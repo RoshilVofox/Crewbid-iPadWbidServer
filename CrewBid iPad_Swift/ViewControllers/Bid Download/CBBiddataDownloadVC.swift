@@ -69,7 +69,10 @@ class CBBiddataDownloadVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        // Do any additional setup after loading the view.
+        if isFromHistoric {
+            self.setYearTitle()
+            self.setEnabledMonthForHistoricBidData()
+        }
     }
     
 
@@ -191,6 +194,36 @@ class CBBiddataDownloadVC: UIViewController {
         }
     }
     
+    func currentYear() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy"
+        let year = dateFormatter.string(from: Date())
+        return year
+    }
+    
+    func currentMonth() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM"
+        let year = dateFormatter.string(from: Date())
+        return year
+    }
+    func setEnabledMonthForHistoricBidData() {
+        let currentMonth = Int(self.currentMonth())
+      let buttonLastBidMonth = self.view.viewWithTag(currentMonth!) as! UIButton
+       self.btnMonthAction(buttonLastBidMonth)
+    }
+    func setYearTitle() {
+        let buttonYearBeforeLast = self.view.viewWithTag(60) as! UIButton
+        buttonYearBeforeLast.setTitle(String(Int(self.currentYear())! - 2), for: .normal)
+        let buttonYearLast = self.view.viewWithTag(61) as! UIButton
+        buttonYearLast.setTitle(String(Int(self.currentYear())! - 1), for: .normal)
+        let buttonYearCurrent = self.view.viewWithTag(62) as! UIButton
+        buttonYearCurrent.setTitle(self.currentYear(), for: .normal)
+        self.btnYearAction(buttonYearCurrent)
+    }
+    
+    
+    
     func setupUI(){
         //Title setup
     if isFromHistoric == true {
@@ -199,6 +232,51 @@ class CBBiddataDownloadVC: UIViewController {
         lblTitle.text = "New Bid Data"
     }
     
+        if !isFromHistoric {
+                //Year view hiding for new bid period
+            viewYear.isHidden = true
+            let btnArray : [UIButton] = [btnJAN,btnFEB,btnMAR,btnAPR,btnMAY,btnJUN,btnJUL,btnAUG,btnSEP,btnOCT,btnNOV,btnDEC]
+            let monthInt = Calendar.current.component(.month, from: Date())
+            var bidMonth: Int = monthInt + 1
+            for button in btnArray {
+                if button.tag < bidMonth {
+                    button.isUserInteractionEnabled = false
+                    button.alpha = 0.3
+                }
+                if button.tag == bidMonth {
+                    button.backgroundColor = UIColor.systemOrange
+                }
+                if bidMonth == 13 {
+                    bidMonth = 1
+                    if button.tag == bidMonth {
+                        button.isUserInteractionEnabled = true
+                        button.backgroundColor = UIColor.systemOrange
+                        button.alpha = 1.0
+                    }
+                }
+            }
+        }
+        if isFromHistoric {
+            viewYear.isHidden = false
+            let btnArray : [UIButton] = [btnJAN,btnFEB,btnMAR,btnAPR,btnMAY,btnJUN,btnJUL,btnAUG,btnSEP,btnOCT,btnNOV,btnDEC]
+            let monthInt = Calendar.current.component(.month, from: Date())
+            let bidMonth: Int = monthInt
+            for button in btnArray {
+                if button.tag > bidMonth {
+                    button.isUserInteractionEnabled = false
+                    button.alpha = 0.3
+                }
+                if button.tag == bidMonth {
+                    button.backgroundColor = UIColor.systemOrange
+                }
+            }
+            let btnYearArray : [UIButton] = [btnBeforePrevious,btnPreviousYear,btnCurrentYear]
+//            for btn in btnYearArray  {
+//                if btn.titleLabel?.text == "\(year)" {
+//                    btn.backgroundColor = UIColor.systemOrange
+//                }
+//            }
+        }
     //Year button title
     let currentDate = Date()
     let nextMonth = Calendar.current.date(byAdding: .month, value: 1, to: currentDate) ?? currentDate
