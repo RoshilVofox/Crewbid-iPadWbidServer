@@ -106,7 +106,7 @@ class helpMenuItemsViewController: UIViewController, UICollectionViewDataSource,
             break
             
         case 1:
-        let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "howToVideosViewController") as! howToVideosViewController
+        let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "howToVideosViewController") as! CBHelpVideosController
         self.navigationController?.pushViewController(vc, animated: true)
         break
             

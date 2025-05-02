@@ -313,17 +313,17 @@ public final class CBGlobalMethods: NSObject {
     /// Show alert
     // Displays a simple alert with an OK button.
 
-//    @objc func ShowAlert(TitleString : String, MessageString : String, buttonTitle: String = "OK") {
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
-//            let alert = UIAlertController(title: TitleString, message: MessageString, preferredStyle: UIAlertController.Style.alert)
-//            let okAction = UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default) {
-//                UIAlertAction in
-//                NSLog("OK Pressed")
-//            }
-//            alert.addAction(okAction)
-//            UIApplication.topViewController()?.present(alert, animated: true, completion: nil)
-//        })
-//    }
+    @objc func ShowAlert(TitleString : String, MessageString : String, buttonTitle: String = "OK") {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
+            let alert = UIAlertController(title: TitleString, message: MessageString, preferredStyle: UIAlertController.Style.alert)
+            let okAction = UIAlertAction(title: buttonTitle, style: UIAlertAction.Style.default) {
+                UIAlertAction in
+                NSLog("OK Pressed")
+            }
+            alert.addAction(okAction)
+            UIApplication.topViewController()?.present(alert, animated: true, completion: nil)
+        })
+    }
     
     // Displays an alert with an OK button and a custom action.
 //    @objc func ShowAlertWithOnlyOKAction(TitleString : String, MessageString : String, buttonTitle: String = "OK", OKAction: ((UIAlertAction) -> Void)?) {

@@ -1239,10 +1239,10 @@ If you would like to provide feedback (positive or negative), report a bug, or s
             </objects>
             <point key="canvasLocation" x="1108" y="328"/>
         </scene>
-        <!--How To Videos View Controller-->
+        <!--Help Videos Controller-->
         <scene sceneID="xBu-hM-j8n">
             <objects>
-                <viewController storyboardIdentifier="howToVideosViewController" id="HV1-ds-TIu" customClass="howToVideosViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="howToVideosViewController" id="HV1-ds-TIu" customClass="CBHelpVideosController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ttq-3B-c4v">
                         <rect key="frame" x="0.0" y="0.0" width="764" height="630"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1251,17 +1251,17 @@ If you would like to provide feedback (positive or negative), report a bug, or s
                                 <rect key="frame" x="0.0" y="0.0" width="764" height="60"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="How-To Videos" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ce2-Sz-Lig">
-                                        <rect key="frame" x="100" y="6" width="564" height="48"/>
+                                        <rect key="frame" x="60" y="19.5" width="644" height="21.5"/>
                                         <color key="tintColor" systemColor="linkColor"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                                         <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SB7-aB-LqH">
-                                        <rect key="frame" x="12" y="10" width="40" height="40"/>
+                                        <rect key="frame" x="10" y="10" width="50" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="dz5-dn-vrF"/>
-                                            <constraint firstAttribute="width" constant="40" id="eqb-Wb-PF2"/>
+                                            <constraint firstAttribute="width" constant="50" id="eqb-Wb-PF2"/>
                                         </constraints>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" image="arrowleftbutton"/>
@@ -1269,43 +1269,58 @@ If you would like to provide feedback (positive or negative), report a bug, or s
                                             <action selector="btnBackAction:" destination="HV1-ds-TIu" eventType="touchUpInside" id="fNe-rl-Omm"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aLP-Iu-gsH">
+                                        <rect key="frame" x="704" y="5" width="50" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50" id="VsB-0N-8Vf"/>
+                                            <constraint firstAttribute="width" constant="50" id="cwS-Lq-xpF"/>
+                                        </constraints>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" image="NavBar-doneButton.png">
+                                            <color key="baseForegroundColor" systemColor="linkColor"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="btnDoneAction:" destination="tWM-Yx-dV9" eventType="touchUpInside" id="vwM-fy-pZl"/>
+                                            <action selector="doneBtnAction:" destination="HV1-ds-TIu" eventType="touchUpInside" id="2D2-yh-lUF"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <viewLayoutGuide key="safeArea" id="TQL-4N-BHO"/>
                                 <color key="backgroundColor" systemColor="systemGray2Color"/>
                                 <constraints>
-                                    <constraint firstItem="ce2-Sz-Lig" firstAttribute="top" secondItem="eLS-Lm-H0V" secondAttribute="top" constant="6" id="2VW-OB-vPq"/>
-                                    <constraint firstAttribute="bottom" secondItem="ce2-Sz-Lig" secondAttribute="bottom" constant="6" id="BJ9-Vv-cCg"/>
+                                    <constraint firstAttribute="trailing" secondItem="aLP-Iu-gsH" secondAttribute="trailing" constant="10" id="2vv-8Q-pPC"/>
+                                    <constraint firstItem="SB7-aB-LqH" firstAttribute="leading" secondItem="eLS-Lm-H0V" secondAttribute="leading" constant="10" id="7iJ-wn-yhH"/>
+                                    <constraint firstItem="aLP-Iu-gsH" firstAttribute="leading" secondItem="ce2-Sz-Lig" secondAttribute="trailing" id="93D-7a-4Ak"/>
+                                    <constraint firstItem="ce2-Sz-Lig" firstAttribute="centerY" secondItem="eLS-Lm-H0V" secondAttribute="centerY" id="Qfa-vw-9RJ"/>
+                                    <constraint firstItem="ce2-Sz-Lig" firstAttribute="leading" secondItem="SB7-aB-LqH" secondAttribute="trailing" id="T2R-WQ-mvV"/>
                                     <constraint firstAttribute="height" constant="60" id="Woc-ov-Yfr"/>
                                     <constraint firstItem="TQL-4N-BHO" firstAttribute="bottom" secondItem="SB7-aB-LqH" secondAttribute="bottom" constant="10" id="Z4D-u0-oSu"/>
-                                    <constraint firstItem="ce2-Sz-Lig" firstAttribute="leading" secondItem="TQL-4N-BHO" secondAttribute="leading" constant="100" id="ZHm-tR-e00"/>
                                     <constraint firstItem="SB7-aB-LqH" firstAttribute="top" secondItem="eLS-Lm-H0V" secondAttribute="top" constant="10" id="bdF-wA-kuW"/>
-                                    <constraint firstAttribute="trailing" secondItem="ce2-Sz-Lig" secondAttribute="trailing" constant="100" id="pYh-OL-ctm"/>
-                                    <constraint firstItem="SB7-aB-LqH" firstAttribute="leading" secondItem="TQL-4N-BHO" secondAttribute="leading" constant="12" id="rTe-lP-Znk"/>
+                                    <constraint firstItem="aLP-Iu-gsH" firstAttribute="top" secondItem="eLS-Lm-H0V" secondAttribute="top" constant="5" id="mcM-YY-bfr"/>
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Ddp-2P-WTt">
-                                <rect key="frame" x="32" y="84" width="700" height="521"/>
-                                <color key="backgroundColor" systemColor="systemGroupedBackgroundColor"/>
+                                <rect key="frame" x="0.0" y="68" width="764" height="554"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Z3E-B0-2mN">
-                                    <size key="itemSize" width="257" height="315"/>
+                                    <size key="itemSize" width="200" height="250"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cell" id="via-N4-kqI" customClass="howToVideoCollectionViewCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="257" height="315"/>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="videoCell" id="via-N4-kqI" customClass="VideoCollectionViewCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="200" height="250"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="zAU-LU-gcL">
-                                            <rect key="frame" x="0.0" y="0.0" width="257" height="315"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="200" height="250"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Nwa-4f-yCI">
-                                                    <rect key="frame" x="0.0" y="0.0" width="257" height="220"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="200" height="200"/>
                                                     <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="300" id="1ea-7k-cm1"/>
-                                                        <constraint firstAttribute="height" constant="220" id="V1n-R9-5ZA"/>
+                                                        <constraint firstAttribute="height" constant="200" id="V1n-R9-5ZA"/>
                                                     </constraints>
                                                     <wkWebViewConfiguration key="configuration">
                                                         <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
@@ -1313,7 +1328,7 @@ If you would like to provide feedback (positive or negative), report a bug, or s
                                                     </wkWebViewConfiguration>
                                                 </wkWebView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EQr-7U-6Nw">
-                                                    <rect key="frame" x="0.0" y="226" width="257" height="83"/>
+                                                    <rect key="frame" x="10" y="213" width="180" height="21.5"/>
                                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1322,18 +1337,17 @@ If you would like to provide feedback (positive or negative), report a bug, or s
                                             <constraints>
                                                 <constraint firstItem="Nwa-4f-yCI" firstAttribute="leading" secondItem="zAU-LU-gcL" secondAttribute="leading" id="Dwq-bn-5ha"/>
                                                 <constraint firstAttribute="trailing" secondItem="Nwa-4f-yCI" secondAttribute="trailing" id="Hao-HY-QmD"/>
-                                                <constraint firstItem="EQr-7U-6Nw" firstAttribute="leading" secondItem="zAU-LU-gcL" secondAttribute="leading" id="M3v-fY-IwC"/>
-                                                <constraint firstItem="EQr-7U-6Nw" firstAttribute="top" secondItem="Nwa-4f-yCI" secondAttribute="bottom" constant="6" id="TsW-Vu-QA1"/>
-                                                <constraint firstAttribute="trailing" secondItem="EQr-7U-6Nw" secondAttribute="trailing" id="gZ4-8L-Mfk"/>
-                                                <constraint firstAttribute="bottom" secondItem="EQr-7U-6Nw" secondAttribute="bottom" constant="6" id="t79-7b-jof"/>
+                                                <constraint firstItem="EQr-7U-6Nw" firstAttribute="top" secondItem="Nwa-4f-yCI" secondAttribute="bottom" constant="13" id="LbF-ta-v8t"/>
+                                                <constraint firstAttribute="trailing" secondItem="EQr-7U-6Nw" secondAttribute="trailing" constant="10" id="PcU-RK-GJY"/>
                                                 <constraint firstItem="Nwa-4f-yCI" firstAttribute="top" secondItem="zAU-LU-gcL" secondAttribute="top" id="ucy-Rw-dZY"/>
+                                                <constraint firstItem="EQr-7U-6Nw" firstAttribute="leading" secondItem="zAU-LU-gcL" secondAttribute="leading" constant="10" id="yw9-8e-e8K"/>
                                             </constraints>
                                         </collectionViewCellContentView>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <size key="customSize" width="257" height="315"/>
+                                        <size key="customSize" width="200" height="250"/>
                                         <connections>
+                                            <outlet property="videoTitleLbl" destination="EQr-7U-6Nw" id="CLu-bo-yIH"/>
                                             <outlet property="webView" destination="Nwa-4f-yCI" id="FiH-yL-W32"/>
-                                            <outlet property="webViewLabel" destination="EQr-7U-6Nw" id="CLu-bo-yIH"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -1346,13 +1360,13 @@ If you would like to provide feedback (positive or negative), report a bug, or s
                         <viewLayoutGuide key="safeArea" id="iMg-LL-kcd"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="iMg-LL-kcd" firstAttribute="trailing" secondItem="Ddp-2P-WTt" secondAttribute="trailing" constant="32" id="3yK-Br-e4O"/>
+                            <constraint firstItem="Ddp-2P-WTt" firstAttribute="top" secondItem="eLS-Lm-H0V" secondAttribute="bottom" constant="8" symbolic="YES" id="2sR-qo-3Nr"/>
+                            <constraint firstItem="Ddp-2P-WTt" firstAttribute="leading" secondItem="iMg-LL-kcd" secondAttribute="leading" id="CiM-kO-p3Q"/>
+                            <constraint firstAttribute="bottom" secondItem="Ddp-2P-WTt" secondAttribute="bottom" constant="8" id="GPY-q0-IR4"/>
                             <constraint firstItem="eLS-Lm-H0V" firstAttribute="top" secondItem="ttq-3B-c4v" secondAttribute="top" id="HAd-DQ-QoH"/>
-                            <constraint firstItem="Ddp-2P-WTt" firstAttribute="leading" secondItem="iMg-LL-kcd" secondAttribute="leading" constant="32" id="Lq8-7e-g4W"/>
                             <constraint firstItem="eLS-Lm-H0V" firstAttribute="trailing" secondItem="iMg-LL-kcd" secondAttribute="trailing" id="SgC-0G-IUv"/>
                             <constraint firstItem="eLS-Lm-H0V" firstAttribute="leading" secondItem="iMg-LL-kcd" secondAttribute="leading" id="UbH-hG-m97"/>
-                            <constraint firstItem="iMg-LL-kcd" firstAttribute="bottom" secondItem="Ddp-2P-WTt" secondAttribute="bottom" id="WPC-Jy-10h"/>
-                            <constraint firstItem="Ddp-2P-WTt" firstAttribute="top" secondItem="eLS-Lm-H0V" secondAttribute="bottom" constant="24" id="hGL-Pp-CjP"/>
+                            <constraint firstItem="Ddp-2P-WTt" firstAttribute="trailing" secondItem="iMg-LL-kcd" secondAttribute="trailing" id="pYN-nC-6eH"/>
                         </constraints>
                     </view>
                     <size key="freeformSize" width="764" height="630"/>
@@ -1399,7 +1413,7 @@ If you would like to provide feedback (positive or negative), report a bug, or s
                     </constraints>
                 </view>
             </objects>
-            <point key="canvasLocation" x="1819" y="328"/>
+            <point key="canvasLocation" x="1818.2926829268292" y="327.96610169491527"/>
         </scene>
         <!--Faq View Controller-->
         <scene sceneID="HT5-cB-EIf">
@@ -1809,9 +1823,6 @@ If you would like to provide feedback (positive or negative), report a bug, or s
         </systemColor>
         <systemColor name="systemGreenColor">
             <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemGroupedBackgroundColor">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemIndigoColor">
             <color red="0.34509803921568627" green="0.33725490196078434" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
