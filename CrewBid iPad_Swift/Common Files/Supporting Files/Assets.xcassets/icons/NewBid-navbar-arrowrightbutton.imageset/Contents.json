@@ -1,0 +1,22 @@
+{
+  "images" : [
+    {
+      "filename" : "NewBid-navbar-arrowrightbutton.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "NewBid-navbar-arrowrightbutton@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

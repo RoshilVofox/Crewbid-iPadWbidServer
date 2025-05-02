@@ -1,0 +1,1728 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="ipad10_9rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Biddata DownloadVC-->
+        <scene sceneID="s5a-WD-0H9">
+            <objects>
+                <viewController storyboardIdentifier="CBBiddataDownloadVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Pou-H5-XRA" customClass="CBBiddataDownloadVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="uwY-fV-rKv">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="550"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dXB-nR-mAq" userLabel="TopView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="an8-DF-ybs">
+                                        <rect key="frame" x="10" y="5" width="50" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="50" id="MTx-Mc-9sO"/>
+                                            <constraint firstAttribute="height" constant="50" id="cMv-za-0yf"/>
+                                        </constraints>
+                                        <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="arrowleftbutton">
+                                            <color key="titleColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="btnBackAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="giI-41-utj"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New Bid Data" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xAh-Nh-zOy">
+                                        <rect key="frame" x="60" y="0.0" width="480" height="60"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                        <color key="textColor" name="BlackLabelColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="L6A-bN-Uv6">
+                                        <rect key="frame" x="540" y="5" width="50" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50" id="E0O-fJ-LkV"/>
+                                            <constraint firstAttribute="width" constant="50" id="eaB-e5-a73"/>
+                                        </constraints>
+                                        <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="BidLineMove">
+                                            <color key="titleColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="btnNextAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="ftu-kF-ZqQ"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" name="TopViewColor"/>
+                                <constraints>
+                                    <constraint firstItem="xAh-Nh-zOy" firstAttribute="top" secondItem="dXB-nR-mAq" secondAttribute="top" id="7U5-dD-6fz"/>
+                                    <constraint firstItem="an8-DF-ybs" firstAttribute="top" secondItem="dXB-nR-mAq" secondAttribute="top" constant="5" id="FzQ-f9-RqN"/>
+                                    <constraint firstItem="L6A-bN-Uv6" firstAttribute="leading" secondItem="xAh-Nh-zOy" secondAttribute="trailing" id="Jer-MF-T27"/>
+                                    <constraint firstItem="L6A-bN-Uv6" firstAttribute="top" secondItem="dXB-nR-mAq" secondAttribute="top" constant="5" id="kZq-yd-oCX"/>
+                                    <constraint firstItem="xAh-Nh-zOy" firstAttribute="leading" secondItem="an8-DF-ybs" secondAttribute="trailing" id="kd0-83-Ohz"/>
+                                    <constraint firstAttribute="bottom" secondItem="xAh-Nh-zOy" secondAttribute="bottom" id="qsj-eG-QCe"/>
+                                    <constraint firstAttribute="height" constant="60" id="rdv-Oq-QmP"/>
+                                    <constraint firstAttribute="trailing" secondItem="L6A-bN-Uv6" secondAttribute="trailing" constant="10" id="tCN-XO-mbo"/>
+                                    <constraint firstItem="an8-DF-ybs" firstAttribute="leading" secondItem="dXB-nR-mAq" secondAttribute="leading" constant="10" id="wK7-5V-0pu"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Edz-0G-F4l" userLabel="BaseView">
+                                <rect key="frame" x="0.0" y="60" width="600" height="170"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Base:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="l6T-bZ-hqC">
+                                        <rect key="frame" x="20" y="15" width="100" height="35"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="35" id="VHw-R2-JXJ"/>
+                                            <constraint firstAttribute="width" constant="100" id="inw-D6-vQG"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
+                                        <color key="textColor" systemColor="secondaryLabelColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8O4-DT-hUR">
+                                        <rect key="frame" x="130" y="10" width="450" height="150"/>
+                                        <subviews>
+                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="J9W-9I-oSW">
+                                                <rect key="frame" x="0.0" y="0.0" width="450" height="45"/>
+                                                <subviews>
+                                                    <button opaque="NO" tag="40" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XVJ-pn-H6b" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="ATL">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="aOV-Oo-wEw"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="41" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="44Z-k7-7wD" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="92" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="AUS">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="ZrL-bW-tle"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="53" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ldb-gM-37a" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="184" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="BNA">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="seu-eF-twI"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="42" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mRN-1i-h6f" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="276" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="BWI">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="ysl-FZ-Cjy"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="43" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="la0-f5-1i8" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="368" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="DAL">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="Fbj-16-a41"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="45" id="Gbd-gZ-jLt"/>
+                                                    <constraint firstAttribute="width" constant="450" id="TXZ-xi-vcp"/>
+                                                </constraints>
+                                            </stackView>
+                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="fah-qJ-lO1">
+                                                <rect key="frame" x="0.0" y="50" width="450" height="45"/>
+                                                <subviews>
+                                                    <button opaque="NO" tag="44" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yPF-sL-aha" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="DEN">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="a1O-91-DSA"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="45" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ebl-n9-eYN" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="92" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="FLL">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="gWx-bj-o0k"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="46" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fNT-yh-y87" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="184" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="HOU">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="Ta5-he-G7e"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="47" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vPA-sx-JBN" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="276" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="LAS">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="n6u-VD-lpm"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="48" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uYu-vT-55t" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="368" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="LAX">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="JS1-LZ-gbm"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <viewLayoutGuide key="safeArea" id="k0V-KT-yGM"/>
+                                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="450" id="SJr-hF-UQ5"/>
+                                                    <constraint firstAttribute="height" constant="45" id="l4R-u4-fUd"/>
+                                                </constraints>
+                                            </stackView>
+                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="WTN-XM-8l2">
+                                                <rect key="frame" x="0.0" y="100" width="450" height="45"/>
+                                                <subviews>
+                                                    <button opaque="NO" tag="49" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hbj-JJ-AXH" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="MCO">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="7tC-k0-5og"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="50" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OHB-hO-cqm" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="92" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="MDW">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="Ezb-Yz-F3t"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="51" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="csi-OR-QnN" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="184" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="OAK">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="8zy-Qi-inK"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="52" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uqW-oh-bnO" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="276" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="PHX">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="48e-fF-JH2"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IiV-eu-xEB">
+                                                        <rect key="frame" x="368" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal">
+                                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="QJC-9e-ebY"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <viewLayoutGuide key="safeArea" id="gft-zL-pyP"/>
+                                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="450" id="kY5-2u-d3g"/>
+                                                    <constraint firstAttribute="height" constant="45" id="q3R-4O-R8D"/>
+                                                </constraints>
+                                            </stackView>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="450" id="17g-S9-pqC"/>
+                                            <constraint firstItem="WTN-XM-8l2" firstAttribute="top" secondItem="fah-qJ-lO1" secondAttribute="bottom" constant="5" id="3FY-0X-sYO"/>
+                                            <constraint firstAttribute="height" constant="150" id="4KN-tx-Yvz"/>
+                                            <constraint firstItem="WTN-XM-8l2" firstAttribute="leading" secondItem="8O4-DT-hUR" secondAttribute="leading" id="6pb-xF-Pcw"/>
+                                            <constraint firstItem="J9W-9I-oSW" firstAttribute="leading" secondItem="8O4-DT-hUR" secondAttribute="leading" id="Gq4-AT-Cfl"/>
+                                            <constraint firstItem="fah-qJ-lO1" firstAttribute="top" secondItem="J9W-9I-oSW" secondAttribute="bottom" constant="5" id="Wjy-JD-oMn"/>
+                                            <constraint firstAttribute="trailing" secondItem="WTN-XM-8l2" secondAttribute="trailing" id="f1v-9o-ZTW"/>
+                                            <constraint firstAttribute="trailing" secondItem="fah-qJ-lO1" secondAttribute="trailing" id="nfw-ei-eQg"/>
+                                            <constraint firstItem="fah-qJ-lO1" firstAttribute="leading" secondItem="8O4-DT-hUR" secondAttribute="leading" id="uUa-i6-2xx"/>
+                                            <constraint firstAttribute="trailing" secondItem="J9W-9I-oSW" secondAttribute="trailing" id="vr3-dA-px3"/>
+                                            <constraint firstItem="J9W-9I-oSW" firstAttribute="top" secondItem="8O4-DT-hUR" secondAttribute="top" id="yP0-Jj-fnf"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="l6T-bZ-hqC" firstAttribute="top" secondItem="Edz-0G-F4l" secondAttribute="top" constant="15" id="1ey-vI-PbC"/>
+                                    <constraint firstItem="l6T-bZ-hqC" firstAttribute="leading" secondItem="Edz-0G-F4l" secondAttribute="leading" constant="20" id="Tae-jr-AVB"/>
+                                    <constraint firstAttribute="trailing" secondItem="8O4-DT-hUR" secondAttribute="trailing" constant="20" id="Uct-d2-5az"/>
+                                    <constraint firstItem="8O4-DT-hUR" firstAttribute="top" secondItem="Edz-0G-F4l" secondAttribute="top" constant="10" id="ue7-4o-0xt"/>
+                                    <constraint firstAttribute="height" constant="170" id="vxX-9f-mSK"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LnD-Ie-0Im" userLabel="PositionView">
+                                <rect key="frame" x="0.0" y="230" width="600" height="65"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Position:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yvR-0r-rH9">
+                                        <rect key="frame" x="20" y="15" width="100" height="35"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="100" id="XEz-ad-zrf"/>
+                                            <constraint firstAttribute="height" constant="35" id="vwA-NK-YnT"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
+                                        <color key="textColor" systemColor="secondaryLabelColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Dib-N0-LkO" userLabel="View Position">
+                                        <rect key="frame" x="125" y="10" width="450" height="50"/>
+                                        <subviews>
+                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="so1-22-eDR">
+                                                <rect key="frame" x="0.0" y="0.0" width="450" height="45"/>
+                                                <subviews>
+                                                    <button opaque="NO" tag="14" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Sk-Kl-ri8" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="143.5" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="CP">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnPositionAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="02R-vR-W8M"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="15" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xp0-1C-9v6" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="153.5" y="0.0" width="143" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="FO">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnPositionAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="quf-bt-4dF"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="16" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iyz-L2-8dW" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="306.5" y="0.0" width="143.5" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="FA">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnPositionAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="rfR-Qc-SDM"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <viewLayoutGuide key="safeArea" id="PQP-VQ-G8b"/>
+                                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="45" id="AVU-tp-sz3"/>
+                                                    <constraint firstAttribute="width" constant="450" id="e0r-dO-FK4"/>
+                                                </constraints>
+                                            </stackView>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstItem="so1-22-eDR" firstAttribute="leading" secondItem="Dib-N0-LkO" secondAttribute="leading" id="EFt-Mx-k4d"/>
+                                            <constraint firstAttribute="trailing" secondItem="so1-22-eDR" secondAttribute="trailing" id="IYf-rH-cBy"/>
+                                            <constraint firstItem="so1-22-eDR" firstAttribute="top" secondItem="Dib-N0-LkO" secondAttribute="top" id="NI8-Zq-obz"/>
+                                            <constraint firstAttribute="width" constant="450" id="VVJ-jl-50r"/>
+                                            <constraint firstAttribute="height" constant="50" id="tf1-Rd-t3b"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstItem="yvR-0r-rH9" firstAttribute="leading" secondItem="LnD-Ie-0Im" secondAttribute="leading" constant="20" id="1KJ-ad-zBT"/>
+                                    <constraint firstItem="yvR-0r-rH9" firstAttribute="top" secondItem="LnD-Ie-0Im" secondAttribute="top" constant="15" id="289-Nn-9ma"/>
+                                    <constraint firstAttribute="trailing" secondItem="Dib-N0-LkO" secondAttribute="trailing" constant="25" id="Tge-Xd-KEE"/>
+                                    <constraint firstAttribute="height" constant="65" id="aJg-Kq-1Kl"/>
+                                    <constraint firstItem="Dib-N0-LkO" firstAttribute="top" secondItem="LnD-Ie-0Im" secondAttribute="top" constant="10" id="zJx-hn-u1T"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2l3-4k-gcy" userLabel="RoundView">
+                                <rect key="frame" x="0.0" y="295" width="600" height="65"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Round:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0nr-fq-sdq">
+                                        <rect key="frame" x="20" y="15" width="100" height="35"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="35" id="R90-Ok-6XF"/>
+                                            <constraint firstAttribute="width" constant="100" id="VYk-fE-fgC"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
+                                        <color key="textColor" systemColor="secondaryLabelColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zhu-GZ-8e3">
+                                        <rect key="frame" x="125" y="10" width="450" height="50"/>
+                                        <subviews>
+                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="uuE-Gi-QHw">
+                                                <rect key="frame" x="0.0" y="0.0" width="450" height="45"/>
+                                                <subviews>
+                                                    <button opaque="NO" tag="17" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jN5-Lw-vI3" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="220" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="1st Round">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnRoundAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="s4m-NO-tnN"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="18" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EV5-5l-QV9" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="230" y="0.0" width="220" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="2nd Round">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnRoundAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="uhm-jv-DBJ"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <viewLayoutGuide key="safeArea" id="4Ed-Bc-1rK"/>
+                                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="45" id="0VG-CJ-OwA"/>
+                                                    <constraint firstAttribute="width" constant="450" id="ovW-dC-QcQ"/>
+                                                </constraints>
+                                            </stackView>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="450" id="ANS-vc-5Io"/>
+                                            <constraint firstItem="uuE-Gi-QHw" firstAttribute="top" secondItem="Zhu-GZ-8e3" secondAttribute="top" id="GEp-kC-3c7"/>
+                                            <constraint firstItem="uuE-Gi-QHw" firstAttribute="leading" secondItem="Zhu-GZ-8e3" secondAttribute="leading" id="d6R-ZV-JcF"/>
+                                            <constraint firstAttribute="height" constant="50" id="knA-x2-XvX"/>
+                                            <constraint firstAttribute="trailing" secondItem="uuE-Gi-QHw" secondAttribute="trailing" id="rk7-0l-l3o"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="Zhu-GZ-8e3" secondAttribute="trailing" constant="25" id="4X1-ss-mqB"/>
+                                    <constraint firstItem="0nr-fq-sdq" firstAttribute="leading" secondItem="2l3-4k-gcy" secondAttribute="leading" constant="20" id="4pp-Ju-OHh"/>
+                                    <constraint firstItem="0nr-fq-sdq" firstAttribute="top" secondItem="2l3-4k-gcy" secondAttribute="top" constant="15" id="FAn-1r-nUP"/>
+                                    <constraint firstItem="Zhu-GZ-8e3" firstAttribute="top" secondItem="2l3-4k-gcy" secondAttribute="top" constant="10" id="a10-39-4nB"/>
+                                    <constraint firstAttribute="height" constant="65" id="yoP-Md-MS3"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5TO-Cw-0IM" userLabel="MonthView">
+                                <rect key="frame" x="0.0" y="360" width="600" height="115"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Month:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Ch-ei-lDb">
+                                        <rect key="frame" x="20" y="15" width="100" height="35"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="35" id="BfO-Mi-xoC"/>
+                                            <constraint firstAttribute="width" constant="100" id="eSN-Zo-eMK"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
+                                        <color key="textColor" systemColor="secondaryLabelColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hVj-zE-eOU">
+                                        <rect key="frame" x="125" y="10" width="450" height="100"/>
+                                        <subviews>
+                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="VgI-Cv-jHS">
+                                                <rect key="frame" x="0.0" y="0.0" width="450" height="45"/>
+                                                <subviews>
+                                                    <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QIP-gP-oEN" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="66.5" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="Jan">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnMonthAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="t2d-Ap-6ph"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SJq-zG-3bk" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="76.5" y="0.0" width="67" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="Feb">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnMonthAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="IZ6-zD-uSM"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PMQ-5d-oWJ" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="153.5" y="0.0" width="66.5" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="Mar">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnMonthAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="FDk-Rm-EpC"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="amn-6X-uns" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="230" y="0.0" width="66.5" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="Apr">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnMonthAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="nvg-te-Jka"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hjb-1l-AYc" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="306.5" y="0.0" width="67" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="May">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnMonthAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="vAZ-y6-jEe"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="6" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WVk-YZ-3YK" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="383.5" y="0.0" width="66.5" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="Jun">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnMonthAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="VrT-az-UHs"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="45" id="O0a-p9-D2g"/>
+                                                    <constraint firstAttribute="width" constant="450" id="oyX-Me-O6a"/>
+                                                </constraints>
+                                            </stackView>
+                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="XYb-yJ-GP4">
+                                                <rect key="frame" x="0.0" y="50" width="450" height="45"/>
+                                                <subviews>
+                                                    <button opaque="NO" tag="7" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lbV-tC-4es" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="66.5" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="Jul">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnMonthAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="qJK-ys-Gk1"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="8" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hyv-eF-k23" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="76.5" y="0.0" width="67" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="Aug">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnMonthAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="bH5-cH-oXb"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="9" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BN6-vD-E9e" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="153.5" y="0.0" width="66.5" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="Sep">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnMonthAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="MT2-nR-srQ"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="10" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eM9-HX-06Y" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="230" y="0.0" width="66.5" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="Oct">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnMonthAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="Lah-CI-OFg"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="11" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yx8-9g-cfa" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="306.5" y="0.0" width="67" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="Nov">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnMonthAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="vpC-0f-mIJ"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="12" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="L2j-ts-YgI" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="383.5" y="0.0" width="66.5" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="Dec">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnMonthAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="Tgd-sS-aMd"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <viewLayoutGuide key="safeArea" id="niw-aP-AZG"/>
+                                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="450" id="5Fc-bq-B9q"/>
+                                                    <constraint firstAttribute="height" constant="45" id="NJk-Ht-uYW"/>
+                                                </constraints>
+                                            </stackView>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstItem="XYb-yJ-GP4" firstAttribute="top" secondItem="VgI-Cv-jHS" secondAttribute="bottom" constant="5" id="0S2-vE-pZ4"/>
+                                            <constraint firstItem="VgI-Cv-jHS" firstAttribute="leading" secondItem="hVj-zE-eOU" secondAttribute="leading" id="1FY-XR-b8L"/>
+                                            <constraint firstAttribute="height" constant="100" id="6h8-Fc-hrZ"/>
+                                            <constraint firstAttribute="trailing" secondItem="XYb-yJ-GP4" secondAttribute="trailing" id="AHx-Yk-PWY"/>
+                                            <constraint firstAttribute="trailing" secondItem="VgI-Cv-jHS" secondAttribute="trailing" id="JFV-TW-lIj"/>
+                                            <constraint firstItem="XYb-yJ-GP4" firstAttribute="leading" secondItem="hVj-zE-eOU" secondAttribute="leading" id="TdA-Ph-tpb"/>
+                                            <constraint firstAttribute="width" constant="450" id="ZI3-K6-K8b"/>
+                                            <constraint firstItem="VgI-Cv-jHS" firstAttribute="top" secondItem="hVj-zE-eOU" secondAttribute="top" id="wEF-xz-Fkc"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="115" id="N9l-4I-h9Y"/>
+                                    <constraint firstAttribute="trailing" secondItem="hVj-zE-eOU" secondAttribute="trailing" constant="25" id="aXo-7U-A1m"/>
+                                    <constraint firstItem="7Ch-ei-lDb" firstAttribute="leading" secondItem="5TO-Cw-0IM" secondAttribute="leading" constant="20" id="bbj-bg-q6A"/>
+                                    <constraint firstItem="hVj-zE-eOU" firstAttribute="top" secondItem="5TO-Cw-0IM" secondAttribute="top" constant="10" id="ldh-4y-sJT"/>
+                                    <constraint firstItem="7Ch-ei-lDb" firstAttribute="top" secondItem="5TO-Cw-0IM" secondAttribute="top" constant="15" id="vVA-JM-ZGv"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="p1W-2R-xpV">
+                                <rect key="frame" x="0.0" y="475" width="600" height="60"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Year:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O9w-RQ-TdS">
+                                        <rect key="frame" x="20" y="15" width="100" height="35"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="35" id="EHe-fq-t3F"/>
+                                            <constraint firstAttribute="width" constant="100" id="yM2-mS-M1l"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
+                                        <color key="textColor" systemColor="secondaryLabelColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="igs-PY-j8m">
+                                        <rect key="frame" x="125" y="5" width="450" height="50"/>
+                                        <subviews>
+                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="YAQ-k8-uZv">
+                                                <rect key="frame" x="0.0" y="5" width="450" height="45"/>
+                                                <subviews>
+                                                    <button opaque="NO" tag="60" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hvm-Ht-WbS" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="0.0" width="146.5" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="Jan">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnYearAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="PNy-8x-EKy"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="61" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WAK-hA-9dA" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="151.5" y="0.0" width="147" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="Jan">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnYearAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="2jE-rz-0cz"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="62" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Av-TM-IAi" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="303.5" y="0.0" width="146.5" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="Jan">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnYearAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="ze9-5M-g9b"/>
+                                                        </connections>
+                                                    </button>
+                                                </subviews>
+                                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="45" id="6lP-kK-BKn"/>
+                                                    <constraint firstAttribute="width" constant="450" id="Oc6-Pj-tc7"/>
+                                                </constraints>
+                                            </stackView>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50" id="9ge-cT-kVA"/>
+                                            <constraint firstItem="YAQ-k8-uZv" firstAttribute="top" secondItem="igs-PY-j8m" secondAttribute="top" constant="5" id="BMb-QP-TAX"/>
+                                            <constraint firstItem="YAQ-k8-uZv" firstAttribute="leading" secondItem="igs-PY-j8m" secondAttribute="leading" id="Erm-xA-Tug"/>
+                                            <constraint firstAttribute="trailing" secondItem="YAQ-k8-uZv" secondAttribute="trailing" id="UKx-34-V44"/>
+                                            <constraint firstAttribute="width" constant="450" id="dQ7-ZL-DGo"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="igs-PY-j8m" secondAttribute="trailing" constant="25" id="KSp-UX-lcM"/>
+                                    <constraint firstItem="O9w-RQ-TdS" firstAttribute="top" secondItem="p1W-2R-xpV" secondAttribute="top" constant="15" id="RdX-SO-yxX"/>
+                                    <constraint firstItem="O9w-RQ-TdS" firstAttribute="leading" secondItem="p1W-2R-xpV" secondAttribute="leading" constant="20" id="arQ-37-TzU"/>
+                                    <constraint firstAttribute="height" constant="60" id="iZt-ub-etq"/>
+                                    <constraint firstItem="igs-PY-j8m" firstAttribute="top" secondItem="p1W-2R-xpV" secondAttribute="top" constant="5" id="vUM-Sx-Saz"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vno-wY-h3s"/>
+                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="dXB-nR-mAq" firstAttribute="trailing" secondItem="vno-wY-h3s" secondAttribute="trailing" id="2z8-Rr-5iY"/>
+                            <constraint firstItem="2l3-4k-gcy" firstAttribute="trailing" secondItem="vno-wY-h3s" secondAttribute="trailing" id="6tX-qa-7HZ"/>
+                            <constraint firstItem="LnD-Ie-0Im" firstAttribute="leading" secondItem="vno-wY-h3s" secondAttribute="leading" id="CS8-3N-Rih"/>
+                            <constraint firstItem="LnD-Ie-0Im" firstAttribute="trailing" secondItem="vno-wY-h3s" secondAttribute="trailing" id="DuM-bq-G2L"/>
+                            <constraint firstItem="Edz-0G-F4l" firstAttribute="top" secondItem="dXB-nR-mAq" secondAttribute="bottom" id="FW8-fw-mW9"/>
+                            <constraint firstItem="2l3-4k-gcy" firstAttribute="leading" secondItem="vno-wY-h3s" secondAttribute="leading" id="GDa-Bl-u6P"/>
+                            <constraint firstItem="LnD-Ie-0Im" firstAttribute="top" secondItem="Edz-0G-F4l" secondAttribute="bottom" id="Nkf-8p-dk2"/>
+                            <constraint firstItem="5TO-Cw-0IM" firstAttribute="leading" secondItem="vno-wY-h3s" secondAttribute="leading" id="SAr-Se-0ZU"/>
+                            <constraint firstItem="p1W-2R-xpV" firstAttribute="leading" secondItem="vno-wY-h3s" secondAttribute="leading" id="UNS-Hg-WoH"/>
+                            <constraint firstItem="p1W-2R-xpV" firstAttribute="trailing" secondItem="vno-wY-h3s" secondAttribute="trailing" id="Va5-Qj-HGP"/>
+                            <constraint firstItem="p1W-2R-xpV" firstAttribute="top" secondItem="5TO-Cw-0IM" secondAttribute="bottom" id="Xi0-Hs-87g"/>
+                            <constraint firstItem="5TO-Cw-0IM" firstAttribute="top" secondItem="2l3-4k-gcy" secondAttribute="bottom" id="fzq-vL-qn4"/>
+                            <constraint firstItem="Edz-0G-F4l" firstAttribute="trailing" secondItem="vno-wY-h3s" secondAttribute="trailing" id="iEk-aE-8kU"/>
+                            <constraint firstItem="5TO-Cw-0IM" firstAttribute="trailing" secondItem="vno-wY-h3s" secondAttribute="trailing" id="jF6-tk-esd"/>
+                            <constraint firstItem="Edz-0G-F4l" firstAttribute="leading" secondItem="vno-wY-h3s" secondAttribute="leading" id="mS8-a1-JvC"/>
+                            <constraint firstItem="dXB-nR-mAq" firstAttribute="leading" secondItem="vno-wY-h3s" secondAttribute="leading" id="pae-oM-hdw"/>
+                            <constraint firstItem="2l3-4k-gcy" firstAttribute="top" secondItem="LnD-Ie-0Im" secondAttribute="bottom" id="vDu-LS-Kbq"/>
+                            <constraint firstItem="dXB-nR-mAq" firstAttribute="top" secondItem="uwY-fV-rKv" secondAttribute="top" id="wZ4-HS-bb7"/>
+                        </constraints>
+                    </view>
+                    <size key="freeformSize" width="600" height="550"/>
+                    <connections>
+                        <outlet property="btnAPR" destination="amn-6X-uns" id="BMb-b7-bvv"/>
+                        <outlet property="btnATL" destination="XVJ-pn-H6b" id="ZKC-8b-r6d"/>
+                        <outlet property="btnAUG" destination="hyv-eF-k23" id="heG-Qr-bpD"/>
+                        <outlet property="btnAUS" destination="44Z-k7-7wD" id="Clb-4z-OvE"/>
+                        <outlet property="btnBNA" destination="ldb-gM-37a" id="a3l-OD-w4e"/>
+                        <outlet property="btnBWI" destination="mRN-1i-h6f" id="SJE-fn-QK2"/>
+                        <outlet property="btnBeforePrevious" destination="Hvm-Ht-WbS" id="vvi-Xx-Nfp"/>
+                        <outlet property="btnCP" destination="3Sk-Kl-ri8" id="ykg-9U-71L"/>
+                        <outlet property="btnCurrentYear" destination="9Av-TM-IAi" id="Uip-Ae-wdP"/>
+                        <outlet property="btnDAL" destination="la0-f5-1i8" id="Cu8-W0-j45"/>
+                        <outlet property="btnDEC" destination="L2j-ts-YgI" id="zVg-i0-Waz"/>
+                        <outlet property="btnDEN" destination="yPF-sL-aha" id="w8o-zr-oiM"/>
+                        <outlet property="btnFA" destination="iyz-L2-8dW" id="4Gs-Md-SoJ"/>
+                        <outlet property="btnFEB" destination="SJq-zG-3bk" id="GuF-4X-6B4"/>
+                        <outlet property="btnFLL" destination="Ebl-n9-eYN" id="C9K-V1-NTg"/>
+                        <outlet property="btnFO" destination="Xp0-1C-9v6" id="Ofs-Lx-JbU"/>
+                        <outlet property="btnFirstRound" destination="jN5-Lw-vI3" id="9Iz-AB-eCa"/>
+                        <outlet property="btnHOU" destination="fNT-yh-y87" id="da0-29-cCn"/>
+                        <outlet property="btnJAN" destination="QIP-gP-oEN" id="K8T-cl-qpM"/>
+                        <outlet property="btnJUL" destination="lbV-tC-4es" id="K4A-F0-JUf"/>
+                        <outlet property="btnJUN" destination="WVk-YZ-3YK" id="1Y1-gH-Zxr"/>
+                        <outlet property="btnLAS" destination="vPA-sx-JBN" id="IqH-l6-dou"/>
+                        <outlet property="btnLAX" destination="uYu-vT-55t" id="8FT-Vq-OAQ"/>
+                        <outlet property="btnMAR" destination="PMQ-5d-oWJ" id="aNy-Yw-3d3"/>
+                        <outlet property="btnMAY" destination="hjb-1l-AYc" id="xDC-dz-0nR"/>
+                        <outlet property="btnMCO" destination="hbj-JJ-AXH" id="7tv-Fa-ybO"/>
+                        <outlet property="btnMDW" destination="OHB-hO-cqm" id="63m-IX-mAw"/>
+                        <outlet property="btnNOV" destination="yx8-9g-cfa" id="Nge-Rq-KB0"/>
+                        <outlet property="btnOAK" destination="csi-OR-QnN" id="kd1-eW-IXB"/>
+                        <outlet property="btnOCT" destination="eM9-HX-06Y" id="75p-66-XV1"/>
+                        <outlet property="btnPHX" destination="uqW-oh-bnO" id="dWd-0w-VSl"/>
+                        <outlet property="btnPreviousYear" destination="WAK-hA-9dA" id="Mpg-pL-NBA"/>
+                        <outlet property="btnSEP" destination="BN6-vD-E9e" id="XFK-zb-lup"/>
+                        <outlet property="btnSecondRound" destination="EV5-5l-QV9" id="lX7-bd-m5v"/>
+                        <outlet property="lblTitle" destination="xAh-Nh-zOy" id="nq1-7V-xyt"/>
+                        <outlet property="viewBase" destination="Edz-0G-F4l" id="wLc-QS-VIm"/>
+                        <outlet property="viewMonth" destination="5TO-Cw-0IM" id="U2z-N8-wB3"/>
+                        <outlet property="viewPosition" destination="LnD-Ie-0Im" id="HLD-fB-NAV"/>
+                        <outlet property="viewRound" destination="2l3-4k-gcy" id="nZ3-XW-2BE"/>
+                        <outlet property="viewYear" destination="p1W-2R-xpV" id="pgh-0R-7tg"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="m1h-X1-z0u" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1583" y="-184"/>
+        </scene>
+        <!--Default EmployeeVC-->
+        <scene sceneID="HTz-t2-D20">
+            <objects>
+                <viewController storyboardIdentifier="CBDefaultEmployeeVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="l9l-2j-bB9" customClass="CBDefaultEmployeeVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="vq3-bc-3Gg">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="550"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" text="Please enter the employee number for whom the bid will be submitted (no &quot;e&quot;). " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="0HF-lW-0h4" userLabel="Prompt Text View">
+                                <rect key="frame" x="47" y="352" width="506" height="88"/>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="88" id="S4E-wh-9cd"/>
+                                </constraints>
+                                <color key="textColor" systemColor="secondaryLabelColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6xR-TY-aMO">
+                                <rect key="frame" x="0.0" y="500" width="600" height="50"/>
+                                <color key="backgroundColor" name="TopViewColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="4bJ-bF-ukf"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8Zi-rw-1s4">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ol9-g8-BRg">
+                                        <rect key="frame" x="10" y="5" width="50" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="50" id="6Lb-As-ovt"/>
+                                            <constraint firstAttribute="height" constant="50" id="802-bj-Gmu"/>
+                                        </constraints>
+                                        <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="arrowleftbutton">
+                                            <color key="titleColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="btnBackAction:" destination="l9l-2j-bB9" eventType="touchUpInside" id="BBJ-YO-zyo"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ruh-AA-Xe7">
+                                        <rect key="frame" x="540" y="5" width="50" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="50" id="JWm-eG-RA1"/>
+                                            <constraint firstAttribute="height" constant="50" id="c6U-WB-Hw8"/>
+                                        </constraints>
+                                        <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="BidLineMove">
+                                            <color key="titleColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="btnNextAction:" destination="l9l-2j-bB9" eventType="touchUpInside" id="28X-cK-Xaa"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter Employee Number" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p09-Ib-64s">
+                                        <rect key="frame" x="60" y="0.0" width="480" height="60"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                        <color key="textColor" name="BlackLabelColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" name="TopViewColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="Ruh-AA-Xe7" secondAttribute="trailing" constant="10" id="7Vk-dc-0DY"/>
+                                    <constraint firstAttribute="bottom" secondItem="p09-Ib-64s" secondAttribute="bottom" id="GRQ-Xh-dBh"/>
+                                    <constraint firstItem="Ruh-AA-Xe7" firstAttribute="top" secondItem="8Zi-rw-1s4" secondAttribute="top" constant="5" id="GXc-Bs-YCJ"/>
+                                    <constraint firstItem="Ruh-AA-Xe7" firstAttribute="leading" secondItem="p09-Ib-64s" secondAttribute="trailing" id="Is5-6f-pXo"/>
+                                    <constraint firstItem="p09-Ib-64s" firstAttribute="leading" secondItem="Ol9-g8-BRg" secondAttribute="trailing" id="K61-pq-ivR"/>
+                                    <constraint firstItem="Ol9-g8-BRg" firstAttribute="top" secondItem="8Zi-rw-1s4" secondAttribute="top" constant="5" id="KeT-EZ-xoT"/>
+                                    <constraint firstItem="p09-Ib-64s" firstAttribute="top" secondItem="8Zi-rw-1s4" secondAttribute="top" id="d3a-SG-kBb"/>
+                                    <constraint firstItem="Ol9-g8-BRg" firstAttribute="leading" secondItem="8Zi-rw-1s4" secondAttribute="leading" constant="10" id="hIS-SB-JKE"/>
+                                    <constraint firstAttribute="height" constant="60" id="nNG-fY-IlB"/>
+                                </constraints>
+                            </view>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Employee Number" adjustsFontSizeToFit="NO" minimumFontSize="32" translatesAutoresizingMaskIntoConstraints="NO" id="Vxs-fn-amG" customClass="customUITextField" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                <rect key="frame" x="70" y="110" width="460" height="71"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="71" id="9m9-gT-2I9"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="34"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="numberPad" returnKeyType="next" enablesReturnKeyAutomatically="YES" textContentType="tel"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="placeholderLabel.textColor">
+                                        <color key="value" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </textField>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="6p7-zZ-nZP"/>
+                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Vxs-fn-amG" firstAttribute="leading" secondItem="6p7-zZ-nZP" secondAttribute="leading" constant="70" id="CUN-8g-dcW"/>
+                            <constraint firstItem="8Zi-rw-1s4" firstAttribute="trailing" secondItem="6p7-zZ-nZP" secondAttribute="trailing" id="H8I-EA-fEz"/>
+                            <constraint firstItem="6p7-zZ-nZP" firstAttribute="trailing" secondItem="0HF-lW-0h4" secondAttribute="trailing" constant="47" id="Has-j6-Ux6"/>
+                            <constraint firstItem="8Zi-rw-1s4" firstAttribute="leading" secondItem="6p7-zZ-nZP" secondAttribute="leading" id="J3M-8b-gZN"/>
+                            <constraint firstAttribute="bottom" secondItem="6xR-TY-aMO" secondAttribute="bottom" id="KbM-Ta-hSh"/>
+                            <constraint firstItem="8Zi-rw-1s4" firstAttribute="top" secondItem="vq3-bc-3Gg" secondAttribute="top" id="Lf6-O7-lKb"/>
+                            <constraint firstItem="6xR-TY-aMO" firstAttribute="top" secondItem="0HF-lW-0h4" secondAttribute="bottom" constant="60" id="Mj7-Bq-dTy"/>
+                            <constraint firstItem="0HF-lW-0h4" firstAttribute="leading" secondItem="6p7-zZ-nZP" secondAttribute="leading" constant="47" id="NRq-Qi-CW1"/>
+                            <constraint firstItem="Vxs-fn-amG" firstAttribute="top" secondItem="8Zi-rw-1s4" secondAttribute="bottom" constant="50" id="Xcg-Wz-EMN"/>
+                            <constraint firstItem="6xR-TY-aMO" firstAttribute="leading" secondItem="6p7-zZ-nZP" secondAttribute="leading" id="iBv-7N-5yw"/>
+                            <constraint firstItem="6p7-zZ-nZP" firstAttribute="trailing" secondItem="Vxs-fn-amG" secondAttribute="trailing" constant="70" id="vfa-rc-sDv"/>
+                            <constraint firstItem="6xR-TY-aMO" firstAttribute="trailing" secondItem="6p7-zZ-nZP" secondAttribute="trailing" id="z6u-dY-E2S"/>
+                        </constraints>
+                    </view>
+                    <size key="freeformSize" width="600" height="550"/>
+                    <connections>
+                        <outlet property="textEmpNum" destination="Vxs-fn-amG" id="ZjM-f0-QwS"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1Zm-Z2-8vb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1231" y="-184"/>
+        </scene>
+        <!--Credentials PageVC-->
+        <scene sceneID="bdJ-Ud-Ha2">
+            <objects>
+                <viewController storyboardIdentifier="CBCredentialsPageVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="da5-Pj-DhV" customClass="CBCredentialsPageVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Q9Y-U8-HD5">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="550"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="  Password" adjustsFontSizeToFit="NO" minimumFontSize="32" translatesAutoresizingMaskIntoConstraints="NO" id="18h-4z-Niv" customClass="customUITextField" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                <rect key="frame" x="60" y="190" width="480" height="60"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="mRz-NW-636"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="32"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" returnKeyType="go" secureTextEntry="YES" textContentType="password"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="placeholderLabel.textColor">
+                                        <color key="value" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="  User ID" adjustsFontSizeToFit="NO" minimumFontSize="32" translatesAutoresizingMaskIntoConstraints="NO" id="3qo-fj-rVs" customClass="customUITextField" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                <rect key="frame" x="60" y="120" width="480" height="60"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="1hx-Yn-hcz"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="32"/>
+                                <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="numberPad" returnKeyType="next" enablesReturnKeyAutomatically="YES"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="placeholderLabel.textColor">
+                                        <color key="value" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </textField>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wcS-Al-rGz">
+                                <rect key="frame" x="0.0" y="500" width="600" height="50"/>
+                                <color key="backgroundColor" name="TopViewColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="dqr-KY-HOu"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yR0-cT-Kph">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New Bid Data" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cq8-ER-JCF">
+                                        <rect key="frame" x="60" y="0.0" width="480" height="60"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                        <color key="textColor" name="BlackLabelColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fVd-Ti-TAq">
+                                        <rect key="frame" x="540" y="5" width="50" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="50" id="3pa-sd-AGH"/>
+                                            <constraint firstAttribute="height" constant="50" id="BJU-WH-fY6"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="19"/>
+                                        <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="Go">
+                                            <color key="titleColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="btnGoAction:" destination="da5-Pj-DhV" eventType="touchUpInside" id="5zf-Qu-X1T"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oew-xb-wbe">
+                                        <rect key="frame" x="10" y="5" width="50" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50" id="7UK-EP-TQH"/>
+                                            <constraint firstAttribute="width" constant="50" id="bvC-ya-vTE"/>
+                                        </constraints>
+                                        <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="arrowleftbutton">
+                                            <color key="titleColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="btnBackAction:" destination="da5-Pj-DhV" eventType="touchUpInside" id="7mq-lq-luF"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" name="TopViewColor"/>
+                                <constraints>
+                                    <constraint firstItem="fVd-Ti-TAq" firstAttribute="leading" secondItem="Cq8-ER-JCF" secondAttribute="trailing" id="DxP-Vq-UNh"/>
+                                    <constraint firstItem="Cq8-ER-JCF" firstAttribute="leading" secondItem="Oew-xb-wbe" secondAttribute="trailing" id="Gd2-wO-U3a"/>
+                                    <constraint firstAttribute="height" constant="60" id="ISx-J2-2JN"/>
+                                    <constraint firstAttribute="trailing" secondItem="fVd-Ti-TAq" secondAttribute="trailing" constant="10" id="Xd4-L7-6T5"/>
+                                    <constraint firstAttribute="bottom" secondItem="Cq8-ER-JCF" secondAttribute="bottom" id="g9c-Bj-aZv"/>
+                                    <constraint firstItem="Oew-xb-wbe" firstAttribute="top" secondItem="yR0-cT-Kph" secondAttribute="top" constant="5" id="l0u-pU-AjJ"/>
+                                    <constraint firstItem="fVd-Ti-TAq" firstAttribute="top" secondItem="yR0-cT-Kph" secondAttribute="top" constant="5" id="mgU-Hw-wUx"/>
+                                    <constraint firstItem="Oew-xb-wbe" firstAttribute="leading" secondItem="yR0-cT-Kph" secondAttribute="leading" constant="10" id="oxk-GF-U9S"/>
+                                    <constraint firstItem="Cq8-ER-JCF" firstAttribute="top" secondItem="yR0-cT-Kph" secondAttribute="top" id="xhh-Dk-hSc"/>
+                                </constraints>
+                            </view>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Enter SWALife Credentials" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ssa-XP-Hzc" userLabel="Prompt Label">
+                                <rect key="frame" x="0.0" y="440" width="600" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="Cqg-8C-EvY"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <color key="textColor" red="0.41210135819999999" green="0.46647906300000003" blue="0.51675605769999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OJY-Kj-9QL">
+                                <rect key="frame" x="489" y="190" width="41" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="JKO-5C-pcK"/>
+                                    <constraint firstAttribute="width" constant="41" id="chq-4a-Ysr"/>
+                                </constraints>
+                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" image="showPwd"/>
+                                <connections>
+                                    <action selector="showPasswordAction:" destination="da5-Pj-DhV" eventType="touchUpInside" id="KWh-TR-243"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="uXe-E2-7PP"/>
+                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Ssa-XP-Hzc" firstAttribute="leading" secondItem="uXe-E2-7PP" secondAttribute="leading" id="2qN-Ky-Q0h"/>
+                            <constraint firstItem="3qo-fj-rVs" firstAttribute="leading" secondItem="uXe-E2-7PP" secondAttribute="leading" constant="60" id="AdK-BL-tSW"/>
+                            <constraint firstItem="uXe-E2-7PP" firstAttribute="trailing" secondItem="18h-4z-Niv" secondAttribute="trailing" constant="60" id="D3H-g1-7LU"/>
+                            <constraint firstItem="yR0-cT-Kph" firstAttribute="leading" secondItem="uXe-E2-7PP" secondAttribute="leading" id="Edw-g4-lE0"/>
+                            <constraint firstItem="yR0-cT-Kph" firstAttribute="top" secondItem="Q9Y-U8-HD5" secondAttribute="top" id="EyR-Ol-KBI"/>
+                            <constraint firstItem="18h-4z-Niv" firstAttribute="leading" secondItem="uXe-E2-7PP" secondAttribute="leading" constant="60" id="F1G-DU-dxx"/>
+                            <constraint firstItem="18h-4z-Niv" firstAttribute="top" secondItem="3qo-fj-rVs" secondAttribute="bottom" constant="10" id="JeR-hs-6aE"/>
+                            <constraint firstItem="wcS-Al-rGz" firstAttribute="trailing" secondItem="uXe-E2-7PP" secondAttribute="trailing" id="NBH-uO-Z6U"/>
+                            <constraint firstItem="Ssa-XP-Hzc" firstAttribute="trailing" secondItem="uXe-E2-7PP" secondAttribute="trailing" id="Q7O-3t-fq6"/>
+                            <constraint firstItem="OJY-Kj-9QL" firstAttribute="top" secondItem="3qo-fj-rVs" secondAttribute="bottom" constant="10" id="Rbb-07-fmk"/>
+                            <constraint firstAttribute="bottom" secondItem="wcS-Al-rGz" secondAttribute="bottom" id="TdR-7k-FM8"/>
+                            <constraint firstItem="3qo-fj-rVs" firstAttribute="top" secondItem="yR0-cT-Kph" secondAttribute="bottom" constant="60" id="c3k-CX-zbl"/>
+                            <constraint firstItem="wcS-Al-rGz" firstAttribute="top" secondItem="Ssa-XP-Hzc" secondAttribute="bottom" id="eIL-OE-ESU"/>
+                            <constraint firstItem="uXe-E2-7PP" firstAttribute="trailing" secondItem="OJY-Kj-9QL" secondAttribute="trailing" constant="70" id="eXg-Rl-FvZ"/>
+                            <constraint firstItem="wcS-Al-rGz" firstAttribute="leading" secondItem="uXe-E2-7PP" secondAttribute="leading" id="k2v-UP-5k4"/>
+                            <constraint firstItem="yR0-cT-Kph" firstAttribute="trailing" secondItem="uXe-E2-7PP" secondAttribute="trailing" id="p1a-nj-Ohy"/>
+                            <constraint firstItem="uXe-E2-7PP" firstAttribute="trailing" secondItem="3qo-fj-rVs" secondAttribute="trailing" constant="60" id="qUZ-PP-ZUb"/>
+                        </constraints>
+                    </view>
+                    <size key="freeformSize" width="600" height="550"/>
+                    <connections>
+                        <outlet property="lblTitle" destination="Cq8-ER-JCF" id="BDx-it-tBd"/>
+                        <outlet property="showPasswordBtn" destination="OJY-Kj-9QL" id="dvy-h5-xNC"/>
+                        <outlet property="txtPassword" destination="18h-4z-Niv" id="Pu5-U0-BfS"/>
+                        <outlet property="txtUserID" destination="3qo-fj-rVs" id="8cB-4P-lZA"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1bf-Db-7ir" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1938" y="-184"/>
+        </scene>
+        <!--Id Data Type View Controller-->
+        <scene sceneID="s0d-6b-0kx">
+            <objects>
+                <viewController storyboardIdentifier="CBBIdDataTypeViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Y6W-OH-hqX" customClass="CBBIdDataTypeViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="550"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ngF-yg-so1">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Ta-ap-t7a">
+                                        <rect key="frame" x="10" y="5" width="50" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="50" id="Qu7-gj-NZt"/>
+                                            <constraint firstAttribute="height" constant="50" id="fqd-ZS-ZeV"/>
+                                        </constraints>
+                                        <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="cc">
+                                            <color key="titleColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="btnCloseAction:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="sQI-w8-afY"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Choose Bid Data Type" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mXb-mU-QtN">
+                                        <rect key="frame" x="212.5" y="0.0" width="175" height="60"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                        <color key="textColor" name="BlackLabelColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" name="TopViewColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="1gv-Pq-4HC"/>
+                                    <constraint firstAttribute="bottom" secondItem="mXb-mU-QtN" secondAttribute="bottom" id="7VF-in-bze"/>
+                                    <constraint firstItem="mXb-mU-QtN" firstAttribute="top" secondItem="ngF-yg-so1" secondAttribute="top" id="Hf5-9t-SPS"/>
+                                    <constraint firstItem="3Ta-ap-t7a" firstAttribute="leading" secondItem="ngF-yg-so1" secondAttribute="leading" constant="10" id="Msd-nl-vmT"/>
+                                    <constraint firstItem="3Ta-ap-t7a" firstAttribute="top" secondItem="ngF-yg-so1" secondAttribute="top" constant="5" id="rJ8-af-byo"/>
+                                    <constraint firstItem="mXb-mU-QtN" firstAttribute="centerX" secondItem="ngF-yg-so1" secondAttribute="centerX" id="yFo-g7-DA0"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kng-nf-bsf">
+                                <rect key="frame" x="50" y="170" width="500" height="210"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="D7z-KU-g04" customClass="customButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="130" width="500" height="80"/>
+                                        <color key="backgroundColor" red="0.40360090139999999" green="0.45599991080000002" blue="0.4953032732" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="80" id="7Fj-Td-eLp"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
+                                        <state key="normal" title="Historic Bid Period">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="btnHistoricBidPeriod:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="gDO-g8-coP"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Q9-hd-b6T" customClass="customButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="500" height="80"/>
+                                        <color key="backgroundColor" red="0.40360090139999999" green="0.45599991080000002" blue="0.4953032732" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="80" id="HPQ-TX-6FL"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
+                                        <state key="normal" title="New Bid Period">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="btnNewBidPeriod:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="VZ7-O0-Cc6"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="D7z-KU-g04" firstAttribute="leading" secondItem="kng-nf-bsf" secondAttribute="leading" id="FLQ-mc-P9D"/>
+                                    <constraint firstItem="2Q9-hd-b6T" firstAttribute="top" secondItem="kng-nf-bsf" secondAttribute="top" id="JaL-Iq-3Za"/>
+                                    <constraint firstAttribute="bottom" secondItem="D7z-KU-g04" secondAttribute="bottom" id="juN-Xc-Gzu"/>
+                                    <constraint firstAttribute="height" constant="210" id="q4H-2E-wUG"/>
+                                    <constraint firstAttribute="trailing" secondItem="D7z-KU-g04" secondAttribute="trailing" id="siY-Sk-jFo"/>
+                                    <constraint firstAttribute="trailing" secondItem="2Q9-hd-b6T" secondAttribute="trailing" id="sz2-nb-gHk"/>
+                                    <constraint firstItem="2Q9-hd-b6T" firstAttribute="leading" secondItem="kng-nf-bsf" secondAttribute="leading" id="veA-tY-wdh"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="MVk-HM-bbp">
+                                <rect key="frame" x="0.0" y="500" width="600" height="50"/>
+                                <color key="backgroundColor" name="TopViewColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="EaR-2R-vx0"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
+                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="ngF-yg-so1" secondAttribute="trailing" id="2aS-nU-yBt"/>
+                            <constraint firstItem="ngF-yg-so1" firstAttribute="top" secondItem="5EZ-qb-Rvc" secondAttribute="top" id="6vF-AZ-CCu"/>
+                            <constraint firstItem="ngF-yg-so1" firstAttribute="leading" secondItem="5EZ-qb-Rvc" secondAttribute="leading" id="B6F-lW-8cJ"/>
+                            <constraint firstItem="kng-nf-bsf" firstAttribute="centerY" secondItem="5EZ-qb-Rvc" secondAttribute="centerY" id="KGH-MF-2WD"/>
+                            <constraint firstItem="kng-nf-bsf" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="LsC-xc-BBx"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="kng-nf-bsf" secondAttribute="trailing" constant="50" id="adl-Sm-HYi"/>
+                            <constraint firstAttribute="bottom" secondItem="MVk-HM-bbp" secondAttribute="bottom" id="ceK-uz-GJD"/>
+                            <constraint firstItem="MVk-HM-bbp" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="eBh-w2-wu1"/>
+                            <constraint firstItem="kng-nf-bsf" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="50" id="oA5-uG-Epa"/>
+                            <constraint firstItem="MVk-HM-bbp" firstAttribute="trailing" secondItem="vDu-zF-Fre" secondAttribute="trailing" id="qEz-tD-YBu"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="QWu-fb-A7F"/>
+                    <size key="freeformSize" width="600" height="550"/>
+                    <connections>
+                        <outlet property="btnClose" destination="3Ta-ap-t7a" id="WVx-9K-I7I"/>
+                        <outlet property="btnHistoricBP" destination="D7z-KU-g04" id="izP-o5-Y1Q"/>
+                        <outlet property="btnNewBP" destination="2Q9-hd-b6T" id="gaw-Na-ZJU"/>
+                        <outlet property="viewBottom" destination="MVk-HM-bbp" id="5on-CC-6fr"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="879" y="-184"/>
+        </scene>
+        <!--ProgressVC-->
+        <scene sceneID="Sdd-eO-ehn">
+            <objects>
+                <viewController storyboardIdentifier="CBProgressVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="qmZ-Vo-OyQ" customClass="CBProgressVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="aDA-9Y-9Hl">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="550"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" spacing="90" translatesAutoresizingMaskIntoConstraints="NO" id="Tlp-vn-iCD">
+                                <rect key="frame" x="70" y="100" width="440" height="340"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="5HD-V1-POt">
+                                        <rect key="frame" x="0.0" y="0.0" width="350" height="340"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Checking Internet Connection:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4sp-qb-ra0">
+                                                <rect key="frame" x="0.0" y="0.0" width="350" height="68"/>
+                                                <color key="backgroundColor" name="contentBgColor"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Getting Crewbid Files:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Gd-xH-cSq">
+                                                <rect key="frame" x="0.0" y="68" width="350" height="68"/>
+                                                <color key="backgroundColor" name="contentBgColor"/>
+                                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Downloading Bid Files:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AeY-0N-n2r">
+                                                <rect key="frame" x="0.0" y="136" width="350" height="68"/>
+                                                <color key="backgroundColor" name="contentBgColor"/>
+                                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Parsing Bid Files:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tDe-9Q-71G">
+                                                <rect key="frame" x="0.0" y="204" width="350" height="68"/>
+                                                <color key="backgroundColor" name="contentBgColor"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Parsing Vacation Files:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lD7-JL-nMW">
+                                                <rect key="frame" x="0.0" y="272" width="350" height="68"/>
+                                                <color key="backgroundColor" name="contentBgColor"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                        <color key="backgroundColor" name="contentBgColor"/>
+                                    </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="VJL-vm-3IF">
+                                        <rect key="frame" x="440" y="0.0" width="0.0" height="340"/>
+                                        <subviews>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BU9-E8-BCR">
+                                                <rect key="frame" x="0.0" y="0.0" width="0.0" height="68"/>
+                                                <subviews>
+                                                    <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5cg-Br-drG" customClass="GRRoundButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="-22.5" y="11.5" width="45" height="45"/>
+                                                        <color key="backgroundColor" red="1" green="0.3803921569" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="45" id="nyh-fn-WnL"/>
+                                                            <constraint firstAttribute="width" constant="45" id="w9l-Y6-q0j"/>
+                                                        </constraints>
+                                                    </button>
+                                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="O7V-wO-2ev">
+                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="68"/>
+                                                    </activityIndicatorView>
+                                                </subviews>
+                                                <color key="backgroundColor" name="contentBgColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="bottom" secondItem="O7V-wO-2ev" secondAttribute="bottom" id="OPL-CV-flU"/>
+                                                    <constraint firstAttribute="trailing" secondItem="O7V-wO-2ev" secondAttribute="trailing" id="Vgw-OY-pm8"/>
+                                                    <constraint firstItem="5cg-Br-drG" firstAttribute="centerY" secondItem="BU9-E8-BCR" secondAttribute="centerY" id="WAc-2A-Fop"/>
+                                                    <constraint firstItem="O7V-wO-2ev" firstAttribute="leading" secondItem="BU9-E8-BCR" secondAttribute="leading" id="ewa-SW-7aS"/>
+                                                    <constraint firstItem="O7V-wO-2ev" firstAttribute="top" secondItem="BU9-E8-BCR" secondAttribute="top" id="opJ-cy-YxT"/>
+                                                    <constraint firstItem="5cg-Br-drG" firstAttribute="centerX" secondItem="BU9-E8-BCR" secondAttribute="centerX" id="w5U-qj-AbV"/>
+                                                </constraints>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bAQ-rj-Uan">
+                                                <rect key="frame" x="0.0" y="68" width="0.0" height="68"/>
+                                                <subviews>
+                                                    <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UXa-WN-EGh" customClass="GRRoundButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="-22.5" y="11.5" width="45" height="45"/>
+                                                        <color key="backgroundColor" red="1" green="0.3803921569" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="height" constant="45" id="1Hu-L3-1v8"/>
+                                                            <constraint firstAttribute="width" constant="45" id="jNe-gm-LN1"/>
+                                                        </constraints>
+                                                    </button>
+                                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="0sY-5z-fZR">
+                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="68"/>
+                                                    </activityIndicatorView>
+                                                </subviews>
+                                                <color key="backgroundColor" name="contentBgColor"/>
+                                                <constraints>
+                                                    <constraint firstItem="0sY-5z-fZR" firstAttribute="leading" secondItem="bAQ-rj-Uan" secondAttribute="leading" id="6H9-Qc-wC3"/>
+                                                    <constraint firstAttribute="trailing" secondItem="0sY-5z-fZR" secondAttribute="trailing" id="DZq-1H-pUd"/>
+                                                    <constraint firstItem="UXa-WN-EGh" firstAttribute="centerX" secondItem="bAQ-rj-Uan" secondAttribute="centerX" id="EMr-E6-XbX"/>
+                                                    <constraint firstItem="0sY-5z-fZR" firstAttribute="top" secondItem="bAQ-rj-Uan" secondAttribute="top" id="SDl-X5-qHD"/>
+                                                    <constraint firstAttribute="bottom" secondItem="0sY-5z-fZR" secondAttribute="bottom" id="clF-gU-yTw"/>
+                                                    <constraint firstItem="UXa-WN-EGh" firstAttribute="centerY" secondItem="bAQ-rj-Uan" secondAttribute="centerY" id="xhj-jt-G37"/>
+                                                </constraints>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dgj-Rh-VMY">
+                                                <rect key="frame" x="0.0" y="136" width="0.0" height="68"/>
+                                                <subviews>
+                                                    <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lIR-Qz-o3b" customClass="GRRoundButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="-22.5" y="11.5" width="45" height="45"/>
+                                                        <color key="backgroundColor" red="1" green="0.3803921569" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="45" id="2aZ-Lt-ubJ"/>
+                                                            <constraint firstAttribute="height" constant="45" id="ln9-ra-CZ6"/>
+                                                        </constraints>
+                                                    </button>
+                                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="oxc-4V-2Wl">
+                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="68"/>
+                                                    </activityIndicatorView>
+                                                </subviews>
+                                                <color key="backgroundColor" name="contentBgColor"/>
+                                                <constraints>
+                                                    <constraint firstItem="lIR-Qz-o3b" firstAttribute="centerY" secondItem="dgj-Rh-VMY" secondAttribute="centerY" id="9ah-wf-Dsf"/>
+                                                    <constraint firstAttribute="bottom" secondItem="oxc-4V-2Wl" secondAttribute="bottom" id="ATG-au-R2c"/>
+                                                    <constraint firstItem="lIR-Qz-o3b" firstAttribute="centerX" secondItem="dgj-Rh-VMY" secondAttribute="centerX" id="HKT-Qj-IYt"/>
+                                                    <constraint firstAttribute="trailing" secondItem="oxc-4V-2Wl" secondAttribute="trailing" id="O9H-K5-raG"/>
+                                                    <constraint firstItem="oxc-4V-2Wl" firstAttribute="leading" secondItem="dgj-Rh-VMY" secondAttribute="leading" id="UTJ-75-JQR"/>
+                                                    <constraint firstItem="oxc-4V-2Wl" firstAttribute="top" secondItem="dgj-Rh-VMY" secondAttribute="top" id="lES-AG-eWJ"/>
+                                                </constraints>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="T2i-ms-PKD">
+                                                <rect key="frame" x="0.0" y="204" width="0.0" height="68"/>
+                                                <subviews>
+                                                    <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VwY-ga-Sx1" customClass="GRRoundButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="-22.5" y="11.5" width="45" height="45"/>
+                                                        <color key="backgroundColor" red="1" green="0.3803921569" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="45" id="D1y-ZI-W56"/>
+                                                            <constraint firstAttribute="height" constant="45" id="YLy-uw-4OS"/>
+                                                        </constraints>
+                                                    </button>
+                                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="aNz-qf-Lo3">
+                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="68"/>
+                                                    </activityIndicatorView>
+                                                </subviews>
+                                                <color key="backgroundColor" name="contentBgColor"/>
+                                                <constraints>
+                                                    <constraint firstItem="VwY-ga-Sx1" firstAttribute="centerX" secondItem="T2i-ms-PKD" secondAttribute="centerX" id="1nN-wX-1gZ"/>
+                                                    <constraint firstItem="aNz-qf-Lo3" firstAttribute="top" secondItem="T2i-ms-PKD" secondAttribute="top" id="70t-WP-d9R"/>
+                                                    <constraint firstItem="aNz-qf-Lo3" firstAttribute="leading" secondItem="T2i-ms-PKD" secondAttribute="leading" id="APz-cr-2Vb"/>
+                                                    <constraint firstItem="VwY-ga-Sx1" firstAttribute="centerY" secondItem="T2i-ms-PKD" secondAttribute="centerY" id="Eb2-Bg-Kwi"/>
+                                                    <constraint firstAttribute="trailing" secondItem="aNz-qf-Lo3" secondAttribute="trailing" id="Qng-mH-QAr"/>
+                                                    <constraint firstAttribute="bottom" secondItem="aNz-qf-Lo3" secondAttribute="bottom" id="fAh-3y-iLd"/>
+                                                </constraints>
+                                            </view>
+                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nyg-uP-lGo">
+                                                <rect key="frame" x="0.0" y="272" width="0.0" height="68"/>
+                                                <subviews>
+                                                    <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xvf-Nu-e8V" customClass="GRRoundButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="-22.5" y="11.5" width="45" height="45"/>
+                                                        <color key="backgroundColor" red="1" green="0.3803921569" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="45" id="ecY-CD-vnK"/>
+                                                            <constraint firstAttribute="height" constant="45" id="pbF-X0-cY8"/>
+                                                        </constraints>
+                                                    </button>
+                                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="ZJu-In-0HQ">
+                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="68"/>
+                                                    </activityIndicatorView>
+                                                </subviews>
+                                                <color key="backgroundColor" name="contentBgColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="trailing" secondItem="ZJu-In-0HQ" secondAttribute="trailing" id="3Zf-pG-VKJ"/>
+                                                    <constraint firstItem="ZJu-In-0HQ" firstAttribute="leading" secondItem="nyg-uP-lGo" secondAttribute="leading" id="7OH-Bn-bqH"/>
+                                                    <constraint firstItem="xvf-Nu-e8V" firstAttribute="centerX" secondItem="nyg-uP-lGo" secondAttribute="centerX" id="BKI-oa-ITN"/>
+                                                    <constraint firstItem="xvf-Nu-e8V" firstAttribute="centerY" secondItem="nyg-uP-lGo" secondAttribute="centerY" id="FYW-cE-Yix"/>
+                                                    <constraint firstItem="ZJu-In-0HQ" firstAttribute="top" secondItem="nyg-uP-lGo" secondAttribute="top" id="mO6-Vt-B9i"/>
+                                                    <constraint firstAttribute="bottom" secondItem="ZJu-In-0HQ" secondAttribute="bottom" id="sNf-Qq-qXf"/>
+                                                </constraints>
+                                            </view>
+                                        </subviews>
+                                        <color key="backgroundColor" name="contentBgColor"/>
+                                    </stackView>
+                                </subviews>
+                                <color key="backgroundColor" name="contentBgColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="340" id="Lh9-3k-jDi"/>
+                                </constraints>
+                            </stackView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GXa-2w-4Rs">
+                                <rect key="frame" x="0.0" y="490" width="600" height="60"/>
+                                <color key="backgroundColor" name="TopViewColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="sd1-WI-HSF"/>
+                                </constraints>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xzo-VO-h5k">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Downloading Bid Data" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qft-OM-FYY">
+                                        <rect key="frame" x="0.0" y="0.0" width="175" height="60"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                        <color key="textColor" name="BlackLabelColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" name="TopViewColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="60" id="79L-7O-cQC"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="wyz-KN-Rhc"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="xzo-VO-h5k" firstAttribute="trailing" secondItem="wyz-KN-Rhc" secondAttribute="trailing" id="74q-Ly-AOf"/>
+                            <constraint firstItem="xzo-VO-h5k" firstAttribute="leading" secondItem="wyz-KN-Rhc" secondAttribute="leading" id="BTO-3x-pKK"/>
+                            <constraint firstItem="wyz-KN-Rhc" firstAttribute="trailing" secondItem="Tlp-vn-iCD" secondAttribute="trailing" constant="90" id="JuW-sX-tes"/>
+                            <constraint firstItem="Tlp-vn-iCD" firstAttribute="top" secondItem="xzo-VO-h5k" secondAttribute="bottom" constant="40" id="P9n-4d-7Mw"/>
+                            <constraint firstAttribute="bottom" secondItem="GXa-2w-4Rs" secondAttribute="bottom" id="gk3-GH-Yuz"/>
+                            <constraint firstItem="xzo-VO-h5k" firstAttribute="top" secondItem="aDA-9Y-9Hl" secondAttribute="top" id="jCX-Pq-mvu"/>
+                            <constraint firstItem="GXa-2w-4Rs" firstAttribute="trailing" secondItem="wyz-KN-Rhc" secondAttribute="trailing" id="jmf-1B-N6k"/>
+                            <constraint firstItem="Tlp-vn-iCD" firstAttribute="leading" secondItem="wyz-KN-Rhc" secondAttribute="leading" constant="70" id="kkZ-ep-qNj"/>
+                            <constraint firstItem="GXa-2w-4Rs" firstAttribute="leading" secondItem="wyz-KN-Rhc" secondAttribute="leading" id="z79-PE-icX"/>
+                        </constraints>
+                    </view>
+                    <size key="freeformSize" width="600" height="550"/>
+                    <connections>
+                        <outlet property="button1" destination="5cg-Br-drG" id="Y2T-Ft-z7a"/>
+                        <outlet property="button2" destination="UXa-WN-EGh" id="Vpb-vz-iaW"/>
+                        <outlet property="button3" destination="lIR-Qz-o3b" id="KvH-3l-fzn"/>
+                        <outlet property="button4" destination="VwY-ga-Sx1" id="shv-iw-fJf"/>
+                        <outlet property="button5" destination="xvf-Nu-e8V" id="zCh-tP-r2C"/>
+                        <outlet property="indicator1" destination="O7V-wO-2ev" id="cSJ-vD-ku6"/>
+                        <outlet property="indicator2" destination="0sY-5z-fZR" id="gDe-sb-tGg"/>
+                        <outlet property="indicator3" destination="oxc-4V-2Wl" id="beo-EP-7GI"/>
+                        <outlet property="indicator4" destination="aNz-qf-Lo3" id="msE-No-o5o"/>
+                        <outlet property="indicator5" destination="ZJu-In-0HQ" id="PSP-h6-rWg"/>
+                        <outlet property="text1" destination="4sp-qb-ra0" id="8I1-Ci-OLc"/>
+                        <outlet property="text2" destination="2Gd-xH-cSq" id="HcZ-wa-1iZ"/>
+                        <outlet property="text3" destination="AeY-0N-n2r" id="iDv-xi-8Rm"/>
+                        <outlet property="text4" destination="tDe-9Q-71G" id="tVG-XS-O0Y"/>
+                        <outlet property="text5" destination="lD7-JL-nMW" id="q24-qE-xaR"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="RDL-MD-GuK" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="196.77966101694918" y="371.70731707317071"/>
+        </scene>
+        <!--AlertVC-->
+        <scene sceneID="hPJ-Ak-gSC">
+            <objects>
+                <viewController storyboardIdentifier="CBAlertVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="cFP-Vr-ujs" customClass="CBAlertVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8cx-ag-hov">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="550"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="52W-dB-z6U" userLabel="Destructive Button">
+                                <rect key="frame" x="130" y="290" width="340" height="45"/>
+                                <color key="backgroundColor" red="0.87058823529999996" green="0.44705882349999998" blue="0.1019607843" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="hiu-o0-XIh"/>
+                                    <constraint firstAttribute="width" constant="340" id="mM9-sN-68u"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                <size key="titleShadowOffset" width="0.0" height="-1"/>
+                                <state key="normal" title="Cancel">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="titleShadowColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                            </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8d6-Nu-o6f">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="50"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Oops!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mci-kZ-biS">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="50"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="24"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemGray3Color"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="Mci-kZ-biS" secondAttribute="trailing" id="7TR-6y-cbt"/>
+                                    <constraint firstAttribute="height" constant="50" id="AQN-No-eOK"/>
+                                    <constraint firstItem="Mci-kZ-biS" firstAttribute="leading" secondItem="8d6-Nu-o6f" secondAttribute="leading" id="Y4B-Da-0ZO"/>
+                                    <constraint firstItem="Mci-kZ-biS" firstAttribute="top" secondItem="8d6-Nu-o6f" secondAttribute="top" id="eIx-Qx-Bet"/>
+                                    <constraint firstAttribute="bottom" secondItem="Mci-kZ-biS" secondAttribute="bottom" id="trM-Bl-cSC"/>
+                                </constraints>
+                            </view>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" text="Message Text" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="PQr-kv-4hT" userLabel="Message Text View">
+                                <rect key="frame" x="20" y="90" width="560" height="150"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="150" id="jed-SS-XwC"/>
+                                </constraints>
+                                <color key="textColor" systemColor="labelColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="30"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I6G-Tg-6hU" userLabel="Destructive Button">
+                                <rect key="frame" x="130" y="370" width="340" height="45"/>
+                                <color key="backgroundColor" red="0.3411764706" green="0.1333333333" blue="0.70196078429999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="45" id="Soj-ZF-jMb"/>
+                                    <constraint firstAttribute="width" constant="340" id="VIS-bA-gjf"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                <size key="titleShadowOffset" width="0.0" height="-1"/>
+                                <state key="normal" title="Try Again">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="titleShadowColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                            </button>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="nhk-ep-aIJ"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="8d6-Nu-o6f" firstAttribute="top" secondItem="8cx-ag-hov" secondAttribute="top" id="48s-9g-LnN"/>
+                            <constraint firstItem="I6G-Tg-6hU" firstAttribute="width" secondItem="52W-dB-z6U" secondAttribute="width" id="4NB-l7-mEx"/>
+                            <constraint firstItem="I6G-Tg-6hU" firstAttribute="top" secondItem="52W-dB-z6U" secondAttribute="bottom" constant="35" id="9bi-9A-JKu"/>
+                            <constraint firstItem="nhk-ep-aIJ" firstAttribute="trailing" secondItem="PQr-kv-4hT" secondAttribute="trailing" constant="20" id="CLu-Qc-go7"/>
+                            <constraint firstItem="8d6-Nu-o6f" firstAttribute="leading" secondItem="nhk-ep-aIJ" secondAttribute="leading" id="JX4-Jb-TZe"/>
+                            <constraint firstItem="I6G-Tg-6hU" firstAttribute="height" secondItem="52W-dB-z6U" secondAttribute="height" id="NpK-fj-SRp"/>
+                            <constraint firstItem="8d6-Nu-o6f" firstAttribute="trailing" secondItem="nhk-ep-aIJ" secondAttribute="trailing" id="SiP-lj-X7W"/>
+                            <constraint firstItem="PQr-kv-4hT" firstAttribute="top" secondItem="8d6-Nu-o6f" secondAttribute="bottom" constant="40" id="kxB-hv-uPY"/>
+                            <constraint firstItem="52W-dB-z6U" firstAttribute="centerX" secondItem="8cx-ag-hov" secondAttribute="centerX" id="s1j-ou-b4h"/>
+                            <constraint firstItem="52W-dB-z6U" firstAttribute="top" secondItem="PQr-kv-4hT" secondAttribute="bottom" constant="50" id="tgn-A6-Lu7"/>
+                            <constraint firstItem="I6G-Tg-6hU" firstAttribute="centerX" secondItem="8cx-ag-hov" secondAttribute="centerX" id="unb-xh-c0y"/>
+                            <constraint firstItem="PQr-kv-4hT" firstAttribute="leading" secondItem="nhk-ep-aIJ" secondAttribute="leading" constant="20" id="yC9-Bx-T92"/>
+                        </constraints>
+                    </view>
+                    <size key="freeformSize" width="600" height="550"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="G7y-5q-MlT" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="535" y="372"/>
+        </scene>
+        <!--Download Again AlertVC-->
+        <scene sceneID="hEg-TA-Zlr">
+            <objects>
+                <viewController storyboardIdentifier="CBDownloadAgainAlertVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="sUJ-bQ-l5S" customClass="CBDownloadAgainAlertVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="b2d-xw-2bt">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="550"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mKE-Mr-y9J">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Download Bid Again?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oxY-YS-9FW">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                        <color key="textColor" name="BlackLabelColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" name="TopViewColor"/>
+                                <constraints>
+                                    <constraint firstItem="oxY-YS-9FW" firstAttribute="leading" secondItem="mKE-Mr-y9J" secondAttribute="leading" id="38J-si-cdX"/>
+                                    <constraint firstItem="oxY-YS-9FW" firstAttribute="top" secondItem="mKE-Mr-y9J" secondAttribute="top" id="GFb-va-QLW"/>
+                                    <constraint firstAttribute="bottom" secondItem="oxY-YS-9FW" secondAttribute="bottom" id="LPv-KG-kI6"/>
+                                    <constraint firstAttribute="trailing" secondItem="oxY-YS-9FW" secondAttribute="trailing" id="vne-jO-P2R"/>
+                                    <constraint firstAttribute="height" constant="60" id="yU6-Pi-Dx8"/>
+                                </constraints>
+                            </view>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="The bid for\n%@\nalready exists. If you download it again, all existing data, including bid receipts, will be removed." textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="xxc-y1-acc">
+                                <rect key="frame" x="50" y="80" width="500" height="120"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="120" id="OI4-Cf-AuB"/>
+                                </constraints>
+                                <color key="textColor" systemColor="labelColor"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iQC-8C-lbZ">
+                                <rect key="frame" x="77.5" y="235" width="445" height="200"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="lyo-cf-6jo">
+                                        <rect key="frame" x="0.0" y="0.0" width="445" height="200"/>
+                                        <subviews>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GHP-NK-97K" customClass="customButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="445" height="58.5"/>
+                                                <color key="backgroundColor" name="RedViewColor"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
+                                                <state key="normal" title="Download Again?">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LYj-pG-LoQ" customClass="customButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="70.5" width="445" height="59"/>
+                                                <color key="backgroundColor" name="LightOrangeColor"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
+                                                <state key="normal" title="Cancel">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                            </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fQt-8F-Glz" customClass="customButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="141.5" width="445" height="58.5"/>
+                                                <color key="backgroundColor" name="PurpleColor"/>
+                                                <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
+                                                <state key="normal" title="Open Bid">
+                                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                </state>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="lyo-cf-6jo" secondAttribute="bottom" id="DGX-mU-E7A"/>
+                                    <constraint firstAttribute="height" constant="200" id="GFY-zX-Dmv"/>
+                                    <constraint firstAttribute="width" constant="445" id="LAX-oP-BLt"/>
+                                    <constraint firstItem="lyo-cf-6jo" firstAttribute="top" secondItem="iQC-8C-lbZ" secondAttribute="top" id="Sn6-eS-oJd"/>
+                                    <constraint firstItem="lyo-cf-6jo" firstAttribute="leading" secondItem="iQC-8C-lbZ" secondAttribute="leading" id="XUf-FE-dte"/>
+                                    <constraint firstAttribute="trailing" secondItem="lyo-cf-6jo" secondAttribute="trailing" id="wnc-tL-KzM"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="74v-Fe-Rww"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="mKE-Mr-y9J" firstAttribute="leading" secondItem="74v-Fe-Rww" secondAttribute="leading" id="3mX-BA-7zG"/>
+                            <constraint firstItem="iQC-8C-lbZ" firstAttribute="centerX" secondItem="b2d-xw-2bt" secondAttribute="centerX" id="JEP-Ng-t40"/>
+                            <constraint firstItem="iQC-8C-lbZ" firstAttribute="centerY" secondItem="b2d-xw-2bt" secondAttribute="centerY" constant="60" id="NHb-GG-SMc"/>
+                            <constraint firstItem="mKE-Mr-y9J" firstAttribute="top" secondItem="b2d-xw-2bt" secondAttribute="top" id="UYC-Yz-PGF"/>
+                            <constraint firstItem="xxc-y1-acc" firstAttribute="leading" secondItem="74v-Fe-Rww" secondAttribute="leading" constant="50" id="Unj-xk-yC4"/>
+                            <constraint firstItem="xxc-y1-acc" firstAttribute="top" secondItem="mKE-Mr-y9J" secondAttribute="bottom" constant="20" id="ZWg-55-dx8"/>
+                            <constraint firstItem="mKE-Mr-y9J" firstAttribute="trailing" secondItem="74v-Fe-Rww" secondAttribute="trailing" id="gR0-m0-fjg"/>
+                            <constraint firstItem="74v-Fe-Rww" firstAttribute="trailing" secondItem="xxc-y1-acc" secondAttribute="trailing" constant="50" id="y8P-k0-Z8W"/>
+                        </constraints>
+                    </view>
+                    <size key="freeformSize" width="600" height="550"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="jJU-tg-n47" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="878.64406779661022" y="371.70731707317071"/>
+        </scene>
+        <!--New BidVC-->
+        <scene sceneID="dUg-LZ-fpc">
+            <objects>
+                <viewController storyboardIdentifier="CBNewBidVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Uti-Ld-NhW" customClass="CBNewBidVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="6pR-5h-zNb">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="550"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <containerView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="owR-lK-Sc9">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="550"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <connections>
+                                    <segue destination="e6M-ch-h46" kind="embed" id="Y9y-Qk-gfF"/>
+                                </connections>
+                            </containerView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="7wt-qq-lTV"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <size key="freeformSize" width="600" height="550"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="O2f-L2-zP9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="197" y="-184"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="cH4-J8-9aQ">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="e6M-ch-h46" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <size key="freeformSize" width="600" height="550"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="2HA-lX-KBg">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="Y6W-OH-hqX" kind="relationship" relationship="rootViewController" id="vhf-Jo-77Q"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="DcJ-An-F0t" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="535" y="-184"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="BidLineMove" width="14" height="21"/>
+        <image name="arrowleftbutton" width="16" height="23"/>
+        <image name="cc" width="21" height="21"/>
+        <image name="showPwd" width="32" height="32"/>
+        <namedColor name="BlackLabelColor">
+            <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="LightOrangeColor">
+            <color red="0.99599999189376831" green="0.48199999332427979" blue="0.21199999749660492" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="PurpleColor">
+            <color red="0.3411764705882353" green="0.15294117647058825" blue="0.70196078431372544" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="RedViewColor">
+            <color red="1" green="0.14900000393390656" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="TopViewColor">
+            <color red="0.70200002193450928" green="0.70200002193450928" blue="0.70200002193450928" alpha="0.90299999713897705" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="contentBgColor">
+            <color red="0.99607843137254903" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="secondaryLabelColor">
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="secondarySystemBackgroundColor">
+            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGray3Color">
+            <color red="0.78039215689999997" green="0.78039215689999997" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

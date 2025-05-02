@@ -1,0 +1,98 @@
+//
+//  CBBidDocumentController.swift
+//  CrewBid iPad_Swift
+//
+//  Created by Fayaz on 18/03/25.
+//
+
+import UIKit
+
+class CBBidDocumentController: UIViewController {
+
+    @IBOutlet weak var btnHome: UIButton!
+    @IBOutlet weak var btnSettings: UIButton!
+    @IBOutlet weak var btnEOM: UIButton!
+    @IBOutlet weak var btnWbidMax: UIButton!
+    @IBOutlet weak var lblHome: UILabel!
+    @IBOutlet weak var btnSwaptimizer: UIButton!
+    @IBOutlet weak var btnHelp: UIButton!
+    @IBOutlet weak var btnShare: UIButton!
+    @IBOutlet weak var btnLocalHerbView: UIView!
+    @IBOutlet weak var herbLabel: UILabel!
+    @IBOutlet weak var localLabel: UILabel!
+    @IBOutlet weak var btnLocalHerb: UIButton!
+    
+    @IBOutlet weak var leftShadowView: UIView!
+    @IBOutlet weak var rightShadowView: UIView!
+    @IBOutlet weak var leftContainerView: UIView!
+    @IBOutlet weak var rightContainerView: UIView!
+    
+    var bidPeriod: BIBidPeriod?
+    
+    
+    var bdPrd:Int!
+    var locHerb:Bool!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        bdPrd = 1
+        locHerb = true
+        setupUI()
+
+        // Do any additional setup after loading the view.
+    }
+    func setupUI(){
+        btnLocalHerbView.layer.borderWidth = 1
+        btnLocalHerbView.layer.borderColor = UIColor.black.cgColor
+        btnLocalHerbView.layer.cornerRadius = 16
+    
+        herbLabel.backgroundColor = UIColor.purple
+        herbLabel.textColor = UIColor.white
+        
+        herbLabel.layer.borderColor = UIColor.white.cgColor
+        herbLabel.layer.borderWidth = 0.4
+        herbLabel.layer.cornerRadius = 15
+        herbLabel.clipsToBounds = true
+        
+        localLabel.layer.borderColor = UIColor.white.cgColor
+        localLabel.layer.borderWidth = 0.4
+        localLabel.layer.cornerRadius = 15
+        localLabel.clipsToBounds = true
+       
+    }
+    @IBAction func btnHomeAction(_ sender: UIButton) {
+        if let navigationController = self.navigationController {
+            navigationController.popToRootViewController(animated: true)
+        } else {
+            self.dismiss(animated: true)
+        }
+    }
+    
+    @IBAction func localHerbAction(_ sender: Any) {
+        if(locHerb){
+            localLabel.backgroundColor = UIColor.purple
+            localLabel.textColor = UIColor.white
+            herbLabel.backgroundColor = UIColor.white
+            herbLabel.textColor = UIColor.black
+            locHerb = false
+        }else{
+            localLabel.backgroundColor = UIColor.white
+            localLabel.textColor = UIColor.black
+            herbLabel.backgroundColor = UIColor.purple
+            herbLabel.textColor = UIColor.white
+            locHerb = true
+        }
+        
+    }
+    
+    @IBAction func settingsAction(_ sender: Any) {
+        let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedSettingsVC") as! EmbeddedSettingsVC
+//        vc.bidPeriod = self.bidPeriod
+        vc.preferredContentSize = CGSize(width: 300, height: 210)
+        vc.modalPresentationStyle = .custom
+        let frame = CGRect(x: 15, y: 35, width: 0, height: 0)
+        vc.showPopover(sourceView: btnSettings, sourceRect: frame)
+    }
+    
+}

@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>version</key>
+	<integer>1</integer>
+	<key>values</key>
+	<array>
+		<dict>
+			<key>type</key>
+			<integer>0</integer>
+			<key>name</key>
+			<string>Aircraft Changes</string>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Aircraft Type 800</string>
+			<key>type</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Aircraft Type 700</string>
+			<key>type</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Aircraft Type 8Max</string>
+			<key>type</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>name</key>
+			<string>Aircraft Type 7Max</string>
+			<key>type</key>
+			<integer>57</integer>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>4</integer>
+			<key>name</key>
+			<string>Block of Days Off</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>5</integer>
+			<key>name</key>
+			<string>Block Time</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>44</integer>
+			<key>name</key>
+			<string>cmts</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>45</integer>
+			<key>name</key>
+			<string>cmtFr</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>46</integer>
+			<key>name</key>
+			<string>cmtBa</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>47</integer>
+			<key>name</key>
+			<string>cmt%Fr</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>48</integer>
+			<key>name</key>
+			<string>cmt%Ba</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>49</integer>
+			<key>name</key>
+			<string>cmt%Ov</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>51</integer>
+			<key>name</key>
+			<string>Carry Out Pay</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>76</integer>
+			<key>name</key>
+			<string>coHoli</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>78</integer>
+			<key>name</key>
+			<string>Co+Holi</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>6</integer>
+			<key>name</key>
+			<string>Days Off</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>70</integer>
+			<key>name</key>
+			<string>Days of Reserve</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>7</integer>
+			<key>name</key>
+			<string>Deadheads</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>8</integer>
+			<key>name</key>
+			<string>Duty Hours</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>39</integer>
+			<key>name</key>
+			<string>Duty Hours Per Day</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>9</integer>
+			<key>name</key>
+			<string>Earliest Departure</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>64</integer>
+			<key>name</key>
+			<string>eTrips</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>67</integer>
+			<key>name</key>
+			<string>Ground Time Average</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>66</integer>
+			<key>name</key>
+			<string>Ground Time Max</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>41</integer>
+			<key>name</key>
+			<string>HoliRig</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>10</integer>
+			<key>name</key>
+			<string>Latest Arrival</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>11</integer>
+			<key>name</key>
+			<string>Legs</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>54</integer>
+			<key>name</key>
+			<string>Line Rig</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>12</integer>
+			<key>name</key>
+			<string>Max Legs in a Day</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>40</integer>
+			<key>name</key>
+			<string>NonConUS Legs</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>43</integer>
+			<key>name</key>
+			<string>nMid</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>69</integer>
+			<key>name</key>
+			<string>Overnight Average</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>13</integer>
+			<key>name</key>
+			<string>Overnights in Base</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>14</integer>
+			<key>name</key>
+			<string>Passes through Base</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>15</integer>
+			<key>name</key>
+			<string>Pay</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>77</integer>
+			<key>name</key>
+			<string>Pay+CO</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>16</integer>
+			<key>name</key>
+			<string>Pay Per Block Hour</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>17</integer>
+			<key>name</key>
+			<string>Pay Per Day</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>18</integer>
+			<key>name</key>
+			<string>Pay Per Duty Hour</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>19</integer>
+			<key>name</key>
+			<string>Pay Per Leg</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>20</integer>
+			<key>name</key>
+			<string>Pay Per TAFB</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>71</integer>
+			<key>name</key>
+			<string>rigADG</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>72</integer>
+			<key>name</key>
+			<string>rigDHR</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>73</integer>
+			<key>name</key>
+			<string>rigDPM</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>74</integer>
+			<key>name</key>
+			<string>rigTHR</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>21</integer>
+			<key>name</key>
+			<string>T234</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>22</integer>
+			<key>name</key>
+			<string>TAFB</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>23</integer>
+			<key>name</key>
+			<string>Trips</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>75</integer>
+			<key>name</key>
+			<string>TripTfp</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<string>55</string>
+			<key>name</key>
+			<string>Vac+LG</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>24</integer>
+			<key>name</key>
+			<string>Weekends</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>25</integer>
+			<key>name</key>
+			<string>Work All</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>56</integer>
+			<key>name</key>
+			<string>Work BP</string>
+		</dict>
+		<dict>
+			<key>type</key>
+			<integer>65</integer>
+			<key>name</key>
+			<string>Workblocks</string>
+		</dict>
+	</array>
+</dict>
+</plist>

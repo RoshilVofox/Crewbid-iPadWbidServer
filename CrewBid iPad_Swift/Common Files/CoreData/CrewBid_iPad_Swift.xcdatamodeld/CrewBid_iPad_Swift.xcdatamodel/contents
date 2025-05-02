@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24D81" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AwardDetails" representedClassName="AwardDetails" syncable="YES" codeGenerationType="class">
+        <attribute name="empNum" optional="YES" attributeType="String"/>
+        <attribute name="lineNum" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="seqNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <relationship name="bidPeriod" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="awardDetails" inverseEntity="BidPeriod"/>
+    </entity>
+    <entity name="BidPeriod" representedClassName="BIBidPeriod" syncable="YES">
+        <attribute name="appVersion" optional="YES" attributeType="String"/>
+        <attribute name="aWeekDays" optional="YES" attributeType="String"/>
+        <attribute name="base" attributeType="String" minValueString="3" maxValueString="3" regularExpressionString="[A-Z]{3}"/>
+        <attribute name="baseLine" optional="YES" attributeType="Transformable"/>
+        <attribute name="bidLineNumbers" optional="YES" attributeType="Transformable"/>
+        <attribute name="bidListLineCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="bidPackageErrorDisplayed" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="buddyBidder1" optional="YES" attributeType="String"/>
+        <attribute name="buddyBidder2" optional="YES" attributeType="String"/>
+        <attribute name="bWeekDays" optional="YES" attributeType="String"/>
+        <attribute name="cbFileIntent" optional="YES" attributeType="String"/>
+        <attribute name="cbFileIntentF" optional="YES" attributeType="String"/>
+        <attribute name="cbVacationFiles" optional="YES" attributeType="Transformable"/>
+        <attribute name="cbVacationFilesF" optional="YES" attributeType="Transformable"/>
+        <attribute name="containsCFV" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="containsEBG" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="containsFvVacay" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="containsMissingTripLines" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="containsVacay" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="coverLetterDisplayed" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="crewBidSecretVacation" optional="YES" attributeType="Transformable"/>
+        <attribute name="crewIdentifier" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="currentAmPmHerb" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="currentDateTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="cWeekDays" optional="YES" attributeType="String"/>
+        <attribute name="dWeekDays" optional="YES" attributeType="String"/>
+        <attribute name="eomIsNo" optional="YES" attributeType="String"/>
+        <attribute name="eWeekDays" optional="YES" attributeType="String"/>
+        <attribute name="faEomSelectedDate" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="faFileIntent" optional="YES" attributeType="String"/>
+        <attribute name="faFileIntentEomOnly" optional="YES" attributeType="String"/>
+        <attribute name="faFileIntentF" optional="YES" attributeType="String"/>
+        <attribute name="faMrtLineExists" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="faReserveLineExists" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="faVacationFiles" optional="YES" attributeType="Transformable"/>
+        <attribute name="faVacationFilesEomOnlyFA1" optional="YES" attributeType="Transformable"/>
+        <attribute name="faVacationFilesEomOnlyFA2" optional="YES" attributeType="Transformable"/>
+        <attribute name="faVacationFilesEomOnlyFA3" optional="YES" attributeType="Transformable"/>
+        <attribute name="faVacationFilesEomOnlyFA4" optional="YES" attributeType="Transformable"/>
+        <attribute name="faVacationFilesEomOnlyFA5" optional="YES" attributeType="Transformable"/>
+        <attribute name="faVacationFilesEomOnlyFA6" optional="YES" attributeType="Transformable"/>
+        <attribute name="faVacationFilesEomOnlyFA7" optional="YES" attributeType="Transformable"/>
+        <attribute name="faVacationFilesFA1" optional="YES" attributeType="Transformable"/>
+        <attribute name="faVacationFilesFA2" optional="YES" attributeType="Transformable"/>
+        <attribute name="faVacationFilesFA3" optional="YES" attributeType="Transformable"/>
+        <attribute name="faVacationStatus" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="filteredLineNumbers" optional="YES" attributeType="Transformable"/>
+        <attribute name="firstLineNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="fWeekDays" optional="YES" attributeType="String"/>
+        <attribute name="historicSecretUser" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="isAllLinesTrashed" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isAwardSortOn" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isBidListSortOn" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isContainVacationLineValues" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isEomFADeafaultDownload" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isEomOn" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isEtopsLinesContainsInBid" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isFAVacationOn" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isFirstRoundPaperBidder" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isHistoric" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isMaxSubScriptionOfEnteredUser" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isMockData" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isNetwrkNotAvailForSeniorityVacParsing" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isOverNightBulkApplied" optional="YES" attributeType="String"/>
+        <attribute name="isQAdata" optional="YES" attributeType="String"/>
+        <attribute name="isReportReleaseFilterApplied" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isSeniorityVacParsingFailed" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isSortBySubmitOn" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isStateFileModifiedToSync" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isSwaptimizerOn" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isVacationRemoved" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isWbidMaxOn" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="lastBidDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastTrashedArray" optional="YES" attributeType="Transformable"/>
+        <attribute name="lastTrashedDetails" optional="YES" attributeType="Transformable"/>
+        <attribute name="latestNewsDisplayed" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="loadedPresetIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="month" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="mRTEnabledForASort" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="mRTLineIndexForASort" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="myCalEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="myCalEndDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="myCalStartDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="numVacations" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="onlyContainEOM" optional="YES" attributeType="String"/>
+        <attribute name="overNightBulk" optional="YES" attributeType="Transformable"/>
+        <attribute name="overNightCities" optional="YES" attributeType="Transformable"/>
+        <attribute name="paperBidCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="paperBidVacArray" optional="YES" attributeType="Transformable"/>
+        <attribute name="positionType" attributeType="Integer 16" usesScalarValueType="NO"/>
+        <attribute name="reservedLineIndexForASort" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="reserveEnabledForASort" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="round" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="secretSwitchOn" optional="YES" attributeType="String"/>
+        <attribute name="selectedSegmentVacType" optional="YES" attributeType="String"/>
+        <attribute name="seniorityNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="seniorityVacayAvailable" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="stateFileVersion" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="stateSyncVersion" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="stateUpdatedTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="submitSortOrder" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="submittedBid" optional="YES" attributeType="String"/>
+        <attribute name="swaptimizerIdentifier" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="swaptimizerStatus" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="userVacationWbidOrCrewBid" optional="YES" attributeType="String"/>
+        <attribute name="vacationDeffArray" optional="YES" attributeType="Transformable"/>
+        <attribute name="vacationName" optional="YES" attributeType="String"/>
+        <attribute name="vacationType" optional="YES" attributeType="String"/>
+        <attribute name="vacayAlertDisplayed" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="vactionWeekAlertDisplayed" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="wbFileIntent" optional="YES" attributeType="String"/>
+        <attribute name="wbFileIntentF" optional="YES" attributeType="String"/>
+        <attribute name="wbidSecretVacation" optional="YES" attributeType="Transformable"/>
+        <attribute name="wbVacationfile" optional="YES" attributeType="Transformable"/>
+        <attribute name="wbVacationfileF" optional="YES" attributeType="Transformable"/>
+        <attribute name="year" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <relationship name="awardDetails" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AwardDetails" inverseName="bidPeriod" inverseEntity="AwardDetails"/>
+        <relationship name="bidReceipts" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="BidReceipt" inverseName="bidPeriod" inverseEntity="BidReceipt"/>
+        <relationship name="commuteTime" optional="YES" toMany="YES" deletionRule="No Action" destinationEntity="CommuteTime" inverseName="commutable" inverseEntity="CommuteTime"/>
+        <relationship name="deadheadAtEndCities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DeadheadAtEndCity" inverseName="bidPeriod" inverseEntity="DeadheadAtEndCity"/>
+        <relationship name="deadheadAtStartCities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DeadheadAtStartCity" inverseName="bidPeriod" inverseEntity="DeadheadAtStartCity"/>
+        <relationship name="lineFilters" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="FilterRule" inverseName="bidPeriod" inverseEntity="FilterRule"/>
+        <relationship name="lines" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Line" inverseName="bidPeriod" inverseEntity="Line"/>
+        <relationship name="lineSortKeyMaps" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LineSortKeyMap" inverseName="bidPeriod" inverseEntity="LineSortKeyMap"/>
+        <relationship name="lineSorts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LineSort" inverseName="bidPeriod" inverseEntity="LineSort"/>
+        <relationship name="textFiles" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TextFile" inverseName="bidPeriod" inverseEntity="TextFile"/>
+        <relationship name="vacationArrayFromServer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="VacationArrayFromServer" inverseName="bidPeriod" inverseEntity="VacationArrayFromServer"/>
+        <relationship name="vacations" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Vacation" inverseName="bidPeriod" inverseEntity="Vacation"/>
+    </entity>
+    <entity name="BidReceipt" representedClassName="BIBidReceipt" syncable="YES">
+        <attribute name="bidLineNumbers" optional="YES" attributeType="Transformable"/>
+        <attribute name="condensedText" optional="YES" attributeType="String"/>
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="optionalEmployeeNumbers" optional="YES" attributeType="Transformable"/>
+        <attribute name="submittedBy" optional="YES" attributeType="String"/>
+        <attribute name="submittedByUserId" optional="YES" attributeType="String"/>
+        <attribute name="submittedDateString" optional="YES" attributeType="String"/>
+        <attribute name="submittedFor" optional="YES" attributeType="String"/>
+        <attribute name="submittedForUserId" optional="YES" attributeType="String"/>
+        <attribute name="submittedLineNumbersString" optional="YES" attributeType="String"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <attribute name="timeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="bidPeriod" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="bidReceipts" inverseEntity="BidPeriod"/>
+    </entity>
+    <entity name="Commutability" representedClassName=".Commutability" syncable="YES">
+        <attribute name="baseTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="checkInTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="city" optional="YES" attributeType="String"/>
+        <attribute name="commutableType" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="commuteCity" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="connectTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="isNonStop" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="secondCellValue" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="thirdCellValue" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="value" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="weight" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="CommuteTime" representedClassName=".CommuteTime" syncable="YES">
+        <attribute name="bidDay" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="bidDayStringValue" optional="YES" attributeType="String"/>
+        <attribute name="earliestArrivel" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="latestDeparture" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="type" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <relationship name="commutable" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="commuteTime" inverseEntity="BidPeriod"/>
+    </entity>
+    <entity name="CrewBidUpdateData" representedClassName="CrewBidUpdateData" syncable="YES">
+        <attribute name="cities" optional="YES" attributeType="String"/>
+        <attribute name="defenitions" optional="YES" attributeType="String"/>
+        <attribute name="faq" optional="YES" attributeType="String"/>
+        <attribute name="helpVideos" optional="YES" attributeType="String"/>
+        <attribute name="hotels" optional="YES" attributeType="String"/>
+        <attribute name="inappPurchase" optional="YES" attributeType="String"/>
+        <attribute name="latestNews" optional="YES" attributeType="String"/>
+        <attribute name="receiptValidationURL" optional="YES" attributeType="String"/>
+        <attribute name="secretUser" optional="YES" attributeType="String"/>
+        <attribute name="swaptimizerDefinitions" optional="YES" attributeType="String"/>
+        <attribute name="swaptimizerFaq" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="Day" representedClassName="BIDay" syncable="YES">
+        <attribute name="date" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="displayType" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="holidayPayment" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <relationship name="info" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="DayInfo" inverseName="days" inverseEntity="DayInfo"/>
+        <relationship name="legs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Leg" inverseName="day" inverseEntity="Leg"/>
+        <relationship name="line" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Line" inverseName="days" inverseEntity="Line"/>
+        <relationship name="trip" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Trip" inverseName="days" inverseEntity="Trip"/>
+        <relationship name="workBlock" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="WorkBlockList" inverseName="days" inverseEntity="WorkBlockList"/>
+    </entity>
+    <entity name="DayInfo" representedClassName="BIDayInfo" syncable="YES">
+        <attribute name="blockMinutes" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="city" optional="YES" attributeType="String"/>
+        <attribute name="dayPayWithRig" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="departTimeFirstLeg" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dutyMinutes" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="isHolidayPaycalculated" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isOvernightBulkRed" optional="YES" attributeType="String"/>
+        <attribute name="pay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="releaseTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="reportTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <relationship name="days" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Day" inverseName="info" inverseEntity="Day"/>
+        <relationship name="firstLeg" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="LegInfo" inverseName="dayFirstLeg" inverseEntity="LegInfo"/>
+        <relationship name="legs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LegInfo" inverseName="day" inverseEntity="LegInfo"/>
+        <relationship name="nextDay" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="DayInfo" inverseName="previousDay" inverseEntity="DayInfo"/>
+        <relationship name="previousDay" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="DayInfo" inverseName="nextDay" inverseEntity="DayInfo"/>
+        <relationship name="trip" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="TripInfo" inverseName="days" inverseEntity="TripInfo"/>
+        <relationship name="tripFirstDay" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="TripInfo" inverseName="firstDay" inverseEntity="TripInfo"/>
+    </entity>
+    <entity name="DeadheadAtEndCity" representedClassName="BIDeadheadAtEndCity" syncable="YES" codeGenerationType="class">
+        <attribute name="city" optional="YES" attributeType="String"/>
+        <relationship name="bidPeriod" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="deadheadAtEndCities" inverseEntity="BidPeriod"/>
+    </entity>
+    <entity name="DeadheadAtStartCity" representedClassName="BIDeadheadAtStartCity" syncable="YES" codeGenerationType="class">
+        <attribute name="city" optional="YES" attributeType="String"/>
+        <relationship name="bidPeriod" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="deadheadAtStartCities" inverseEntity="BidPeriod"/>
+    </entity>
+    <entity name="FilterRule" representedClassName="BIFilterRule" syncable="YES">
+        <attribute name="abbreviation" optional="YES" attributeType="String"/>
+        <attribute name="category" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="comparison" optional="YES" attributeType="Integer 16" defaultValueString="1" usesScalarValueType="NO"/>
+        <attribute name="keyPath" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="variables" optional="YES" attributeType="Transformable"/>
+        <relationship name="bidPeriod" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="lineFilters" inverseEntity="BidPeriod"/>
+    </entity>
+    <entity name="FlightRouteDetails" representedClassName="FlightRouteDetails" syncable="YES" codeGenerationType="class">
+        <attribute name="carr" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="cdep" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dest" optional="YES" attributeType="String"/>
+        <attribute name="flight" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="flightDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="flightId" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="larr" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="ldep" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="orig" optional="YES" attributeType="String"/>
+        <attribute name="routeNum" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="InsertionPoint" representedClassName="BIInsertionPoint" syncable="YES">
+        <attribute name="above" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="index" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <relationship name="line" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Line" inverseName="insertionPoint" inverseEntity="Line"/>
+    </entity>
+    <entity name="Leg" representedClassName="BILeg" syncable="YES">
+        <relationship name="day" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Day" inverseName="legs" inverseEntity="Day"/>
+        <relationship name="info" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="LegInfo" inverseName="legs" inverseEntity="LegInfo"/>
+        <relationship name="line" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Line" inverseName="legs" inverseEntity="Line"/>
+        <relationship name="trip" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Trip" inverseName="legs" inverseEntity="Trip"/>
+    </entity>
+    <entity name="LegInfo" representedClassName="BILegInfo" syncable="YES">
+        <attribute name="arriveCity" optional="YES" attributeType="String"/>
+        <attribute name="arriveMinutes" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="departCity" optional="YES" attributeType="String"/>
+        <attribute name="departMinutes" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="equipment" optional="YES" attributeType="String"/>
+        <attribute name="firstLegOfTrip" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="flight" optional="YES" attributeType="String"/>
+        <attribute name="isAircraftChange" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="isDeadhead" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="isDutyBreak" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="isEtopsFlight" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isRedEyeFlight" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="lastLegOfTrip" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="pay" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <relationship name="day" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="DayInfo" inverseName="legs" inverseEntity="DayInfo"/>
+        <relationship name="dayFirstLeg" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="DayInfo" inverseName="firstLeg" inverseEntity="DayInfo"/>
+        <relationship name="legs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Leg" inverseName="info" inverseEntity="Leg"/>
+        <relationship name="nextLeg" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="LegInfo" inverseName="previousLeg" inverseEntity="LegInfo"/>
+        <relationship name="previousLeg" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="LegInfo" inverseName="nextLeg" inverseEntity="LegInfo"/>
+    </entity>
+    <entity name="Line" representedClassName="BILine" syncable="YES">
+        <attribute name="actualBlockMinutes" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="actualPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="acTypeClassicPercent" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="acTypeNgPercent" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="aircraftType7MaxCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="aircraftType8MaxCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="aircraftType300Count" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="aircraftType500Count" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="aircraftType700Count" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="aircraftType800Count" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="amPM" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="awardSortOrder" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="bidOrder" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="blockHours" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="blockMinutes" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="blockOfDaysOff" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="carryOutPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="cfvVacDates" optional="YES" attributeType="Transformable"/>
+        <attribute name="coHoli" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="commutabilityBack" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="commutabilityFront" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="commutabilityOverall" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="commutableBacks" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="commutableFronts" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="commutesRequired" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="containsNonConusLeg" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="containsPartialTrip" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="coPlusHoli" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="daysOff" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="deadheadsAtEitherCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="deadheadsAtEndCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="deadheadsAtStartCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="deadheadsCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dutyHours" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dutyHoursPerDay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="dutyMinutes" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue0" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue1" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue2" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue3" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue4" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue5" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue6" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue7" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue8" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue9" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue10" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue11" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue12" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue13" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue14" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue15" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue16" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue17" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue18" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue19" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue20" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue21" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue22" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue23" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue24" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue25" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue26" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue27" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue28" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue29" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dynamicSortValue30" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="earliestDepartureTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="etopsTripsCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="etopsType" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="faBidLineMrt" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="faBidLineReserve" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="faLineType" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="faNumber" optional="YES" attributeType="String"/>
+        <attribute name="faPosition" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="faReserveLineType" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="flagOrder" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="fourDayTripsCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="fridaysCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="frozenOrder" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="groupOrder" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="gTavg" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="gTmax" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="holidayPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="isETOPS" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isETOPSRES" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isFA25thLineVacationCalculated" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isFA31thLineVacationCalculated" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isFrozen" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="isOvernightFiltered" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="isTrashed" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="latestArrivalTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="lineoverNightCities" optional="YES" attributeType="Transformable"/>
+        <attribute name="lineRig" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="markerTitle" optional="YES" attributeType="String"/>
+        <attribute name="maximumOvernightHours" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="maxLegsInADay" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="midTripPTBs" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="minimumOvernightHours" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="mondaysCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="monthBits" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="nightsInMid" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="nonConusLegsCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="numAircraftChanges" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="number" attributeType="Integer 16" minValueString="1" usesScalarValueType="NO"/>
+        <attribute name="numDays" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="numLegs" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="numTrips" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="oneOrTwoDaysCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="ovAvg" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="overlapDaysCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="overnightsInBase" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="passesThruBase" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="pay" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="payPerBlockHour" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="payPerDay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="payPerDutyTime" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="payPerLeg" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="payPerTAFB" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="payPerTrip" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="payPlusCo" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="previousBidOrder" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="redeyes" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="redEyeTrips" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="reportReleaseType" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="reserveDays" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="rigADG" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="rigDHR" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="rigDPM" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="rigTHR" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="rlsGreaterThanEntered" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="rptLessThanentered" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="saturdaysCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="submitSortOrder" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="sundaysCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="tafbHours" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="tafbMinutes" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="threeDayTripsCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="thursdaysCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="totalCommutes" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="tripEndMonthBits" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="tripStartMonthBits" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="tripTfp" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="tuesdaysCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="turnsCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="twoDayTripsCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="userFlagType" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="vAbo" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vAbp" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vAne" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vAPbo" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vAPbp" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vAPne" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vBackVoPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vBlockTime" optional="YES" attributeType="Float" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="vCarryOutPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vCarryOutVOPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vCBVacPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vDaysOff" optional="YES" attributeType="Integer 16" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vEffectiveVacayLength" optional="YES" attributeType="Integer 16" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vFlyPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vFrontVoPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vHolidayPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vLongestBlockofDaysOff" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="vPayPerBlock" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vPayPerDay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vTotalPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vTpLPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vVacationPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vVacayCarryOutPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vVacayPayBothBP" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vVacayPayNextBP" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vWBVacPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="wednesdaysCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="weekdayBits" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="weekendsCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="workBlock1" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="workBlock2" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="workBlock3" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="workBlock4" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="workBlockCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="workDays" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="workDaysBP" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <relationship name="bidPeriod" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="lines" inverseEntity="BidPeriod"/>
+        <relationship name="days" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Day" inverseName="line" inverseEntity="Day"/>
+        <relationship name="firstTrip" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Trip" inverseName="lineFirstTrip" inverseEntity="Trip"/>
+        <relationship name="fvvacations" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Vacation" inverseName="line" inverseEntity="Vacation"/>
+        <relationship name="insertionPoint" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="InsertionPoint" inverseName="line" inverseEntity="InsertionPoint"/>
+        <relationship name="legs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Leg" inverseName="line" inverseEntity="Leg"/>
+        <relationship name="trips" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Trip" inverseName="line" inverseEntity="Trip"/>
+        <relationship name="vacationArrayFromServer" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="VacationArrayFromServer" inverseName="line" inverseEntity="VacationArrayFromServer"/>
+        <relationship name="workBlocks" optional="YES" toMany="YES" deletionRule="No Action" destinationEntity="WorkBlockList" inverseName="line" inverseEntity="WorkBlockList"/>
+    </entity>
+    <entity name="LineSort" representedClassName="BILineSort" syncable="YES">
+        <attribute name="abbreviation" optional="YES" attributeType="String"/>
+        <attribute name="arrayVariables" optional="YES" attributeType="Transformable"/>
+        <attribute name="ascending" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="NO"/>
+        <attribute name="category" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="city" optional="YES" attributeType="String"/>
+        <attribute name="expression" optional="YES" attributeType="String"/>
+        <attribute name="isBidListSort" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isMutable" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="NO"/>
+        <attribute name="keyPath" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="order" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="variables" optional="YES" attributeType="Transformable"/>
+        <relationship name="bidPeriod" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="lineSorts" inverseEntity="BidPeriod"/>
+        <relationship name="lineSortKeyMap" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LineSortKeyMap" inverseName="lineSort" inverseEntity="LineSortKeyMap"/>
+    </entity>
+    <entity name="LineSortKeyMap" representedClassName="BILineSortKeyMap" syncable="YES">
+        <attribute name="lineKey" attributeType="String"/>
+        <attribute name="sortKey" attributeType="String"/>
+        <relationship name="bidPeriod" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="lineSortKeyMaps" inverseEntity="BidPeriod"/>
+        <relationship name="lineSort" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LineSort" inverseName="lineSortKeyMap" inverseEntity="LineSort"/>
+    </entity>
+    <entity name="OvernightBulk" representedClassName=".OvernightBulk" syncable="YES">
+        <attribute name="citystatus" optional="YES" attributeType="Transformable"/>
+    </entity>
+    <entity name="PresetSync" representedClassName="PresetSync" syncable="YES" codeGenerationType="class">
+        <attribute name="isPresetModified" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="presetSyncVersion" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="presetUpdatedTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="type" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="TextFile" representedClassName="BITextFile" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <relationship name="bidPeriod" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="textFiles" inverseEntity="BidPeriod"/>
+    </entity>
+    <entity name="Trip" representedClassName="BITrip" syncable="YES">
+        <attribute name="bidListHighlighted" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="dropForFiltersSorts" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="endDateOnly" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="endWeekday" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="highlightCount" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="isReserveFa" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="number" optional="YES" attributeType="String"/>
+        <attribute name="position" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="positionString" optional="YES" attributeType="String"/>
+        <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="startDay" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="startWeekday" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="tripEndDay" optional="YES" attributeType="String"/>
+        <attribute name="tripStartDay" optional="YES" attributeType="String"/>
+        <attribute name="vacationOverlapType" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="vBackVoPay" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vFrontVoPay" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <relationship name="days" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Day" inverseName="trip" inverseEntity="Day"/>
+        <relationship name="info" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="TripInfo" inverseName="trips" inverseEntity="TripInfo"/>
+        <relationship name="legs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Leg" inverseName="trip" inverseEntity="Leg"/>
+        <relationship name="line" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Line" inverseName="trips" inverseEntity="Line"/>
+        <relationship name="lineFirstTrip" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Line" inverseName="firstTrip" inverseEntity="Line"/>
+        <relationship name="nextTrip" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Trip" inverseName="previousTrip" inverseEntity="Trip"/>
+        <relationship name="previousTrip" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Trip" inverseName="nextTrip" inverseEntity="Trip"/>
+    </entity>
+    <entity name="TripInfo" representedClassName="BITripInfo" syncable="YES">
+        <attribute name="aircraftType800Count" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="amPM" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="blockMinutes" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="briefMinutes" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="calendarDaysCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="commutesRequired" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="containsMidTripPTB" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="debriefMinutes" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="departTime" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dutyMinutes" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dutyPeriodsCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="earliestDepartureTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="faPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="isETOPS" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="isFullyCommutable" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="jsonPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="latestArrivalTimes" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="maxLegsInADay" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="numAircraftChanges" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="number" optional="YES" attributeType="String"/>
+        <attribute name="numLegs" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="overnightsInBase" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="partialTrip" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="passesThruBase" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="returnTime" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="tafbJson" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <relationship name="days" optional="YES" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="DayInfo" inverseName="trip" inverseEntity="DayInfo"/>
+        <relationship name="firstDay" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="DayInfo" inverseName="tripFirstDay" inverseEntity="DayInfo"/>
+        <relationship name="trips" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Trip" inverseName="info" inverseEntity="Trip"/>
+    </entity>
+    <entity name="UserAccountData" representedClassName="UserAccountData" syncable="YES" codeGenerationType="class">
+        <attribute name="cellCarrier" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="cellPhone" optional="YES" attributeType="String"/>
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="employeeNumber" optional="YES" attributeType="String"/>
+        <attribute name="firstName" optional="YES" attributeType="String"/>
+        <attribute name="isAcceptMail" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isAcceptUserTerms" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="lastname" optional="YES" attributeType="String"/>
+        <attribute name="password" optional="YES" attributeType="String"/>
+        <attribute name="position" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="userAccountDate" optional="YES" attributeType="String"/>
+        <attribute name="userDetails" optional="YES" attributeType="Transformable"/>
+        <attribute name="userType" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="Vacation" representedClassName="BIVacation" syncable="YES">
+        <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="fvEnddate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="fvLength" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="fvStartdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="length" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="vacationType" optional="YES" attributeType="String"/>
+        <relationship name="bidPeriod" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="vacations" inverseEntity="BidPeriod"/>
+        <relationship name="line" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Line" inverseName="fvvacations" inverseEntity="Line"/>
+    </entity>
+    <entity name="VacationArrayFromServer" representedClassName=".VacationArrayFromServer" syncable="YES">
+        <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="fvEnddate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="fvLength" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="fvStartdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="length" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="vacationType" optional="YES" attributeType="String"/>
+        <relationship name="bidPeriod" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="vacationArrayFromServer" inverseEntity="BidPeriod"/>
+        <relationship name="line" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Line" inverseName="vacationArrayFromServer" inverseEntity="Line"/>
+    </entity>
+    <entity name="WorkBlockList" representedClassName="WorkBlockList" syncable="YES">
+        <attribute name="backToBackCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="briefMinutes" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="deBriefMinutes" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="endDateOnly" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="endDateTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="endDay" optional="YES" attributeType="String"/>
+        <attribute name="nightINDomicile" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="startDateTakeOffTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="startDateTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="startDay" optional="YES" attributeType="String"/>
+        <attribute name="trips" optional="YES" attributeType="Transformable"/>
+        <relationship name="days" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Day" inverseName="workBlock" inverseEntity="Day"/>
+        <relationship name="line" optional="YES" maxCount="1" deletionRule="No Action" destinationEntity="Line" inverseName="workBlocks" inverseEntity="Line"/>
+    </entity>
+</model>

@@ -1,0 +1,32 @@
+//
+//  EmbeddedSettingsVC.swift
+//  CrewBid iPad_Swift
+//
+//  Created by Fayaz on 19/04/25.
+//
+
+import UIKit
+
+class EmbeddedSettingsVC: BaseViewController,KUIPopOverUsable {
+
+    var contentSize: CGSize {
+        return CGSize(width: 300, height: self.bdPrd == 0 ? 280 : 400)
+    }
+    
+    var bidPeriod: BIBidPeriod?
+    var bdPrd:Int!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Do any additional setup after loading the view.
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let navVC = segue.destination as? UINavigationController
+        let vc = navVC?.viewControllers.first as! SettingsViewController
+//        vc.bidPeriod = bidPeriod
+        vc.bdPrd = bdPrd
+    }
+
+
+}
