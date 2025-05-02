@@ -7,12 +7,8 @@
 
 import UIKit
 
+class CBReportReleaseRuleCellTableViewCell: UITableViewCell {
 
-class CBReportReleaseRuleCellTableViewCell: UITableViewCell, CBFilterRuleCellDelegateAssignable {
-
-    weak var delegate: CBFilterRuleCellDelegate?
-    
-    
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var txtReport: UITextField!
     @IBOutlet weak var txtRelease: UITextField!
@@ -34,6 +30,7 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell, CBFilterRuleCellDel
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        // Initialization code
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -42,11 +39,4 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell, CBFilterRuleCellDel
         // Configure the view for the selected state
     }
 
-    @IBAction func deleteCellRow(_ sender: Any) {
-        //MARK: Delegate
-        delegate?.deleteCellRow(in: self)
-    }
-
-    
-    
 }

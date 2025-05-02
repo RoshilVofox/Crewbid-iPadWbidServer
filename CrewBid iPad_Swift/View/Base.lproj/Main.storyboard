@@ -326,7 +326,7 @@
                                                                     <constraint firstAttribute="height" constant="30" id="zEN-Xe-LYP"/>
                                                                 </constraints>
                                                                 <connections>
-                                                                    <action selector="syncAction:" destination="e5X-r3-Axy" eventType="valueChanged" id="x9I-zp-fAP"/>
+                                                                    <action selector="syncAction:" destination="e5X-r3-Axy" eventType="valueChanged" id="Bcq-Nm-47m"/>
                                                                 </connections>
                                                             </switch>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LwQ-KX-vPX">
@@ -366,17 +366,17 @@
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="100" id="901-65-Euw"/>
                                                                 </constraints>
-                                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                                 <textInputTraits key="textInputTraits" keyboardType="decimalPad" returnKeyType="go" enablesReturnKeyAutomatically="YES" textContentType="tel"/>
                                                             </textField>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="AM/PM (in Local time)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ncb-hm-tAC">
-                                                                <rect key="frame" x="125" y="10" width="140" height="39.5"/>
+                                                                <rect key="frame" x="125" y="10" width="140" height="42.5"/>
                                                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                                                 <nil key="textColor"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yIQ-id-e7D">
-                                                                <rect key="frame" x="125" y="8" width="140" height="43.5"/>
+                                                                <rect key="frame" x="125" y="10" width="140" height="42.5"/>
                                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             </view>
                                                         </subviews>
@@ -388,14 +388,14 @@
                                                             <constraint firstItem="Ncb-hm-tAC" firstAttribute="leading" secondItem="Wa0-c2-9su" secondAttribute="trailing" constant="10" id="AsY-9r-J3u"/>
                                                             <constraint firstAttribute="height" constant="60" id="GfJ-Mr-rU6"/>
                                                             <constraint firstItem="yIQ-id-e7D" firstAttribute="leading" secondItem="Wa0-c2-9su" secondAttribute="trailing" constant="10" id="IWq-iU-gk4"/>
-                                                            <constraint firstItem="yIQ-id-e7D" firstAttribute="top" secondItem="GpO-dm-v03" secondAttribute="top" constant="8" id="KiL-G0-77f"/>
+                                                            <constraint firstItem="TjY-Yx-gVp" firstAttribute="top" secondItem="Ncb-hm-tAC" secondAttribute="bottom" constant="7" id="IXx-z8-R4O"/>
+                                                            <constraint firstItem="yIQ-id-e7D" firstAttribute="top" secondItem="GpO-dm-v03" secondAttribute="top" constant="10" id="KiL-G0-77f"/>
                                                             <constraint firstAttribute="trailing" secondItem="TjY-Yx-gVp" secondAttribute="trailing" id="Oj5-NF-PrL"/>
                                                             <constraint firstAttribute="bottom" secondItem="TjY-Yx-gVp" secondAttribute="bottom" id="U1C-dS-HbH"/>
-                                                            <constraint firstItem="TjY-Yx-gVp" firstAttribute="top" secondItem="yIQ-id-e7D" secondAttribute="bottom" constant="8" id="Vh5-oO-922"/>
+                                                            <constraint firstItem="TjY-Yx-gVp" firstAttribute="top" secondItem="yIQ-id-e7D" secondAttribute="bottom" constant="7" id="Vh5-oO-922"/>
                                                             <constraint firstItem="GpO-dm-v03" firstAttribute="trailing" secondItem="yIQ-id-e7D" secondAttribute="trailing" constant="5" id="bY6-Vz-EYa"/>
                                                             <constraint firstItem="GpO-dm-v03" firstAttribute="trailing" secondItem="Ncb-hm-tAC" secondAttribute="trailing" constant="5" id="fll-kH-f4c"/>
                                                             <constraint firstItem="Wa0-c2-9su" firstAttribute="leading" secondItem="GpO-dm-v03" secondAttribute="leading" constant="15" id="g4N-zq-K4z"/>
-                                                            <constraint firstItem="Ncb-hm-tAC" firstAttribute="centerY" secondItem="Wa0-c2-9su" secondAttribute="centerY" id="qIK-DT-3Ty"/>
                                                             <constraint firstItem="Wa0-c2-9su" firstAttribute="top" secondItem="GpO-dm-v03" secondAttribute="top" constant="8" id="tW3-UE-gMH"/>
                                                             <constraint firstItem="TjY-Yx-gVp" firstAttribute="leading" secondItem="Dj6-gV-9at" secondAttribute="leading" id="x9N-Hs-AKO"/>
                                                         </constraints>
@@ -441,7 +441,7 @@
                                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                         <state key="normal" image="RadioButton-On"/>
                                                         <connections>
-                                                            <action selector="firstTakeOffBtnAction:" destination="e5X-r3-Axy" eventType="touchUpInside" id="F6t-EK-qH3"/>
+                                                            <action selector="FirstTakeoffbtnAction:" destination="e5X-r3-Axy" eventType="touchUpInside" id="uPo-zO-rlE"/>
                                                         </connections>
                                                     </button>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1st Take Off/Last Arrive Time" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sl0-Eq-wTu">
@@ -462,7 +462,7 @@
                                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                         <state key="normal" image="radioButton-Off"/>
                                                         <connections>
-                                                            <action selector="reportTimeBtnAction:" destination="e5X-r3-Axy" eventType="touchUpInside" id="NbP-is-r8R"/>
+                                                            <action selector="ReportTimeBtnAction:" destination="e5X-r3-Axy" eventType="touchUpInside" id="1as-YD-gwx"/>
                                                         </connections>
                                                     </button>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Report / Release" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ccp-Iq-0Z2">
@@ -491,7 +491,7 @@
                                                                     <constraint firstAttribute="height" constant="30" id="hmc-Sm-TV4"/>
                                                                 </constraints>
                                                                 <connections>
-                                                                    <action selector="myCalSwitchAction:" destination="e5X-r3-Axy" eventType="valueChanged" id="hNd-z3-Yyj"/>
+                                                                    <action selector="myCalSwitchAction:" destination="e5X-r3-Axy" eventType="valueChanged" id="6sN-FH-h2K"/>
                                                                 </connections>
                                                             </switch>
                                                             <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eZk-2Y-za9">
@@ -505,7 +505,7 @@
                                                                     <color key="titleColor" systemColor="labelColor"/>
                                                                 </state>
                                                                 <connections>
-                                                                    <action selector="myCalAction:" destination="e5X-r3-Axy" eventType="touchUpInside" id="1uY-yO-MVR"/>
+                                                                    <action selector="myCalAction:" destination="e5X-r3-Axy" eventType="touchUpInside" id="hH0-0S-hRS"/>
                                                                 </connections>
                                                             </button>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Start Date" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zwj-xi-vKU">
@@ -536,7 +536,7 @@
                                                                     <constraint firstAttribute="height" constant="34.5" id="neT-CD-dFv"/>
                                                                 </constraints>
                                                                 <connections>
-                                                                    <action selector="startDateSelection:" destination="e5X-r3-Axy" eventType="valueChanged" id="sGo-yz-zLe"/>
+                                                                    <action selector="startDateSelection:" destination="e5X-r3-Axy" eventType="valueChanged" id="wX7-TD-NT3"/>
                                                                 </connections>
                                                             </datePicker>
                                                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" translatesAutoresizingMaskIntoConstraints="NO" id="GZM-3P-W1I">
@@ -546,7 +546,7 @@
                                                                     <constraint firstAttribute="width" constant="85" id="wbd-yU-TeG"/>
                                                                 </constraints>
                                                                 <connections>
-                                                                    <action selector="endDateSelection:" destination="e5X-r3-Axy" eventType="valueChanged" id="kl6-KP-y99"/>
+                                                                    <action selector="endDateSelection:" destination="e5X-r3-Axy" eventType="valueChanged" id="P8I-Sg-ekS"/>
                                                                 </connections>
                                                             </datePicker>
                                                         </subviews>
@@ -632,29 +632,29 @@
                     <navigationItem key="navigationItem" id="2k3-0H-hGh"/>
                     <size key="freeformSize" width="300" height="410"/>
                     <connections>
-                        <outlet property="amPmTime" destination="Wa0-c2-9su" id="dXE-MD-cUF"/>
-                        <outlet property="amPmTimeLabel" destination="Ncb-hm-tAC" id="dbR-0H-mtU"/>
-                        <outlet property="amPmView" destination="yIQ-id-e7D" id="Pvd-iI-wSx"/>
-                        <outlet property="endDatePicker" destination="GZM-3P-W1I" id="MsZ-bT-djl"/>
-                        <outlet property="firstTakeOffBtn" destination="cmW-1b-q51" id="xxr-Kb-sQU"/>
-                        <outlet property="myCalButton" destination="eZk-2Y-za9" id="7Ma-L8-i0c"/>
-                        <outlet property="myCalSwitch" destination="Qi6-05-hxd" id="c11-T8-ah9"/>
-                        <outlet property="myCalView" destination="kZt-yC-pDu" id="kUt-2p-cvM"/>
-                        <outlet property="myCalViewHeight" destination="f1m-0x-BV0" id="9wm-Mr-4VR"/>
-                        <outlet property="reportTimeBtn" destination="lFb-TD-CEa" id="f1b-Vr-xap"/>
-                        <outlet property="startDatePicker" destination="9rX-Co-vtq" id="5M1-dT-MdZ"/>
-                        <outlet property="syncSwitch" destination="hoR-nT-ANa" id="3im-Us-3OO"/>
-                        <outlet property="viewBG" destination="QFg-fP-lxp" id="aay-10-3pn"/>
+                        <outlet property="amPmTime" destination="Wa0-c2-9su" id="Z5n-F6-BRf"/>
+                        <outlet property="amPmView" destination="yIQ-id-e7D" id="fgE-AG-fpf"/>
+                        <outlet property="ampPmTimeLabel" destination="Ncb-hm-tAC" id="7Gp-6V-QGY"/>
+                        <outlet property="endDatePicker" destination="GZM-3P-W1I" id="6UU-rn-BdV"/>
+                        <outlet property="firstTakeOffBtn" destination="cmW-1b-q51" id="Xq5-rD-5yu"/>
+                        <outlet property="myCalButton" destination="eZk-2Y-za9" id="uZC-7d-Xq5"/>
+                        <outlet property="myCalView" destination="kZt-yC-pDu" id="Bkf-Ik-vhh"/>
+                        <outlet property="myCalViewHeight" destination="f1m-0x-BV0" id="qK2-iC-2bs"/>
+                        <outlet property="mycalSwitch" destination="Qi6-05-hxd" id="EbS-lM-oLF"/>
+                        <outlet property="reportTimeBtn" destination="lFb-TD-CEa" id="hJX-IC-dkf"/>
+                        <outlet property="startDatePicker" destination="9rX-Co-vtq" id="zJz-ap-rcD"/>
+                        <outlet property="syncSwitch" destination="hoR-nT-ANa" id="bxm-kM-Pye"/>
+                        <outlet property="viewBG" destination="QFg-fP-lxp" id="C8H-9U-xSQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7lM-w5-G5F" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3376" y="-239"/>
+            <point key="canvasLocation" x="3376.7796610169494" y="-240"/>
         </scene>
         <!--My CalendarVC-->
         <scene sceneID="LJa-Wf-GfM">
             <objects>
-                <viewController storyboardIdentifier="MyCalendarVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="WZn-Lj-tiZ" customClass="MyCalendarVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MyCalendarVC" id="WZn-Lj-tiZ" customClass="MyCalendarVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="aB5-ne-iSc">
                         <rect key="frame" x="0.0" y="0.0" width="350" height="370"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -665,13 +665,13 @@
                                     <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" style="inline" translatesAutoresizingMaskIntoConstraints="NO" id="apN-9e-xhJ">
                                         <rect key="frame" x="0.0" y="0.0" width="333" height="326"/>
                                         <connections>
-                                            <action selector="startDateSelection:" destination="WZn-Lj-tiZ" eventType="valueChanged" id="Bgg-Y5-T5x"/>
+                                            <action selector="startDateSelection:" destination="WZn-Lj-tiZ" eventType="valueChanged" id="wD0-Ug-dlY"/>
                                         </connections>
                                     </datePicker>
                                     <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" style="inline" translatesAutoresizingMaskIntoConstraints="NO" id="29B-La-xep">
                                         <rect key="frame" x="0.0" y="0.0" width="333" height="326"/>
                                         <connections>
-                                            <action selector="endDateSelection:" destination="WZn-Lj-tiZ" eventType="valueChanged" id="NnE-8k-esY"/>
+                                            <action selector="endDateSelection:" destination="WZn-Lj-tiZ" eventType="valueChanged" id="QL2-nT-VOK"/>
                                         </connections>
                                     </datePicker>
                                 </subviews>
@@ -699,18 +699,18 @@
                     </view>
                     <size key="freeformSize" width="350" height="370"/>
                     <connections>
-                        <outlet property="endDatePicker" destination="29B-La-xep" id="vOP-df-jfk"/>
-                        <outlet property="startDatePicker" destination="apN-9e-xhJ" id="p9q-ng-cjQ"/>
+                        <outlet property="endDatePicker" destination="29B-La-xep" id="hLy-uj-fTk"/>
+                        <outlet property="startDatePicker" destination="apN-9e-xhJ" id="FyE-ME-zco"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pHm-1U-1fv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3577" y="-253"/>
+            <point key="canvasLocation" x="3582.71186440678" y="-255.36585365853659"/>
         </scene>
         <!--Embedded SettingsVC-->
         <scene sceneID="ieG-kB-m8d">
             <objects>
-                <viewController storyboardIdentifier="EmbeddedSettingsVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="5WF-B3-CGt" customClass="EmbeddedSettingsVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="EmbeddedSettingsVC" id="5WF-B3-CGt" customClass="EmbeddedSettingsVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="RBc-wO-Wlg">
                         <rect key="frame" x="0.0" y="0.0" width="300" height="350"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -795,16 +795,16 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray2Color">
-            <color red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray6Color">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

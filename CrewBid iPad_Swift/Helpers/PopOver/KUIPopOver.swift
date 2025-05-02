@@ -102,7 +102,7 @@ extension KUIPopOverUsable where Self: UIViewController {
         popoverPresentationController?.delegate = KUIPopOverDelegation.shared
         popoverPresentationController?.backgroundColor = popOverBackgroundColor
         popoverPresentationController?.permittedArrowDirections = arrowDirection
-
+      //  popoverPresentationController?.popoverBackgroundViewClass = GIKPopoverBackgroundView.self
     }
     
     public func setupPopover(sourceView: UIView, sourceRect: CGRect? = nil, isMidOn: Bool = false) {
@@ -133,6 +133,7 @@ extension KUIPopOverUsable where Self: UIViewController {
     
     public func showPopover(withNavigationController sourceView: UIView, sourceRect: CGRect? = nil) {
         let naviController = popOverUsableNavigationController
+        // Below code added by Kripa on 13 Nov for fixing normalview popover ios18 issue - convert the coordinates to match the root view controller's coordinate system
             if let sourceRect = sourceRect {
                 let convertedRect = sourceView.convert(sourceRect, to: rootViewController?.view)
                 naviController.popoverPresentationController?.sourceView = rootViewController?.view

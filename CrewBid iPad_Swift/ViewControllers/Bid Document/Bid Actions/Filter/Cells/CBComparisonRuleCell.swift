@@ -7,17 +7,8 @@
 
 import UIKit
 
-class CBComparisonRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
+class CBComparisonRuleCell: UITableViewCell {
 
-    weak var delegate: CBFilterRuleCellDelegate?
-    
-    @IBOutlet weak var comparisonButton: UIButton!
-    @IBOutlet weak var valueButton: UIButton!
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var deletButton: UIButton!
-    
-    
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -29,14 +20,4 @@ class CBComparisonRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
         // Configure the view for the selected state
     }
 
-    @IBAction func showValueOptions(_ sender: Any) {
-    }
-    
-    @IBAction func showComparisonOptions(_ sender: Any) {
-    }
-    
-    @IBAction func deleteCellRow(_ sender: Any) {
-        delegate?.deleteCellRow(in: self)
-        
-    }
 }

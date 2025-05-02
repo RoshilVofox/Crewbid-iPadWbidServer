@@ -7,15 +7,8 @@
 
 import UIKit
 
-class CBOvernightBulkRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
-    weak var delegate: CBFilterRuleCellDelegate?
-    @IBOutlet weak var yesBtn: UIButton!
-    @IBOutlet weak var noBtn: UIButton!
-    @IBOutlet weak var noneBtn: UIButton!
-    @IBOutlet weak var collectionView: UICollectionView!
-    @IBOutlet weak var overnightCities: UILabel!
-    @IBOutlet weak var noOvernightCities: UILabel!
-    @IBOutlet weak var deleteButton: UIButton!
+class CBOvernightBulkRuleCell: UITableViewCell {
+
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -27,7 +20,4 @@ class CBOvernightBulkRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignabl
         // Configure the view for the selected state
     }
 
-    @IBAction func deleteCellAction(_ sender: Any) {
-        delegate?.deleteCellRow(in: self)
-    }
 }

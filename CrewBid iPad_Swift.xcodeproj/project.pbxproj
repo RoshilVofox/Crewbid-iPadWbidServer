@@ -7,19 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8BA9B6952DAF9E7B00CFB770 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BA9B6942DAF9E7B00CFB770 /* WebKit.framework */; };
 		F4CF5A8E2D892B9800A351DB /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = F4CF5A8D2D892B9800A351DB /* ZipArchive */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8BA9B6942DAF9E7B00CFB770 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		F4CF5A282D891A3800A351DB /* CrewBid iPad_Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CrewBid iPad_Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		F4CF5A3D2D891A3A00A351DB /* Exceptions for "CrewBid iPad_Swift" folder in "CrewBid iPad_Swift" target */ = {
+		8B7519222DAF8C9D00FBF2BA /* Exceptions for "CrewBid iPad_Swift" folder in "CrewBid iPad_Swift" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"Common Files/Info.plist",
-				"ViewControllers/Bid Document/LineValues.plist",
 			);
 			target = F4CF5A272D891A3800A351DB /* CrewBid iPad_Swift */;
 		};
@@ -29,7 +30,7 @@
 		F4CF5A2A2D891A3800A351DB /* CrewBid iPad_Swift */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				F4CF5A3D2D891A3A00A351DB /* Exceptions for "CrewBid iPad_Swift" folder in "CrewBid iPad_Swift" target */,
+				8B7519222DAF8C9D00FBF2BA /* Exceptions for "CrewBid iPad_Swift" folder in "CrewBid iPad_Swift" target */,
 			);
 			path = "CrewBid iPad_Swift";
 			sourceTree = "<group>";
@@ -41,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8BA9B6952DAF9E7B00CFB770 /* WebKit.framework in Frameworks */,
 				F4CF5A8E2D892B9800A351DB /* ZipArchive in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -48,10 +50,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8BA9B6932DAF9E7B00CFB770 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8BA9B6942DAF9E7B00CFB770 /* WebKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		F4CF5A1F2D891A3800A351DB = {
 			isa = PBXGroup;
 			children = (
 				F4CF5A2A2D891A3800A351DB /* CrewBid iPad_Swift */,
+				8BA9B6932DAF9E7B00CFB770 /* Frameworks */,
 				F4CF5A292D891A3800A351DB /* Products */,
 			);
 			sourceTree = "<group>";

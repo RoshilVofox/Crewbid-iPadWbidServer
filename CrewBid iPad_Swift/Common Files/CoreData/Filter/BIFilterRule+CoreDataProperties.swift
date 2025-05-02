@@ -22,7 +22,7 @@ extension BIFilterRule {
     @NSManaged public var keyPath: String?
     @NSManaged public var name: String?
     @NSManaged public var type: NSNumber?
-    @NSManaged public var variables: NSDictionary?
+    @NSManaged public var variables: NSObject?
     @NSManaged public var bidPeriod: BIBidPeriod?
 
 }

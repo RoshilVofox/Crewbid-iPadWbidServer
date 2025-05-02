@@ -18,7 +18,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
     @IBOutlet weak var editButton: UIButton!
     @IBOutlet weak var helpMenuButton: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
-    var bdPrd:Int!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,7 +26,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         
-        bdPrd = 0
+        
     }
    
     @IBAction func downloadBid(_ sender: Any) {
@@ -37,14 +37,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
     }
     
     @IBAction func settingsAction(_ sender: Any) {
-        let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "SettingsViewController") as! SettingsViewController
-//        vc.bidPeriod = nil
-        vc.bdPrd = bdPrd
-        vc.preferredContentSize = CGSize(width: 300, height: 210)
-        vc.modalPresentationStyle = .custom
-        let frame = CGRect(x: 15, y: 35, width: 0, height: 0)
-        vc.showPopover(sourceView: settingsButton, sourceRect: frame)
+        print("Settings")
     }
     
     
@@ -54,6 +47,12 @@ class CBDocumentsCollectionViewController: BaseViewController {
     
     @IBAction func helpAction(_ sender: Any) {
         print("HelpMenu")
+        let storyBoard = UIStoryboard(name: "HelpMenu", bundle: nil)
+        if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "helpMenuViewController") as? helpMenuViewController{
+//            helpMenuVC.modalPresentationStyle = .formSheet
+            helpMenuVC.preferredContentSize = CGSize(width: 764, height: 630)
+            present(helpMenuVC, animated: true)
+        }
     }
 }
 

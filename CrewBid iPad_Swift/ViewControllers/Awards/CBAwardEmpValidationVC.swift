@@ -1,0 +1,36 @@
+//
+//  CBAwardEmpValidationVC.swift
+//  CrewBid iPad_Swift
+//
+//  Created by Developer on 17/04/25.
+//
+
+import UIKit
+
+class CBAwardEmpValidationVC: UIViewController {
+    
+    @IBOutlet weak var txtEmpNum: customUITextField!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Do any additional setup after loading the view.
+    }
+    
+
+    @IBAction func btnDismissAction(_ sender: Any) {
+        self.dismiss(animated: true)
+    }
+    
+    @IBAction func btnGoAction(_ sender: Any) {
+        if let presentingVC = self.presentingViewController {
+            self.dismiss(animated: true) {
+                let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+                let vc = storyboard.instantiateViewController(withIdentifier: "CBAwardLineCalendarViewController") as! CBAwardLineCalendarViewController
+                vc.preferredContentSize = CGSize(width: 600, height: 500)
+                presentingVC.present(vc, animated: true)
+            }
+        }
+    }
+    
+}

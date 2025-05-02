@@ -7,9 +7,7 @@
 
 import UIKit
 
-class CBComutabilityRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
-    weak var delegate: CBFilterRuleCellDelegate?
-
+class CBComutabilityRuleCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -22,7 +20,4 @@ class CBComutabilityRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable
         // Configure the view for the selected state
     }
 
-    @IBAction func deleteCellRow(_ sender: Any) {
-        delegate?.deleteCellRow(in: self)
-    }
 }

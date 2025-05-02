@@ -7,20 +7,8 @@
 
 import UIKit
 
-class CBWorkBlockRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
-    weak var delegate: CBFilterRuleCellDelegate?
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var valueButton: UIButton!
-    @IBOutlet weak var comparisonButton: UIButton!
-    @IBOutlet weak var ruleTypeButton: UIButton!
-    @IBOutlet weak var deleteButton: UIButton!
-    
-    var filterRule: BIFilterRule?
-    var bidPeriod: BIBidPeriod?
-    var bacViewColor: UIColor = .white
-    var modeTexttColor: UIColor = .gray
-    
-    
+class CBWorkBlockRuleCell: UITableViewCell {
+
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -32,7 +20,4 @@ class CBWorkBlockRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
         // Configure the view for the selected state
     }
 
-    @IBAction func deleteCellAction(_ sender: Any) {
-        delegate?.deleteCellRow(in: self)
-    }
 }
