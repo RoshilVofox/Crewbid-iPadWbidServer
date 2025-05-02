@@ -74,6 +74,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
             if arr[indexPath.row] == "Show Bid File" || arr[indexPath.row] == "Vacation" {
                 cell.label.text = arrForPilotWithAwdTxt[indexPath.row]
                 cell.imgv.image = UIImage(named: "newarrow")
+                cell.imgv.isHidden = false
             } else {
                 cell.label.text = arr[indexPath.row]
                 cell.imgv.isHidden = true
