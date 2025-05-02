@@ -76,7 +76,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                 cell.imgv.image = UIImage(named: "newarrow")
             } else {
                 cell.label.text = arr[indexPath.row]
-                cell.imgv.image = UIImage(named: "")
+                cell.imgv.isHidden = true
             }
             return cell
             
@@ -89,7 +89,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "CBBidActionTableCell", for: indexPath) as! CBBidActionTableCell
             cell.label.text = arr[indexPath.row]
-            cell.imgv.image = UIImage(named: "")
+            cell.imgv.isHidden = true
             return cell
         }
     }
