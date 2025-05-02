@@ -54,6 +54,13 @@ class CBDocumentsCollectionViewController: BaseViewController {
     
     @IBAction func helpAction(_ sender: Any) {
         print("HelpMenu")
+//        print("HelpMenu")
+        let storyBoard = UIStoryboard(name: "HelpMenu", bundle: nil)
+        if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "helpMenuViewController") as? helpMenuViewController{
+//            helpMenuVC.modalPresentationStyle = .formSheet
+            helpMenuVC.preferredContentSize = CGSize(width: 764, height: 630)
+            present(helpMenuVC, animated: true)
+        }
     }
 }
 
@@ -76,4 +83,5 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
         let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
         self.navigationController?.pushViewController(vc, animated: true)
     }
+    
 }

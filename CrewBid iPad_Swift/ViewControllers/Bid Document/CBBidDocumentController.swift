@@ -95,4 +95,24 @@ class CBBidDocumentController: UIViewController {
         vc.showPopover(sourceView: btnSettings, sourceRect: frame)
     }
     
+    
+    @IBAction func btnShareAction(_ sender: Any) {
+        let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedBidActionsVC") as! EmbeddedBidActionsVC
+       
+        vc.preferredContentSize = CGSize(width: 310, height: 610)
+        vc.modalPresentationStyle = .custom
+        let frame = CGRect(x: 15, y: 35, width: 0, height: 0)
+        vc.showPopover(sourceView: btnShare, sourceRect: frame)
+    }
+    
+    @IBAction func btnHelpAction(_ sender: Any) {
+        print("HelpMenu")
+        let storyBoard = UIStoryboard(name: "HelpMenu", bundle: nil)
+        if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "helpMenuViewController") as? helpMenuViewController{
+//            helpMenuVC.modalPresentationStyle = .formSheet
+            helpMenuVC.preferredContentSize = CGSize(width: 764, height: 630)
+            present(helpMenuVC, animated: true)
+        }
+    }
 }

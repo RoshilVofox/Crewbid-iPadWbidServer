@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8BEADE8B2DC4A4DB00B3BDF2 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BEADE8A2DC4A4DB00B3BDF2 /* WebKit.framework */; };
 		F4CF5A8E2D892B9800A351DB /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = F4CF5A8D2D892B9800A351DB /* ZipArchive */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8BEADE8A2DC4A4DB00B3BDF2 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		F4CF5A282D891A3800A351DB /* CrewBid iPad_Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CrewBid iPad_Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -41,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8BEADE8B2DC4A4DB00B3BDF2 /* WebKit.framework in Frameworks */,
 				F4CF5A8E2D892B9800A351DB /* ZipArchive in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -48,10 +51,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8BEADE892DC4A4DB00B3BDF2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8BEADE8A2DC4A4DB00B3BDF2 /* WebKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		F4CF5A1F2D891A3800A351DB = {
 			isa = PBXGroup;
 			children = (
 				F4CF5A2A2D891A3800A351DB /* CrewBid iPad_Swift */,
+				8BEADE892DC4A4DB00B3BDF2 /* Frameworks */,
 				F4CF5A292D891A3800A351DB /* Products */,
 			);
 			sourceTree = "<group>";
