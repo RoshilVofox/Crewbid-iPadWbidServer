@@ -3,10 +3,9 @@ import UIKit
 class quickTutorialViewController: UIViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
-    var pageControl: UIPageControl! // ✅ Added UIPageControl programmatically
+    var pageControl: UIPageControl!
     
     var images: [String] = ["WelcomeSlide", "Slide01", "Slide02", "Slide03", "Slide04", "Slide05", "Slide06", "Slide07", "Slide08", "Slide09", "Slide10", "Slide11" , "Slide12", "Slide13", "Slide14", "Slide15", "Slide16", "Slide17", "Slide18", "Slide19", "Slide20", "Slide21", "Slide22", "Slide23", "Slide24", "Slide25", "Slide26", "Slide27", "Slide28", "Slide29"]
-    let maxPageDots = 7 // Maximum dots to display in page control
     var totalPages: Int = 0
     
     override func viewDidLoad() {
@@ -22,8 +21,8 @@ class quickTutorialViewController: UIViewController {
         collectionView.delegate = self
         collectionView.isPagingEnabled = true
         
-        // ✅ Configure PageControl programmatically
-        totalPages = images.count > maxPageDots ? (images.count / 3) : images.count
+
+        totalPages = images.count
         pageControl = UIPageControl()
         pageControl.numberOfPages = totalPages
         pageControl.currentPage = 0
@@ -42,7 +41,6 @@ class quickTutorialViewController: UIViewController {
     
     @IBAction func btnDoneAction(_ sender: Any) {
         self.dismiss(animated: false, completion: nil)
-        print("done clicked")
     }
     
     
@@ -69,10 +67,9 @@ extension quickTutorialViewController: UICollectionViewDelegateFlowLayout, UICol
         return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
     }
     
-    // ✅ Detect scroll and update pageControl with grouped pagination logic
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let pageIndex = round(scrollView.contentOffset.x / scrollView.frame.width)
-        let adjustedPageIndex = images.count > maxPageDots ? Int(pageIndex / 3) : Int(pageIndex)
+        let adjustedPageIndex = Int(pageIndex)
         pageControl.currentPage = adjustedPageIndex
     }
 }

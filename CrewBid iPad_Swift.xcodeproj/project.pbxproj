@@ -8,35 +8,615 @@
 
 /* Begin PBXBuildFile section */
 		8BEADE8B2DC4A4DB00B3BDF2 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BEADE8A2DC4A4DB00B3BDF2 /* WebKit.framework */; };
+		F41EBE902DC4DB20001413DE /* ThirdPartyURL.plist in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD5A2DC4DB20001413DE /* ThirdPartyURL.plist */; };
+		F41EBE912DC4DB20001413DE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD612DC4DB20001413DE /* Assets.xcassets */; };
+		F41EBE922DC4DB20001413DE /* SWAPtimizer Tutorial.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD632DC4DB20001413DE /* SWAPtimizer Tutorial.xcassets */; };
+		F41EBE932DC4DB20001413DE /* Tutorial.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD642DC4DB20001413DE /* Tutorial.xcassets */; };
+		F41EBE952DC4DB20001413DE /* Definitions.pdf in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD692DC4DB20001413DE /* Definitions.pdf */; };
+		F41EBE962DC4DB20001413DE /* FAQs.pdf in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD6A2DC4DB20001413DE /* FAQs.pdf */; };
+		F41EBE972DC4DB20001413DE /* LatestNewssdsds.pdf in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD6B2DC4DB20001413DE /* LatestNewssdsds.pdf */; };
+		F41EBE982DC4DB20001413DE /* LineValues.pdf in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD6C2DC4DB20001413DE /* LineValues.pdf */; };
+		F41EBE992DC4DB20001413DE /* SWAPtimizerDefinitions.pdf in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD6D2DC4DB20001413DE /* SWAPtimizerDefinitions.pdf */; };
+		F41EBE9A2DC4DB20001413DE /* SWAPtimizerFAQ.pdf in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD6E2DC4DB20001413DE /* SWAPtimizerFAQ.pdf */; };
+		F41EBE9B2DC4DB20001413DE /* agreement@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD702DC4DB20001413DE /* agreement@2x.png */; };
+		F41EBE9C2DC4DB20001413DE /* document.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD712DC4DB20001413DE /* document.png */; };
+		F41EBE9D2DC4DB20001413DE /* Folder.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD722DC4DB20001413DE /* Folder.png */; };
+		F41EBE9E2DC4DB20001413DE /* Help_preserver.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD732DC4DB20001413DE /* Help_preserver.png */; };
+		F41EBE9F2DC4DB20001413DE /* Link.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD742DC4DB20001413DE /* Link.png */; };
+		F41EBEA02DC4DB20001413DE /* Mail.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD752DC4DB20001413DE /* Mail.png */; };
+		F41EBEA12DC4DB20001413DE /* Movie.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD762DC4DB20001413DE /* Movie.png */; };
+		F41EBEA22DC4DB20001413DE /* Notebook.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD772DC4DB20001413DE /* Notebook.png */; };
+		F41EBEA32DC4DB20001413DE /* Shopping.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD782DC4DB20001413DE /* Shopping.png */; };
+		F41EBEA42DC4DB20001413DE /* Update.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD792DC4DB20001413DE /* Update.png */; };
+		F41EBEA52DC4DB20001413DE /* user.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD7A2DC4DB20001413DE /* user.png */; };
+		F41EBEA62DC4DB20001413DE /* Vacation1.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD7B2DC4DB20001413DE /* Vacation1.png */; };
+		F41EBEA72DC4DB20001413DE /* BlueRect.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD7D2DC4DB20001413DE /* BlueRect.png */; };
+		F41EBEA82DC4DB20001413DE /* GrayRect.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD7E2DC4DB20001413DE /* GrayRect.png */; };
+		F41EBEA92DC4DB20001413DE /* GreenRect.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD7F2DC4DB20001413DE /* GreenRect.png */; };
+		F41EBEAA2DC4DB20001413DE /* NavBar-doneButton.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD802DC4DB20001413DE /* NavBar-doneButton.png */; };
+		F41EBEAB2DC4DB20001413DE /* OrangeRect.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD812DC4DB20001413DE /* OrangeRect.png */; };
+		F41EBEAC2DC4DB20001413DE /* PurpleRect.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD822DC4DB20001413DE /* PurpleRect.png */; };
+		F41EBEAD2DC4DB20001413DE /* RedRect.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD832DC4DB20001413DE /* RedRect.png */; };
+		F41EBEAE2DC4DB20001413DE /* TripButton-rounded-both-brown_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD842DC4DB20001413DE /* TripButton-rounded-both-brown_iOS7.png */; };
+		F41EBEAF2DC4DB20001413DE /* TripButton-rounded-both-brown_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD852DC4DB20001413DE /* TripButton-rounded-both-brown_iOS7@2x.png */; };
+		F41EBEB02DC4DB20001413DE /* TripButton-rounded-both-FVBlue_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD862DC4DB20001413DE /* TripButton-rounded-both-FVBlue_iOS7.png */; };
+		F41EBEB12DC4DB20001413DE /* TripButton-rounded-both-FVBlue_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD872DC4DB20001413DE /* TripButton-rounded-both-FVBlue_iOS7@2x.png */; };
+		F41EBEB22DC4DB20001413DE /* TripButton-rounded-both-green.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD882DC4DB20001413DE /* TripButton-rounded-both-green.png */; };
+		F41EBEB32DC4DB20001413DE /* TripButton-rounded-both-green_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD892DC4DB20001413DE /* TripButton-rounded-both-green_iOS7.png */; };
+		F41EBEB42DC4DB20001413DE /* TripButton-rounded-both-green_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD8A2DC4DB20001413DE /* TripButton-rounded-both-green_iOS7@2x.png */; };
+		F41EBEB52DC4DB20001413DE /* TripButton-rounded-both-green@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD8B2DC4DB20001413DE /* TripButton-rounded-both-green@2x.png */; };
+		F41EBEB62DC4DB20001413DE /* TripButton-rounded-both-orange.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD8C2DC4DB20001413DE /* TripButton-rounded-both-orange.png */; };
+		F41EBEB72DC4DB20001413DE /* TripButton-rounded-both-orange_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD8D2DC4DB20001413DE /* TripButton-rounded-both-orange_iOS7.png */; };
+		F41EBEB82DC4DB20001413DE /* TripButton-rounded-both-orange_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD8E2DC4DB20001413DE /* TripButton-rounded-both-orange_iOS7@2x.png */; };
+		F41EBEB92DC4DB20001413DE /* TripButton-rounded-both-orange@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD8F2DC4DB20001413DE /* TripButton-rounded-both-orange@2x.png */; };
+		F41EBEBA2DC4DB20001413DE /* TripButton-rounded-both-purple.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD902DC4DB20001413DE /* TripButton-rounded-both-purple.png */; };
+		F41EBEBB2DC4DB20001413DE /* TripButton-rounded-both-purple_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD912DC4DB20001413DE /* TripButton-rounded-both-purple_iOS7.png */; };
+		F41EBEBC2DC4DB20001413DE /* TripButton-rounded-both-purple_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD922DC4DB20001413DE /* TripButton-rounded-both-purple_iOS7@2x.png */; };
+		F41EBEBD2DC4DB20001413DE /* TripButton-rounded-both-purple@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD932DC4DB20001413DE /* TripButton-rounded-both-purple@2x.png */; };
+		F41EBEBE2DC4DB20001413DE /* TripButton-rounded-both-red.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD942DC4DB20001413DE /* TripButton-rounded-both-red.png */; };
+		F41EBEBF2DC4DB20001413DE /* TripButton-rounded-both-red@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD952DC4DB20001413DE /* TripButton-rounded-both-red@2x.png */; };
+		F41EBEC02DC4DB20001413DE /* TripButton-rounded-both-red2_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD962DC4DB20001413DE /* TripButton-rounded-both-red2_iOS7.png */; };
+		F41EBEC12DC4DB20001413DE /* TripButton-rounded-both-red2_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD972DC4DB20001413DE /* TripButton-rounded-both-red2_iOS7@2x.png */; };
+		F41EBEC22DC4DB20001413DE /* TripButton-rounded-both-yellow_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD982DC4DB20001413DE /* TripButton-rounded-both-yellow_iOS7.png */; };
+		F41EBEC32DC4DB20001413DE /* TripButton-rounded-both-yellow_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD992DC4DB20001413DE /* TripButton-rounded-both-yellow_iOS7@2x.png */; };
+		F41EBEC42DC4DB20001413DE /* TripButton-rounded-left-brown_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD9A2DC4DB20001413DE /* TripButton-rounded-left-brown_iOS7.png */; };
+		F41EBEC52DC4DB20001413DE /* TripButton-rounded-left-brown_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD9B2DC4DB20001413DE /* TripButton-rounded-left-brown_iOS7@2x.png */; };
+		F41EBEC62DC4DB20001413DE /* TripButton-rounded-left-FVBlue_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD9C2DC4DB20001413DE /* TripButton-rounded-left-FVBlue_iOS7.png */; };
+		F41EBEC72DC4DB20001413DE /* TripButton-rounded-left-FVBlue_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD9D2DC4DB20001413DE /* TripButton-rounded-left-FVBlue_iOS7@2x.png */; };
+		F41EBEC82DC4DB20001413DE /* TripButton-rounded-left-green.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD9E2DC4DB20001413DE /* TripButton-rounded-left-green.png */; };
+		F41EBEC92DC4DB20001413DE /* TripButton-rounded-left-green_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD9F2DC4DB20001413DE /* TripButton-rounded-left-green_iOS7.png */; };
+		F41EBECA2DC4DB20001413DE /* TripButton-rounded-left-green_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDA02DC4DB20001413DE /* TripButton-rounded-left-green_iOS7@2x.png */; };
+		F41EBECB2DC4DB20001413DE /* TripButton-rounded-left-green@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDA12DC4DB20001413DE /* TripButton-rounded-left-green@2x.png */; };
+		F41EBECC2DC4DB20001413DE /* TripButton-rounded-left-orange.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDA22DC4DB20001413DE /* TripButton-rounded-left-orange.png */; };
+		F41EBECD2DC4DB20001413DE /* TripButton-rounded-left-orange_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDA32DC4DB20001413DE /* TripButton-rounded-left-orange_iOS7.png */; };
+		F41EBECE2DC4DB20001413DE /* TripButton-rounded-left-orange_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDA42DC4DB20001413DE /* TripButton-rounded-left-orange_iOS7@2x.png */; };
+		F41EBECF2DC4DB20001413DE /* TripButton-rounded-left-orange@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDA52DC4DB20001413DE /* TripButton-rounded-left-orange@2x.png */; };
+		F41EBED02DC4DB20001413DE /* TripButton-rounded-left-purple.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDA62DC4DB20001413DE /* TripButton-rounded-left-purple.png */; };
+		F41EBED12DC4DB20001413DE /* TripButton-rounded-left-purple_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDA72DC4DB20001413DE /* TripButton-rounded-left-purple_iOS7.png */; };
+		F41EBED22DC4DB20001413DE /* TripButton-rounded-left-purple_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDA82DC4DB20001413DE /* TripButton-rounded-left-purple_iOS7@2x.png */; };
+		F41EBED32DC4DB20001413DE /* TripButton-rounded-left-purple@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDA92DC4DB20001413DE /* TripButton-rounded-left-purple@2x.png */; };
+		F41EBED42DC4DB20001413DE /* TripButton-rounded-left-red.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDAA2DC4DB20001413DE /* TripButton-rounded-left-red.png */; };
+		F41EBED52DC4DB20001413DE /* TripButton-rounded-left-red@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDAB2DC4DB20001413DE /* TripButton-rounded-left-red@2x.png */; };
+		F41EBED62DC4DB20001413DE /* TripButton-rounded-left-red2_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDAC2DC4DB20001413DE /* TripButton-rounded-left-red2_iOS7.png */; };
+		F41EBED72DC4DB20001413DE /* TripButton-rounded-left-red2_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDAD2DC4DB20001413DE /* TripButton-rounded-left-red2_iOS7@2x.png */; };
+		F41EBED82DC4DB20001413DE /* TripButton-rounded-left-yellow_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDAE2DC4DB20001413DE /* TripButton-rounded-left-yellow_iOS7.png */; };
+		F41EBED92DC4DB20001413DE /* TripButton-rounded-left-yellow_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDAF2DC4DB20001413DE /* TripButton-rounded-left-yellow_iOS7@2x.png */; };
+		F41EBEDA2DC4DB20001413DE /* TripButton-rounded-right-brown_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDB02DC4DB20001413DE /* TripButton-rounded-right-brown_iOS7.png */; };
+		F41EBEDB2DC4DB20001413DE /* TripButton-rounded-right-brown_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDB12DC4DB20001413DE /* TripButton-rounded-right-brown_iOS7@2x.png */; };
+		F41EBEDC2DC4DB20001413DE /* TripButton-rounded-right-FVBlue_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDB22DC4DB20001413DE /* TripButton-rounded-right-FVBlue_iOS7.png */; };
+		F41EBEDD2DC4DB20001413DE /* TripButton-rounded-right-FVBlue_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDB32DC4DB20001413DE /* TripButton-rounded-right-FVBlue_iOS7@2x.png */; };
+		F41EBEDE2DC4DB20001413DE /* TripButton-rounded-right-green.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDB42DC4DB20001413DE /* TripButton-rounded-right-green.png */; };
+		F41EBEDF2DC4DB20001413DE /* TripButton-rounded-right-green_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDB52DC4DB20001413DE /* TripButton-rounded-right-green_iOS7.png */; };
+		F41EBEE02DC4DB20001413DE /* TripButton-rounded-right-green_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDB62DC4DB20001413DE /* TripButton-rounded-right-green_iOS7@2x.png */; };
+		F41EBEE12DC4DB20001413DE /* TripButton-rounded-right-green@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDB72DC4DB20001413DE /* TripButton-rounded-right-green@2x.png */; };
+		F41EBEE22DC4DB20001413DE /* TripButton-rounded-right-orange.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDB82DC4DB20001413DE /* TripButton-rounded-right-orange.png */; };
+		F41EBEE32DC4DB20001413DE /* TripButton-rounded-right-orange_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDB92DC4DB20001413DE /* TripButton-rounded-right-orange_iOS7.png */; };
+		F41EBEE42DC4DB20001413DE /* TripButton-rounded-right-orange_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDBA2DC4DB20001413DE /* TripButton-rounded-right-orange_iOS7@2x.png */; };
+		F41EBEE52DC4DB20001413DE /* TripButton-rounded-right-orange@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDBB2DC4DB20001413DE /* TripButton-rounded-right-orange@2x.png */; };
+		F41EBEE62DC4DB20001413DE /* TripButton-rounded-right-purple.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDBC2DC4DB20001413DE /* TripButton-rounded-right-purple.png */; };
+		F41EBEE72DC4DB20001413DE /* TripButton-rounded-right-purple_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDBD2DC4DB20001413DE /* TripButton-rounded-right-purple_iOS7.png */; };
+		F41EBEE82DC4DB20001413DE /* TripButton-rounded-right-purple_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDBE2DC4DB20001413DE /* TripButton-rounded-right-purple_iOS7@2x.png */; };
+		F41EBEE92DC4DB20001413DE /* TripButton-rounded-right-purple@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDBF2DC4DB20001413DE /* TripButton-rounded-right-purple@2x.png */; };
+		F41EBEEA2DC4DB20001413DE /* TripButton-rounded-right-red.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDC02DC4DB20001413DE /* TripButton-rounded-right-red.png */; };
+		F41EBEEB2DC4DB20001413DE /* TripButton-rounded-right-red@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDC12DC4DB20001413DE /* TripButton-rounded-right-red@2x.png */; };
+		F41EBEEC2DC4DB20001413DE /* TripButton-rounded-right-red2_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDC22DC4DB20001413DE /* TripButton-rounded-right-red2_iOS7.png */; };
+		F41EBEED2DC4DB20001413DE /* TripButton-rounded-right-red2_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDC32DC4DB20001413DE /* TripButton-rounded-right-red2_iOS7@2x.png */; };
+		F41EBEEE2DC4DB20001413DE /* TripButton-rounded-right-yellow_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDC42DC4DB20001413DE /* TripButton-rounded-right-yellow_iOS7.png */; };
+		F41EBEEF2DC4DB20001413DE /* TripButton-rounded-right-yellow_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDC52DC4DB20001413DE /* TripButton-rounded-right-yellow_iOS7@2x.png */; };
+		F41EBEF02DC4DB20001413DE /* YellowRect.png in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDC62DC4DB20001413DE /* YellowRect.png */; };
+		F41EBEF12DC4DB20001413DE /* BidActions.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDDD2DC4DB20001413DE /* BidActions.storyboard */; };
+		F41EBEF22DC4DB20001413DE /* BidDocument.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDDE2DC4DB20001413DE /* BidDocument.storyboard */; };
+		F41EBEF32DC4DB20001413DE /* BidInfo.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDDF2DC4DB20001413DE /* BidInfo.storyboard */; };
+		F41EBEF42DC4DB20001413DE /* Filter.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDE02DC4DB20001413DE /* Filter.storyboard */; };
+		F41EBEF52DC4DB20001413DE /* FlightDataChange.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDE12DC4DB20001413DE /* FlightDataChange.storyboard */; };
+		F41EBEF62DC4DB20001413DE /* HelpMenu.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDE22DC4DB20001413DE /* HelpMenu.storyboard */; };
+		F41EBEF72DC4DB20001413DE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDE42DC4DB20001413DE /* LaunchScreen.storyboard */; };
+		F41EBEF82DC4DB20001413DE /* LineCalendar.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDE52DC4DB20001413DE /* LineCalendar.storyboard */; };
+		F41EBEF92DC4DB20001413DE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDE72DC4DB20001413DE /* Main.storyboard */; };
+		F41EBEFA2DC4DB20001413DE /* Secret.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDE82DC4DB20001413DE /* Secret.storyboard */; };
+		F41EBEFB2DC4DB20001413DE /* Sync.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F41EBDE92DC4DB20001413DE /* Sync.storyboard */; };
+		F41EBEFC2DC4DB20001413DE /* FilterRules.plist in Resources */ = {isa = PBXBuildFile; fileRef = F41EBE0E2DC4DB20001413DE /* FilterRules.plist */; };
+		F41EBEFD2DC4DB20001413DE /* FilterRulesFaVacation.plist in Resources */ = {isa = PBXBuildFile; fileRef = F41EBE0F2DC4DB20001413DE /* FilterRulesFaVacation.plist */; };
+		F41EBEFE2DC4DB20001413DE /* FilterRulesRound2.plist in Resources */ = {isa = PBXBuildFile; fileRef = F41EBE102DC4DB20001413DE /* FilterRulesRound2.plist */; };
+		F41EBEFF2DC4DB20001413DE /* FilterRulesSwaptimizer.plist in Resources */ = {isa = PBXBuildFile; fileRef = F41EBE112DC4DB20001413DE /* FilterRulesSwaptimizer.plist */; };
+		F41EBF002DC4DB20001413DE /* LineValues.plist in Resources */ = {isa = PBXBuildFile; fileRef = F41EBE1D2DC4DB20001413DE /* LineValues.plist */; };
+		F41EBF012DC4DB20001413DE /* LineSorts.plist in Resources */ = {isa = PBXBuildFile; fileRef = F41EBE2C2DC4DB20001413DE /* LineSorts.plist */; };
+		F41EBF022DC4DB20001413DE /* LineSortsFA.plist in Resources */ = {isa = PBXBuildFile; fileRef = F41EBE2D2DC4DB20001413DE /* LineSortsFA.plist */; };
+		F41EBF032DC4DB20001413DE /* LineSortsFaVacation.plist in Resources */ = {isa = PBXBuildFile; fileRef = F41EBE2E2DC4DB20001413DE /* LineSortsFaVacation.plist */; };
+		F41EBF042DC4DB20001413DE /* LineSortsRound2.plist in Resources */ = {isa = PBXBuildFile; fileRef = F41EBE2F2DC4DB20001413DE /* LineSortsRound2.plist */; };
+		F41EBF052DC4DB20001413DE /* LineSortsSwaptimizer.plist in Resources */ = {isa = PBXBuildFile; fileRef = F41EBE302DC4DB20001413DE /* LineSortsSwaptimizer.plist */; };
+		F41EBF072DC4DB20001413DE /* YouTubeTemplate.txt in Resources */ = {isa = PBXBuildFile; fileRef = F41EBE6D2DC4DB20001413DE /* YouTubeTemplate.txt */; };
+		F41EBF082DC4DB20001413DE /* AwardCalendarCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD292DC4DB20001413DE /* AwardCalendarCollectionViewCell.swift */; };
+		F41EBF092DC4DB20001413DE /* contactUsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD2A2DC4DB20001413DE /* contactUsCollectionViewCell.swift */; };
+		F41EBF0A2DC4DB20001413DE /* helpMenuItemCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD2B2DC4DB20001413DE /* helpMenuItemCollectionViewCell.swift */; };
+		F41EBF0B2DC4DB20001413DE /* mySubscriptionCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD2C2DC4DB20001413DE /* mySubscriptionCollectionViewCell.swift */; };
+		F41EBF0C2DC4DB20001413DE /* quickTutorialCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD2D2DC4DB20001413DE /* quickTutorialCollectionViewCell.swift */; };
+		F41EBF0D2DC4DB20001413DE /* swaptimizerHelpMenuCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD2E2DC4DB20001413DE /* swaptimizerHelpMenuCollectionViewCell.swift */; };
+		F41EBF0E2DC4DB20001413DE /* VideoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD2F2DC4DB20001413DE /* VideoCollectionViewCell.swift */; };
+		F41EBF0F2DC4DB20001413DE /* BIBidPeriod+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD312DC4DB20001413DE /* BIBidPeriod+CoreDataClass.swift */; };
+		F41EBF102DC4DB20001413DE /* BIBidPeriod+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD322DC4DB20001413DE /* BIBidPeriod+CoreDataProperties.swift */; };
+		F41EBF112DC4DB20001413DE /* BIBidReceipt+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD342DC4DB20001413DE /* BIBidReceipt+CoreDataClass.swift */; };
+		F41EBF122DC4DB20001413DE /* BIBidReceipt+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD352DC4DB20001413DE /* BIBidReceipt+CoreDataProperties.swift */; };
+		F41EBF132DC4DB20001413DE /* BIFilterRule+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD372DC4DB20001413DE /* BIFilterRule+CoreDataClass.swift */; };
+		F41EBF142DC4DB20001413DE /* BIFilterRule+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD382DC4DB20001413DE /* BIFilterRule+CoreDataProperties.swift */; };
+		F41EBF152DC4DB20001413DE /* BILineSort+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD3A2DC4DB20001413DE /* BILineSort+CoreDataClass.swift */; };
+		F41EBF162DC4DB20001413DE /* BILineSort+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD3B2DC4DB20001413DE /* BILineSort+CoreDataProperties.swift */; };
+		F41EBF172DC4DB20001413DE /* BIDay+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD3D2DC4DB20001413DE /* BIDay+CoreDataClass.swift */; };
+		F41EBF182DC4DB20001413DE /* BIDay+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD3E2DC4DB20001413DE /* BIDay+CoreDataProperties.swift */; };
+		F41EBF192DC4DB20001413DE /* BIDayInfo+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD3F2DC4DB20001413DE /* BIDayInfo+CoreDataClass.swift */; };
+		F41EBF1A2DC4DB20001413DE /* BIDayInfo+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD402DC4DB20001413DE /* BIDayInfo+CoreDataProperties.swift */; };
+		F41EBF1B2DC4DB20001413DE /* BIInsertionPoint+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD412DC4DB20001413DE /* BIInsertionPoint+CoreDataClass.swift */; };
+		F41EBF1C2DC4DB20001413DE /* BIInsertionPoint+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD422DC4DB20001413DE /* BIInsertionPoint+CoreDataProperties.swift */; };
+		F41EBF1D2DC4DB20001413DE /* BILeg+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD432DC4DB20001413DE /* BILeg+CoreDataClass.swift */; };
+		F41EBF1E2DC4DB20001413DE /* BILeg+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD442DC4DB20001413DE /* BILeg+CoreDataProperties.swift */; };
+		F41EBF1F2DC4DB20001413DE /* BILegInfo+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD452DC4DB20001413DE /* BILegInfo+CoreDataClass.swift */; };
+		F41EBF202DC4DB20001413DE /* BILegInfo+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD462DC4DB20001413DE /* BILegInfo+CoreDataProperties.swift */; };
+		F41EBF212DC4DB20001413DE /* BILine+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD472DC4DB20001413DE /* BILine+CoreDataClass.swift */; };
+		F41EBF222DC4DB20001413DE /* BILine+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD482DC4DB20001413DE /* BILine+CoreDataProperties.swift */; };
+		F41EBF232DC4DB20001413DE /* BILineSortKeyMap+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD492DC4DB20001413DE /* BILineSortKeyMap+CoreDataClass.swift */; };
+		F41EBF242DC4DB20001413DE /* BILineSortKeyMap+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD4A2DC4DB20001413DE /* BILineSortKeyMap+CoreDataProperties.swift */; };
+		F41EBF252DC4DB20001413DE /* BITrip+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD4B2DC4DB20001413DE /* BITrip+CoreDataClass.swift */; };
+		F41EBF262DC4DB20001413DE /* BITrip+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD4C2DC4DB20001413DE /* BITrip+CoreDataProperties.swift */; };
+		F41EBF272DC4DB20001413DE /* BITripInfo+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD4D2DC4DB20001413DE /* BITripInfo+CoreDataClass.swift */; };
+		F41EBF282DC4DB20001413DE /* BITripInfo+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD4E2DC4DB20001413DE /* BITripInfo+CoreDataProperties.swift */; };
+		F41EBF292DC4DB20001413DE /* BIVacation+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD4F2DC4DB20001413DE /* BIVacation+CoreDataClass.swift */; };
+		F41EBF2A2DC4DB20001413DE /* BIVacation+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD502DC4DB20001413DE /* BIVacation+CoreDataProperties.swift */; };
+		F41EBF2B2DC4DB20001413DE /* Commutability+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD512DC4DB20001413DE /* Commutability+CoreDataClass.swift */; };
+		F41EBF2C2DC4DB20001413DE /* Commutability+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD522DC4DB20001413DE /* Commutability+CoreDataProperties.swift */; };
+		F41EBF2D2DC4DB20001413DE /* CommuteTime+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD532DC4DB20001413DE /* CommuteTime+CoreDataClass.swift */; };
+		F41EBF2E2DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD542DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift */; };
+		F41EBF2F2DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD552DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld */; };
+		F41EBF302DC4DB20001413DE /* CrewBidUpdateData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD562DC4DB20001413DE /* CrewBidUpdateData+CoreDataClass.swift */; };
+		F41EBF312DC4DB20001413DE /* CrewBidUpdateData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD572DC4DB20001413DE /* CrewBidUpdateData+CoreDataProperties.swift */; };
+		F41EBF322DC4DB20001413DE /* OvernightBulk+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD582DC4DB20001413DE /* OvernightBulk+CoreDataClass.swift */; };
+		F41EBF332DC4DB20001413DE /* OvernightBulk+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD592DC4DB20001413DE /* OvernightBulk+CoreDataProperties.swift */; };
+		F41EBF342DC4DB20001413DE /* VacationArrayFromServer+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD5B2DC4DB20001413DE /* VacationArrayFromServer+CoreDataClass.swift */; };
+		F41EBF352DC4DB20001413DE /* VacationArrayFromServer+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD5C2DC4DB20001413DE /* VacationArrayFromServer+CoreDataProperties.swift */; };
+		F41EBF362DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD5D2DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift */; };
+		F41EBF372DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD5E2DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift */; };
+		F41EBF382DC4DB20001413DE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD602DC4DB20001413DE /* AppDelegate.swift */; };
+		F41EBF392DC4DB20001413DE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD622DC4DB20001413DE /* SceneDelegate.swift */; };
+		F41EBF3A2DC4DB20001413DE /* BICalendarData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD662DC4DB20001413DE /* BICalendarData.swift */; };
+		F41EBF3B2DC4DB20001413DE /* KUIPopOver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDC82DC4DB20001413DE /* KUIPopOver.swift */; };
+		F41EBF3C2DC4DB20001413DE /* KUIPopOverUsable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDC92DC4DB20001413DE /* KUIPopOverUsable.swift */; };
+		F41EBF3D2DC4DB20001413DE /* CBColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDCB2DC4DB20001413DE /* CBColor.swift */; };
+		F41EBF3E2DC4DB20001413DE /* CBGlobalMethods.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDCC2DC4DB20001413DE /* CBGlobalMethods.swift */; };
+		F41EBF3F2DC4DB20001413DE /* CBToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDCD2DC4DB20001413DE /* CBToggleButton.swift */; };
+		F41EBF402DC4DB20001413DE /* CBTripButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDCE2DC4DB20001413DE /* CBTripButton.swift */; };
+		F41EBF412DC4DB20001413DE /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDCF2DC4DB20001413DE /* Constants.swift */; };
+		F41EBF422DC4DB20001413DE /* CustomKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDD02DC4DB20001413DE /* CustomKeyboard.swift */; };
+		F41EBF432DC4DB20001413DE /* CustomUIClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDD12DC4DB20001413DE /* CustomUIClass.swift */; };
+		F41EBF442DC4DB20001413DE /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDD22DC4DB20001413DE /* Extensions.swift */; };
+		F41EBF452DC4DB20001413DE /* iOSDropDown.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDD32DC4DB20001413DE /* iOSDropDown.swift */; };
+		F41EBF462DC4DB20001413DE /* CBLineValues.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDD52DC4DB20001413DE /* CBLineValues.swift */; };
+		F41EBF472DC4DB20001413DE /* CBBidActionTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDD72DC4DB20001413DE /* CBBidActionTableCell.swift */; };
+		F41EBF482DC4DB20001413DE /* CBCommuteDiffVCTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDD82DC4DB20001413DE /* CBCommuteDiffVCTableCell.swift */; };
+		F41EBF492DC4DB20001413DE /* CBFlightDataChangeVCTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDD92DC4DB20001413DE /* CBFlightDataChangeVCTableCell.swift */; };
+		F41EBF4A2DC4DB20001413DE /* ShowCAPTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDDA2DC4DB20001413DE /* ShowCAPTableViewCell.swift */; };
+		F41EBF4B2DC4DB20001413DE /* SwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDDB2DC4DB20001413DE /* SwitchTableViewCell.swift */; };
+		F41EBF4C2DC4DB20001413DE /* AwardActionsTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDEB2DC4DB20001413DE /* AwardActionsTableController.swift */; };
+		F41EBF4D2DC4DB20001413DE /* CBAwardEmpValidationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDEC2DC4DB20001413DE /* CBAwardEmpValidationVC.swift */; };
+		F41EBF4E2DC4DB20001413DE /* CBAwardLineCalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDED2DC4DB20001413DE /* CBAwardLineCalendarViewController.swift */; };
+		F41EBF4F2DC4DB20001413DE /* CBAwardsRetrievalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDEE2DC4DB20001413DE /* CBAwardsRetrievalViewController.swift */; };
+		F41EBF502DC4DB20001413DE /* CBLineNumberController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDEF2DC4DB20001413DE /* CBLineNumberController.swift */; };
+		F41EBF512DC4DB20001413DE /* CBShowAwardsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDF02DC4DB20001413DE /* CBShowAwardsViewController.swift */; };
+		F41EBF522DC4DB20001413DE /* CBTripAwardTextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDF12DC4DB20001413DE /* CBTripAwardTextViewController.swift */; };
+		F41EBF532DC4DB20001413DE /* CBTripAwardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDF22DC4DB20001413DE /* CBTripAwardViewController.swift */; };
+		F41EBF542DC4DB20001413DE /* CBBidActionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDF42DC4DB20001413DE /* CBBidActionsViewController.swift */; };
+		F41EBF552DC4DB20001413DE /* CBSpreadsheetImportController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDF52DC4DB20001413DE /* CBSpreadsheetImportController.swift */; };
+		F41EBF562DC4DB20001413DE /* EmbeddedAwardEmpValidationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDF62DC4DB20001413DE /* EmbeddedAwardEmpValidationVC.swift */; };
+		F41EBF572DC4DB20001413DE /* EmbeddedBidActionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDF72DC4DB20001413DE /* EmbeddedBidActionsVC.swift */; };
+		F41EBF582DC4DB20001413DE /* EmbeddedCredentialVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDF82DC4DB20001413DE /* EmbeddedCredentialVC.swift */; };
+		F41EBF592DC4DB20001413DE /* EmbeddedLineImporterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDF92DC4DB20001413DE /* EmbeddedLineImporterVC.swift */; };
+		F41EBF5A2DC4DB20001413DE /* EmbeddedShowCAPVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDFA2DC4DB20001413DE /* EmbeddedShowCAPVC.swift */; };
+		F41EBF5B2DC4DB20001413DE /* CBAmPmRuleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDFC2DC4DB20001413DE /* CBAmPmRuleCell.swift */; };
+		F41EBF5C2DC4DB20001413DE /* CBCityComparisonRuleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDFD2DC4DB20001413DE /* CBCityComparisonRuleCell.swift */; };
+		F41EBF5D2DC4DB20001413DE /* CBCommutingRuleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDFE2DC4DB20001413DE /* CBCommutingRuleCell.swift */; };
+		F41EBF5E2DC4DB20001413DE /* CBComparisonRuleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBDFF2DC4DB20001413DE /* CBComparisonRuleCell.swift */; };
+		F41EBF5F2DC4DB20001413DE /* CBComutabilityRuleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE002DC4DB20001413DE /* CBComutabilityRuleCell.swift */; };
+		F41EBF602DC4DB20001413DE /* CBDayMonthRuleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE012DC4DB20001413DE /* CBDayMonthRuleCell.swift */; };
+		F41EBF612DC4DB20001413DE /* CBFaReserveRuleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE022DC4DB20001413DE /* CBFaReserveRuleCell.swift */; };
+		F41EBF622DC4DB20001413DE /* CBLineTypeRuleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE032DC4DB20001413DE /* CBLineTypeRuleCell.swift */; };
+		F41EBF632DC4DB20001413DE /* CBOvernightBulkRuleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE042DC4DB20001413DE /* CBOvernightBulkRuleCell.swift */; };
+		F41EBF642DC4DB20001413DE /* CBPositionRuleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE052DC4DB20001413DE /* CBPositionRuleCell.swift */; };
+		F41EBF652DC4DB20001413DE /* CBReportReleaseRuleCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE062DC4DB20001413DE /* CBReportReleaseRuleCellTableViewCell.swift */; };
+		F41EBF662DC4DB20001413DE /* CBTripLengthRuleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE072DC4DB20001413DE /* CBTripLengthRuleCell.swift */; };
+		F41EBF672DC4DB20001413DE /* CBUserFlagRuleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE082DC4DB20001413DE /* CBUserFlagRuleCell.swift */; };
+		F41EBF682DC4DB20001413DE /* CBWeekdayRuleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE092DC4DB20001413DE /* CBWeekdayRuleCell.swift */; };
+		F41EBF692DC4DB20001413DE /* CBWorkBlockRuleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE0A2DC4DB20001413DE /* CBWorkBlockRuleCell.swift */; };
+		F41EBF6A2DC4DB20001413DE /* RefreshController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE0C2DC4DB20001413DE /* RefreshController.swift */; };
+		F41EBF6B2DC4DB20001413DE /* CBFilterRulesTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE132DC4DB20001413DE /* CBFilterRulesTableVC.swift */; };
+		F41EBF6C2DC4DB20001413DE /* CBFlagSortPopUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE142DC4DB20001413DE /* CBFlagSortPopUp.swift */; };
+		F41EBF6D2DC4DB20001413DE /* CBRulesMenuTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE152DC4DB20001413DE /* CBRulesMenuTableVC.swift */; };
+		F41EBF6E2DC4DB20001413DE /* CBPresetsTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE172DC4DB20001413DE /* CBPresetsTVC.swift */; };
+		F41EBF6F2DC4DB20001413DE /* CBBidListSmallCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE192DC4DB20001413DE /* CBBidListSmallCollectionViewCell.swift */; };
+		F41EBF702DC4DB20001413DE /* CBLineCalendarCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE1A2DC4DB20001413DE /* CBLineCalendarCollectionView.swift */; };
+		F41EBF712DC4DB20001413DE /* CBLineValuesMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE1B2DC4DB20001413DE /* CBLineValuesMenuController.swift */; };
+		F41EBF722DC4DB20001413DE /* CBScratchPadVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE1C2DC4DB20001413DE /* CBScratchPadVC.swift */; };
+		F41EBF732DC4DB20001413DE /* CBLineValueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE1F2DC4DB20001413DE /* CBLineValueView.swift */; };
+		F41EBF742DC4DB20001413DE /* CBTripTextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE202DC4DB20001413DE /* CBTripTextViewController.swift */; };
+		F41EBF752DC4DB20001413DE /* CBUserFlagTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE212DC4DB20001413DE /* CBUserFlagTableController.swift */; };
+		F41EBF762DC4DB20001413DE /* RefreshMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE222DC4DB20001413DE /* RefreshMenuController.swift */; };
+		F41EBF772DC4DB20001413DE /* RefreshMenuTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE232DC4DB20001413DE /* RefreshMenuTableViewCell.swift */; };
+		F41EBF782DC4DB20001413DE /* ScratchPadTableCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE242DC4DB20001413DE /* ScratchPadTableCellTableViewCell.swift */; };
+		F41EBF792DC4DB20001413DE /* CBCommutabilitySortCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE262DC4DB20001413DE /* CBCommutabilitySortCell.swift */; };
+		F41EBF7A2DC4DB20001413DE /* CBCommutingSortCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE272DC4DB20001413DE /* CBCommutingSortCell.swift */; };
+		F41EBF7B2DC4DB20001413DE /* CBDayMonthSortCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE282DC4DB20001413DE /* CBDayMonthSortCell.swift */; };
+		F41EBF7C2DC4DB20001413DE /* CBFlagSortCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE292DC4DB20001413DE /* CBFlagSortCell.swift */; };
+		F41EBF7D2DC4DB20001413DE /* CBLineSortCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE2A2DC4DB20001413DE /* CBLineSortCell.swift */; };
+		F41EBF7E2DC4DB20001413DE /* CBCommuteInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE322DC4DB20001413DE /* CBCommuteInfoViewController.swift */; };
+		F41EBF7F2DC4DB20001413DE /* CBLineSortsTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE332DC4DB20001413DE /* CBLineSortsTVC.swift */; };
+		F41EBF802DC4DB20001413DE /* CBMenuTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE342DC4DB20001413DE /* CBMenuTableVC.swift */; };
+		F41EBF812DC4DB20001413DE /* CBSortRulesMenuTableVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE352DC4DB20001413DE /* CBSortRulesMenuTableVC.swift */; };
+		F41EBF822DC4DB20001413DE /* CommutableTimeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE362DC4DB20001413DE /* CommutableTimeViewController.swift */; };
+		F41EBF832DC4DB20001413DE /* CommuteCityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE372DC4DB20001413DE /* CommuteCityViewController.swift */; };
+		F41EBF842DC4DB20001413DE /* CBBidActionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE392DC4DB20001413DE /* CBBidActionsVC.swift */; };
+		F41EBF852DC4DB20001413DE /* CBBidlineViewTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE3B2DC4DB20001413DE /* CBBidlineViewTableViewCell.swift */; };
+		F41EBF862DC4DB20001413DE /* CBBidListCalenderViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE3C2DC4DB20001413DE /* CBBidListCalenderViewCell.swift */; };
+		F41EBF872DC4DB20001413DE /* InnerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE3D2DC4DB20001413DE /* InnerCollectionViewCell.swift */; };
+		F41EBF882DC4DB20001413DE /* CBBidListSortOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE3F2DC4DB20001413DE /* CBBidListSortOptions.swift */; };
+		F41EBF892DC4DB20001413DE /* BidListActionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE412DC4DB20001413DE /* BidListActionVC.swift */; };
+		F41EBF8A2DC4DB20001413DE /* CBBidListActionTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE422DC4DB20001413DE /* CBBidListActionTableCell.swift */; };
+		F41EBF8B2DC4DB20001413DE /* CBBidLineMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE442DC4DB20001413DE /* CBBidLineMenuController.swift */; };
+		F41EBF8C2DC4DB20001413DE /* CBExpandedBidLinesTableController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE472DC4DB20001413DE /* CBExpandedBidLinesTableController.swift */; };
+		F41EBF8D2DC4DB20001413DE /* CBExpandedBidLinesTableControllerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE482DC4DB20001413DE /* CBExpandedBidLinesTableControllerCell.swift */; };
+		F41EBF8E2DC4DB20001413DE /* FaMoveBidListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE4A2DC4DB20001413DE /* FaMoveBidListCell.swift */; };
+		F41EBF8F2DC4DB20001413DE /* FaMoveBidListMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE4B2DC4DB20001413DE /* FaMoveBidListMenu.swift */; };
+		F41EBF902DC4DB20001413DE /* CBBidListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE4D2DC4DB20001413DE /* CBBidListVC.swift */; };
+		F41EBF912DC4DB20001413DE /* CBBidDocumentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE4F2DC4DB20001413DE /* CBBidDocumentController.swift */; };
+		F41EBF922DC4DB20001413DE /* CBReportReleaseCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE502DC4DB20001413DE /* CBReportReleaseCollectionViewController.swift */; };
+		F41EBF932DC4DB20001413DE /* CBReportReleaseCVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE512DC4DB20001413DE /* CBReportReleaseCVC.swift */; };
+		F41EBF942DC4DB20001413DE /* CBBiddataDownloadVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE542DC4DB20001413DE /* CBBiddataDownloadVC.swift */; };
+		F41EBF952DC4DB20001413DE /* CBBIdDataTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE552DC4DB20001413DE /* CBBIdDataTypeViewController.swift */; };
+		F41EBF962DC4DB20001413DE /* CBCredentialsPageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE562DC4DB20001413DE /* CBCredentialsPageVC.swift */; };
+		F41EBF972DC4DB20001413DE /* CBDefaultEmployeeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE572DC4DB20001413DE /* CBDefaultEmployeeVC.swift */; };
+		F41EBF982DC4DB20001413DE /* CBDownloadAgainAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE582DC4DB20001413DE /* CBDownloadAgainAlertVC.swift */; };
+		F41EBF992DC4DB20001413DE /* CBDownloadAlldomicileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE592DC4DB20001413DE /* CBDownloadAlldomicileViewController.swift */; };
+		F41EBF9A2DC4DB20001413DE /* CBNewBidVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE5A2DC4DB20001413DE /* CBNewBidVC.swift */; };
+		F41EBF9B2DC4DB20001413DE /* CBProgressVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE5B2DC4DB20001413DE /* CBProgressVC.swift */; };
+		F41EBF9C2DC4DB20001413DE /* CBOptionalEmployeesPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE5D2DC4DB20001413DE /* CBOptionalEmployeesPageViewController.swift */; };
+		F41EBF9D2DC4DB20001413DE /* CBSubmissionCertifyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE5E2DC4DB20001413DE /* CBSubmissionCertifyVC.swift */; };
+		F41EBF9E2DC4DB20001413DE /* CBSubmitCredentialVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE5F2DC4DB20001413DE /* CBSubmitCredentialVC.swift */; };
+		F41EBF9F2DC4DB20001413DE /* SubmissionErrorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE602DC4DB20001413DE /* SubmissionErrorVC.swift */; };
+		F41EBFA02DC4DB20001413DE /* CBBidReciptViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE622DC4DB20001413DE /* CBBidReciptViewController.swift */; };
+		F41EBFA12DC4DB20001413DE /* CBCAPViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE642DC4DB20001413DE /* CBCAPViewController.swift */; };
+		F41EBFA22DC4DB20001413DE /* CBTextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE662DC4DB20001413DE /* CBTextViewController.swift */; };
+		F41EBFA32DC4DB20001413DE /* CBCommuteDiffVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE682DC4DB20001413DE /* CBCommuteDiffVC.swift */; };
+		F41EBFA42DC4DB20001413DE /* CBFlighDataChangeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE692DC4DB20001413DE /* CBFlighDataChangeVC.swift */; };
+		F41EBFA52DC4DB20001413DE /* CBAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE6B2DC4DB20001413DE /* CBAlertVC.swift */; };
+		F41EBFA62DC4DB20001413DE /* CBLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE6F2DC4DB20001413DE /* CBLoginViewController.swift */; };
+		F41EBFA72DC4DB20001413DE /* LoginEmbeddedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE702DC4DB20001413DE /* LoginEmbeddedController.swift */; };
+		F41EBFA82DC4DB20001413DE /* CBHelpVideosController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE722DC4DB20001413DE /* CBHelpVideosController.swift */; };
+		F41EBFA92DC4DB20001413DE /* contactUsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE732DC4DB20001413DE /* contactUsViewController.swift */; };
+		F41EBFAA2DC4DB20001413DE /* defenitionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE742DC4DB20001413DE /* defenitionsViewController.swift */; };
+		F41EBFAB2DC4DB20001413DE /* faqViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE752DC4DB20001413DE /* faqViewController.swift */; };
+		F41EBFAC2DC4DB20001413DE /* helpMenuItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE762DC4DB20001413DE /* helpMenuItemsViewController.swift */; };
+		F41EBFAD2DC4DB20001413DE /* helpMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE772DC4DB20001413DE /* helpMenuViewController.swift */; };
+		F41EBFAE2DC4DB20001413DE /* latestNewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE782DC4DB20001413DE /* latestNewsViewController.swift */; };
+		F41EBFAF2DC4DB20001413DE /* lineValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE792DC4DB20001413DE /* lineValuesViewController.swift */; };
+		F41EBFB02DC4DB20001413DE /* mySubscriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE7A2DC4DB20001413DE /* mySubscriptionViewController.swift */; };
+		F41EBFB12DC4DB20001413DE /* quickTutorialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE7B2DC4DB20001413DE /* quickTutorialViewController.swift */; };
+		F41EBFB22DC4DB20001413DE /* serviceAgreementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE7C2DC4DB20001413DE /* serviceAgreementViewController.swift */; };
+		F41EBFB32DC4DB20001413DE /* swaptimizerHelpMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE7D2DC4DB20001413DE /* swaptimizerHelpMenuViewController.swift */; };
+		F41EBFB42DC4DB20001413DE /* userAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE7E2DC4DB20001413DE /* userAccountViewController.swift */; };
+		F41EBFB52DC4DB20001413DE /* CBDocumentsCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE802DC4DB20001413DE /* CBDocumentsCollectionViewController.swift */; };
+		F41EBFB62DC4DB20001413DE /* DocumentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE812DC4DB20001413DE /* DocumentCell.swift */; };
+		F41EBFB72DC4DB20001413DE /* SecretMethodsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE832DC4DB20001413DE /* SecretMethodsViewController.swift */; };
+		F41EBFB82DC4DB20001413DE /* EmbeddedSettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE852DC4DB20001413DE /* EmbeddedSettingsVC.swift */; };
+		F41EBFB92DC4DB20001413DE /* MyCalendarVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE862DC4DB20001413DE /* MyCalendarVC.swift */; };
+		F41EBFBA2DC4DB20001413DE /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE872DC4DB20001413DE /* SettingsViewController.swift */; };
+		F41EBFBB2DC4DB20001413DE /* CBsyncConflictViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE892DC4DB20001413DE /* CBsyncConflictViewController.swift */; };
+		F41EBFBC2DC4DB20001413DE /* CBSyncInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE8A2DC4DB20001413DE /* CBSyncInfoViewController.swift */; };
+		F41EBFBD2DC4DB20001413DE /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE8C2DC4DB20001413DE /* BaseViewController.swift */; };
 		F4CF5A8E2D892B9800A351DB /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = F4CF5A8D2D892B9800A351DB /* ZipArchive */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		8BEADE8A2DC4A4DB00B3BDF2 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		F41EBD292DC4DB20001413DE /* AwardCalendarCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwardCalendarCollectionViewCell.swift; sourceTree = "<group>"; };
+		F41EBD2A2DC4DB20001413DE /* contactUsCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = contactUsCollectionViewCell.swift; sourceTree = "<group>"; };
+		F41EBD2B2DC4DB20001413DE /* helpMenuItemCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helpMenuItemCollectionViewCell.swift; sourceTree = "<group>"; };
+		F41EBD2C2DC4DB20001413DE /* mySubscriptionCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mySubscriptionCollectionViewCell.swift; sourceTree = "<group>"; };
+		F41EBD2D2DC4DB20001413DE /* quickTutorialCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = quickTutorialCollectionViewCell.swift; sourceTree = "<group>"; };
+		F41EBD2E2DC4DB20001413DE /* swaptimizerHelpMenuCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swaptimizerHelpMenuCollectionViewCell.swift; sourceTree = "<group>"; };
+		F41EBD2F2DC4DB20001413DE /* VideoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCollectionViewCell.swift; sourceTree = "<group>"; };
+		F41EBD312DC4DB20001413DE /* BIBidPeriod+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIBidPeriod+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD322DC4DB20001413DE /* BIBidPeriod+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIBidPeriod+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD342DC4DB20001413DE /* BIBidReceipt+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIBidReceipt+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD352DC4DB20001413DE /* BIBidReceipt+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIBidReceipt+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD372DC4DB20001413DE /* BIFilterRule+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIFilterRule+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD382DC4DB20001413DE /* BIFilterRule+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIFilterRule+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD3A2DC4DB20001413DE /* BILineSort+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILineSort+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD3B2DC4DB20001413DE /* BILineSort+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILineSort+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD3D2DC4DB20001413DE /* BIDay+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIDay+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD3E2DC4DB20001413DE /* BIDay+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIDay+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD3F2DC4DB20001413DE /* BIDayInfo+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIDayInfo+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD402DC4DB20001413DE /* BIDayInfo+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIDayInfo+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD412DC4DB20001413DE /* BIInsertionPoint+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIInsertionPoint+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD422DC4DB20001413DE /* BIInsertionPoint+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIInsertionPoint+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD432DC4DB20001413DE /* BILeg+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILeg+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD442DC4DB20001413DE /* BILeg+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILeg+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD452DC4DB20001413DE /* BILegInfo+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILegInfo+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD462DC4DB20001413DE /* BILegInfo+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILegInfo+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD472DC4DB20001413DE /* BILine+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILine+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD482DC4DB20001413DE /* BILine+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILine+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD492DC4DB20001413DE /* BILineSortKeyMap+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILineSortKeyMap+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD4A2DC4DB20001413DE /* BILineSortKeyMap+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILineSortKeyMap+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD4B2DC4DB20001413DE /* BITrip+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BITrip+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD4C2DC4DB20001413DE /* BITrip+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BITrip+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD4D2DC4DB20001413DE /* BITripInfo+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BITripInfo+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD4E2DC4DB20001413DE /* BITripInfo+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BITripInfo+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD4F2DC4DB20001413DE /* BIVacation+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIVacation+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD502DC4DB20001413DE /* BIVacation+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIVacation+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD512DC4DB20001413DE /* Commutability+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Commutability+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD522DC4DB20001413DE /* Commutability+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Commutability+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD532DC4DB20001413DE /* CommuteTime+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommuteTime+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD542DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommuteTime+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD562DC4DB20001413DE /* CrewBidUpdateData+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CrewBidUpdateData+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD572DC4DB20001413DE /* CrewBidUpdateData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CrewBidUpdateData+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD582DC4DB20001413DE /* OvernightBulk+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OvernightBulk+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD592DC4DB20001413DE /* OvernightBulk+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OvernightBulk+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD5A2DC4DB20001413DE /* ThirdPartyURL.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ThirdPartyURL.plist; sourceTree = "<group>"; };
+		F41EBD5B2DC4DB20001413DE /* VacationArrayFromServer+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VacationArrayFromServer+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD5C2DC4DB20001413DE /* VacationArrayFromServer+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VacationArrayFromServer+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD5D2DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorkBlockList+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F41EBD5E2DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorkBlockList+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F41EBD602DC4DB20001413DE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F41EBD612DC4DB20001413DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F41EBD622DC4DB20001413DE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		F41EBD632DC4DB20001413DE /* SWAPtimizer Tutorial.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "SWAPtimizer Tutorial.xcassets"; sourceTree = "<group>"; };
+		F41EBD642DC4DB20001413DE /* Tutorial.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Tutorial.xcassets; sourceTree = "<group>"; };
+		F41EBD662DC4DB20001413DE /* BICalendarData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BICalendarData.swift; sourceTree = "<group>"; };
+		F41EBD672DC4DB20001413DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F41EBD692DC4DB20001413DE /* Definitions.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = Definitions.pdf; sourceTree = "<group>"; };
+		F41EBD6A2DC4DB20001413DE /* FAQs.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = FAQs.pdf; sourceTree = "<group>"; };
+		F41EBD6B2DC4DB20001413DE /* LatestNewssdsds.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = LatestNewssdsds.pdf; sourceTree = "<group>"; };
+		F41EBD6C2DC4DB20001413DE /* LineValues.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = LineValues.pdf; sourceTree = "<group>"; };
+		F41EBD6D2DC4DB20001413DE /* SWAPtimizerDefinitions.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = SWAPtimizerDefinitions.pdf; sourceTree = "<group>"; };
+		F41EBD6E2DC4DB20001413DE /* SWAPtimizerFAQ.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = SWAPtimizerFAQ.pdf; sourceTree = "<group>"; };
+		F41EBD702DC4DB20001413DE /* agreement@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "agreement@2x.png"; sourceTree = "<group>"; };
+		F41EBD712DC4DB20001413DE /* document.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = document.png; sourceTree = "<group>"; };
+		F41EBD722DC4DB20001413DE /* Folder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Folder.png; sourceTree = "<group>"; };
+		F41EBD732DC4DB20001413DE /* Help_preserver.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Help_preserver.png; sourceTree = "<group>"; };
+		F41EBD742DC4DB20001413DE /* Link.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Link.png; sourceTree = "<group>"; };
+		F41EBD752DC4DB20001413DE /* Mail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Mail.png; sourceTree = "<group>"; };
+		F41EBD762DC4DB20001413DE /* Movie.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Movie.png; sourceTree = "<group>"; };
+		F41EBD772DC4DB20001413DE /* Notebook.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Notebook.png; sourceTree = "<group>"; };
+		F41EBD782DC4DB20001413DE /* Shopping.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Shopping.png; sourceTree = "<group>"; };
+		F41EBD792DC4DB20001413DE /* Update.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Update.png; sourceTree = "<group>"; };
+		F41EBD7A2DC4DB20001413DE /* user.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = user.png; sourceTree = "<group>"; };
+		F41EBD7B2DC4DB20001413DE /* Vacation1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Vacation1.png; sourceTree = "<group>"; };
+		F41EBD7D2DC4DB20001413DE /* BlueRect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = BlueRect.png; sourceTree = "<group>"; };
+		F41EBD7E2DC4DB20001413DE /* GrayRect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GrayRect.png; sourceTree = "<group>"; };
+		F41EBD7F2DC4DB20001413DE /* GreenRect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = GreenRect.png; sourceTree = "<group>"; };
+		F41EBD802DC4DB20001413DE /* NavBar-doneButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "NavBar-doneButton.png"; sourceTree = "<group>"; };
+		F41EBD812DC4DB20001413DE /* OrangeRect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OrangeRect.png; sourceTree = "<group>"; };
+		F41EBD822DC4DB20001413DE /* PurpleRect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PurpleRect.png; sourceTree = "<group>"; };
+		F41EBD832DC4DB20001413DE /* RedRect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RedRect.png; sourceTree = "<group>"; };
+		F41EBD842DC4DB20001413DE /* TripButton-rounded-both-brown_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-brown_iOS7.png"; sourceTree = "<group>"; };
+		F41EBD852DC4DB20001413DE /* TripButton-rounded-both-brown_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-brown_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBD862DC4DB20001413DE /* TripButton-rounded-both-FVBlue_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-FVBlue_iOS7.png"; sourceTree = "<group>"; };
+		F41EBD872DC4DB20001413DE /* TripButton-rounded-both-FVBlue_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-FVBlue_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBD882DC4DB20001413DE /* TripButton-rounded-both-green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-green.png"; sourceTree = "<group>"; };
+		F41EBD892DC4DB20001413DE /* TripButton-rounded-both-green_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-green_iOS7.png"; sourceTree = "<group>"; };
+		F41EBD8A2DC4DB20001413DE /* TripButton-rounded-both-green_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-green_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBD8B2DC4DB20001413DE /* TripButton-rounded-both-green@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-green@2x.png"; sourceTree = "<group>"; };
+		F41EBD8C2DC4DB20001413DE /* TripButton-rounded-both-orange.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-orange.png"; sourceTree = "<group>"; };
+		F41EBD8D2DC4DB20001413DE /* TripButton-rounded-both-orange_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-orange_iOS7.png"; sourceTree = "<group>"; };
+		F41EBD8E2DC4DB20001413DE /* TripButton-rounded-both-orange_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-orange_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBD8F2DC4DB20001413DE /* TripButton-rounded-both-orange@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-orange@2x.png"; sourceTree = "<group>"; };
+		F41EBD902DC4DB20001413DE /* TripButton-rounded-both-purple.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-purple.png"; sourceTree = "<group>"; };
+		F41EBD912DC4DB20001413DE /* TripButton-rounded-both-purple_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-purple_iOS7.png"; sourceTree = "<group>"; };
+		F41EBD922DC4DB20001413DE /* TripButton-rounded-both-purple_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-purple_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBD932DC4DB20001413DE /* TripButton-rounded-both-purple@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-purple@2x.png"; sourceTree = "<group>"; };
+		F41EBD942DC4DB20001413DE /* TripButton-rounded-both-red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-red.png"; sourceTree = "<group>"; };
+		F41EBD952DC4DB20001413DE /* TripButton-rounded-both-red@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-red@2x.png"; sourceTree = "<group>"; };
+		F41EBD962DC4DB20001413DE /* TripButton-rounded-both-red2_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-red2_iOS7.png"; sourceTree = "<group>"; };
+		F41EBD972DC4DB20001413DE /* TripButton-rounded-both-red2_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-red2_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBD982DC4DB20001413DE /* TripButton-rounded-both-yellow_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-yellow_iOS7.png"; sourceTree = "<group>"; };
+		F41EBD992DC4DB20001413DE /* TripButton-rounded-both-yellow_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-yellow_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBD9A2DC4DB20001413DE /* TripButton-rounded-left-brown_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-brown_iOS7.png"; sourceTree = "<group>"; };
+		F41EBD9B2DC4DB20001413DE /* TripButton-rounded-left-brown_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-brown_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBD9C2DC4DB20001413DE /* TripButton-rounded-left-FVBlue_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-FVBlue_iOS7.png"; sourceTree = "<group>"; };
+		F41EBD9D2DC4DB20001413DE /* TripButton-rounded-left-FVBlue_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-FVBlue_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBD9E2DC4DB20001413DE /* TripButton-rounded-left-green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-green.png"; sourceTree = "<group>"; };
+		F41EBD9F2DC4DB20001413DE /* TripButton-rounded-left-green_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-green_iOS7.png"; sourceTree = "<group>"; };
+		F41EBDA02DC4DB20001413DE /* TripButton-rounded-left-green_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-green_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBDA12DC4DB20001413DE /* TripButton-rounded-left-green@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-green@2x.png"; sourceTree = "<group>"; };
+		F41EBDA22DC4DB20001413DE /* TripButton-rounded-left-orange.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-orange.png"; sourceTree = "<group>"; };
+		F41EBDA32DC4DB20001413DE /* TripButton-rounded-left-orange_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-orange_iOS7.png"; sourceTree = "<group>"; };
+		F41EBDA42DC4DB20001413DE /* TripButton-rounded-left-orange_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-orange_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBDA52DC4DB20001413DE /* TripButton-rounded-left-orange@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-orange@2x.png"; sourceTree = "<group>"; };
+		F41EBDA62DC4DB20001413DE /* TripButton-rounded-left-purple.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-purple.png"; sourceTree = "<group>"; };
+		F41EBDA72DC4DB20001413DE /* TripButton-rounded-left-purple_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-purple_iOS7.png"; sourceTree = "<group>"; };
+		F41EBDA82DC4DB20001413DE /* TripButton-rounded-left-purple_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-purple_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBDA92DC4DB20001413DE /* TripButton-rounded-left-purple@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-purple@2x.png"; sourceTree = "<group>"; };
+		F41EBDAA2DC4DB20001413DE /* TripButton-rounded-left-red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-red.png"; sourceTree = "<group>"; };
+		F41EBDAB2DC4DB20001413DE /* TripButton-rounded-left-red@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-red@2x.png"; sourceTree = "<group>"; };
+		F41EBDAC2DC4DB20001413DE /* TripButton-rounded-left-red2_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-red2_iOS7.png"; sourceTree = "<group>"; };
+		F41EBDAD2DC4DB20001413DE /* TripButton-rounded-left-red2_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-red2_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBDAE2DC4DB20001413DE /* TripButton-rounded-left-yellow_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-yellow_iOS7.png"; sourceTree = "<group>"; };
+		F41EBDAF2DC4DB20001413DE /* TripButton-rounded-left-yellow_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-yellow_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBDB02DC4DB20001413DE /* TripButton-rounded-right-brown_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-brown_iOS7.png"; sourceTree = "<group>"; };
+		F41EBDB12DC4DB20001413DE /* TripButton-rounded-right-brown_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-brown_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBDB22DC4DB20001413DE /* TripButton-rounded-right-FVBlue_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-FVBlue_iOS7.png"; sourceTree = "<group>"; };
+		F41EBDB32DC4DB20001413DE /* TripButton-rounded-right-FVBlue_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-FVBlue_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBDB42DC4DB20001413DE /* TripButton-rounded-right-green.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-green.png"; sourceTree = "<group>"; };
+		F41EBDB52DC4DB20001413DE /* TripButton-rounded-right-green_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-green_iOS7.png"; sourceTree = "<group>"; };
+		F41EBDB62DC4DB20001413DE /* TripButton-rounded-right-green_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-green_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBDB72DC4DB20001413DE /* TripButton-rounded-right-green@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-green@2x.png"; sourceTree = "<group>"; };
+		F41EBDB82DC4DB20001413DE /* TripButton-rounded-right-orange.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-orange.png"; sourceTree = "<group>"; };
+		F41EBDB92DC4DB20001413DE /* TripButton-rounded-right-orange_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-orange_iOS7.png"; sourceTree = "<group>"; };
+		F41EBDBA2DC4DB20001413DE /* TripButton-rounded-right-orange_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-orange_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBDBB2DC4DB20001413DE /* TripButton-rounded-right-orange@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-orange@2x.png"; sourceTree = "<group>"; };
+		F41EBDBC2DC4DB20001413DE /* TripButton-rounded-right-purple.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-purple.png"; sourceTree = "<group>"; };
+		F41EBDBD2DC4DB20001413DE /* TripButton-rounded-right-purple_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-purple_iOS7.png"; sourceTree = "<group>"; };
+		F41EBDBE2DC4DB20001413DE /* TripButton-rounded-right-purple_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-purple_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBDBF2DC4DB20001413DE /* TripButton-rounded-right-purple@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-purple@2x.png"; sourceTree = "<group>"; };
+		F41EBDC02DC4DB20001413DE /* TripButton-rounded-right-red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-red.png"; sourceTree = "<group>"; };
+		F41EBDC12DC4DB20001413DE /* TripButton-rounded-right-red@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-red@2x.png"; sourceTree = "<group>"; };
+		F41EBDC22DC4DB20001413DE /* TripButton-rounded-right-red2_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-red2_iOS7.png"; sourceTree = "<group>"; };
+		F41EBDC32DC4DB20001413DE /* TripButton-rounded-right-red2_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-red2_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBDC42DC4DB20001413DE /* TripButton-rounded-right-yellow_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-yellow_iOS7.png"; sourceTree = "<group>"; };
+		F41EBDC52DC4DB20001413DE /* TripButton-rounded-right-yellow_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-yellow_iOS7@2x.png"; sourceTree = "<group>"; };
+		F41EBDC62DC4DB20001413DE /* YellowRect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = YellowRect.png; sourceTree = "<group>"; };
+		F41EBDC82DC4DB20001413DE /* KUIPopOver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KUIPopOver.swift; sourceTree = "<group>"; };
+		F41EBDC92DC4DB20001413DE /* KUIPopOverUsable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KUIPopOverUsable.swift; sourceTree = "<group>"; };
+		F41EBDCB2DC4DB20001413DE /* CBColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBColor.swift; sourceTree = "<group>"; };
+		F41EBDCC2DC4DB20001413DE /* CBGlobalMethods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBGlobalMethods.swift; sourceTree = "<group>"; };
+		F41EBDCD2DC4DB20001413DE /* CBToggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBToggleButton.swift; sourceTree = "<group>"; };
+		F41EBDCE2DC4DB20001413DE /* CBTripButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBTripButton.swift; sourceTree = "<group>"; };
+		F41EBDCF2DC4DB20001413DE /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		F41EBDD02DC4DB20001413DE /* CustomKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomKeyboard.swift; sourceTree = "<group>"; };
+		F41EBDD12DC4DB20001413DE /* CustomUIClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomUIClass.swift; sourceTree = "<group>"; };
+		F41EBDD22DC4DB20001413DE /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		F41EBDD32DC4DB20001413DE /* iOSDropDown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSDropDown.swift; sourceTree = "<group>"; };
+		F41EBDD52DC4DB20001413DE /* CBLineValues.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLineValues.swift; sourceTree = "<group>"; };
+		F41EBDD72DC4DB20001413DE /* CBBidActionTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidActionTableCell.swift; sourceTree = "<group>"; };
+		F41EBDD82DC4DB20001413DE /* CBCommuteDiffVCTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCommuteDiffVCTableCell.swift; sourceTree = "<group>"; };
+		F41EBDD92DC4DB20001413DE /* CBFlightDataChangeVCTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBFlightDataChangeVCTableCell.swift; sourceTree = "<group>"; };
+		F41EBDDA2DC4DB20001413DE /* ShowCAPTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowCAPTableViewCell.swift; sourceTree = "<group>"; };
+		F41EBDDB2DC4DB20001413DE /* SwitchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchTableViewCell.swift; sourceTree = "<group>"; };
+		F41EBDDD2DC4DB20001413DE /* BidActions.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = BidActions.storyboard; sourceTree = "<group>"; };
+		F41EBDDE2DC4DB20001413DE /* BidDocument.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = BidDocument.storyboard; sourceTree = "<group>"; };
+		F41EBDDF2DC4DB20001413DE /* BidInfo.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = BidInfo.storyboard; sourceTree = "<group>"; };
+		F41EBDE02DC4DB20001413DE /* Filter.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Filter.storyboard; sourceTree = "<group>"; };
+		F41EBDE12DC4DB20001413DE /* FlightDataChange.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = FlightDataChange.storyboard; sourceTree = "<group>"; };
+		F41EBDE22DC4DB20001413DE /* HelpMenu.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = HelpMenu.storyboard; sourceTree = "<group>"; };
+		F41EBDE32DC4DB20001413DE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F41EBDE52DC4DB20001413DE /* LineCalendar.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LineCalendar.storyboard; sourceTree = "<group>"; };
+		F41EBDE62DC4DB20001413DE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		F41EBDE82DC4DB20001413DE /* Secret.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Secret.storyboard; sourceTree = "<group>"; };
+		F41EBDE92DC4DB20001413DE /* Sync.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Sync.storyboard; sourceTree = "<group>"; };
+		F41EBDEB2DC4DB20001413DE /* AwardActionsTableController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwardActionsTableController.swift; sourceTree = "<group>"; };
+		F41EBDEC2DC4DB20001413DE /* CBAwardEmpValidationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBAwardEmpValidationVC.swift; sourceTree = "<group>"; };
+		F41EBDED2DC4DB20001413DE /* CBAwardLineCalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBAwardLineCalendarViewController.swift; sourceTree = "<group>"; };
+		F41EBDEE2DC4DB20001413DE /* CBAwardsRetrievalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBAwardsRetrievalViewController.swift; sourceTree = "<group>"; };
+		F41EBDEF2DC4DB20001413DE /* CBLineNumberController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLineNumberController.swift; sourceTree = "<group>"; };
+		F41EBDF02DC4DB20001413DE /* CBShowAwardsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBShowAwardsViewController.swift; sourceTree = "<group>"; };
+		F41EBDF12DC4DB20001413DE /* CBTripAwardTextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBTripAwardTextViewController.swift; sourceTree = "<group>"; };
+		F41EBDF22DC4DB20001413DE /* CBTripAwardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBTripAwardViewController.swift; sourceTree = "<group>"; };
+		F41EBDF42DC4DB20001413DE /* CBBidActionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidActionsViewController.swift; sourceTree = "<group>"; };
+		F41EBDF52DC4DB20001413DE /* CBSpreadsheetImportController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSpreadsheetImportController.swift; sourceTree = "<group>"; };
+		F41EBDF62DC4DB20001413DE /* EmbeddedAwardEmpValidationVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedAwardEmpValidationVC.swift; sourceTree = "<group>"; };
+		F41EBDF72DC4DB20001413DE /* EmbeddedBidActionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedBidActionsVC.swift; sourceTree = "<group>"; };
+		F41EBDF82DC4DB20001413DE /* EmbeddedCredentialVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedCredentialVC.swift; sourceTree = "<group>"; };
+		F41EBDF92DC4DB20001413DE /* EmbeddedLineImporterVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedLineImporterVC.swift; sourceTree = "<group>"; };
+		F41EBDFA2DC4DB20001413DE /* EmbeddedShowCAPVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedShowCAPVC.swift; sourceTree = "<group>"; };
+		F41EBDFC2DC4DB20001413DE /* CBAmPmRuleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBAmPmRuleCell.swift; sourceTree = "<group>"; };
+		F41EBDFD2DC4DB20001413DE /* CBCityComparisonRuleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCityComparisonRuleCell.swift; sourceTree = "<group>"; };
+		F41EBDFE2DC4DB20001413DE /* CBCommutingRuleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCommutingRuleCell.swift; sourceTree = "<group>"; };
+		F41EBDFF2DC4DB20001413DE /* CBComparisonRuleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBComparisonRuleCell.swift; sourceTree = "<group>"; };
+		F41EBE002DC4DB20001413DE /* CBComutabilityRuleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBComutabilityRuleCell.swift; sourceTree = "<group>"; };
+		F41EBE012DC4DB20001413DE /* CBDayMonthRuleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBDayMonthRuleCell.swift; sourceTree = "<group>"; };
+		F41EBE022DC4DB20001413DE /* CBFaReserveRuleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBFaReserveRuleCell.swift; sourceTree = "<group>"; };
+		F41EBE032DC4DB20001413DE /* CBLineTypeRuleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLineTypeRuleCell.swift; sourceTree = "<group>"; };
+		F41EBE042DC4DB20001413DE /* CBOvernightBulkRuleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBOvernightBulkRuleCell.swift; sourceTree = "<group>"; };
+		F41EBE052DC4DB20001413DE /* CBPositionRuleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPositionRuleCell.swift; sourceTree = "<group>"; };
+		F41EBE062DC4DB20001413DE /* CBReportReleaseRuleCellTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBReportReleaseRuleCellTableViewCell.swift; sourceTree = "<group>"; };
+		F41EBE072DC4DB20001413DE /* CBTripLengthRuleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBTripLengthRuleCell.swift; sourceTree = "<group>"; };
+		F41EBE082DC4DB20001413DE /* CBUserFlagRuleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUserFlagRuleCell.swift; sourceTree = "<group>"; };
+		F41EBE092DC4DB20001413DE /* CBWeekdayRuleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBWeekdayRuleCell.swift; sourceTree = "<group>"; };
+		F41EBE0A2DC4DB20001413DE /* CBWorkBlockRuleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBWorkBlockRuleCell.swift; sourceTree = "<group>"; };
+		F41EBE0C2DC4DB20001413DE /* RefreshController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshController.swift; sourceTree = "<group>"; };
+		F41EBE0E2DC4DB20001413DE /* FilterRules.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = FilterRules.plist; sourceTree = "<group>"; };
+		F41EBE0F2DC4DB20001413DE /* FilterRulesFaVacation.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = FilterRulesFaVacation.plist; sourceTree = "<group>"; };
+		F41EBE102DC4DB20001413DE /* FilterRulesRound2.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = FilterRulesRound2.plist; sourceTree = "<group>"; };
+		F41EBE112DC4DB20001413DE /* FilterRulesSwaptimizer.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = FilterRulesSwaptimizer.plist; sourceTree = "<group>"; };
+		F41EBE132DC4DB20001413DE /* CBFilterRulesTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBFilterRulesTableVC.swift; sourceTree = "<group>"; };
+		F41EBE142DC4DB20001413DE /* CBFlagSortPopUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBFlagSortPopUp.swift; sourceTree = "<group>"; };
+		F41EBE152DC4DB20001413DE /* CBRulesMenuTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBRulesMenuTableVC.swift; sourceTree = "<group>"; };
+		F41EBE172DC4DB20001413DE /* CBPresetsTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPresetsTVC.swift; sourceTree = "<group>"; };
+		F41EBE192DC4DB20001413DE /* CBBidListSmallCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidListSmallCollectionViewCell.swift; sourceTree = "<group>"; };
+		F41EBE1A2DC4DB20001413DE /* CBLineCalendarCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLineCalendarCollectionView.swift; sourceTree = "<group>"; };
+		F41EBE1B2DC4DB20001413DE /* CBLineValuesMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLineValuesMenuController.swift; sourceTree = "<group>"; };
+		F41EBE1C2DC4DB20001413DE /* CBScratchPadVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBScratchPadVC.swift; sourceTree = "<group>"; };
+		F41EBE1D2DC4DB20001413DE /* LineValues.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = LineValues.plist; sourceTree = "<group>"; };
+		F41EBE1F2DC4DB20001413DE /* CBLineValueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLineValueView.swift; sourceTree = "<group>"; };
+		F41EBE202DC4DB20001413DE /* CBTripTextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBTripTextViewController.swift; sourceTree = "<group>"; };
+		F41EBE212DC4DB20001413DE /* CBUserFlagTableController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUserFlagTableController.swift; sourceTree = "<group>"; };
+		F41EBE222DC4DB20001413DE /* RefreshMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshMenuController.swift; sourceTree = "<group>"; };
+		F41EBE232DC4DB20001413DE /* RefreshMenuTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshMenuTableViewCell.swift; sourceTree = "<group>"; };
+		F41EBE242DC4DB20001413DE /* ScratchPadTableCellTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScratchPadTableCellTableViewCell.swift; sourceTree = "<group>"; };
+		F41EBE262DC4DB20001413DE /* CBCommutabilitySortCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCommutabilitySortCell.swift; sourceTree = "<group>"; };
+		F41EBE272DC4DB20001413DE /* CBCommutingSortCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCommutingSortCell.swift; sourceTree = "<group>"; };
+		F41EBE282DC4DB20001413DE /* CBDayMonthSortCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBDayMonthSortCell.swift; sourceTree = "<group>"; };
+		F41EBE292DC4DB20001413DE /* CBFlagSortCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBFlagSortCell.swift; sourceTree = "<group>"; };
+		F41EBE2A2DC4DB20001413DE /* CBLineSortCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLineSortCell.swift; sourceTree = "<group>"; };
+		F41EBE2C2DC4DB20001413DE /* LineSorts.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = LineSorts.plist; sourceTree = "<group>"; };
+		F41EBE2D2DC4DB20001413DE /* LineSortsFA.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = LineSortsFA.plist; sourceTree = "<group>"; };
+		F41EBE2E2DC4DB20001413DE /* LineSortsFaVacation.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = LineSortsFaVacation.plist; sourceTree = "<group>"; };
+		F41EBE2F2DC4DB20001413DE /* LineSortsRound2.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = LineSortsRound2.plist; sourceTree = "<group>"; };
+		F41EBE302DC4DB20001413DE /* LineSortsSwaptimizer.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = LineSortsSwaptimizer.plist; sourceTree = "<group>"; };
+		F41EBE322DC4DB20001413DE /* CBCommuteInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCommuteInfoViewController.swift; sourceTree = "<group>"; };
+		F41EBE332DC4DB20001413DE /* CBLineSortsTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLineSortsTVC.swift; sourceTree = "<group>"; };
+		F41EBE342DC4DB20001413DE /* CBMenuTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMenuTableVC.swift; sourceTree = "<group>"; };
+		F41EBE352DC4DB20001413DE /* CBSortRulesMenuTableVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSortRulesMenuTableVC.swift; sourceTree = "<group>"; };
+		F41EBE362DC4DB20001413DE /* CommutableTimeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommutableTimeViewController.swift; sourceTree = "<group>"; };
+		F41EBE372DC4DB20001413DE /* CommuteCityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommuteCityViewController.swift; sourceTree = "<group>"; };
+		F41EBE392DC4DB20001413DE /* CBBidActionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidActionsVC.swift; sourceTree = "<group>"; };
+		F41EBE3B2DC4DB20001413DE /* CBBidlineViewTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidlineViewTableViewCell.swift; sourceTree = "<group>"; };
+		F41EBE3C2DC4DB20001413DE /* CBBidListCalenderViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidListCalenderViewCell.swift; sourceTree = "<group>"; };
+		F41EBE3D2DC4DB20001413DE /* InnerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnerCollectionViewCell.swift; sourceTree = "<group>"; };
+		F41EBE3F2DC4DB20001413DE /* CBBidListSortOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidListSortOptions.swift; sourceTree = "<group>"; };
+		F41EBE412DC4DB20001413DE /* BidListActionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BidListActionVC.swift; sourceTree = "<group>"; };
+		F41EBE422DC4DB20001413DE /* CBBidListActionTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidListActionTableCell.swift; sourceTree = "<group>"; };
+		F41EBE442DC4DB20001413DE /* CBBidLineMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidLineMenuController.swift; sourceTree = "<group>"; };
+		F41EBE472DC4DB20001413DE /* CBExpandedBidLinesTableController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBExpandedBidLinesTableController.swift; sourceTree = "<group>"; };
+		F41EBE482DC4DB20001413DE /* CBExpandedBidLinesTableControllerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBExpandedBidLinesTableControllerCell.swift; sourceTree = "<group>"; };
+		F41EBE4A2DC4DB20001413DE /* FaMoveBidListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaMoveBidListCell.swift; sourceTree = "<group>"; };
+		F41EBE4B2DC4DB20001413DE /* FaMoveBidListMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaMoveBidListMenu.swift; sourceTree = "<group>"; };
+		F41EBE4D2DC4DB20001413DE /* CBBidListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidListVC.swift; sourceTree = "<group>"; };
+		F41EBE4F2DC4DB20001413DE /* CBBidDocumentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidDocumentController.swift; sourceTree = "<group>"; };
+		F41EBE502DC4DB20001413DE /* CBReportReleaseCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBReportReleaseCollectionViewController.swift; sourceTree = "<group>"; };
+		F41EBE512DC4DB20001413DE /* CBReportReleaseCVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBReportReleaseCVC.swift; sourceTree = "<group>"; };
+		F41EBE522DC4DB20001413DE /* LineValues.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = LineValues.plist; sourceTree = "<group>"; };
+		F41EBE542DC4DB20001413DE /* CBBiddataDownloadVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBiddataDownloadVC.swift; sourceTree = "<group>"; };
+		F41EBE552DC4DB20001413DE /* CBBIdDataTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBIdDataTypeViewController.swift; sourceTree = "<group>"; };
+		F41EBE562DC4DB20001413DE /* CBCredentialsPageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCredentialsPageVC.swift; sourceTree = "<group>"; };
+		F41EBE572DC4DB20001413DE /* CBDefaultEmployeeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBDefaultEmployeeVC.swift; sourceTree = "<group>"; };
+		F41EBE582DC4DB20001413DE /* CBDownloadAgainAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBDownloadAgainAlertVC.swift; sourceTree = "<group>"; };
+		F41EBE592DC4DB20001413DE /* CBDownloadAlldomicileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBDownloadAlldomicileViewController.swift; sourceTree = "<group>"; };
+		F41EBE5A2DC4DB20001413DE /* CBNewBidVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBNewBidVC.swift; sourceTree = "<group>"; };
+		F41EBE5B2DC4DB20001413DE /* CBProgressVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBProgressVC.swift; sourceTree = "<group>"; };
+		F41EBE5D2DC4DB20001413DE /* CBOptionalEmployeesPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBOptionalEmployeesPageViewController.swift; sourceTree = "<group>"; };
+		F41EBE5E2DC4DB20001413DE /* CBSubmissionCertifyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSubmissionCertifyVC.swift; sourceTree = "<group>"; };
+		F41EBE5F2DC4DB20001413DE /* CBSubmitCredentialVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSubmitCredentialVC.swift; sourceTree = "<group>"; };
+		F41EBE602DC4DB20001413DE /* SubmissionErrorVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionErrorVC.swift; sourceTree = "<group>"; };
+		F41EBE622DC4DB20001413DE /* CBBidReciptViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidReciptViewController.swift; sourceTree = "<group>"; };
+		F41EBE642DC4DB20001413DE /* CBCAPViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCAPViewController.swift; sourceTree = "<group>"; };
+		F41EBE662DC4DB20001413DE /* CBTextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBTextViewController.swift; sourceTree = "<group>"; };
+		F41EBE682DC4DB20001413DE /* CBCommuteDiffVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCommuteDiffVC.swift; sourceTree = "<group>"; };
+		F41EBE692DC4DB20001413DE /* CBFlighDataChangeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBFlighDataChangeVC.swift; sourceTree = "<group>"; };
+		F41EBE6B2DC4DB20001413DE /* CBAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBAlertVC.swift; sourceTree = "<group>"; };
+		F41EBE6D2DC4DB20001413DE /* YouTubeTemplate.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = YouTubeTemplate.txt; sourceTree = "<group>"; };
+		F41EBE6F2DC4DB20001413DE /* CBLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLoginViewController.swift; sourceTree = "<group>"; };
+		F41EBE702DC4DB20001413DE /* LoginEmbeddedController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginEmbeddedController.swift; sourceTree = "<group>"; };
+		F41EBE722DC4DB20001413DE /* CBHelpVideosController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBHelpVideosController.swift; sourceTree = "<group>"; };
+		F41EBE732DC4DB20001413DE /* contactUsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = contactUsViewController.swift; sourceTree = "<group>"; };
+		F41EBE742DC4DB20001413DE /* defenitionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = defenitionsViewController.swift; sourceTree = "<group>"; };
+		F41EBE752DC4DB20001413DE /* faqViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = faqViewController.swift; sourceTree = "<group>"; };
+		F41EBE762DC4DB20001413DE /* helpMenuItemsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helpMenuItemsViewController.swift; sourceTree = "<group>"; };
+		F41EBE772DC4DB20001413DE /* helpMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helpMenuViewController.swift; sourceTree = "<group>"; };
+		F41EBE782DC4DB20001413DE /* latestNewsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = latestNewsViewController.swift; sourceTree = "<group>"; };
+		F41EBE792DC4DB20001413DE /* lineValuesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = lineValuesViewController.swift; sourceTree = "<group>"; };
+		F41EBE7A2DC4DB20001413DE /* mySubscriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mySubscriptionViewController.swift; sourceTree = "<group>"; };
+		F41EBE7B2DC4DB20001413DE /* quickTutorialViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = quickTutorialViewController.swift; sourceTree = "<group>"; };
+		F41EBE7C2DC4DB20001413DE /* serviceAgreementViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = serviceAgreementViewController.swift; sourceTree = "<group>"; };
+		F41EBE7D2DC4DB20001413DE /* swaptimizerHelpMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swaptimizerHelpMenuViewController.swift; sourceTree = "<group>"; };
+		F41EBE7E2DC4DB20001413DE /* userAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = userAccountViewController.swift; sourceTree = "<group>"; };
+		F41EBE802DC4DB20001413DE /* CBDocumentsCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBDocumentsCollectionViewController.swift; sourceTree = "<group>"; };
+		F41EBE812DC4DB20001413DE /* DocumentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentCell.swift; sourceTree = "<group>"; };
+		F41EBE832DC4DB20001413DE /* SecretMethodsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecretMethodsViewController.swift; sourceTree = "<group>"; };
+		F41EBE852DC4DB20001413DE /* EmbeddedSettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedSettingsVC.swift; sourceTree = "<group>"; };
+		F41EBE862DC4DB20001413DE /* MyCalendarVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCalendarVC.swift; sourceTree = "<group>"; };
+		F41EBE872DC4DB20001413DE /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		F41EBE892DC4DB20001413DE /* CBsyncConflictViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBsyncConflictViewController.swift; sourceTree = "<group>"; };
+		F41EBE8A2DC4DB20001413DE /* CBSyncInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSyncInfoViewController.swift; sourceTree = "<group>"; };
+		F41EBE8C2DC4DB20001413DE /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
+		F41EBE8F2DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CrewBid_iPad_Swift.xcdatamodel; sourceTree = "<group>"; };
 		F4CF5A282D891A3800A351DB /* CrewBid iPad_Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CrewBid iPad_Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		F4CF5A3D2D891A3A00A351DB /* Exceptions for "CrewBid iPad_Swift" folder in "CrewBid iPad_Swift" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"Common Files/Info.plist",
-				"ViewControllers/Bid Document/LineValues.plist",
-			);
-			target = F4CF5A272D891A3800A351DB /* CrewBid iPad_Swift */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		F4CF5A2A2D891A3800A351DB /* CrewBid iPad_Swift */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				F4CF5A3D2D891A3A00A351DB /* Exceptions for "CrewBid iPad_Swift" folder in "CrewBid iPad_Swift" target */,
-			);
-			path = "CrewBid iPad_Swift";
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		F4CF5A252D891A3800A351DB /* Frameworks */ = {
@@ -59,10 +639,743 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		F41EBD302DC4DB20001413DE /* collectionViewCells */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD292DC4DB20001413DE /* AwardCalendarCollectionViewCell.swift */,
+				F41EBD2A2DC4DB20001413DE /* contactUsCollectionViewCell.swift */,
+				F41EBD2B2DC4DB20001413DE /* helpMenuItemCollectionViewCell.swift */,
+				F41EBD2C2DC4DB20001413DE /* mySubscriptionCollectionViewCell.swift */,
+				F41EBD2D2DC4DB20001413DE /* quickTutorialCollectionViewCell.swift */,
+				F41EBD2E2DC4DB20001413DE /* swaptimizerHelpMenuCollectionViewCell.swift */,
+				F41EBD2F2DC4DB20001413DE /* VideoCollectionViewCell.swift */,
+			);
+			path = collectionViewCells;
+			sourceTree = "<group>";
+		};
+		F41EBD332DC4DB20001413DE /* BIBidPeriod */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD312DC4DB20001413DE /* BIBidPeriod+CoreDataClass.swift */,
+				F41EBD322DC4DB20001413DE /* BIBidPeriod+CoreDataProperties.swift */,
+			);
+			path = BIBidPeriod;
+			sourceTree = "<group>";
+		};
+		F41EBD362DC4DB20001413DE /* BIBidReceipt */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD342DC4DB20001413DE /* BIBidReceipt+CoreDataClass.swift */,
+				F41EBD352DC4DB20001413DE /* BIBidReceipt+CoreDataProperties.swift */,
+			);
+			path = BIBidReceipt;
+			sourceTree = "<group>";
+		};
+		F41EBD392DC4DB20001413DE /* Filter */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD372DC4DB20001413DE /* BIFilterRule+CoreDataClass.swift */,
+				F41EBD382DC4DB20001413DE /* BIFilterRule+CoreDataProperties.swift */,
+			);
+			path = Filter;
+			sourceTree = "<group>";
+		};
+		F41EBD3C2DC4DB20001413DE /* Sort */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD3A2DC4DB20001413DE /* BILineSort+CoreDataClass.swift */,
+				F41EBD3B2DC4DB20001413DE /* BILineSort+CoreDataProperties.swift */,
+			);
+			path = Sort;
+			sourceTree = "<group>";
+		};
+		F41EBD5F2DC4DB20001413DE /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD332DC4DB20001413DE /* BIBidPeriod */,
+				F41EBD362DC4DB20001413DE /* BIBidReceipt */,
+				F41EBD392DC4DB20001413DE /* Filter */,
+				F41EBD3C2DC4DB20001413DE /* Sort */,
+				F41EBD3D2DC4DB20001413DE /* BIDay+CoreDataClass.swift */,
+				F41EBD3E2DC4DB20001413DE /* BIDay+CoreDataProperties.swift */,
+				F41EBD3F2DC4DB20001413DE /* BIDayInfo+CoreDataClass.swift */,
+				F41EBD402DC4DB20001413DE /* BIDayInfo+CoreDataProperties.swift */,
+				F41EBD412DC4DB20001413DE /* BIInsertionPoint+CoreDataClass.swift */,
+				F41EBD422DC4DB20001413DE /* BIInsertionPoint+CoreDataProperties.swift */,
+				F41EBD432DC4DB20001413DE /* BILeg+CoreDataClass.swift */,
+				F41EBD442DC4DB20001413DE /* BILeg+CoreDataProperties.swift */,
+				F41EBD452DC4DB20001413DE /* BILegInfo+CoreDataClass.swift */,
+				F41EBD462DC4DB20001413DE /* BILegInfo+CoreDataProperties.swift */,
+				F41EBD472DC4DB20001413DE /* BILine+CoreDataClass.swift */,
+				F41EBD482DC4DB20001413DE /* BILine+CoreDataProperties.swift */,
+				F41EBD492DC4DB20001413DE /* BILineSortKeyMap+CoreDataClass.swift */,
+				F41EBD4A2DC4DB20001413DE /* BILineSortKeyMap+CoreDataProperties.swift */,
+				F41EBD4B2DC4DB20001413DE /* BITrip+CoreDataClass.swift */,
+				F41EBD4C2DC4DB20001413DE /* BITrip+CoreDataProperties.swift */,
+				F41EBD4D2DC4DB20001413DE /* BITripInfo+CoreDataClass.swift */,
+				F41EBD4E2DC4DB20001413DE /* BITripInfo+CoreDataProperties.swift */,
+				F41EBD4F2DC4DB20001413DE /* BIVacation+CoreDataClass.swift */,
+				F41EBD502DC4DB20001413DE /* BIVacation+CoreDataProperties.swift */,
+				F41EBD512DC4DB20001413DE /* Commutability+CoreDataClass.swift */,
+				F41EBD522DC4DB20001413DE /* Commutability+CoreDataProperties.swift */,
+				F41EBD532DC4DB20001413DE /* CommuteTime+CoreDataClass.swift */,
+				F41EBD542DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift */,
+				F41EBD552DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld */,
+				F41EBD562DC4DB20001413DE /* CrewBidUpdateData+CoreDataClass.swift */,
+				F41EBD572DC4DB20001413DE /* CrewBidUpdateData+CoreDataProperties.swift */,
+				F41EBD582DC4DB20001413DE /* OvernightBulk+CoreDataClass.swift */,
+				F41EBD592DC4DB20001413DE /* OvernightBulk+CoreDataProperties.swift */,
+				F41EBD5A2DC4DB20001413DE /* ThirdPartyURL.plist */,
+				F41EBD5B2DC4DB20001413DE /* VacationArrayFromServer+CoreDataClass.swift */,
+				F41EBD5C2DC4DB20001413DE /* VacationArrayFromServer+CoreDataProperties.swift */,
+				F41EBD5D2DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift */,
+				F41EBD5E2DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift */,
+			);
+			path = CoreData;
+			sourceTree = "<group>";
+		};
+		F41EBD652DC4DB20001413DE /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD602DC4DB20001413DE /* AppDelegate.swift */,
+				F41EBD612DC4DB20001413DE /* Assets.xcassets */,
+				F41EBD622DC4DB20001413DE /* SceneDelegate.swift */,
+				F41EBD632DC4DB20001413DE /* SWAPtimizer Tutorial.xcassets */,
+				F41EBD642DC4DB20001413DE /* Tutorial.xcassets */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F41EBD682DC4DB20001413DE /* Common Files */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD5F2DC4DB20001413DE /* CoreData */,
+				F41EBD652DC4DB20001413DE /* Supporting Files */,
+				F41EBD662DC4DB20001413DE /* BICalendarData.swift */,
+				F41EBD672DC4DB20001413DE /* Info.plist */,
+			);
+			path = "Common Files";
+			sourceTree = "<group>";
+		};
+		F41EBD6F2DC4DB20001413DE /* documents */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD692DC4DB20001413DE /* Definitions.pdf */,
+				F41EBD6A2DC4DB20001413DE /* FAQs.pdf */,
+				F41EBD6B2DC4DB20001413DE /* LatestNewssdsds.pdf */,
+				F41EBD6C2DC4DB20001413DE /* LineValues.pdf */,
+				F41EBD6D2DC4DB20001413DE /* SWAPtimizerDefinitions.pdf */,
+				F41EBD6E2DC4DB20001413DE /* SWAPtimizerFAQ.pdf */,
+			);
+			path = documents;
+			sourceTree = "<group>";
+		};
+		F41EBD7C2DC4DB20001413DE /* helpMenu1 */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD702DC4DB20001413DE /* agreement@2x.png */,
+				F41EBD712DC4DB20001413DE /* document.png */,
+				F41EBD722DC4DB20001413DE /* Folder.png */,
+				F41EBD732DC4DB20001413DE /* Help_preserver.png */,
+				F41EBD742DC4DB20001413DE /* Link.png */,
+				F41EBD752DC4DB20001413DE /* Mail.png */,
+				F41EBD762DC4DB20001413DE /* Movie.png */,
+				F41EBD772DC4DB20001413DE /* Notebook.png */,
+				F41EBD782DC4DB20001413DE /* Shopping.png */,
+				F41EBD792DC4DB20001413DE /* Update.png */,
+				F41EBD7A2DC4DB20001413DE /* user.png */,
+				F41EBD7B2DC4DB20001413DE /* Vacation1.png */,
+			);
+			path = helpMenu1;
+			sourceTree = "<group>";
+		};
+		F41EBDC72DC4DB20001413DE /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD7C2DC4DB20001413DE /* helpMenu1 */,
+				F41EBD7D2DC4DB20001413DE /* BlueRect.png */,
+				F41EBD7E2DC4DB20001413DE /* GrayRect.png */,
+				F41EBD7F2DC4DB20001413DE /* GreenRect.png */,
+				F41EBD802DC4DB20001413DE /* NavBar-doneButton.png */,
+				F41EBD812DC4DB20001413DE /* OrangeRect.png */,
+				F41EBD822DC4DB20001413DE /* PurpleRect.png */,
+				F41EBD832DC4DB20001413DE /* RedRect.png */,
+				F41EBD842DC4DB20001413DE /* TripButton-rounded-both-brown_iOS7.png */,
+				F41EBD852DC4DB20001413DE /* TripButton-rounded-both-brown_iOS7@2x.png */,
+				F41EBD862DC4DB20001413DE /* TripButton-rounded-both-FVBlue_iOS7.png */,
+				F41EBD872DC4DB20001413DE /* TripButton-rounded-both-FVBlue_iOS7@2x.png */,
+				F41EBD882DC4DB20001413DE /* TripButton-rounded-both-green.png */,
+				F41EBD892DC4DB20001413DE /* TripButton-rounded-both-green_iOS7.png */,
+				F41EBD8A2DC4DB20001413DE /* TripButton-rounded-both-green_iOS7@2x.png */,
+				F41EBD8B2DC4DB20001413DE /* TripButton-rounded-both-green@2x.png */,
+				F41EBD8C2DC4DB20001413DE /* TripButton-rounded-both-orange.png */,
+				F41EBD8D2DC4DB20001413DE /* TripButton-rounded-both-orange_iOS7.png */,
+				F41EBD8E2DC4DB20001413DE /* TripButton-rounded-both-orange_iOS7@2x.png */,
+				F41EBD8F2DC4DB20001413DE /* TripButton-rounded-both-orange@2x.png */,
+				F41EBD902DC4DB20001413DE /* TripButton-rounded-both-purple.png */,
+				F41EBD912DC4DB20001413DE /* TripButton-rounded-both-purple_iOS7.png */,
+				F41EBD922DC4DB20001413DE /* TripButton-rounded-both-purple_iOS7@2x.png */,
+				F41EBD932DC4DB20001413DE /* TripButton-rounded-both-purple@2x.png */,
+				F41EBD942DC4DB20001413DE /* TripButton-rounded-both-red.png */,
+				F41EBD952DC4DB20001413DE /* TripButton-rounded-both-red@2x.png */,
+				F41EBD962DC4DB20001413DE /* TripButton-rounded-both-red2_iOS7.png */,
+				F41EBD972DC4DB20001413DE /* TripButton-rounded-both-red2_iOS7@2x.png */,
+				F41EBD982DC4DB20001413DE /* TripButton-rounded-both-yellow_iOS7.png */,
+				F41EBD992DC4DB20001413DE /* TripButton-rounded-both-yellow_iOS7@2x.png */,
+				F41EBD9A2DC4DB20001413DE /* TripButton-rounded-left-brown_iOS7.png */,
+				F41EBD9B2DC4DB20001413DE /* TripButton-rounded-left-brown_iOS7@2x.png */,
+				F41EBD9C2DC4DB20001413DE /* TripButton-rounded-left-FVBlue_iOS7.png */,
+				F41EBD9D2DC4DB20001413DE /* TripButton-rounded-left-FVBlue_iOS7@2x.png */,
+				F41EBD9E2DC4DB20001413DE /* TripButton-rounded-left-green.png */,
+				F41EBD9F2DC4DB20001413DE /* TripButton-rounded-left-green_iOS7.png */,
+				F41EBDA02DC4DB20001413DE /* TripButton-rounded-left-green_iOS7@2x.png */,
+				F41EBDA12DC4DB20001413DE /* TripButton-rounded-left-green@2x.png */,
+				F41EBDA22DC4DB20001413DE /* TripButton-rounded-left-orange.png */,
+				F41EBDA32DC4DB20001413DE /* TripButton-rounded-left-orange_iOS7.png */,
+				F41EBDA42DC4DB20001413DE /* TripButton-rounded-left-orange_iOS7@2x.png */,
+				F41EBDA52DC4DB20001413DE /* TripButton-rounded-left-orange@2x.png */,
+				F41EBDA62DC4DB20001413DE /* TripButton-rounded-left-purple.png */,
+				F41EBDA72DC4DB20001413DE /* TripButton-rounded-left-purple_iOS7.png */,
+				F41EBDA82DC4DB20001413DE /* TripButton-rounded-left-purple_iOS7@2x.png */,
+				F41EBDA92DC4DB20001413DE /* TripButton-rounded-left-purple@2x.png */,
+				F41EBDAA2DC4DB20001413DE /* TripButton-rounded-left-red.png */,
+				F41EBDAB2DC4DB20001413DE /* TripButton-rounded-left-red@2x.png */,
+				F41EBDAC2DC4DB20001413DE /* TripButton-rounded-left-red2_iOS7.png */,
+				F41EBDAD2DC4DB20001413DE /* TripButton-rounded-left-red2_iOS7@2x.png */,
+				F41EBDAE2DC4DB20001413DE /* TripButton-rounded-left-yellow_iOS7.png */,
+				F41EBDAF2DC4DB20001413DE /* TripButton-rounded-left-yellow_iOS7@2x.png */,
+				F41EBDB02DC4DB20001413DE /* TripButton-rounded-right-brown_iOS7.png */,
+				F41EBDB12DC4DB20001413DE /* TripButton-rounded-right-brown_iOS7@2x.png */,
+				F41EBDB22DC4DB20001413DE /* TripButton-rounded-right-FVBlue_iOS7.png */,
+				F41EBDB32DC4DB20001413DE /* TripButton-rounded-right-FVBlue_iOS7@2x.png */,
+				F41EBDB42DC4DB20001413DE /* TripButton-rounded-right-green.png */,
+				F41EBDB52DC4DB20001413DE /* TripButton-rounded-right-green_iOS7.png */,
+				F41EBDB62DC4DB20001413DE /* TripButton-rounded-right-green_iOS7@2x.png */,
+				F41EBDB72DC4DB20001413DE /* TripButton-rounded-right-green@2x.png */,
+				F41EBDB82DC4DB20001413DE /* TripButton-rounded-right-orange.png */,
+				F41EBDB92DC4DB20001413DE /* TripButton-rounded-right-orange_iOS7.png */,
+				F41EBDBA2DC4DB20001413DE /* TripButton-rounded-right-orange_iOS7@2x.png */,
+				F41EBDBB2DC4DB20001413DE /* TripButton-rounded-right-orange@2x.png */,
+				F41EBDBC2DC4DB20001413DE /* TripButton-rounded-right-purple.png */,
+				F41EBDBD2DC4DB20001413DE /* TripButton-rounded-right-purple_iOS7.png */,
+				F41EBDBE2DC4DB20001413DE /* TripButton-rounded-right-purple_iOS7@2x.png */,
+				F41EBDBF2DC4DB20001413DE /* TripButton-rounded-right-purple@2x.png */,
+				F41EBDC02DC4DB20001413DE /* TripButton-rounded-right-red.png */,
+				F41EBDC12DC4DB20001413DE /* TripButton-rounded-right-red@2x.png */,
+				F41EBDC22DC4DB20001413DE /* TripButton-rounded-right-red2_iOS7.png */,
+				F41EBDC32DC4DB20001413DE /* TripButton-rounded-right-red2_iOS7@2x.png */,
+				F41EBDC42DC4DB20001413DE /* TripButton-rounded-right-yellow_iOS7.png */,
+				F41EBDC52DC4DB20001413DE /* TripButton-rounded-right-yellow_iOS7@2x.png */,
+				F41EBDC62DC4DB20001413DE /* YellowRect.png */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
+		F41EBDCA2DC4DB20001413DE /* PopOver */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBDC82DC4DB20001413DE /* KUIPopOver.swift */,
+				F41EBDC92DC4DB20001413DE /* KUIPopOverUsable.swift */,
+			);
+			path = PopOver;
+			sourceTree = "<group>";
+		};
+		F41EBDD42DC4DB20001413DE /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD6F2DC4DB20001413DE /* documents */,
+				F41EBDC72DC4DB20001413DE /* Images */,
+				F41EBDCA2DC4DB20001413DE /* PopOver */,
+				F41EBDCB2DC4DB20001413DE /* CBColor.swift */,
+				F41EBDCC2DC4DB20001413DE /* CBGlobalMethods.swift */,
+				F41EBDCD2DC4DB20001413DE /* CBToggleButton.swift */,
+				F41EBDCE2DC4DB20001413DE /* CBTripButton.swift */,
+				F41EBDCF2DC4DB20001413DE /* Constants.swift */,
+				F41EBDD02DC4DB20001413DE /* CustomKeyboard.swift */,
+				F41EBDD12DC4DB20001413DE /* CustomUIClass.swift */,
+				F41EBDD22DC4DB20001413DE /* Extensions.swift */,
+				F41EBDD32DC4DB20001413DE /* iOSDropDown.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		F41EBDD62DC4DB20001413DE /* LineValueView */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBDD52DC4DB20001413DE /* CBLineValues.swift */,
+			);
+			path = LineValueView;
+			sourceTree = "<group>";
+		};
+		F41EBDDC2DC4DB20001413DE /* tableViewCells */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBDD72DC4DB20001413DE /* CBBidActionTableCell.swift */,
+				F41EBDD82DC4DB20001413DE /* CBCommuteDiffVCTableCell.swift */,
+				F41EBDD92DC4DB20001413DE /* CBFlightDataChangeVCTableCell.swift */,
+				F41EBDDA2DC4DB20001413DE /* ShowCAPTableViewCell.swift */,
+				F41EBDDB2DC4DB20001413DE /* SwitchTableViewCell.swift */,
+			);
+			path = tableViewCells;
+			sourceTree = "<group>";
+		};
+		F41EBDEA2DC4DB20001413DE /* View */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBDDD2DC4DB20001413DE /* BidActions.storyboard */,
+				F41EBDDE2DC4DB20001413DE /* BidDocument.storyboard */,
+				F41EBDDF2DC4DB20001413DE /* BidInfo.storyboard */,
+				F41EBDE02DC4DB20001413DE /* Filter.storyboard */,
+				F41EBDE12DC4DB20001413DE /* FlightDataChange.storyboard */,
+				F41EBDE22DC4DB20001413DE /* HelpMenu.storyboard */,
+				F41EBDE42DC4DB20001413DE /* LaunchScreen.storyboard */,
+				F41EBDE52DC4DB20001413DE /* LineCalendar.storyboard */,
+				F41EBDE72DC4DB20001413DE /* Main.storyboard */,
+				F41EBDE82DC4DB20001413DE /* Secret.storyboard */,
+				F41EBDE92DC4DB20001413DE /* Sync.storyboard */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		F41EBDF32DC4DB20001413DE /* Awards */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBDEB2DC4DB20001413DE /* AwardActionsTableController.swift */,
+				F41EBDEC2DC4DB20001413DE /* CBAwardEmpValidationVC.swift */,
+				F41EBDED2DC4DB20001413DE /* CBAwardLineCalendarViewController.swift */,
+				F41EBDEE2DC4DB20001413DE /* CBAwardsRetrievalViewController.swift */,
+				F41EBDEF2DC4DB20001413DE /* CBLineNumberController.swift */,
+				F41EBDF02DC4DB20001413DE /* CBShowAwardsViewController.swift */,
+				F41EBDF12DC4DB20001413DE /* CBTripAwardTextViewController.swift */,
+				F41EBDF22DC4DB20001413DE /* CBTripAwardViewController.swift */,
+			);
+			path = Awards;
+			sourceTree = "<group>";
+		};
+		F41EBDFB2DC4DB20001413DE /* Bid Actions */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBDF42DC4DB20001413DE /* CBBidActionsViewController.swift */,
+				F41EBDF52DC4DB20001413DE /* CBSpreadsheetImportController.swift */,
+				F41EBDF62DC4DB20001413DE /* EmbeddedAwardEmpValidationVC.swift */,
+				F41EBDF72DC4DB20001413DE /* EmbeddedBidActionsVC.swift */,
+				F41EBDF82DC4DB20001413DE /* EmbeddedCredentialVC.swift */,
+				F41EBDF92DC4DB20001413DE /* EmbeddedLineImporterVC.swift */,
+				F41EBDFA2DC4DB20001413DE /* EmbeddedShowCAPVC.swift */,
+			);
+			path = "Bid Actions";
+			sourceTree = "<group>";
+		};
+		F41EBE0B2DC4DB20001413DE /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBDFC2DC4DB20001413DE /* CBAmPmRuleCell.swift */,
+				F41EBDFD2DC4DB20001413DE /* CBCityComparisonRuleCell.swift */,
+				F41EBDFE2DC4DB20001413DE /* CBCommutingRuleCell.swift */,
+				F41EBDFF2DC4DB20001413DE /* CBComparisonRuleCell.swift */,
+				F41EBE002DC4DB20001413DE /* CBComutabilityRuleCell.swift */,
+				F41EBE012DC4DB20001413DE /* CBDayMonthRuleCell.swift */,
+				F41EBE022DC4DB20001413DE /* CBFaReserveRuleCell.swift */,
+				F41EBE032DC4DB20001413DE /* CBLineTypeRuleCell.swift */,
+				F41EBE042DC4DB20001413DE /* CBOvernightBulkRuleCell.swift */,
+				F41EBE052DC4DB20001413DE /* CBPositionRuleCell.swift */,
+				F41EBE062DC4DB20001413DE /* CBReportReleaseRuleCellTableViewCell.swift */,
+				F41EBE072DC4DB20001413DE /* CBTripLengthRuleCell.swift */,
+				F41EBE082DC4DB20001413DE /* CBUserFlagRuleCell.swift */,
+				F41EBE092DC4DB20001413DE /* CBWeekdayRuleCell.swift */,
+				F41EBE0A2DC4DB20001413DE /* CBWorkBlockRuleCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		F41EBE0D2DC4DB20001413DE /* MenuForFilterCell */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE0C2DC4DB20001413DE /* RefreshController.swift */,
+			);
+			path = MenuForFilterCell;
+			sourceTree = "<group>";
+		};
+		F41EBE122DC4DB20001413DE /* Plist */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE0E2DC4DB20001413DE /* FilterRules.plist */,
+				F41EBE0F2DC4DB20001413DE /* FilterRulesFaVacation.plist */,
+				F41EBE102DC4DB20001413DE /* FilterRulesRound2.plist */,
+				F41EBE112DC4DB20001413DE /* FilterRulesSwaptimizer.plist */,
+			);
+			path = Plist;
+			sourceTree = "<group>";
+		};
+		F41EBE162DC4DB20001413DE /* Filter */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE0B2DC4DB20001413DE /* Cells */,
+				F41EBE0D2DC4DB20001413DE /* MenuForFilterCell */,
+				F41EBE122DC4DB20001413DE /* Plist */,
+				F41EBE132DC4DB20001413DE /* CBFilterRulesTableVC.swift */,
+				F41EBE142DC4DB20001413DE /* CBFlagSortPopUp.swift */,
+				F41EBE152DC4DB20001413DE /* CBRulesMenuTableVC.swift */,
+			);
+			path = Filter;
+			sourceTree = "<group>";
+		};
+		F41EBE182DC4DB20001413DE /* Preset */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE172DC4DB20001413DE /* CBPresetsTVC.swift */,
+			);
+			path = Preset;
+			sourceTree = "<group>";
+		};
+		F41EBE1E2DC4DB20001413DE /* LineValues */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE192DC4DB20001413DE /* CBBidListSmallCollectionViewCell.swift */,
+				F41EBE1A2DC4DB20001413DE /* CBLineCalendarCollectionView.swift */,
+				F41EBE1B2DC4DB20001413DE /* CBLineValuesMenuController.swift */,
+				F41EBE1C2DC4DB20001413DE /* CBScratchPadVC.swift */,
+				F41EBE1D2DC4DB20001413DE /* LineValues.plist */,
+			);
+			path = LineValues;
+			sourceTree = "<group>";
+		};
+		F41EBE252DC4DB20001413DE /* ScratchPad */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE1E2DC4DB20001413DE /* LineValues */,
+				F41EBE1F2DC4DB20001413DE /* CBLineValueView.swift */,
+				F41EBE202DC4DB20001413DE /* CBTripTextViewController.swift */,
+				F41EBE212DC4DB20001413DE /* CBUserFlagTableController.swift */,
+				F41EBE222DC4DB20001413DE /* RefreshMenuController.swift */,
+				F41EBE232DC4DB20001413DE /* RefreshMenuTableViewCell.swift */,
+				F41EBE242DC4DB20001413DE /* ScratchPadTableCellTableViewCell.swift */,
+			);
+			path = ScratchPad;
+			sourceTree = "<group>";
+		};
+		F41EBE2B2DC4DB20001413DE /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE262DC4DB20001413DE /* CBCommutabilitySortCell.swift */,
+				F41EBE272DC4DB20001413DE /* CBCommutingSortCell.swift */,
+				F41EBE282DC4DB20001413DE /* CBDayMonthSortCell.swift */,
+				F41EBE292DC4DB20001413DE /* CBFlagSortCell.swift */,
+				F41EBE2A2DC4DB20001413DE /* CBLineSortCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		F41EBE312DC4DB20001413DE /* Plist */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE2C2DC4DB20001413DE /* LineSorts.plist */,
+				F41EBE2D2DC4DB20001413DE /* LineSortsFA.plist */,
+				F41EBE2E2DC4DB20001413DE /* LineSortsFaVacation.plist */,
+				F41EBE2F2DC4DB20001413DE /* LineSortsRound2.plist */,
+				F41EBE302DC4DB20001413DE /* LineSortsSwaptimizer.plist */,
+			);
+			path = Plist;
+			sourceTree = "<group>";
+		};
+		F41EBE382DC4DB20001413DE /* Sort */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE2B2DC4DB20001413DE /* Cells */,
+				F41EBE312DC4DB20001413DE /* Plist */,
+				F41EBE322DC4DB20001413DE /* CBCommuteInfoViewController.swift */,
+				F41EBE332DC4DB20001413DE /* CBLineSortsTVC.swift */,
+				F41EBE342DC4DB20001413DE /* CBMenuTableVC.swift */,
+				F41EBE352DC4DB20001413DE /* CBSortRulesMenuTableVC.swift */,
+				F41EBE362DC4DB20001413DE /* CommutableTimeViewController.swift */,
+				F41EBE372DC4DB20001413DE /* CommuteCityViewController.swift */,
+			);
+			path = Sort;
+			sourceTree = "<group>";
+		};
+		F41EBE3A2DC4DB20001413DE /* Bid Actions */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE162DC4DB20001413DE /* Filter */,
+				F41EBE182DC4DB20001413DE /* Preset */,
+				F41EBE252DC4DB20001413DE /* ScratchPad */,
+				F41EBE382DC4DB20001413DE /* Sort */,
+				F41EBE392DC4DB20001413DE /* CBBidActionsVC.swift */,
+			);
+			path = "Bid Actions";
+			sourceTree = "<group>";
+		};
+		F41EBE3E2DC4DB20001413DE /* BidListCells */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE3B2DC4DB20001413DE /* CBBidlineViewTableViewCell.swift */,
+				F41EBE3C2DC4DB20001413DE /* CBBidListCalenderViewCell.swift */,
+				F41EBE3D2DC4DB20001413DE /* InnerCollectionViewCell.swift */,
+			);
+			path = BidListCells;
+			sourceTree = "<group>";
+		};
+		F41EBE402DC4DB20001413DE /* ASort */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE3F2DC4DB20001413DE /* CBBidListSortOptions.swift */,
+			);
+			path = ASort;
+			sourceTree = "<group>";
+		};
+		F41EBE432DC4DB20001413DE /* BidListAction */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE412DC4DB20001413DE /* BidListActionVC.swift */,
+				F41EBE422DC4DB20001413DE /* CBBidListActionTableCell.swift */,
+			);
+			path = BidListAction;
+			sourceTree = "<group>";
+		};
+		F41EBE452DC4DB20001413DE /* BidListLineMenu */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE442DC4DB20001413DE /* CBBidLineMenuController.swift */,
+			);
+			path = BidListLineMenu;
+			sourceTree = "<group>";
+		};
+		F41EBE462DC4DB20001413DE /* BidListMenu */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE402DC4DB20001413DE /* ASort */,
+				F41EBE432DC4DB20001413DE /* BidListAction */,
+				F41EBE452DC4DB20001413DE /* BidListLineMenu */,
+			);
+			path = BidListMenu;
+			sourceTree = "<group>";
+		};
+		F41EBE492DC4DB20001413DE /* ExpandedCalendarView */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE472DC4DB20001413DE /* CBExpandedBidLinesTableController.swift */,
+				F41EBE482DC4DB20001413DE /* CBExpandedBidLinesTableControllerCell.swift */,
+			);
+			path = ExpandedCalendarView;
+			sourceTree = "<group>";
+		};
+		F41EBE4C2DC4DB20001413DE /* FaBidListMoveMenu */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE4A2DC4DB20001413DE /* FaMoveBidListCell.swift */,
+				F41EBE4B2DC4DB20001413DE /* FaMoveBidListMenu.swift */,
+			);
+			path = FaBidListMoveMenu;
+			sourceTree = "<group>";
+		};
+		F41EBE4E2DC4DB20001413DE /* BidList */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE3E2DC4DB20001413DE /* BidListCells */,
+				F41EBE462DC4DB20001413DE /* BidListMenu */,
+				F41EBE492DC4DB20001413DE /* ExpandedCalendarView */,
+				F41EBE4C2DC4DB20001413DE /* FaBidListMoveMenu */,
+				F41EBE4D2DC4DB20001413DE /* CBBidListVC.swift */,
+			);
+			path = BidList;
+			sourceTree = "<group>";
+		};
+		F41EBE532DC4DB20001413DE /* Bid Document */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE3A2DC4DB20001413DE /* Bid Actions */,
+				F41EBE4E2DC4DB20001413DE /* BidList */,
+				F41EBE4F2DC4DB20001413DE /* CBBidDocumentController.swift */,
+				F41EBE502DC4DB20001413DE /* CBReportReleaseCollectionViewController.swift */,
+				F41EBE512DC4DB20001413DE /* CBReportReleaseCVC.swift */,
+				F41EBE522DC4DB20001413DE /* LineValues.plist */,
+			);
+			path = "Bid Document";
+			sourceTree = "<group>";
+		};
+		F41EBE5C2DC4DB20001413DE /* Bid Download */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE542DC4DB20001413DE /* CBBiddataDownloadVC.swift */,
+				F41EBE552DC4DB20001413DE /* CBBIdDataTypeViewController.swift */,
+				F41EBE562DC4DB20001413DE /* CBCredentialsPageVC.swift */,
+				F41EBE572DC4DB20001413DE /* CBDefaultEmployeeVC.swift */,
+				F41EBE582DC4DB20001413DE /* CBDownloadAgainAlertVC.swift */,
+				F41EBE592DC4DB20001413DE /* CBDownloadAlldomicileViewController.swift */,
+				F41EBE5A2DC4DB20001413DE /* CBNewBidVC.swift */,
+				F41EBE5B2DC4DB20001413DE /* CBProgressVC.swift */,
+			);
+			path = "Bid Download";
+			sourceTree = "<group>";
+		};
+		F41EBE612DC4DB20001413DE /* Bid Submission 1 */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE5D2DC4DB20001413DE /* CBOptionalEmployeesPageViewController.swift */,
+				F41EBE5E2DC4DB20001413DE /* CBSubmissionCertifyVC.swift */,
+				F41EBE5F2DC4DB20001413DE /* CBSubmitCredentialVC.swift */,
+				F41EBE602DC4DB20001413DE /* SubmissionErrorVC.swift */,
+			);
+			path = "Bid Submission 1";
+			sourceTree = "<group>";
+		};
+		F41EBE632DC4DB20001413DE /* BidRecipt */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE622DC4DB20001413DE /* CBBidReciptViewController.swift */,
+			);
+			path = BidRecipt;
+			sourceTree = "<group>";
+		};
+		F41EBE652DC4DB20001413DE /* CapDetails */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE642DC4DB20001413DE /* CBCAPViewController.swift */,
+			);
+			path = CapDetails;
+			sourceTree = "<group>";
+		};
+		F41EBE672DC4DB20001413DE /* Cover Letter */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE662DC4DB20001413DE /* CBTextViewController.swift */,
+			);
+			path = "Cover Letter";
+			sourceTree = "<group>";
+		};
+		F41EBE6A2DC4DB20001413DE /* Flight Data Change */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE682DC4DB20001413DE /* CBCommuteDiffVC.swift */,
+				F41EBE692DC4DB20001413DE /* CBFlighDataChangeVC.swift */,
+			);
+			path = "Flight Data Change";
+			sourceTree = "<group>";
+		};
+		F41EBE6C2DC4DB20001413DE /* CBAlertVC */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE6B2DC4DB20001413DE /* CBAlertVC.swift */,
+			);
+			path = CBAlertVC;
+			sourceTree = "<group>";
+		};
+		F41EBE6E2DC4DB20001413DE /* How-to-Videos */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE6D2DC4DB20001413DE /* YouTubeTemplate.txt */,
+			);
+			path = "How-to-Videos";
+			sourceTree = "<group>";
+		};
+		F41EBE712DC4DB20001413DE /* User Account */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE6F2DC4DB20001413DE /* CBLoginViewController.swift */,
+				F41EBE702DC4DB20001413DE /* LoginEmbeddedController.swift */,
+			);
+			path = "User Account";
+			sourceTree = "<group>";
+		};
+		F41EBE7F2DC4DB20001413DE /* Help Menu */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE6C2DC4DB20001413DE /* CBAlertVC */,
+				F41EBE6E2DC4DB20001413DE /* How-to-Videos */,
+				F41EBE712DC4DB20001413DE /* User Account */,
+				F41EBE722DC4DB20001413DE /* CBHelpVideosController.swift */,
+				F41EBE732DC4DB20001413DE /* contactUsViewController.swift */,
+				F41EBE742DC4DB20001413DE /* defenitionsViewController.swift */,
+				F41EBE752DC4DB20001413DE /* faqViewController.swift */,
+				F41EBE762DC4DB20001413DE /* helpMenuItemsViewController.swift */,
+				F41EBE772DC4DB20001413DE /* helpMenuViewController.swift */,
+				F41EBE782DC4DB20001413DE /* latestNewsViewController.swift */,
+				F41EBE792DC4DB20001413DE /* lineValuesViewController.swift */,
+				F41EBE7A2DC4DB20001413DE /* mySubscriptionViewController.swift */,
+				F41EBE7B2DC4DB20001413DE /* quickTutorialViewController.swift */,
+				F41EBE7C2DC4DB20001413DE /* serviceAgreementViewController.swift */,
+				F41EBE7D2DC4DB20001413DE /* swaptimizerHelpMenuViewController.swift */,
+				F41EBE7E2DC4DB20001413DE /* userAccountViewController.swift */,
+			);
+			path = "Help Menu";
+			sourceTree = "<group>";
+		};
+		F41EBE822DC4DB20001413DE /* HomeScreen */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE802DC4DB20001413DE /* CBDocumentsCollectionViewController.swift */,
+				F41EBE812DC4DB20001413DE /* DocumentCell.swift */,
+			);
+			path = HomeScreen;
+			sourceTree = "<group>";
+		};
+		F41EBE842DC4DB20001413DE /* Secret Methods */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE832DC4DB20001413DE /* SecretMethodsViewController.swift */,
+			);
+			path = "Secret Methods";
+			sourceTree = "<group>";
+		};
+		F41EBE882DC4DB20001413DE /* Settings Menu */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE852DC4DB20001413DE /* EmbeddedSettingsVC.swift */,
+				F41EBE862DC4DB20001413DE /* MyCalendarVC.swift */,
+				F41EBE872DC4DB20001413DE /* SettingsViewController.swift */,
+			);
+			path = "Settings Menu";
+			sourceTree = "<group>";
+		};
+		F41EBE8B2DC4DB20001413DE /* Sync */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE892DC4DB20001413DE /* CBsyncConflictViewController.swift */,
+				F41EBE8A2DC4DB20001413DE /* CBSyncInfoViewController.swift */,
+			);
+			path = Sync;
+			sourceTree = "<group>";
+		};
+		F41EBE8D2DC4DB20001413DE /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBDF32DC4DB20001413DE /* Awards */,
+				F41EBDFB2DC4DB20001413DE /* Bid Actions */,
+				F41EBE532DC4DB20001413DE /* Bid Document */,
+				F41EBE5C2DC4DB20001413DE /* Bid Download */,
+				F41EBE612DC4DB20001413DE /* Bid Submission 1 */,
+				F41EBE632DC4DB20001413DE /* BidRecipt */,
+				F41EBE652DC4DB20001413DE /* CapDetails */,
+				F41EBE672DC4DB20001413DE /* Cover Letter */,
+				F41EBE6A2DC4DB20001413DE /* Flight Data Change */,
+				F41EBE7F2DC4DB20001413DE /* Help Menu */,
+				F41EBE822DC4DB20001413DE /* HomeScreen */,
+				F41EBE842DC4DB20001413DE /* Secret Methods */,
+				F41EBE882DC4DB20001413DE /* Settings Menu */,
+				F41EBE8B2DC4DB20001413DE /* Sync */,
+				F41EBE8C2DC4DB20001413DE /* BaseViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		F41EBE8E2DC4DB20001413DE /* CrewBid iPad_Swift */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD302DC4DB20001413DE /* collectionViewCells */,
+				F41EBD682DC4DB20001413DE /* Common Files */,
+				F41EBDD42DC4DB20001413DE /* Helpers */,
+				F41EBDD62DC4DB20001413DE /* LineValueView */,
+				F41EBDDC2DC4DB20001413DE /* tableViewCells */,
+				F41EBDEA2DC4DB20001413DE /* View */,
+				F41EBE8D2DC4DB20001413DE /* ViewControllers */,
+			);
+			path = "CrewBid iPad_Swift";
+			sourceTree = "<group>";
+		};
 		F4CF5A1F2D891A3800A351DB = {
 			isa = PBXGroup;
 			children = (
-				F4CF5A2A2D891A3800A351DB /* CrewBid iPad_Swift */,
+				F41EBE8E2DC4DB20001413DE /* CrewBid iPad_Swift */,
 				8BEADE892DC4A4DB00B3BDF2 /* Frameworks */,
 				F4CF5A292D891A3800A351DB /* Products */,
 			);
@@ -90,9 +1403,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				F4CF5A2A2D891A3800A351DB /* CrewBid iPad_Swift */,
 			);
 			name = "CrewBid iPad_Swift";
 			packageProductDependencies = (
@@ -144,6 +1454,124 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F41EBE902DC4DB20001413DE /* ThirdPartyURL.plist in Resources */,
+				F41EBE912DC4DB20001413DE /* Assets.xcassets in Resources */,
+				F41EBE922DC4DB20001413DE /* SWAPtimizer Tutorial.xcassets in Resources */,
+				F41EBE932DC4DB20001413DE /* Tutorial.xcassets in Resources */,
+				F41EBE952DC4DB20001413DE /* Definitions.pdf in Resources */,
+				F41EBE962DC4DB20001413DE /* FAQs.pdf in Resources */,
+				F41EBE972DC4DB20001413DE /* LatestNewssdsds.pdf in Resources */,
+				F41EBE982DC4DB20001413DE /* LineValues.pdf in Resources */,
+				F41EBE992DC4DB20001413DE /* SWAPtimizerDefinitions.pdf in Resources */,
+				F41EBE9A2DC4DB20001413DE /* SWAPtimizerFAQ.pdf in Resources */,
+				F41EBE9B2DC4DB20001413DE /* agreement@2x.png in Resources */,
+				F41EBE9C2DC4DB20001413DE /* document.png in Resources */,
+				F41EBE9D2DC4DB20001413DE /* Folder.png in Resources */,
+				F41EBE9E2DC4DB20001413DE /* Help_preserver.png in Resources */,
+				F41EBE9F2DC4DB20001413DE /* Link.png in Resources */,
+				F41EBEA02DC4DB20001413DE /* Mail.png in Resources */,
+				F41EBEA12DC4DB20001413DE /* Movie.png in Resources */,
+				F41EBEA22DC4DB20001413DE /* Notebook.png in Resources */,
+				F41EBEA32DC4DB20001413DE /* Shopping.png in Resources */,
+				F41EBEA42DC4DB20001413DE /* Update.png in Resources */,
+				F41EBEA52DC4DB20001413DE /* user.png in Resources */,
+				F41EBEA62DC4DB20001413DE /* Vacation1.png in Resources */,
+				F41EBEA72DC4DB20001413DE /* BlueRect.png in Resources */,
+				F41EBEA82DC4DB20001413DE /* GrayRect.png in Resources */,
+				F41EBEA92DC4DB20001413DE /* GreenRect.png in Resources */,
+				F41EBEAA2DC4DB20001413DE /* NavBar-doneButton.png in Resources */,
+				F41EBEAB2DC4DB20001413DE /* OrangeRect.png in Resources */,
+				F41EBEAC2DC4DB20001413DE /* PurpleRect.png in Resources */,
+				F41EBEAD2DC4DB20001413DE /* RedRect.png in Resources */,
+				F41EBEAE2DC4DB20001413DE /* TripButton-rounded-both-brown_iOS7.png in Resources */,
+				F41EBEAF2DC4DB20001413DE /* TripButton-rounded-both-brown_iOS7@2x.png in Resources */,
+				F41EBEB02DC4DB20001413DE /* TripButton-rounded-both-FVBlue_iOS7.png in Resources */,
+				F41EBEB12DC4DB20001413DE /* TripButton-rounded-both-FVBlue_iOS7@2x.png in Resources */,
+				F41EBEB22DC4DB20001413DE /* TripButton-rounded-both-green.png in Resources */,
+				F41EBEB32DC4DB20001413DE /* TripButton-rounded-both-green_iOS7.png in Resources */,
+				F41EBEB42DC4DB20001413DE /* TripButton-rounded-both-green_iOS7@2x.png in Resources */,
+				F41EBEB52DC4DB20001413DE /* TripButton-rounded-both-green@2x.png in Resources */,
+				F41EBEB62DC4DB20001413DE /* TripButton-rounded-both-orange.png in Resources */,
+				F41EBEB72DC4DB20001413DE /* TripButton-rounded-both-orange_iOS7.png in Resources */,
+				F41EBEB82DC4DB20001413DE /* TripButton-rounded-both-orange_iOS7@2x.png in Resources */,
+				F41EBEB92DC4DB20001413DE /* TripButton-rounded-both-orange@2x.png in Resources */,
+				F41EBEBA2DC4DB20001413DE /* TripButton-rounded-both-purple.png in Resources */,
+				F41EBEBB2DC4DB20001413DE /* TripButton-rounded-both-purple_iOS7.png in Resources */,
+				F41EBEBC2DC4DB20001413DE /* TripButton-rounded-both-purple_iOS7@2x.png in Resources */,
+				F41EBEBD2DC4DB20001413DE /* TripButton-rounded-both-purple@2x.png in Resources */,
+				F41EBEBE2DC4DB20001413DE /* TripButton-rounded-both-red.png in Resources */,
+				F41EBEBF2DC4DB20001413DE /* TripButton-rounded-both-red@2x.png in Resources */,
+				F41EBEC02DC4DB20001413DE /* TripButton-rounded-both-red2_iOS7.png in Resources */,
+				F41EBEC12DC4DB20001413DE /* TripButton-rounded-both-red2_iOS7@2x.png in Resources */,
+				F41EBEC22DC4DB20001413DE /* TripButton-rounded-both-yellow_iOS7.png in Resources */,
+				F41EBEC32DC4DB20001413DE /* TripButton-rounded-both-yellow_iOS7@2x.png in Resources */,
+				F41EBEC42DC4DB20001413DE /* TripButton-rounded-left-brown_iOS7.png in Resources */,
+				F41EBEC52DC4DB20001413DE /* TripButton-rounded-left-brown_iOS7@2x.png in Resources */,
+				F41EBEC62DC4DB20001413DE /* TripButton-rounded-left-FVBlue_iOS7.png in Resources */,
+				F41EBEC72DC4DB20001413DE /* TripButton-rounded-left-FVBlue_iOS7@2x.png in Resources */,
+				F41EBEC82DC4DB20001413DE /* TripButton-rounded-left-green.png in Resources */,
+				F41EBEC92DC4DB20001413DE /* TripButton-rounded-left-green_iOS7.png in Resources */,
+				F41EBECA2DC4DB20001413DE /* TripButton-rounded-left-green_iOS7@2x.png in Resources */,
+				F41EBECB2DC4DB20001413DE /* TripButton-rounded-left-green@2x.png in Resources */,
+				F41EBECC2DC4DB20001413DE /* TripButton-rounded-left-orange.png in Resources */,
+				F41EBECD2DC4DB20001413DE /* TripButton-rounded-left-orange_iOS7.png in Resources */,
+				F41EBECE2DC4DB20001413DE /* TripButton-rounded-left-orange_iOS7@2x.png in Resources */,
+				F41EBECF2DC4DB20001413DE /* TripButton-rounded-left-orange@2x.png in Resources */,
+				F41EBED02DC4DB20001413DE /* TripButton-rounded-left-purple.png in Resources */,
+				F41EBED12DC4DB20001413DE /* TripButton-rounded-left-purple_iOS7.png in Resources */,
+				F41EBED22DC4DB20001413DE /* TripButton-rounded-left-purple_iOS7@2x.png in Resources */,
+				F41EBED32DC4DB20001413DE /* TripButton-rounded-left-purple@2x.png in Resources */,
+				F41EBED42DC4DB20001413DE /* TripButton-rounded-left-red.png in Resources */,
+				F41EBED52DC4DB20001413DE /* TripButton-rounded-left-red@2x.png in Resources */,
+				F41EBED62DC4DB20001413DE /* TripButton-rounded-left-red2_iOS7.png in Resources */,
+				F41EBED72DC4DB20001413DE /* TripButton-rounded-left-red2_iOS7@2x.png in Resources */,
+				F41EBED82DC4DB20001413DE /* TripButton-rounded-left-yellow_iOS7.png in Resources */,
+				F41EBED92DC4DB20001413DE /* TripButton-rounded-left-yellow_iOS7@2x.png in Resources */,
+				F41EBEDA2DC4DB20001413DE /* TripButton-rounded-right-brown_iOS7.png in Resources */,
+				F41EBEDB2DC4DB20001413DE /* TripButton-rounded-right-brown_iOS7@2x.png in Resources */,
+				F41EBEDC2DC4DB20001413DE /* TripButton-rounded-right-FVBlue_iOS7.png in Resources */,
+				F41EBEDD2DC4DB20001413DE /* TripButton-rounded-right-FVBlue_iOS7@2x.png in Resources */,
+				F41EBEDE2DC4DB20001413DE /* TripButton-rounded-right-green.png in Resources */,
+				F41EBEDF2DC4DB20001413DE /* TripButton-rounded-right-green_iOS7.png in Resources */,
+				F41EBEE02DC4DB20001413DE /* TripButton-rounded-right-green_iOS7@2x.png in Resources */,
+				F41EBEE12DC4DB20001413DE /* TripButton-rounded-right-green@2x.png in Resources */,
+				F41EBEE22DC4DB20001413DE /* TripButton-rounded-right-orange.png in Resources */,
+				F41EBEE32DC4DB20001413DE /* TripButton-rounded-right-orange_iOS7.png in Resources */,
+				F41EBEE42DC4DB20001413DE /* TripButton-rounded-right-orange_iOS7@2x.png in Resources */,
+				F41EBEE52DC4DB20001413DE /* TripButton-rounded-right-orange@2x.png in Resources */,
+				F41EBEE62DC4DB20001413DE /* TripButton-rounded-right-purple.png in Resources */,
+				F41EBEE72DC4DB20001413DE /* TripButton-rounded-right-purple_iOS7.png in Resources */,
+				F41EBEE82DC4DB20001413DE /* TripButton-rounded-right-purple_iOS7@2x.png in Resources */,
+				F41EBEE92DC4DB20001413DE /* TripButton-rounded-right-purple@2x.png in Resources */,
+				F41EBEEA2DC4DB20001413DE /* TripButton-rounded-right-red.png in Resources */,
+				F41EBEEB2DC4DB20001413DE /* TripButton-rounded-right-red@2x.png in Resources */,
+				F41EBEEC2DC4DB20001413DE /* TripButton-rounded-right-red2_iOS7.png in Resources */,
+				F41EBEED2DC4DB20001413DE /* TripButton-rounded-right-red2_iOS7@2x.png in Resources */,
+				F41EBEEE2DC4DB20001413DE /* TripButton-rounded-right-yellow_iOS7.png in Resources */,
+				F41EBEEF2DC4DB20001413DE /* TripButton-rounded-right-yellow_iOS7@2x.png in Resources */,
+				F41EBEF02DC4DB20001413DE /* YellowRect.png in Resources */,
+				F41EBEF12DC4DB20001413DE /* BidActions.storyboard in Resources */,
+				F41EBEF22DC4DB20001413DE /* BidDocument.storyboard in Resources */,
+				F41EBEF32DC4DB20001413DE /* BidInfo.storyboard in Resources */,
+				F41EBEF42DC4DB20001413DE /* Filter.storyboard in Resources */,
+				F41EBEF52DC4DB20001413DE /* FlightDataChange.storyboard in Resources */,
+				F41EBEF62DC4DB20001413DE /* HelpMenu.storyboard in Resources */,
+				F41EBEF72DC4DB20001413DE /* LaunchScreen.storyboard in Resources */,
+				F41EBEF82DC4DB20001413DE /* LineCalendar.storyboard in Resources */,
+				F41EBEF92DC4DB20001413DE /* Main.storyboard in Resources */,
+				F41EBEFA2DC4DB20001413DE /* Secret.storyboard in Resources */,
+				F41EBEFB2DC4DB20001413DE /* Sync.storyboard in Resources */,
+				F41EBEFC2DC4DB20001413DE /* FilterRules.plist in Resources */,
+				F41EBEFD2DC4DB20001413DE /* FilterRulesFaVacation.plist in Resources */,
+				F41EBEFE2DC4DB20001413DE /* FilterRulesRound2.plist in Resources */,
+				F41EBEFF2DC4DB20001413DE /* FilterRulesSwaptimizer.plist in Resources */,
+				F41EBF002DC4DB20001413DE /* LineValues.plist in Resources */,
+				F41EBF012DC4DB20001413DE /* LineSorts.plist in Resources */,
+				F41EBF022DC4DB20001413DE /* LineSortsFA.plist in Resources */,
+				F41EBF032DC4DB20001413DE /* LineSortsFaVacation.plist in Resources */,
+				F41EBF042DC4DB20001413DE /* LineSortsRound2.plist in Resources */,
+				F41EBF052DC4DB20001413DE /* LineSortsSwaptimizer.plist in Resources */,
+				F41EBF072DC4DB20001413DE /* YouTubeTemplate.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,10 +1582,211 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F41EBF082DC4DB20001413DE /* AwardCalendarCollectionViewCell.swift in Sources */,
+				F41EBF092DC4DB20001413DE /* contactUsCollectionViewCell.swift in Sources */,
+				F41EBF0A2DC4DB20001413DE /* helpMenuItemCollectionViewCell.swift in Sources */,
+				F41EBF0B2DC4DB20001413DE /* mySubscriptionCollectionViewCell.swift in Sources */,
+				F41EBF0C2DC4DB20001413DE /* quickTutorialCollectionViewCell.swift in Sources */,
+				F41EBF0D2DC4DB20001413DE /* swaptimizerHelpMenuCollectionViewCell.swift in Sources */,
+				F41EBF0E2DC4DB20001413DE /* VideoCollectionViewCell.swift in Sources */,
+				F41EBF0F2DC4DB20001413DE /* BIBidPeriod+CoreDataClass.swift in Sources */,
+				F41EBF102DC4DB20001413DE /* BIBidPeriod+CoreDataProperties.swift in Sources */,
+				F41EBF112DC4DB20001413DE /* BIBidReceipt+CoreDataClass.swift in Sources */,
+				F41EBF122DC4DB20001413DE /* BIBidReceipt+CoreDataProperties.swift in Sources */,
+				F41EBF132DC4DB20001413DE /* BIFilterRule+CoreDataClass.swift in Sources */,
+				F41EBF142DC4DB20001413DE /* BIFilterRule+CoreDataProperties.swift in Sources */,
+				F41EBF152DC4DB20001413DE /* BILineSort+CoreDataClass.swift in Sources */,
+				F41EBF162DC4DB20001413DE /* BILineSort+CoreDataProperties.swift in Sources */,
+				F41EBF172DC4DB20001413DE /* BIDay+CoreDataClass.swift in Sources */,
+				F41EBF182DC4DB20001413DE /* BIDay+CoreDataProperties.swift in Sources */,
+				F41EBF192DC4DB20001413DE /* BIDayInfo+CoreDataClass.swift in Sources */,
+				F41EBF1A2DC4DB20001413DE /* BIDayInfo+CoreDataProperties.swift in Sources */,
+				F41EBF1B2DC4DB20001413DE /* BIInsertionPoint+CoreDataClass.swift in Sources */,
+				F41EBF1C2DC4DB20001413DE /* BIInsertionPoint+CoreDataProperties.swift in Sources */,
+				F41EBF1D2DC4DB20001413DE /* BILeg+CoreDataClass.swift in Sources */,
+				F41EBF1E2DC4DB20001413DE /* BILeg+CoreDataProperties.swift in Sources */,
+				F41EBF1F2DC4DB20001413DE /* BILegInfo+CoreDataClass.swift in Sources */,
+				F41EBF202DC4DB20001413DE /* BILegInfo+CoreDataProperties.swift in Sources */,
+				F41EBF212DC4DB20001413DE /* BILine+CoreDataClass.swift in Sources */,
+				F41EBF222DC4DB20001413DE /* BILine+CoreDataProperties.swift in Sources */,
+				F41EBF232DC4DB20001413DE /* BILineSortKeyMap+CoreDataClass.swift in Sources */,
+				F41EBF242DC4DB20001413DE /* BILineSortKeyMap+CoreDataProperties.swift in Sources */,
+				F41EBF252DC4DB20001413DE /* BITrip+CoreDataClass.swift in Sources */,
+				F41EBF262DC4DB20001413DE /* BITrip+CoreDataProperties.swift in Sources */,
+				F41EBF272DC4DB20001413DE /* BITripInfo+CoreDataClass.swift in Sources */,
+				F41EBF282DC4DB20001413DE /* BITripInfo+CoreDataProperties.swift in Sources */,
+				F41EBF292DC4DB20001413DE /* BIVacation+CoreDataClass.swift in Sources */,
+				F41EBF2A2DC4DB20001413DE /* BIVacation+CoreDataProperties.swift in Sources */,
+				F41EBF2B2DC4DB20001413DE /* Commutability+CoreDataClass.swift in Sources */,
+				F41EBF2C2DC4DB20001413DE /* Commutability+CoreDataProperties.swift in Sources */,
+				F41EBF2D2DC4DB20001413DE /* CommuteTime+CoreDataClass.swift in Sources */,
+				F41EBF2E2DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift in Sources */,
+				F41EBF2F2DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld in Sources */,
+				F41EBF302DC4DB20001413DE /* CrewBidUpdateData+CoreDataClass.swift in Sources */,
+				F41EBF312DC4DB20001413DE /* CrewBidUpdateData+CoreDataProperties.swift in Sources */,
+				F41EBF322DC4DB20001413DE /* OvernightBulk+CoreDataClass.swift in Sources */,
+				F41EBF332DC4DB20001413DE /* OvernightBulk+CoreDataProperties.swift in Sources */,
+				F41EBF342DC4DB20001413DE /* VacationArrayFromServer+CoreDataClass.swift in Sources */,
+				F41EBF352DC4DB20001413DE /* VacationArrayFromServer+CoreDataProperties.swift in Sources */,
+				F41EBF362DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift in Sources */,
+				F41EBF372DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift in Sources */,
+				F41EBF382DC4DB20001413DE /* AppDelegate.swift in Sources */,
+				F41EBF392DC4DB20001413DE /* SceneDelegate.swift in Sources */,
+				F41EBF3A2DC4DB20001413DE /* BICalendarData.swift in Sources */,
+				F41EBF3B2DC4DB20001413DE /* KUIPopOver.swift in Sources */,
+				F41EBF3C2DC4DB20001413DE /* KUIPopOverUsable.swift in Sources */,
+				F41EBF3D2DC4DB20001413DE /* CBColor.swift in Sources */,
+				F41EBF3E2DC4DB20001413DE /* CBGlobalMethods.swift in Sources */,
+				F41EBF3F2DC4DB20001413DE /* CBToggleButton.swift in Sources */,
+				F41EBF402DC4DB20001413DE /* CBTripButton.swift in Sources */,
+				F41EBF412DC4DB20001413DE /* Constants.swift in Sources */,
+				F41EBF422DC4DB20001413DE /* CustomKeyboard.swift in Sources */,
+				F41EBF432DC4DB20001413DE /* CustomUIClass.swift in Sources */,
+				F41EBF442DC4DB20001413DE /* Extensions.swift in Sources */,
+				F41EBF452DC4DB20001413DE /* iOSDropDown.swift in Sources */,
+				F41EBF462DC4DB20001413DE /* CBLineValues.swift in Sources */,
+				F41EBF472DC4DB20001413DE /* CBBidActionTableCell.swift in Sources */,
+				F41EBF482DC4DB20001413DE /* CBCommuteDiffVCTableCell.swift in Sources */,
+				F41EBF492DC4DB20001413DE /* CBFlightDataChangeVCTableCell.swift in Sources */,
+				F41EBF4A2DC4DB20001413DE /* ShowCAPTableViewCell.swift in Sources */,
+				F41EBF4B2DC4DB20001413DE /* SwitchTableViewCell.swift in Sources */,
+				F41EBF4C2DC4DB20001413DE /* AwardActionsTableController.swift in Sources */,
+				F41EBF4D2DC4DB20001413DE /* CBAwardEmpValidationVC.swift in Sources */,
+				F41EBF4E2DC4DB20001413DE /* CBAwardLineCalendarViewController.swift in Sources */,
+				F41EBF4F2DC4DB20001413DE /* CBAwardsRetrievalViewController.swift in Sources */,
+				F41EBF502DC4DB20001413DE /* CBLineNumberController.swift in Sources */,
+				F41EBF512DC4DB20001413DE /* CBShowAwardsViewController.swift in Sources */,
+				F41EBF522DC4DB20001413DE /* CBTripAwardTextViewController.swift in Sources */,
+				F41EBF532DC4DB20001413DE /* CBTripAwardViewController.swift in Sources */,
+				F41EBF542DC4DB20001413DE /* CBBidActionsViewController.swift in Sources */,
+				F41EBF552DC4DB20001413DE /* CBSpreadsheetImportController.swift in Sources */,
+				F41EBF562DC4DB20001413DE /* EmbeddedAwardEmpValidationVC.swift in Sources */,
+				F41EBF572DC4DB20001413DE /* EmbeddedBidActionsVC.swift in Sources */,
+				F41EBF582DC4DB20001413DE /* EmbeddedCredentialVC.swift in Sources */,
+				F41EBF592DC4DB20001413DE /* EmbeddedLineImporterVC.swift in Sources */,
+				F41EBF5A2DC4DB20001413DE /* EmbeddedShowCAPVC.swift in Sources */,
+				F41EBF5B2DC4DB20001413DE /* CBAmPmRuleCell.swift in Sources */,
+				F41EBF5C2DC4DB20001413DE /* CBCityComparisonRuleCell.swift in Sources */,
+				F41EBF5D2DC4DB20001413DE /* CBCommutingRuleCell.swift in Sources */,
+				F41EBF5E2DC4DB20001413DE /* CBComparisonRuleCell.swift in Sources */,
+				F41EBF5F2DC4DB20001413DE /* CBComutabilityRuleCell.swift in Sources */,
+				F41EBF602DC4DB20001413DE /* CBDayMonthRuleCell.swift in Sources */,
+				F41EBF612DC4DB20001413DE /* CBFaReserveRuleCell.swift in Sources */,
+				F41EBF622DC4DB20001413DE /* CBLineTypeRuleCell.swift in Sources */,
+				F41EBF632DC4DB20001413DE /* CBOvernightBulkRuleCell.swift in Sources */,
+				F41EBF642DC4DB20001413DE /* CBPositionRuleCell.swift in Sources */,
+				F41EBF652DC4DB20001413DE /* CBReportReleaseRuleCellTableViewCell.swift in Sources */,
+				F41EBF662DC4DB20001413DE /* CBTripLengthRuleCell.swift in Sources */,
+				F41EBF672DC4DB20001413DE /* CBUserFlagRuleCell.swift in Sources */,
+				F41EBF682DC4DB20001413DE /* CBWeekdayRuleCell.swift in Sources */,
+				F41EBF692DC4DB20001413DE /* CBWorkBlockRuleCell.swift in Sources */,
+				F41EBF6A2DC4DB20001413DE /* RefreshController.swift in Sources */,
+				F41EBF6B2DC4DB20001413DE /* CBFilterRulesTableVC.swift in Sources */,
+				F41EBF6C2DC4DB20001413DE /* CBFlagSortPopUp.swift in Sources */,
+				F41EBF6D2DC4DB20001413DE /* CBRulesMenuTableVC.swift in Sources */,
+				F41EBF6E2DC4DB20001413DE /* CBPresetsTVC.swift in Sources */,
+				F41EBF6F2DC4DB20001413DE /* CBBidListSmallCollectionViewCell.swift in Sources */,
+				F41EBF702DC4DB20001413DE /* CBLineCalendarCollectionView.swift in Sources */,
+				F41EBF712DC4DB20001413DE /* CBLineValuesMenuController.swift in Sources */,
+				F41EBF722DC4DB20001413DE /* CBScratchPadVC.swift in Sources */,
+				F41EBF732DC4DB20001413DE /* CBLineValueView.swift in Sources */,
+				F41EBF742DC4DB20001413DE /* CBTripTextViewController.swift in Sources */,
+				F41EBF752DC4DB20001413DE /* CBUserFlagTableController.swift in Sources */,
+				F41EBF762DC4DB20001413DE /* RefreshMenuController.swift in Sources */,
+				F41EBF772DC4DB20001413DE /* RefreshMenuTableViewCell.swift in Sources */,
+				F41EBF782DC4DB20001413DE /* ScratchPadTableCellTableViewCell.swift in Sources */,
+				F41EBF792DC4DB20001413DE /* CBCommutabilitySortCell.swift in Sources */,
+				F41EBF7A2DC4DB20001413DE /* CBCommutingSortCell.swift in Sources */,
+				F41EBF7B2DC4DB20001413DE /* CBDayMonthSortCell.swift in Sources */,
+				F41EBF7C2DC4DB20001413DE /* CBFlagSortCell.swift in Sources */,
+				F41EBF7D2DC4DB20001413DE /* CBLineSortCell.swift in Sources */,
+				F41EBF7E2DC4DB20001413DE /* CBCommuteInfoViewController.swift in Sources */,
+				F41EBF7F2DC4DB20001413DE /* CBLineSortsTVC.swift in Sources */,
+				F41EBF802DC4DB20001413DE /* CBMenuTableVC.swift in Sources */,
+				F41EBF812DC4DB20001413DE /* CBSortRulesMenuTableVC.swift in Sources */,
+				F41EBF822DC4DB20001413DE /* CommutableTimeViewController.swift in Sources */,
+				F41EBF832DC4DB20001413DE /* CommuteCityViewController.swift in Sources */,
+				F41EBF842DC4DB20001413DE /* CBBidActionsVC.swift in Sources */,
+				F41EBF852DC4DB20001413DE /* CBBidlineViewTableViewCell.swift in Sources */,
+				F41EBF862DC4DB20001413DE /* CBBidListCalenderViewCell.swift in Sources */,
+				F41EBF872DC4DB20001413DE /* InnerCollectionViewCell.swift in Sources */,
+				F41EBF882DC4DB20001413DE /* CBBidListSortOptions.swift in Sources */,
+				F41EBF892DC4DB20001413DE /* BidListActionVC.swift in Sources */,
+				F41EBF8A2DC4DB20001413DE /* CBBidListActionTableCell.swift in Sources */,
+				F41EBF8B2DC4DB20001413DE /* CBBidLineMenuController.swift in Sources */,
+				F41EBF8C2DC4DB20001413DE /* CBExpandedBidLinesTableController.swift in Sources */,
+				F41EBF8D2DC4DB20001413DE /* CBExpandedBidLinesTableControllerCell.swift in Sources */,
+				F41EBF8E2DC4DB20001413DE /* FaMoveBidListCell.swift in Sources */,
+				F41EBF8F2DC4DB20001413DE /* FaMoveBidListMenu.swift in Sources */,
+				F41EBF902DC4DB20001413DE /* CBBidListVC.swift in Sources */,
+				F41EBF912DC4DB20001413DE /* CBBidDocumentController.swift in Sources */,
+				F41EBF922DC4DB20001413DE /* CBReportReleaseCollectionViewController.swift in Sources */,
+				F41EBF932DC4DB20001413DE /* CBReportReleaseCVC.swift in Sources */,
+				F41EBF942DC4DB20001413DE /* CBBiddataDownloadVC.swift in Sources */,
+				F41EBF952DC4DB20001413DE /* CBBIdDataTypeViewController.swift in Sources */,
+				F41EBF962DC4DB20001413DE /* CBCredentialsPageVC.swift in Sources */,
+				F41EBF972DC4DB20001413DE /* CBDefaultEmployeeVC.swift in Sources */,
+				F41EBF982DC4DB20001413DE /* CBDownloadAgainAlertVC.swift in Sources */,
+				F41EBF992DC4DB20001413DE /* CBDownloadAlldomicileViewController.swift in Sources */,
+				F41EBF9A2DC4DB20001413DE /* CBNewBidVC.swift in Sources */,
+				F41EBF9B2DC4DB20001413DE /* CBProgressVC.swift in Sources */,
+				F41EBF9C2DC4DB20001413DE /* CBOptionalEmployeesPageViewController.swift in Sources */,
+				F41EBF9D2DC4DB20001413DE /* CBSubmissionCertifyVC.swift in Sources */,
+				F41EBF9E2DC4DB20001413DE /* CBSubmitCredentialVC.swift in Sources */,
+				F41EBF9F2DC4DB20001413DE /* SubmissionErrorVC.swift in Sources */,
+				F41EBFA02DC4DB20001413DE /* CBBidReciptViewController.swift in Sources */,
+				F41EBFA12DC4DB20001413DE /* CBCAPViewController.swift in Sources */,
+				F41EBFA22DC4DB20001413DE /* CBTextViewController.swift in Sources */,
+				F41EBFA32DC4DB20001413DE /* CBCommuteDiffVC.swift in Sources */,
+				F41EBFA42DC4DB20001413DE /* CBFlighDataChangeVC.swift in Sources */,
+				F41EBFA52DC4DB20001413DE /* CBAlertVC.swift in Sources */,
+				F41EBFA62DC4DB20001413DE /* CBLoginViewController.swift in Sources */,
+				F41EBFA72DC4DB20001413DE /* LoginEmbeddedController.swift in Sources */,
+				F41EBFA82DC4DB20001413DE /* CBHelpVideosController.swift in Sources */,
+				F41EBFA92DC4DB20001413DE /* contactUsViewController.swift in Sources */,
+				F41EBFAA2DC4DB20001413DE /* defenitionsViewController.swift in Sources */,
+				F41EBFAB2DC4DB20001413DE /* faqViewController.swift in Sources */,
+				F41EBFAC2DC4DB20001413DE /* helpMenuItemsViewController.swift in Sources */,
+				F41EBFAD2DC4DB20001413DE /* helpMenuViewController.swift in Sources */,
+				F41EBFAE2DC4DB20001413DE /* latestNewsViewController.swift in Sources */,
+				F41EBFAF2DC4DB20001413DE /* lineValuesViewController.swift in Sources */,
+				F41EBFB02DC4DB20001413DE /* mySubscriptionViewController.swift in Sources */,
+				F41EBFB12DC4DB20001413DE /* quickTutorialViewController.swift in Sources */,
+				F41EBFB22DC4DB20001413DE /* serviceAgreementViewController.swift in Sources */,
+				F41EBFB32DC4DB20001413DE /* swaptimizerHelpMenuViewController.swift in Sources */,
+				F41EBFB42DC4DB20001413DE /* userAccountViewController.swift in Sources */,
+				F41EBFB52DC4DB20001413DE /* CBDocumentsCollectionViewController.swift in Sources */,
+				F41EBFB62DC4DB20001413DE /* DocumentCell.swift in Sources */,
+				F41EBFB72DC4DB20001413DE /* SecretMethodsViewController.swift in Sources */,
+				F41EBFB82DC4DB20001413DE /* EmbeddedSettingsVC.swift in Sources */,
+				F41EBFB92DC4DB20001413DE /* MyCalendarVC.swift in Sources */,
+				F41EBFBA2DC4DB20001413DE /* SettingsViewController.swift in Sources */,
+				F41EBFBB2DC4DB20001413DE /* CBsyncConflictViewController.swift in Sources */,
+				F41EBFBC2DC4DB20001413DE /* CBSyncInfoViewController.swift in Sources */,
+				F41EBFBD2DC4DB20001413DE /* BaseViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		F41EBDE42DC4DB20001413DE /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F41EBDE32DC4DB20001413DE /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		F41EBDE72DC4DB20001413DE /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F41EBDE62DC4DB20001413DE /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		F4CF5A3F2D891A3A00A351DB /* Debug */ = {
@@ -376,6 +2005,19 @@
 			productName = ZipArchive;
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		F41EBD552DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				F41EBE8F2DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodel */,
+			);
+			currentVersion = F41EBE8F2DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodel */;
+			path = CrewBid_iPad_Swift.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = F4CF5A202D891A3800A351DB /* Project object */;
 }
