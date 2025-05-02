@@ -20,19 +20,15 @@ class CBDocumentsCollectionViewController: BaseViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     var bdPrd:Int!
     
+    let viewModel = DocumentsCollectionViewModel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        initialize()
+        viewModel.initialize()
         collectionView.delegate = self
         collectionView.dataSource = self
         
         bdPrd = 0
-    }
-    func initialize(){
-        let arrVideoUrl = ["njTXQKbStoY", "jrZAmrE720A", "rwMDZkm73o8", "QUNmnde9X0U", "7sINWWtG_zo", "raUv3CiRhbo", "5SjKSTOC4aw"]
-        let arrVideoTtiles = ["Getting Started", "Filtering Basics", "Sorting Basics", "Navigating the Bid List", "Pilot Quick Bid", "FA Quick Bid", "SWAPtimizer"]
-        UserDefaults.standard.register(defaults: [kCBHelpVideoURL:arrVideoUrl])
-        UserDefaults.standard.register(defaults: [kCBHelpVideotitles:arrVideoTtiles])
     }
     @IBAction func downloadBid(_ sender: Any) {
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)

@@ -308,6 +308,7 @@
 		F41EBFBB2DC4DB20001413DE /* CBsyncConflictViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE892DC4DB20001413DE /* CBsyncConflictViewController.swift */; };
 		F41EBFBC2DC4DB20001413DE /* CBSyncInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE8A2DC4DB20001413DE /* CBSyncInfoViewController.swift */; };
 		F41EBFBD2DC4DB20001413DE /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE8C2DC4DB20001413DE /* BaseViewController.swift */; };
+		F41EBFC32DC4E19A001413DE /* DocumentsCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBFC22DC4E19A001413DE /* DocumentsCollectionViewModel.swift */; };
 		F4CF5A8E2D892B9800A351DB /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = F4CF5A8D2D892B9800A351DB /* ZipArchive */; };
 /* End PBXBuildFile section */
 
@@ -615,6 +616,7 @@
 		F41EBE8A2DC4DB20001413DE /* CBSyncInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSyncInfoViewController.swift; sourceTree = "<group>"; };
 		F41EBE8C2DC4DB20001413DE /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		F41EBE8F2DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CrewBid_iPad_Swift.xcdatamodel; sourceTree = "<group>"; };
+		F41EBFC22DC4E19A001413DE /* DocumentsCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentsCollectionViewModel.swift; sourceTree = "<group>"; };
 		F4CF5A282D891A3800A351DB /* CrewBid iPad_Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CrewBid iPad_Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -720,12 +722,10 @@
 				F41EBD522DC4DB20001413DE /* Commutability+CoreDataProperties.swift */,
 				F41EBD532DC4DB20001413DE /* CommuteTime+CoreDataClass.swift */,
 				F41EBD542DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift */,
-				F41EBD552DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld */,
 				F41EBD562DC4DB20001413DE /* CrewBidUpdateData+CoreDataClass.swift */,
 				F41EBD572DC4DB20001413DE /* CrewBidUpdateData+CoreDataProperties.swift */,
 				F41EBD582DC4DB20001413DE /* OvernightBulk+CoreDataClass.swift */,
 				F41EBD592DC4DB20001413DE /* OvernightBulk+CoreDataProperties.swift */,
-				F41EBD5A2DC4DB20001413DE /* ThirdPartyURL.plist */,
 				F41EBD5B2DC4DB20001413DE /* VacationArrayFromServer+CoreDataClass.swift */,
 				F41EBD5C2DC4DB20001413DE /* VacationArrayFromServer+CoreDataProperties.swift */,
 				F41EBD5D2DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift */,
@@ -737,11 +737,14 @@
 		F41EBD652DC4DB20001413DE /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				F41EBD6F2DC4DB20001413DE /* documents */,
+				F41EBDC72DC4DB20001413DE /* Images */,
 				F41EBD602DC4DB20001413DE /* AppDelegate.swift */,
 				F41EBD612DC4DB20001413DE /* Assets.xcassets */,
 				F41EBD622DC4DB20001413DE /* SceneDelegate.swift */,
 				F41EBD632DC4DB20001413DE /* SWAPtimizer Tutorial.xcassets */,
 				F41EBD642DC4DB20001413DE /* Tutorial.xcassets */,
+				F41EBE6E2DC4DB20001413DE /* How-to-Videos */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";
@@ -749,10 +752,14 @@
 		F41EBD682DC4DB20001413DE /* Common Files */ = {
 			isa = PBXGroup;
 			children = (
-				F41EBD5F2DC4DB20001413DE /* CoreData */,
+				F41EBDD42DC4DB20001413DE /* Helpers */,
+				F41EBFC82DC4E4F4001413DE /* pList */,
 				F41EBD652DC4DB20001413DE /* Supporting Files */,
 				F41EBD662DC4DB20001413DE /* BICalendarData.swift */,
+				F41EBDD52DC4DB20001413DE /* CBLineValues.swift */,
 				F41EBD672DC4DB20001413DE /* Info.plist */,
+				F41EBD5A2DC4DB20001413DE /* ThirdPartyURL.plist */,
+				F41EBD552DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld */,
 			);
 			path = "Common Files";
 			sourceTree = "<group>";
@@ -883,8 +890,6 @@
 		F41EBDD42DC4DB20001413DE /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				F41EBD6F2DC4DB20001413DE /* documents */,
-				F41EBDC72DC4DB20001413DE /* Images */,
 				F41EBDCA2DC4DB20001413DE /* PopOver */,
 				F41EBDCB2DC4DB20001413DE /* CBColor.swift */,
 				F41EBDCC2DC4DB20001413DE /* CBGlobalMethods.swift */,
@@ -899,14 +904,6 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
-		F41EBDD62DC4DB20001413DE /* LineValueView */ = {
-			isa = PBXGroup;
-			children = (
-				F41EBDD52DC4DB20001413DE /* CBLineValues.swift */,
-			);
-			path = LineValueView;
-			sourceTree = "<group>";
-		};
 		F41EBDDC2DC4DB20001413DE /* tableViewCells */ = {
 			isa = PBXGroup;
 			children = (
@@ -919,7 +916,7 @@
 			path = tableViewCells;
 			sourceTree = "<group>";
 		};
-		F41EBDEA2DC4DB20001413DE /* View */ = {
+		F41EBDEA2DC4DB20001413DE /* Storyboards */ = {
 			isa = PBXGroup;
 			children = (
 				F41EBDDD2DC4DB20001413DE /* BidActions.storyboard */,
@@ -934,7 +931,7 @@
 				F41EBDE82DC4DB20001413DE /* Secret.storyboard */,
 				F41EBDE92DC4DB20001413DE /* Sync.storyboard */,
 			);
-			path = View;
+			path = Storyboards;
 			sourceTree = "<group>";
 		};
 		F41EBDF32DC4DB20001413DE /* Awards */ = {
@@ -996,26 +993,10 @@
 			path = MenuForFilterCell;
 			sourceTree = "<group>";
 		};
-		F41EBE122DC4DB20001413DE /* Plist */ = {
-			isa = PBXGroup;
-			children = (
-				F41EBE0E2DC4DB20001413DE /* FilterRules.plist */,
-				F41EBE0F2DC4DB20001413DE /* FilterRulesFaVacation.plist */,
-				F41EBE102DC4DB20001413DE /* FilterRulesRound2.plist */,
-				F41EBE112DC4DB20001413DE /* FilterRulesSwaptimizer.plist */,
-			);
-			path = Plist;
-			sourceTree = "<group>";
-		};
 		F41EBE162DC4DB20001413DE /* Filter */ = {
 			isa = PBXGroup;
 			children = (
 				F41EBE0B2DC4DB20001413DE /* Cells */,
-				F41EBE0D2DC4DB20001413DE /* MenuForFilterCell */,
-				F41EBE122DC4DB20001413DE /* Plist */,
-				F41EBE132DC4DB20001413DE /* CBFilterRulesTableVC.swift */,
-				F41EBE142DC4DB20001413DE /* CBFlagSortPopUp.swift */,
-				F41EBE152DC4DB20001413DE /* CBRulesMenuTableVC.swift */,
 			);
 			path = Filter;
 			sourceTree = "<group>";
@@ -1066,23 +1047,9 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
-		F41EBE312DC4DB20001413DE /* Plist */ = {
-			isa = PBXGroup;
-			children = (
-				F41EBE2C2DC4DB20001413DE /* LineSorts.plist */,
-				F41EBE2D2DC4DB20001413DE /* LineSortsFA.plist */,
-				F41EBE2E2DC4DB20001413DE /* LineSortsFaVacation.plist */,
-				F41EBE2F2DC4DB20001413DE /* LineSortsRound2.plist */,
-				F41EBE302DC4DB20001413DE /* LineSortsSwaptimizer.plist */,
-			);
-			path = Plist;
-			sourceTree = "<group>";
-		};
 		F41EBE382DC4DB20001413DE /* Sort */ = {
 			isa = PBXGroup;
 			children = (
-				F41EBE2B2DC4DB20001413DE /* Cells */,
-				F41EBE312DC4DB20001413DE /* Plist */,
 				F41EBE322DC4DB20001413DE /* CBCommuteInfoViewController.swift */,
 				F41EBE332DC4DB20001413DE /* CBLineSortsTVC.swift */,
 				F41EBE342DC4DB20001413DE /* CBMenuTableVC.swift */,
@@ -1096,11 +1063,12 @@
 		F41EBE3A2DC4DB20001413DE /* Bid Actions */ = {
 			isa = PBXGroup;
 			children = (
-				F41EBE162DC4DB20001413DE /* Filter */,
+				F41EBFCA2DC4E54B001413DE /* Filter */,
 				F41EBE182DC4DB20001413DE /* Preset */,
 				F41EBE252DC4DB20001413DE /* ScratchPad */,
 				F41EBE382DC4DB20001413DE /* Sort */,
 				F41EBE392DC4DB20001413DE /* CBBidActionsVC.swift */,
+				F41EBE0D2DC4DB20001413DE /* MenuForFilterCell */,
 			);
 			path = "Bid Actions";
 			sourceTree = "<group>";
@@ -1127,7 +1095,6 @@
 			isa = PBXGroup;
 			children = (
 				F41EBE412DC4DB20001413DE /* BidListActionVC.swift */,
-				F41EBE422DC4DB20001413DE /* CBBidListActionTableCell.swift */,
 			);
 			path = BidListAction;
 			sourceTree = "<group>";
@@ -1154,7 +1121,6 @@
 			isa = PBXGroup;
 			children = (
 				F41EBE472DC4DB20001413DE /* CBExpandedBidLinesTableController.swift */,
-				F41EBE482DC4DB20001413DE /* CBExpandedBidLinesTableControllerCell.swift */,
 			);
 			path = ExpandedCalendarView;
 			sourceTree = "<group>";
@@ -1162,7 +1128,6 @@
 		F41EBE4C2DC4DB20001413DE /* FaBidListMoveMenu */ = {
 			isa = PBXGroup;
 			children = (
-				F41EBE4A2DC4DB20001413DE /* FaMoveBidListCell.swift */,
 				F41EBE4B2DC4DB20001413DE /* FaMoveBidListMenu.swift */,
 			);
 			path = FaBidListMoveMenu;
@@ -1171,7 +1136,6 @@
 		F41EBE4E2DC4DB20001413DE /* BidList */ = {
 			isa = PBXGroup;
 			children = (
-				F41EBE3E2DC4DB20001413DE /* BidListCells */,
 				F41EBE462DC4DB20001413DE /* BidListMenu */,
 				F41EBE492DC4DB20001413DE /* ExpandedCalendarView */,
 				F41EBE4C2DC4DB20001413DE /* FaBidListMoveMenu */,
@@ -1188,7 +1152,6 @@
 				F41EBE4F2DC4DB20001413DE /* CBBidDocumentController.swift */,
 				F41EBE502DC4DB20001413DE /* CBReportReleaseCollectionViewController.swift */,
 				F41EBE512DC4DB20001413DE /* CBReportReleaseCVC.swift */,
-				F41EBE522DC4DB20001413DE /* LineValues.plist */,
 			);
 			path = "Bid Document";
 			sourceTree = "<group>";
@@ -1208,7 +1171,7 @@
 			path = "Bid Download";
 			sourceTree = "<group>";
 		};
-		F41EBE612DC4DB20001413DE /* Bid Submission 1 */ = {
+		F41EBE612DC4DB20001413DE /* Bid Submission */ = {
 			isa = PBXGroup;
 			children = (
 				F41EBE5D2DC4DB20001413DE /* CBOptionalEmployeesPageViewController.swift */,
@@ -1216,7 +1179,7 @@
 				F41EBE5F2DC4DB20001413DE /* CBSubmitCredentialVC.swift */,
 				F41EBE602DC4DB20001413DE /* SubmissionErrorVC.swift */,
 			);
-			path = "Bid Submission 1";
+			path = "Bid Submission";
 			sourceTree = "<group>";
 		};
 		F41EBE632DC4DB20001413DE /* BidRecipt */ = {
@@ -1281,7 +1244,6 @@
 			isa = PBXGroup;
 			children = (
 				F41EBE6C2DC4DB20001413DE /* CBAlertVC */,
-				F41EBE6E2DC4DB20001413DE /* How-to-Videos */,
 				F41EBE712DC4DB20001413DE /* User Account */,
 				F41EBE722DC4DB20001413DE /* CBHelpVideosController.swift */,
 				F41EBE732DC4DB20001413DE /* contactUsViewController.swift */,
@@ -1304,7 +1266,6 @@
 			isa = PBXGroup;
 			children = (
 				F41EBE802DC4DB20001413DE /* CBDocumentsCollectionViewController.swift */,
-				F41EBE812DC4DB20001413DE /* DocumentCell.swift */,
 			);
 			path = HomeScreen;
 			sourceTree = "<group>";
@@ -1336,14 +1297,14 @@
 			path = Sync;
 			sourceTree = "<group>";
 		};
-		F41EBE8D2DC4DB20001413DE /* ViewControllers */ = {
+		F41EBE8D2DC4DB20001413DE /* View */ = {
 			isa = PBXGroup;
 			children = (
 				F41EBDF32DC4DB20001413DE /* Awards */,
 				F41EBDFB2DC4DB20001413DE /* Bid Actions */,
 				F41EBE532DC4DB20001413DE /* Bid Document */,
 				F41EBE5C2DC4DB20001413DE /* Bid Download */,
-				F41EBE612DC4DB20001413DE /* Bid Submission 1 */,
+				F41EBE612DC4DB20001413DE /* Bid Submission */,
 				F41EBE632DC4DB20001413DE /* BidRecipt */,
 				F41EBE652DC4DB20001413DE /* CapDetails */,
 				F41EBE672DC4DB20001413DE /* Cover Letter */,
@@ -1355,21 +1316,135 @@
 				F41EBE8B2DC4DB20001413DE /* Sync */,
 				F41EBE8C2DC4DB20001413DE /* BaseViewController.swift */,
 			);
-			path = ViewControllers;
+			path = View;
 			sourceTree = "<group>";
 		};
 		F41EBE8E2DC4DB20001413DE /* CrewBid iPad_Swift */ = {
 			isa = PBXGroup;
 			children = (
-				F41EBD302DC4DB20001413DE /* collectionViewCells */,
+				F41EBDEA2DC4DB20001413DE /* Storyboards */,
 				F41EBD682DC4DB20001413DE /* Common Files */,
-				F41EBDD42DC4DB20001413DE /* Helpers */,
-				F41EBDD62DC4DB20001413DE /* LineValueView */,
-				F41EBDDC2DC4DB20001413DE /* tableViewCells */,
-				F41EBDEA2DC4DB20001413DE /* View */,
-				F41EBE8D2DC4DB20001413DE /* ViewControllers */,
+				F41EBFC72DC4E465001413DE /* Model */,
+				F41EBE8D2DC4DB20001413DE /* View */,
+				F41EBFBF2DC4DCF7001413DE /* ViewModel */,
+				F41EBFC52DC4E3AB001413DE /* SubViews */,
 			);
 			path = "CrewBid iPad_Swift";
+			sourceTree = "<group>";
+		};
+		F41EBFBF2DC4DCF7001413DE /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBFC22DC4E19A001413DE /* DocumentsCollectionViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		F41EBFC52DC4E3AB001413DE /* SubViews */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD302DC4DB20001413DE /* collectionViewCells */,
+				F41EBFD02DC4EAB0001413DE /* HomescreenDocCell */,
+				F41EBFCF2DC4E802001413DE /* FABidListMoveMenuCell */,
+				F41EBFCE2DC4E7E6001413DE /* ExpandedCalendarTC */,
+				F41EBFCD2DC4E7C5001413DE /* BidListAction */,
+				F41EBE3E2DC4DB20001413DE /* BidListCells */,
+				F41EBFCB2DC4E627001413DE /* Sort */,
+				F41EBE162DC4DB20001413DE /* Filter */,
+				F41EBDDC2DC4DB20001413DE /* tableViewCells */,
+			);
+			path = SubViews;
+			sourceTree = "<group>";
+		};
+		F41EBFC72DC4E465001413DE /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD5F2DC4DB20001413DE /* CoreData */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		F41EBFC82DC4E4F4001413DE /* pList */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE522DC4DB20001413DE /* LineValues.plist */,
+				F41EBFCC2DC4E643001413DE /* Sort */,
+				F41EBFC92DC4E502001413DE /* Filter */,
+			);
+			path = pList;
+			sourceTree = "<group>";
+		};
+		F41EBFC92DC4E502001413DE /* Filter */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE0E2DC4DB20001413DE /* FilterRules.plist */,
+				F41EBE0F2DC4DB20001413DE /* FilterRulesFaVacation.plist */,
+				F41EBE102DC4DB20001413DE /* FilterRulesRound2.plist */,
+				F41EBE112DC4DB20001413DE /* FilterRulesSwaptimizer.plist */,
+			);
+			path = Filter;
+			sourceTree = "<group>";
+		};
+		F41EBFCA2DC4E54B001413DE /* Filter */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE132DC4DB20001413DE /* CBFilterRulesTableVC.swift */,
+				F41EBE142DC4DB20001413DE /* CBFlagSortPopUp.swift */,
+				F41EBE152DC4DB20001413DE /* CBRulesMenuTableVC.swift */,
+			);
+			path = Filter;
+			sourceTree = "<group>";
+		};
+		F41EBFCB2DC4E627001413DE /* Sort */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE2B2DC4DB20001413DE /* Cells */,
+			);
+			path = Sort;
+			sourceTree = "<group>";
+		};
+		F41EBFCC2DC4E643001413DE /* Sort */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE2C2DC4DB20001413DE /* LineSorts.plist */,
+				F41EBE2D2DC4DB20001413DE /* LineSortsFA.plist */,
+				F41EBE2E2DC4DB20001413DE /* LineSortsFaVacation.plist */,
+				F41EBE2F2DC4DB20001413DE /* LineSortsRound2.plist */,
+				F41EBE302DC4DB20001413DE /* LineSortsSwaptimizer.plist */,
+			);
+			path = Sort;
+			sourceTree = "<group>";
+		};
+		F41EBFCD2DC4E7C5001413DE /* BidListAction */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE422DC4DB20001413DE /* CBBidListActionTableCell.swift */,
+			);
+			path = BidListAction;
+			sourceTree = "<group>";
+		};
+		F41EBFCE2DC4E7E6001413DE /* ExpandedCalendarTC */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE482DC4DB20001413DE /* CBExpandedBidLinesTableControllerCell.swift */,
+			);
+			path = ExpandedCalendarTC;
+			sourceTree = "<group>";
+		};
+		F41EBFCF2DC4E802001413DE /* FABidListMoveMenuCell */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE4A2DC4DB20001413DE /* FaMoveBidListCell.swift */,
+			);
+			path = FABidListMoveMenuCell;
+			sourceTree = "<group>";
+		};
+		F41EBFD02DC4EAB0001413DE /* HomescreenDocCell */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBE812DC4DB20001413DE /* DocumentCell.swift */,
+			);
+			path = HomescreenDocCell;
 			sourceTree = "<group>";
 		};
 		F4CF5A1F2D891A3800A351DB = {
@@ -1728,6 +1803,7 @@
 				F41EBF972DC4DB20001413DE /* CBDefaultEmployeeVC.swift in Sources */,
 				F41EBF982DC4DB20001413DE /* CBDownloadAgainAlertVC.swift in Sources */,
 				F41EBF992DC4DB20001413DE /* CBDownloadAlldomicileViewController.swift in Sources */,
+				F41EBFC32DC4E19A001413DE /* DocumentsCollectionViewModel.swift in Sources */,
 				F41EBF9A2DC4DB20001413DE /* CBNewBidVC.swift in Sources */,
 				F41EBF9B2DC4DB20001413DE /* CBProgressVC.swift in Sources */,
 				F41EBF9C2DC4DB20001413DE /* CBOptionalEmployeesPageViewController.swift in Sources */,
