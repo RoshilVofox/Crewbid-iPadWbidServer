@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24D81" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788" systemVersion="24E263" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AwardDetails" representedClassName="AwardDetails" syncable="YES" codeGenerationType="class">
         <attribute name="empNum" optional="YES" attributeType="String"/>
         <attribute name="lineNum" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -152,7 +152,7 @@
         <attribute name="timeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="bidPeriod" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="bidReceipts" inverseEntity="BidPeriod"/>
     </entity>
-    <entity name="Commutability" representedClassName=".Commutability" syncable="YES">
+    <entity name="Commutability" representedClassName=".Commutability" syncable="YES" codeGenerationType="class">
         <attribute name="baseTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="checkInTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="city" optional="YES" attributeType="String"/>
@@ -174,7 +174,7 @@
         <attribute name="type" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
         <relationship name="commutable" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="commuteTime" inverseEntity="BidPeriod"/>
     </entity>
-    <entity name="CrewBidUpdateData" representedClassName="CrewBidUpdateData" syncable="YES">
+    <entity name="CrewBidUpdateData" representedClassName="CrewBidUpdateData" syncable="YES" codeGenerationType="class">
         <attribute name="cities" optional="YES" attributeType="String"/>
         <attribute name="defenitions" optional="YES" attributeType="String"/>
         <attribute name="faq" optional="YES" attributeType="String"/>
@@ -246,7 +246,7 @@
         <attribute name="orig" optional="YES" attributeType="String"/>
         <attribute name="routeNum" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
     </entity>
-    <entity name="InsertionPoint" representedClassName="BIInsertionPoint" syncable="YES">
+    <entity name="InsertionPoint" representedClassName="BIInsertionPoint" syncable="YES" codeGenerationType="class">
         <attribute name="above" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="index" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <relationship name="line" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Line" inverseName="insertionPoint" inverseEntity="Line"/>
@@ -490,13 +490,13 @@
         <relationship name="bidPeriod" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="lineSorts" inverseEntity="BidPeriod"/>
         <relationship name="lineSortKeyMap" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LineSortKeyMap" inverseName="lineSort" inverseEntity="LineSortKeyMap"/>
     </entity>
-    <entity name="LineSortKeyMap" representedClassName="BILineSortKeyMap" syncable="YES">
+    <entity name="LineSortKeyMap" representedClassName="BILineSortKeyMap" syncable="YES" codeGenerationType="class">
         <attribute name="lineKey" attributeType="String"/>
         <attribute name="sortKey" attributeType="String"/>
         <relationship name="bidPeriod" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="lineSortKeyMaps" inverseEntity="BidPeriod"/>
         <relationship name="lineSort" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LineSort" inverseName="lineSortKeyMap" inverseEntity="LineSort"/>
     </entity>
-    <entity name="OvernightBulk" representedClassName=".OvernightBulk" syncable="YES">
+    <entity name="OvernightBulk" representedClassName=".OvernightBulk" syncable="YES" codeGenerationType="class">
         <attribute name="citystatus" optional="YES" attributeType="Transformable"/>
     </entity>
     <entity name="PresetSync" representedClassName="PresetSync" syncable="YES" codeGenerationType="class">
@@ -594,7 +594,7 @@
         <relationship name="bidPeriod" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="vacations" inverseEntity="BidPeriod"/>
         <relationship name="line" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Line" inverseName="fvvacations" inverseEntity="Line"/>
     </entity>
-    <entity name="VacationArrayFromServer" representedClassName=".VacationArrayFromServer" syncable="YES">
+    <entity name="VacationArrayFromServer" representedClassName=".VacationArrayFromServer" syncable="YES" codeGenerationType="class">
         <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="fvEnddate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="fvLength" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>

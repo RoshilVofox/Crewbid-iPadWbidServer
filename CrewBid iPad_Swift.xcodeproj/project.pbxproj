@@ -148,33 +148,21 @@
 		F41EBF182DC4DB20001413DE /* BIDay+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD3E2DC4DB20001413DE /* BIDay+CoreDataProperties.swift */; };
 		F41EBF192DC4DB20001413DE /* BIDayInfo+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD3F2DC4DB20001413DE /* BIDayInfo+CoreDataClass.swift */; };
 		F41EBF1A2DC4DB20001413DE /* BIDayInfo+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD402DC4DB20001413DE /* BIDayInfo+CoreDataProperties.swift */; };
-		F41EBF1B2DC4DB20001413DE /* BIInsertionPoint+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD412DC4DB20001413DE /* BIInsertionPoint+CoreDataClass.swift */; };
-		F41EBF1C2DC4DB20001413DE /* BIInsertionPoint+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD422DC4DB20001413DE /* BIInsertionPoint+CoreDataProperties.swift */; };
 		F41EBF1D2DC4DB20001413DE /* BILeg+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD432DC4DB20001413DE /* BILeg+CoreDataClass.swift */; };
 		F41EBF1E2DC4DB20001413DE /* BILeg+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD442DC4DB20001413DE /* BILeg+CoreDataProperties.swift */; };
 		F41EBF1F2DC4DB20001413DE /* BILegInfo+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD452DC4DB20001413DE /* BILegInfo+CoreDataClass.swift */; };
 		F41EBF202DC4DB20001413DE /* BILegInfo+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD462DC4DB20001413DE /* BILegInfo+CoreDataProperties.swift */; };
 		F41EBF212DC4DB20001413DE /* BILine+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD472DC4DB20001413DE /* BILine+CoreDataClass.swift */; };
 		F41EBF222DC4DB20001413DE /* BILine+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD482DC4DB20001413DE /* BILine+CoreDataProperties.swift */; };
-		F41EBF232DC4DB20001413DE /* BILineSortKeyMap+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD492DC4DB20001413DE /* BILineSortKeyMap+CoreDataClass.swift */; };
-		F41EBF242DC4DB20001413DE /* BILineSortKeyMap+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD4A2DC4DB20001413DE /* BILineSortKeyMap+CoreDataProperties.swift */; };
 		F41EBF252DC4DB20001413DE /* BITrip+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD4B2DC4DB20001413DE /* BITrip+CoreDataClass.swift */; };
 		F41EBF262DC4DB20001413DE /* BITrip+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD4C2DC4DB20001413DE /* BITrip+CoreDataProperties.swift */; };
 		F41EBF272DC4DB20001413DE /* BITripInfo+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD4D2DC4DB20001413DE /* BITripInfo+CoreDataClass.swift */; };
 		F41EBF282DC4DB20001413DE /* BITripInfo+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD4E2DC4DB20001413DE /* BITripInfo+CoreDataProperties.swift */; };
 		F41EBF292DC4DB20001413DE /* BIVacation+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD4F2DC4DB20001413DE /* BIVacation+CoreDataClass.swift */; };
 		F41EBF2A2DC4DB20001413DE /* BIVacation+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD502DC4DB20001413DE /* BIVacation+CoreDataProperties.swift */; };
-		F41EBF2B2DC4DB20001413DE /* Commutability+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD512DC4DB20001413DE /* Commutability+CoreDataClass.swift */; };
-		F41EBF2C2DC4DB20001413DE /* Commutability+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD522DC4DB20001413DE /* Commutability+CoreDataProperties.swift */; };
 		F41EBF2D2DC4DB20001413DE /* CommuteTime+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD532DC4DB20001413DE /* CommuteTime+CoreDataClass.swift */; };
 		F41EBF2E2DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD542DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift */; };
 		F41EBF2F2DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD552DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld */; };
-		F41EBF302DC4DB20001413DE /* CrewBidUpdateData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD562DC4DB20001413DE /* CrewBidUpdateData+CoreDataClass.swift */; };
-		F41EBF312DC4DB20001413DE /* CrewBidUpdateData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD572DC4DB20001413DE /* CrewBidUpdateData+CoreDataProperties.swift */; };
-		F41EBF322DC4DB20001413DE /* OvernightBulk+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD582DC4DB20001413DE /* OvernightBulk+CoreDataClass.swift */; };
-		F41EBF332DC4DB20001413DE /* OvernightBulk+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD592DC4DB20001413DE /* OvernightBulk+CoreDataProperties.swift */; };
-		F41EBF342DC4DB20001413DE /* VacationArrayFromServer+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD5B2DC4DB20001413DE /* VacationArrayFromServer+CoreDataClass.swift */; };
-		F41EBF352DC4DB20001413DE /* VacationArrayFromServer+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD5C2DC4DB20001413DE /* VacationArrayFromServer+CoreDataProperties.swift */; };
 		F41EBF362DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD5D2DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift */; };
 		F41EBF372DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD5E2DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift */; };
 		F41EBF382DC4DB20001413DE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD602DC4DB20001413DE /* AppDelegate.swift */; };
@@ -339,33 +327,21 @@
 		F41EBD3E2DC4DB20001413DE /* BIDay+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIDay+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F41EBD3F2DC4DB20001413DE /* BIDayInfo+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIDayInfo+CoreDataClass.swift"; sourceTree = "<group>"; };
 		F41EBD402DC4DB20001413DE /* BIDayInfo+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIDayInfo+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		F41EBD412DC4DB20001413DE /* BIInsertionPoint+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIInsertionPoint+CoreDataClass.swift"; sourceTree = "<group>"; };
-		F41EBD422DC4DB20001413DE /* BIInsertionPoint+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIInsertionPoint+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F41EBD432DC4DB20001413DE /* BILeg+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILeg+CoreDataClass.swift"; sourceTree = "<group>"; };
 		F41EBD442DC4DB20001413DE /* BILeg+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILeg+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F41EBD452DC4DB20001413DE /* BILegInfo+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILegInfo+CoreDataClass.swift"; sourceTree = "<group>"; };
 		F41EBD462DC4DB20001413DE /* BILegInfo+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILegInfo+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F41EBD472DC4DB20001413DE /* BILine+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILine+CoreDataClass.swift"; sourceTree = "<group>"; };
 		F41EBD482DC4DB20001413DE /* BILine+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILine+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		F41EBD492DC4DB20001413DE /* BILineSortKeyMap+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILineSortKeyMap+CoreDataClass.swift"; sourceTree = "<group>"; };
-		F41EBD4A2DC4DB20001413DE /* BILineSortKeyMap+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BILineSortKeyMap+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F41EBD4B2DC4DB20001413DE /* BITrip+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BITrip+CoreDataClass.swift"; sourceTree = "<group>"; };
 		F41EBD4C2DC4DB20001413DE /* BITrip+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BITrip+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F41EBD4D2DC4DB20001413DE /* BITripInfo+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BITripInfo+CoreDataClass.swift"; sourceTree = "<group>"; };
 		F41EBD4E2DC4DB20001413DE /* BITripInfo+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BITripInfo+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F41EBD4F2DC4DB20001413DE /* BIVacation+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIVacation+CoreDataClass.swift"; sourceTree = "<group>"; };
 		F41EBD502DC4DB20001413DE /* BIVacation+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIVacation+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		F41EBD512DC4DB20001413DE /* Commutability+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Commutability+CoreDataClass.swift"; sourceTree = "<group>"; };
-		F41EBD522DC4DB20001413DE /* Commutability+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Commutability+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F41EBD532DC4DB20001413DE /* CommuteTime+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommuteTime+CoreDataClass.swift"; sourceTree = "<group>"; };
 		F41EBD542DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommuteTime+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		F41EBD562DC4DB20001413DE /* CrewBidUpdateData+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CrewBidUpdateData+CoreDataClass.swift"; sourceTree = "<group>"; };
-		F41EBD572DC4DB20001413DE /* CrewBidUpdateData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CrewBidUpdateData+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		F41EBD582DC4DB20001413DE /* OvernightBulk+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OvernightBulk+CoreDataClass.swift"; sourceTree = "<group>"; };
-		F41EBD592DC4DB20001413DE /* OvernightBulk+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OvernightBulk+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F41EBD5A2DC4DB20001413DE /* ThirdPartyURL.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = ThirdPartyURL.plist; sourceTree = "<group>"; };
-		F41EBD5B2DC4DB20001413DE /* VacationArrayFromServer+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VacationArrayFromServer+CoreDataClass.swift"; sourceTree = "<group>"; };
-		F41EBD5C2DC4DB20001413DE /* VacationArrayFromServer+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VacationArrayFromServer+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F41EBD5D2DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorkBlockList+CoreDataClass.swift"; sourceTree = "<group>"; };
 		F41EBD5E2DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WorkBlockList+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F41EBD602DC4DB20001413DE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -702,40 +678,15 @@
 			children = (
 				F41EBD332DC4DB20001413DE /* BIBidPeriod */,
 				F41EBD362DC4DB20001413DE /* BIBidReceipt */,
-				F41EBD392DC4DB20001413DE /* Filter */,
+				F494ED2B2DC5EFD8007B178E /* WorkBlockList */,
+				F494ED2A2DC5EF9C007B178E /* BITrip */,
+				F494ED282DC5EF67007B178E /* BILeg */,
+				F494ED272DC5EF56007B178E /* BIDay */,
 				F41EBD3C2DC4DB20001413DE /* Sort */,
-				F41EBD3D2DC4DB20001413DE /* BIDay+CoreDataClass.swift */,
-				F41EBD3E2DC4DB20001413DE /* BIDay+CoreDataProperties.swift */,
-				F41EBD3F2DC4DB20001413DE /* BIDayInfo+CoreDataClass.swift */,
-				F41EBD402DC4DB20001413DE /* BIDayInfo+CoreDataProperties.swift */,
-				F41EBD412DC4DB20001413DE /* BIInsertionPoint+CoreDataClass.swift */,
-				F41EBD422DC4DB20001413DE /* BIInsertionPoint+CoreDataProperties.swift */,
-				F41EBD432DC4DB20001413DE /* BILeg+CoreDataClass.swift */,
-				F41EBD442DC4DB20001413DE /* BILeg+CoreDataProperties.swift */,
-				F41EBD452DC4DB20001413DE /* BILegInfo+CoreDataClass.swift */,
-				F41EBD462DC4DB20001413DE /* BILegInfo+CoreDataProperties.swift */,
-				F41EBD472DC4DB20001413DE /* BILine+CoreDataClass.swift */,
-				F41EBD482DC4DB20001413DE /* BILine+CoreDataProperties.swift */,
-				F41EBD492DC4DB20001413DE /* BILineSortKeyMap+CoreDataClass.swift */,
-				F41EBD4A2DC4DB20001413DE /* BILineSortKeyMap+CoreDataProperties.swift */,
-				F41EBD4B2DC4DB20001413DE /* BITrip+CoreDataClass.swift */,
-				F41EBD4C2DC4DB20001413DE /* BITrip+CoreDataProperties.swift */,
-				F41EBD4D2DC4DB20001413DE /* BITripInfo+CoreDataClass.swift */,
-				F41EBD4E2DC4DB20001413DE /* BITripInfo+CoreDataProperties.swift */,
-				F41EBD4F2DC4DB20001413DE /* BIVacation+CoreDataClass.swift */,
-				F41EBD502DC4DB20001413DE /* BIVacation+CoreDataProperties.swift */,
-				F41EBD512DC4DB20001413DE /* Commutability+CoreDataClass.swift */,
-				F41EBD522DC4DB20001413DE /* Commutability+CoreDataProperties.swift */,
-				F41EBD532DC4DB20001413DE /* CommuteTime+CoreDataClass.swift */,
-				F41EBD542DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift */,
-				F41EBD562DC4DB20001413DE /* CrewBidUpdateData+CoreDataClass.swift */,
-				F41EBD572DC4DB20001413DE /* CrewBidUpdateData+CoreDataProperties.swift */,
-				F41EBD582DC4DB20001413DE /* OvernightBulk+CoreDataClass.swift */,
-				F41EBD592DC4DB20001413DE /* OvernightBulk+CoreDataProperties.swift */,
-				F41EBD5B2DC4DB20001413DE /* VacationArrayFromServer+CoreDataClass.swift */,
-				F41EBD5C2DC4DB20001413DE /* VacationArrayFromServer+CoreDataProperties.swift */,
-				F41EBD5D2DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift */,
-				F41EBD5E2DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift */,
+				F41EBD392DC4DB20001413DE /* Filter */,
+				F494ED292DC5EF91007B178E /* BILine */,
+				F494ED2C2DC5F10A007B178E /* Vacation */,
+				F494ED2D2DC5F1B1007B178E /* CommuteTime */,
 				F41EBD552DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld */,
 				F41EBD662DC4DB20001413DE /* BICalendarData.swift */,
 			);
@@ -1472,6 +1423,75 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		F494ED272DC5EF56007B178E /* BIDay */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD3D2DC4DB20001413DE /* BIDay+CoreDataClass.swift */,
+				F41EBD3E2DC4DB20001413DE /* BIDay+CoreDataProperties.swift */,
+				F41EBD3F2DC4DB20001413DE /* BIDayInfo+CoreDataClass.swift */,
+				F41EBD402DC4DB20001413DE /* BIDayInfo+CoreDataProperties.swift */,
+			);
+			path = BIDay;
+			sourceTree = "<group>";
+		};
+		F494ED282DC5EF67007B178E /* BILeg */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD432DC4DB20001413DE /* BILeg+CoreDataClass.swift */,
+				F41EBD442DC4DB20001413DE /* BILeg+CoreDataProperties.swift */,
+				F41EBD452DC4DB20001413DE /* BILegInfo+CoreDataClass.swift */,
+				F41EBD462DC4DB20001413DE /* BILegInfo+CoreDataProperties.swift */,
+			);
+			path = BILeg;
+			sourceTree = "<group>";
+		};
+		F494ED292DC5EF91007B178E /* BILine */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD472DC4DB20001413DE /* BILine+CoreDataClass.swift */,
+				F41EBD482DC4DB20001413DE /* BILine+CoreDataProperties.swift */,
+			);
+			path = BILine;
+			sourceTree = "<group>";
+		};
+		F494ED2A2DC5EF9C007B178E /* BITrip */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD4B2DC4DB20001413DE /* BITrip+CoreDataClass.swift */,
+				F41EBD4C2DC4DB20001413DE /* BITrip+CoreDataProperties.swift */,
+				F41EBD4D2DC4DB20001413DE /* BITripInfo+CoreDataClass.swift */,
+				F41EBD4E2DC4DB20001413DE /* BITripInfo+CoreDataProperties.swift */,
+			);
+			path = BITrip;
+			sourceTree = "<group>";
+		};
+		F494ED2B2DC5EFD8007B178E /* WorkBlockList */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD5D2DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift */,
+				F41EBD5E2DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift */,
+			);
+			path = WorkBlockList;
+			sourceTree = "<group>";
+		};
+		F494ED2C2DC5F10A007B178E /* Vacation */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD4F2DC4DB20001413DE /* BIVacation+CoreDataClass.swift */,
+				F41EBD502DC4DB20001413DE /* BIVacation+CoreDataProperties.swift */,
+			);
+			path = Vacation;
+			sourceTree = "<group>";
+		};
+		F494ED2D2DC5F1B1007B178E /* CommuteTime */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD532DC4DB20001413DE /* CommuteTime+CoreDataClass.swift */,
+				F41EBD542DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift */,
+			);
+			path = CommuteTime;
+			sourceTree = "<group>";
+		};
 		F4CF5A1F2D891A3800A351DB = {
 			isa = PBXGroup;
 			children = (
@@ -1704,33 +1724,21 @@
 				F41EBF182DC4DB20001413DE /* BIDay+CoreDataProperties.swift in Sources */,
 				F41EBF192DC4DB20001413DE /* BIDayInfo+CoreDataClass.swift in Sources */,
 				F41EBF1A2DC4DB20001413DE /* BIDayInfo+CoreDataProperties.swift in Sources */,
-				F41EBF1B2DC4DB20001413DE /* BIInsertionPoint+CoreDataClass.swift in Sources */,
-				F41EBF1C2DC4DB20001413DE /* BIInsertionPoint+CoreDataProperties.swift in Sources */,
 				F41EBF1D2DC4DB20001413DE /* BILeg+CoreDataClass.swift in Sources */,
 				F41EBF1E2DC4DB20001413DE /* BILeg+CoreDataProperties.swift in Sources */,
 				F41EBF1F2DC4DB20001413DE /* BILegInfo+CoreDataClass.swift in Sources */,
 				F41EBF202DC4DB20001413DE /* BILegInfo+CoreDataProperties.swift in Sources */,
 				F41EBF212DC4DB20001413DE /* BILine+CoreDataClass.swift in Sources */,
 				F41EBF222DC4DB20001413DE /* BILine+CoreDataProperties.swift in Sources */,
-				F41EBF232DC4DB20001413DE /* BILineSortKeyMap+CoreDataClass.swift in Sources */,
-				F41EBF242DC4DB20001413DE /* BILineSortKeyMap+CoreDataProperties.swift in Sources */,
 				F41EBF252DC4DB20001413DE /* BITrip+CoreDataClass.swift in Sources */,
 				F41EBF262DC4DB20001413DE /* BITrip+CoreDataProperties.swift in Sources */,
 				F41EBF272DC4DB20001413DE /* BITripInfo+CoreDataClass.swift in Sources */,
 				F41EBF282DC4DB20001413DE /* BITripInfo+CoreDataProperties.swift in Sources */,
 				F41EBF292DC4DB20001413DE /* BIVacation+CoreDataClass.swift in Sources */,
 				F41EBF2A2DC4DB20001413DE /* BIVacation+CoreDataProperties.swift in Sources */,
-				F41EBF2B2DC4DB20001413DE /* Commutability+CoreDataClass.swift in Sources */,
-				F41EBF2C2DC4DB20001413DE /* Commutability+CoreDataProperties.swift in Sources */,
 				F41EBF2D2DC4DB20001413DE /* CommuteTime+CoreDataClass.swift in Sources */,
 				F41EBF2E2DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift in Sources */,
 				F41EBF2F2DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld in Sources */,
-				F41EBF302DC4DB20001413DE /* CrewBidUpdateData+CoreDataClass.swift in Sources */,
-				F41EBF312DC4DB20001413DE /* CrewBidUpdateData+CoreDataProperties.swift in Sources */,
-				F41EBF322DC4DB20001413DE /* OvernightBulk+CoreDataClass.swift in Sources */,
-				F41EBF332DC4DB20001413DE /* OvernightBulk+CoreDataProperties.swift in Sources */,
-				F41EBF342DC4DB20001413DE /* VacationArrayFromServer+CoreDataClass.swift in Sources */,
-				F41EBF352DC4DB20001413DE /* VacationArrayFromServer+CoreDataProperties.swift in Sources */,
 				F41EBF362DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift in Sources */,
 				F41EBF372DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift in Sources */,
 				F41EBF382DC4DB20001413DE /* AppDelegate.swift in Sources */,
