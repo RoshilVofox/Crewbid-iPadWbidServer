@@ -736,38 +736,10 @@
 				F41EBD5C2DC4DB20001413DE /* VacationArrayFromServer+CoreDataProperties.swift */,
 				F41EBD5D2DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift */,
 				F41EBD5E2DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift */,
+				F41EBD552DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld */,
+				F41EBD662DC4DB20001413DE /* BICalendarData.swift */,
 			);
 			path = CoreData;
-			sourceTree = "<group>";
-		};
-		F41EBD652DC4DB20001413DE /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				F41EBD6F2DC4DB20001413DE /* documents */,
-				F41EBDC72DC4DB20001413DE /* Images */,
-				F41EBD602DC4DB20001413DE /* AppDelegate.swift */,
-				F41EBD612DC4DB20001413DE /* Assets.xcassets */,
-				F41EBD622DC4DB20001413DE /* SceneDelegate.swift */,
-				F41EBD632DC4DB20001413DE /* SWAPtimizer Tutorial.xcassets */,
-				F41EBD642DC4DB20001413DE /* Tutorial.xcassets */,
-				F41EBE6E2DC4DB20001413DE /* How-to-Videos */,
-			);
-			path = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		F41EBD682DC4DB20001413DE /* Common Files */ = {
-			isa = PBXGroup;
-			children = (
-				F41EBDD42DC4DB20001413DE /* Helpers */,
-				F41EBFC82DC4E4F4001413DE /* pList */,
-				F41EBD652DC4DB20001413DE /* Supporting Files */,
-				F41EBD662DC4DB20001413DE /* BICalendarData.swift */,
-				F41EBDD52DC4DB20001413DE /* CBLineValues.swift */,
-				F41EBD672DC4DB20001413DE /* Info.plist */,
-				F41EBD5A2DC4DB20001413DE /* ThirdPartyURL.plist */,
-				F41EBD552DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld */,
-			);
-			path = "Common Files";
 			sourceTree = "<group>";
 		};
 		F41EBD6F2DC4DB20001413DE /* documents */ = {
@@ -1232,12 +1204,12 @@
 			path = CBAlertVC;
 			sourceTree = "<group>";
 		};
-		F41EBE6E2DC4DB20001413DE /* How-to-Videos */ = {
+		F41EBE6E2DC4DB20001413DE /* HTML */ = {
 			isa = PBXGroup;
 			children = (
 				F41EBE6D2DC4DB20001413DE /* YouTubeTemplate.txt */,
 			);
-			path = "How-to-Videos";
+			path = HTML;
 			sourceTree = "<group>";
 		};
 		F41EBE712DC4DB20001413DE /* User Account */ = {
@@ -1306,50 +1278,38 @@
 			path = Sync;
 			sourceTree = "<group>";
 		};
-		F41EBE8D2DC4DB20001413DE /* View */ = {
+		F41EBE8D2DC4DB20001413DE /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				F41EBDF32DC4DB20001413DE /* Awards */,
-				F41EBDFB2DC4DB20001413DE /* Bid Actions */,
-				F41EBE532DC4DB20001413DE /* Bid Document */,
-				F41EBE5C2DC4DB20001413DE /* Bid Download */,
-				F41EBE612DC4DB20001413DE /* Bid Submission */,
-				F41EBE632DC4DB20001413DE /* BidRecipt */,
-				F41EBE652DC4DB20001413DE /* CapDetails */,
-				F41EBE672DC4DB20001413DE /* Cover Letter */,
-				F41EBE6A2DC4DB20001413DE /* Flight Data Change */,
-				F41EBE7F2DC4DB20001413DE /* Help Menu */,
-				F41EBE822DC4DB20001413DE /* HomeScreen */,
-				F41EBE842DC4DB20001413DE /* Secret Methods */,
-				F41EBE882DC4DB20001413DE /* Settings Menu */,
-				F41EBE8B2DC4DB20001413DE /* Sync */,
-				F41EBE8C2DC4DB20001413DE /* BaseViewController.swift */,
+				F494ECD82DC5C6B6007B178E /* ViewControllers */,
+				F41EBFC52DC4E3AB001413DE /* Cells */,
+				F41EBDEA2DC4DB20001413DE /* Storyboards */,
 			);
-			path = View;
+			path = Views;
 			sourceTree = "<group>";
 		};
 		F41EBE8E2DC4DB20001413DE /* CrewBid iPad_Swift */ = {
 			isa = PBXGroup;
 			children = (
-				F41EBDEA2DC4DB20001413DE /* Storyboards */,
-				F41EBD682DC4DB20001413DE /* Common Files */,
-				F41EBFC72DC4E465001413DE /* Model */,
-				F41EBE8D2DC4DB20001413DE /* View */,
-				F41EBFBF2DC4DCF7001413DE /* ViewModel */,
-				F41EBFC52DC4E3AB001413DE /* SubViews */,
+				F494ECDC2DC5C8F9007B178E /* Utilities */,
+				F494ECDB2DC5C767007B178E /* App */,
+				F494ECDA2DC5C6E8007B178E /* Resources */,
+				F41EBFC72DC4E465001413DE /* Models */,
+				F41EBE8D2DC4DB20001413DE /* Views */,
+				F41EBFBF2DC4DCF7001413DE /* ViewModels */,
 			);
 			path = "CrewBid iPad_Swift";
 			sourceTree = "<group>";
 		};
-		F41EBFBF2DC4DCF7001413DE /* ViewModel */ = {
+		F41EBFBF2DC4DCF7001413DE /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
 				F41EBFC22DC4E19A001413DE /* DocumentsCollectionViewModel.swift */,
 			);
-			path = ViewModel;
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		F41EBFC52DC4E3AB001413DE /* SubViews */ = {
+		F41EBFC52DC4E3AB001413DE /* Cells */ = {
 			isa = PBXGroup;
 			children = (
 				F41EBD302DC4DB20001413DE /* collectionViewCells */,
@@ -1362,23 +1322,26 @@
 				F41EBE162DC4DB20001413DE /* Filter */,
 				F41EBDDC2DC4DB20001413DE /* tableViewCells */,
 			);
-			path = SubViews;
+			path = Cells;
 			sourceTree = "<group>";
 		};
-		F41EBFC72DC4E465001413DE /* Model */ = {
+		F41EBFC72DC4E465001413DE /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				F41EBD5F2DC4DB20001413DE /* CoreData */,
+				F41EBDD52DC4DB20001413DE /* CBLineValues.swift */,
 			);
-			path = Model;
+			path = Models;
 			sourceTree = "<group>";
 		};
 		F41EBFC82DC4E4F4001413DE /* pList */ = {
 			isa = PBXGroup;
 			children = (
-				F41EBE522DC4DB20001413DE /* LineValues.plist */,
 				F41EBFCC2DC4E643001413DE /* Sort */,
 				F41EBFC92DC4E502001413DE /* Filter */,
+				F41EBD5A2DC4DB20001413DE /* ThirdPartyURL.plist */,
+				F41EBE522DC4DB20001413DE /* LineValues.plist */,
+				F41EBD672DC4DB20001413DE /* Info.plist */,
 			);
 			path = pList;
 			sourceTree = "<group>";
@@ -1454,6 +1417,59 @@
 				F41EBE812DC4DB20001413DE /* DocumentCell.swift */,
 			);
 			path = HomescreenDocCell;
+			sourceTree = "<group>";
+		};
+		F494ECD82DC5C6B6007B178E /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBDF32DC4DB20001413DE /* Awards */,
+				F41EBDFB2DC4DB20001413DE /* Bid Actions */,
+				F41EBE532DC4DB20001413DE /* Bid Document */,
+				F41EBE5C2DC4DB20001413DE /* Bid Download */,
+				F41EBE612DC4DB20001413DE /* Bid Submission */,
+				F41EBE632DC4DB20001413DE /* BidRecipt */,
+				F41EBE652DC4DB20001413DE /* CapDetails */,
+				F41EBE672DC4DB20001413DE /* Cover Letter */,
+				F41EBE6A2DC4DB20001413DE /* Flight Data Change */,
+				F41EBE7F2DC4DB20001413DE /* Help Menu */,
+				F41EBE822DC4DB20001413DE /* HomeScreen */,
+				F41EBE842DC4DB20001413DE /* Secret Methods */,
+				F41EBE882DC4DB20001413DE /* Settings Menu */,
+				F41EBE8B2DC4DB20001413DE /* Sync */,
+				F41EBE8C2DC4DB20001413DE /* BaseViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		F494ECDA2DC5C6E8007B178E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD6F2DC4DB20001413DE /* documents */,
+				F41EBDC72DC4DB20001413DE /* Images */,
+				F41EBE6E2DC4DB20001413DE /* HTML */,
+				F41EBD612DC4DB20001413DE /* Assets.xcassets */,
+				F41EBD632DC4DB20001413DE /* SWAPtimizer Tutorial.xcassets */,
+				F41EBD642DC4DB20001413DE /* Tutorial.xcassets */,
+				F41EBFC82DC4E4F4001413DE /* pList */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		F494ECDB2DC5C767007B178E /* App */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBD602DC4DB20001413DE /* AppDelegate.swift */,
+				F41EBD622DC4DB20001413DE /* SceneDelegate.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		F494ECDC2DC5C8F9007B178E /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				F41EBDD42DC4DB20001413DE /* Helpers */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 		F4CF5A1F2D891A3800A351DB = {
@@ -1885,7 +1901,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "CrewBid iPad_Swift/Common Files/Info.plist";
+				INFOPLIST_FILE = "CrewBid iPad_Swift/Resources/pList/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = CrewBid;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
@@ -1913,7 +1929,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "CrewBid iPad_Swift/Common Files/Info.plist";
+				INFOPLIST_FILE = "CrewBid iPad_Swift/Resources/pList/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = CrewBid;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
