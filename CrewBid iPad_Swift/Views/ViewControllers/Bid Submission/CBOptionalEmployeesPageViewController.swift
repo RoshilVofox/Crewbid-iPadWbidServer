@@ -21,6 +21,8 @@ class CBOptionalEmployeesPageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        txtEmpNum1.delegate = self
+        txtEmpNum2.delegate = self
 
        
     }
@@ -41,4 +43,16 @@ class CBOptionalEmployeesPageViewController: UIViewController {
         }
     }
     
+}
+
+extension CBOptionalEmployeesPageViewController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if textField.text!.isEmpty {
+            textField.layer.borderWidth = 4
+            textField.layer.borderColor = UIColor.purple.cgColor
+        } else {
+            textField.layer.borderWidth = 4
+            textField.layer.borderColor = UIColor.gray.cgColor
+        }
+    }
 }

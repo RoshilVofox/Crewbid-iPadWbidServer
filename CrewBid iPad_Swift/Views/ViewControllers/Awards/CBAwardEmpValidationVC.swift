@@ -13,6 +13,7 @@ class CBAwardEmpValidationVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        txtEmpNum.delegate = self
 
         // Do any additional setup after loading the view.
     }
@@ -33,4 +34,16 @@ class CBAwardEmpValidationVC: UIViewController {
         }
     }
     
+}
+
+extension CBAwardEmpValidationVC: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if textField.text!.isEmpty {
+            textField.layer.borderWidth = 4
+            textField.layer.borderColor = UIColor.purple.cgColor
+        } else {
+            textField.layer.borderWidth = 4
+            textField.layer.borderColor = UIColor.gray.cgColor
+        }
+    }
 }

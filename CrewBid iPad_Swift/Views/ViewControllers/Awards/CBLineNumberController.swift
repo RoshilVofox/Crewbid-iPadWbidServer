@@ -16,6 +16,8 @@ class CBLineNumberController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        txtPosition.delegate = self
+        txtLineNumber.delegate = self
 
         // Do any additional setup after loading the view.
     }
@@ -26,4 +28,16 @@ class CBLineNumberController: UIViewController {
     @IBAction func btnGoAction(_ sender: Any) {
     }
     
+}
+
+extension CBLineNumberController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if textField.text!.isEmpty {
+            textField.layer.borderWidth = 4
+            textField.layer.borderColor = UIColor.purple.cgColor
+        } else {
+            textField.layer.borderWidth = 4
+            textField.layer.borderColor = UIColor.gray.cgColor
+        }
+    }
 }

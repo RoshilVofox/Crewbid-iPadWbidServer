@@ -16,6 +16,8 @@ class CBAwardsRetrievalViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        txtPassword.delegate = self
+        txtEmpNum.delegate = self
 
         
     }
@@ -35,6 +37,18 @@ class CBAwardsRetrievalViewController: UIViewController {
                 vc.modalPresentationStyle = .fullScreen
                 presentingVC.present(vc, animated: true)
             }
+        }
+    }
+}
+
+extension CBAwardsRetrievalViewController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if textField.text!.isEmpty {
+            textField.layer.borderWidth = 4
+            textField.layer.borderColor = UIColor.purple.cgColor
+        } else {
+            textField.layer.borderWidth = 4
+            textField.layer.borderColor = UIColor.gray.cgColor
         }
     }
 }

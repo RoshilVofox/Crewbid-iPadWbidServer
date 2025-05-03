@@ -17,6 +17,8 @@ class CBSubmitCredentialVC: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        txtPassword.delegate = self
+        txtEmpNum.delegate = self
         finalAlert()
     }
 
@@ -47,5 +49,17 @@ class CBSubmitCredentialVC: UIViewController {
         let cancelAction = UIAlertAction(title: "ok", style: .cancel)
         alert.addAction(cancelAction)
         present(alert, animated: true)
+    }
+}
+
+extension CBSubmitCredentialVC: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if textField.text!.isEmpty {
+            textField.layer.borderWidth = 4
+            textField.layer.borderColor = UIColor.purple.cgColor
+        } else {
+            textField.layer.borderWidth = 4
+            textField.layer.borderColor = UIColor.gray.cgColor
+        }
     }
 }

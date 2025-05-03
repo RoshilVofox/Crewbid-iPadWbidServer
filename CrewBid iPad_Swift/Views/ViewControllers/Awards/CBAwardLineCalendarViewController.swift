@@ -33,6 +33,7 @@ class CBAwardLineCalendarViewController: UIViewController, UICollectionViewDeleg
     }
     
     @IBAction func btnDismissAction(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
     }
 }
 

@@ -17,6 +17,8 @@ class CBTripAwardViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        txtPosition.delegate = self
+        txtTripID.delegate = self
 
         // Do any additional setup after loading the view.
     }
@@ -28,4 +30,16 @@ class CBTripAwardViewController: UIViewController {
     @IBAction func btnGoAction(_ sender: Any) {
     }
     
+}
+
+extension CBTripAwardViewController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if textField.text!.isEmpty {
+            textField.layer.borderWidth = 4
+            textField.layer.borderColor = UIColor.purple.cgColor
+        } else {
+            textField.layer.borderWidth = 4
+            textField.layer.borderColor = UIColor.gray.cgColor
+        }
+    }
 }
