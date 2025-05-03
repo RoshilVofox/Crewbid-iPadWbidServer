@@ -206,9 +206,13 @@
                                     <outlet property="delegate" destination="Y6W-OH-hqX" id="DXA-Pv-rco"/>
                                 </connections>
                             </tableView>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UWM-9W-xVJ">
-                                <rect key="frame" x="588" y="905" width="200" height="50"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UWM-9W-xVJ">
+                                <rect key="frame" x="588" y="907" width="200" height="50"/>
                                 <color key="backgroundColor" name="CrewbidOrange"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="qIF-D3-VBN"/>
+                                    <constraint firstAttribute="width" constant="200" id="ra6-qB-CfE"/>
+                                </constraints>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Update Bid Data">
                                     <fontDescription key="titleFontDescription" type="boldSystem" pointSize="17"/>
@@ -223,16 +227,17 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="354-1m-Rv8" firstAttribute="top" secondItem="gk9-1W-UQl" secondAttribute="bottom" id="GRl-L6-4Ol"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="UWM-9W-xVJ" secondAttribute="bottom" constant="30" id="L5v-YR-FlW"/>
+                            <constraint firstItem="UWM-9W-xVJ" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="588" id="L6T-Lr-jaU"/>
                             <constraint firstItem="utg-6O-eXU" firstAttribute="top" secondItem="5EZ-qb-Rvc" secondAttribute="top" constant="162" id="MXi-yX-Nhy"/>
                             <constraint firstItem="utg-6O-eXU" firstAttribute="leading" secondItem="gk9-1W-UQl" secondAttribute="leading" id="Mke-nm-jPE"/>
-                            <constraint firstItem="UWM-9W-xVJ" firstAttribute="top" secondItem="utg-6O-eXU" secondAttribute="bottom" constant="68" id="OYJ-nF-8Bi"/>
                             <constraint firstItem="utg-6O-eXU" firstAttribute="trailing" secondItem="354-1m-Rv8" secondAttribute="trailing" id="Qve-KA-fd0"/>
                             <constraint firstItem="gk9-1W-UQl" firstAttribute="top" secondItem="vDu-zF-Fre" secondAttribute="top" id="YDM-9z-Y5X"/>
                             <constraint firstItem="utg-6O-eXU" firstAttribute="trailing" secondItem="gk9-1W-UQl" secondAttribute="trailing" id="an4-Mb-HRn"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="354-1m-Rv8" secondAttribute="trailing" id="c4b-Ao-fB3"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="UWM-9W-xVJ" secondAttribute="trailing" constant="588" id="e4J-O2-xJx"/>
                             <constraint firstItem="utg-6O-eXU" firstAttribute="top" secondItem="354-1m-Rv8" secondAttribute="bottom" id="i6h-M9-sJh"/>
                             <constraint firstItem="utg-6O-eXU" firstAttribute="leading" secondItem="354-1m-Rv8" secondAttribute="leading" id="ktA-JM-EsE"/>
-                            <constraint firstItem="utg-6O-eXU" firstAttribute="centerX" secondItem="UWM-9W-xVJ" secondAttribute="centerX" id="vfm-E6-Xkj"/>
                             <constraint firstItem="354-1m-Rv8" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="xTH-i5-IHL"/>
                         </constraints>
                     </view>
