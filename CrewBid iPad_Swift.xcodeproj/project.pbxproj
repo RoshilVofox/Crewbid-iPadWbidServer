@@ -688,7 +688,6 @@
 				F494ED2C2DC5F10A007B178E /* Vacation */,
 				F494ED2D2DC5F1B1007B178E /* CommuteTime */,
 				F41EBD552DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld */,
-				F41EBD662DC4DB20001413DE /* BICalendarData.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -1281,6 +1280,7 @@
 			children = (
 				F41EBD5F2DC4DB20001413DE /* CoreData */,
 				F41EBDD52DC4DB20001413DE /* CBLineValues.swift */,
+				F41EBD662DC4DB20001413DE /* BICalendarData.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
