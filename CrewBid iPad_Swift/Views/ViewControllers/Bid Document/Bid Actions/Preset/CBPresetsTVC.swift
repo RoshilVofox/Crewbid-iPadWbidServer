@@ -80,7 +80,7 @@ extension CBPresetsTVC: CBPresetCellDelegate{
     func deleteButtonPressed(presetCell: CBPresetCell, indexpath indexPath: IndexPath) {
         let alert = UIAlertController(title: "Delete Preset?", message: "Tap OK to confirm.", preferredStyle: .alert)
         
-        let okAction = UIAlertAction(title: "OK", style: .destructive) { [weak self] _ in
+        let okAction = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
             guard let self = self else { return }
 
             if indexPath.row < self.array.count {
