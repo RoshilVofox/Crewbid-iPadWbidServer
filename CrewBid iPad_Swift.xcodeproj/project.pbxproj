@@ -305,7 +305,6 @@
 		F49849CB2DC76E0100FE9426 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = F49849CA2DC76E0100FE9426 /* FirebaseCrashlytics */; };
 		F49849CD2DC76EF900FE9426 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49849CC2DC76EF900FE9426 /* Reachability.swift */; };
 		F49849D12DC7800C00FE9426 /* SimplePing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49849D02DC7800C00FE9426 /* SimplePing.swift */; };
-		F49849D32DC7901F00FE9426 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F49849D22DC78E1300FE9426 /* GoogleService-Info.plist */; };
 		F4CF5A8E2D892B9800A351DB /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = F4CF5A8D2D892B9800A351DB /* ZipArchive */; };
 /* End PBXBuildFile section */
 
@@ -608,7 +607,6 @@
 		F41EBFC22DC4E19A001413DE /* DocumentsCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentsCollectionViewModel.swift; sourceTree = "<group>"; };
 		F49849CC2DC76EF900FE9426 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		F49849D02DC7800C00FE9426 /* SimplePing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimplePing.swift; sourceTree = "<group>"; };
-		F49849D22DC78E1300FE9426 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		F4CF5A282D891A3800A351DB /* CrewBid iPad_Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CrewBid iPad_Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -1311,7 +1309,6 @@
 		F41EBFC82DC4E4F4001413DE /* pList */ = {
 			isa = PBXGroup;
 			children = (
-				F49849D22DC78E1300FE9426 /* GoogleService-Info.plist */,
 				F41EBFCC2DC4E643001413DE /* Sort */,
 				F41EBFC92DC4E502001413DE /* Filter */,
 				F41EBD5A2DC4DB20001413DE /* ThirdPartyURL.plist */,
@@ -1656,7 +1653,6 @@
 				F41EBEC32DC4DB20001413DE /* TripButton-rounded-both-yellow_iOS7@2x.png in Resources */,
 				F41EBEC42DC4DB20001413DE /* TripButton-rounded-left-brown_iOS7.png in Resources */,
 				F41EBEC52DC4DB20001413DE /* TripButton-rounded-left-brown_iOS7@2x.png in Resources */,
-				F49849D32DC7901F00FE9426 /* GoogleService-Info.plist in Resources */,
 				F41EBEC62DC4DB20001413DE /* TripButton-rounded-left-FVBlue_iOS7.png in Resources */,
 				F41EBEC72DC4DB20001413DE /* TripButton-rounded-left-FVBlue_iOS7@2x.png in Resources */,
 				F41EBEC82DC4DB20001413DE /* TripButton-rounded-left-green.png in Resources */,

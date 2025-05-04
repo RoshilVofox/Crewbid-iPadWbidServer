@@ -81,16 +81,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         onLaunch = true
-        FirebaseApp.configure()
-        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(false)
-        Crashlytics.crashlytics().checkForUnsentReports { hasUnsentReports in
-            let hasConsent = true
-            if hasUnsentReports && hasConsent {
-                Crashlytics.crashlytics().sendUnsentReports()
-            }else{
-                Crashlytics.crashlytics().deleteUnsentReports()
-            }
-        }
+//        FirebaseApp.configure()
+//        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(false)
+//        Crashlytics.crashlytics().checkForUnsentReports { hasUnsentReports in
+//            let hasConsent = true
+//            if hasUnsentReports && hasConsent {
+//                Crashlytics.crashlytics().sendUnsentReports()
+//            }else{
+//                Crashlytics.crashlytics().deleteUnsentReports()
+//            }
+//        }
         locationManager = CLLocationManager()
         locationManager?.startUpdatingHeading()
         
