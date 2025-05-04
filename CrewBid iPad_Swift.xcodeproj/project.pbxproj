@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8B0044192DC72AA900CAEF82 /* CBPresetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */; };
 		8BEADE8B2DC4A4DB00B3BDF2 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BEADE8A2DC4A4DB00B3BDF2 /* WebKit.framework */; };
 		8BFCEE9E2DC4F62F0068C00B /* Box.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEE9D2DC4F62F0068C00B /* Box.png */; };
 		8BFCEEA02DC4F6400068C00B /* Chat.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEE9F2DC4F6400068C00B /* Chat.png */; };
@@ -304,6 +305,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPresetCell.swift; sourceTree = "<group>"; };
 		8BEADE8A2DC4A4DB00B3BDF2 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		8BFCEE9D2DC4F62F0068C00B /* Box.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Box.png; sourceTree = "<group>"; };
 		8BFCEE9F2DC4F6400068C00B /* Chat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Chat.png; sourceTree = "<group>"; };
@@ -615,6 +617,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8B0044172DC72A9200CAEF82 /* Preset */ = {
+			isa = PBXGroup;
+			children = (
+				8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */,
+			);
+			path = Preset;
+			sourceTree = "<group>";
+		};
 		8BEADE892DC4A4DB00B3BDF2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1262,6 +1272,7 @@
 		F41EBFC52DC4E3AB001413DE /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				8B0044172DC72A9200CAEF82 /* Preset */,
 				F41EBD302DC4DB20001413DE /* collectionViewCells */,
 				F41EBFD02DC4EAB0001413DE /* HomescreenDocCell */,
 				F41EBFCF2DC4E802001413DE /* FABidListMoveMenuCell */,
@@ -1762,6 +1773,7 @@
 				F41EBF4A2DC4DB20001413DE /* ShowCAPTableViewCell.swift in Sources */,
 				F41EBF4B2DC4DB20001413DE /* SwitchTableViewCell.swift in Sources */,
 				F41EBF4C2DC4DB20001413DE /* AwardActionsTableController.swift in Sources */,
+				8B0044192DC72AA900CAEF82 /* CBPresetCell.swift in Sources */,
 				F41EBF4D2DC4DB20001413DE /* CBAwardEmpValidationVC.swift in Sources */,
 				F41EBF4E2DC4DB20001413DE /* CBAwardLineCalendarViewController.swift in Sources */,
 				F41EBF4F2DC4DB20001413DE /* CBAwardsRetrievalViewController.swift in Sources */,

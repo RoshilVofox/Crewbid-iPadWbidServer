@@ -3153,7 +3153,7 @@
                                 <rect key="frame" x="0.0" y="50" width="580" height="560"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="presetCell" rowHeight="107" id="VhQ-8N-aFh">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="presetCell" rowHeight="107" id="VhQ-8N-aFh" customClass="CBPresetCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="50" width="580" height="107"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="VhQ-8N-aFh" id="bvb-mf-NqO">
@@ -3178,6 +3178,9 @@
                                                     </constraints>
                                                     <inset key="imageEdgeInsets" minX="8" minY="8" maxX="8" maxY="8"/>
                                                     <state key="normal" image="bidDelete"/>
+                                                    <connections>
+                                                        <action selector="deletePresetBtnTapped:" destination="VhQ-8N-aFh" eventType="touchUpInside" id="Rkc-oc-O8h"/>
+                                                    </connections>
                                                 </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loaded" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BKh-KX-MHi" userLabel="Load Label">
                                                     <rect key="frame" x="463" y="31.5" width="81" height="44"/>
@@ -3221,10 +3224,22 @@
                                                 <constraint firstItem="v4w-K7-Nqt" firstAttribute="centerY" secondItem="bvb-mf-NqO" secondAttribute="centerY" id="ksk-bE-YHy"/>
                                                 <constraint firstItem="VWi-hr-AAd" firstAttribute="centerY" secondItem="kpG-f2-oe6" secondAttribute="centerY" id="pDO-jN-s5S"/>
                                                 <constraint firstItem="v4w-K7-Nqt" firstAttribute="leading" secondItem="kpG-f2-oe6" secondAttribute="trailing" constant="15" id="tSr-kM-Yom"/>
+                                                <constraint firstItem="VWi-hr-AAd" firstAttribute="leading" secondItem="bvb-mf-NqO" secondAttribute="leadingMargin" constant="17" id="wnV-uf-RI3"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="addButton" destination="VWi-hr-AAd" id="m2s-kq-iRb"/>
+                                            <outlet property="deleteButton" destination="kpG-f2-oe6" id="nTJ-rR-85w"/>
+                                            <outlet property="loadLabel" destination="BKh-KX-MHi" id="8sx-8K-Kvx"/>
+                                            <outlet property="nameLabel" destination="v4w-K7-Nqt" id="x9T-xr-0cH"/>
+                                            <outlet property="nameTextField" destination="XxK-xk-TmR" id="ju7-lA-TRP"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="0Is-tp-i6s" id="cFV-4P-gyB"/>
+                                    <outlet property="delegate" destination="0Is-tp-i6s" id="szR-1I-8F1"/>
+                                </connections>
                             </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="NoD-RC-KdF"/>
@@ -3243,6 +3258,7 @@
                     <size key="freeformSize" width="580" height="630"/>
                     <connections>
                         <outlet property="btnBidListCount" destination="O0M-86-HaF" id="GZV-7i-FON"/>
+                        <outlet property="tableView" destination="av1-gu-h2G" id="QjY-7T-tsJ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="i6n-y0-PgX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
