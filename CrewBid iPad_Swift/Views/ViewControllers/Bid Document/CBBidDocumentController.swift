@@ -26,6 +26,7 @@ class CBBidDocumentController: UIViewController {
     @IBOutlet weak var rightShadowView: UIView!
     @IBOutlet weak var leftContainerView: UIView!
     @IBOutlet weak var rightContainerView: UIView!
+    @IBOutlet weak var bidView: UIView!
     
     var bidPeriod: BIBidPeriod?
     

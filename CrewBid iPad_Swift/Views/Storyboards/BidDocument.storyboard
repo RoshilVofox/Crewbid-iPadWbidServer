@@ -189,61 +189,96 @@
                                     <constraint firstItem="omP-p3-FZ2" firstAttribute="leading" secondItem="lrd-vH-UbI" secondAttribute="trailing" constant="10" id="wGl-kB-lnp"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aCx-CY-HlG" userLabel="Left Shadow View">
-                                <rect key="frame" x="14" y="94" width="586" height="690"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="HHH-Tn-XjL">
+                                <rect key="frame" x="14" y="94" width="1182" height="690"/>
                                 <subviews>
-                                    <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wsv-BL-8wb">
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aCx-CY-HlG" userLabel="Left Shadow View">
                                         <rect key="frame" x="0.0" y="0.0" width="586" height="690"/>
-                                        <connections>
-                                            <segue destination="1Ak-2G-kPz" kind="embed" id="Wl9-1m-dhB"/>
-                                        </connections>
-                                    </containerView>
+                                        <subviews>
+                                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wsv-BL-8wb">
+                                                <rect key="frame" x="0.0" y="0.0" width="586" height="690"/>
+                                                <connections>
+                                                    <segue destination="1Ak-2G-kPz" kind="embed" id="Wl9-1m-dhB"/>
+                                                </connections>
+                                            </containerView>
+                                        </subviews>
+                                        <color key="backgroundColor" name="HomeBackGround"/>
+                                        <constraints>
+                                            <constraint firstItem="wsv-BL-8wb" firstAttribute="top" secondItem="aCx-CY-HlG" secondAttribute="top" id="0tA-eX-oLR"/>
+                                            <constraint firstAttribute="bottom" secondItem="wsv-BL-8wb" secondAttribute="bottom" id="B49-UW-e85"/>
+                                            <constraint firstAttribute="width" constant="586" id="HvD-2Z-9QG"/>
+                                            <constraint firstItem="wsv-BL-8wb" firstAttribute="leading" secondItem="aCx-CY-HlG" secondAttribute="leading" id="Sbb-I6-xt0"/>
+                                            <constraint firstAttribute="trailing" secondItem="wsv-BL-8wb" secondAttribute="trailing" id="z2R-8n-iym"/>
+                                        </constraints>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Dsv-i9-PZT" userLabel="Right Shadow View">
+                                        <rect key="frame" x="596" y="0.0" width="586" height="690"/>
+                                        <subviews>
+                                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RO9-JJ-rOX">
+                                                <rect key="frame" x="0.0" y="0.0" width="586" height="690"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="586" id="fEW-ei-CW5"/>
+                                                </constraints>
+                                                <connections>
+                                                    <segue destination="7Zk-um-CRe" kind="embed" id="KK3-Md-RPn"/>
+                                                </connections>
+                                            </containerView>
+                                        </subviews>
+                                        <color key="backgroundColor" name="HomeBackGround"/>
+                                        <constraints>
+                                            <constraint firstAttribute="trailing" secondItem="RO9-JJ-rOX" secondAttribute="trailing" id="7kh-0B-7Gy"/>
+                                            <constraint firstItem="RO9-JJ-rOX" firstAttribute="leading" secondItem="Dsv-i9-PZT" secondAttribute="leading" id="fk8-Qe-61Z"/>
+                                            <constraint firstItem="RO9-JJ-rOX" firstAttribute="top" secondItem="Dsv-i9-PZT" secondAttribute="top" id="gM3-Yc-BUx"/>
+                                            <constraint firstAttribute="bottom" secondItem="RO9-JJ-rOX" secondAttribute="bottom" id="xrh-1n-9P4"/>
+                                        </constraints>
+                                    </view>
+                                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gfd-8c-jhG" userLabel="bidView">
+                                        <rect key="frame" x="1182" y="0.0" width="0.0" height="690"/>
+                                        <subviews>
+                                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gon-gB-WKz">
+                                                <rect key="frame" x="0.0" y="0.0" width="0.0" height="690"/>
+                                            </containerView>
+                                        </subviews>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstItem="Gon-gB-WKz" firstAttribute="top" secondItem="Gfd-8c-jhG" secondAttribute="top" id="8UF-BS-6uc"/>
+                                            <constraint firstItem="Gon-gB-WKz" firstAttribute="top" secondItem="Gfd-8c-jhG" secondAttribute="top" id="Ehh-9J-yuW"/>
+                                            <constraint firstAttribute="bottom" secondItem="Gon-gB-WKz" secondAttribute="bottom" id="QZw-iG-Orr"/>
+                                            <constraint firstItem="Gon-gB-WKz" firstAttribute="leading" secondItem="Gfd-8c-jhG" secondAttribute="leading" id="URQ-4b-NWo"/>
+                                            <constraint firstItem="Gon-gB-WKz" firstAttribute="leading" secondItem="Gfd-8c-jhG" secondAttribute="leading" id="aU1-m7-XvD"/>
+                                            <constraint firstAttribute="trailing" secondItem="Gon-gB-WKz" secondAttribute="trailing" id="bpe-yx-2YB"/>
+                                            <constraint firstAttribute="trailing" secondItem="Gon-gB-WKz" secondAttribute="trailing" id="etq-PQ-tB3"/>
+                                            <constraint firstAttribute="bottom" secondItem="Gon-gB-WKz" secondAttribute="bottom" id="hro-3Z-oDe"/>
+                                        </constraints>
+                                    </view>
                                 </subviews>
-                                <color key="backgroundColor" name="HomeBackGround"/>
                                 <constraints>
-                                    <constraint firstItem="wsv-BL-8wb" firstAttribute="leading" secondItem="aCx-CY-HlG" secondAttribute="leading" id="Sfj-KH-GlK"/>
-                                    <constraint firstItem="wsv-BL-8wb" firstAttribute="top" secondItem="aCx-CY-HlG" secondAttribute="top" id="Y05-h4-v99"/>
-                                    <constraint firstAttribute="trailing" secondItem="wsv-BL-8wb" secondAttribute="trailing" id="aWr-M4-1y4"/>
-                                    <constraint firstAttribute="bottom" secondItem="wsv-BL-8wb" secondAttribute="bottom" id="j4I-Gq-BfR"/>
+                                    <constraint firstAttribute="bottom" secondItem="Gfd-8c-jhG" secondAttribute="bottom" id="4a8-37-etj"/>
+                                    <constraint firstAttribute="trailing" secondItem="Gfd-8c-jhG" secondAttribute="trailing" id="7TN-ip-Dh2"/>
+                                    <constraint firstItem="aCx-CY-HlG" firstAttribute="leading" secondItem="HHH-Tn-XjL" secondAttribute="leading" id="7z1-Ia-1dE"/>
+                                    <constraint firstItem="aCx-CY-HlG" firstAttribute="top" secondItem="HHH-Tn-XjL" secondAttribute="top" id="DId-bB-pV2"/>
+                                    <constraint firstItem="Gfd-8c-jhG" firstAttribute="leading" secondItem="Dsv-i9-PZT" secondAttribute="trailing" id="HBh-yE-Wfq"/>
+                                    <constraint firstAttribute="bottom" secondItem="aCx-CY-HlG" secondAttribute="bottom" id="VUJ-b7-0ea"/>
+                                    <constraint firstAttribute="bottom" secondItem="aCx-CY-HlG" secondAttribute="bottom" id="bVt-vN-l3M"/>
+                                    <constraint firstItem="Gfd-8c-jhG" firstAttribute="top" secondItem="HHH-Tn-XjL" secondAttribute="top" id="sM1-vs-ciq"/>
                                 </constraints>
-                            </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Dsv-i9-PZT" userLabel="Right Shadow View">
-                                <rect key="frame" x="610" y="94" width="586" height="690"/>
-                                <subviews>
-                                    <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="RO9-JJ-rOX">
-                                        <rect key="frame" x="0.0" y="0.0" width="586" height="690"/>
-                                        <connections>
-                                            <segue destination="7Zk-um-CRe" kind="embed" id="KK3-Md-RPn"/>
-                                        </connections>
-                                    </containerView>
-                                </subviews>
-                                <color key="backgroundColor" name="HomeBackGround"/>
-                                <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="RO9-JJ-rOX" secondAttribute="trailing" id="UBh-ga-tS1"/>
-                                    <constraint firstAttribute="bottom" secondItem="RO9-JJ-rOX" secondAttribute="bottom" id="V9d-Nk-dBj"/>
-                                    <constraint firstItem="RO9-JJ-rOX" firstAttribute="leading" secondItem="Dsv-i9-PZT" secondAttribute="leading" id="pt4-79-Zt4"/>
-                                    <constraint firstItem="RO9-JJ-rOX" firstAttribute="top" secondItem="Dsv-i9-PZT" secondAttribute="top" id="vbW-G9-vn2"/>
-                                </constraints>
-                            </view>
+                            </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" red="0.43137254901960786" green="0.49803921568627452" blue="0.5490196078431373" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="Dsv-i9-PZT" secondAttribute="trailing" constant="14" id="4yC-Qb-HPg"/>
-                            <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="Dsv-i9-PZT" secondAttribute="bottom" constant="5" id="53L-Ki-idJ"/>
-                            <constraint firstItem="Dsv-i9-PZT" firstAttribute="top" secondItem="VNf-2O-4Pg" secondAttribute="bottom" constant="20" id="73v-kw-pwp"/>
-                            <constraint firstItem="Dsv-i9-PZT" firstAttribute="leading" secondItem="aCx-CY-HlG" secondAttribute="trailing" constant="10" id="B8E-rs-HQR"/>
+                            <constraint firstItem="HHH-Tn-XjL" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="14" id="1NO-PT-4Lu"/>
+                            <constraint firstItem="HHH-Tn-XjL" firstAttribute="top" secondItem="VNf-2O-4Pg" secondAttribute="bottom" constant="20" id="BJJ-9d-lvR"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="HHH-Tn-XjL" secondAttribute="bottom" constant="5" id="DtG-V4-zve"/>
                             <constraint firstItem="VNf-2O-4Pg" firstAttribute="top" secondItem="5EZ-qb-Rvc" secondAttribute="top" id="Xbw-JM-pqw"/>
+                            <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="HHH-Tn-XjL" secondAttribute="trailing" constant="14" id="YxE-uU-cd8"/>
                             <constraint firstItem="VNf-2O-4Pg" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="bjc-ZF-UHv"/>
-                            <constraint firstItem="Dsv-i9-PZT" firstAttribute="width" secondItem="aCx-CY-HlG" secondAttribute="width" id="ebc-cW-SGB"/>
-                            <constraint firstItem="aCx-CY-HlG" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="14" id="sNt-nL-N5O"/>
-                            <constraint firstItem="aCx-CY-HlG" firstAttribute="top" secondItem="VNf-2O-4Pg" secondAttribute="bottom" constant="20" id="tA6-2l-cMm"/>
-                            <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="aCx-CY-HlG" secondAttribute="bottom" constant="5" id="wq5-Oe-zfj"/>
                             <constraint firstItem="VNf-2O-4Pg" firstAttribute="trailing" secondItem="vDu-zF-Fre" secondAttribute="trailing" id="zoj-Kt-poL"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="U1d-XH-vIC"/>
                     <connections>
+                        <outlet property="bidView" destination="Gfd-8c-jhG" id="r7y-XR-T8b"/>
                         <outlet property="btnEOM" destination="lrd-vH-UbI" id="wsA-Dy-FHG"/>
                         <outlet property="btnHelp" destination="YjE-Fl-JAK" id="Fsz-gc-2LY"/>
                         <outlet property="btnHome" destination="Tw6-dj-hQi" id="7eG-hn-XP3"/>
