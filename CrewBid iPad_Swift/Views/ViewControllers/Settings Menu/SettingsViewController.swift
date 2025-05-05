@@ -10,7 +10,7 @@ import UIKit
 class SettingsViewController: BaseViewController,KUIPopOverUsable {
     
     var contentSize: CGSize {
-        return CGSize(width: 300, height: self.bdPrd == 0 ? 280 : 400)
+        return CGSize(width: 300, height: self.bdPrd == 0 ? 376 : 400)
     }
 
     
@@ -27,6 +27,7 @@ class SettingsViewController: BaseViewController,KUIPopOverUsable {
     @IBOutlet weak var myCalButton: UIButton!
     @IBOutlet weak var startDatePicker: UIDatePicker!
     @IBOutlet weak var endDatePicker: UIDatePicker!
+    @IBOutlet weak var brightnessView: UIView!
     
     var bidPeriod: BIBidPeriod?
     var bdPrd:Int!
@@ -37,6 +38,9 @@ class SettingsViewController: BaseViewController,KUIPopOverUsable {
         viewBG.layer.cornerRadius = 5
         setSwitchState()
         setUiForCell()
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewTapped))
+        brightnessView.isUserInteractionEnabled = true
+        brightnessView.addGestureRecognizer(tapGesture)
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutViewForSwitch), name: NSNotification.Name("SyncSwitchStateAction"), object: nil)
         // Do any additional setup after loading the view.
     }
@@ -98,6 +102,19 @@ class SettingsViewController: BaseViewController,KUIPopOverUsable {
         }
         else {
             print("sync switch is turned off")
+        }
+    }
+    
+    @objc func viewTapped() {
+        print("hello")
+        print(self.navigationController)
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let vc = storyboard.instantiateViewController(withIdentifier: "CBBrightnessViewController") as? CBBrightnessViewController {
+            vc.preferredContentSize = CGSize(width: 300, height: 200)
+            self.navigationController?.pushViewController(vc, animated: true)
+            print("success")
+        } else {
+            print("Failed to instantiate CBBrightnessViewController")
         }
     }
 }

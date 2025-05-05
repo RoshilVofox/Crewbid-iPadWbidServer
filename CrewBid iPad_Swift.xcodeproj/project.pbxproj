@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		8B0044192DC72AA900CAEF82 /* CBPresetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */; };
+		8B5F03282DC8D99F006A4E85 /* CBBrightnessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F03272DC8D99F006A4E85 /* CBBrightnessViewController.swift */; };
 		8B77C52B2DC7973B00E5B3B4 /* AppData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B77C52A2DC7973B00E5B3B4 /* AppData.swift */; };
 		8BEADE8B2DC4A4DB00B3BDF2 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BEADE8A2DC4A4DB00B3BDF2 /* WebKit.framework */; };
 		8BFCEE9E2DC4F62F0068C00B /* Box.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEE9D2DC4F62F0068C00B /* Box.png */; };
@@ -311,6 +312,7 @@
 
 /* Begin PBXFileReference section */
 		8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPresetCell.swift; sourceTree = "<group>"; };
+		8B5F03272DC8D99F006A4E85 /* CBBrightnessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBrightnessViewController.swift; sourceTree = "<group>"; };
 		8B77C52A2DC7973B00E5B3B4 /* AppData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
 		8BEADE8A2DC4A4DB00B3BDF2 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		8BFCEE9D2DC4F62F0068C00B /* Box.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Box.png; sourceTree = "<group>"; };
@@ -633,6 +635,14 @@
 				8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */,
 			);
 			path = Preset;
+			sourceTree = "<group>";
+		};
+		8B5F03262DC8D979006A4E85 /* Brightness */ = {
+			isa = PBXGroup;
+			children = (
+				8B5F03272DC8D99F006A4E85 /* CBBrightnessViewController.swift */,
+			);
+			path = Brightness;
 			sourceTree = "<group>";
 		};
 		8BEADE892DC4A4DB00B3BDF2 /* Frameworks */ = {
@@ -1397,6 +1407,7 @@
 		F494ECD82DC5C6B6007B178E /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				8B5F03262DC8D979006A4E85 /* Brightness */,
 				F41EBDF32DC4DB20001413DE /* Awards */,
 				F41EBDFB2DC4DB20001413DE /* Bid Actions */,
 				F41EBE532DC4DB20001413DE /* Bid Document */,
@@ -1748,6 +1759,7 @@
 				F41EBF152DC4DB20001413DE /* BILineSort+CoreDataClass.swift in Sources */,
 				F41EBF162DC4DB20001413DE /* BILineSort+CoreDataProperties.swift in Sources */,
 				F41EBF172DC4DB20001413DE /* BIDay+CoreDataClass.swift in Sources */,
+				8B5F03282DC8D99F006A4E85 /* CBBrightnessViewController.swift in Sources */,
 				F41EBF182DC4DB20001413DE /* BIDay+CoreDataProperties.swift in Sources */,
 				F41EBF192DC4DB20001413DE /* BIDayInfo+CoreDataClass.swift in Sources */,
 				F49849CD2DC76EF900FE9426 /* Reachability.swift in Sources */,

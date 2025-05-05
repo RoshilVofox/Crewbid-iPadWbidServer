@@ -10,7 +10,7 @@ import UIKit
 class EmbeddedSettingsVC: BaseViewController,KUIPopOverUsable {
 
     var contentSize: CGSize {
-        return CGSize(width: 300, height: self.bdPrd == 0 ? 280 : 400)
+        return CGSize(width: 300, height: self.bdPrd == 0 ? 376 : 500)
     }
     
     var bidPeriod: BIBidPeriod?
