@@ -37,10 +37,18 @@ class SettingsViewController: BaseViewController,KUIPopOverUsable {
         viewBG.layer.cornerRadius = 5
         setSwitchState()
         setUiForCell()
+        NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutViewForSwitch), name: NSNotification.Name("SyncSwitchStateAction"), object: nil)
         // Do any additional setup after loading the view.
     }
     
     @IBAction func syncAction(_ sender: Any) {
+        if self.syncSwitch.isOn {
+            AppData.shared.isSyncOn = true
+        }
+        else {
+            AppData.shared.isSyncOn = false
+        }
+        NotificationCenter.default.post(name: Notification.Name("SyncSwitchStateAction"), object: nil)
     }
     
     @IBAction func firstTakeOffBtnAction(_ sender: Any) {
@@ -60,14 +68,15 @@ class SettingsViewController: BaseViewController,KUIPopOverUsable {
     }
     
     func setSwitchState(){
+        self.syncSwitch.isOn = AppData.shared.isSyncOn
         
-        amPmTime.text = UserDefaults.standard.string(forKey: KCBCustomizedHerbValue) ?? "1200"
-        
-        if UserDefaults.standard.bool(forKey: KCBIsSyncEnabled) {
-            self.syncSwitch.isOn = true
-        } else {
-            self.syncSwitch.isOn = false
-        }
+//        amPmTime.text = UserDefaults.standard.string(forKey: KCBCustomizedHerbValue) ?? "1200"
+//        
+//        if UserDefaults.standard.bool(forKey: KCBIsSyncEnabled) {
+//            self.syncSwitch.isOn = true
+//        } else {
+//            self.syncSwitch.isOn = false
+//        }
     }
     func setUiForCell(){
         reportTimeBtn.setImage(UIImage(named: "radioButton-Off"), for: .normal)
@@ -82,4 +91,13 @@ class SettingsViewController: BaseViewController,KUIPopOverUsable {
         
     @IBAction func endDateSelection(_ sender: Any) {}
     
+    
+    @objc func setupLayoutViewForSwitch() {
+        if AppData.shared.isSyncOn {
+            print("sync switch is turned on")
+        }
+        else {
+            print("sync switch is turned off")
+        }
+    }
 }

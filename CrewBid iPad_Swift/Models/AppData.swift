@@ -10,6 +10,7 @@ class AppData {
     static let shared = AppData()  // Shared instance
 
     var isBidListSort: Bool = false
+    var isSyncOn: Bool = false
     
     private init() {}  // Prevents outside instantiation
 }

@@ -21,6 +21,7 @@ class CBBidDocumentController: UIViewController {
     @IBOutlet weak var herbLabel: UILabel!
     @IBOutlet weak var localLabel: UILabel!
     @IBOutlet weak var btnLocalHerb: UIButton!
+    @IBOutlet weak var btnSync: UIButton!
     
     @IBOutlet weak var leftShadowView: UIView!
     @IBOutlet weak var rightShadowView: UIView!
@@ -42,8 +43,13 @@ class CBBidDocumentController: UIViewController {
         locHerb = true
         setupUI()
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutViewForSwitch), name: NSNotification.Name("SyncSwitchStateAction"), object: nil)
 
         // Do any additional setup after loading the view.
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver("SortBidListAction")
+        NotificationCenter.default.removeObserver("SyncSwitchStateAction")
     }
     func setupUI(){
         btnLocalHerbView.layer.borderWidth = 1
@@ -62,6 +68,9 @@ class CBBidDocumentController: UIViewController {
         localLabel.layer.borderWidth = 0.4
         localLabel.layer.cornerRadius = 15
         localLabel.clipsToBounds = true
+        if AppData.shared.isSyncOn == false {
+            btnSync.isHidden = true
+        }
        
     }
     @IBAction func btnHomeAction(_ sender: UIButton) {
@@ -140,4 +149,20 @@ class CBBidDocumentController: UIViewController {
             bidView.isHidden = true
         }
     }
+    @objc func setupLayoutViewForSwitch() {
+        if AppData.shared.isSyncOn {
+            btnSync.isHidden = false
+        }
+        else {
+            btnSync.isHidden = true
+        }
+    }
+    
+    @IBAction func btnSyncAction(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Sync", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "syncFirstVC")
+        vc.preferredContentSize = CGSize(width: 768, height: 900)
+        present(vc, animated: true)
+    }
+    
 }
