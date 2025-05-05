@@ -10,7 +10,7 @@ import UIKit
 class SettingsViewController: BaseViewController,KUIPopOverUsable {
     
     var contentSize: CGSize {
-        return CGSize(width: 300, height: self.bdPrd == 0 ? 280 : 400)
+        return CGSize(width: 300, height: self.bdPrd == 0 ? 376 : 400)
     }
 
     
@@ -27,6 +27,7 @@ class SettingsViewController: BaseViewController,KUIPopOverUsable {
     @IBOutlet weak var myCalButton: UIButton!
     @IBOutlet weak var startDatePicker: UIDatePicker!
     @IBOutlet weak var endDatePicker: UIDatePicker!
+    @IBOutlet weak var brightnessView: UIView!
     
     var bidPeriod: BIBidPeriod?
     var bdPrd:Int!
@@ -37,10 +38,21 @@ class SettingsViewController: BaseViewController,KUIPopOverUsable {
         viewBG.layer.cornerRadius = 5
         setSwitchState()
         setUiForCell()
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewTapped))
+        brightnessView.isUserInteractionEnabled = true
+        brightnessView.addGestureRecognizer(tapGesture)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutViewForSwitch), name: NSNotification.Name("SyncSwitchStateAction"), object: nil)
         // Do any additional setup after loading the view.
     }
     
     @IBAction func syncAction(_ sender: Any) {
+        if self.syncSwitch.isOn {
+            AppData.shared.isSyncOn = true
+        }
+        else {
+            AppData.shared.isSyncOn = false
+        }
+        NotificationCenter.default.post(name: Notification.Name("SyncSwitchStateAction"), object: nil)
     }
     
     @IBAction func firstTakeOffBtnAction(_ sender: Any) {
@@ -60,14 +72,15 @@ class SettingsViewController: BaseViewController,KUIPopOverUsable {
     }
     
     func setSwitchState(){
+        self.syncSwitch.isOn = AppData.shared.isSyncOn
         
-        amPmTime.text = UserDefaults.standard.string(forKey: KCBCustomizedHerbValue) ?? "1200"
-        
-        if UserDefaults.standard.bool(forKey: KCBIsSyncEnabled) {
-            self.syncSwitch.isOn = true
-        } else {
-            self.syncSwitch.isOn = false
-        }
+//        amPmTime.text = UserDefaults.standard.string(forKey: KCBCustomizedHerbValue) ?? "1200"
+//        
+//        if UserDefaults.standard.bool(forKey: KCBIsSyncEnabled) {
+//            self.syncSwitch.isOn = true
+//        } else {
+//            self.syncSwitch.isOn = false
+//        }
     }
     func setUiForCell(){
         reportTimeBtn.setImage(UIImage(named: "radioButton-Off"), for: .normal)
@@ -82,4 +95,26 @@ class SettingsViewController: BaseViewController,KUIPopOverUsable {
         
     @IBAction func endDateSelection(_ sender: Any) {}
     
+    
+    @objc func setupLayoutViewForSwitch() {
+        if AppData.shared.isSyncOn {
+            print("sync switch is turned on")
+        }
+        else {
+            print("sync switch is turned off")
+        }
+    }
+    
+    @objc func viewTapped() {
+        print("hello")
+        print(self.navigationController)
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let vc = storyboard.instantiateViewController(withIdentifier: "CBBrightnessViewController") as? CBBrightnessViewController {
+            vc.preferredContentSize = CGSize(width: 300, height: 200)
+            self.navigationController?.pushViewController(vc, animated: true)
+            print("success")
+        } else {
+            print("Failed to instantiate CBBrightnessViewController")
+        }
+    }
 }

@@ -12,7 +12,7 @@
         <!--View Controller-->
         <scene sceneID="s0d-6b-0kx">
             <objects>
-                <viewController id="Y6W-OH-hqX" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="syncFirstVC" id="Y6W-OH-hqX" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5EZ-qb-Rvc">
                         <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -41,7 +41,7 @@
         <!--Sync Info View Controller-->
         <scene sceneID="z6S-4b-Ohb">
             <objects>
-                <viewController id="29U-oz-UXv" customClass="CBSyncInfoViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CBSyncInfoViewController" id="29U-oz-UXv" customClass="CBSyncInfoViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ViB-DM-ewI">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="800"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -253,7 +253,7 @@
         <!--Bsync Conflict View Controller-->
         <scene sceneID="hXg-oV-1Ig">
             <objects>
-                <viewController id="aOQ-yr-LxL" customClass="CBsyncConflictViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CBsyncConflictViewController" id="aOQ-yr-LxL" customClass="CBsyncConflictViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Q9a-CB-WiG">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="900"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -267,7 +267,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IEg-dd-auR">
-                                <rect key="frame" x="8" y="202" width="752" height="416"/>
+                                <rect key="frame" x="8" y="202" width="752" height="500"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="11" translatesAutoresizingMaskIntoConstraints="NO" id="7LF-28-5JU">
                                         <rect key="frame" x="16" y="16" width="720" height="384"/>
@@ -390,6 +390,7 @@
                                                 <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                             </view>
                                         </subviews>
+                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstItem="5EZ-6u-IHh" firstAttribute="leading" secondItem="7LF-28-5JU" secondAttribute="leading" id="dr8-oy-9pf"/>
                                             <constraint firstItem="ET6-LB-7Ix" firstAttribute="top" secondItem="7LF-28-5JU" secondAttribute="top" id="gTd-6a-cOj"/>
@@ -404,10 +405,10 @@
                                 <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstItem="7LF-28-5JU" firstAttribute="top" secondItem="IEg-dd-auR" secondAttribute="top" constant="16" id="36p-qT-wta"/>
-                                    <constraint firstAttribute="height" constant="416" id="74U-9K-dMZ"/>
+                                    <constraint firstAttribute="height" constant="500" id="74U-9K-dMZ"/>
                                     <constraint firstAttribute="trailing" secondItem="7LF-28-5JU" secondAttribute="trailing" constant="16" id="7Uq-Tb-aGG"/>
                                     <constraint firstItem="7LF-28-5JU" firstAttribute="leading" secondItem="IEg-dd-auR" secondAttribute="leading" constant="16" id="mWR-Rm-uVW"/>
-                                    <constraint firstAttribute="bottom" secondItem="7LF-28-5JU" secondAttribute="bottom" constant="16" id="nko-an-sUs"/>
+                                    <constraint firstAttribute="bottom" secondItem="7LF-28-5JU" secondAttribute="bottom" constant="100" id="nko-an-sUs"/>
                                     <constraint firstAttribute="width" constant="752" id="ych-YX-xtS"/>
                                 </constraints>
                             </view>
@@ -428,7 +429,7 @@
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <state key="normal" title="Sync Data">
-                                    <color key="titleColor" name="WhiteColor"/>
+                                    <color key="titleColor" name="WhiteLabelColor"/>
                                 </state>
                                 <connections>
                                     <action selector="btnSyncDataAction:" destination="aOQ-yr-LxL" eventType="touchUpInside" id="Pa0-Ik-xLQ"/>
@@ -483,7 +484,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WKY-gD-ynl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1943" y="-6"/>
+            <point key="canvasLocation" x="1942.5872093023254" y="-6.3953488372093021"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="yka-jF-1qo">
@@ -512,8 +513,8 @@
         <namedColor name="RedViewColor">
             <color red="1" green="0.14900000393390656" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
-        <namedColor name="WhiteColor">
-            <color red="0.32899999618530273" green="0.32400000095367432" blue="0.4779999852180481" alpha="0.33000001311302185" colorSpace="custom" customColorSpace="sRGB"/>
+        <namedColor name="WhiteLabelColor">
+            <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="secondarySystemBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

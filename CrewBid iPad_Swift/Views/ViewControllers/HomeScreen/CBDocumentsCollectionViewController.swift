@@ -39,7 +39,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
     
     @IBAction func settingsAction(_ sender: Any) {
         let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "SettingsViewController") as! SettingsViewController
+        let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedSettingsVC") as! EmbeddedSettingsVC
 //        vc.bidPeriod = nil
         vc.bdPrd = bdPrd
         vc.preferredContentSize = CGSize(width: 300, height: 210)

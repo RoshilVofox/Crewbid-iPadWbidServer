@@ -12,7 +12,7 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
     @IBOutlet weak var tableView: UITableView!
     var menuItems = NSArray()
     private var kCellReuseIdentifier = "menuCell"
-    var arrowDirection: UIPopoverArrowDirection = UIPopoverArrowDirection.right
+    var arrowDirection: UIPopoverArrowDirection = AppData.shared.isBidListSort == true ? UIPopoverArrowDirection.left : UIPopoverArrowDirection.right
 
     
     var contentSize: CGSize {

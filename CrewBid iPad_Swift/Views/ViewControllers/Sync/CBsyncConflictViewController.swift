@@ -18,12 +18,28 @@ class CBsyncConflictViewController: UIViewController {
     
     @IBOutlet weak var viewState: UIView!
     @IBOutlet weak var viewPreset: UIView!
+
+    var selectedType: GRCheckButtonType!
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
 
         // Do any additional setup after loading the view.
+    }
+    func setupUI() {
+        if selectedType == GRCheckButtonType.both {
+            viewState.isHidden = false
+            viewPreset.isHidden = false
+        }
+        if selectedType == GRCheckButtonType.cbState {
+            viewPreset.isHidden = true
+            
+        }
+        if selectedType == GRCheckButtonType.preset {
+            viewState.isHidden = true
+        }
     }
     
 
