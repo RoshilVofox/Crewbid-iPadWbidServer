@@ -233,7 +233,7 @@
                                         </constraints>
                                     </view>
                                     <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gfd-8c-jhG" userLabel="bidView">
-                                        <rect key="frame" x="1182" y="0.0" width="0.0" height="690"/>
+                                        <rect key="frame" x="1192" y="0.0" width="0.0" height="690"/>
                                         <subviews>
                                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gon-gB-WKz">
                                                 <rect key="frame" x="0.0" y="0.0" width="0.0" height="690"/>
@@ -257,7 +257,7 @@
                                     <constraint firstAttribute="trailing" secondItem="Gfd-8c-jhG" secondAttribute="trailing" id="7TN-ip-Dh2"/>
                                     <constraint firstItem="aCx-CY-HlG" firstAttribute="leading" secondItem="HHH-Tn-XjL" secondAttribute="leading" id="7z1-Ia-1dE"/>
                                     <constraint firstItem="aCx-CY-HlG" firstAttribute="top" secondItem="HHH-Tn-XjL" secondAttribute="top" id="DId-bB-pV2"/>
-                                    <constraint firstItem="Gfd-8c-jhG" firstAttribute="leading" secondItem="Dsv-i9-PZT" secondAttribute="trailing" id="HBh-yE-Wfq"/>
+                                    <constraint firstItem="Gfd-8c-jhG" firstAttribute="leading" secondItem="Dsv-i9-PZT" secondAttribute="trailing" constant="10" id="HBh-yE-Wfq"/>
                                     <constraint firstAttribute="bottom" secondItem="aCx-CY-HlG" secondAttribute="bottom" id="VUJ-b7-0ea"/>
                                     <constraint firstAttribute="bottom" secondItem="aCx-CY-HlG" secondAttribute="bottom" id="bVt-vN-l3M"/>
                                     <constraint firstItem="Gfd-8c-jhG" firstAttribute="top" secondItem="HHH-Tn-XjL" secondAttribute="top" id="sM1-vs-ciq"/>
@@ -278,6 +278,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="U1d-XH-vIC"/>
                     <connections>
+                        <outlet property="bidCont" destination="Gon-gB-WKz" id="fpA-nB-OFe"/>
                         <outlet property="bidView" destination="Gfd-8c-jhG" id="r7y-XR-T8b"/>
                         <outlet property="btnEOM" destination="lrd-vH-UbI" id="wsA-Dy-FHG"/>
                         <outlet property="btnHelp" destination="YjE-Fl-JAK" id="Fsz-gc-2LY"/>
@@ -852,7 +853,7 @@
                                         </connections>
                                     </button>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="2Bk-DJ-z45">
-                                        <rect key="frame" x="166" y="10" width="240" height="30"/>
+                                        <rect key="frame" x="206" y="10" width="240" height="30"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6wg-c6-eOn">
                                                 <rect key="frame" x="0.0" y="0.0" width="79.5" height="30"/>
@@ -921,7 +922,7 @@
                                     <constraint firstAttribute="height" constant="50" id="0B2-mv-eyR"/>
                                     <constraint firstAttribute="bottom" secondItem="2Bk-DJ-z45" secondAttribute="bottom" constant="10" id="2Zu-KC-KMh"/>
                                     <constraint firstAttribute="bottom" secondItem="pOE-CW-dvV" secondAttribute="bottom" constant="10" id="7Jd-YM-7aQ"/>
-                                    <constraint firstItem="2Bk-DJ-z45" firstAttribute="centerX" secondItem="uON-PP-bsg" secondAttribute="centerX" constant="-40" id="KtP-6J-vJ4"/>
+                                    <constraint firstItem="2Bk-DJ-z45" firstAttribute="centerX" secondItem="uON-PP-bsg" secondAttribute="centerX" id="KtP-6J-vJ4"/>
                                     <constraint firstAttribute="bottom" secondItem="rzG-aB-1Ix" secondAttribute="bottom" constant="10" id="QFO-bR-dxp"/>
                                     <constraint firstAttribute="bottom" secondItem="0oh-xK-7nO" secondAttribute="bottom" constant="10" id="RGv-Wg-8K0"/>
                                     <constraint firstItem="rzG-aB-1Ix" firstAttribute="leading" secondItem="uON-PP-bsg" secondAttribute="leading" constant="30" id="cOr-lB-h0S"/>
@@ -3111,7 +3112,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="580" height="50"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="Iff-zG-Zs0">
-                                        <rect key="frame" x="130" y="10" width="240" height="30"/>
+                                        <rect key="frame" x="170" y="10" width="240" height="30"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9xQ-xt-ue6">
                                                 <rect key="frame" x="0.0" y="0.0" width="79.5" height="30"/>
@@ -3175,7 +3176,7 @@
                                 <color key="backgroundColor" name="TopViewColor"/>
                                 <constraints>
                                     <constraint firstItem="O0M-86-HaF" firstAttribute="leading" secondItem="5D1-eY-gzd" secondAttribute="trailing" constant="15" id="32E-6U-AuY"/>
-                                    <constraint firstItem="Iff-zG-Zs0" firstAttribute="centerX" secondItem="tXF-CP-Wqh" secondAttribute="centerX" constant="-40" id="8LB-Uf-Ife"/>
+                                    <constraint firstItem="Iff-zG-Zs0" firstAttribute="centerX" secondItem="tXF-CP-Wqh" secondAttribute="centerX" id="8LB-Uf-Ife"/>
                                     <constraint firstAttribute="bottom" secondItem="5D1-eY-gzd" secondAttribute="bottom" constant="10" id="LyV-bf-HPE"/>
                                     <constraint firstAttribute="bottom" secondItem="O0M-86-HaF" secondAttribute="bottom" constant="10" id="aLk-f9-GNs"/>
                                     <constraint firstAttribute="bottom" secondItem="Iff-zG-Zs0" secondAttribute="bottom" constant="10" id="eXC-uH-2yY"/>
@@ -4928,7 +4929,7 @@
                                         </connections>
                                     </button>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="uZW-6K-FCj">
-                                        <rect key="frame" x="130" y="10" width="240" height="30"/>
+                                        <rect key="frame" x="170" y="10" width="240" height="30"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BOy-7q-fnp">
                                                 <rect key="frame" x="0.0" y="0.0" width="79.5" height="30"/>
@@ -4997,7 +4998,7 @@
                                     <constraint firstAttribute="bottom" secondItem="Xoc-nH-Woh" secondAttribute="bottom" constant="10" id="T0Y-Gy-IDm"/>
                                     <constraint firstItem="Ah3-LG-txB" firstAttribute="leading" secondItem="Xoc-nH-Woh" secondAttribute="trailing" constant="15" id="YaB-T9-wZh"/>
                                     <constraint firstItem="uZW-6K-FCj" firstAttribute="top" secondItem="PEV-J5-72f" secondAttribute="top" constant="10" id="iPi-eP-P7C"/>
-                                    <constraint firstItem="uZW-6K-FCj" firstAttribute="centerX" secondItem="PEV-J5-72f" secondAttribute="centerX" constant="-40" id="j74-qL-pfe"/>
+                                    <constraint firstItem="uZW-6K-FCj" firstAttribute="centerX" secondItem="PEV-J5-72f" secondAttribute="centerX" id="j74-qL-pfe"/>
                                     <constraint firstAttribute="bottom" secondItem="Ah3-LG-txB" secondAttribute="bottom" constant="10" id="mKR-b4-EPb"/>
                                     <constraint firstAttribute="trailing" secondItem="Ah3-LG-txB" secondAttribute="trailing" constant="30" id="oPA-mp-20u"/>
                                     <constraint firstAttribute="height" constant="50" id="oos-Ot-UeU"/>
@@ -5014,6 +5015,9 @@
                                             <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="18"/>
                                             <color key="baseForegroundColor" systemColor="labelColor"/>
                                         </buttonConfiguration>
+                                        <connections>
+                                            <action selector="btnSortTheScratchpadAction:" destination="Eml-Ur-yj1" eventType="touchUpInside" id="t4g-QK-GUx"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8ir-BH-bH8">
                                         <rect key="frame" x="291" y="2" width="287" height="46"/>
@@ -5023,6 +5027,9 @@
                                             <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="18"/>
                                             <color key="baseForegroundColor" systemColor="labelColor"/>
                                         </buttonConfiguration>
+                                        <connections>
+                                            <action selector="btnSortTheBidListAction:" destination="Eml-Ur-yj1" eventType="touchUpInside" id="J6J-A0-a0V"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -5696,6 +5703,12 @@
                     <size key="freeformSize" width="580" height="1980"/>
                     <connections>
                         <outlet property="btnBidListCount" destination="Ah3-LG-txB" id="IhF-gf-Pf4"/>
+                        <outlet property="btnBids" destination="Xoc-nH-Woh" id="xe2-XF-yZV"/>
+                        <outlet property="btnFilter" destination="BOy-7q-fnp" id="Ovg-Q6-yy0"/>
+                        <outlet property="btnPreset" destination="KL2-ti-edg" id="ybE-Gf-09v"/>
+                        <outlet property="btnSort" destination="cX7-sT-F51" id="ht5-D0-XXN"/>
+                        <outlet property="btnSortTheBidlist" destination="8ir-BH-bH8" id="cg3-nb-gpS"/>
+                        <outlet property="btnSortTheScratchpad" destination="3Fc-9X-H4V" id="GvF-0X-frn"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Yzc-HH-EXG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

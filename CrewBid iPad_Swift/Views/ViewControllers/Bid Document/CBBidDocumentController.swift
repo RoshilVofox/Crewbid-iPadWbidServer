@@ -28,7 +28,9 @@ class CBBidDocumentController: UIViewController {
     @IBOutlet weak var rightContainerView: UIView!
     @IBOutlet weak var bidView: UIView!
     
+    @IBOutlet weak var bidCont: UIView!
     var bidPeriod: BIBidPeriod?
+    var bidVC: CBBidListVC!
     
     
     var bdPrd:Int!
@@ -39,6 +41,7 @@ class CBBidDocumentController: UIViewController {
         bdPrd = 1
         locHerb = true
         setupUI()
+        NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
 
         // Do any additional setup after loading the view.
     }
@@ -114,6 +117,27 @@ class CBBidDocumentController: UIViewController {
 //            helpMenuVC.modalPresentationStyle = .formSheet
             helpMenuVC.preferredContentSize = CGSize(width: 764, height: 630)
             present(helpMenuVC, animated: true)
+        }
+    }
+    
+    @objc func setupLayoutView(){
+        if AppData.shared.isBidListSort == true{
+            leftShadowView.isHidden = true
+            rightShadowView.isHidden = false
+            bidView.isHidden = false
+            self.bidVC = self.storyboard?.instantiateViewController(identifier: "CBBidListVC") as? CBBidListVC
+            self.bidVC?.view.frame = self.bidCont.frame
+            if let bidController = self.bidVC {
+                
+                self.bidCont.addSubview(bidController.view)
+                self.addChild(bidController)
+                bidController.didMove(toParent: self)
+          }
+        }
+        else {
+            leftShadowView.isHidden = false
+            rightShadowView.isHidden = false
+            bidView.isHidden = true
         }
     }
 }

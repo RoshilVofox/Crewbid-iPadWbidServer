@@ -12,11 +12,8 @@ class CBBidListVC: BaseViewController {
     @IBOutlet weak var btnNormalView: UIButton!
     @IBOutlet weak var btnCalendarView: UIButton!
     @IBOutlet weak var btnExpandedView: UIButton!
-    
     @IBOutlet weak var btnActions: UIButton!
-    
     @IBOutlet weak var btnASort: UIButton!
-    
     @IBOutlet weak var tableViewNormalView: UITableView!
     var isAwardSort = false
     var isSubmitSort = false

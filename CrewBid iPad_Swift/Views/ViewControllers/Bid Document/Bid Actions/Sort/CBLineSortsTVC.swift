@@ -10,13 +10,21 @@ import UIKit
 class CBLineSortsTVC: UIViewController {
 
     @IBOutlet weak var btnBidListCount: UIButton!
+    @IBOutlet weak var btnSortTheBidlist: UIButton!
+    @IBOutlet weak var btnSortTheScratchpad: UIButton!
+    @IBOutlet weak var btnFilter: UIButton!
+    @IBOutlet weak var btnSort: UIButton!
+    @IBOutlet weak var btnPreset: UIButton!
+    @IBOutlet weak var btnBids: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        // Do any additional setup after loading the view.
+        NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
     }
     func setupUI(){
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
+        btnSortTheBidlist.backgroundColor = .systemRed
+        btnSortTheScratchpad.backgroundColor = .systemGreen
     }
     @IBAction func btnFilterAction(_ sender: Any) {
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
@@ -48,6 +56,41 @@ class CBLineSortsTVC: UIViewController {
         navigationController.navigationBar.barTintColor = .lightGray
         let frame = CGRect(x: sender.frame.origin.x - 30, y: sender.frame.origin.y - 20, width: sender.frame.width, height: sender.frame.height)
         filterMenuController.showPopover(withNavigationController: sender, sourceRect: frame)
+    }
+    
+//    MARK: setup layout for notification
+    @objc func setupLayoutView(){
+        if AppData.shared.isBidListSort == true {
+            btnFilter.isHidden = true
+            btnPreset.isHidden = true
+            btnBids.isHidden = true
+            btnBidListCount.isHidden = true
+        }
+        else {
+            btnFilter.isHidden = false
+            btnPreset.isHidden = false
+            btnBids.isHidden = false
+            btnBidListCount.isHidden = false
+        }
+    }
+    
+    @IBAction func btnSortTheBidListAction(_ sender: Any) {
+        if btnSortTheBidlist.backgroundColor == .systemRed {
+            btnSortTheBidlist.backgroundColor = .systemGreen
+            btnSortTheScratchpad.backgroundColor = .systemRed
+            AppData.shared.isBidListSort = true
+            NotificationCenter.default.post(name: NSNotification.Name("SortBidListAction"), object: self)
+            
+        }
+    }
+    
+    @IBAction func btnSortTheScratchpadAction(_ sender: Any) {
+        if btnSortTheScratchpad.backgroundColor == .systemRed {
+            btnSortTheScratchpad.backgroundColor = .systemGreen
+            btnSortTheBidlist.backgroundColor = .systemRed
+            AppData.shared.isBidListSort = false
+            NotificationCenter.default.post(name: NSNotification.Name("SortBidListAction"), object: self)
+        }
     }
 }
 
