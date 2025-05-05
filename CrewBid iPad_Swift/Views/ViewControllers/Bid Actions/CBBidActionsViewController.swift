@@ -33,7 +33,7 @@ class CBBidActionsViewController: UIViewController, KUIPopOverUsable {
     var prev: [String] = []
     let arrForPilotWithAwdTxt = ["Submit Bid","Show Bid Receipt","Show Awards","Show Bid File","Line Importer","Vacation", "Show CAP","Retrieve Awards","Restore Last Bid","ReDownload Flt Data"]
     let pilotFileArray = ["Cover Letter","Seniority List","Lines Text","Trips Text"]
-    let vacationFAArray = ["Keep Pulled Trips In Filters/Sorts"]
+    let vacationFAArray = ["Keep Pulled Trips In Filters/Sorts", "Re Download WBID Maz Vac File", "Re Download Swaptimizer Maz Vac File"]
     
     
     override func viewDidLoad() {
@@ -83,7 +83,9 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
             
         } else if arr[0] == "Keep Pulled Trips In Filters/Sorts" {
             let cell = tableView.dequeueReusableCell(withIdentifier: "SwitchTableViewCell", for: indexPath) as! SwitchTableViewCell
+            cell.switch.isHidden = arr[indexPath.row] == "Keep Pulled Trips In Filters/Sorts" ? false : true
             cell.label.text = arr[indexPath.row]
+            
             // configure CBFlightCell here
             return cell
             
@@ -120,6 +122,20 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                     let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
                     let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
                     vc.modalPresentationStyle = .fullScreen
+                    vc.type = "cover letter"
+                    presentingVC.present(vc, animated: true)
+                }
+            }
+            
+        }
+        // MARK: - Seniority List Selection
+        if item == "Seniority List" {
+            if let presentingVC = self.presentingViewController {
+                self.dismiss(animated: true) {
+                    let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+                    let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
+                    vc.modalPresentationStyle = .fullScreen
+                    vc.type = "Seniority List"
                     presentingVC.present(vc, animated: true)
                 }
             }

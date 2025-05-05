@@ -14,10 +14,16 @@ class CBTextViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var txtView: UITextView!
     @IBOutlet weak var searchBar: UISearchBar!
+    var type: String = ""
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if type == "Seniority List" {
+            lblTitle.text = "Seniority List"
+            searchBar.backgroundColor = .white
+            searchBar.isHidden = false
+        }
 
         // Do any additional setup after loading the view.
     }

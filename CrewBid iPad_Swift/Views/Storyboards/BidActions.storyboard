@@ -168,28 +168,18 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="N72-fr-CBF">
                                 <rect key="frame" x="0.0" y="24" width="1376" height="60"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s5O-w6-0VG">
-                                        <rect key="frame" x="10" y="15" width="50" height="50"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                        <state key="normal" image="NewBid-navbar-xcancelbutton">
-                                            <color key="titleColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="btnDismissAction:" destination="pev-EE-iRe" eventType="touchUpInside" id="G1E-1N-4He"/>
-                                        </connections>
-                                    </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Cover Letter" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m16-Hy-SV9">
-                                        <rect key="frame" x="60" y="15" width="1256" height="45"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cover Letter" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m16-Hy-SV9">
+                                        <rect key="frame" x="400" y="15.5" width="576" height="29"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="24"/>
                                         <color key="textColor" name="BlackLabelColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GHH-8Q-1PX">
-                                        <rect key="frame" x="1316" y="15" width="50" height="50"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GHH-8Q-1PX">
+                                        <rect key="frame" x="1326" y="10" width="40" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="QRL-81-4KY"/>
+                                            <constraint firstAttribute="height" constant="40" id="gQG-ce-jTV"/>
+                                        </constraints>
                                         <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                         <state key="normal" image="NavBarGray-ActionButton">
@@ -199,16 +189,44 @@
                                             <action selector="btnShareAction:" destination="pev-EE-iRe" eventType="touchUpInside" id="XP6-G9-O5v"/>
                                         </connections>
                                     </button>
-                                    <searchBar hidden="YES" contentMode="redraw" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LDD-KQ-bAU">
-                                        <rect key="frame" x="996" y="18" width="300" height="44"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <searchBar hidden="YES" contentMode="redraw" placeholder="search" translatesAutoresizingMaskIntoConstraints="NO" id="LDD-KQ-bAU">
+                                        <rect key="frame" x="1006" y="10" width="300" height="40"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="AQr-zh-9QJ"/>
+                                            <constraint firstAttribute="width" constant="300" id="iBe-4A-uib"/>
+                                        </constraints>
+                                        <color key="barTintColor" systemColor="systemBackgroundColor"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </searchBar>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s5O-w6-0VG">
+                                        <rect key="frame" x="10" y="10" width="40" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="1mc-xQ-6P0"/>
+                                            <constraint firstAttribute="width" constant="40" id="s1g-3E-EwS"/>
+                                        </constraints>
+                                        <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="NewBid-navbar-xcancelbutton">
+                                            <color key="titleColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="btnDismissAction:" destination="pev-EE-iRe" eventType="touchUpInside" id="G1E-1N-4He"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" name="TopViewColor"/>
                                 <constraints>
+                                    <constraint firstItem="s5O-w6-0VG" firstAttribute="centerY" secondItem="N72-fr-CBF" secondAttribute="centerY" id="08R-br-ue8"/>
+                                    <constraint firstItem="GHH-8Q-1PX" firstAttribute="centerY" secondItem="N72-fr-CBF" secondAttribute="centerY" id="0Bw-x8-B9g"/>
+                                    <constraint firstItem="m16-Hy-SV9" firstAttribute="centerY" secondItem="N72-fr-CBF" secondAttribute="centerY" id="2h1-Ng-oyo"/>
                                     <constraint firstAttribute="height" constant="60" id="VXT-4d-V6n"/>
+                                    <constraint firstItem="s5O-w6-0VG" firstAttribute="leading" secondItem="N72-fr-CBF" secondAttribute="leading" constant="10" id="Wmf-ml-qYD"/>
+                                    <constraint firstAttribute="trailing" secondItem="m16-Hy-SV9" secondAttribute="trailing" constant="400" id="X7u-u6-14x"/>
+                                    <constraint firstItem="GHH-8Q-1PX" firstAttribute="leading" secondItem="LDD-KQ-bAU" secondAttribute="trailing" constant="20" id="Zpr-lz-o3U"/>
+                                    <constraint firstItem="m16-Hy-SV9" firstAttribute="leading" secondItem="N72-fr-CBF" secondAttribute="leading" constant="400" id="fUQ-T3-Gqd"/>
+                                    <constraint firstAttribute="trailing" secondItem="GHH-8Q-1PX" secondAttribute="trailing" constant="10" id="iho-pD-Mxv"/>
+                                    <constraint firstItem="LDD-KQ-bAU" firstAttribute="centerY" secondItem="N72-fr-CBF" secondAttribute="centerY" id="vtq-S6-zfx"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -2573,7 +2591,7 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jEH-uM-JRp">
+                                                <switch hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jEH-uM-JRp">
                                                     <rect key="frame" x="235" y="8" width="51" height="31"/>
                                                 </switch>
                                             </subviews>
