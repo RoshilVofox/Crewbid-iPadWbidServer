@@ -71,17 +71,14 @@ extension KUIPopOverUsable where Self: UIViewController {
     }
     
     private var rootViewController: UIViewController? {
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }) {
-                
-                keyWindow.layer.shadowColor = UIColor.black.cgColor
-                keyWindow.layer.shadowOpacity = 1
-                keyWindow.layer.shadowOffset = .zero
-                keyWindow.layer.shadowRadius = 10
-                
-                return keyWindow.rootViewController?.topPresentedViewController
-            }
-            return nil
+        
+        
+        let yourView = UIApplication.shared.keyWindow!
+        yourView.layer.shadowColor = UIColor.black.cgColor
+        yourView.layer.shadowOpacity = 1
+        yourView.layer.shadowOffset = .zero
+        yourView.layer.shadowRadius = 10
+        return UIApplication.shared.keyWindow?.rootViewController?.topPresentedViewController
     }
     
     private var popOverUsableNavigationController: KUIPopOverUsableNavigationController {

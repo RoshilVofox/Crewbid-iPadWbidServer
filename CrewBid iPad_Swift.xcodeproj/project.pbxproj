@@ -12,6 +12,8 @@
 		8BFCEE9E2DC4F62F0068C00B /* Box.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEE9D2DC4F62F0068C00B /* Box.png */; };
 		8BFCEEA02DC4F6400068C00B /* Chat.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEE9F2DC4F6400068C00B /* Chat.png */; };
 		8BFCEEA22DC4F6DB0068C00B /* oneMonth.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEEA12DC4F6DB0068C00B /* oneMonth.png */; };
+		F41475812DC8D8290064CD25 /* KeychainItemWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = F41475802DC8D8290064CD25 /* KeychainItemWrapper.m */; };
+		F41475842DC8E1980064CD25 /* AlertService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41475832DC8E1980064CD25 /* AlertService.swift */; };
 		F41EBE902DC4DB20001413DE /* ThirdPartyURL.plist in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD5A2DC4DB20001413DE /* ThirdPartyURL.plist */; };
 		F41EBE912DC4DB20001413DE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD612DC4DB20001413DE /* Assets.xcassets */; };
 		F41EBE922DC4DB20001413DE /* SWAPtimizer Tutorial.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD632DC4DB20001413DE /* SWAPtimizer Tutorial.xcassets */; };
@@ -314,6 +316,11 @@
 		8BFCEE9D2DC4F62F0068C00B /* Box.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Box.png; sourceTree = "<group>"; };
 		8BFCEE9F2DC4F6400068C00B /* Chat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Chat.png; sourceTree = "<group>"; };
 		8BFCEEA12DC4F6DB0068C00B /* oneMonth.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = oneMonth.png; sourceTree = "<group>"; };
+		F414757D2DC8D6520064CD25 /* CrewBid iPad_Swift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CrewBid iPad_Swift.entitlements"; sourceTree = "<group>"; };
+		F414757F2DC8D8290064CD25 /* KeychainItemWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeychainItemWrapper.h; sourceTree = "<group>"; };
+		F41475802DC8D8290064CD25 /* KeychainItemWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeychainItemWrapper.m; sourceTree = "<group>"; };
+		F41475822DC8D82B0064CD25 /* CrewBid iPad_Swift-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CrewBid iPad_Swift-Bridging-Header.h"; sourceTree = "<group>"; };
+		F41475832DC8E1980064CD25 /* AlertService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertService.swift; sourceTree = "<group>"; };
 		F41EBD292DC4DB20001413DE /* AwardCalendarCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwardCalendarCollectionViewCell.swift; sourceTree = "<group>"; };
 		F41EBD2A2DC4DB20001413DE /* contactUsCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = contactUsCollectionViewCell.swift; sourceTree = "<group>"; };
 		F41EBD2B2DC4DB20001413DE /* helpMenuItemCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helpMenuItemCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -641,6 +648,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		F414757E2DC8D8220064CD25 /* StoreKit */ = {
+			isa = PBXGroup;
+			children = (
+				F414757F2DC8D8290064CD25 /* KeychainItemWrapper.h */,
+				F41475802DC8D8290064CD25 /* KeychainItemWrapper.m */,
+				F41475822DC8D82B0064CD25 /* CrewBid iPad_Swift-Bridging-Header.h */,
+			);
+			path = StoreKit;
+			sourceTree = "<group>";
+		};
 		F41EBD302DC4DB20001413DE /* collectionViewCells */ = {
 			isa = PBXGroup;
 			children = (
@@ -839,8 +856,9 @@
 		F41EBDD42DC4DB20001413DE /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				F49849CC2DC76EF900FE9426 /* Reachability.swift */,
+				F414757E2DC8D8220064CD25 /* StoreKit */,
 				F41EBDCA2DC4DB20001413DE /* PopOver */,
+				F49849CC2DC76EF900FE9426 /* Reachability.swift */,
 				F41EBDCB2DC4DB20001413DE /* CBColor.swift */,
 				F41EBDCC2DC4DB20001413DE /* CBGlobalMethods.swift */,
 				F41EBDCD2DC4DB20001413DE /* CBToggleButton.swift */,
@@ -1261,6 +1279,7 @@
 		F41EBE8E2DC4DB20001413DE /* CrewBid iPad_Swift */ = {
 			isa = PBXGroup;
 			children = (
+				F414757D2DC8D6520064CD25 /* CrewBid iPad_Swift.entitlements */,
 				F494ECDC2DC5C8F9007B178E /* Utilities */,
 				F494ECDB2DC5C767007B178E /* App */,
 				F494ECDA2DC5C6E8007B178E /* Resources */,
@@ -1440,6 +1459,7 @@
 			isa = PBXGroup;
 			children = (
 				F41EBDD42DC4DB20001413DE /* Helpers */,
+				F41475832DC8E1980064CD25 /* AlertService.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1567,6 +1587,7 @@
 				TargetAttributes = {
 					F4CF5A272D891A3800A351DB = {
 						CreatedOnToolsVersion = 16.2;
+						LastSwiftMigration = 1630;
 					};
 				};
 			};
@@ -1829,6 +1850,7 @@
 				F41EBF732DC4DB20001413DE /* CBLineValueView.swift in Sources */,
 				F41EBF742DC4DB20001413DE /* CBTripTextViewController.swift in Sources */,
 				F41EBF752DC4DB20001413DE /* CBUserFlagTableController.swift in Sources */,
+				F41475842DC8E1980064CD25 /* AlertService.swift in Sources */,
 				F41EBF762DC4DB20001413DE /* RefreshMenuController.swift in Sources */,
 				F41EBF772DC4DB20001413DE /* RefreshMenuTableViewCell.swift in Sources */,
 				F41EBF782DC4DB20001413DE /* ScratchPadTableCellTableViewCell.swift in Sources */,
@@ -1882,6 +1904,7 @@
 				F41EBFA72DC4DB20001413DE /* LoginEmbeddedController.swift in Sources */,
 				F41EBFA82DC4DB20001413DE /* CBHelpVideosController.swift in Sources */,
 				F41EBFA92DC4DB20001413DE /* contactUsViewController.swift in Sources */,
+				F41475812DC8D8290064CD25 /* KeychainItemWrapper.m in Sources */,
 				F41EBFAA2DC4DB20001413DE /* defenitionsViewController.swift in Sources */,
 				F41EBFAB2DC4DB20001413DE /* faqViewController.swift in Sources */,
 				F41EBFAC2DC4DB20001413DE /* helpMenuItemsViewController.swift in Sources */,
@@ -1933,6 +1956,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "CrewBid iPad_Swift/CrewBid iPad_Swift.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1942,7 +1967,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1951,6 +1976,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brainbagsoftware.CrewBid;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "CrewBid iPad_Swift/Utilities/Helpers/StoreKit/CrewBid iPad_Swift-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1961,6 +1988,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "CrewBid iPad_Swift/CrewBid iPad_Swift.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1970,7 +1999,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1979,6 +2008,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.brainbagsoftware.CrewBid;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "CrewBid iPad_Swift/Utilities/Helpers/StoreKit/CrewBid iPad_Swift-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
