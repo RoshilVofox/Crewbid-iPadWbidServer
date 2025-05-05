@@ -79,7 +79,16 @@ class CBLineSortsTVC: UIViewController {
             btnSortTheBidlist.backgroundColor = .systemGreen
             btnSortTheScratchpad.backgroundColor = .systemRed
             AppData.shared.isBidListSort = true
-            NotificationCenter.default.post(name: NSNotification.Name("SortBidListAction"), object: self)
+            let alert = UIAlertController(title: "Confirmation", message: "Do you want to sort the bid list?", preferredStyle: .alert)
+            let yesAction = UIAlertAction(title: "Yes", style: .default) { _ in
+                NotificationCenter.default.post(name: NSNotification.Name("SortBidListAction"), object: self)
+            }
+            let noAction = UIAlertAction(title: "No", style: .cancel, handler: nil)
+            alert.addAction(noAction)
+            alert.addAction(yesAction)
+
+            self.present(alert, animated: true, completion: nil)
+
             
         }
     }
