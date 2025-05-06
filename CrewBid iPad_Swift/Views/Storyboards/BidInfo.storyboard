@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="ipad10_9rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -814,7 +814,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" text="Please enter the employee number for whom the bid will be submitted (no &quot;e&quot;). " textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="0HF-lW-0h4" userLabel="Prompt Text View">
-                                <rect key="frame" x="47" y="352" width="506" height="88"/>
+                                <rect key="frame" x="47" y="332" width="506" height="88"/>
                                 <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="88" id="S4E-wh-9cd"/>
@@ -884,7 +884,7 @@
                                 </constraints>
                             </view>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Employee Number" adjustsFontSizeToFit="NO" minimumFontSize="32" translatesAutoresizingMaskIntoConstraints="NO" id="Vxs-fn-amG" customClass="customUITextField" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                <rect key="frame" x="70" y="110" width="460" height="71"/>
+                                <rect key="frame" x="70" y="130" width="460" height="71"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <gestureRecognizers/>
                                 <constraints>
@@ -908,9 +908,9 @@
                             <constraint firstItem="8Zi-rw-1s4" firstAttribute="leading" secondItem="6p7-zZ-nZP" secondAttribute="leading" id="J3M-8b-gZN"/>
                             <constraint firstAttribute="bottom" secondItem="6xR-TY-aMO" secondAttribute="bottom" id="KbM-Ta-hSh"/>
                             <constraint firstItem="8Zi-rw-1s4" firstAttribute="top" secondItem="vq3-bc-3Gg" secondAttribute="top" id="Lf6-O7-lKb"/>
-                            <constraint firstItem="6xR-TY-aMO" firstAttribute="top" secondItem="0HF-lW-0h4" secondAttribute="bottom" constant="60" id="Mj7-Bq-dTy"/>
+                            <constraint firstItem="6xR-TY-aMO" firstAttribute="top" secondItem="0HF-lW-0h4" secondAttribute="bottom" constant="80" id="Mj7-Bq-dTy"/>
                             <constraint firstItem="0HF-lW-0h4" firstAttribute="leading" secondItem="6p7-zZ-nZP" secondAttribute="leading" constant="47" id="NRq-Qi-CW1"/>
-                            <constraint firstItem="Vxs-fn-amG" firstAttribute="top" secondItem="8Zi-rw-1s4" secondAttribute="bottom" constant="50" id="Xcg-Wz-EMN"/>
+                            <constraint firstItem="Vxs-fn-amG" firstAttribute="top" secondItem="8Zi-rw-1s4" secondAttribute="bottom" constant="70" id="Xcg-Wz-EMN"/>
                             <constraint firstItem="6xR-TY-aMO" firstAttribute="leading" secondItem="6p7-zZ-nZP" secondAttribute="leading" id="iBv-7N-5yw"/>
                             <constraint firstItem="6p7-zZ-nZP" firstAttribute="trailing" secondItem="Vxs-fn-amG" secondAttribute="trailing" constant="70" id="vfa-rc-sDv"/>
                             <constraint firstItem="6xR-TY-aMO" firstAttribute="trailing" secondItem="6p7-zZ-nZP" secondAttribute="trailing" id="z6u-dY-E2S"/>
@@ -934,7 +934,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="  Password" adjustsFontSizeToFit="NO" minimumFontSize="32" translatesAutoresizingMaskIntoConstraints="NO" id="18h-4z-Niv" customClass="customUITextField" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                <rect key="frame" x="60" y="190" width="480" height="60"/>
+                                <rect key="frame" x="60" y="200" width="480" height="60"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="mRz-NW-636"/>
@@ -948,7 +948,7 @@
                                 </userDefinedRuntimeAttributes>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="  User ID" adjustsFontSizeToFit="NO" minimumFontSize="32" translatesAutoresizingMaskIntoConstraints="NO" id="3qo-fj-rVs" customClass="customUITextField" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                <rect key="frame" x="60" y="120" width="480" height="60"/>
+                                <rect key="frame" x="60" y="130" width="480" height="60"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="1hx-Yn-hcz"/>
@@ -1032,7 +1032,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OJY-Kj-9QL">
-                                <rect key="frame" x="489" y="190" width="41" height="60"/>
+                                <rect key="frame" x="489" y="200" width="41" height="60"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="60" id="JKO-5C-pcK"/>
                                     <constraint firstAttribute="width" constant="41" id="chq-4a-Ysr"/>
@@ -1059,7 +1059,7 @@
                             <constraint firstItem="Ssa-XP-Hzc" firstAttribute="trailing" secondItem="uXe-E2-7PP" secondAttribute="trailing" id="Q7O-3t-fq6"/>
                             <constraint firstItem="OJY-Kj-9QL" firstAttribute="top" secondItem="3qo-fj-rVs" secondAttribute="bottom" constant="10" id="Rbb-07-fmk"/>
                             <constraint firstAttribute="bottom" secondItem="wcS-Al-rGz" secondAttribute="bottom" id="TdR-7k-FM8"/>
-                            <constraint firstItem="3qo-fj-rVs" firstAttribute="top" secondItem="yR0-cT-Kph" secondAttribute="bottom" constant="60" id="c3k-CX-zbl"/>
+                            <constraint firstItem="3qo-fj-rVs" firstAttribute="top" secondItem="yR0-cT-Kph" secondAttribute="bottom" constant="70" id="c3k-CX-zbl"/>
                             <constraint firstItem="wcS-Al-rGz" firstAttribute="top" secondItem="Ssa-XP-Hzc" secondAttribute="bottom" id="eIL-OE-ESU"/>
                             <constraint firstItem="uXe-E2-7PP" firstAttribute="trailing" secondItem="OJY-Kj-9QL" secondAttribute="trailing" constant="70" id="eXg-Rl-FvZ"/>
                             <constraint firstItem="wcS-Al-rGz" firstAttribute="leading" secondItem="uXe-E2-7PP" secondAttribute="leading" id="k2v-UP-5k4"/>

@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "NewBid-navbar-arrowleftbutton.png",
+      "filename" : "NavBar-doneButton 2.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -12,12 +12,12 @@
           "value" : "dark"
         }
       ],
-      "filename" : "BidLineButton.png",
+      "filename" : "NavBar-doneButton.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "NewBid-navbar-arrowleftbutton@2x.png",
+      "filename" : "NavBar-doneButton@2x 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
@@ -28,7 +28,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "BidLineButton@2x-1.png",
+      "filename" : "NavBar-doneButton@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
