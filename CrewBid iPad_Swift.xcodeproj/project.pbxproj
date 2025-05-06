@@ -309,6 +309,9 @@
 		F49849CB2DC76E0100FE9426 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = F49849CA2DC76E0100FE9426 /* FirebaseCrashlytics */; };
 		F49849CD2DC76EF900FE9426 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49849CC2DC76EF900FE9426 /* Reachability.swift */; };
 		F49849D12DC7800C00FE9426 /* SimplePing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49849D02DC7800C00FE9426 /* SimplePing.swift */; };
+		F4C5D6642DC9E25500D86BD2 /* FBEncryptorAES.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6632DC9E25500D86BD2 /* FBEncryptorAES.m */; };
+		F4C5D6652DC9E25500D86BD2 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6622DC9E25500D86BD2 /* NSData+Base64.m */; };
+		F4C5D66A2DC9EBC200D86BD2 /* NSData+AES.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6692DC9EBC200D86BD2 /* NSData+AES.m */; };
 		F4CF5A8E2D892B9800A351DB /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = F4CF5A8D2D892B9800A351DB /* ZipArchive */; };
 /* End PBXBuildFile section */
 
@@ -618,6 +621,12 @@
 		F41EBFC22DC4E19A001413DE /* DocumentsCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentsCollectionViewModel.swift; sourceTree = "<group>"; };
 		F49849CC2DC76EF900FE9426 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		F49849D02DC7800C00FE9426 /* SimplePing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimplePing.swift; sourceTree = "<group>"; };
+		F4C5D6602DC9E25500D86BD2 /* NSData+Base64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
+		F4C5D6612DC9E25500D86BD2 /* FBEncryptorAES.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBEncryptorAES.h; sourceTree = "<group>"; };
+		F4C5D6622DC9E25500D86BD2 /* NSData+Base64.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
+		F4C5D6632DC9E25500D86BD2 /* FBEncryptorAES.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FBEncryptorAES.m; sourceTree = "<group>"; };
+		F4C5D6682DC9EBC200D86BD2 /* NSData+AES.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+AES.h"; sourceTree = "<group>"; };
+		F4C5D6692DC9EBC200D86BD2 /* NSData+AES.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+AES.m"; sourceTree = "<group>"; };
 		F4CF5A282D891A3800A351DB /* CrewBid iPad_Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CrewBid iPad_Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -663,6 +672,12 @@
 		F414757E2DC8D8220064CD25 /* StoreKit */ = {
 			isa = PBXGroup;
 			children = (
+				F4C5D6682DC9EBC200D86BD2 /* NSData+AES.h */,
+				F4C5D6692DC9EBC200D86BD2 /* NSData+AES.m */,
+				F4C5D6602DC9E25500D86BD2 /* NSData+Base64.h */,
+				F4C5D6612DC9E25500D86BD2 /* FBEncryptorAES.h */,
+				F4C5D6622DC9E25500D86BD2 /* NSData+Base64.m */,
+				F4C5D6632DC9E25500D86BD2 /* FBEncryptorAES.m */,
 				F414757F2DC8D8290064CD25 /* KeychainItemWrapper.h */,
 				F41475802DC8D8290064CD25 /* KeychainItemWrapper.m */,
 				F41475822DC8D82B0064CD25 /* CrewBid iPad_Swift-Bridging-Header.h */,
@@ -1786,6 +1801,8 @@
 				F49849CD2DC76EF900FE9426 /* Reachability.swift in Sources */,
 				F41EBF1A2DC4DB20001413DE /* BIDayInfo+CoreDataProperties.swift in Sources */,
 				F41EBF1D2DC4DB20001413DE /* BILeg+CoreDataClass.swift in Sources */,
+				F4C5D6642DC9E25500D86BD2 /* FBEncryptorAES.m in Sources */,
+				F4C5D6652DC9E25500D86BD2 /* NSData+Base64.m in Sources */,
 				F41EBF1E2DC4DB20001413DE /* BILeg+CoreDataProperties.swift in Sources */,
 				F41EBF1F2DC4DB20001413DE /* BILegInfo+CoreDataClass.swift in Sources */,
 				F41EBF202DC4DB20001413DE /* BILegInfo+CoreDataProperties.swift in Sources */,
@@ -1915,6 +1932,7 @@
 				F41EBFA32DC4DB20001413DE /* CBCommuteDiffVC.swift in Sources */,
 				F41EBFA42DC4DB20001413DE /* CBFlighDataChangeVC.swift in Sources */,
 				F41EBFA52DC4DB20001413DE /* CBAlertVC.swift in Sources */,
+				F4C5D66A2DC9EBC200D86BD2 /* NSData+AES.m in Sources */,
 				F41EBFA62DC4DB20001413DE /* CBLoginViewController.swift in Sources */,
 				8B77C52B2DC7973B00E5B3B4 /* AppData.swift in Sources */,
 				F41EBFA72DC4DB20001413DE /* LoginEmbeddedController.swift in Sources */,

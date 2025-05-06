@@ -25,5 +25,4 @@ class AlertService{
             return alert
         }
     }
-    
 }
