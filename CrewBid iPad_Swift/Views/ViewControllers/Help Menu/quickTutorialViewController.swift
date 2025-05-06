@@ -3,8 +3,8 @@ import UIKit
 class quickTutorialViewController: UIViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
-    
- 
+    @IBOutlet weak var btnBack: UIButton!
+    @IBOutlet weak var btndone: UIButton!
     @IBOutlet weak var pageControl: UIPageControl!
     
     var images: [String] = ["WelcomeSlide", "Slide01", "Slide02", "Slide03", "Slide04", "Slide05", "Slide06", "Slide07", "Slide08", "Slide09", "Slide10", "Slide11" , "Slide12", "Slide13", "Slide14", "Slide15", "Slide16", "Slide17", "Slide18", "Slide19", "Slide20", "Slide21", "Slide22", "Slide23", "Slide24", "Slide25", "Slide26", "Slide27", "Slide28", "Slide29"]
@@ -13,6 +13,8 @@ class quickTutorialViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        btndone.setTitle("", for: .normal)
+        btnBack.setTitle("", for: .normal)
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0

@@ -362,6 +362,8 @@ Get ready for bidding to get way, way easier.</string>
                     </view>
                     <size key="freeformSize" width="764" height="630"/>
                     <connections>
+                        <outlet property="btnBack" destination="D9V-Re-Lmg" id="yKO-ta-3IT"/>
+                        <outlet property="btnDone" destination="u66-Sm-w0b" id="JD5-vZ-7CD"/>
                         <outlet property="collectionView" destination="F1Z-Qd-joL" id="Q78-G6-z9t"/>
                     </connections>
                 </viewController>
@@ -525,6 +527,8 @@ Get ready for bidding to get way, way easier.</string>
                     </view>
                     <size key="freeformSize" width="764" height="630"/>
                     <connections>
+                        <outlet property="btnBack" destination="mbX-Bp-wID" id="csF-Jv-gyg"/>
+                        <outlet property="btnDone" destination="BqS-ns-Q1V" id="YGF-tH-IyG"/>
                         <outlet property="collectionView" destination="LYj-hY-Raf" id="8hT-Vr-MSk"/>
                     </connections>
                 </viewController>
@@ -837,6 +841,9 @@ Get ready for bidding to get way, way easier.</string>
                         </constraints>
                     </view>
                     <size key="freeformSize" width="764" height="630"/>
+                    <connections>
+                        <outlet property="btnBack" destination="erd-oq-vrW" id="znc-Ov-sFN"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yha-de-mZr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1008,6 +1015,8 @@ If you would like to provide feedback (positive or negative), report a bug, or s
                     </view>
                     <size key="freeformSize" width="764" height="630"/>
                     <connections>
+                        <outlet property="btnBack" destination="YGD-pj-DU6" id="Nsh-jl-0yC"/>
+                        <outlet property="btnDone" destination="anB-kD-n0I" id="ufd-pq-c5f"/>
                         <outlet property="collectionView" destination="89a-iH-yka" id="Muy-c9-Vw8"/>
                     </connections>
                 </viewController>
@@ -1106,6 +1115,10 @@ If you would like to provide feedback (positive or negative), report a bug, or s
                         </constraints>
                     </view>
                     <size key="freeformSize" width="764" height="630"/>
+                    <connections>
+                        <outlet property="btnBack" destination="KFO-PT-E7D" id="q4p-VL-Gh1"/>
+                        <outlet property="btnDone" destination="HDX-py-Cvl" id="HUQ-8v-t29"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zPC-jn-0KA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1246,6 +1259,8 @@ If you would like to provide feedback (positive or negative), report a bug, or s
                     </view>
                     <size key="freeformSize" width="764" height="630"/>
                     <connections>
+                        <outlet property="btnBack" destination="bvb-ng-4rY" id="oqp-zn-ACE"/>
+                        <outlet property="btndone" destination="Yd8-5h-ukA" id="uOf-4k-YzL"/>
                         <outlet property="collectionView" destination="RJf-eA-Th9" id="jv2-Ts-lKP"/>
                         <outlet property="pageControl" destination="1re-u9-2T6" id="AQe-We-z7O"/>
                     </connections>
@@ -1386,6 +1401,8 @@ If you would like to provide feedback (positive or negative), report a bug, or s
                     </view>
                     <size key="freeformSize" width="764" height="630"/>
                     <connections>
+                        <outlet property="btnBack" destination="SB7-aB-LqH" id="YX6-Gq-gKm"/>
+                        <outlet property="btnDone" destination="aLP-Iu-gsH" id="HOt-ai-Bsz"/>
                         <outlet property="collectionView" destination="Ddp-2P-WTt" id="AVh-cP-2Vj"/>
                     </connections>
                 </viewController>
@@ -1518,6 +1535,8 @@ If you would like to provide feedback (positive or negative), report a bug, or s
                     </view>
                     <size key="freeformSize" width="764" height="630"/>
                     <connections>
+                        <outlet property="btnBack" destination="sqV-QN-kBn" id="XBV-G1-sTT"/>
+                        <outlet property="btnDone" destination="4Y7-0l-Bd5" id="FKY-ym-67x"/>
                         <outlet property="webView" destination="MEZ-IP-lud" id="oD4-AI-8vr"/>
                     </connections>
                 </viewController>
@@ -1616,6 +1635,8 @@ If you would like to provide feedback (positive or negative), report a bug, or s
                     </view>
                     <size key="freeformSize" width="764" height="630"/>
                     <connections>
+                        <outlet property="btnBack" destination="o66-4o-zIW" id="Hom-hZ-mz5"/>
+                        <outlet property="btnDone" destination="iZV-52-ESk" id="RDh-az-wPs"/>
                         <outlet property="webView" destination="RpP-e0-xET" id="atP-jG-Dza"/>
                     </connections>
                 </viewController>
@@ -1710,6 +1731,8 @@ If you would like to provide feedback (positive or negative), report a bug, or s
                     </view>
                     <size key="freeformSize" width="764" height="630"/>
                     <connections>
+                        <outlet property="btnBack" destination="krx-Y2-9pK" id="njp-4Q-9Ct"/>
+                        <outlet property="btnDone" destination="qJz-2q-g1j" id="ZBe-3V-kCh"/>
                         <outlet property="defenitions" destination="Ti4-CN-eC8" id="cZs-Xz-ZkD"/>
                     </connections>
                 </viewController>
@@ -1805,6 +1828,8 @@ If you would like to provide feedback (positive or negative), report a bug, or s
                     </view>
                     <size key="freeformSize" width="764" height="630"/>
                     <connections>
+                        <outlet property="btnBack" destination="9FN-ZQ-Zri" id="Ai5-sd-Yau"/>
+                        <outlet property="btnDone" destination="kf3-SE-KXQ" id="qLm-X1-eud"/>
                         <outlet property="webView" destination="HbL-Hd-Aw3" id="4Up-gF-zfP"/>
                     </connections>
                 </viewController>

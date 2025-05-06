@@ -4,10 +4,12 @@ import UIKit
 
 class serviceAgreementViewController: UIViewController {
 
+    @IBOutlet weak var btnBack: UIButton!
+    @IBOutlet weak var btnDone: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        btnBack.setTitle("", for: .normal)
+        btnDone.setTitle("", for: .normal)
     }
     
 

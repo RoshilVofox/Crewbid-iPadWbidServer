@@ -5,8 +5,14 @@ import UIKit
 class mySubscriptionViewController: UIViewController, UICollectionViewDelegateFlowLayout {
 
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var btnBack: UIButton!
+    @IBOutlet weak var btnDone: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        btnBack.setTitle("", for: .normal)
+        btnDone.setTitle("", for: .normal)
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0

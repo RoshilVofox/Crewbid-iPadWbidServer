@@ -4,6 +4,8 @@ import UIKit
 class contactUsViewController: UIViewController, UICollectionViewDelegateFlowLayout {
 
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var btnDone: UIButton!
+    @IBOutlet weak var btnBack: UIButton!
     
     struct CItem {
         var imageName: String
@@ -13,6 +15,8 @@ class contactUsViewController: UIViewController, UICollectionViewDelegateFlowLay
     var items: [CItem] = []
     override func viewDidLoad() {
         super.viewDidLoad()
+        btnBack.setTitle("", for: .normal)
+        btnDone.setTitle("", for: .normal)
         readItems()
         
         let layout = UICollectionViewFlowLayout()
