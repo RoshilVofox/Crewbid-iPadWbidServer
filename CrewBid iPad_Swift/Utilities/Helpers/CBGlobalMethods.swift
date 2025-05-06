@@ -10,7 +10,7 @@ import UIKit
 import CloudKit
 
 public final class CBGlobalMethods: NSObject {
-    var activityView: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.medium)
+    var activityView: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
     // Can't init is singleton
     private override init() { }
     

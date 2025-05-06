@@ -55,6 +55,7 @@ class CBCredentialsPageVC: UIViewController {
         
         
         showPasswordBtn.setImage(UIImage(named: "showPwd")?.withRenderingMode(.alwaysTemplate), for: .normal)
+        
         showPasswordBtn.tintColor = .label
         
         txtUserID.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtUserID.frame.height))

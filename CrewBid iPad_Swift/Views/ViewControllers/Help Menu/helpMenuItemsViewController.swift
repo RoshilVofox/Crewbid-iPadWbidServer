@@ -17,6 +17,7 @@ class helpMenuItemsViewController: UIViewController, UICollectionViewDataSource,
     
     @IBOutlet weak var btnSecretBidload2: UIButton!
     
+    @IBOutlet weak var closeBtn: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,7 +27,9 @@ class helpMenuItemsViewController: UIViewController, UICollectionViewDataSource,
         layout.minimumInteritemSpacing = 0
                 layout.minimumLineSpacing = 0
         collectionView.setCollectionViewLayout(layout, animated: true)
-        
+        btnSecretBidload1.setTitle("", for: .normal)
+        btnSecretBidload2.setTitle("", for: .normal)
+        closeBtn.setTitle("", for: .normal)
         readhelpMenuItems()
         // Do any additional setup after loading the view.
     }

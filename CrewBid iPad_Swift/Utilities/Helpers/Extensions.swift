@@ -19,15 +19,15 @@ extension UIApplication {
 //        return topController!
 //    }
     static func topVC() -> UIViewController {
-        guard let windowScene = UIApplication.shared.connectedScenes
-                .filter({ $0.activationState == .foregroundActive })
-                .first as? UIWindowScene,
-              let root = windowScene.windows
-                .first(where: { $0.isKeyWindow })?.rootViewController else {
-            fatalError("No rootViewController found")
-        }
-
-        var topController: UIViewController? = root
+//        guard let windowScene = UIApplication.shared.connectedScenes
+//                .filter({ $0.activationState == .foregroundActive })
+//                .first as? UIWindowScene,
+//              let root = windowScene.windows
+//                .first(where: { $0.isKeyWindow })?.rootViewController else {
+//            fatalError("No rootViewController found")
+//        }
+//        var topController: UIViewController? = root
+        var topController: UIViewController? = UIApplication.shared.keyWindow?.rootViewController
         while let presented = topController?.presentedViewController {
             topController = presented
         }
@@ -52,17 +52,18 @@ extension UIApplication {
      */
     
 
-    class func topViewController(base: UIViewController? = {
-        if let scene = UIApplication.shared.connectedScenes
-            .filter({ $0.activationState == .foregroundActive })
-            .first as? UIWindowScene {
-
-            return scene.windows
-                .first(where: { $0.isKeyWindow })?.rootViewController
-        }
-        return nil
-    }()) -> UIViewController? {
-
+    class func topViewController(base: UIViewController? =
+//    {
+//        if let scene = UIApplication.shared.connectedScenes
+//            .filter({ $0.activationState == .foregroundActive })
+//            .first as? UIWindowScene {
+//
+//            return scene.windows
+//                .first(where: { $0.isKeyWindow })?.rootViewController
+//        }
+//        return nil
+//    }()) -> UIViewController? {
+    UIApplication.shared.keyWindow?.rootViewController) -> UIViewController? {
         if let nav = base as? UINavigationController {
             return topViewController(base: nav.visibleViewController)
         }

@@ -77,14 +77,10 @@ class CBLineValueView: UIView {
             }
             
         } else {
-            
-            if #available(iOS 13.0, *) {
-                titleLabel?.textColor = UIColor.systemGray
-                valueLabel?.textColor = UIColor.label
-            } else {
+           
                 titleLabel?.textColor = UIColor.lightGray
                 valueLabel?.textColor = UIColor.darkGray
-            }
+            
         }
     }
     

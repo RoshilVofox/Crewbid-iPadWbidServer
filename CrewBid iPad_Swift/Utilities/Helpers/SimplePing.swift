@@ -15,6 +15,19 @@ struct ICMPHeader {
     var identifier: UInt16
     var sequenceNumber: UInt16
 }
+struct IPHeader {
+    var versionAndHeaderLength: UInt8       // 1 byte
+    var typeOfService: UInt8                // 1 byte
+    var totalLength: UInt16                 // 2 bytes
+    var identification: UInt16              // 2 bytes
+    var flagsAndFragmentOffset: UInt16      // 2 bytes
+    var timeToLive: UInt8                   // 1 byte
+    var `protocol`: UInt8                   // 1 byte
+    var headerChecksum: UInt16              // 2 bytes
+    var sourceAddress: UInt32               // 4 bytes
+    var destinationAddress: UInt32          // 4 bytes
+}
+
 
 private func in_cksum(_ buffer: UnsafeRawPointer, bufferLen: Int) -> UInt16 {
     var bytesLeft = bufferLen
@@ -42,9 +55,9 @@ private func in_cksum(_ buffer: UnsafeRawPointer, bufferLen: Int) -> UInt16 {
 
 protocol SimplePingDelegate: AnyObject {
     func simplePing(_ pinger: SimplePing, didStartWithAddress address: Data)
-    func simplePing(_ pinger: SimplePing, didFailWithError error: Error)
+    func simplePing(_ pinger: SimplePing, didFailWithError error: NSError)
     func simplePing(_ pinger: SimplePing, didSendPacket packet: Data)
-    func simplePing(_ pinger: SimplePing, didFailToSendPacket packet: Data, error: Error)
+    func simplePing(_ pinger: SimplePing, didFailToSendPacket packet: Data, error: NSError)
     func simplePing(_ pinger: SimplePing, didReceivePingResponsePacket packet: Data)
     func simplePing(_ pinger: SimplePing, didReceiveUnexpectedPacket packet: Data)
     func simplePingDidTimeoutWaitingForResponsePacket(_ pinger: SimplePing)
@@ -98,13 +111,13 @@ class SimplePing: NSObject {
         var streamError = CFStreamError()
         host = CFHostCreateWithName(nil, name as CFString).takeRetainedValue()
         guard let host = host else { return }
-
-        var context = CFHostClientContext(version: 0, info: Unmanaged.passUnretained(self).toOpaque(),
+        let retainedSelf = Unmanaged.passRetained(self)
+        var context = CFHostClientContext(version: 0, info: retainedSelf.toOpaque(),
                                           retain: nil, release: nil, copyDescription: nil)
-
         CFHostSetClient(host, { (host, typeInfo, error, info) in
             guard let info = info else { return }
-            let simplePing = Unmanaged<SimplePing>.fromOpaque(info).takeUnretainedValue()
+            let unmanaged = Unmanaged<SimplePing>.fromOpaque(info)
+            let simplePing = unmanaged.takeRetainedValue()
             if let err = error, err.pointee.domain != 0 {
                 simplePing._didFailWithHostStreamError(err.pointee)
             } else {
@@ -152,7 +165,7 @@ class SimplePing: NSObject {
         _didFailWithError(error)
     }
 
-    private func _didFailWithError(_ error: Error) {
+    private func _didFailWithError(_ error: NSError) {
         stop()
         delegate?.simplePing(self, didFailWithError: error)
     }
@@ -170,8 +183,8 @@ class SimplePing: NSObject {
             _didFailWithError(NSError(domain: NSPOSIXErrorDomain, code: Int(errno), userInfo: nil))
             return
         }
-
-        var context = CFSocketContext(version: 0, info: Unmanaged.passUnretained(self).toOpaque(),
+        let retainedSelf = Unmanaged.passRetained(self)
+        var context = CFSocketContext(version: 0, info: retainedSelf.toOpaque(),
                                       retain: nil, release: nil, copyDescription: nil)
 
         socket = CFSocketCreateWithNative(nil, fd, CFSocketCallBackType.readCallBack.rawValue,
@@ -272,4 +285,71 @@ class SimplePing: NSObject {
             delegate?.simplePing(self, didFailWithError: NSError(domain: NSPOSIXErrorDomain, code: Int(errno), userInfo: nil))
         }
     }
+    static func icmpHeaderOffset(in packet: Data) -> Int {
+        var result = NSNotFound
+        let ipHeaderSize = MemoryLayout<IPHeader>.size
+        let icmpHeaderSize = MemoryLayout<ICMPHeader>.size
+
+        guard packet.count >= (ipHeaderSize + icmpHeaderSize) else {
+            return result
+        }
+
+        let ipPtr = packet.withUnsafeBytes { $0.bindMemory(to: IPHeader.self).baseAddress }
+
+        guard let ip = ipPtr else {
+            return result
+        }
+
+        // IPv4 version check (upper 4 bits of versionAndHeaderLength == 4)
+        assert((ip.pointee.versionAndHeaderLength & 0xF0) == 0x40)
+        // Protocol check: 1 means ICMP
+        assert(ip.pointee.protocol == 1)
+
+        let ipHeaderLength = Int(ip.pointee.versionAndHeaderLength & 0x0F) * MemoryLayout<UInt32>.size
+
+        if packet.count >= (ipHeaderLength + icmpHeaderSize) {
+            result = ipHeaderLength
+        }
+
+        return result
+    }
+    class func icmpInPacket(_ packet: Data) -> ICMPHeader? {
+          var result: ICMPHeader?
+          let icmpHeaderOffset = icmpHeaderOffsetInPacket(packet)
+          
+          if icmpHeaderOffset != NSNotFound {
+              result = packet.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> ICMPHeader? in
+                  guard let baseAddress = bytes.baseAddress else { return nil }
+                  let icmpHeader = baseAddress.advanced(by: icmpHeaderOffset).assumingMemoryBound(to: ICMPHeader.self)
+                  return icmpHeader.pointee
+              }
+          }
+          return result
+      }
+    class func icmpHeaderOffsetInPacket(_ packet: Data) -> Int {
+         var result = NSNotFound
+         
+         if packet.count >= MemoryLayout<IPHeader>.size + MemoryLayout<ICMPHeader>.size {
+             // Access the raw bytes of the packet
+             let ipPtr = packet.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> UnsafePointer<IPHeader>? in
+                 guard let baseAddress = bytes.baseAddress else { return nil }
+                 return baseAddress.assumingMemoryBound(to: IPHeader.self)
+             }
+             
+             guard let ipHeader = ipPtr else { return result }
+             
+             // Ensure the version and header length are correct
+             assert((ipHeader.pointee.versionAndHeaderLength & 0xF0) == 0x40)
+             assert(ipHeader.pointee.protocol == 1)
+             
+             // Calculate the IP header length
+             let ipHeaderLength = (Int(ipHeader.pointee.versionAndHeaderLength) & 0x0F) * MemoryLayout<UInt32>.size
+             
+             if packet.count >= ipHeaderLength + MemoryLayout<ICMPHeader>.size {
+                 result = ipHeaderLength
+             }
+         }
+         
+         return result
+     }
 }

@@ -59,9 +59,8 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
 //        let value = lineValuesTemp[indexPath.row] as! NSDictionary
         let value = lineValues[indexPath.row] as! NSDictionary
-        var configure = UIListContentConfiguration.cell()
-        configure.text = value["name"] as? String
-        cell.contentConfiguration = configure
+        let title = value["name"] as? String
+        cell.textLabel?.text = title
         cell.selectionStyle = .none
         if (cell.isSelected) {
             cell.accessoryType = .checkmark

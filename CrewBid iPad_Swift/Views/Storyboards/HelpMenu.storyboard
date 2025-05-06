@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="tWM-Yx-dV9">
     <device id="ipad10_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -163,6 +164,7 @@
                     <connections>
                         <outlet property="btnSecretBidload1" destination="6c1-qV-cPF" id="g4h-e8-dZo"/>
                         <outlet property="btnSecretBidload2" destination="pEN-bQ-tKu" id="ZXH-sl-tkC"/>
+                        <outlet property="closeBtn" destination="a1V-MD-dJW" id="TEc-kG-G6K"/>
                         <outlet property="collectionView" destination="Bnu-ae-wIY" id="Qd6-nW-pjN"/>
                     </connections>
                 </viewController>

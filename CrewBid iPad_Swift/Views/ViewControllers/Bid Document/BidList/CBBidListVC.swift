@@ -79,9 +79,8 @@ class CBBidListVC: BaseViewController {
     func manageViewSelection(){
         
         var bgColor: UIColor = .white
-        if #available(iOS 13.0, *) {
-            bgColor = .secondarySystemBackground
-        }
+        bgColor = .secondarySystemBackground
+        
         
         if UserDefaults.standard.bool(forKey: "isSelectedCalanderView"){
             self.btnNormalView.backgroundColor = bgColor
