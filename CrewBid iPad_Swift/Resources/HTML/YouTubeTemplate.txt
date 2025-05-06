@@ -15,13 +15,9 @@ body, div {
 var ytPlayer = null;
 
 function onYouTubePlayerAPIReady() {
-    ytPlayer = new YT.Player('media_area', {height: '%d', width: '%d', videoId: '%@',
-        events: {'onReady': onPlayerReady}
+    ytPlayer = new YT.Player('media_area', {height: '%d', width: '%d', videoId: '%@'
     });
 }
 
-function onPlayerReady(e) {
-    e.target.playVideo();
-}
 </script>
 </html>

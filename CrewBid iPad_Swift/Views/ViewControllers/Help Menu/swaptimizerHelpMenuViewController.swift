@@ -5,6 +5,8 @@ import UIKit
 class swaptimizerHelpMenuViewController: UIViewController, UICollectionViewDelegateFlowLayout {
 
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var btnBack: UIButton!
+    @IBOutlet weak var btnDone: UIButton!
     struct CItem {
         var imageName: String
         var itemLabel: String
@@ -12,13 +14,13 @@ class swaptimizerHelpMenuViewController: UIViewController, UICollectionViewDeleg
     var items: [CItem] = []
     override func viewDidLoad() {
         super.viewDidLoad()
+        btnBack.setTitle("", for: .normal)
+        btnDone.setTitle("", for: .normal)
         
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
         collectionView.setCollectionViewLayout(layout, animated: true)
-    
-
         readitmes()
         // Do any additional setup after loading the view.
     }

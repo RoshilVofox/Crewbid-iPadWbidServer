@@ -7,10 +7,14 @@ class faqViewController: UIViewController {
 
     
     @IBOutlet weak var webView: WKWebView!
+    @IBOutlet weak var btnDone: UIButton!
+    @IBOutlet weak var btnBack: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
 
         loadWebView()
+        btnBack.setTitle("", for: .normal)
+        btnDone.setTitle("", for: .normal)
         // Do any additional setup after loading the view.
     }
     

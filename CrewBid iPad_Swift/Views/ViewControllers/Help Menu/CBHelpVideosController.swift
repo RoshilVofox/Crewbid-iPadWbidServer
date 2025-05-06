@@ -5,16 +5,20 @@ class CBHelpVideosController: BaseViewController,UICollectionViewDelegateFlowLay
     var abc = ["dsjkfdks","sdfhnjkds","sdfhjkg", "sdhfjkg"]
 
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var btnBack: UIButton!
+    @IBOutlet weak var btnDone: UIButton!
     var videoIDs = [String]()
     var videoTitles = [String]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-setupUI()
+        setupUI()
         // Do any additional setup after loading the view.
     }
     
     func setupUI(){
+        btnBack.setTitle("", for: .normal)
+        btnDone.setTitle("", for: .normal)
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         layout.sectionInset = UIEdgeInsets(top: 30, left: 40, bottom: 20, right: 40)
         layout.minimumInteritemSpacing = 15
