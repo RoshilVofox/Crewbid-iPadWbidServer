@@ -10,14 +10,16 @@ body, div {
 </head>
 <body>
   <div id="media_area"></div>
-</body>
 <script>
-var ytPlayer = null;
+  var ytPlayer = null;
 
-function onYouTubePlayerAPIReady() {
-    ytPlayer = new YT.Player('media_area', {height: '%d', width: '%d', videoId: '%@'
-    });
-}
-
+  window.onYouTubePlayerAPIReady = function() {
+      ytPlayer = new YT.Player('media_area', {
+          height: '%d',
+          width: '%d',
+          videoId: '%@'
+      });
+  };
 </script>
+</body>
 </html>
