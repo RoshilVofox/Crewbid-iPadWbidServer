@@ -107,12 +107,10 @@ class SettingsViewController: BaseViewController,KUIPopOverUsable {
     
     @objc func viewTapped() {
         print("hello")
-        print(self.navigationController)
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let vc = storyboard.instantiateViewController(withIdentifier: "CBBrightnessViewController") as? CBBrightnessViewController {
             vc.preferredContentSize = CGSize(width: 300, height: 200)
             self.navigationController?.pushViewController(vc, animated: true)
-            print("success")
         } else {
             print("Failed to instantiate CBBrightnessViewController")
         }

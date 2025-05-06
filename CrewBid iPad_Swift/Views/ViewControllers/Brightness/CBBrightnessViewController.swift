@@ -18,13 +18,19 @@ class CBBrightnessViewController: UIViewController {
         brightnessSlider.minimumValue = 0.0
         brightnessSlider.maximumValue = 1.0
 
-        // Get current user interface style from the window
-            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-               let window = windowScene.windows.first {
-                darkModeSwitch.isOn = (window.overrideUserInterfaceStyle == .dark)
-            }
-        // Do any additional setup after loading the view.
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = windowScene.windows.first {
+            
+//            // Reset to system default mode unless user sets it explicitly
+//            if window.overrideUserInterfaceStyle != .unspecified {
+//                window.overrideUserInterfaceStyle = .unspecified
+//            }
+            
+            // Reflect the current system appearance in the switch
+            darkModeSwitch.isOn = (window.traitCollection.userInterfaceStyle == .dark)
+        }
     }
+
     
 
      @IBAction func btnBackAction(_ sender: Any) {

@@ -51,7 +51,7 @@ class helpMenuItemsViewController: UIViewController, UICollectionViewDataSource,
     
     func readhelpMenuItems() {
         helpMenuItems.removeAll()
-        helpMenuItems.append(HelpMenuItem(imageName: "Folder", itemLabel: "Quick Tutorial", viewControllerName: "quickTutorial"))
+        helpMenuItems.append(HelpMenuItem(imageName: "Quick Tutorial1", itemLabel: "Quick Tutorial", viewControllerName: "quickTutorial"))
         helpMenuItems.append(HelpMenuItem(imageName: "Movie", itemLabel: "How-To Videos ", viewControllerName: "quickTutorial"))
         helpMenuItems.append(HelpMenuItem(imageName: "Notebook", itemLabel: "defenitions", viewControllerName: "quickTutorial"))
         helpMenuItems.append(HelpMenuItem(imageName: "document", itemLabel: "Line Values", viewControllerName: "quickTutorial"))

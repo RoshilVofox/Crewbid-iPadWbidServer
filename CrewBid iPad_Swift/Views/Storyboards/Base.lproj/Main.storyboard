@@ -155,7 +155,6 @@
                                                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="20" contentMode="left" text="Base" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lx5-BQ-jrL">
                                                                             <rect key="frame" x="10" y="89.5" width="162" height="20.5"/>
                                                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                                                            <color key="textColor" systemColor="darkTextColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
                                                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="BASES" translatesAutoresizingMaskIntoConstraints="NO" id="0Fw-Wy-o0b">
@@ -181,7 +180,6 @@
                                                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="20" contentMode="left" text="Position" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mbM-sk-JFd">
                                                                             <rect key="frame" x="10" y="89.5" width="162" height="20.5"/>
                                                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
-                                                                            <color key="textColor" systemColor="darkTextColor"/>
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
                                                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" image="Positions" translatesAutoresizingMaskIntoConstraints="NO" id="LNr-0l-Toa">
@@ -204,7 +202,7 @@
                                                             </subviews>
                                                         </stackView>
                                                     </subviews>
-                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <color key="backgroundColor" name="color_14"/>
                                                     <constraints>
                                                         <constraint firstItem="HyU-RE-ytO" firstAttribute="centerY" secondItem="sEf-9b-qxK" secondAttribute="bottom" constant="-55" id="3Kl-k1-Zru"/>
                                                         <constraint firstItem="Ysy-1G-sbu" firstAttribute="leading" secondItem="sEf-9b-qxK" secondAttribute="leading" constant="10" id="6Fa-3l-9lF"/>
@@ -700,7 +698,7 @@
                                             <constraint firstAttribute="height" constant="40" id="zb5-4J-j9m"/>
                                         </constraints>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" image="arrowleftbutton"/>
+                                        <buttonConfiguration key="configuration" style="plain" image="NewBid-navbar-arrowleftbutton"/>
                                         <connections>
                                             <action selector="btnBackAction:" destination="mCk-ME-gA6" eventType="touchUpInside" id="TDM-wt-Q7B"/>
                                         </connections>
@@ -959,9 +957,9 @@
     </scenes>
     <resources>
         <image name="BASES" width="53" height="53"/>
+        <image name="NewBid-navbar-arrowleftbutton" width="16" height="23"/>
         <image name="Positions" width="97" height="97"/>
         <image name="RadioButton-On" width="22" height="22"/>
-        <image name="arrowleftbutton" width="16" height="23"/>
         <image name="plus" width="22" height="22"/>
         <image name="questionmark" width="128" height="128"/>
         <image name="radioButton-Off" width="22" height="22"/>
@@ -972,9 +970,9 @@
         <namedColor name="HomeBackGround">
             <color red="0.4309999942779541" green="0.50199997425079346" blue="0.54500001668930054" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
-        <systemColor name="darkTextColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
+        <namedColor name="color_14">
+            <color red="0.99999994039535522" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
