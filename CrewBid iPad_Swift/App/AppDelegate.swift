@@ -392,7 +392,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
             if let icmp = SimplePing.icmpInPacket(packet) {
                 let sequenceNumber = UInt16(bigEndian: icmp.sequenceNumber)
                 print("#\(sequenceNumber) received")
-                self.simplePingStatus(true)
+//                self.simplePingStatus(true)
                 self.checkForUpdate(true)
                 self.pinger?.stop()
                 self.sendTimer?.invalidate()
