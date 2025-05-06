@@ -1364,6 +1364,7 @@ If you would like to provide feedback (positive or negative), report a bug, or s
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
+                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             <constraints>
                                                 <constraint firstItem="Nwa-4f-yCI" firstAttribute="leading" secondItem="zAU-LU-gcL" secondAttribute="leading" id="Dwq-bn-5ha"/>
                                                 <constraint firstAttribute="trailing" secondItem="Nwa-4f-yCI" secondAttribute="trailing" id="Hao-HY-QmD"/>
