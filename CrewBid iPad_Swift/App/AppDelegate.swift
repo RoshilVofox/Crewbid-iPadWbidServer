@@ -11,6 +11,7 @@ import UserNotifications
 import SystemConfiguration.CaptiveNetwork
 import CoreLocation
 import Firebase
+import IQKeyboardManagerSwift
 private let TestFlightAppToken = "acc37fb4-d850-42d1-b030-bc968f5ac8a7"
 private let kCBFreeMonthToken = "CrewBidFreeMonthToken"
 private let kFreeMonthEncryptionKey = "acc37fb4-d850"
@@ -29,6 +30,7 @@ var isSenioritySecretOn: Bool = false
 var isHistoricBid: Bool = false
 var swaptimizerClicked: Bool = false
 var isAvailableSouthWestNetwork: Bool = false
+var objCBDocument: CBDocumentsCollectionViewController?
 var dicSSIDDetails: [String: Any]?
 var mockDataMonth: Int?
 var mockDataYear: Int?
@@ -91,7 +93,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         onLaunch = true
-
+        IQKeyboardManager.shared.isEnabled = true
 //        FirebaseApp.configure()
 //        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(false)
 //        Crashlytics.crashlytics().checkForUnsentReports { hasUnsentReports in
@@ -390,7 +392,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
             if let icmp = SimplePing.icmpInPacket(packet) {
                 let sequenceNumber = UInt16(bigEndian: icmp.sequenceNumber)
                 print("#\(sequenceNumber) received")
-//                self.simplePingStatus(true)
+                self.simplePingStatus(true)
                 self.checkForUpdate(true)
                 self.pinger?.stop()
                 self.sendTimer?.invalidate()
