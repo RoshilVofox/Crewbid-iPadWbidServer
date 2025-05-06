@@ -1211,27 +1211,48 @@ If you would like to provide feedback (positive or negative), report a bug, or s
                                     <outlet property="delegate" destination="tWM-Yx-dV9" id="lzG-3Y-2Pl"/>
                                 </connections>
                             </collectionView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0cK-Wo-xEl">
+                                <rect key="frame" x="0.0" y="605" width="764" height="25"/>
+                                <subviews>
+                                    <pageControl opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="1re-u9-2T6">
+                                        <rect key="frame" x="332" y="0.0" width="100" height="25"/>
+                                    </pageControl>
+                                </subviews>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstItem="1re-u9-2T6" firstAttribute="centerY" secondItem="0cK-Wo-xEl" secondAttribute="centerY" id="4R1-Q7-FAZ"/>
+                                    <constraint firstItem="1re-u9-2T6" firstAttribute="centerX" secondItem="0cK-Wo-xEl" secondAttribute="centerX" id="CF7-ZL-vcG"/>
+                                    <constraint firstAttribute="height" constant="25" id="QO3-6g-DRa"/>
+                                    <constraint firstAttribute="bottom" secondItem="1re-u9-2T6" secondAttribute="bottom" id="mYB-de-ewH"/>
+                                    <constraint firstItem="1re-u9-2T6" firstAttribute="top" secondItem="0cK-Wo-xEl" secondAttribute="top" id="yNi-HI-BRR"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="aGE-Iw-HpC"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="RJf-eA-Th9" firstAttribute="leading" secondItem="aGE-Iw-HpC" secondAttribute="leading" id="7YQ-7a-Fac"/>
+                            <constraint firstItem="0cK-Wo-xEl" firstAttribute="leading" secondItem="aGE-Iw-HpC" secondAttribute="leading" id="0u9-Ph-BC5"/>
                             <constraint firstItem="kVL-2e-cbS" firstAttribute="leading" secondItem="aGE-Iw-HpC" secondAttribute="leading" id="Cgk-aJ-oVu"/>
+                            <constraint firstItem="RJf-eA-Th9" firstAttribute="trailing" secondItem="aGE-Iw-HpC" secondAttribute="trailing" id="DT5-s5-pPd"/>
+                            <constraint firstItem="0cK-Wo-xEl" firstAttribute="trailing" secondItem="aGE-Iw-HpC" secondAttribute="trailing" id="FE3-Hf-iBc"/>
                             <constraint firstItem="kVL-2e-cbS" firstAttribute="top" secondItem="lwW-Uw-uQd" secondAttribute="top" id="ScE-qi-pUC"/>
+                            <constraint firstItem="0cK-Wo-xEl" firstAttribute="top" secondItem="RJf-eA-Th9" secondAttribute="bottom" id="UF5-7i-MJM"/>
                             <constraint firstItem="kVL-2e-cbS" firstAttribute="trailing" secondItem="aGE-Iw-HpC" secondAttribute="trailing" id="cdz-Qb-Q0k"/>
-                            <constraint firstItem="RJf-eA-Th9" firstAttribute="top" secondItem="kVL-2e-cbS" secondAttribute="bottom" id="lxY-Vx-LPB"/>
-                            <constraint firstItem="aGE-Iw-HpC" firstAttribute="trailing" secondItem="RJf-eA-Th9" secondAttribute="trailing" id="qqp-Sd-iDZ"/>
-                            <constraint firstItem="aGE-Iw-HpC" firstAttribute="bottom" secondItem="RJf-eA-Th9" secondAttribute="bottom" id="waQ-vc-qyo"/>
+                            <constraint firstAttribute="bottom" secondItem="0cK-Wo-xEl" secondAttribute="bottom" id="o8h-lM-0tf"/>
+                            <constraint firstItem="RJf-eA-Th9" firstAttribute="top" secondItem="kVL-2e-cbS" secondAttribute="bottom" id="oG4-JI-tyj"/>
+                            <constraint firstItem="RJf-eA-Th9" firstAttribute="top" secondItem="kVL-2e-cbS" secondAttribute="bottom" id="p1m-dI-pWl"/>
+                            <constraint firstItem="RJf-eA-Th9" firstAttribute="leading" secondItem="aGE-Iw-HpC" secondAttribute="leading" id="wJI-Xf-4Ev"/>
                         </constraints>
                     </view>
                     <size key="freeformSize" width="764" height="630"/>
                     <connections>
                         <outlet property="collectionView" destination="RJf-eA-Th9" id="jv2-Ts-lKP"/>
+                        <outlet property="pageControl" destination="1re-u9-2T6" id="AQe-We-z7O"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uM4-Y9-fc2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1108" y="328"/>
+            <point key="canvasLocation" x="1107.8048780487804" y="327.96610169491527"/>
         </scene>
         <!--Help Videos Controller-->
         <scene sceneID="xBu-hM-j8n">
