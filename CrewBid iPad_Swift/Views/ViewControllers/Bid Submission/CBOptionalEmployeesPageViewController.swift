@@ -10,6 +10,8 @@ class CBOptionalEmployeesPageViewController: UIViewController {
     @IBOutlet weak var txtEmpNum2: customUITextField!
     @IBOutlet weak var lblOptionalUser2: UILabel!
     @IBOutlet weak var txtEmpNum3: customUITextField!
+    @IBOutlet weak var btnClose: UIButton!
+    @IBOutlet weak var btnNext: UIButton!
     
     @IBOutlet weak var optionalUser1Domicile: UILabel!
     @IBOutlet weak var optionalUser2Domicile: UILabel!
@@ -23,6 +25,8 @@ class CBOptionalEmployeesPageViewController: UIViewController {
         super.viewDidLoad()
         txtEmpNum1.delegate = self
         txtEmpNum2.delegate = self
+        btnClose.setTitle("", for: .normal)
+        btnNext.setTitle("", for: .normal)
 
        
     }

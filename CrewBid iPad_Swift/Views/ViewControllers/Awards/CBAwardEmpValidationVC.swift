@@ -10,10 +10,12 @@ import UIKit
 class CBAwardEmpValidationVC: UIViewController {
     
     @IBOutlet weak var txtEmpNum: customUITextField!
+    @IBOutlet weak var btnClose: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         txtEmpNum.delegate = self
+        btnClose.setTitle("", for: .normal)
 
         // Do any additional setup after loading the view.
     }

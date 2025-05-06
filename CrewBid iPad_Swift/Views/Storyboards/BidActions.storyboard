@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="iPad13_0rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -243,6 +244,8 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnClose" destination="s5O-w6-0VG" id="a30-IW-wLT"/>
+                        <outlet property="btnShare" destination="GHH-8Q-1PX" id="Qi4-CN-Jbs"/>
                         <outlet property="lblTitle" destination="m16-Hy-SV9" id="phu-pB-nzW"/>
                         <outlet property="searchBar" destination="LDD-KQ-bAU" id="7FN-dW-kb6"/>
                         <outlet property="tableView" destination="wWW-hb-9e2" id="aUq-l4-IDO"/>
@@ -330,6 +333,8 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnClose" destination="L49-gb-vVC" id="YSR-Qj-RUc"/>
+                        <outlet property="btnShare" destination="8Bu-ue-Bfc" id="Cjh-Mt-9fv"/>
                         <outlet property="lblTitle" destination="MuF-Re-C08" id="rne-Gn-T3j"/>
                         <outlet property="txtView" destination="9gY-SY-pnj" id="LJc-qZ-dt4"/>
                     </connections>
@@ -603,6 +608,8 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnClose" destination="bob-ie-fZi" id="2qa-Bw-73f"/>
+                        <outlet property="btnShare" destination="h2t-nb-O06" id="itV-ZG-Arb"/>
                         <outlet property="btnShareAction" destination="h2t-nb-O06" id="yYl-25-hLb"/>
                     </connections>
                 </viewController>
@@ -932,6 +939,7 @@
                     <navigationItem key="navigationItem" id="dCO-Aj-iBf"/>
                     <size key="freeformSize" width="600" height="500"/>
                     <connections>
+                        <outlet property="btnClose" destination="lwL-EW-yOO" id="4Ab-VL-Sc2"/>
                         <outlet property="collectionView" destination="CAr-Bh-Obm" id="h9p-oS-CNj"/>
                         <outlet property="lblMonthTitle" destination="T0G-Oz-LEW" id="kvT-Cf-nnF"/>
                         <outlet property="txtPosition" destination="doZ-GI-myd" id="hdA-Ej-3Au"/>
@@ -1017,6 +1025,7 @@
                     </view>
                     <size key="freeformSize" width="600" height="500"/>
                     <connections>
+                        <outlet property="btnBack" destination="HLc-Hw-Sv2" id="I1Q-XM-xW3"/>
                         <outlet property="lblTitle" destination="hvh-Hm-iae" id="INb-NM-JI5"/>
                         <outlet property="txtView" destination="K8S-HE-1Kk" id="s0n-Fb-nvV"/>
                     </connections>
@@ -1137,6 +1146,7 @@
                     <navigationItem key="navigationItem" id="BCk-Ck-7I8"/>
                     <size key="freeformSize" width="600" height="500"/>
                     <connections>
+                        <outlet property="btnClose" destination="dqE-i3-crl" id="iV5-Sx-i7b"/>
                         <outlet property="txtLineNumber" destination="5EZ-Dz-LRv" id="umD-nH-qoz"/>
                         <outlet property="txtPosition" destination="hAJ-Rs-PGo" id="INi-5k-yKH"/>
                         <outlet property="txtView" destination="1D5-bg-KhE" id="vzt-GO-v0J"/>
@@ -1249,6 +1259,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="XTq-GY-hua"/>
                     <connections>
+                        <outlet property="btnClose" destination="Fmv-fj-CpP" id="YQB-vu-whw"/>
                         <outlet property="txtEmpNum" destination="WZr-Yh-dsO" id="t8X-6f-2xP"/>
                     </connections>
                 </viewController>
@@ -1512,6 +1523,8 @@
                     </view>
                     <size key="freeformSize" width="600" height="500"/>
                     <connections>
+                        <outlet property="btnClose" destination="T6p-Sd-CGL" id="d9A-kp-nXE"/>
+                        <outlet property="btnShare" destination="53J-jY-tF9" id="zEY-LR-fAg"/>
                         <outlet property="collectionView" destination="ok8-j5-YhC" id="tk5-Aq-gBW"/>
                         <outlet property="lblFaPosition" destination="Buz-9j-Whs" id="6Kf-Wk-fH2"/>
                         <outlet property="lblLineNumber" destination="g6K-tE-mv2" id="XoJ-o3-sdR"/>
@@ -1544,6 +1557,9 @@
                                         <state key="normal" image="NewBid-navbar-ncelbutton">
                                             <color key="titleColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
+                                        <buttonConfiguration key="configuration" style="plain" image="NewBid-navbar-ncelbutton">
+                                            <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </buttonConfiguration>
                                         <connections>
                                             <action selector="btnDismissAction:" destination="RHv-BM-feg" eventType="touchUpInside" id="W12-eu-DhY"/>
                                         </connections>
@@ -1567,6 +1583,9 @@
                                         <state key="normal" image="BidLineMove">
                                             <color key="titleColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
+                                        <buttonConfiguration key="configuration" style="plain" image="BidLineMove">
+                                            <color key="baseForegroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </buttonConfiguration>
                                         <connections>
                                             <action selector="btnNextAction:" destination="RHv-BM-feg" eventType="touchUpInside" id="zdd-io-qeu"/>
                                         </connections>
@@ -1695,6 +1714,8 @@
                     </view>
                     <size key="freeformSize" width="600" height="500"/>
                     <connections>
+                        <outlet property="btnClose" destination="t6S-We-KtL" id="JBW-5p-NUR"/>
+                        <outlet property="btnNext" destination="FL2-Ip-06V" id="t7A-zv-3C9"/>
                         <outlet property="lblBuddyBid" destination="Nwe-RH-cZf" id="3yT-65-b19"/>
                         <outlet property="lblMessage" destination="Chk-vx-Syb" id="2bg-Mg-d01"/>
                         <outlet property="lblOptionalUser1" destination="9wd-P2-xcU" id="WhA-Xa-3Qg"/>
@@ -1833,6 +1854,7 @@
                     </view>
                     <size key="freeformSize" width="600" height="500"/>
                     <connections>
+                        <outlet property="btnClose" destination="WeA-0z-5z4" id="uIe-i3-gFN"/>
                         <outlet property="txtEmpNum" destination="bue-zE-y5F" id="thB-kb-5YN"/>
                         <outlet property="txtPassword" destination="1p5-7z-fIj" id="HPZ-BZ-10Q"/>
                     </connections>
@@ -2193,6 +2215,7 @@
                     <navigationItem key="navigationItem" id="jDt-gC-o9l"/>
                     <size key="freeformSize" width="600" height="500"/>
                     <connections>
+                        <outlet property="btnClose" destination="GnC-o6-Mic" id="3sY-n4-WTL"/>
                         <outlet property="txtEmpNum" destination="FMg-l8-ygq" id="ygL-Zz-C8m"/>
                         <outlet property="txtPassword" destination="7wR-ei-4Jn" id="0hh-Um-els"/>
                     </connections>
@@ -2299,6 +2322,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="efw-Sb-4Wf"/>
                     <connections>
+                        <outlet property="btnClose" destination="Gxt-1q-ss6" id="4TA-OM-sss"/>
                         <outlet property="btnImportText" destination="avC-Me-UOU" id="rvL-tW-Ml3"/>
                     </connections>
                 </viewController>
@@ -2663,7 +2687,7 @@
                     <navigationItem key="navigationItem" id="R0G-60-scw"/>
                     <size key="freeformSize" width="300" height="600"/>
                     <connections>
-                        <outlet property="btnBack" destination="e3q-Vw-6XA" id="amJ-nV-wb0"/>
+                        <outlet property="btnBack" destination="e3q-Vw-6XA" id="MBo-Ta-yxl"/>
                         <outlet property="tableView" destination="hVF-n0-fDc" id="QRE-Bw-uBU"/>
                     </connections>
                 </viewController>

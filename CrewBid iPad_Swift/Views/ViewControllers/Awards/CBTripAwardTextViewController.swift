@@ -11,10 +11,12 @@ class CBTripAwardTextViewController: UIViewController {
 
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var txtView: UITextView!
+    @IBOutlet weak var btnBack: UIButton!
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        btnBack.setTitle("", for: .normal)
 
         // Do any additional setup after loading the view.
     }

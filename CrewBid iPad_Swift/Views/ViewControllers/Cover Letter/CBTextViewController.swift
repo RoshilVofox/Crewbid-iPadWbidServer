@@ -14,11 +14,15 @@ class CBTextViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var txtView: UITextView!
     @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var btnClose: UIButton!
+    @IBOutlet weak var btnShare: UIButton!
     var type: String = ""
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        btnClose.setTitle("", for: .normal)
+        btnShare.setTitle("", for: .normal)
         if type == "Seniority List" {
             lblTitle.text = "Seniority List"
             searchBar.backgroundColor = .white

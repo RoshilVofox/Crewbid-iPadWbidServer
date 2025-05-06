@@ -14,11 +14,13 @@ class CBTripAwardViewController: UIViewController {
     @IBOutlet weak var txtTripID: customUITextField!
     @IBOutlet weak var txtPosition: customUITextField!
     @IBOutlet weak var viewWeekDays: UIView!
+    @IBOutlet weak var btnClose: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         txtPosition.delegate = self
         txtTripID.delegate = self
+        btnClose.setTitle("", for: .normal)
 
         // Do any additional setup after loading the view.
     }

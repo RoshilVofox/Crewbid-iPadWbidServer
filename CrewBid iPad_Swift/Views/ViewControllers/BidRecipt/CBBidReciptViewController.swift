@@ -11,11 +11,13 @@ class CBBidReciptViewController: UIViewController {
     
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var txtView: UITextView!
+    @IBOutlet weak var btnClose: UIButton!
+    @IBOutlet weak var btnShare: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        
+        btnClose.setTitle("", for: .normal)
+        btnShare.setTitle("", for: .normal)
     }
     
     @IBAction func btnDismissAction(_ sender: Any) {

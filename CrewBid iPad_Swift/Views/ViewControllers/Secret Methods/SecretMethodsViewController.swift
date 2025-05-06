@@ -6,23 +6,16 @@ import UIKit
 class SecretMethodsViewController: UIViewController {
     
     @IBOutlet weak var qaTestSegment: UISegmentedControl!
-    
     @IBOutlet weak var closeBtn: UIButton!
     @IBOutlet weak var mockDataSegment: UISegmentedControl!
-    
     @IBOutlet weak var secretVacationSegment: UISegmentedControl!
-    
     @IBOutlet weak var secretAwsrdSegment: UISegmentedControl!
     
-    
-
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setupUI()
     }
     
-
     func setupUI() {
         qaTestSegment.selectedSegmentIndex = 1
         mockDataSegment.selectedSegmentIndex = 1
@@ -34,6 +27,7 @@ class SecretMethodsViewController: UIViewController {
     @IBAction func closeBtnAction(_ sender: Any) {
         self.dismiss(animated: true)
     }
+    
     @IBAction func btnDonloadDomicileAction(_ sender: Any) {
         if let presentingVC = self.presentingViewController {
             self.dismiss(animated: true) {

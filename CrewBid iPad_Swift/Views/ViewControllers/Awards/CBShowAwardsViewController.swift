@@ -8,11 +8,14 @@
 import UIKit
 
 class CBShowAwardsViewController: UIViewController {
-
+    @IBOutlet weak var btnClose: UIButton!
+    @IBOutlet weak var btnShare: UIButton!
+    
     @IBOutlet weak var btnShareAction: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        btnClose.setTitle("", for: .normal)
+        btnShare.setTitle("", for: .normal)
         // Do any additional setup after loading the view.
     }
     

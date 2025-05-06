@@ -13,12 +13,16 @@ class CBAwardLineCalendarViewController: UIViewController, UICollectionViewDeleg
     @IBOutlet weak var lblFaPosition: UILabel!
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var viewLineValues: UIView!
+    @IBOutlet weak var btnClose: UIButton!
+    @IBOutlet weak var btnShare: UIButton!
     
     
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        btnClose.setTitle("", for: .normal)
+        btnShare.setTitle("", for: .normal)
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
        
         layout.minimumLineSpacing = 0

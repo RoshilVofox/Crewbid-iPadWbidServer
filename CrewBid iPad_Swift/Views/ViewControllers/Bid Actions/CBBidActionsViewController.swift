@@ -13,8 +13,6 @@ class CBBidActionsViewController: UIViewController, KUIPopOverUsable {
     }
     
     @IBOutlet weak var btnBack: UIButton!
-    
-    
     @IBOutlet weak var tableView: UITableView!
     
     lazy var employeeNum: UITextField = {
@@ -42,6 +40,7 @@ class CBBidActionsViewController: UIViewController, KUIPopOverUsable {
         // Do any additional setup after loading the view.
         arr = arrForPilotWithAwdTxt
         btnBack.isHidden = true
+        btnBack.setTitle("", for: .normal)
         
         
         
