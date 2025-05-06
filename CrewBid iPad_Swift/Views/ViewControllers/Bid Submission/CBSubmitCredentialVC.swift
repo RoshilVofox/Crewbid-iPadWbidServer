@@ -7,12 +7,14 @@ class CBSubmitCredentialVC: UIViewController {
     
     @IBOutlet weak var txtEmpNum: customUITextField!
     @IBOutlet weak var btnClose: UIButton!
+    @IBOutlet weak var btnShowPwd: UIButton!
     
     @IBOutlet weak var txtPassword: customUITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         btnClose.setTitle("", for: .normal)
+        btnShowPwd.setTitle("", for: .normal)
         
     }
     

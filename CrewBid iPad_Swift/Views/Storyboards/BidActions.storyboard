@@ -1855,6 +1855,7 @@
                     <size key="freeformSize" width="600" height="500"/>
                     <connections>
                         <outlet property="btnClose" destination="WeA-0z-5z4" id="uIe-i3-gFN"/>
+                        <outlet property="btnShowPwd" destination="hkj-do-Ixx" id="BH8-a6-kk8"/>
                         <outlet property="txtEmpNum" destination="bue-zE-y5F" id="thB-kb-5YN"/>
                         <outlet property="txtPassword" destination="1p5-7z-fIj" id="HPZ-BZ-10Q"/>
                     </connections>

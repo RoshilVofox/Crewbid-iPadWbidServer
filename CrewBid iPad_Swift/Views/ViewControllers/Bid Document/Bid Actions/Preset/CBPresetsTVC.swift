@@ -182,11 +182,13 @@ extension CBPresetsTVC: UITableViewDelegate, UITableViewDataSource{
             deleteButton?.alpha = 0.0
             presetCell.nameTextField.alpha = 0.0
             presetCell.nameLabel.alpha = 1.0
+            
             //presetCell.nameLabel.textColor = .black
             // presetCell.nameTextField.textColor = .black
             presetCell.addButton.alpha = 1.0
             presetCell.deleteButton.alpha = 0.0
             presetCell.loadLabel.alpha = 0.0
+            
         }
         else {
             // Added preset cell
