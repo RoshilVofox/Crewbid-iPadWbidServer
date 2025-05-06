@@ -229,7 +229,9 @@ let EmailNotMatching = "Email Not Matching"
 let PasswordMismatch = "Please repeat same password"
 
 //-------------------------------------------------------------------------------------//
-
+let kCBUserInfoDictionaryKey = "UserInfoDictionary"
+let kCBExpirationDateFormat = "dd/MM/yyyy HH:mm:ss"
+let kCBIncludeDroppedTripsInProcessingKey = "CBIncludeDroppedTripsInProcessing"
 
 let kCBUserInfoEncryptedWbidExpirationDateKey = "UserInfoEncryptedWbidExpirationDateKey"
 let kCBUserInfoUserParseIDKey = "UserInfoUserParseIDKey"

@@ -12,6 +12,12 @@ import SystemConfiguration.CaptiveNetwork
 import CoreLocation
 import Firebase
 
+private let TestFlightAppToken = "acc37fb4-d850-42d1-b030-bc968f5ac8a7"
+private let kCBFreeMonthToken = "CrewBidFreeMonthToken"
+private let kFreeMonthEncryptionKey = "acc37fb4-d850"
+private let faqsObjectID = "G41RDHdiL9"
+private let latestNewsObjectID = "NR58hbGSk3"
+
 
 var dicCurrentBidDetails: [String: Any]?
 var webData: Data?
@@ -116,17 +122,95 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         }
         IPAddress = self.getIPAddress()
         print("IP Address: \(String(describing: IPAddress))")
-        let firstLaunchWithiCloudAvailable = UserDefaults.standard.bool(forKey: "firstLaunchWithiCloudAvailable")
-        let currentiCloudToken = FileManager.default.ubiquityIdentityToken
-        if currentiCloudToken == nil && firstLaunchWithiCloudAvailable{
-//            Add alert
+        self.iCloudAccessCheck()
+//        NotificationCenter.default.addObserver(self, selector: #selector(ubiquitousKeyValueStoreDidChange), name: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: NSUbiquitousKeyValueStore.default)
+//        NotificationCenter.default.addObserver(self, selector: #selector(iCloudAccountAvailabilityChanged), name: .NSUbiquityIdentityDidChange, object: nil)
+//        NSUbiquitousKeyValueStore.default.synchronize()
+        
+        //needs code relsted to subscription reset
+        
+        UIApplication.shared.applicationIconBadgeNumber = 0
+        if (UserDefaults.standard.object(forKey: kCBIncludeDroppedTripsInProcessingKey) == nil){
+            UserDefaults.standard.set(true, forKey: kCBIncludeDroppedTripsInProcessingKey)
         }
+        if (UserDefaults.standard.object(forKey: kCBHideVacationKey) == nil){
+            UserDefaults.standard.set(false, forKey: kCBHideVacationKey)
+        }
+        self.showDeviceUptimeAlert()
         
         return true
     }
+    func showDeviceUptimeAlert(){
+        let uptime = ProcessInfo.processInfo.systemUptime
+        let uptimeDate = Date(timeIntervalSinceNow: -uptime)
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.day,.hour,.minute], from: uptimeDate, to: Date())
+        print(components.day!, components.hour!, components.minute!)
+        if components.day! > 7{
+            let uptimeMessage = "Your device has been running for \(components.day!) days, \(components.hour!) hours, \(components.minute!) minutes. You should Restart your iPad."
+            let alert = AlertService.showAlert(title: "Device Uptime", message: uptimeMessage, actions: nil)
+            DispatchQueue.main.async {
+                let topVC = self.getTopViewController()
+                topVC?.present(alert, animated: true)
+            }
+        }
+    }
     
+    @objc func iCloudAccountAvailabilityChanged(){
+    }
     
+    @objc func ubiquitousKeyValueStoreDidChange(_ notification:Notification){
+        let userInfo1 = notification.userInfo!
+        guard let reasonForChange = userInfo1[NSUbiquitousKeyValueStoreChangeReasonKey] as? NSNumber else {
+            print("No reason for change provided.")
+            return
+        }
+        var reason = -1
+        reason = reasonForChange.intValue
+        if reason == NSUbiquitousKeyValueStoreServerChange || reason == NSUbiquitousKeyValueStoreInitialSyncChange{
+            let changedKeys = userInfo1[NSUbiquitousKeyValueStoreChangeReasonKey] as! NSArray
+            let ubiquitousKeyValueStore = NSUbiquitousKeyValueStore.default
+            let userInfo = ubiquitousKeyValueStore.object(forKey: kCBUserInfoDictionaryKey) as? [String: Any]
+            let encryptedString = userInfo![kCBUserInfoEncryptedExpirationDateKey] as! String
+            var dateString = ""
+            if !encryptedString.isEmpty{
+                dateString = FBEncryptorAES.decryptBase64String(encryptedString, keyString: kFreeMonthEncryptionKey)
+            }
+            let dateFormateer = DateFormatter()
+            dateFormateer.dateFormat = kCBExpirationDateFormat
+            let iCloudDate = dateFormateer.date(from: dateString)
+            
+            //MARK: needs code
+            //related to IAP
+            
+            
+            
+        }
+        
+    }
+
     
+    func iCloudAccessCheck(){
+        if let topVC = self.getTopViewController(){
+        let firstLaunchWithiCloudAvailable = UserDefaults.standard.bool(forKey: "firstLaunchWithiCloudAvailable")
+        let currentiCloudToken = FileManager.default.ubiquityIdentityToken
+        if currentiCloudToken == nil && firstLaunchWithiCloudAvailable{
+            let alert = AlertService.showAlert(title: "No iCloud Access!", message: "CrewBid requires iCloud access to sync your subscriptions across devices. To enable go to Settings > iCloud", actions: nil)
+                topVC.present(alert, animated: true)
+            }
+            UserDefaults.standard.set(true, forKey: "firstLaunchWithiCloudAvailable")
+        }
+    }
+    func getTopViewController() -> UIViewController? {
+        guard let rootVC = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
+            return nil
+        }
+        var topVC = rootVC
+        while let presentedVC = topVC.presentedViewController {
+            topVC = presentedVC
+        }
+        return topVC
+    }
     
     func locationAccess() {
         locationManager.delegate = self
@@ -307,7 +391,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
             if let icmp = SimplePing.icmpInPacket(packet) {
                 let sequenceNumber = UInt16(bigEndian: icmp.sequenceNumber)
                 print("#\(sequenceNumber) received")
-//                self.simplePingStatus(true)
+                self.simplePingStatus(true)
                 self.checkForUpdate(true)
                 self.pinger?.stop()
                 self.sendTimer?.invalidate()
