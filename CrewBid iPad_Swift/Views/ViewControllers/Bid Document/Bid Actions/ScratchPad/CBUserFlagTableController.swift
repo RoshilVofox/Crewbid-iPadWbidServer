@@ -40,12 +40,12 @@ class CBUserFlagTableController: UIViewController,UITableViewDelegate,UITableVie
                     CBUserFlagType.pink          //Pink
        ]
        userFlagColors = [CBUserFlagType.none: UIColor.clear,
-                         CBUserFlagType.green: CBColor.faPosBColor(),         // Green
-                         CBUserFlagType.yellow: CBColor.faPosCColor(),         // Yellow
+                         CBUserFlagType.green: CBColor.faPosBColor,         // Green
+                         CBUserFlagType.yellow: CBColor.faPosCColor,         // Yellow
                          CBUserFlagType.orange: UIColor.orange,
-                         CBUserFlagType.red: CBColor.faPosDColor(),         // Red
-                         CBUserFlagType.blue: CBColor.faPosAColor(),
-                         CBUserFlagType.brown: CBColor.oldbrownColor(),
+                         CBUserFlagType.red: CBColor.faPosDColor,         // Red
+                         CBUserFlagType.blue: CBColor.faPosAColor,
+                         CBUserFlagType.brown: CBColor.oldbrownColor,
                          CBUserFlagType.pink: UIColor.systemPink.withAlphaComponent(0.8)] // Blue
    }
    
@@ -63,12 +63,12 @@ class CBUserFlagTableController: UIViewController,UITableViewDelegate,UITableVie
                     CBUserFlagType.pink.rawValue        // Pink
        ]
        userFlagColors = [CBUserFlagType.none.rawValue: UIColor.clear,
-                         CBUserFlagType.green.rawValue: CBColor.faPosBColor(),         // Green
-                         CBUserFlagType.yellow.rawValue: CBColor.faPosCColor(),         // Yellow
+                         CBUserFlagType.green.rawValue: CBColor.faPosBColor,         // Green
+                         CBUserFlagType.yellow.rawValue: CBColor.faPosCColor,         // Yellow
                          CBUserFlagType.orange.rawValue: UIColor.orange,
-                         CBUserFlagType.red.rawValue: CBColor.faPosDColor(),         // Red
-                         CBUserFlagType.blue.rawValue: CBColor.faPosAColor(),
-                         CBUserFlagType.brown.rawValue: CBColor.oldbrownColor(),
+                         CBUserFlagType.red.rawValue: CBColor.faPosDColor,         // Red
+                         CBUserFlagType.blue.rawValue: CBColor.faPosAColor,
+                         CBUserFlagType.brown.rawValue: CBColor.oldbrownColor,
                          CBUserFlagType.pink.rawValue: UIColor.systemPink.withAlphaComponent(0.8)]
    }
 
@@ -154,17 +154,17 @@ class CBUserFlagTableController: UIViewController,UITableViewDelegate,UITableVie
         case CBUserFlagType.none:
             color = UIColor.clear
         case CBUserFlagType.yellow:
-            color = CBColor.faPosCColor()
+            color = CBColor.faPosCColor
         case CBUserFlagType.orange:
             color = UIColor.orange
         case CBUserFlagType.red:
-            color = CBColor.faPosDColor()
+            color = CBColor.faPosDColor
         case CBUserFlagType.green:
-            color = CBColor.faPosBColor()
+            color = CBColor.faPosBColor
         case CBUserFlagType.blue:
-            color = CBColor.faPosAColor()
+            color = CBColor.faPosAColor
         case CBUserFlagType.brown:
-            color = CBColor.oldbrownColor()
+            color = CBColor.oldbrownColor
         case CBUserFlagType.pink:
             color = UIColor.systemPink.withAlphaComponent(0.8)
             

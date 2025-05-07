@@ -13,6 +13,7 @@ class CBAwardsRetrievalViewController: UIViewController {
     @IBOutlet weak var txtEmpNum: customUITextField!
     @IBOutlet weak var txtPassword: customUITextField!
     @IBOutlet weak var btnClose: UIButton!
+    @IBOutlet weak var btnShowPwd: UIButton!
     
 
     override func viewDidLoad() {
@@ -20,6 +21,7 @@ class CBAwardsRetrievalViewController: UIViewController {
         txtPassword.delegate = self
         txtEmpNum.delegate = self
         btnClose.setTitle("", for: .normal)
+        btnShowPwd.setTitle("", for: .normal)
 
         
     }

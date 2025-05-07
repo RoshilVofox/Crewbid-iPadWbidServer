@@ -97,9 +97,21 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
             subRulesTableVC.delegate = delegate
             navigationController?.pushViewController(subRulesTableVC, animated: true)
         } else {
-            
+//            MARK: in the case of commute auto
+            if item["name"] as? String == "Commuting - Auto" {
+                print("commute auto")
+                if let presentingVC = self.presentingViewController {
+                    self.dismiss(animated: true) {
+                        let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
+                        let vc = storyboard.instantiateViewController(withIdentifier: "CommuteInformation") as! CBCommuteInfoViewController
+                        vc.preferredContentSize = CGSize(width: 320, height: 320)
+                        presentingVC.present(vc, animated: true)
+                    }
+                }
+                return
+                
+            }
             //MARK: Used delegate method, needed to be removed when using actual data
-            
             if let delegate = delegate as? CBRulesMenuFilterDelegate {
                 delegate.filterSelected(filter: item as NSDictionary)
                 self.dismiss(animated: true, completion: nil)
