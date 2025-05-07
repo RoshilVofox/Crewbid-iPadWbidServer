@@ -15,8 +15,8 @@ body, div {
 
   window.onYouTubePlayerAPIReady = function() {
       ytPlayer = new YT.Player('media_area', {
-          height: '%d',
-          width: '%d',
+          height: %d,
+          width: %d,
           videoId: '%@'
       });
   };

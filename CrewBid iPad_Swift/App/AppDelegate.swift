@@ -31,7 +31,7 @@ var isHistoricBid: Bool = false
 var swaptimizerClicked: Bool = false
 var isAvailableSouthWestNetwork: Bool = false
 var objCBDocument: CBDocumentsCollectionViewController?
-var dicSSIDDetails: [String: Any]?
+var dicSSIDDetails: NSMutableDictionary?
 var mockDataMonth: Int?
 var mockDataYear: Int?
 var createEmpNo: String?
@@ -39,7 +39,7 @@ var objReachability: Reachability?
 var isNeedToDownloadSeniorityFromServer: Bool = false
 var isFlightNetwork: Bool = false
 var isPingSuccess: Bool = false
-
+var ObjUserAccount:CBUserAccountDetail?
 enum NetworkType: Int {
     case ground = 0
     case free
@@ -266,10 +266,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
                 }
                 UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
                     if !requests.isEmpty{
-                        print("-----PendingNotificationRequests ",Int(requests.count))
+                        print("PendingNotificationRequests: ",Int(requests.count))
                         if self.isUserInformationAvailable(){
                             if requests.count == 0{
                                 //MARK: need code
+                                //cbutils
                             }
                         }
                     }
@@ -281,17 +282,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
                 print("Notification not allowed")
             }else{
                 UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
-                    print("-----PendingNotificationRequests ",Int(requests.count))
-    
+                    print("PendingNotificationRequests: ",Int(requests.count))
                 }
             }
         }
     }
     func isUserInformationAvailable() -> Bool{
         var isAvailable = false
-        //MARK: need code
+        if ObjUserAccount?.isuserIfoAvaialble() == true{
+            isAvailable = true
+        }
         return isAvailable
     }
+    
     // MARK: UISceneSession Lifecycle
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
@@ -337,34 +340,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     }
     
     func runWithHostName(_ hostName: String){
-        self.pinger?.timeout = 0.05
-        self.pinger = SimplePing.simplePingWithHostName(hostName)
-        assert(self.pinger != nil)
+        self.pinger?.timeout = Int(0.05)
+        self.pinger = SimplePing(hostName: hostName)
         self.pinger?.delegate = self
         self.pinger?.start()
     }
     
     func sendPing(){
-        assert(self.pinger != nil)
-        self.pinger?.sendPing(data: nil)
+        pinger?.send(with: nil)
     }
     
     
     func simplePing(_ pinger: SimplePing, didStartWithAddress address: Data) {
-        if pinger == self.pinger{
             self.sendPing()
-        }
-        
     }
     
-    func simplePing(_ pinger: SimplePing, didFailWithError error: NSError) {
-        if pinger == self.pinger{
-            print("Failed: \(String(describing: self.shortErrorfromError(error)))")
+    func simplePing(_ pinger: SimplePing, didFailWithError error: any Error) {
+            print("Failed: \(String(describing: self.shortErrorfromError(error as NSError)))")
             self.sendTimer?.invalidate()
             self.sendTimer = nil
             self.simplePingStatus(false)
             self.pinger = nil
-        }
     }
     
     
@@ -376,97 +372,97 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         }
     }
     
-    func simplePing(_ pinger: SimplePing, didFailToSendPacket packet: Data, error: NSError) {
+    func simplePing(_ pinger: SimplePing, didFailToSendPacket packet: Data, error: any Error) {
             assert(pinger == self.pinger)
             let sequenceNumber: UInt16 = packet.withUnsafeBytes {
                 $0.bindMemory(to: ICMPHeader.self).baseAddress.map {
                     UInt16(bigEndian: $0.pointee.sequenceNumber)
                 } ?? 0
             }
-            let errorDescription = shortErrorfromError(error)
+        let errorDescription = shortErrorfromError(error as NSError)
             NSLog("#\(sequenceNumber) send failed: \(String(describing: errorDescription))")
             self.simplePingStatus(false)
     }
     
     func simplePing(_ pinger: SimplePing, didReceivePingResponsePacket packet: Data) {
-            if let icmp = SimplePing.icmpInPacket(packet) {
-                let sequenceNumber = UInt16(bigEndian: icmp.sequenceNumber)
-                print("#\(sequenceNumber) received")
-//                self.simplePingStatus(true)
+        if let icmpPtr = SimplePing.icmp(inPacket: packet) {
+            let sequenceNumber = CFSwapInt16BigToHost(icmpPtr.pointee.sequenceNumber)
+            print("\(sequenceNumber) received")
+        }
+                self.simplePingStatus(true)
                 self.checkForUpdate(true)
                 self.pinger?.stop()
                 self.sendTimer?.invalidate()
-            }
     }
     
     func simplePing(_ pinger: SimplePing, didReceiveUnexpectedPacket packet: Data) {
-        if let icmpPtr = SimplePing.icmpInPacket(packet) {
-                let sequenceNumber = UInt16(bigEndian: icmpPtr.sequenceNumber)
-                let type = icmpPtr.type
-                let code = icmpPtr.code
-                let identifier = UInt16(bigEndian: icmpPtr.identifier)
-                print("#\(sequenceNumber) unexpected ICMP type=\(type), code=\(code), identifier=\(identifier)")
-            } else {
+        if let icmpPtr = SimplePing.icmp(inPacket: packet) {
+            let seqNum = CFSwapInt16BigToHost(icmpPtr.pointee.sequenceNumber)
+            let type = icmpPtr.pointee.type
+            let code = icmpPtr.pointee.code
+            let identifier = CFSwapInt16BigToHost(icmpPtr.pointee.identifier)
+            
+            print("#\(seqNum) unexpected ICMP type=\(type), code=\(code), identifier=\(identifier)")
+        } else {
                 print("unexpected packet size=\(packet.count)")
             }
             self.simplePingStatus(false)
     }
-    func simplePingDidTimeoutWaitingForResponsePacket(_ pinger: SimplePing) {
+    
+    func simplePingDidTimeoutWaiting(forResponsePacket pinger: SimplePing) {
         print("TimeOut")
         self.simplePingStatus(false)
     }
     func simplePingStatus(_ isSuccess:Bool){
         isPingSuccess = isSuccess
-        do{
             print("WiFi Status: ", isSuccess)
-            let SSID = dicSSIDDetails?["SSID"] as! String
-            if SSID.lowercased() == "southwestwifi" || SSID.lowercased() == "2wire"{
-                isFlightNetwork = true
-                if isSuccess{
-                    objNetworkType = .paid
-                    isNetWorkAvailable = true
-                    isAvailableSouthWestNetwork = true
+            let SSID = dicSSIDDetails?["SSID"] as? String
+            if SSID?.lowercased() == "southwestwifi" || SSID?.lowercased() == "2wire"{
+                    isFlightNetwork = true
+                    if isSuccess{
+                        objNetworkType = .paid
+                        isNetWorkAvailable = true
+                        isAvailableSouthWestNetwork = true
+                    }else{
+                        objNetworkType = .free
+                        isNetWorkAvailable = false
+                    }
                 }else{
-                    objNetworkType = .free
-                    isNetWorkAvailable = false
-                }
-            }else{
-                isFlightNetwork = false
-                objNetworkType = .ground
-                if isSuccess{
-                    isNetWorkAvailable = true
-                    isAvailableSouthWestNetwork = false
-                }else{
-                    isNetWorkAvailable = false
-                }
-                if onLaunch{
-                    onLaunch = false
-                }
+                    isFlightNetwork = false
+                    objNetworkType = .ground
+                    if isSuccess{
+                        isNetWorkAvailable = true
+                        isAvailableSouthWestNetwork = false
+                    }else{
+                        isNetWorkAvailable = false
+                    }
+                    if onLaunch{
+                        onLaunch = false
+                    }
+                
             }
             let isSouthWestWifi = UserDefaults.standard.string(forKey: "isSouthWestWifi")
             if isSouthWestWifi == "YES"{
                 objNetworkType = .free
             }
             //MARK: needs code
-        }catch{
-            
-        }
     }
     
-    func fetchSSIDInfo() -> [String: Any]? {
+    func fetchSSIDInfo() -> NSMutableDictionary? {
         guard let interfaceNames = CNCopySupportedInterfaces() as? [String] else {
             return nil
         }
-        print("Supported interfaces: \(interfaceNames)")
-        for interfaceName in interfaceNames {
-            if let ssidInfo = CNCopyCurrentNetworkInfo(interfaceName as CFString) as? [String: Any],
-               !ssidInfo.isEmpty {
-                print("\(interfaceName) => \(ssidInfo)")
-                return ssidInfo
+            print("Supported interfaces: \(interfaceNames)")
+            for interfaceName in interfaceNames {
+                if let ssidInfo = CNCopyCurrentNetworkInfo(interfaceName as CFString) as? [String: Any],
+                   !ssidInfo.isEmpty {
+                    print("\(interfaceName) => \(ssidInfo)")
+                    return ssidInfo as? NSMutableDictionary
+                }
             }
-        }
         return nil
     }
+    
     func shortErrorfromError(_ error:NSError) ->String?{
         var result:String?
         if error.domain == kCFErrorDomainCFNetwork as String, error.code == CFNetworkErrors.cfHostErrorUnknown.rawValue{
@@ -476,32 +472,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
                     result = String(cString: failureStr)
                 }
             }
-            
+            if result == nil {
+                result = error.localizedFailureReason
+            }
+            if result == nil {
+                result = error.localizedDescription
+            }
+            if result == nil {
+                result = error.description
+            }
         }
         return result
     }
     
-    func getIPAddress() -> String {
-        var address = "error"
-        var ifaddr: UnsafeMutablePointer<ifaddrs>? = nil
-        if getifaddrs(&ifaddr) == 0 {
-            var ptr = ifaddr
-            while ptr != nil {
-                defer { ptr = ptr?.pointee.ifa_next }
-                
-                let interface = ptr?.pointee
-                let addrFamily = interface?.ifa_addr.pointee.sa_family
-                if addrFamily == UInt8(AF_INET) || addrFamily == UInt8(AF_INET6) {
-                    let name: String = String(cString: (interface?.ifa_name)!)
-                    if name == "en0" {
-                        var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
-                        getnameinfo(interface?.ifa_addr, socklen_t((interface?.ifa_addr.pointee.sa_len)!), &hostname, socklen_t(hostname.count), nil, socklen_t(0), NI_NUMERICHOST)
-                        address = String(cString: hostname)
-                    }
+    func getIPAddress() -> String? {
+        var address: String?
+        var ifaddr: UnsafeMutablePointer<ifaddrs>?
+        guard getifaddrs(&ifaddr) == 0, let firstAddr = ifaddr else {
+            return nil
+        }
+        for ptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
+            let interface = ptr.pointee
+            let addrFamily = interface.ifa_addr.pointee.sa_family
+
+            if addrFamily == UInt8(AF_INET) {
+                let name = String(cString: interface.ifa_name)
+                if name == "en0" {
+                    var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+                    getnameinfo(interface.ifa_addr, socklen_t(interface.ifa_addr.pointee.sa_len),
+                                &hostname, socklen_t(hostname.count),
+                                nil, socklen_t(0), NI_NUMERICHOST)
+                    address = String(cString: hostname)
+                    break
                 }
             }
-            freeifaddrs(ifaddr)
         }
+        freeifaddrs(ifaddr)
         return address
     }
     
@@ -527,6 +533,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
             }
         }
     }
+    
 
+    
+    
+    func persistantStoreCoordinator() -> NSPersistentStoreCoordinator {
+        return persistentContainer.persistentStoreCoordinator
+        //MARK: needs code here
+    }
+    func applicationDocumentDirectory() -> URL {
+        return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        let token = deviceToken.map { String(format: "%02.2hhX", $0) }.joined()
+        let tokenOld = UserDefaults.standard.string(forKey: "Token")
+
+        if token != tokenOld {
+            UserDefaults.standard.set(token, forKey: "Token")
+            UserDefaults.standard.set(false, forKey: "isRegistered")
+        }
+        print("Device Token: \(token)")
+        print("Device ID: \(String(describing: UIDevice.current.identifierForVendor?.uuidString))")
+    }
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: any Error) {
+        print("Error:--\(error)")
+    }
 }
 

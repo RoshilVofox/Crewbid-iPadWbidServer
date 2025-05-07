@@ -71,14 +71,29 @@ extension CBHelpVideosController: UICollectionViewDataSource, UICollectionViewDe
         let videoCell = collectionView.dequeueReusableCell(withReuseIdentifier: "videoCell", for: indexPath) as! VideoCollectionViewCell
         let index = indexPath.item
         videoCell.videoTitleLbl.text = videoTitles[index]
-        guard let templatePath = Bundle.main.path(forResource: "YouTubeTemplate", ofType: "txt") else { return videoCell }
-        do {
-            let template = try String(contentsOfFile: templatePath, encoding: .utf8)
-            let htmlStr = String(format: template, 750, 1000, videoIDs[index]) as NSString
-            videoCell.webView.loadHTMLString(htmlStr as String, baseURL: nil)
-        } catch  {
-            print(error)
-        }
+        let html = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+            <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0">
+            <style>
+                body, html { margin: 0; padding: 0; height: 100%; background-color: black; }
+                iframe { width: 100%; height: 100%; border: none; }
+            </style>
+            </head>
+            <body>
+            <iframe src="https://www.youtube.com/embed/\(videoIDs[index])?playsinline=1&rel=0&showinfo=0"
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+            </iframe>
+            </body>
+            </html>
+            """
+        videoCell.webView.loadHTMLString(html, baseURL: nil)
+//        let videoURL = String(format: "https://www.youtube.com/embed/%@", videoIDs[index])
+//        print(videoURL)
+//        let request = URLRequest(url: URL(string: videoURL)!)
+//        videoCell.webView.load(request)
         return videoCell
     }
     
@@ -88,3 +103,4 @@ extension CBHelpVideosController: UICollectionViewDataSource, UICollectionViewDe
     
     
 }
+

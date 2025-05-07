@@ -309,10 +309,11 @@
 		F49849C92DC76E0100FE9426 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = F49849C82DC76E0100FE9426 /* FirebaseAnalytics */; };
 		F49849CB2DC76E0100FE9426 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = F49849CA2DC76E0100FE9426 /* FirebaseCrashlytics */; };
 		F49849CD2DC76EF900FE9426 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49849CC2DC76EF900FE9426 /* Reachability.swift */; };
-		F49849D12DC7800C00FE9426 /* SimplePing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49849D02DC7800C00FE9426 /* SimplePing.swift */; };
 		F4C5D6642DC9E25500D86BD2 /* FBEncryptorAES.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6632DC9E25500D86BD2 /* FBEncryptorAES.m */; };
 		F4C5D6652DC9E25500D86BD2 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6622DC9E25500D86BD2 /* NSData+Base64.m */; };
 		F4C5D66A2DC9EBC200D86BD2 /* NSData+AES.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6692DC9EBC200D86BD2 /* NSData+AES.m */; };
+		F4C6F9362DCB72940092C00C /* CBUserAccountDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C6F9352DCB72940092C00C /* CBUserAccountDetail.swift */; };
+		F4C6F93A2DCB78770092C00C /* SimplePing.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C6F9392DCB78770092C00C /* SimplePing.m */; };
 		F4CF5A8E2D892B9800A351DB /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = F4CF5A8D2D892B9800A351DB /* ZipArchive */; };
 /* End PBXBuildFile section */
 
@@ -621,13 +622,16 @@
 		F41EBE8F2DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CrewBid_iPad_Swift.xcdatamodel; sourceTree = "<group>"; };
 		F41EBFC22DC4E19A001413DE /* DocumentsCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentsCollectionViewModel.swift; sourceTree = "<group>"; };
 		F49849CC2DC76EF900FE9426 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
-		F49849D02DC7800C00FE9426 /* SimplePing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimplePing.swift; sourceTree = "<group>"; };
 		F4C5D6602DC9E25500D86BD2 /* NSData+Base64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
 		F4C5D6612DC9E25500D86BD2 /* FBEncryptorAES.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBEncryptorAES.h; sourceTree = "<group>"; };
 		F4C5D6622DC9E25500D86BD2 /* NSData+Base64.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
 		F4C5D6632DC9E25500D86BD2 /* FBEncryptorAES.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FBEncryptorAES.m; sourceTree = "<group>"; };
 		F4C5D6682DC9EBC200D86BD2 /* NSData+AES.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+AES.h"; sourceTree = "<group>"; };
 		F4C5D6692DC9EBC200D86BD2 /* NSData+AES.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+AES.m"; sourceTree = "<group>"; };
+		F4C6F9322DCB45440092C00C /* SimplePing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimplePing.h; sourceTree = "<group>"; };
+		F4C6F9352DCB72940092C00C /* CBUserAccountDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUserAccountDetail.swift; sourceTree = "<group>"; };
+		F4C6F9392DCB78770092C00C /* SimplePing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SimplePing.m; sourceTree = "<group>"; };
+		F4C6F93B2DCB85580092C00C /* CrewBid iPad_SwiftRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CrewBid iPad_SwiftRelease.entitlements"; sourceTree = "<group>"; };
 		F4CF5A282D891A3800A351DB /* CrewBid iPad_Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CrewBid iPad_Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -885,6 +889,8 @@
 		F41EBDD42DC4DB20001413DE /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				F4C6F9392DCB78770092C00C /* SimplePing.m */,
+				F4C6F9322DCB45440092C00C /* SimplePing.h */,
 				F414757E2DC8D8220064CD25 /* StoreKit */,
 				F41EBDCA2DC4DB20001413DE /* PopOver */,
 				F49849CC2DC76EF900FE9426 /* Reachability.swift */,
@@ -897,7 +903,6 @@
 				F41EBDD12DC4DB20001413DE /* CustomUIClass.swift */,
 				F41EBDD22DC4DB20001413DE /* Extensions.swift */,
 				F41EBDD32DC4DB20001413DE /* iOSDropDown.swift */,
-				F49849D02DC7800C00FE9426 /* SimplePing.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1308,6 +1313,7 @@
 		F41EBE8E2DC4DB20001413DE /* CrewBid iPad_Swift */ = {
 			isa = PBXGroup;
 			children = (
+				F4C6F93B2DCB85580092C00C /* CrewBid iPad_SwiftRelease.entitlements */,
 				F414757D2DC8D6520064CD25 /* CrewBid iPad_Swift.entitlements */,
 				F494ECDC2DC5C8F9007B178E /* Utilities */,
 				F494ECDB2DC5C767007B178E /* App */,
@@ -1489,6 +1495,7 @@
 		F494ECDC2DC5C8F9007B178E /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				F4C6F9352DCB72940092C00C /* CBUserAccountDetail.swift */,
 				F41EBDD42DC4DB20001413DE /* Helpers */,
 				F41475832DC8E1980064CD25 /* AlertService.swift */,
 			);
@@ -1843,6 +1850,7 @@
 				F41EBF492DC4DB20001413DE /* CBFlightDataChangeVCTableCell.swift in Sources */,
 				F41EBF4A2DC4DB20001413DE /* ShowCAPTableViewCell.swift in Sources */,
 				F41EBF4B2DC4DB20001413DE /* SwitchTableViewCell.swift in Sources */,
+				F4C6F9362DCB72940092C00C /* CBUserAccountDetail.swift in Sources */,
 				F41EBF4C2DC4DB20001413DE /* AwardActionsTableController.swift in Sources */,
 				8B0044192DC72AA900CAEF82 /* CBPresetCell.swift in Sources */,
 				F41EBF4D2DC4DB20001413DE /* CBAwardEmpValidationVC.swift in Sources */,
@@ -1857,6 +1865,7 @@
 				F41EBF562DC4DB20001413DE /* EmbeddedAwardEmpValidationVC.swift in Sources */,
 				F41EBF572DC4DB20001413DE /* EmbeddedBidActionsVC.swift in Sources */,
 				F41EBF582DC4DB20001413DE /* EmbeddedCredentialVC.swift in Sources */,
+				F4C6F93A2DCB78770092C00C /* SimplePing.m in Sources */,
 				F41EBF592DC4DB20001413DE /* EmbeddedLineImporterVC.swift in Sources */,
 				F41EBF5A2DC4DB20001413DE /* EmbeddedShowCAPVC.swift in Sources */,
 				F41EBF5B2DC4DB20001413DE /* CBAmPmRuleCell.swift in Sources */,
@@ -1952,7 +1961,6 @@
 				F41EBFB02DC4DB20001413DE /* mySubscriptionViewController.swift in Sources */,
 				F41EBFB12DC4DB20001413DE /* quickTutorialViewController.swift in Sources */,
 				F41EBFB22DC4DB20001413DE /* serviceAgreementViewController.swift in Sources */,
-				F49849D12DC7800C00FE9426 /* SimplePing.swift in Sources */,
 				F41EBFB32DC4DB20001413DE /* swaptimizerHelpMenuViewController.swift in Sources */,
 				F41EBFB42DC4DB20001413DE /* userAccountViewController.swift in Sources */,
 				F41EBFB52DC4DB20001413DE /* CBDocumentsCollectionViewController.swift in Sources */,
@@ -2028,7 +2036,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = "CrewBid iPad_Swift/CrewBid iPad_Swift.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "CrewBid iPad_Swift/CrewBid iPad_SwiftRelease.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
