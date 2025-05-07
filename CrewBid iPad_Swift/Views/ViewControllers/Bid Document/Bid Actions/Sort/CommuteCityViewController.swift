@@ -7,23 +7,51 @@
 
 import UIKit
 
-class CommuteCityViewController: UIViewController {
-
+class CommuteCityViewController: UIViewController, KUIPopOverUsable {
+    var contentSize: CGSize = CGSize(width: 320, height: 400)
+    @IBOutlet weak var collectionView: UICollectionView!
+    var arrAllCities: NSMutableArray!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        arrAllCities = ["ATL", "DEN", "DAL"]
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    @IBAction func btnCloseAction(_ sender: Any) {
+        print("i am working")
+        self.dismiss(animated: true, completion: nil)
     }
-    */
+    
+}
 
+extension CommuteCityViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return arrAllCities.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CityPickerCell", for: indexPath) as! CityPickerCell
+        cell.cityLabel.text = "\(arrAllCities[indexPath.row])"
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath) as! CityPickerCell
+        let alert = UIAlertController(
+            title: cell.cityLabel.text!,
+            message: "Is your commuter city?",
+            preferredStyle: .alert
+        )
+        //cancel
+        let cancelAction = UIAlertAction(title: "No", style: .cancel)
+        //add
+        let okAction = UIAlertAction(title: "Yes", style: .default) { _ in
+            self.dismiss(animated: true, completion: nil)
+        }
+        alert.addAction(okAction)
+        alert.addAction(cancelAction)
+        
+        present(alert, animated: true)
+    }
 }

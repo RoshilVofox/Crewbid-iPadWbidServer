@@ -11,6 +11,8 @@
 		8B38C5642DCA24C200845E3F /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 8B38C5632DCA24C200845E3F /* IQKeyboardManagerSwift */; };
 		8B5F03282DC8D99F006A4E85 /* CBBrightnessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F03272DC8D99F006A4E85 /* CBBrightnessViewController.swift */; };
 		8B77C52B2DC7973B00E5B3B4 /* AppData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B77C52A2DC7973B00E5B3B4 /* AppData.swift */; };
+		8BA705FC2DCB5BB90090EA71 /* ArrivalDepartureTimeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA705FB2DCB5BB80090EA71 /* ArrivalDepartureTimeCell.swift */; };
+		8BA705FE2DCB5BE20090EA71 /* CityPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA705FD2DCB5BE20090EA71 /* CityPickerCell.swift */; };
 		8BEADE8B2DC4A4DB00B3BDF2 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BEADE8A2DC4A4DB00B3BDF2 /* WebKit.framework */; };
 		8BFCEE9E2DC4F62F0068C00B /* Box.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEE9D2DC4F62F0068C00B /* Box.png */; };
 		8BFCEEA02DC4F6400068C00B /* Chat.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEE9F2DC4F6400068C00B /* Chat.png */; };
@@ -320,6 +322,8 @@
 		8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPresetCell.swift; sourceTree = "<group>"; };
 		8B5F03272DC8D99F006A4E85 /* CBBrightnessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBrightnessViewController.swift; sourceTree = "<group>"; };
 		8B77C52A2DC7973B00E5B3B4 /* AppData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
+		8BA705FB2DCB5BB80090EA71 /* ArrivalDepartureTimeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalDepartureTimeCell.swift; sourceTree = "<group>"; };
+		8BA705FD2DCB5BE20090EA71 /* CityPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityPickerCell.swift; sourceTree = "<group>"; };
 		8BEADE8A2DC4A4DB00B3BDF2 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		8BFCEE9D2DC4F62F0068C00B /* Box.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Box.png; sourceTree = "<group>"; };
 		8BFCEE9F2DC4F6400068C00B /* Chat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Chat.png; sourceTree = "<group>"; };
@@ -661,6 +665,15 @@
 				8B5F03272DC8D99F006A4E85 /* CBBrightnessViewController.swift */,
 			);
 			path = Brightness;
+			sourceTree = "<group>";
+		};
+		8BA705FA2DCB5B7D0090EA71 /* Commute cells */ = {
+			isa = PBXGroup;
+			children = (
+				8BA705FB2DCB5BB80090EA71 /* ArrivalDepartureTimeCell.swift */,
+				8BA705FD2DCB5BE20090EA71 /* CityPickerCell.swift */,
+			);
+			path = "Commute cells";
 			sourceTree = "<group>";
 		};
 		8BEADE892DC4A4DB00B3BDF2 /* Frameworks */ = {
@@ -1330,6 +1343,7 @@
 		F41EBFC52DC4E3AB001413DE /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				8BA705FA2DCB5B7D0090EA71 /* Commute cells */,
 				8B0044172DC72A9200CAEF82 /* Preset */,
 				F41EBD302DC4DB20001413DE /* collectionViewCells */,
 				F41EBFD02DC4EAB0001413DE /* HomescreenDocCell */,
@@ -1866,6 +1880,7 @@
 				F41EBF5F2DC4DB20001413DE /* CBComutabilityRuleCell.swift in Sources */,
 				F41EBF602DC4DB20001413DE /* CBDayMonthRuleCell.swift in Sources */,
 				F41EBF612DC4DB20001413DE /* CBFaReserveRuleCell.swift in Sources */,
+				8BA705FC2DCB5BB90090EA71 /* ArrivalDepartureTimeCell.swift in Sources */,
 				F41EBF622DC4DB20001413DE /* CBLineTypeRuleCell.swift in Sources */,
 				F41EBF632DC4DB20001413DE /* CBOvernightBulkRuleCell.swift in Sources */,
 				F41EBF642DC4DB20001413DE /* CBPositionRuleCell.swift in Sources */,
@@ -1935,6 +1950,7 @@
 				F41EBFA22DC4DB20001413DE /* CBTextViewController.swift in Sources */,
 				F41EBFA32DC4DB20001413DE /* CBCommuteDiffVC.swift in Sources */,
 				F41EBFA42DC4DB20001413DE /* CBFlighDataChangeVC.swift in Sources */,
+				8BA705FE2DCB5BE20090EA71 /* CityPickerCell.swift in Sources */,
 				F41EBFA52DC4DB20001413DE /* CBAlertVC.swift in Sources */,
 				F4C5D66A2DC9EBC200D86BD2 /* NSData+AES.m in Sources */,
 				F41EBFA62DC4DB20001413DE /* CBLoginViewController.swift in Sources */,
