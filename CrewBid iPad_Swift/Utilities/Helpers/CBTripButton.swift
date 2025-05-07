@@ -80,19 +80,19 @@ class CBBorderToggleButton: UIButton {
             if #available(iOS 13.0, *) {
                 titleLabel?.textColor = .label
             } else {
-                titleLabel?.textColor = CBColor.buttonLightTextColor()// Fallback on earlier versions
+                titleLabel?.textColor = CBColor.buttonLightTextColor// Fallback on earlier versions
             }
             if let currentFont = titleLabel?.font {
                 titleLabel?.font = UIFont.systemFont(ofSize: currentFont.pointSize)
             }
         }
-        layer.borderColor = (self.isSelected ? UIColor(red: 76.0 / kColorDivisor, green: 23.0 / kColorDivisor, blue: 203.0 / kColorDivisor, alpha: 1.0).cgColor : CBColor.buttonLightTextColor()?.cgColor)!
-        let textColor = self.isSelected ? .black : CBColor.buttonLightTextColor()
+        layer.borderColor = (self.isSelected ? UIColor(red: 76.0 / kColorDivisor, green: 23.0 / kColorDivisor, blue: 203.0 / kColorDivisor, alpha: 1.0).cgColor : CBColor.buttonLightTextColor.cgColor)
+        let textColor = self.isSelected ? .black : CBColor.buttonLightTextColor
         setTitleColor(textColor, for: .normal)
         setTitleColor(textColor, for: .selected)
        // titleLabel?.textColor = self.isSelected ? .black : CBColor.buttonLightTextColor()
         //Kripa Uncommented the below code on 14 nov for fixing a dark mode issue
-        titleLabel?.textColor = self.isSelected ? UIColor(named: "preset_label") : CBColor.buttonLightTextColor()
+        titleLabel?.textColor = self.isSelected ? UIColor(named: "preset_label") : CBColor.buttonLightTextColor
         //backgroundColor = UIColor.white
         backgroundColor = UIColor(named: "contentBgColor")
         alpha = self.isSelected ? 1.0 : 0.5
@@ -115,11 +115,11 @@ class CBBorderToggleButton: UIButton {
 
     func setSelected(_ selected: Bool) {
         super.select(selected)
-        layer.borderColor = (selected ? UIColor(red: 76.0 / kColorDivisor, green: 23.0 / kColorDivisor, blue: 203.0 / kColorDivisor, alpha: 1.0).cgColor : CBColor.buttonLightTextColor()?.cgColor)!
-        let textColor = selected ? .black : CBColor.buttonLightTextColor()
+        layer.borderColor = (selected ? UIColor(red: 76.0 / kColorDivisor, green: 23.0 / kColorDivisor, blue: 203.0 / kColorDivisor, alpha: 1.0).cgColor : CBColor.buttonLightTextColor.cgColor)
+        let textColor = selected ? .black : CBColor.buttonLightTextColor
         setTitleColor(textColor, for: .normal)
         setTitleColor(textColor, for: .selected)
-        titleLabel?.textColor = selected ? .black  : CBColor.buttonLightTextColor()
+        titleLabel?.textColor = selected ? .black  : CBColor.buttonLightTextColor
         backgroundColor = UIColor.white
         alpha = selected ? 1.0 : 0.3
     }

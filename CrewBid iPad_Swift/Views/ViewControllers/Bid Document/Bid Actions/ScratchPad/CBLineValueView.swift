@@ -63,7 +63,7 @@ class CBLineValueView: UIView {
                 let FloatValue = (value! as String).floatValue
                 if FloatValue > 0.0 {
                     titleLabel?.textColor = vacTitleColor
-                    valueLabel?.textColor = CBColor.greenColor()
+                    valueLabel?.textColor = CBColor.greenColor
                 } else if FloatValue < 0.0 {
                     titleLabel?.textColor = vacTitleColor
                     valueLabel?.textColor = UIColor.red

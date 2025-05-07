@@ -75,7 +75,7 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DocumentCell", for: indexPath) as! DocumentCell
         cell.layer.cornerRadius = 10
         cell.layer.borderWidth = 8
-        cell.layer.borderColor = CBColor.purpleColor().cgColor
+        cell.layer.borderColor = CBColor.purpleColor.cgColor
         return cell
     }
     
