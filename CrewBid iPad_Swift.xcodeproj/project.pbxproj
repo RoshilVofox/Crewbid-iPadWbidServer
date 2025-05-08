@@ -311,6 +311,7 @@
 		F49849C92DC76E0100FE9426 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = F49849C82DC76E0100FE9426 /* FirebaseAnalytics */; };
 		F49849CB2DC76E0100FE9426 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = F49849CA2DC76E0100FE9426 /* FirebaseCrashlytics */; };
 		F49849CD2DC76EF900FE9426 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49849CC2DC76EF900FE9426 /* Reachability.swift */; };
+		F4B545AB2DCC648F00672102 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B545AA2DCC648F00672102 /* CoreDataManager.swift */; };
 		F4C5D6642DC9E25500D86BD2 /* FBEncryptorAES.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6632DC9E25500D86BD2 /* FBEncryptorAES.m */; };
 		F4C5D6652DC9E25500D86BD2 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6622DC9E25500D86BD2 /* NSData+Base64.m */; };
 		F4C5D66A2DC9EBC200D86BD2 /* NSData+AES.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6692DC9EBC200D86BD2 /* NSData+AES.m */; };
@@ -626,6 +627,7 @@
 		F41EBE8F2DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CrewBid_iPad_Swift.xcdatamodel; sourceTree = "<group>"; };
 		F41EBFC22DC4E19A001413DE /* DocumentsCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentsCollectionViewModel.swift; sourceTree = "<group>"; };
 		F49849CC2DC76EF900FE9426 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		F4B545AA2DCC648F00672102 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		F4C5D6602DC9E25500D86BD2 /* NSData+Base64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
 		F4C5D6612DC9E25500D86BD2 /* FBEncryptorAES.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBEncryptorAES.h; sourceTree = "<group>"; };
 		F4C5D6622DC9E25500D86BD2 /* NSData+Base64.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
@@ -769,6 +771,7 @@
 				F494ED2C2DC5F10A007B178E /* Vacation */,
 				F494ED2D2DC5F1B1007B178E /* CommuteTime */,
 				F41EBD552DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld */,
+				F4B545AA2DCC648F00672102 /* CoreDataManager.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -902,8 +905,6 @@
 		F41EBDD42DC4DB20001413DE /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				F4C6F9392DCB78770092C00C /* SimplePing.m */,
-				F4C6F9322DCB45440092C00C /* SimplePing.h */,
 				F414757E2DC8D8220064CD25 /* StoreKit */,
 				F41EBDCA2DC4DB20001413DE /* PopOver */,
 				F49849CC2DC76EF900FE9426 /* Reachability.swift */,
@@ -1510,6 +1511,8 @@
 			isa = PBXGroup;
 			children = (
 				F4C6F9352DCB72940092C00C /* CBUserAccountDetail.swift */,
+				F4C6F9392DCB78770092C00C /* SimplePing.m */,
+				F4C6F9322DCB45440092C00C /* SimplePing.h */,
 				F41EBDD42DC4DB20001413DE /* Helpers */,
 				F41475832DC8E1980064CD25 /* AlertService.swift */,
 			);
@@ -1940,6 +1943,7 @@
 				F41EBF902DC4DB20001413DE /* CBBidListVC.swift in Sources */,
 				F41EBF912DC4DB20001413DE /* CBBidDocumentController.swift in Sources */,
 				F41EBF922DC4DB20001413DE /* CBReportReleaseCollectionViewController.swift in Sources */,
+				F4B545AB2DCC648F00672102 /* CoreDataManager.swift in Sources */,
 				F41EBF932DC4DB20001413DE /* CBReportReleaseCVC.swift in Sources */,
 				F41EBF942DC4DB20001413DE /* CBBiddataDownloadVC.swift in Sources */,
 				F41EBF952DC4DB20001413DE /* CBBIdDataTypeViewController.swift in Sources */,
