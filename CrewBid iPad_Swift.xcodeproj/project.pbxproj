@@ -13,6 +13,8 @@
 		8B77C52B2DC7973B00E5B3B4 /* AppData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B77C52A2DC7973B00E5B3B4 /* AppData.swift */; };
 		8BA705FC2DCB5BB90090EA71 /* ArrivalDepartureTimeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA705FB2DCB5BB80090EA71 /* ArrivalDepartureTimeCell.swift */; };
 		8BA705FE2DCB5BE20090EA71 /* CityPickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA705FD2DCB5BE20090EA71 /* CityPickerCell.swift */; };
+		8BAEE8032DCC68D4002EF328 /* Nofiication.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8BAEE8022DCC68BD002EF328 /* Nofiication.txt */; };
+		8BAEE8092DCC73E3002EF328 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 8BAEE8082DCC73E3002EF328 /* MBProgressHUD.m */; };
 		8BEADE8B2DC4A4DB00B3BDF2 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8BEADE8A2DC4A4DB00B3BDF2 /* WebKit.framework */; };
 		8BFCEE9E2DC4F62F0068C00B /* Box.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEE9D2DC4F62F0068C00B /* Box.png */; };
 		8BFCEEA02DC4F6400068C00B /* Chat.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEE9F2DC4F6400068C00B /* Chat.png */; };
@@ -325,6 +327,9 @@
 		8B77C52A2DC7973B00E5B3B4 /* AppData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
 		8BA705FB2DCB5BB80090EA71 /* ArrivalDepartureTimeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalDepartureTimeCell.swift; sourceTree = "<group>"; };
 		8BA705FD2DCB5BE20090EA71 /* CityPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityPickerCell.swift; sourceTree = "<group>"; };
+		8BAEE8022DCC68BD002EF328 /* Nofiication.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Nofiication.txt; sourceTree = "<group>"; };
+		8BAEE8072DCC73E3002EF328 /* MBProgressHUD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MBProgressHUD.h; path = "CrewBid iPad_Swift/Utilities/MBProgressHUD.h"; sourceTree = SOURCE_ROOT; };
+		8BAEE8082DCC73E3002EF328 /* MBProgressHUD.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MBProgressHUD.m; path = "CrewBid iPad_Swift/Utilities/MBProgressHUD.m"; sourceTree = SOURCE_ROOT; };
 		8BEADE8A2DC4A4DB00B3BDF2 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		8BFCEE9D2DC4F62F0068C00B /* Box.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Box.png; sourceTree = "<group>"; };
 		8BFCEE9F2DC4F6400068C00B /* Chat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Chat.png; sourceTree = "<group>"; };
@@ -678,6 +683,14 @@
 				8BA705FD2DCB5BE20090EA71 /* CityPickerCell.swift */,
 			);
 			path = "Commute cells";
+			sourceTree = "<group>";
+		};
+		8BAEE8012DCC68AF002EF328 /* Notes for developer */ = {
+			isa = PBXGroup;
+			children = (
+				8BAEE8022DCC68BD002EF328 /* Nofiication.txt */,
+			);
+			path = "Notes for developer";
 			sourceTree = "<group>";
 		};
 		8BEADE892DC4A4DB00B3BDF2 /* Frameworks */ = {
@@ -1326,6 +1339,7 @@
 		F41EBE8E2DC4DB20001413DE /* CrewBid iPad_Swift */ = {
 			isa = PBXGroup;
 			children = (
+				8BAEE8012DCC68AF002EF328 /* Notes for developer */,
 				F4C6F93B2DCB85580092C00C /* CrewBid iPad_SwiftRelease.entitlements */,
 				F414757D2DC8D6520064CD25 /* CrewBid iPad_Swift.entitlements */,
 				F494ECDC2DC5C8F9007B178E /* Utilities */,
@@ -1509,6 +1523,8 @@
 		F494ECDC2DC5C8F9007B178E /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				8BAEE8072DCC73E3002EF328 /* MBProgressHUD.h */,
+				8BAEE8082DCC73E3002EF328 /* MBProgressHUD.m */,
 				F4C6F9352DCB72940092C00C /* CBUserAccountDetail.swift */,
 				F41EBDD42DC4DB20001413DE /* Helpers */,
 				F41475832DC8E1980064CD25 /* AlertService.swift */,
@@ -1757,6 +1773,7 @@
 				F41EBEDF2DC4DB20001413DE /* TripButton-rounded-right-green_iOS7.png in Resources */,
 				F41EBEE02DC4DB20001413DE /* TripButton-rounded-right-green_iOS7@2x.png in Resources */,
 				F41EBEE12DC4DB20001413DE /* TripButton-rounded-right-green@2x.png in Resources */,
+				8BAEE8032DCC68D4002EF328 /* Nofiication.txt in Resources */,
 				F41EBEE22DC4DB20001413DE /* TripButton-rounded-right-orange.png in Resources */,
 				F41EBEE32DC4DB20001413DE /* TripButton-rounded-right-orange_iOS7.png in Resources */,
 				F41EBEE42DC4DB20001413DE /* TripButton-rounded-right-orange_iOS7@2x.png in Resources */,
@@ -1826,6 +1843,7 @@
 				F49849CD2DC76EF900FE9426 /* Reachability.swift in Sources */,
 				F41EBF1A2DC4DB20001413DE /* BIDayInfo+CoreDataProperties.swift in Sources */,
 				F41EBF1D2DC4DB20001413DE /* BILeg+CoreDataClass.swift in Sources */,
+				8BAEE8092DCC73E3002EF328 /* MBProgressHUD.m in Sources */,
 				F4C5D6642DC9E25500D86BD2 /* FBEncryptorAES.m in Sources */,
 				F4C5D6652DC9E25500D86BD2 /* NSData+Base64.m in Sources */,
 				F41EBF1E2DC4DB20001413DE /* BILeg+CoreDataProperties.swift in Sources */,

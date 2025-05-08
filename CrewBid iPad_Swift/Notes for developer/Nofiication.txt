@@ -1,0 +1,3 @@
+
+1. NSNotification.Name("SortBidListAction") = to get the sort the bid list in bidDocument (to remove right view and show right view + bid view)
+2. NSNotification.Name("SyncSwitchStateAction") = to get the sync switch

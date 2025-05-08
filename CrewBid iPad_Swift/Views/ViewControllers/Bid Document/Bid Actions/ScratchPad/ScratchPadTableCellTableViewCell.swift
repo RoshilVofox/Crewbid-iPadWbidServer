@@ -54,7 +54,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     private var kLineNumberVertOrigin: Int = 73
     private var kCircleSize: Int = 20 //25
     private var kCircleHorizontalOffset: Int = 30 //28
-    private var kCircleVerticalOffset: Int = 110 //90
+    private var kCircleVerticalOffset: Int = 165 //90
     private var kCircleVerticalIncrement: Int = 30 //30
     private var kPosAViewTag: Int = 500
     private var kPosBViewTag: Int = 510
@@ -150,6 +150,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         
         let verticalSpace: CGFloat = 6.0
         for i in 0..<5 {
+//            adding the line values as subview
             var lineValueView1 = CBLineValueView()
             lineValueView1 = lineValueView1.initWithFrame(aRect: CGRect.zero)
             lineValueView1.tag = LineValueViewTag + i * 10
@@ -164,15 +165,200 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         longPressGesture.minimumPressDuration = 0.3
         lineValuesView.addGestureRecognizer(longPressGesture)
         longPressGesture.delaysTouchesBegan = true
-        
+//            adding the flags values as subview
         let iconView: UIControl? = CBUserFlagTableController.userFlagControlForColor(color: UIColor.blue, diameter: 30.0)
         iconView?.frame = CGRect(x: 23.0, y: 54.0, width: 30.0, height: 30.0)
         iconView?.addTarget(self, action: #selector(self.showUserFlagMenu), for: .touchUpInside)
         addSubview(iconView ?? UIView())
         self.userFlagIconView = iconView!
 
+        // Set up the position circles
         
+        // Position A Colored
+        var posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset, width: kCircleSize, height: kCircleSize))
+        addSubview(posView)
+        posAView = posView
+        posAView.tag = kPosAViewTag
+        posAView.layer.cornerRadius = CGFloat(kCircleSize / 2)
+        var circleFrame: CGRect = posAView.frame
+        circleFrame.origin.x = 0.0
+        circleFrame.origin.y = 0.0
+        posAView.backgroundColor = CBColor.faPosAColor
+        var posText = UILabel(frame: circleFrame)
+        posText.backgroundColor = UIColor.clear
+        posText.textAlignment = .center
+        posText.textColor = UIColor.white
+        posText.tag = 7
+        posText.font = posText.font.withSize(10)
+        posText.text = "A"
+        posAView.addSubview(posText)
+        posAView.alpha = 0.0
+        self.posAView = posView
+        
+        
+        // Position A Gray
+        
+        posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset, width: kCircleSize, height: kCircleSize))
+        addSubview(posView)
+        posAGrayView = posView
+        posAGrayView.tag = kPosAGrayViewTag
+        posAGrayView.layer.cornerRadius = CGFloat(kCircleSize / 2)
+        posAGrayView.backgroundColor = UIColor.lightGray
+        posText = UILabel(frame: circleFrame)
+        posText.backgroundColor = UIColor.clear
+        posText.textAlignment = .center
+        posText.textColor = UIColor.white
+        posText.tag = 7
+        posText.font = posText.font.withSize(10)
+        posText.text = "A"
+        posAGrayView.addSubview(posText)
+        posAGrayView.alpha = 1.0
+        
+        // Position B Colored
+        
+        posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
+        addSubview(posView)
+        posBView = posView
+        posBView.tag = kPosBViewTag
+        posBView.layer.cornerRadius = CGFloat(kCircleSize / 2)
+        posBView.backgroundColor = CBColor.faPosBColor
+        posText = UILabel(frame: circleFrame)
+        posText.backgroundColor = UIColor.clear
+        posText.font = posText.font.withSize(10)
+        posText.text = "B"
+        posText.textAlignment = .center
+        posText.tag = 7
+        posText.textColor = UIColor.white
+        posBView.addSubview(posText)
+        posBView.alpha = 0.0
+        
+        // Position B Gray
+        
+        posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
+        addSubview(posView)
+        posBGrayView = posView
+        posBGrayView.tag = kPosBGrayViewTag
+        posBGrayView.layer.cornerRadius = CGFloat(kCircleSize / 2)
+        posBGrayView.backgroundColor = UIColor.lightGray
+        posText = UILabel(frame: circleFrame)
+        posText.backgroundColor = UIColor.clear
+        posText.textAlignment = .center
+        posText.textColor = UIColor.white
+        posText.tag = 7
+        posText.font = posText.font.withSize(10)
+        posText.text = "B"
+        posBGrayView.addSubview(posText)
+        posBGrayView.alpha = 1.0
+        
+        // Position C colored
+        
+        posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + 2 * kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
+        addSubview(posView)
+        posCView = posView
+        posCView.tag = kPosCViewTag
+        posCView.layer.cornerRadius = CGFloat(kCircleSize / 2)
+        posCView.backgroundColor = CBColor.faPosCColor
+        posText = UILabel(frame: circleFrame)
+        posText.backgroundColor = UIColor.clear
+        posText.font = posText.font.withSize(10)
+        posText.text = "C"
+        posText.textAlignment = .center
+        posText.tag = 7
+        posText.textColor = UIColor.white
+        posCView.addSubview(posText)
+        posCView.alpha = 0.0
+        
+        // Position C Gray
+        
+        posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + 2 * kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
+        addSubview(posView)
+        posCGrayView = posView
+        posCGrayView.tag = kPosCGrayViewTag
+        posCGrayView.layer.cornerRadius = CGFloat(kCircleSize / 2)
+        posCGrayView.backgroundColor = UIColor.lightGray
+        posText = UILabel(frame: circleFrame)
+        posText.backgroundColor = UIColor.clear
+        posText.textAlignment = .center
+        posText.tag = 7
+        posText.textColor = UIColor.white
+        posText.font = posText.font.withSize(10)
+        posText.text = "C"
+        posCGrayView.addSubview(posText)
+        posCGrayView.alpha = 1.0
+        
+        // Position D Colored
+        
+        posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + 3 * kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
+        addSubview(posView)
+        posDView = posView
+        posDView.tag = kPosDViewTag
+        posDView.layer.cornerRadius = CGFloat(kCircleSize / 2)
+        posDView.backgroundColor = CBColor.faPosDColor
+        posText = UILabel(frame: circleFrame)
+        posText.backgroundColor = UIColor.clear
+        posText.font = posText.font.withSize(10)
+        posText.text = "D"
+        posText.textAlignment = .center
+        posText.tag = 7
+        posText.textColor = UIColor.white
+        posDView.addSubview(posText)
+        posDView.alpha = 0.0
+        
+        // Position D Gray
+        
+        posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + 3 * kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
+        addSubview(posView)
+        posDGrayView = posView
+        posDGrayView.tag = kPosDGrayViewTag
+        posDGrayView.layer.cornerRadius = CGFloat(kCircleSize / 2)
+        posDGrayView.backgroundColor = UIColor.lightGray
+        posText = UILabel(frame: circleFrame)
+        posText.backgroundColor = UIColor.clear
+        posText.textAlignment = .center
+        posText.tag = 7
+        posText.textColor = UIColor.white
+        posText.font = posText.font.withSize(10)
+        posText.text = "D"
+        posDGrayView.addSubview(posText)
+        posDGrayView.alpha = 1.0
+        
+        // M Colored
+        
+        posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset, width: kCircleSize, height: kCircleSize))
+        addSubview(posView)
+        posMView = posView
+        posMView.tag = kPosDGrayViewTag
+        posMView.layer.cornerRadius = CGFloat(kCircleSize / 2)
+        posMView.backgroundColor = UIColor.purple
+        posText = UILabel(frame: circleFrame)
+        posText.backgroundColor = UIColor.clear
+        posText.textAlignment = .center
+        posText.tag = 7
+        posText.textColor = UIColor.white
+        posText.font = posText.font.withSize(10)
+        posText.text = "M"
+        posMView.addSubview(posText)
+        posMView.alpha = 0.0
+        
+        // NA Colored
+        
+        posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset, width: kCircleSize, height: kCircleSize))
+        addSubview(posView)
+        posNAView = posView
+        posNAView.tag = kPosDGrayViewTag
+        posNAView.layer.cornerRadius = CGFloat(kCircleSize / 2)
+        posNAView.backgroundColor = UIColor.black
+        posText = UILabel(frame: circleFrame)
+        posText.backgroundColor = UIColor.clear
+        posText.textAlignment = .center
+        posText.tag = 7
+        posText.textColor = UIColor.white
+        posText.text = "NA"
+        posText.font = posText.font.withSize(10)
+        posNAView.addSubview(posText)
+        posNAView.alpha = 0.0
         //-----------------------
+        
         getCalendarData(for: month, year: year)
        
         //-----------------------
