@@ -41,8 +41,6 @@ class SettingsViewController: BaseViewController,KUIPopOverUsable {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewTapped))
         brightnessView.isUserInteractionEnabled = true
         brightnessView.addGestureRecognizer(tapGesture)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutViewForSwitch), name: NSNotification.Name("SyncSwitchStateAction"), object: nil)
-        // Do any additional setup after loading the view.
     }
     
     @IBAction func syncAction(_ sender: Any) {
@@ -96,14 +94,7 @@ class SettingsViewController: BaseViewController,KUIPopOverUsable {
     @IBAction func endDateSelection(_ sender: Any) {}
     
     
-    @objc func setupLayoutViewForSwitch() {
-        if AppData.shared.isSyncOn {
-            print("sync switch is turned on")
-        }
-        else {
-            print("sync switch is turned off")
-        }
-    }
+
     
     @objc func viewTapped() {
         print("hello")

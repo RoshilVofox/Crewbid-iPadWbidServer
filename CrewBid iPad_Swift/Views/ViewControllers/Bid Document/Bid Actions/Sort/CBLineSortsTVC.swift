@@ -19,7 +19,6 @@ class CBLineSortsTVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
     }
     func setupUI(){
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
@@ -58,22 +57,6 @@ class CBLineSortsTVC: UIViewController {
         filterMenuController.showPopover(withNavigationController: sender, sourceRect: frame)
     }
     
-//    MARK: setup layout for notification
-    @objc func setupLayoutView(){
-        if AppData.shared.isBidListSort == true {
-            btnFilter.isHidden = true
-            btnPreset.isHidden = true
-            btnBids.isHidden = true
-            btnBidListCount.isHidden = true
-        }
-        else {
-            btnFilter.isHidden = false
-            btnPreset.isHidden = false
-            btnBids.isHidden = false
-            btnBidListCount.isHidden = false
-        }
-    }
-    
     @IBAction func btnSortTheBidListAction(_ sender: Any) {
         if btnSortTheBidlist.backgroundColor == .systemRed {
             btnSortTheBidlist.backgroundColor = .systemGreen
@@ -82,6 +65,10 @@ class CBLineSortsTVC: UIViewController {
             let alert = UIAlertController(title: "Confirmation", message: "Do you want to sort the bid list?", preferredStyle: .alert)
             let yesAction = UIAlertAction(title: "Yes", style: .default) { _ in
                 NotificationCenter.default.post(name: NSNotification.Name("SortBidListAction"), object: self)
+                self.btnFilter.isHidden = true
+                self.btnPreset.isHidden = true
+                self.btnBids.isHidden = true
+                self.btnBidListCount.isHidden = true
             }
             let noAction = UIAlertAction(title: "No", style: .cancel, handler: nil)
             alert.addAction(noAction)
@@ -99,6 +86,10 @@ class CBLineSortsTVC: UIViewController {
             btnSortTheBidlist.backgroundColor = .systemRed
             AppData.shared.isBidListSort = false
             NotificationCenter.default.post(name: NSNotification.Name("SortBidListAction"), object: self)
+            btnFilter.isHidden = false
+            btnPreset.isHidden = false
+            btnBids.isHidden = false
+            btnBidListCount.isHidden = false
         }
     }
 }
