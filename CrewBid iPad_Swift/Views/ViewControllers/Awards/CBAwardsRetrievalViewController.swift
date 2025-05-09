@@ -47,6 +47,76 @@ class CBAwardsRetrievalViewController: UIViewController {
 }
 
 extension CBAwardsRetrievalViewController: UITextFieldDelegate {
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        var shouldChangeCharacters: Bool = true
+
+        if textField == txtEmpNum {
+            var validUserid: Bool = true
+            let inverseSet = CharacterSet(charactersIn: "0123456789").inverted
+            let components = string.components(separatedBy: inverseSet)
+            let filtered = components.joined(separator: "")
+
+            if let currentText = textField.text {
+                // Allow deletion
+                if string.isEmpty {
+                    return true
+                }
+
+                // Full replacement scenario
+                if range.length == currentText.count {
+                    if string.hasPrefix("e") || string.hasPrefix("x") {
+                        let newStringWithoutPrefix = String(string.dropFirst())
+                        let newStringIsValid = newStringWithoutPrefix.rangeOfCharacter(from: inverseSet) == nil
+                        if !newStringIsValid {
+                            textField.shakeTextField()
+                        }
+                        return newStringIsValid
+                    } else if string.rangeOfCharacter(from: inverseSet) == nil {
+                        return true
+                    } else {
+                        textField.shakeTextField()
+                        return false
+                    }
+                }
+
+                // Prevent extra leading 'e' or 'x'
+                if currentText.hasPrefix("e") || currentText.hasPrefix("x") {
+                    if string == "e" || string == "x" {
+                        textField.shakeTextField()
+                        return false
+                    }
+                    if range.location == 0 {
+                        textField.shakeTextField()
+                        return false
+                    }
+                }
+            }
+
+            if range.location == 0 {
+                validUserid = false
+                if string == "" {
+                    validUserid = true
+                } else if string.count > 0 && ((string.first == "e") || (string.first == "x") || string == filtered) {
+                    validUserid = true
+                }
+            } else {
+                let isValid = string == filtered
+                if !isValid {
+                    textField.shakeTextField()
+                }
+                return isValid
+            }
+
+            if !validUserid {
+                textField.shakeTextField()
+                shouldChangeCharacters = false
+            }
+        }
+        return shouldChangeCharacters
+    }
+
+    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         if textField.text!.isEmpty {
             textField.layer.borderWidth = 4
@@ -55,5 +125,9 @@ extension CBAwardsRetrievalViewController: UITextFieldDelegate {
             textField.layer.borderWidth = 4
             textField.layer.borderColor = UIColor.gray.cgColor
         }
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        textField.layer.borderColor = UIColor.gray.cgColor
     }
 }

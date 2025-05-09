@@ -15,6 +15,7 @@ class CBDefaultEmployeeVC: UIViewController {
         super.viewDidLoad()
         setupUI()
     }
+    
     func setupUI(){
         textEmpNum.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: textEmpNum.frame.height))
         textEmpNum.leftViewMode = .always
@@ -32,21 +33,29 @@ class CBDefaultEmployeeVC: UIViewController {
 }
 
 extension CBDefaultEmployeeVC : UITextFieldDelegate{
+    
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField == textEmpNum {
             // Limit characters to 7
             let currentText = textField.text ?? ""
             let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: string)
-            // Check if prospectiveText length is more than 7
             if prospectiveText.count > 7 {
+                textField.shakeTextField() // Exceeds length limit
                 return false
             }
-            let allowedCharacters = CharacterSet(charactersIn:"0123456789")//Here change this characters based on your requirement
+            let allowedCharacters = CharacterSet(charactersIn: "0123456789") // Modify if needed
             let characterSet = CharacterSet(charactersIn: string)
-            return allowedCharacters.isSuperset(of: characterSet)
+            
+            if !allowedCharacters.isSuperset(of: characterSet) {
+                textField.shakeTextField() // Disallowed characters
+                return false
+            }
+            return true
         }
         return true
     }
+
+    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         if textField == textEmpNum {
             textField.layer.borderWidth = 4

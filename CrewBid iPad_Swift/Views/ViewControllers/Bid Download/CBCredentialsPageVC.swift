@@ -61,63 +61,69 @@ class CBCredentialsPageVC: UIViewController {
 
 
 extension CBCredentialsPageVC: UITextFieldDelegate {
+    
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         var shouldChangeCharacters: Bool = true
-        // Make sure that userid text field always has leading 'e' and all digits
-        // after that.
+
         if textField == txtUserID {
             var validUserid: Bool = true
-            let inverseSet = NSCharacterSet(charactersIn:"0123456789").inverted
+            let inverseSet = CharacterSet(charactersIn: "0123456789").inverted
             let components = string.components(separatedBy: inverseSet)
             let filtered = components.joined(separator: "")
-            // Prevent changing leading 'e', which is entered in the
-            // useridTextField in the viewWillAppear: method.
-            // Get the current text in the text field
+
             if let currentText = textField.text {
                 // Allow deletion
                 if string.isEmpty {
                     return true
                 }
-                
-                // If the entire text is selected and about to be replaced, check the new string for validity
+
+                // Full replacement scenario
                 if range.length == currentText.count {
                     if string.hasPrefix("e") || string.hasPrefix("x") {
-                        // Allow replacement if it starts with 'e' or 'x', followed by digits
                         let newStringWithoutPrefix = String(string.dropFirst())
                         let newStringIsValid = newStringWithoutPrefix.rangeOfCharacter(from: inverseSet) == nil
+                        if !newStringIsValid {
+                            textField.shakeTextField()
+                        }
                         return newStringIsValid
                     } else if string.rangeOfCharacter(from: inverseSet) == nil {
-                        // Allow pure numbers (e.g., 21221)
                         return true
                     } else {
-                        // Reject if it contains invalid characters
+                        textField.shakeTextField()
                         return false
                     }
                 }
-                
-                // If the current text already starts with 'e' or 'x', prevent adding another 'e' or 'x'
+
+                // Prevent extra leading 'e' or 'x'
                 if currentText.hasPrefix("e") || currentText.hasPrefix("x") {
                     if string == "e" || string == "x" {
+                        textField.shakeTextField()
                         return false
                     }
-                    // Prevent any characters from being added at the start if 'e' or 'x' is already present
                     if range.location == 0 {
+                        textField.shakeTextField()
                         return false
                     }
                 }
             }
-            if 0 == range.location {
+
+            if range.location == 0 {
                 validUserid = false
                 if string == "" {
                     validUserid = true
-                } else if string.count > 0 && (( string.first == "e" ) || (string.first == "x") || string == filtered){
+                } else if string.count > 0 && ((string.first == "e") || (string.first == "x") || string == filtered) {
                     validUserid = true
                 }
+            } else {
+                let isValid = string == filtered
+                if !isValid {
+                    textField.shakeTextField()
+                }
+                return isValid
             }
-            else {
-                return string == filtered
-            }
+
             if !validUserid {
+                textField.shakeTextField()
                 shouldChangeCharacters = false
             }
         }
@@ -132,6 +138,10 @@ extension CBCredentialsPageVC: UITextFieldDelegate {
             textField.layer.borderWidth = 4
             textField.layer.borderColor = UIColor.gray.cgColor
         }
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        textField.layer.borderColor = UIColor.gray.cgColor
     }
     
     func loginAction(){

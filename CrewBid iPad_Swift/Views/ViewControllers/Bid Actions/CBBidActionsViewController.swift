@@ -169,6 +169,18 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
             if let presentingVC = self.presentingViewController {
                 self.dismiss(animated: true) {
                     let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+                    let vc = storyboard.instantiateViewController(withIdentifier: "CBShowAwardsViewController") as! CBShowAwardsViewController
+                    vc.modalPresentationStyle = .fullScreen
+                    presentingVC.present(vc, animated: true)
+                }
+            }
+        }
+        
+        // MARK: - Retrieve Awards Selection
+        if item == "Retrieve Awards" {
+            if let presentingVC = self.presentingViewController {
+                self.dismiss(animated: true) {
+                    let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
                     let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedCredentialVC") as! EmbeddedCredentialVC
                     vc.preferredContentSize = CGSize(width: 600, height: 500)
                     presentingVC.present(vc, animated: true)
