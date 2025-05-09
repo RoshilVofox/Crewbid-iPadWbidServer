@@ -12,7 +12,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     var kCBLineValueViewWidth : CGFloat = 55.0
     var kCBLineValueViewHeight : CGFloat = 28.0
     
-    
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var lineValuesView: UIView!
     @IBOutlet weak var moveBidListButton: UIButton!
@@ -20,7 +19,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     @IBOutlet weak var calendarView: UIView!
     @IBOutlet weak var orderLabel: UILabel!
     @IBOutlet weak var lineNumberLabel: UILabel!
-    
     
     var app: AppDelegate?
     var calendarData: BICalendarData?
@@ -74,6 +72,8 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     let tripDays = [1,2,3,4,8,9,10,11,15,16,17,18,22,23,24,25]
     let month = 5
     let year = 2025
+    
+//    to get calendat days
     func getCalendarData(for month: Int, year: Int){
         let calendar = Calendar.current
         //---------Bid Month Details-----------
@@ -118,6 +118,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
             }
         CalendarData = calendarData
     }
+    
     // Function to display the day and apply styles based on the bid month
     func displayDay(for collection: CBBidListSmallCollectionViewCell, day: Int?, isBidMonth: Bool) {
         // Display the day or placeholder if nil
@@ -128,9 +129,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
             collection.dayLabel.textColor = UIColor(red: 195/255, green: 195/255, blue: 197/255, alpha: 1.0)
         }
     }
-
-
-
 
     func cellLayout(){
         let layout = UICollectionViewFlowLayout()
@@ -195,9 +193,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posAView.alpha = 0.0
         self.posAView = posView
         
-        
         // Position A Gray
-        
         posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset, width: kCircleSize, height: kCircleSize))
         addSubview(posView)
         posAGrayView = posView
@@ -215,7 +211,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posAGrayView.alpha = 1.0
         
         // Position B Colored
-        
         posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
         addSubview(posView)
         posBView = posView
@@ -233,7 +228,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posBView.alpha = 0.0
         
         // Position B Gray
-        
         posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
         addSubview(posView)
         posBGrayView = posView
@@ -251,7 +245,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posBGrayView.alpha = 1.0
         
         // Position C colored
-        
         posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + 2 * kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
         addSubview(posView)
         posCView = posView
@@ -269,7 +262,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posCView.alpha = 0.0
         
         // Position C Gray
-        
         posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + 2 * kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
         addSubview(posView)
         posCGrayView = posView
@@ -287,7 +279,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posCGrayView.alpha = 1.0
         
         // Position D Colored
-        
         posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + 3 * kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
         addSubview(posView)
         posDView = posView
@@ -305,7 +296,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posDView.alpha = 0.0
         
         // Position D Gray
-        
         posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + 3 * kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
         addSubview(posView)
         posDGrayView = posView
@@ -323,7 +313,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posDGrayView.alpha = 1.0
         
         // M Colored
-        
         posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset, width: kCircleSize, height: kCircleSize))
         addSubview(posView)
         posMView = posView
@@ -341,7 +330,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posMView.alpha = 0.0
         
         // NA Colored
-        
         posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset, width: kCircleSize, height: kCircleSize))
         addSubview(posView)
         posNAView = posView
@@ -362,7 +350,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         getCalendarData(for: month, year: year)
        
         //-----------------------
-        
     }
 
     @objc func longPressLineValueContainerView(_ gesture: UILongPressGestureRecognizer) {
@@ -392,6 +379,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
 
         // Configure the view for the selected state
     }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 42
     }
@@ -406,14 +394,15 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         displayDay(for: cell, day: day, isBidMonth: isbidmonth)
         return cell
     }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = floor(collectionView.frame.width / 7)
         return CGSize(width: width, height: 55)
-
     }
 
     @IBAction func removeLineAction(_ sender: Any) {
     }
+    
     @IBAction func moveLinesToBidListAction(_ sender: Any) {
         
     }

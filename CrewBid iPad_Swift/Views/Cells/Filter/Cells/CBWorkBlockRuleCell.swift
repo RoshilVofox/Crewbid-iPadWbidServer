@@ -8,6 +8,7 @@
 import UIKit
 
 class CBWorkBlockRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
+    
     weak var delegate: CBFilterRuleCellDelegate?
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var valueButton: UIButton!
@@ -19,7 +20,6 @@ class CBWorkBlockRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
     var bidPeriod: BIBidPeriod?
     var bacViewColor: UIColor = .white
     var modeTexttColor: UIColor = .gray
-    
     
     override func awakeFromNib() {
         super.awakeFromNib()

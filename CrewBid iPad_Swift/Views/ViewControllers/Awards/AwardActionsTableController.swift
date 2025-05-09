@@ -8,25 +8,18 @@
 import UIKit
 
 class AwardActionsTableController: UIViewController, KUIPopOverUsable {
+    
     var contentSize: CGSize {
         return CGSize(width: 300, height: 300)
     }
     
     var awardACtionArray = ["Email Bid Awards","Print Bid Awards","Show Awarded Line","Add Awarded Line to Calendar"]
-    
-    
-
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-       
+        
     }
-    
-
-   
-
 }
 
 

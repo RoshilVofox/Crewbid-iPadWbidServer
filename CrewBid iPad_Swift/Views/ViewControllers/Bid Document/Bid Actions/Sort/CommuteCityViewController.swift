@@ -14,6 +14,7 @@ class CommuteCityViewController: UIViewController, KUIPopOverUsable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         arrAllCities = ["ATL", "DEN", "DAL"]
         self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
@@ -51,7 +52,6 @@ extension CommuteCityViewController: UICollectionViewDelegate, UICollectionViewD
         }
         alert.addAction(okAction)
         alert.addAction(cancelAction)
-        
         present(alert, animated: true)
     }
 }

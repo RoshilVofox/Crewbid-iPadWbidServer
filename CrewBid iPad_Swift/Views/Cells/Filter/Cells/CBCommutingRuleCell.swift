@@ -8,7 +8,9 @@
 import UIKit
 
 class CBCommutingRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
+    
     weak var delegate: CBFilterRuleCellDelegate?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

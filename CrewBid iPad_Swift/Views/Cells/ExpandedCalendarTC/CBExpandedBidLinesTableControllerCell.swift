@@ -18,7 +18,6 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell {
     @IBOutlet weak var collectionViewRightConstraint: NSLayoutConstraint!
     @IBOutlet weak var lineValuesContainerView: UIView!
     @IBOutlet weak var imgAccessoryView: UIImageView!
-    
     @IBOutlet weak var txtMarker: UITextField!
     
     override func awakeFromNib() {

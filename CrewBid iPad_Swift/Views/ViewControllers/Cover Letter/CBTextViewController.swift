@@ -9,7 +9,6 @@ import UIKit
 
 class CBTextViewController: UIViewController {
     
-    
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var txtView: UITextView!
@@ -18,9 +17,13 @@ class CBTextViewController: UIViewController {
     @IBOutlet weak var btnShare: UIButton!
     var type: String = ""
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupUI()
+    }
+    
+    func setupUI() {
         btnClose.setTitle("", for: .normal)
         btnShare.setTitle("", for: .normal)
         if type == "Seniority List" {
@@ -28,18 +31,14 @@ class CBTextViewController: UIViewController {
             searchBar.backgroundColor = .white
             searchBar.isHidden = false
         }
-
-        // Do any additional setup after loading the view.
     }
     
     @IBAction func btnDismissAction(_ sender: Any) {
         self.dismiss(animated: true)
     }
-    
   
     @IBAction func btnShareAction(_ sender: Any) {
     }
-    
 }
 
 extension CBTextViewController: UITableViewDataSource, UITableViewDelegate {

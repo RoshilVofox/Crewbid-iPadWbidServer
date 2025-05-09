@@ -21,6 +21,7 @@ class EmbeddedSettingsVC: BaseViewController,KUIPopOverUsable {
 
         // Do any additional setup after loading the view.
     }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let navVC = segue.destination as? UINavigationController
         let vc = navVC?.viewControllers.first as! SettingsViewController

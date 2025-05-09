@@ -8,19 +8,18 @@
 import UIKit
 
 class CBCredentialsPageVC: UIViewController {
-
+    
     @IBOutlet weak var txtUserID: customUITextField!
     @IBOutlet weak var txtPassword: customUITextField!
     @IBOutlet weak var showPasswordBtn: UIButton!
     @IBOutlet weak var lblTitle: UILabel!
     
-
     var isFromHistoric : Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupUI()
-        // Do any additional setup after loading the view.
     }
     
     @IBAction func showPasswordAction(_ sender: UIButton) {
@@ -37,9 +36,6 @@ class CBCredentialsPageVC: UIViewController {
         loginAction()
     }
     
-    
-    
-    
     func setupUI(){
         txtUserID.delegate = self
         txtPassword.delegate = self
@@ -53,9 +49,7 @@ class CBCredentialsPageVC: UIViewController {
             lblTitle.text = "New Bid Data"
         }
         
-        
         showPasswordBtn.setImage(UIImage(named: "showPwd")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        
         showPasswordBtn.tintColor = .label
         
         txtUserID.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtUserID.frame.height))
@@ -69,15 +63,15 @@ class CBCredentialsPageVC: UIViewController {
 extension CBCredentialsPageVC: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         var shouldChangeCharacters: Bool = true
-            // Make sure that userid text field always has leading 'e' and all digits
-            // after that.
+        // Make sure that userid text field always has leading 'e' and all digits
+        // after that.
         if textField == txtUserID {
             var validUserid: Bool = true
             let inverseSet = NSCharacterSet(charactersIn:"0123456789").inverted
             let components = string.components(separatedBy: inverseSet)
             let filtered = components.joined(separator: "")
-                // Prevent changing leading 'e', which is entered in the
-                // useridTextField in the viewWillAppear: method.
+            // Prevent changing leading 'e', which is entered in the
+            // useridTextField in the viewWillAppear: method.
             // Get the current text in the text field
             if let currentText = textField.text {
                 // Allow deletion
@@ -139,6 +133,7 @@ extension CBCredentialsPageVC: UITextFieldDelegate {
             textField.layer.borderColor = UIColor.gray.cgColor
         }
     }
+    
     func loginAction(){
         self.dismiss(animated: false)
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
@@ -146,9 +141,9 @@ extension CBCredentialsPageVC: UITextFieldDelegate {
         vc.modalPresentationStyle = .fullScreen
         vc.modalTransitionStyle = .coverVertical
         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let window = scene.windows.first,
-                   let rootVC = window.rootViewController {
-                    rootVC.present(vc, animated: true, completion: nil)
-                }
+           let window = scene.windows.first,
+           let rootVC = window.rootViewController {
+            rootVC.present(vc, animated: true, completion: nil)
+        }
     }
 }

@@ -26,7 +26,6 @@ class CBLineTypeRuleCell: UITableViewCell {
     var buttonTextColor: UIColor = .white
     var backViewColor: UIColor = .white
     
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

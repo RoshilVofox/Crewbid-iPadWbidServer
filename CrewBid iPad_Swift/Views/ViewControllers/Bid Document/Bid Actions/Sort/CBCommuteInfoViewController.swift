@@ -19,9 +19,8 @@ class CBCommuteInfoViewController: UIViewController {
     let connectTimeArray = NSArray(objects: "00:05","00:10","00:15","00:20","00:25","00:30","00:35","00:40","00:45","00:50","00:55","01:00")
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
         
-        // Do any additional setup after loading the view.
+        setupUI()
     }
     func setupUI(){
         let borderColor = UIColor.gray.cgColor
@@ -46,6 +45,7 @@ class CBCommuteInfoViewController: UIViewController {
         nonStopView.isHidden = true
 //        print(self.navigationController)
     }
+    
 //    selecting commutter city
     @IBAction func btnCommuterCityAction(_ sender: Any) {
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
@@ -109,6 +109,7 @@ class CBCommuteInfoViewController: UIViewController {
     @IBAction func btnCancelAction(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
+    
     //    alert's function for setting time
     func timeAlert(array: NSArray, title: String){
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: UIAlertController.Style.alert)

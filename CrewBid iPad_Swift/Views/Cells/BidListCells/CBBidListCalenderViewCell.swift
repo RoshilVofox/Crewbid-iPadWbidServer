@@ -10,7 +10,6 @@ import UIKit
 class CBBidListCalenderViewCell: UITableViewCell {
     @IBOutlet weak var mainView: UIView!
     @IBOutlet weak var lineValuesContainerView: UIView!
-    
     @IBOutlet weak var cellNoLabel: UILabel!
     @IBOutlet weak var userFlagControl: UIControl!
     @IBOutlet weak var positionCircleView: UIView!

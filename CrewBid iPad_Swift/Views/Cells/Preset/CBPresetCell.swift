@@ -8,6 +8,7 @@
 import UIKit
 
 protocol CBPresetCellDelegate {
+    
     func deleteButtonPressed(presetCell: CBPresetCell, indexpath: IndexPath)
     func nameTextFieldEndedEditing(presetCell: CBPresetCell)
     func nameTextFieldBeginEditing()
@@ -15,7 +16,6 @@ protocol CBPresetCellDelegate {
 
 class CBPresetCell: UITableViewCell, UITextFieldDelegate {
 
-  
     @IBOutlet weak var deleteButton: UIButton!
     @IBOutlet weak var loadLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
@@ -37,7 +37,6 @@ class CBPresetCell: UITableViewCell, UITextFieldDelegate {
         self.addButton.layer.cornerRadius = self.addButton.frame.height / 2
         self.addButton.layer.masksToBounds = true
         nameTextField.delegate = self
-
     }
     
     override func layoutSubviews() {

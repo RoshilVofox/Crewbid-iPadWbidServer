@@ -16,8 +16,6 @@ class CBComparisonRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var deletButton: UIButton!
     
-    
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

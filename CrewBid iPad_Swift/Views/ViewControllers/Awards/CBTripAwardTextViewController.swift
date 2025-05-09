@@ -13,20 +13,20 @@ class CBTripAwardTextViewController: UIViewController {
     @IBOutlet weak var txtView: UITextView!
     @IBOutlet weak var btnBack: UIButton!
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        btnBack.setTitle("", for: .normal)
-
-        // Do any additional setup after loading the view.
+        
+        setupUI()
     }
     
-
+    func setupUI() {
+        btnBack.setTitle("", for: .normal)
+    }
+    
     @IBAction func btnDismissAction(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
     
-
     @IBAction func btnShareAction(_ sender: Any) {
     }
 }

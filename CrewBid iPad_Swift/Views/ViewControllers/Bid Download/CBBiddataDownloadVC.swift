@@ -8,6 +8,7 @@
 import UIKit
 
 class CBBiddataDownloadVC: UIViewController {
+    
     // base
     @IBOutlet weak var btnATL: dataDownloadingButton!
     @IBOutlet weak var btnAUS: dataDownloadingButton!
@@ -64,8 +65,6 @@ class CBBiddataDownloadVC: UIViewController {
     var Year : Int?
     
     
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -75,8 +74,6 @@ class CBBiddataDownloadVC: UIViewController {
         }
     }
     
-
- 
     @IBAction func btnNextAction(_ sender: Any) {
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
@@ -87,8 +84,6 @@ class CBBiddataDownloadVC: UIViewController {
     @IBAction func btnBackAction(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
     }
-    
-    
     
     @IBAction func btnBaseAction(_ sender: UIButton) {
         // Iterate over a range of button tags
@@ -176,13 +171,13 @@ class CBBiddataDownloadVC: UIViewController {
     @IBAction func btnYearAction(_ sender: UIButton) {
         month = nil
         // Reset background color for all month buttons
-//
-//        for i in (1..<13) {
-//            let button = self.view.viewWithTag(i) as! UIButton
-//            button.backgroundColor = .secondarySystemBackground
-//        }
+        //
+        //        for i in (1..<13) {
+        //            let button = self.view.viewWithTag(i) as! UIButton
+        //            button.backgroundColor = .secondarySystemBackground
+        //        }
         // Iterate over a range of button tags representing years
-
+        
         for i in (60..<63) {
             if i == (sender as AnyObject).tag {
                 let button = self.view.viewWithTag(i) as! UIButton
@@ -207,11 +202,13 @@ class CBBiddataDownloadVC: UIViewController {
         let year = dateFormatter.string(from: Date())
         return year
     }
+    
     func setEnabledMonthForHistoricBidData() {
         let currentMonth = Int(self.currentMonth())
-      let buttonLastBidMonth = self.view.viewWithTag(currentMonth!) as! UIButton
-       self.btnMonthAction(buttonLastBidMonth)
+        let buttonLastBidMonth = self.view.viewWithTag(currentMonth!) as! UIButton
+        self.btnMonthAction(buttonLastBidMonth)
     }
+    
     func setYearTitle() {
         let buttonYearBeforeLast = self.view.viewWithTag(60) as! UIButton
         buttonYearBeforeLast.setTitle(String(Int(self.currentYear())! - 2), for: .normal)
@@ -222,18 +219,16 @@ class CBBiddataDownloadVC: UIViewController {
         self.btnYearAction(buttonYearCurrent)
     }
     
-    
-    
     func setupUI(){
         //Title setup
-    if isFromHistoric == true {
-        lblTitle.text = "Historic Bid Data"
-    }else{
-        lblTitle.text = "New Bid Data"
-    }
-    
+        if isFromHistoric == true {
+            lblTitle.text = "Historic Bid Data"
+        }else{
+            lblTitle.text = "New Bid Data"
+        }
+        
         if !isFromHistoric {
-                //Year view hiding for new bid period
+            //Year view hiding for new bid period
             viewYear.isHidden = true
             let btnArray : [UIButton] = [btnJAN,btnFEB,btnMAR,btnAPR,btnMAY,btnJUN,btnJUL,btnAUG,btnSEP,btnOCT,btnNOV,btnDEC]
             let monthInt = Calendar.current.component(.month, from: Date())
@@ -271,21 +266,21 @@ class CBBiddataDownloadVC: UIViewController {
                 }
             }
             let btnYearArray : [UIButton] = [btnBeforePrevious,btnPreviousYear,btnCurrentYear]
-//            for btn in btnYearArray  {
-//                if btn.titleLabel?.text == "\(year)" {
-//                    btn.backgroundColor = UIColor.systemOrange
-//                }
-//            }
+            //            for btn in btnYearArray  {
+            //                if btn.titleLabel?.text == "\(year)" {
+            //                    btn.backgroundColor = UIColor.systemOrange
+            //                }
+            //            }
         }
-    //Year button title
-    let currentDate = Date()
-    let nextMonth = Calendar.current.date(byAdding: .month, value: 1, to: currentDate) ?? currentDate
-    let nextMonthYear = Calendar.current.component(.year, from: nextMonth)
-
-    btnBeforePrevious.setTitle("\(nextMonthYear - 2)", for: UIControl.State.normal)
-    btnPreviousYear.setTitle("\(nextMonthYear - 1)", for: UIControl.State.normal)
-    btnCurrentYear.setTitle("\(nextMonthYear)", for: UIControl.State.normal)
-
-
-}
+        //Year button title
+        let currentDate = Date()
+        let nextMonth = Calendar.current.date(byAdding: .month, value: 1, to: currentDate) ?? currentDate
+        let nextMonthYear = Calendar.current.component(.year, from: nextMonth)
+        
+        btnBeforePrevious.setTitle("\(nextMonthYear - 2)", for: UIControl.State.normal)
+        btnPreviousYear.setTitle("\(nextMonthYear - 1)", for: UIControl.State.normal)
+        btnCurrentYear.setTitle("\(nextMonthYear)", for: UIControl.State.normal)
+        
+        
+    }
 }

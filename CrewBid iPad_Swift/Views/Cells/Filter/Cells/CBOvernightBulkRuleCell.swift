@@ -8,6 +8,7 @@
 import UIKit
 
 class CBOvernightBulkRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
+    
     weak var delegate: CBFilterRuleCellDelegate?
     @IBOutlet weak var yesBtn: UIButton!
     @IBOutlet weak var noBtn: UIButton!
@@ -16,6 +17,7 @@ class CBOvernightBulkRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignabl
     @IBOutlet weak var overnightCities: UILabel!
     @IBOutlet weak var noOvernightCities: UILabel!
     @IBOutlet weak var deleteButton: UIButton!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

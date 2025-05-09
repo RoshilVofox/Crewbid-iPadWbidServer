@@ -1,9 +1,10 @@
 
 import UIKit
 import AVFoundation
-class CBHelpVideosController: BaseViewController,UICollectionViewDelegateFlowLayout {
-    var abc = ["dsjkfdks","sdfhnjkds","sdfhjkg", "sdhfjkg"]
 
+class CBHelpVideosController: BaseViewController,UICollectionViewDelegateFlowLayout {
+    
+    var abc = ["dsjkfdks","sdfhnjkds","sdfhjkg", "sdhfjkg"]
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var btnDone: UIButton!
@@ -12,8 +13,8 @@ class CBHelpVideosController: BaseViewController,UICollectionViewDelegateFlowLay
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupUI()
-        // Do any additional setup after loading the view.
     }
     
     func setupUI(){
@@ -26,22 +27,22 @@ class CBHelpVideosController: BaseViewController,UICollectionViewDelegateFlowLay
         layout.scrollDirection = .vertical
         collectionView!.collectionViewLayout = layout
         // Check if video URLs and titles are stored in UserDefaults
-
+        
         if UserDefaults.standard.object(forKey: kCBHelpVideoURL) != nil && UserDefaults.standard.object(forKey: kCBHelpVideotitles) != nil {
             // Retrieve video URLs and titles from UserDefaults
-
+            
             videoIDs = UserDefaults.standard.object(forKey: kCBHelpVideoURL) as! [String]
             videoTitles = UserDefaults.standard.object(forKey: kCBHelpVideotitles) as! [String]
         }
         // Check if the number of video IDs matches the number of titles
-
+        
         if videoIDs.count != videoTitles.count {
             DispatchQueue.main.async {
                 CBGlobalMethods.shared.ShowAlert(TitleString: "Video Load Error", MessageString: "The number of videos did not match the number of video titles. Please send a bug report to the support team.")
             }
         }
         // Configure the audio session for playback
-
+        
         let audioSession = AVAudioSession.sharedInstance()
         do {
             try audioSession.setCategory(.playback)
@@ -53,6 +54,7 @@ class CBHelpVideosController: BaseViewController,UICollectionViewDelegateFlowLay
         }
         collectionView.reloadData()
     }
+    
     @IBAction func btnBackAction(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
     }
@@ -63,6 +65,7 @@ class CBHelpVideosController: BaseViewController,UICollectionViewDelegateFlowLay
 }
 
 extension CBHelpVideosController: UICollectionViewDataSource, UICollectionViewDelegate {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return videoIDs.count
     }
@@ -90,10 +93,10 @@ extension CBHelpVideosController: UICollectionViewDataSource, UICollectionViewDe
             </html>
             """
         videoCell.webView.loadHTMLString(html, baseURL: nil)
-//        let videoURL = String(format: "https://www.youtube.com/embed/%@", videoIDs[index])
-//        print(videoURL)
-//        let request = URLRequest(url: URL(string: videoURL)!)
-//        videoCell.webView.load(request)
+        //        let videoURL = String(format: "https://www.youtube.com/embed/%@", videoIDs[index])
+        //        print(videoURL)
+        //        let request = URLRequest(url: URL(string: videoURL)!)
+        //        videoCell.webView.load(request)
         return videoCell
     }
     

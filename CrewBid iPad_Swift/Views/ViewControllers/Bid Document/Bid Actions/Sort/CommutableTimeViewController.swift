@@ -8,23 +8,21 @@
 import UIKit
 
 class CommutableTimeViewController: UIViewController,KUIPopOverUsable {
+    
     var contentSize: CGSize = CGSize(width: 400, height: 450)
     @IBOutlet weak var collectionView: UICollectionView!
     var dates = ["01", "02", "03"]
     var dep = ["1200","0500","1000"]
     var arr = ["1700", "1400", "1100"]
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.setNavigationBarHidden(true, animated: false)
-        
     }
     
     @IBAction func btnDoneAction(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
-    
 }
 
 

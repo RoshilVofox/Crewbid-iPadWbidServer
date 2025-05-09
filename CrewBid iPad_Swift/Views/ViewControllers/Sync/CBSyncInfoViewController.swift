@@ -18,10 +18,11 @@ class CBSyncInfoViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupUI()
 
-        // Do any additional setup after loading the view.
     }
+    
     func setupUI() {
         let image = UIImage(named: "RadioButton-On") as UIImage?
         btnState.setImage(image, for: .normal)
@@ -84,5 +85,4 @@ class CBSyncInfoViewController: UIViewController {
             (sender as AnyObject).setImage(UIImage(named: "radioButton-Off"), for: .normal)
         }
     }
-    
 }

@@ -11,6 +11,11 @@ class mySubscriptionViewController: UIViewController, UICollectionViewDelegateFl
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setupUI()
+        // Do any additional setup after loading the view.
+    }
+    
+    func setupUI() {
         btnBack.setTitle("", for: .normal)
         btnDone.setTitle("", for: .normal)
         let layout = UICollectionViewFlowLayout()
@@ -24,10 +29,7 @@ class mySubscriptionViewController: UIViewController, UICollectionViewDelegateFl
         
         layout.sectionInset = UIEdgeInsets(top: 0, left: horizontalInset, bottom: 0, right: horizontalInset) // ✅ Center horizontally
         collectionView.setCollectionViewLayout(layout, animated: true)
-        // Do any additional setup after loading the view.
     }
-    
-    
     
     @IBAction func btnBackAction(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
@@ -36,11 +38,10 @@ class mySubscriptionViewController: UIViewController, UICollectionViewDelegateFl
     @IBAction func btnDoneAction(_ sender: Any) {
         self.dismiss(animated: false, completion: nil)
     }
-    
-
 }
 
 extension mySubscriptionViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 1
     }

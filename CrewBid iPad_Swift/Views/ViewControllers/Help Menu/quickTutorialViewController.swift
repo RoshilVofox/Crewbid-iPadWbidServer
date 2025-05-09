@@ -13,6 +13,10 @@ class quickTutorialViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setupUI()
+    }
+    
+    func setupUI() {
         btndone.setTitle("", for: .normal)
         btnBack.setTitle("", for: .normal)
         let layout = UICollectionViewFlowLayout()
@@ -33,21 +37,17 @@ class quickTutorialViewController: UIViewController {
         pageControl.currentPageIndicatorTintColor = UIColor.red
     }
     
-    
     @IBAction func btnDoneAction(_ sender: Any) {
         self.dismiss(animated: false, completion: nil)
     }
     
-    
-    
     @IBAction func btnBackAction(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
     }
-    
-    
 }
 
 extension quickTutorialViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return images.count
     }

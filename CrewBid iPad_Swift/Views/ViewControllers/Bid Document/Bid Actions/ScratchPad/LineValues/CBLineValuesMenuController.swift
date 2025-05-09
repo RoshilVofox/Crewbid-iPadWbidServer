@@ -9,14 +9,9 @@ import UIKit
 
 class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITableViewDataSource,KUIPopOverUsable {
 
-    
-
-    
-
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var resetButton: UIButton!
-    
     
     var lineValuesTemp:NSArray!
     
@@ -25,9 +20,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
     weak var bidPeriod: BIBidPeriod?
     var menuItems = [Any]()
     
-    
     var count = 0
-    
     
     var contentSize: CGSize {
         return CGSize(width: 310.0, height: UIScreen.main.bounds.height - 120)
@@ -47,7 +40,6 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         
 // ----------------------------------
         lineValues = lineValues1()
-        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -69,6 +61,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         }
         return cell
     }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if count < 5{
             tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
@@ -81,6 +74,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
             self.present(alert, animated: true, completion: nil)
         }
     }
+    
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         tableView.cellForRow(at: indexPath)?.accessoryType = .none
         count -= 1
@@ -89,6 +83,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
     @IBAction func resetAction(_ sender: Any) {
         
     }
+    
     func lineValues1() -> [Any] {
         var values: [Any]? = nil
         let path = Bundle.main.path(forResource: "LineValues", ofType: "plist")

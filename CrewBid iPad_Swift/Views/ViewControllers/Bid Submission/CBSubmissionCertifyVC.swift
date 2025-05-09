@@ -5,7 +5,6 @@ import UIKit
 
 class CBSubmissionCertifyVC: UIViewController {
     
-    
     @IBOutlet weak var firstLabel: UILabel!
     @IBOutlet weak var secondLabel: UILabel!
     @IBOutlet weak var certifyLabel: UILabel!

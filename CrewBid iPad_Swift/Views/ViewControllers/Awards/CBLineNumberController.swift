@@ -14,14 +14,16 @@ class CBLineNumberController: UIViewController {
     @IBOutlet weak var txtView: UITextView!
     @IBOutlet weak var btnClose: UIButton!
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+       
+        setupUI()
+    }
+    
+    func setupUI() {
         txtPosition.delegate = self
         txtLineNumber.delegate = self
         btnClose.setTitle("", for: .normal)
-
-        // Do any additional setup after loading the view.
     }
     
     @IBAction func btnDismissAction(_ sender: Any) {

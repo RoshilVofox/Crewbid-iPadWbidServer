@@ -43,10 +43,6 @@ class CBDownloadAlldomicileViewController: UIViewController {
     }
     
     func setUpUI(){
-        
-        
-       
-        
         txtMonth.optionArray = ["1", "2", "3", "4", "5", "6", "7", "8","9","10","11","12"]
         txtMonth.didSelect{(selectedText , index ,id) in
             self.txtMonth.text = "\(selectedText)"
@@ -57,7 +53,6 @@ class CBDownloadAlldomicileViewController: UIViewController {
         self.selectButton(button: btnFirstRound)
 //        self.selectButton(button: btnBoth)
         activityIndicator.isHidden = true
-        
     }
     
     func selectButton(button : UIButton){
@@ -92,7 +87,6 @@ class CBDownloadAlldomicileViewController: UIViewController {
         }
         
         self.unselectButton(button: btnAllPilot)
-
     }
     
     // MARK: - All pilot btn
@@ -107,11 +101,13 @@ class CBDownloadAlldomicileViewController: UIViewController {
             self.unselectButton(button: btn)
         }
     }
+    
     // MARK: -  firstRound btn
     @IBAction func btnFirstRoundAction(_ sender: Any) {
         self.selectButton(button: sender as! UIButton)
         self.unselectButton(button: btnSecondRound)
     }
+    
     // MARK: -  Second Round btn
     @IBAction func btnSecondRoundAction(_ sender: Any) {
         self.selectButton(button: sender as! UIButton)

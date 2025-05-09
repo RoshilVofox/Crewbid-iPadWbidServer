@@ -16,5 +16,4 @@ class DocumentCell: UICollectionViewCell {
     @IBOutlet weak var position: UILabel!
     @IBOutlet weak var userIconView: UIImageView!
     
-    
 }

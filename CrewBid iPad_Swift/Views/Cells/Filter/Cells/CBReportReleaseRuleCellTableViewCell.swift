@@ -12,7 +12,6 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell, CBFilterRuleCellDel
 
     weak var delegate: CBFilterRuleCellDelegate?
     
-    
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var txtReport: UITextField!
     @IBOutlet weak var txtRelease: UITextField!

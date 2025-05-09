@@ -16,7 +16,6 @@ protocol CBFilterRuleCellDelegate: AnyObject {
     func deleteCellRow(in cell: UITableViewCell)
 }
 
-
 class CBFilterRulesTableVC: BaseViewController {
     
     @IBOutlet weak var btnAdd: UIButton!
@@ -30,13 +29,11 @@ class CBFilterRulesTableVC: BaseViewController {
         super.viewDidLoad()
  
         setupUI()
-        // Do any additional setup after loading the view.
     }
     
     func setupUI(){
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
     }
-    
     
     @IBAction func btnSortAction(_ sender: Any) {
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
@@ -95,6 +92,7 @@ class CBFilterRulesTableVC: BaseViewController {
     var kReportReleaseRuleCell = "ReportReleaseCell"
     var kworkBlockRuleCell = "CBWorkBlockRuleCell"
     
+//    seting filter identifier
     func cellIdentifier(for category: BIFilterRuleCategory.RawValue, type: Int) -> String? {
         var cellIdentifier: String? = nil
         switch category {
@@ -217,7 +215,6 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
             return 56
         }
     }
-    
 }
 //MARK: Delegate method
 extension CBFilterRulesTableVC: CBRulesMenuFilterDelegate,CBFilterRuleCellDelegate {
@@ -246,5 +243,4 @@ extension CBFilterRulesTableVC: CBRulesMenuFilterDelegate,CBFilterRuleCellDelega
         // Delete the row from the table view
         objFilterTableView.deleteRows(at: [indexPath], with: .fade)
     }
-    
 }

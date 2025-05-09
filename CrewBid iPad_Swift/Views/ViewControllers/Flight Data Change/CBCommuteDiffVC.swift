@@ -12,7 +12,6 @@ class CBCommuteDiffVC: UIViewController {
         // Do any additional setup after loading the view.
     }
     
-
     @IBAction func btnUpdateBidAction(_ sender: Any) {
     }
     

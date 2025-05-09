@@ -10,10 +10,15 @@ class latestNewsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+       setupUI()
+    }
+    
+    func setupUI() {
         loadWebView()
         btnBack.setTitle("", for: .normal)
         btnDone.setTitle("", for: .normal)
     }
+    
     @IBAction func btnDoneAction(_ sender: Any) {
         self.dismiss(animated: false, completion: nil)
     }

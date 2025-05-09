@@ -8,7 +8,9 @@
 import UIKit
 
 class CBDayMonthRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
+    
     weak var delegate: CBFilterRuleCellDelegate?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

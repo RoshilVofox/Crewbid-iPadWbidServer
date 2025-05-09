@@ -8,6 +8,7 @@
 import Foundation
 
 class AlertService{
+    
     static func showAlert(title: String?,
                            message: String?,
                            actions: [(title: String, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Void)?)]?) -> UIAlertController

@@ -9,21 +9,22 @@ import UIKit
 
 class CBAwardsRetrievalViewController: UIViewController {
     
-    
     @IBOutlet weak var txtEmpNum: customUITextField!
     @IBOutlet weak var txtPassword: customUITextField!
     @IBOutlet weak var btnClose: UIButton!
     @IBOutlet weak var btnShowPwd: UIButton!
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupUI()
+    }
+    
+    func setupUI() {
         txtPassword.delegate = self
         txtEmpNum.delegate = self
         btnClose.setTitle("", for: .normal)
         btnShowPwd.setTitle("", for: .normal)
-
-        
     }
     
     @IBAction func btnShowPasswordAction(_ sender: Any) {

@@ -23,6 +23,7 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
         preferredContentSize = CGSize(width: 310, height: height + 30)
         return CGSize(width: preferredContentSize.width, height: preferredContentSize.height)
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: kCellReuseIdentifier)
@@ -53,9 +54,11 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
         cell.selectionStyle = .none
         return cell
     }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 40
     }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let item:NSDictionary = menuItems[indexPath.row] as! NSDictionary
         let types:NSArray?
@@ -73,6 +76,7 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
         }
         selectSortMenuAt(indexPath: indexPath, with: category, and: types)
     }
+    
     func selectSortMenuAt(indexPath: IndexPath, with category: Int, and types: NSArray?) {
         let item  = menuItems.object(at: indexPath.row) as! [String: Any]
         if (types != nil) && ((types?.count)! > 0) {

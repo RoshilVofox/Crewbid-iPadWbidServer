@@ -32,10 +32,6 @@ class CoreDataManager{
     lazy var persistantStoreCoordinator: NSPersistentStoreCoordinator = {
         let storeURL = self.applicationDocumentDirectory().appendingPathComponent( "CrewBid_iPad_Swift.sqlite")
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        
-        
-        
-        
         return persistentContainer.persistentStoreCoordinator
     }()
     

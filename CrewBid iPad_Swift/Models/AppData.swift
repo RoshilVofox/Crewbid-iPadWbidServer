@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 class AppData {
     static let shared = AppData()  // Shared instance
 

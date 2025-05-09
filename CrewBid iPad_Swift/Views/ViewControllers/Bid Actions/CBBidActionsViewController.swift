@@ -8,6 +8,7 @@
 import UIKit
 
 class CBBidActionsViewController: UIViewController, KUIPopOverUsable {
+    
     var contentSize: CGSize {
         return CGSize(width: 410, height: 480)
     }
@@ -33,40 +34,32 @@ class CBBidActionsViewController: UIViewController, KUIPopOverUsable {
     let pilotFileArray = ["Cover Letter","Seniority List","Lines Text","Trips Text"]
     let vacationFAArray = ["Keep Pulled Trips In Filters/Sorts", "Re Download WBID Maz Vac File", "Re Download Swaptimizer Maz Vac File"]
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
         arr = arrForPilotWithAwdTxt
-        btnBack.isHidden = true
-        btnBack.setTitle("", for: .normal)
-        
-        
-        
+       setupUI()
     }
     
+    func setupUI(){
+        btnBack.isHidden = true
+        btnBack.setTitle("", for: .normal)
+    }
     
     @IBAction func btnBackAction(_ sender: Any) {
         arr = prev
         tableView.reloadData()
         btnBack.isHidden = true
     }
-    
-    
-    
-    
 }
 
 extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate{
-    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return arr.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         if arr[0] == "Submit Bid" {
             let cell = tableView.dequeueReusableCell(withIdentifier: "CBBidActionTableCell", for: indexPath) as! CBBidActionTableCell
             
@@ -97,8 +90,6 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        
         // MARK: - Vacation Selection
         let item = arr[indexPath.row]
         if item == "Vacation" {
@@ -125,7 +116,6 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                     presentingVC.present(vc, animated: true)
                 }
             }
-            
         }
         // MARK: - Seniority List Selection
         if item == "Seniority List" {
@@ -138,7 +128,6 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                     presentingVC.present(vc, animated: true)
                 }
             }
-            
         }
         // MARK: - Bid recipt Selection
         if item == "Show Bid Receipt" {
@@ -150,7 +139,6 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                     presentingVC.present(vc, animated: true)
                 }
             }
-            
         }
         // MARK: - LIne Importer Selection
         if item == "Line Importer" {
@@ -200,9 +188,9 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
             }
             
             //cancel
-            let cancelAction = UIAlertAction(title: "cancel", style: .cancel)
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
             //add
-            let okAction = UIAlertAction(title: "ok", style: .default) { _ in
+            let okAction = UIAlertAction(title: "OK", style: .default) { _ in
                 self.submitBidAlert()
             }
             alert.addAction(okAction)
@@ -232,9 +220,9 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
         }
         
         //cancel
-        let cancelAction = UIAlertAction(title: "cancel", style: .cancel)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         //add
-        let okAction = UIAlertAction(title: "ok", style: .default) { _ in
+        let okAction = UIAlertAction(title: "OK", style: .default) { _ in
             self.ConfirmSubmitBidAlert()
         }
         alert.addAction(okAction)
@@ -267,7 +255,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                 message: "The entered employee number does not match the original entry. Please check and try again.",
                 preferredStyle: .alert
             )
-            let cancelAction = UIAlertAction(title: "ok", style: .cancel)
+            let cancelAction = UIAlertAction(title: "OK", style: .cancel)
             alert.addAction(cancelAction)
             present(alert, animated: true)
         }
@@ -295,10 +283,9 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
             message: "By continuing, you represent that you have the permission of your buddy or buddies to Buddy Bid with them and you have taken the necessary steps inSwA lite to out them on vour BuddyBidding list.I Understand and Accept",
             preferredStyle: .alert
         )
-        let cancelAction = UIAlertAction(title: "ok", style: .cancel)
+        let cancelAction = UIAlertAction(title: "OK", style: .cancel)
         alert.addAction(cancelAction)
         present(alert, animated: true)
     }
-    
 }
 

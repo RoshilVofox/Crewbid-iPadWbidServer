@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		35162E032DCDBEA600BD8E2E /* UIView+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35162E022DCDBEA600BD8E2E /* UIView+extensions.swift */; };
 		8B0044192DC72AA900CAEF82 /* CBPresetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */; };
 		8B38C5642DCA24C200845E3F /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 8B38C5632DCA24C200845E3F /* IQKeyboardManagerSwift */; };
 		8B5F03282DC8D99F006A4E85 /* CBBrightnessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F03272DC8D99F006A4E85 /* CBBrightnessViewController.swift */; };
@@ -323,6 +324,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		35162E022DCDBEA600BD8E2E /* UIView+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+extensions.swift"; sourceTree = "<group>"; };
 		8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPresetCell.swift; sourceTree = "<group>"; };
 		8B5F03272DC8D99F006A4E85 /* CBBrightnessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBrightnessViewController.swift; sourceTree = "<group>"; };
 		8B77C52A2DC7973B00E5B3B4 /* AppData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
@@ -1531,6 +1533,7 @@
 				F4C6F9322DCB45440092C00C /* SimplePing.h */,
 				F41EBDD42DC4DB20001413DE /* Helpers */,
 				F41475832DC8E1980064CD25 /* AlertService.swift */,
+				35162E022DCDBEA600BD8E2E /* UIView+extensions.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -1890,6 +1893,7 @@
 				8B0044192DC72AA900CAEF82 /* CBPresetCell.swift in Sources */,
 				F41EBF4D2DC4DB20001413DE /* CBAwardEmpValidationVC.swift in Sources */,
 				F41EBF4E2DC4DB20001413DE /* CBAwardLineCalendarViewController.swift in Sources */,
+				35162E032DCDBEA600BD8E2E /* UIView+extensions.swift in Sources */,
 				F41EBF4F2DC4DB20001413DE /* CBAwardsRetrievalViewController.swift in Sources */,
 				F41EBF502DC4DB20001413DE /* CBLineNumberController.swift in Sources */,
 				F41EBF512DC4DB20001413DE /* CBShowAwardsViewController.swift in Sources */,

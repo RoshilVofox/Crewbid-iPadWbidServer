@@ -21,13 +21,13 @@ class CBsyncConflictViewController: UIViewController {
 
     var selectedType: GRCheckButtonType!
     
-    
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         setupUI()
 
-        // Do any additional setup after loading the view.
     }
+    
     func setupUI() {
         if selectedType == GRCheckButtonType.both {
             viewState.isHidden = false
@@ -41,10 +41,7 @@ class CBsyncConflictViewController: UIViewController {
             viewState.isHidden = true
         }
     }
-    
 
     @IBAction func btnSyncDataAction(_ sender: Any) {
     }
-    
-
 }

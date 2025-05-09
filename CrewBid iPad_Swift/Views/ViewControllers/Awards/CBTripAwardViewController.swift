@@ -18,11 +18,14 @@ class CBTripAwardViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        seyupUI()
+    }
+    
+    func seyupUI() {
         txtPosition.delegate = self
         txtTripID.delegate = self
         btnClose.setTitle("", for: .normal)
-
-        // Do any additional setup after loading the view.
     }
     
     @IBAction func btnDismissAction(_ sender: Any) {

@@ -13,14 +13,16 @@ class CBSpreadsheetImportController: UIViewController {
     @IBOutlet weak var btnClose: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
+       
+        setupUI()
+    }
+    
+    func setupUI() {
         btnClose.setTitle("", for: .normal)
         btnImportText.layer.borderColor = CBColor.purpleColor.cgColor
         btnImportText.layer.borderWidth = 2
         btnImportText.layer.cornerRadius = 4
-
-        // Do any additional setup after loading the view.
     }
-    
 
     @IBAction func btnDismissAction(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)

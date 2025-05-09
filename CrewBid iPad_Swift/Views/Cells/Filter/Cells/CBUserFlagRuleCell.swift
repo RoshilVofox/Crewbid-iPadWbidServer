@@ -10,7 +10,6 @@ import UIKit
 class CBUserFlagRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
     weak var delegate: CBFilterRuleCellDelegate?
     
-    
     weak var userFlagControlNoColor: UIControl?
     weak var userFlagControlYellow: UIControl?
     weak var userFlagControlOrange: UIControl?

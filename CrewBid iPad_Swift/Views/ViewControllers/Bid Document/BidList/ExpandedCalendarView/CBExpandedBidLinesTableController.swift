@@ -8,16 +8,17 @@
 import UIKit
 
 class CBExpandedBidLinesTableController: BaseViewController {
+    
     @IBOutlet weak var btnClose: UIButton!
     @IBOutlet weak var btnShare: UIButton!
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var expandedTableView: UITableView!
     
-    
     var navTitle = "Expanded Bid List"
     var tempRows = [0,1,2,3,4]
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupUI()
     }
     
@@ -36,8 +37,8 @@ class CBExpandedBidLinesTableController: BaseViewController {
         (sender as? UIButton)?.isEnabled = false
         self.dismiss(animated: true)
     }
-
 }
+
 extension CBExpandedBidLinesTableController: UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tempRows.count

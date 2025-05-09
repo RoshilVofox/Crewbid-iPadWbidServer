@@ -51,28 +51,37 @@ static const CGFloat MBDefaultDetailsLabelFontSize = 12.f;
     return hud;
 }
 + (instancetype)showHUDAddedTo:(UIView *)view
-                      animated:(BOOL)animated
-                         title:(NSString *)title
-              backgroundColor:(UIColor *)backgroundColor {
+                       animated:(BOOL)animated
+                          title:(NSString *)title
+               backgroundColor:(UIColor *)backgroundColor {
 
-    MBProgressHUD *hud = [[self alloc] initWithView:view];
-    hud.removeFromSuperViewOnHide = YES;
+     MBProgressHUD *hud = [[self alloc] initWithView:view];
+     hud.removeFromSuperViewOnHide = YES;
 
-    // Optional title
-    if (title != nil) {
-        hud.label.text = title;
-    }
+     // Optional title
+     if (title != nil) {
+         hud.label.text = title;
+     }
 
-    // Optional background color
+    hud.label.textColor = [UIColor whiteColor];
+    UIActivityIndicatorView *indicator = (UIActivityIndicatorView *)hud.indicator;
+    indicator.color = [UIColor whiteColor]; // or any color you want
+    
+     // Optional bezel color (the central box)
     if (backgroundColor != nil) {
-        hud.bezelView.color = backgroundColor;
+        UIColor *opaqueColor = [backgroundColor colorWithAlphaComponent:0.6];
+        hud.bezelView.color = opaqueColor;
+        hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
     }
 
-    [view addSubview:hud];
-    [hud showAnimated:animated];
-    return hud;
-}
+     // Dim background setup
+     hud.backgroundView.style = MBProgressHUDBackgroundStyleSolidColor;
+     hud.backgroundView.color = [UIColor colorWithWhite:0.f alpha:0.1f];
 
+     [view addSubview:hud];
+     [hud showAnimated:animated];
+     return hud;
+ }
 
 
 + (BOOL)hideHUDForView:(UIView *)view animated:(BOOL)animated {

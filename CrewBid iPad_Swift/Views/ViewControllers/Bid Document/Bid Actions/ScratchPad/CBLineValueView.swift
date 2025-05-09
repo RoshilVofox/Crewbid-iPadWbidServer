@@ -47,7 +47,6 @@ class CBLineValueView: UIView {
         
         return self
     }
-
     
     func setValue(value: String?, forTitle title: String?, andType type: CBLineValueTypes) {
         
@@ -63,7 +62,7 @@ class CBLineValueView: UIView {
                 let FloatValue = (value! as String).floatValue
                 if FloatValue > 0.0 {
                     titleLabel?.textColor = vacTitleColor
-                    valueLabel?.textColor = CBColor.greenColor
+                    valueLabel?.textColor = CBColor.cbGreenColor
                 } else if FloatValue < 0.0 {
                     titleLabel?.textColor = vacTitleColor
                     valueLabel?.textColor = UIColor.red
@@ -83,8 +82,6 @@ class CBLineValueView: UIView {
             
         }
     }
-    
-
     
     func intrinsicContentSize()-> CGSize {
         return CGSize(width: kCBLineValueViewWidth, height: kCBLineValueViewHeight)

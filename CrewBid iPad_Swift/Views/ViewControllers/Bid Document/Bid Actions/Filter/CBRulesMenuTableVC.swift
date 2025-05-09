@@ -28,7 +28,6 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
         return CGSize(width: preferredContentSize.width, height: preferredContentSize.height)
     }
     
-
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
@@ -109,7 +108,6 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
                     }
                 }
                 return
-                
             }
             //MARK: Used delegate method, needed to be removed when using actual data
             if let delegate = delegate as? CBRulesMenuFilterDelegate {

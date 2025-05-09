@@ -16,6 +16,11 @@ class CBBidReciptViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupUI()
+    }
+    
+    func setupUI() {
         btnClose.setTitle("", for: .normal)
         btnShare.setTitle("", for: .normal)
     }

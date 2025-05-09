@@ -18,13 +18,16 @@ class CBLineSortsTVC: UIViewController {
     @IBOutlet weak var btnBids: UIButton!
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupUI()
     }
+    
     func setupUI(){
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
         btnSortTheBidlist.backgroundColor = .systemRed
         btnSortTheScratchpad.backgroundColor = .systemGreen
     }
+    
     @IBAction func btnFilterAction(_ sender: Any) {
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBFilterRulesTableVC") as! CBFilterRulesTableVC
@@ -43,6 +46,7 @@ class CBLineSortsTVC: UIViewController {
         self.navigationController?.pushViewController(vc, animated: false)
         UIView.transition(from: self.view, to: vc.view, duration: 0.65, options: [.transitionFlipFromLeft])
     }
+    
     @IBAction func btnAddAction(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Filter", bundle: nil)
         let filterMenuController = storyboard.instantiateViewController(withIdentifier: "CBSortRulesMenuTableVC") as! CBSortRulesMenuTableVC
@@ -73,10 +77,7 @@ class CBLineSortsTVC: UIViewController {
             let noAction = UIAlertAction(title: "No", style: .cancel, handler: nil)
             alert.addAction(noAction)
             alert.addAction(yesAction)
-
             self.present(alert, animated: true, completion: nil)
-
-            
         }
     }
     

@@ -9,7 +9,6 @@ class SubmissionErrorVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-      
     }
     
     @IBAction func btnCancelAction(_ sender: Any) {

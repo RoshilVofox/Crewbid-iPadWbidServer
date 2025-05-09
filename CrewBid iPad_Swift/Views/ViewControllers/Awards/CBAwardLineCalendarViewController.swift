@@ -16,20 +16,20 @@ class CBAwardLineCalendarViewController: UIViewController, UICollectionViewDeleg
     @IBOutlet weak var btnClose: UIButton!
     @IBOutlet weak var btnShare: UIButton!
     
-    
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupUI()
+    }
+    
+    func setupUI() {
         btnClose.setTitle("", for: .normal)
         btnShare.setTitle("", for: .normal)
+        
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
-       
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
         collectionView.collectionViewLayout = layout
-
-        // Do any additional setup after loading the view.
     }
     
 
@@ -39,6 +39,7 @@ class CBAwardLineCalendarViewController: UIViewController, UICollectionViewDeleg
     @IBAction func btnDismissAction(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
+    
 }
 
 extension CBAwardLineCalendarViewController: UICollectionViewDataSource {

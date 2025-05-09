@@ -8,6 +8,7 @@
 import UIKit
 
 class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate {
+    
     private let bidListActionArray = ["Scrolling Options","Deselect All Lines","Move Selected Lines","Undo","Redo","Return Selected Lines To Scratchpad","Return Unfrozen Lines To Scratchpad", "Start Over"]
     
     var contentSize: CGSize{
@@ -15,7 +16,7 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
     }
     
@@ -58,7 +59,7 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
                     //                    NotificationCenter
                 }
             }
-
+            
             let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) {
                 UIAlertAction in
                 self.dismiss(animated: true, completion: nil)

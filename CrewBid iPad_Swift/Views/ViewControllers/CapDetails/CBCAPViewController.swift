@@ -6,21 +6,16 @@ class CBCAPViewController: UIViewController {
 
     @IBOutlet weak var prevMonthLabel: UILabel!
     @IBOutlet weak var currentMonthLabel: UILabel!
-    
     @IBOutlet weak var tableView: UITableView!
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
     }
     
-
     @IBAction func btnOkAction(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
-    
 }
 
 

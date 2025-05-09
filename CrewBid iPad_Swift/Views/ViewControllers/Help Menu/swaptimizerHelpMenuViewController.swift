@@ -14,6 +14,12 @@ class swaptimizerHelpMenuViewController: UIViewController, UICollectionViewDeleg
     var items: [CItem] = []
     override func viewDidLoad() {
         super.viewDidLoad()
+       
+        setupUI()
+        // Do any additional setup after loading the view.
+    }
+    
+    func setupUI() {
         btnBack.setTitle("", for: .normal)
         btnDone.setTitle("", for: .normal)
         
@@ -22,16 +28,13 @@ class swaptimizerHelpMenuViewController: UIViewController, UICollectionViewDeleg
         layout.minimumInteritemSpacing = 0
         collectionView.setCollectionViewLayout(layout, animated: true)
         readitmes()
-        // Do any additional setup after loading the view.
     }
-    
 
     func readitmes() {
         items.append(CItem(imageName: "Folder", itemLabel: "Tutorial"))
         items.append(CItem(imageName: "Help_preserver", itemLabel: "FAQ"))
         items.append(CItem(imageName: "Notebook", itemLabel: "Definitions"))
     }
-    
     
     @IBAction func btnDoneAction(_ sender: Any) {
         self.dismiss(animated: false, completion: nil)
@@ -40,11 +43,10 @@ class swaptimizerHelpMenuViewController: UIViewController, UICollectionViewDeleg
     @IBAction func btnBackAction(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
     }
-    
-
 }
 
 extension swaptimizerHelpMenuViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return items.count
     }
@@ -85,7 +87,6 @@ extension swaptimizerHelpMenuViewController: UICollectionViewDelegate, UICollect
             print("default")
         }
     }
-    
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath)

@@ -13,7 +13,7 @@ import UIKit
 //}
 
 class CBBidListSortOptions: UIViewController {
-
+    
     @IBOutlet weak var backView: UIView!
     @IBOutlet weak var popBackView: UIView!
     @IBOutlet weak var popBackTopConstraint: NSLayoutConstraint!
@@ -23,13 +23,15 @@ class CBBidListSortOptions: UIViewController {
     
     var yAxis: CGFloat!
     var xAxis: CGFloat!
-
-//    var Delegate: CBSortOptionDelegate?
+    
+    //    var Delegate: CBSortOptionDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-   setupUI()
+        
+        setupUI()
     }
+    
     func setupUI() {
         self.view.backgroundColor = UIColor.black.withAlphaComponent(0.3)
         //A-Sort UI
@@ -43,6 +45,7 @@ class CBBidListSortOptions: UIViewController {
         // Add a tap gesture recognizer to the background view to dismiss the view controller.
         backView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissVC)))
     }
+    
     @objc private func dismissVC() {
         self.removeFromParent()
         self.view.isHidden = true

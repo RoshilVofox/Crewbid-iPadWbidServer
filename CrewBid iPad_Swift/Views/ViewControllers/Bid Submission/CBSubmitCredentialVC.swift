@@ -4,7 +4,6 @@ import UIKit
 
 class CBSubmitCredentialVC: UIViewController {
     
-    
     @IBOutlet weak var txtEmpNum: customUITextField!
     @IBOutlet weak var btnClose: UIButton!
     @IBOutlet weak var btnShowPwd: UIButton!
@@ -13,22 +12,33 @@ class CBSubmitCredentialVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupUI()
+    }
+    
+    func setupUI() {
         btnClose.setTitle("", for: .normal)
         btnShowPwd.setTitle("", for: .normal)
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         txtPassword.delegate = self
         txtEmpNum.delegate = self
+        
         finalAlert()
+        
+        self.view.showActivityIndicator()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+            self.view.hideActivityIndicator()
+        }
     }
-
 
     @IBAction func btnDismissActiomn(_ sender: Any) {
         self.dismiss(animated: true)
     }
+    
     @IBAction func btnGoAction(_ sender: Any) {
         if let presentingVC = self.presentingViewController {
             self.dismiss(animated: true) {
@@ -38,8 +48,8 @@ class CBSubmitCredentialVC: UIViewController {
                 presentingVC.present(vc, animated: true)
             }
         }
-        
     }
+    
     @IBAction func btnShowPasswordAction(_ sender: Any) {
     }
     

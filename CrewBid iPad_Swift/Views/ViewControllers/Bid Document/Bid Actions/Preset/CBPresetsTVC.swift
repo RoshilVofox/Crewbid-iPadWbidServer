@@ -26,7 +26,6 @@ class CBPresetsTVC: UIViewController {
     }
     
     var array: [PresetModel] = []
-    
     let preset1 = PresetModel(
         selected: 1,
         month: 5,
@@ -49,6 +48,7 @@ class CBPresetsTVC: UIViewController {
     func setupUI(){
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
     }
+    
     @IBAction func btnFilterAction(_ sender: Any) {
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBFilterRulesTableVC") as! CBFilterRulesTableVC
@@ -71,7 +71,6 @@ class CBPresetsTVC: UIViewController {
     func updatePresets() {
         tableView.reloadData()
     }
-    
 }
 
 
@@ -105,7 +104,6 @@ extension CBPresetsTVC: CBPresetCellDelegate{
         self.textFieldIsEditing = true
         self.tableView.setEditing(false, animated: false)
     }
-
     
     func nameTextFieldEndedEditing(presetCell: CBPresetCell) {
         self.textFieldIsEditing = false

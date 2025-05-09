@@ -3,6 +3,7 @@
 import UIKit
 
 class helpMenuItemsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    
     var helpMenuItems: [HelpMenuItem] = []
     struct HelpMenuItem {
         let imageName:String?
@@ -10,28 +11,29 @@ class helpMenuItemsViewController: UIViewController, UICollectionViewDataSource,
         let viewControllerName: String?
     }
     
-    
     @IBOutlet weak var collectionView: UICollectionView!
-    
     @IBOutlet weak var btnSecretBidload1: UIButton!
-    
     @IBOutlet weak var btnSecretBidload2: UIButton!
-    
     @IBOutlet weak var closeBtn: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupUI()
+        // Do any additional setup after loading the view.
+    }
+    
+    func setupUI() {
         collectionView.dataSource = self
         collectionView.delegate = self
         let layout = UICollectionViewFlowLayout()
         layout.minimumInteritemSpacing = 0
-                layout.minimumLineSpacing = 0
+        layout.minimumLineSpacing = 0
         collectionView.setCollectionViewLayout(layout, animated: true)
         btnSecretBidload1.setTitle("", for: .normal)
         btnSecretBidload2.setTitle("", for: .normal)
         closeBtn.setTitle("", for: .normal)
         readhelpMenuItems()
-        // Do any additional setup after loading the view.
     }
     
     @IBAction func btnSecretBidDownload(_ sender: Any) {
@@ -45,9 +47,6 @@ class helpMenuItemsViewController: UIViewController, UICollectionViewDataSource,
             }
         }
     }
-    
-    
-    
     
     func readhelpMenuItems() {
         helpMenuItems.removeAll()
@@ -63,36 +62,30 @@ class helpMenuItemsViewController: UIViewController, UICollectionViewDataSource,
         helpMenuItems.append(HelpMenuItem(imageName: "Vacation1", itemLabel: "Vacation", viewControllerName: "quickTutorial"))
         helpMenuItems.append(HelpMenuItem(imageName: "user", itemLabel: "User Account", viewControllerName: "quickTutorial"))
         helpMenuItems.append(HelpMenuItem(imageName: "agreement@2x", itemLabel: "Service Agreement", viewControllerName: "quickTutorial"))
-        
-        
-        
-        
-        
-        
-        
     }
-        
+    
     @IBAction func btnDismissAction(_ sender: Any) {
         self.dismiss(animated: true)
     }
+    
     // MARK: - Collection View
-        func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-            return helpMenuItems.count
-        }
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return helpMenuItems.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? helpMenuItemCollectionViewCell
+        cell?.itemLabel.text = helpMenuItems[indexPath.row].itemLabel
+        cell?.itemImage.image = UIImage(named: helpMenuItems[indexPath.row].imageName!)
         
-        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? helpMenuItemCollectionViewCell
-            cell?.itemLabel.text = helpMenuItems[indexPath.row].itemLabel
-            cell?.itemImage.image = UIImage(named: helpMenuItems[indexPath.row].imageName!)
-            
-            return cell!
-        }
+        return cell!
+    }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        let padding: CGFloat = 10
-//        let columnsInRow = 7
-//        let availableSpace = collectionView.frame.width - CGFloat(columnsInRow - 1) * padding
-//        let widthPerItem = availableSpace / CGFloat(columnsInRow)
+        //        let padding: CGFloat = 10
+        //        let columnsInRow = 7
+        //        let availableSpace = collectionView.frame.width - CGFloat(columnsInRow - 1) * padding
+        //        let widthPerItem = availableSpace / CGFloat(columnsInRow)
         return CGSize(width: collectionView.frame.width / 4, height: 160)
     }
     
@@ -103,84 +96,82 @@ class helpMenuItemsViewController: UIViewController, UICollectionViewDataSource,
         cell?.layer.cornerRadius = 5
         cell?.isSelected = true
         switch indexPath.item {
-            case 0:
+        case 0:
             let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "quickTutorialViewController") as! quickTutorialViewController
             self.navigationController?.pushViewController(vc, animated: true)
             break
             
         case 1:
-        let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "howToVideosViewController") as! CBHelpVideosController
-        self.navigationController?.pushViewController(vc, animated: true)
-        break
+            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "howToVideosViewController") as! CBHelpVideosController
+            self.navigationController?.pushViewController(vc, animated: true)
+            break
             
         case 2:
-        let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "defenitionsViewController") as! defenitionsViewController
-        self.navigationController?.pushViewController(vc, animated: true)
-        break
+            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "defenitionsViewController") as! defenitionsViewController
+            self.navigationController?.pushViewController(vc, animated: true)
+            break
             
         case 3:
-        let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "lineValuesViewController") as! lineValuesViewController
-        self.navigationController?.pushViewController(vc, animated: true)
-        break
+            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "lineValuesViewController") as! lineValuesViewController
+            self.navigationController?.pushViewController(vc, animated: true)
+            break
             
         case 4:
             let alert = UIAlertController(title: "Notice", message: "This action is not available right now.", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
             self.present(alert, animated: true, completion: nil)
             break
-
+            
             
         case 5:
-        let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "faqViewController") as! faqViewController
-        self.navigationController?.pushViewController(vc, animated: true)
-        break
+            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "faqViewController") as! faqViewController
+            self.navigationController?.pushViewController(vc, animated: true)
+            break
             
         case 6:
-        let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "mySubscriptionViewController") as! mySubscriptionViewController
-        self.navigationController?.pushViewController(vc, animated: true)
-        break
+            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "mySubscriptionViewController") as! mySubscriptionViewController
+            self.navigationController?.pushViewController(vc, animated: true)
+            break
             
         case 7:
-        let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "contactUsViewController") as! contactUsViewController
-        self.navigationController?.pushViewController(vc, animated: true)
-        break
+            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "contactUsViewController") as! contactUsViewController
+            self.navigationController?.pushViewController(vc, animated: true)
+            break
             
         case 8:
-        let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "latestNewsViewController") as! latestNewsViewController
-        self.navigationController?.pushViewController(vc, animated: true)
-        break
+            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "latestNewsViewController") as! latestNewsViewController
+            self.navigationController?.pushViewController(vc, animated: true)
+            break
             
         case 9:
-        let userAccount = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "swaptimizerHelpMenuViewController") as! swaptimizerHelpMenuViewController
-        self.navigationController?.pushViewController(userAccount, animated: true)
-        break
+            let userAccount = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "swaptimizerHelpMenuViewController") as! swaptimizerHelpMenuViewController
+            self.navigationController?.pushViewController(userAccount, animated: true)
+            break
             
         case 10:
-        let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "userAccountViewController") as! userAccountViewController
-        self.navigationController?.pushViewController(vc, animated: true)
-        break
+            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "userAccountViewController") as! userAccountViewController
+            self.navigationController?.pushViewController(vc, animated: true)
+            break
             
             
         case 11:
-        let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "serviceAgreementViewController") as! serviceAgreementViewController
-        self.navigationController?.pushViewController(vc, animated: true)
-        break
+            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "serviceAgreementViewController") as! serviceAgreementViewController
+            self.navigationController?.pushViewController(vc, animated: true)
+            break
             
             
         default:
             print("default")
         }
         
-//        userAccount.modalPresentationStyle = .overCurrentContext
-//        present(userAccount, animated: false)
-        
+        //        userAccount.modalPresentationStyle = .overCurrentContext
+        //        present(userAccount, animated: false)
     }
+    
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath)
         cell?.layer.borderColor = UIColor.clear.cgColor
         cell?.isSelected = false
     }
-        
-        
-    }
+}
 

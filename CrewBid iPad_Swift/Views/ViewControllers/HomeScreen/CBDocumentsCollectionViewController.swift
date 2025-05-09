@@ -9,9 +9,6 @@ import UIKit
 
 class CBDocumentsCollectionViewController: BaseViewController {
 
-    
-
-    
     @IBOutlet weak var bidDownloadButton: UIButton!
     @IBOutlet weak var settingsButton: UIButton!
     @IBOutlet weak var lblHome: UILabel!
@@ -24,12 +21,13 @@ class CBDocumentsCollectionViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         viewModel.initialize()
         collectionView.delegate = self
         collectionView.dataSource = self
-        
         bdPrd = 0
     }
+    
     @IBAction func downloadBid(_ sender: Any) {
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBNewBidVC") as! CBNewBidVC
@@ -47,7 +45,6 @@ class CBDocumentsCollectionViewController: BaseViewController {
         let frame = CGRect(x: 15, y: 35, width: 0, height: 0)
         vc.showPopover(sourceView: settingsButton, sourceRect: frame)
     }
-    
     
     @IBAction func editAction(_ sender: Any) {
         print("Edit")
@@ -67,6 +64,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
 
 
 extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 2
     }
@@ -75,7 +73,7 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DocumentCell", for: indexPath) as! DocumentCell
         cell.layer.cornerRadius = 10
         cell.layer.borderWidth = 8
-        cell.layer.borderColor = CBColor.purpleColor.cgColor
+        cell.layer.borderColor = CBColor.cbPurpleColor?.cgColor
         return cell
     }
     
@@ -84,5 +82,4 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
         let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
         self.navigationController?.pushViewController(vc, animated: true)
     }
-    
 }

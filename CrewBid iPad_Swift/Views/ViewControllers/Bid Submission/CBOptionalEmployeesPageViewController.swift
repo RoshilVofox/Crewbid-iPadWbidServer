@@ -23,18 +23,20 @@ class CBOptionalEmployeesPageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupUI()
+    }
+    
+    func setupUI() {
         txtEmpNum1.delegate = self
         txtEmpNum2.delegate = self
         btnClose.setTitle("", for: .normal)
         btnNext.setTitle("", for: .normal)
-
-       
     }
     
     @IBAction func btnDismissAction(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
-    
     
     @IBAction func btnNextAction(_ sender: Any) {
         if let presentingVC = self.presentingViewController {

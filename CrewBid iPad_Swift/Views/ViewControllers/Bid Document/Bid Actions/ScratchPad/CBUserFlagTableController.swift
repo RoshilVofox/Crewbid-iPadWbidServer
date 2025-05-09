@@ -81,14 +81,12 @@ class CBUserFlagTableController: UIViewController,UITableViewDelegate,UITableVie
     var userFlagColors: NSDictionary = NSDictionary()
     var arrowDirection: UIPopoverArrowDirection = [.up,.down]
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         userFlagTable.rowHeight = 52
         userFlagTable.layer.cornerRadius = 10
     }
     
-
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 8
     }
@@ -148,23 +146,31 @@ class CBUserFlagTableController: UIViewController,UITableViewDelegate,UITableVie
         //circleView.layer.borderWidth = 0.5;
         return circleView
     }
+    
     @objc class func colorForUserFlagType(flagType: CBUserFlagType) -> UIColor  {
         var color: UIColor? = nil
         switch flagType {
         case CBUserFlagType.none:
             color = UIColor.clear
+            
         case CBUserFlagType.yellow:
             color = CBColor.faPosCColor
+            
         case CBUserFlagType.orange:
             color = UIColor.orange
+            
         case CBUserFlagType.red:
             color = CBColor.faPosDColor
+            
         case CBUserFlagType.green:
             color = CBColor.faPosBColor
+            
         case CBUserFlagType.blue:
             color = CBColor.faPosAColor
+            
         case CBUserFlagType.brown:
             color = CBColor.oldbrownColor
+            
         case CBUserFlagType.pink:
             color = UIColor.systemPink.withAlphaComponent(0.8)
             

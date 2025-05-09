@@ -11,10 +11,15 @@ class contactUsViewController: UIViewController, UICollectionViewDelegateFlowLay
         var imageName: String
         var itemLabel: String
     }
-    
     var items: [CItem] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+     setupUI()
+    }
+    
+    func setupUI() {
         btnBack.setTitle("", for: .normal)
         btnDone.setTitle("", for: .normal)
         readItems()
@@ -23,15 +28,12 @@ class contactUsViewController: UIViewController, UICollectionViewDelegateFlowLay
         layout.minimumInteritemSpacing = 20
         layout.minimumLineSpacing = 0
         collectionView.setCollectionViewLayout(layout, animated: true)
-        // Do any additional setup after loading the view.
-        
     }
     
     func readItems() {
         items.append(CItem(imageName: "Chat", itemLabel: "Send a\nComment/Question"))
         items.append(CItem(imageName: "Box", itemLabel: "Report a Bug"))
     }
-    
     
     @IBAction func btnBackAction(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
@@ -41,8 +43,6 @@ class contactUsViewController: UIViewController, UICollectionViewDelegateFlowLay
         self.dismiss(animated: false, completion: nil)
     }
     
-    
-
 }
 
 extension contactUsViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -60,6 +60,4 @@ extension contactUsViewController: UICollectionViewDelegate, UICollectionViewDat
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 200, height: 200)
     }
-    
-    
 }

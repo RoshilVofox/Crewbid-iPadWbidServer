@@ -9,7 +9,6 @@ import UIKit
 
 class CBScratchPadVC: BaseViewController {
 
-    
     @IBOutlet weak var lblTrashLineCount: UILabel!
     @IBOutlet weak var btnTrash: UIButton!
     @IBOutlet weak var btnFlag: UIButton!
@@ -17,10 +16,6 @@ class CBScratchPadVC: BaseViewController {
     @IBOutlet weak var btnMoveAllToBidList: UIButton!
     @IBOutlet weak var lblScratchpadLineCount: UILabel!
     @IBOutlet weak var scratchPadTableView: UITableView!
-    
-
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,6 +45,7 @@ class CBScratchPadVC: BaseViewController {
         lineValuesController.showPopover(sourceView: self.btnFlag)
     }
 }
+
 extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -61,6 +57,7 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
         cell.selectionStyle = .none
         return cell
     }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 340
     }

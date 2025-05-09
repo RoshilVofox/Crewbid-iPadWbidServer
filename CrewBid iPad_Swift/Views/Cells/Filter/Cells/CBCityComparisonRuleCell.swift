@@ -8,12 +8,14 @@
 import UIKit
 
 class CBCityComparisonRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
+    
     weak var delegate: CBFilterRuleCellDelegate?
     @IBOutlet weak var deleteButton: UIButton!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var valueButton: UIButton!
     @IBOutlet weak var cityTextField: UITextField!
     @IBOutlet weak var comparisonButton: UIButton!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
