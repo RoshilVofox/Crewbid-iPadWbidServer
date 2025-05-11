@@ -74,11 +74,23 @@ class CBBiddataDownloadVC: UIViewController {
         }
     }
     
-    @IBAction func btnNextAction(_ sender: Any) {
-        let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
-        vc.isFromHistoric = self.isFromHistoric
-        self.navigationController?.pushViewController(vc, animated: true)
+    @IBAction func btnNextAction(_ sender: UIButton) {
+        if selectedDomicile == nil {
+            self.shakeView(view: self.viewBase)
+        } else if selectedPosition == nil {
+            self.shakeView(view: self.viewPosition)
+        } else if selectedRound == nil {
+            self.shakeView(view: self.viewRound)
+        } else if month == nil {
+            self.shakeView(view: self.viewMonth)
+        } else if Year == nil {
+            self.shakeView(view: self.viewYear)
+        } else {
+            let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
+            vc.isFromHistoric = self.isFromHistoric
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
     @IBAction func btnBackAction(_ sender: Any) {
@@ -96,11 +108,16 @@ class CBBiddataDownloadVC: UIViewController {
             } else {
                 // Reset background color for other buttons
                 let button = self.view.viewWithTag(i) as! UIButton
-                button.backgroundColor = .secondarySystemBackground
+                if #available(iOS 13.0, *) {
+                    button.backgroundColor = .secondarySystemBackground
+                } else {
+                    button.backgroundColor = .white
+                }
                 
             }
         }
         print("Base: \(selectedDomicile!)")
+//        navigationAction()
     }
     
     @IBAction func btnPositionAction(_ sender: UIButton) {
@@ -110,7 +127,11 @@ class CBBiddataDownloadVC: UIViewController {
                 button.backgroundColor = UIColor.systemOrange
             } else {
                 let button = self.view.viewWithTag(i) as! UIButton
-                button.backgroundColor = .secondarySystemBackground
+                if #available(iOS 13.0, *) {
+                    button.backgroundColor = .secondarySystemBackground
+                } else {
+                    button.backgroundColor = .white
+                }
             }
         }
         switch sender.tag {
@@ -119,7 +140,29 @@ class CBBiddataDownloadVC: UIViewController {
         case 16:selectedPosition = "FA"
         default:break
         }
+        if sender.tag == 14 || sender.tag == 15{
+            btnAUS.alpha = 0.3
+            btnFLL.alpha = 0.3
+            if #available(iOS 13.0, *) {
+                btnAUS.backgroundColor = .secondarySystemBackground
+                btnFLL.backgroundColor = .secondarySystemBackground
+            } else {
+                btnAUS.backgroundColor = .white
+                btnFLL.backgroundColor = .white
+            }
+            btnAUS.isUserInteractionEnabled = false
+            btnFLL.isUserInteractionEnabled = false
+            if selectedDomicile == "AUS" || selectedDomicile == "FLL"{
+                selectedDomicile = nil
+            }
+        }else{
+            btnAUS.alpha = 1
+            btnFLL.alpha = 1
+            btnAUS.isUserInteractionEnabled = true
+            btnFLL.isUserInteractionEnabled = true
+        }
         print("Position: \(selectedPosition!)")
+//        navigationAction()
     }
     
     @IBAction func btnRoundAction(_ sender: UIButton) {
@@ -129,7 +172,11 @@ class CBBiddataDownloadVC: UIViewController {
                 button.backgroundColor = UIColor.systemOrange
             } else {
                 let button = self.view.viewWithTag(i) as! UIButton
-                button.backgroundColor = .secondarySystemBackground
+                if #available(iOS 13.0, *) {
+                    button.backgroundColor = .secondarySystemBackground
+                } else {
+                    button.backgroundColor = .white
+                }
             }
         }
         switch sender.tag {
@@ -138,6 +185,7 @@ class CBBiddataDownloadVC: UIViewController {
         default:break
         }
         print("Round: \(selectedRound!)")
+//        navigationAction()
     }
     
     @IBAction func btnMonthAction(_ sender: UIButton) {
@@ -147,7 +195,11 @@ class CBBiddataDownloadVC: UIViewController {
                 button.backgroundColor = UIColor.systemOrange
             } else {
                 let button = self.view.viewWithTag(i) as! UIButton
-                button.backgroundColor = .secondarySystemBackground
+                if #available(iOS 13.0, *) {
+                    button.backgroundColor = .secondarySystemBackground
+                } else {
+                    button.backgroundColor = .white
+                }
             }
         }
         switch sender.tag {
@@ -166,16 +218,21 @@ class CBBiddataDownloadVC: UIViewController {
         default:break
         }
         print("Month: \(month!)")
+//        navigationAction()
     }
     
     @IBAction func btnYearAction(_ sender: UIButton) {
         month = nil
         // Reset background color for all month buttons
-        //
-        //        for i in (1..<13) {
-        //            let button = self.view.viewWithTag(i) as! UIButton
-        //            button.backgroundColor = .secondarySystemBackground
-        //        }
+        
+                for i in (1..<13) {
+                    let button = self.view.viewWithTag(i) as! UIButton
+                    if #available(iOS 13.0, *) {
+                        button.backgroundColor = .secondarySystemBackground
+                    } else {
+                        button.backgroundColor = .white
+                    }
+                }
         // Iterate over a range of button tags representing years
         
         for i in (60..<63) {
@@ -184,9 +241,52 @@ class CBBiddataDownloadVC: UIViewController {
                 button.backgroundColor = UIColor.systemOrange
             } else {
                 let button = self.view.viewWithTag(i) as! UIButton
-                button.backgroundColor = .secondarySystemBackground
+                if #available(iOS 13.0, *) {
+                    button.backgroundColor = .secondarySystemBackground
+                } else {
+                    button.backgroundColor = .white
+                }
             }
         }
+        if sender.tag == 60{
+            let currentDate = Date()
+            let indexYear = Calendar.current.component(.year, from: currentDate)
+            Year = indexYear - 2
+            if isFromHistoric{
+                let btnArray:[UIButton] = [btnJAN,btnFEB,btnMAR,btnAPR,btnMAY,btnJUN,btnJUL,btnAUG,btnSEP,btnOCT,btnNOV,btnDEC]
+                for button in btnArray{
+                    button.isUserInteractionEnabled = true
+                    button.alpha = 1
+                }
+            }
+        }else if sender.tag == 61{
+            let currentDate = Date()
+            let indexYear = Calendar.current.component(.year, from: currentDate)
+            Year = indexYear - 1
+            if isFromHistoric{
+                let btnArray:[UIButton] = [btnJAN,btnFEB,btnMAR,btnAPR,btnMAY,btnJUN,btnJUL,btnAUG,btnSEP,btnOCT,btnNOV,btnDEC]
+                for button in btnArray{
+                    button.isUserInteractionEnabled = true
+                    button.alpha = 1
+                }
+            }
+        }else if sender.tag == 62{
+            let currentDate = Date()
+            let indexYear = Calendar.current.component(.year, from: currentDate)
+            Year = indexYear
+            if isFromHistoric{
+                let btnArray:[UIButton] = [btnJAN,btnFEB,btnMAR,btnAPR,btnMAY,btnJUN,btnJUL,btnAUG,btnSEP,btnOCT,btnNOV,btnDEC]
+                let monthInt = Calendar.current.component(.month, from: Date())
+                let currentMonth:Int = monthInt
+                for button in btnArray{
+                    if button.tag > currentMonth{
+                        button.isUserInteractionEnabled = false
+                        button.alpha = 0.3
+                    }
+                }
+            }
+        }
+//        navigationAction()
     }
     
     func currentYear() -> String {
@@ -226,6 +326,19 @@ class CBBiddataDownloadVC: UIViewController {
         }else{
             lblTitle.text = "New Bid Data"
         }
+        let currentDate = Date()
+        let indexMonth = Calendar.current.component(.month, from: currentDate)
+        let indexYear = Calendar.current.component(.year, from: currentDate)
+        let year = CBUtils.getYearforBid(month: indexMonth, year: indexYear)
+        btnBeforePrevious.setTitle("\(year-2)", for: .normal)
+        btnPreviousYear.setTitle("\(year-1)", for: .normal)
+        btnCurrentYear.setTitle("\(year)", for: .normal)
+        month = indexMonth
+        Year = year
+        if month == 12{
+            Year = year - 1
+        }
+        
         
         if !isFromHistoric {
             //Year view hiding for new bid period
@@ -272,15 +385,30 @@ class CBBiddataDownloadVC: UIViewController {
             //                }
             //            }
         }
-        //Year button title
-        let currentDate = Date()
-        let nextMonth = Calendar.current.date(byAdding: .month, value: 1, to: currentDate) ?? currentDate
-        let nextMonthYear = Calendar.current.component(.year, from: nextMonth)
+
         
-        btnBeforePrevious.setTitle("\(nextMonthYear - 2)", for: UIControl.State.normal)
-        btnPreviousYear.setTitle("\(nextMonthYear - 1)", for: UIControl.State.normal)
-        btnCurrentYear.setTitle("\(nextMonthYear)", for: UIControl.State.normal)
-        
-        
+    }
+    func shakeView(view: UIView){
+        let animation = CABasicAnimation(keyPath: "position")
+        animation.duration = 0.07
+        animation.repeatCount = 3
+        animation.autoreverses = true
+        animation.fromValue = NSValue(cgPoint: CGPoint(x: view.center.x - 10, y: view.center.y))
+        animation.toValue = NSValue(cgPoint: CGPoint(x: view.center.x + 10, y: view.center.y))
+        view.layer.add(animation, forKey: "position")
+    }
+    
+    //Automatic navigation
+    func navigationAction() {
+        if selectedDomicile == nil || selectedPosition == nil || selectedRound == nil || month == nil || Year == nil {
+            return
+        } else {
+            let storyboard : UIStoryboard = UIStoryboard(name: "BidInfo", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
+            vc.isFromHistoric = self.isFromHistoric
+//            vc.preferredContentSize = CGSize(width: 600, height: 500)
+            self.navigationController?.pushViewController(vc, animated: true)
+//            NotificationCenter.default.post(name: NSNotification.Name("contentSizechanging"), object: CGSize(width: 600, height: 540))
+        }
     }
 }
