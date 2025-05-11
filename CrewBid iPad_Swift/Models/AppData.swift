@@ -22,6 +22,8 @@ class AppData {
         ["category": 5, "type": 0],
 //        ["category": 6, "type": 0]
     ]
+    
+    var sortsToBeAddedInTable: [[String: Int]] = []
 
     
     private init() {}  // Prevents outside instantiation

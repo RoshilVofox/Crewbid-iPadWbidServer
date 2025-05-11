@@ -16,10 +16,26 @@ class CBLineSortsTVC: UIViewController {
     @IBOutlet weak var btnSort: UIButton!
     @IBOutlet weak var btnPreset: UIButton!
     @IBOutlet weak var btnBids: UIButton!
+    @IBOutlet weak var tableView: UITableView!
+    
+    var cellIdentifiers: [String] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        cellIdentifiers.append("LineSortCell")
+        print("hi")
         setupUI()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(self, selector: #selector(updateLines), name: NSNotification.Name("refreshLines"), object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(deleteCellRow), name: Notification.Name("DeleteCellNotification"), object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver("refreshLines")
+        NotificationCenter.default.removeObserver("DeleteCellNotification")
     }
     
     func setupUI(){
@@ -93,5 +109,35 @@ class CBLineSortsTVC: UIViewController {
             btnBidListCount.isHidden = false
         }
     }
+    
+    @objc func updateLines() {
+        let arr = AppData.shared.sortsToBeAddedInTable
+        let indexpath = arr.count - 1
+//        let newRow = cellIdentifier(for: arr[indexpath]["category"]!, type: arr[indexpath]["type"]!)!
+        cellIdentifiers.append("LineSortCell")
+        tableView.reloadData()
+    }
+}
+
+extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return cellIdentifiers.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "LineSortCell", for: indexPath)
+        return cell
+    }
+    @objc func deleteCellRow(_ notification: Notification) {
+        guard let cell = notification.object as? UITableViewCell,
+              let indexPath = tableView.indexPath(for: cell) else { return }
+
+//        AppData.shared.filtersToBeAddedInTable.remove(at: indexPath.row)
+        cellIdentifiers.remove(at: indexPath.row)
+
+//        print(AppData.shared.filtersToBeAddedInTable.count)
+        tableView.deleteRows(at: [indexPath], with: .fade)
+    }
+    
 }
 

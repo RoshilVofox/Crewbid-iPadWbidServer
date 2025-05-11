@@ -209,6 +209,38 @@ extension BILine {
     @NSManaged public var trips: NSSet?
     @NSManaged public var vacationArrayFromServer: VacationArrayFromServer?
     @NSManaged public var workBlocks: NSSet?
+    
+    
+    @objc enum BILineSortCategory : Int {
+        case BIStandardSortCategory
+        // 0
+        case BICitiesLineSortCategory
+        // 1
+        case BIDeadheadsLineSortCategory
+        // 2
+        case BIPositionsLineSortCategory
+        // 3
+        case BICommutingLineSortCategory
+        // 4
+        case BISwaptimizerLineSortCategory
+        // 5
+        case BIPassesThruBaseLineSortCategory
+        // 6
+        case BIFaVacationLineSortCategory
+        // 7
+        case BIDaysOffLineSortCategory
+        // 8
+        case BICommutabilityLineSortCategory
+        // 9
+        case BIFlagLineSortCategory
+        // 10
+        case BIDaysWorkLineSortCategory
+        // 11
+        case BIDaysTripStartSortCategory
+        // 12
+        
+        
+    }
 
 }
 

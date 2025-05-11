@@ -5749,6 +5749,10 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="Eml-Ur-yj1" id="qB3-Zi-1kw"/>
+                                    <outlet property="delegate" destination="Eml-Ur-yj1" id="48E-cr-wkb"/>
+                                </connections>
                             </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="UaM-gL-52H"/>
@@ -5776,6 +5780,7 @@
                         <outlet property="btnSort" destination="cX7-sT-F51" id="ht5-D0-XXN"/>
                         <outlet property="btnSortTheBidlist" destination="8ir-BH-bH8" id="cg3-nb-gpS"/>
                         <outlet property="btnSortTheScratchpad" destination="3Fc-9X-H4V" id="GvF-0X-frn"/>
+                        <outlet property="tableView" destination="LJ8-O3-tqg" id="Xdn-fj-otl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Yzc-HH-EXG" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

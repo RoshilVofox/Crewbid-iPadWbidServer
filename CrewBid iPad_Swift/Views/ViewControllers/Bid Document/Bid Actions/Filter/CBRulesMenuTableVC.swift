@@ -119,11 +119,6 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
                 self.dismiss(animated: true, completion: nil)
                 return
             }
-            //MARK: Used delegate method, needed to be removed when using actual data
-            if let delegate = delegate as? CBRulesMenuFilterDelegate {
-                delegate.filterSelected(filter: item as NSDictionary)
-                self.dismiss(animated: true, completion: nil)
-            }
         }
     }
 }

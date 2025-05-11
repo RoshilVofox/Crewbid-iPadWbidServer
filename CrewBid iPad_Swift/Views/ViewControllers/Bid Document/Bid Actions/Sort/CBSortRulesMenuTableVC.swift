@@ -86,5 +86,14 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
             subRulesTableViewController.title = (item["title"] as! String)
             navigationController?.pushViewController(subRulesTableViewController, animated: true)
         }
+        else {
+//            adding the sort part
+            let newRow = [
+                "category": item["category"] as! Int,
+                "type": item["type"] as? Int ?? 0
+            ]
+            AppData.shared.sortsToBeAddedInTable.append(newRow)
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
+        }
     }
 }

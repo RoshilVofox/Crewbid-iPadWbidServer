@@ -21,5 +21,9 @@ class CBCommutabilitySortCell: UITableViewCell {
     }
 
     @IBAction func btnCloseAction(_ sender: Any) {
+        NotificationCenter.default.post(
+            name: Notification.Name("DeleteCellNotification"),
+            object: self // Pass the cell itself as the object
+        )
     }
 }
