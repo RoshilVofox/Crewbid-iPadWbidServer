@@ -9,8 +9,8 @@ import Foundation
 import UIKit
 
 //crew type
-enum BICrewPositionType : Int {
-    case Captain
+enum BICrewPositionType : Int, CaseIterable {
+    case Captain =  0
     case FirstOfficer
     case FlightAttendant
 }
