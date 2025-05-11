@@ -21,5 +21,7 @@ class CBUtils{
         }
         return yearToReturn
     }
-    
+    class func AppVersion() -> String{
+        return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
+    }
 }

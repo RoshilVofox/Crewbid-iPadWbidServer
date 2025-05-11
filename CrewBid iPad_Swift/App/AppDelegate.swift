@@ -19,27 +19,7 @@ private let faqsObjectID = "G41RDHdiL9"
 private let latestNewsObjectID = "NR58hbGSk3"
 
 
-var dicCurrentBidDetails: [String: Any]?
-var webData: Data?
-var Domain: String?
-var isNetWorkAvailable: Bool = false
-var IPAddress: String?
-var isMockData: Bool = false
-var onLaunch: Bool = false
-var isSenioritySecretOn: Bool = false
-var isHistoricBid: Bool = false
-var swaptimizerClicked: Bool = false
-var isAvailableSouthWestNetwork: Bool = false
-var objCBDocument: CBDocumentsCollectionViewController?
-var dicSSIDDetails: NSMutableDictionary?
-var mockDataMonth: Int?
-var mockDataYear: Int?
-var createEmpNo: String?
-var objReachability: Reachability?
-var isNeedToDownloadSeniorityFromServer: Bool = false
-var isFlightNetwork: Bool = false
-var isPingSuccess: Bool = false
-var ObjUserAccount:CBUserAccountDetail?
+
 enum NetworkType: Int {
     case ground = 0
     case free
@@ -49,7 +29,28 @@ enum NetworkType: Int {
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLocationManagerDelegate, UNUserNotificationCenterDelegate {
-
+    
+    var dicCurrentBidDetails: [String: Any]?
+    var webData: Data?
+    var Domain: String?
+    var isNetWorkAvailable: Bool = false
+    var IPAddress: String?
+    var isMockData: Bool = false
+    var onLaunch: Bool = false
+    var isSenioritySecretOn: Bool = false
+    var isHistoricBid: Bool = false
+    var swaptimizerClicked: Bool = false
+    var isAvailableSouthWestNetwork: Bool = false
+    var objCBDocument: CBDocumentsCollectionViewController?
+    var dicSSIDDetails: NSMutableDictionary?
+    var mockDataMonth: Int?
+    var mockDataYear: Int?
+    var createEmpNo: String?
+    var objReachability: Reachability?
+    var isNeedToDownloadSeniorityFromServer: Bool = false
+    var isFlightNetwork: Bool = false
+    var isPingSuccess: Bool = false
+    var ObjUserAccount:CBUserAccountDetail?
 
     var pinger:SimplePing?
     var sendTimer: Timer?

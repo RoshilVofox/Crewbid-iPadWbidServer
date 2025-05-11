@@ -57,7 +57,21 @@ class CBCredentialsPageVC: UIViewController {
         txtPassword.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtPassword.frame.height))
         txtPassword.leftViewMode = .always
     }
+    
+    func verifyBidInfoFileDownload(completion: @escaping (_ shouldDownload: Bool, _ shouldOpen: Bool) -> Void) {
+        
+    }
+    
+    
 }
+
+
+
+
+
+
+
+
 
 
 extension CBCredentialsPageVC: UITextFieldDelegate {
@@ -145,6 +159,20 @@ extension CBCredentialsPageVC: UITextFieldDelegate {
     }
     
     func loginAction(){
+        var userIDParam = txtUserID.text!
+        if txtUserID.text!.prefix(1) != "x" && txtUserID.text!.prefix(1) != "e" {
+            if txtUserID.text! == DevUserID {
+                userIDParam = "x\(txtUserID.text!)"
+            } else {
+                userIDParam = "e\(txtUserID.text!)"
+            }
+        }
+        txtUserID.text! = userIDParam
+        UserDefaults.standard.set(txtUserID.text, forKey: KCBEmpNumWithPrefix)
+        
+        
+        
+        
         self.dismiss(animated: false)
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
