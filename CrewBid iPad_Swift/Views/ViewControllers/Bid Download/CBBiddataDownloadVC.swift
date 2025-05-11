@@ -116,6 +116,27 @@ class CBBiddataDownloadVC: UIViewController {
                 
             }
         }
+                if sender.tag == 41 || sender.tag == 45{
+                    btnCP.alpha = 0.3
+                    btnFO.alpha = 0.3
+                    if #available(iOS 13.0, *) {
+                        btnCP.backgroundColor = .secondarySystemBackground
+                        btnFO.backgroundColor = .secondarySystemBackground
+                    } else {
+                        btnCP.backgroundColor = .white
+                        btnFO.backgroundColor = .white
+                    }
+                    btnCP.isUserInteractionEnabled = false
+                    btnFO.isUserInteractionEnabled = false
+                    if selectedPosition == "CP" || selectedPosition == "FO"{
+                        selectedPosition = nil
+                    }
+                }else{
+                    btnCP.alpha = 1
+                    btnFO.alpha = 1
+                    btnCP.isUserInteractionEnabled = true
+                    btnFO.isUserInteractionEnabled = true
+                }
         print("Base: \(selectedDomicile!)")
 //        navigationAction()
     }
@@ -140,27 +161,7 @@ class CBBiddataDownloadVC: UIViewController {
         case 16:selectedPosition = "FA"
         default:break
         }
-        if sender.tag == 14 || sender.tag == 15{
-            btnAUS.alpha = 0.3
-            btnFLL.alpha = 0.3
-            if #available(iOS 13.0, *) {
-                btnAUS.backgroundColor = .secondarySystemBackground
-                btnFLL.backgroundColor = .secondarySystemBackground
-            } else {
-                btnAUS.backgroundColor = .white
-                btnFLL.backgroundColor = .white
-            }
-            btnAUS.isUserInteractionEnabled = false
-            btnFLL.isUserInteractionEnabled = false
-            if selectedDomicile == "AUS" || selectedDomicile == "FLL"{
-                selectedDomicile = nil
-            }
-        }else{
-            btnAUS.alpha = 1
-            btnFLL.alpha = 1
-            btnAUS.isUserInteractionEnabled = true
-            btnFLL.isUserInteractionEnabled = true
-        }
+
         print("Position: \(selectedPosition!)")
 //        navigationAction()
     }
