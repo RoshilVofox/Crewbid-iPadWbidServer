@@ -5147,6 +5147,9 @@
                                                     <state key="normal" image="whileClose">
                                                         <color key="titleShadowColor" name="HomeBackGround"/>
                                                     </state>
+                                                    <connections>
+                                                        <action selector="btnCloseAction:" destination="lUM-52-Gco" eventType="touchUpInside" id="nJJ-UH-A5w"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
@@ -5403,6 +5406,9 @@
                                                     <state key="highlighted">
                                                         <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     </state>
+                                                    <connections>
+                                                        <action selector="btnCloseAction:" destination="KJQ-f7-mnx" eventType="touchUpInside" id="KIw-er-eAa"/>
+                                                    </connections>
                                                 </button>
                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="6" translatesAutoresizingMaskIntoConstraints="NO" id="r8t-mO-2Hh">
                                                     <rect key="frame" x="473.5" y="37" width="90.5" height="177"/>
@@ -5562,6 +5568,9 @@
                                                             <state key="highlighted">
                                                                 <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="btnCloseAction:" destination="kIk-yx-12w" eventType="touchUpInside" id="IRZ-S8-ham"/>
+                                                            </connections>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o4b-cY-QiZ">
                                                             <rect key="frame" x="490" y="129.5" width="80" height="31"/>
@@ -5662,6 +5671,9 @@
                                                             <state key="highlighted">
                                                                 <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="btnCloseAction:" destination="cm3-Ga-IrQ" eventType="touchUpInside" id="XJ8-8h-hLs"/>
+                                                            </connections>
                                                         </button>
                                                     </subviews>
                                                     <color key="backgroundColor" name="contentBgColor"/>
@@ -5721,6 +5733,9 @@
                                                     <state key="highlighted">
                                                         <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     </state>
+                                                    <connections>
+                                                        <action selector="btnCloseAction:" destination="V5b-51-wXo" eventType="touchUpInside" id="2ye-5R-HJ0"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>

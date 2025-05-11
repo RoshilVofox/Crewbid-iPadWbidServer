@@ -7,9 +7,8 @@
 
 import UIKit
 
-class CBWorkBlockRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
+class CBWorkBlockRuleCell: UITableViewCell {
     
-    weak var delegate: CBFilterRuleCellDelegate?
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var valueButton: UIButton!
     @IBOutlet weak var comparisonButton: UIButton!
@@ -33,6 +32,9 @@ class CBWorkBlockRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
     }
 
     @IBAction func deleteCellAction(_ sender: Any) {
-        delegate?.deleteCellRow(in: self)
+        NotificationCenter.default.post(
+                name: Notification.Name("DeleteCellNotification"),
+                object: self // Pass the cell itself as the object
+            )
     }
 }

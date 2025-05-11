@@ -8,14 +8,6 @@
 
 import UIKit
 
-protocol CBFilterRuleCellDelegateAssignable: AnyObject {
-    var delegate: CBFilterRuleCellDelegate? { get set }
-}
-
-protocol CBFilterRuleCellDelegate: AnyObject {
-    func deleteCellRow(in cell: UITableViewCell)
-}
-
 class CBFilterRulesTableVC: BaseViewController {
     
     @IBOutlet weak var btnAdd: UIButton!
@@ -24,15 +16,34 @@ class CBFilterRulesTableVC: BaseViewController {
     @IBOutlet weak var objFilterTableView: UITableView!
     
     var selectedFilters: [String] = []
-    
+    var cellidentifiers: [String] = []
     override func viewDidLoad() {
         super.viewDidLoad()
  
+        initialCellidentifiers()
         setupUI()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(self, selector: #selector(updateLines), name: NSNotification.Name("refreshLines"), object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(deleteCellRow), name: Notification.Name("DeleteCellNotification"), object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver("refreshLines")
+        NotificationCenter.default.removeObserver("DeleteCellNotification")
     }
     
     func setupUI(){
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
+    }
+    
+    func initialCellidentifiers() {
+        for i in AppData.shared.filtersToBeAddedInTable {
+            let item = cellIdentifier(for: i["category"]!, type: i["type"]!)!
+            cellidentifiers.append(item)
+        }
     }
     
     @IBAction func btnSortAction(_ sender: Any) {
@@ -72,7 +83,7 @@ class CBFilterRulesTableVC: BaseViewController {
     @IBAction func btnBidListCountAction(_ sender: Any) {
     }
     
-    var cellidentifiers = ["LineTypeFilterRuleCell","AmPmFilterRuleCell","WeekdayRuleCell","TripLengthRuleCell"]
+//    var cellidentifiers = ["LineTypeFilterRuleCell","AmPmFilterRuleCell","WeekdayRuleCell","TripLengthRuleCell"]
     
     var kLineTypeFilterRuleCell = "LineTypeFilterRuleCell"
     var kAmPmFilterRuleCell = "AmPmFilterRuleCell"
@@ -92,14 +103,14 @@ class CBFilterRulesTableVC: BaseViewController {
     var kReportReleaseRuleCell = "ReportReleaseCell"
     var kworkBlockRuleCell = "CBWorkBlockRuleCell"
     
-//    seting filter identifier
+    //    seting filter identifier
     func cellIdentifier(for category: BIFilterRuleCategory.RawValue, type: Int) -> String? {
         var cellIdentifier: String? = nil
         switch category {
-    
+            
         case BIFilterRuleCategory.BIWorkBlockRuleCategory.rawValue:
             cellIdentifier = kworkBlockRuleCell
-        
+            
         case BIFilterRuleCategory.BITypeFilterRuleCategory.rawValue:
             cellIdentifier = kLineTypeFilterRuleCell
             
@@ -180,8 +191,16 @@ class CBFilterRulesTableVC: BaseViewController {
         }
         return cellIdentifier
     }
+    
+//    MARK: refresh line notification
+    @objc func updateLines() {
+        let arr = AppData.shared.filtersToBeAddedInTable
+        let indexpath = arr.count - 1
+        let newRow = cellIdentifier(for: arr[indexpath]["category"]!, type: arr[indexpath]["type"]!)!
+        cellidentifiers.append(newRow)
+        objFilterTableView.reloadData()
+    }
 }
-
 extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return cellidentifiers.count
@@ -194,13 +213,9 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
         let borderView = UIView(frame: customViewFrame)
         borderView.backgroundColor = UIColor.lightGray
         cell?.addSubview(borderView)
-        //MARK: Delegate function
-        if let closableCell = cell,
-           let delegateAware = closableCell as? CBFilterRuleCellDelegateAssignable {
-            delegateAware.delegate = self
-        }
         return cell!
     }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch cellidentifiers[indexPath.row]{
             case kReportReleaseRuleCell:
@@ -215,32 +230,18 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
             return 56
         }
     }
-}
-//MARK: Delegate method
-extension CBFilterRulesTableVC: CBRulesMenuFilterDelegate,CBFilterRuleCellDelegate {
-    func filterSelected(filter: NSDictionary) {
-        guard
-            let category = filter["category"] as? Int,
-            let type = filter["type"] as? Int
-        else {
-            print("Missing category or type in filter: \(filter)")
-            return
-        }
-        if let identifier = cellIdentifier(for: category, type: type) {
-            cellidentifiers.append(identifier)
-            objFilterTableView.reloadData()
-        } else {
-            print("No matching cell identifier for category \(category), type \(type)")
-        }
-    }
+    
+    //    MARK: delete cell  notification
+    @objc func deleteCellRow(_ notification: Notification) {
+        guard let cell = notification.object as? UITableViewCell,
+              let indexPath = objFilterTableView.indexPath(for: cell) else { return }
 
-    func deleteCellRow(in cell: UITableViewCell) {
-        guard let indexPath = objFilterTableView.indexPath(for: cell) else { return }
-
-        // Remove the corresponding identifier from the data source
+        AppData.shared.filtersToBeAddedInTable.remove(at: indexPath.row)
         cellidentifiers.remove(at: indexPath.row)
-        
-        // Delete the row from the table view
+
+        print(AppData.shared.filtersToBeAddedInTable.count)
+
         objFilterTableView.deleteRows(at: [indexPath], with: .fade)
     }
 }
+
