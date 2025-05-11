@@ -20,4 +20,6 @@ class CBDayMonthSortCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    @IBAction func btnCloseAction(_ sender: Any) {
+    }
 }

@@ -7,9 +7,8 @@
 
 import UIKit
 
-class CBCityComparisonRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
+class CBCityComparisonRuleCell: UITableViewCell {
     
-    weak var delegate: CBFilterRuleCellDelegate?
     @IBOutlet weak var deleteButton: UIButton!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var valueButton: UIButton!
@@ -20,14 +19,17 @@ class CBCityComparisonRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignab
         super.awakeFromNib()
         // Initialization code
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
-
+    
     @IBAction func deleteCellAction(_ sender: Any) {
-        delegate?.deleteCellRow(in: self)
+        NotificationCenter.default.post(
+            name: Notification.Name("DeleteCellNotification"),
+            object: self // Pass the cell itself as the object
+        )
     }
 }

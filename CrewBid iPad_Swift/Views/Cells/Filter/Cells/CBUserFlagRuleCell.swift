@@ -7,8 +7,7 @@
 
 import UIKit
 
-class CBUserFlagRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
-    weak var delegate: CBFilterRuleCellDelegate?
+class CBUserFlagRuleCell: UITableViewCell {
     
     weak var userFlagControlNoColor: UIControl?
     weak var userFlagControlYellow: UIControl?
@@ -42,7 +41,7 @@ class CBUserFlagRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
         flagControl.addTarget(self, action: #selector(self.buttonAction), for: .touchUpInside)
         contentView.addSubview(flagControl)
         userFlagControlNoColor = flagControl
-
+        
         //Green
         flagControl = CBUserFlagTableController.userFlagControlForColor(color: CBUserFlagTableController.colorForUserFlagType(flagType: CBUserFlagType.green), diameter: kUserFlagFilterWidthHeight)
         flagControl.frame = CGRect(x: kUserFlagFilterX + 1.0 * (kUserFlagFilterWidthHeight + kUserFlagFilterHorizontalSpacing), y: kUserFlagFilterY, width: kUserFlagFilterWidthHeight, height: kUserFlagFilterWidthHeight)
@@ -99,15 +98,18 @@ class CBUserFlagRuleCell: UITableViewCell,CBFilterRuleCellDelegateAssignable {
         contentView.addSubview(flagControl)
         userFlagControlPink = flagControl
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
-
+    
     @IBAction func deleteCellRow(_ sender: Any) {
-        delegate?.deleteCellRow(in: self)
+        NotificationCenter.default.post(
+            name: Notification.Name("DeleteCellNotification"),
+            object: self // Pass the cell itself as the object
+        )
     }
     
     

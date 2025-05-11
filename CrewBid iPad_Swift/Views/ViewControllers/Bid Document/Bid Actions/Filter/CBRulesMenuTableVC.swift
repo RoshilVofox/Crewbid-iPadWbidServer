@@ -109,6 +109,16 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
                 }
                 return
             }
+            else {
+                let newRow = [
+                    "category": item["category"] as! Int,
+                    "type": item["type"] as? Int ?? 0
+                ]
+                AppData.shared.filtersToBeAddedInTable.append(newRow)
+                NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+                self.dismiss(animated: true, completion: nil)
+                return
+            }
             //MARK: Used delegate method, needed to be removed when using actual data
             if let delegate = delegate as? CBRulesMenuFilterDelegate {
                 delegate.filterSelected(filter: item as NSDictionary)

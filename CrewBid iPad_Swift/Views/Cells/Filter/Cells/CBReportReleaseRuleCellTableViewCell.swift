@@ -8,9 +8,7 @@
 import UIKit
 
 
-class CBReportReleaseRuleCellTableViewCell: UITableViewCell, CBFilterRuleCellDelegateAssignable {
-
-    weak var delegate: CBFilterRuleCellDelegate?
+class CBReportReleaseRuleCellTableViewCell: UITableViewCell {
     
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var txtReport: UITextField!
@@ -34,18 +32,21 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell, CBFilterRuleCellDel
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         // Configure the view for the selected state
     }
-
+    
     @IBAction func deleteCellRow(_ sender: Any) {
         //MARK: Delegate
-        delegate?.deleteCellRow(in: self)
+        NotificationCenter.default.post(
+            name: Notification.Name("DeleteCellNotification"),
+            object: self // Pass the cell itself as the object
+        )
     }
-
+    
     
     
 }
