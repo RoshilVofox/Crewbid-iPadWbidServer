@@ -23,7 +23,7 @@ class CBLineSortsTVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         cellIdentifiers.append("LineSortCell")
-        print("hi")
+
         setupUI()
     }
     
@@ -136,6 +136,7 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
         var cellIdentifier = kLineSortCellIdentifier
         let category = lineSort["category"] as? Int
         let type = lineSort["type"] as? Int
+        let title = lineSort["title"] as? String
         
         if ((category == BILineSortCategory.BICitiesLineSortCategory.rawValue &&
              type != BICityLineSortType.BICitiesLineSortTypeNonConusLegs.rawValue) ||
@@ -173,6 +174,7 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
         }
        else if  cellIdentifier == kCommutingLineSortCellIdentifier {
             let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CBCommutingSortCell
+           cell.titleLabel.text = title
             return cell
         }
         else if  cellIdentifier == kDaysOffLineSortCellIdentifier {
@@ -181,9 +183,11 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
          }
         else if  cellIdentifier == kCommutabilityLineSortCellIdentifier {
              let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CBCommutabilitySortCell
+            cell.btnTitle.setTitle(title, for: .normal)
              return cell
          }
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CBLineSortCell
+        cell.titleLabel.text = title
         return cell
         
     }
@@ -191,7 +195,6 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let lineSort = AppData.shared.sortsToBeAddedInTable[indexPath.row]
         let category = lineSort["category"] as? Int
-        let type = lineSort["type"] as? Int
         
         if category == BILineSortCategory.BICommutingLineSortCategory.rawValue {
             return 270.0

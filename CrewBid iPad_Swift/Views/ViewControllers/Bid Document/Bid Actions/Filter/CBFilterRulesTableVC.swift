@@ -214,6 +214,41 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellidentifier = cellidentifiers[indexPath.row]
+        
+        let lineSort = AppData.shared.filtersToBeAddedInTable[indexPath.row]
+        let title = lineSort["title"] as? String
+        
+        if cellidentifier == kReportReleaseRuleCell {
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellidentifier, for: indexPath) as! CBReportReleaseRuleCellTableViewCell
+            cell.lblTitle.text = title
+            return cell
+        }
+        else if cellidentifier == kworkBlockRuleCell {
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellidentifier, for: indexPath) as! CBWorkBlockRuleCell
+            cell.titleLabel.text = title
+            return cell
+        }
+        else if cellidentifier == kComparisonFilterRuleCell {
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellidentifier, for: indexPath) as! CBComparisonRuleCell
+            cell.titleLabel.text = title
+            return cell
+        }
+        else if cellidentifier == kCityComparisonFilterRuleCell {
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellidentifier, for: indexPath) as! CBCityComparisonRuleCell
+            cell.titleLabel.text = title
+            return cell
+        }
+        else if cellidentifier == kCommutabilityRuleCell {
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellidentifier, for: indexPath) as! CBComutabilityRuleCell
+            cell.titleLabel.text = title
+            return cell
+        }
+        else if cellidentifier == kCommutingRuleCell {
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellidentifier, for: indexPath) as! CBCommutingRuleCell
+            cell.titleLabel.text = title
+            return cell
+        }
+        
         let cell: UITableViewCell? = tableView.dequeueReusableCell(withIdentifier: cellidentifier, for: indexPath)
         let customViewFrame = CGRect(x: 0, y: (cell?.contentView.layer.frame.maxY)! - 1, width: (cell?.contentView.frame.width)!, height: 1)
         let borderView = UIView(frame: customViewFrame)

@@ -971,7 +971,7 @@
                                                                 <constraint firstAttribute="height" constant="29" id="GVg-wU-BHb"/>
                                                                 <constraint firstAttribute="width" constant="427" id="o6e-ep-9mO"/>
                                                             </constraints>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tu4-Qo-4CN" userLabel="View All Days">

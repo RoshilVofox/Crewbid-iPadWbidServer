@@ -90,8 +90,9 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
 //            adding the sort part
             let newRow = [
                 "category": item["category"] as! Int,
-                "type": item["type"] as? Int ?? 0
-            ]
+                "type": item["type"] as? Int ?? 0,
+                "title": item["name"] as? String ?? "",
+            ] as [String : Any]
             AppData.shared.sortsToBeAddedInTable.append(newRow)
             NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
             self.dismiss(animated: true, completion: nil)
