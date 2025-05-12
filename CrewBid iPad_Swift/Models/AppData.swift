@@ -16,14 +16,14 @@ class AppData {
     var isSyncOn: Bool = false
     
     var filtersToBeAddedInTable = [
-        ["category": 0, "type": 0],
-        ["category": 1, "type": 0],
-        ["category": 4, "type": 0],
-        ["category": 5, "type": 0],
+        ["category": 0, "type": 0, "title": ""],
+        ["category": 1, "type": 0, "title": ""],
+        ["category": 4, "type": 0, "title": ""],
+        ["category": 5, "type": 0, "title": ""],
 //        ["category": 6, "type": 0]
     ]
     
-    var sortsToBeAddedInTable: [[String: Int]] = []
+    var sortsToBeAddedInTable: [[String: Any]] = []
 
     
     private init() {}  // Prevents outside instantiation

@@ -41,8 +41,11 @@ class CBFilterRulesTableVC: BaseViewController {
     
     func initialCellidentifiers() {
         for i in AppData.shared.filtersToBeAddedInTable {
-            let item = cellIdentifier(for: i["category"]!, type: i["type"]!)!
-            cellidentifiers.append(item)
+            if let category = i["category"] as? Int,
+               let type = i["type"] as? Int {
+                let item = cellIdentifier(for: category, type: type)
+                cellidentifiers.append(item!)
+            }
         }
     }
     
@@ -195,9 +198,12 @@ class CBFilterRulesTableVC: BaseViewController {
 //    MARK: refresh line notification
     @objc func updateLines() {
         let arr = AppData.shared.filtersToBeAddedInTable
-        let indexpath = arr.count - 1
-        let newRow = cellIdentifier(for: arr[indexpath]["category"]!, type: arr[indexpath]["type"]!)!
-        cellidentifiers.append(newRow)
+        let indexPath = arr.count - 1
+        if let category = arr[indexPath]["category"] as? Int,
+           let type = arr[indexPath]["type"] as? Int,
+           let newRow = cellIdentifier(for: category, type: type) {
+            cellidentifiers.append(newRow)
+        }
         objFilterTableView.reloadData()
     }
 }

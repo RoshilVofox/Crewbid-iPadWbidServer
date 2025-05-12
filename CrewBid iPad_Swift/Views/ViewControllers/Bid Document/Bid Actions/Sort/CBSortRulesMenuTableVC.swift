@@ -94,6 +94,7 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
             ]
             AppData.shared.sortsToBeAddedInTable.append(newRow)
             NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
+            self.dismiss(animated: true, completion: nil)
         }
     }
 }

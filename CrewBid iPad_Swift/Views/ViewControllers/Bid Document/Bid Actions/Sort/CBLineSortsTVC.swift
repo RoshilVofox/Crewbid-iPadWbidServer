@@ -121,19 +121,110 @@ class CBLineSortsTVC: UIViewController {
 
 extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cellIdentifiers.count
+        return AppData.shared.sortsToBeAddedInTable.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "LineSortCell", for: indexPath)
+        let kLineSortCellIdentifier = "LineSortCell"
+        let kCityLineSortCellIdentifier = "CityLineSortCell"
+        let kCommutingLineSortCellIdentifier = "CommutingLineSortCell"
+        let kCommutabilityLineSortCellIdentifier = "CommutabilitySortCell"
+        let kDaysOffLineSortCellIdentifier = "DayMonthLineSortCell"
+        let kFlagSortCellIdentifier = "flagSortCell"
+        
+        let lineSort = AppData.shared.sortsToBeAddedInTable[indexPath.row]
+        var cellIdentifier = kLineSortCellIdentifier
+        let category = lineSort["category"] as? Int
+        let type = lineSort["type"] as? Int
+        
+        if ((category == BILineSortCategory.BICitiesLineSortCategory.rawValue &&
+             type != BICityLineSortType.BICitiesLineSortTypeNonConusLegs.rawValue) ||
+            (category == BILineSortCategory.BIDeadheadsLineSortCategory.rawValue &&
+             (type == BIDeadheadLineSortType.BIDeadheadAtStartSortType.rawValue ||
+              type == BIDeadheadLineSortType.BIDeadheadAtEndSortType.rawValue ||
+              type == BIDeadheadLineSortType.BIDeadheadAtBothSortType.rawValue))) {
+            
+            cellIdentifier = kCityLineSortCellIdentifier
+        }
+        
+        
+        else if category == BILineSortCategory.BICommutingLineSortCategory.rawValue {
+            cellIdentifier = kCommutingLineSortCellIdentifier
+        }
+        else if category == BILineSortCategory.BICommutabilityLineSortCategory.rawValue {
+            cellIdentifier = kCommutabilityLineSortCellIdentifier
+        }
+        else if category == BILineSortCategory.BIDaysOffLineSortCategory.rawValue {
+            cellIdentifier = kDaysOffLineSortCellIdentifier
+        }
+        else if category == BILineSortCategory.BIDaysWorkLineSortCategory.rawValue {
+            cellIdentifier = kDaysOffLineSortCellIdentifier
+        }
+        else if category == BILineSortCategory.BIDaysTripStartSortCategory.rawValue {
+            cellIdentifier = kDaysOffLineSortCellIdentifier
+        }
+        else if category == BILineSortCategory.BIFlagLineSortCategory.rawValue {
+            cellIdentifier = kFlagSortCellIdentifier
+        }
+        
+        if cellIdentifier == "flagSortCell" {
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CBFlagSortCell
+            return cell
+        }
+       else if  cellIdentifier == kCommutingLineSortCellIdentifier {
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CBCommutingSortCell
+            return cell
+        }
+        else if  cellIdentifier == kDaysOffLineSortCellIdentifier {
+             let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CBDayMonthSortCell
+             return cell
+         }
+        else if  cellIdentifier == kCommutabilityLineSortCellIdentifier {
+             let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CBCommutabilitySortCell
+             return cell
+         }
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CBLineSortCell
         return cell
+        
     }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let lineSort = AppData.shared.sortsToBeAddedInTable[indexPath.row]
+        let category = lineSort["category"] as? Int
+        let type = lineSort["type"] as? Int
+        
+        if category == BILineSortCategory.BICommutingLineSortCategory.rawValue {
+            return 270.0
+        }
+        else if category == BILineSortCategory.BIDaysOffLineSortCategory.rawValue {
+            return 330.0
+        }
+        else if category == BILineSortCategory.BIDaysWorkLineSortCategory.rawValue {
+            return 330.0
+        }
+        else if category == BILineSortCategory.BIDaysTripStartSortCategory.rawValue {
+            return 330.0
+        }
+        else if category == BILineSortCategory.BIFlagLineSortCategory.rawValue {
+            return CGFloat(/*(sort.variables?.count)!*/ 6 * 50)
+        }
+        else if category == BILineSortCategory.BIDeadheadsLineSortCategory.rawValue {
+            return 70.0
+        }
+        else if category == BILineSortCategory.BICommutabilityLineSortCategory.rawValue {
+            return 70.0
+        } else {
+            return 70
+        }
+    }
+    
+//    MARK: delete cell notification method
     @objc func deleteCellRow(_ notification: Notification) {
         guard let cell = notification.object as? UITableViewCell,
               let indexPath = tableView.indexPath(for: cell) else { return }
 
-//        AppData.shared.filtersToBeAddedInTable.remove(at: indexPath.row)
-        cellIdentifiers.remove(at: indexPath.row)
+        AppData.shared.sortsToBeAddedInTable.remove(at: indexPath.row)
+//        cellIdentifiers.remove(at: indexPath.row)
 
 //        print(AppData.shared.filtersToBeAddedInTable.count)
         tableView.deleteRows(at: [indexPath], with: .fade)
