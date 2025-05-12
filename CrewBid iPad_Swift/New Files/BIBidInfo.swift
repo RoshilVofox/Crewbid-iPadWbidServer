@@ -7,16 +7,17 @@
 
 import Foundation
 
-protocol BIBidInfoDataSource: AnyObject {
-    func year() -> NSNumber
-    func month() -> NSNumber?
-    func base() -> String?
-    func position() -> BICrewPosition?
-    func round() -> NSNumber?
-    func employeeNumber() -> String
-    func swaptimizerId() -> String
+
+class BIBidInfoDataSource {
+    var year = Int()
+    var month  = Int()
+    var base = String()
+    var position : BICrewPositionType = .Captain
+    var round = Int()
+    var employeeNumber = String()
+    var swaptimizerID = String()
 }
-class BIBidInfo{
+class BIBidInfo:NSObject{
     private var app:AppDelegate!
     weak var dataSource: BIBidInfoDataSource!
     
@@ -29,7 +30,7 @@ class BIBidInfo{
         return BIBidInfo.tempDirectory().appendingPathComponent("Downloads")
     }
     
-    static func documentsDirectory() -> URL {
+    class func documentsDirectory() -> URL {
         let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
      return directory.last!
     }
@@ -43,39 +44,18 @@ class BIBidInfo{
     }
     
     func mockDataFilenameBase() -> String {
-        // C for captain, F for first officer, A for flight attendant.
-        let positionChar = dataSource.position()?.character.unicodeScalars.first!.value
-        // D for first round bid, B for second round bid.
-        let roundChar = isFirstRoundBid() ? "D".unicodeScalars.first!.value : "B".unicodeScalars.first!.value
-        // Log month value
-        print("Month---DataFile --\(dataSource?.month()?.intValue ?? 0)")
-        // Get app delegate
-        let app = UIApplication.shared.delegate as! AppDelegate
-        // Format the filename using hex for the month
-        let filename = String(format: "%c%c%@%lX",positionChar!,roundChar,dataSource.base()!,app.mockDataMonth!)
+        let filename = ""
         return filename
     }
     
     func dataFilenameBase() -> String {
-        // C for captain, F for first officer, A for flight attendant.
-        let positionChar = dataSource.position()?.character.unicodeScalars.first!.value
-        // D for first round bid, B for second round bid.
-        let roundChar = (isFirstRoundBid() ? "D" : "B").unicodeScalars.first!.value
-        // Log the month
-        print("Month---DataFile --\(dataSource.month()?.intValue ?? 0)")
-        let app = UIApplication.shared.delegate as! AppDelegate
-        let filename: String
-        if app.isMockData || app.isHistoricBid {
-            filename = String(format: "%c%c%@%lX",positionChar!,roundChar,dataSource.base()!,app.mockDataMonth!)
-        } else {
-            filename = String(format: "%c%c%@%lX",positionChar!,roundChar,dataSource.base()!,dataSource.month()?.intValue ?? 0)
-        }
+        let filename = ""
         return filename
     }
     
     func textFilenameBase() -> String {
-        let base = dataSource.base()
-        let shortName = dataSource.position()?.shortName
+        let base = dataSource.base
+        let shortName = dataSource.position
         return "\(String(describing: base))\(String(describing: shortName))"
     }
     
@@ -85,8 +65,8 @@ class BIBidInfo{
         monthYearFormatter.dateFormat = "MMM yyyy"
         var components = DateComponents()
         let app = UIApplication.shared.delegate as! AppDelegate
-        components.year = dataSource.year().intValue
-        components.month = dataSource.month()?.intValue ?? 0
+        components.year = dataSource.year
+        components.month = dataSource.month
         if app.isMockData || app.isHistoricBid {
             components.year = app.mockDataYear
             components.month = app.mockDataMonth
@@ -104,9 +84,9 @@ class BIBidInfo{
         let bidMonth = calendar.date(from: components)
         let month = monthYearFormatter.string(from: bidMonth!)
         // Position, base, and round
-        let position = dataSource.position()?.longName
-        let base = dataSource.base()
-        let round = "Round \(dataSource.round()!.intValue)"
+        let position = CBGlobalMethods.longNameOf(type: dataSource.position)
+        let base = dataSource.base
+        let round = "Round \(dataSource.round)"
         let filename = "\(month) \(String(describing: base)) \(String(describing: position)) \(round).crewbiddoc"
         return filename
     }
@@ -123,16 +103,5 @@ class BIBidInfo{
         }
     }
     
-    
-    func isFirstRoundBid() -> Bool {
-        return dataSource?.round()?.intValue == 1
-    }
-    
-    func isSecondRoundBid() -> Bool {
-        return dataSource?.round()?.intValue == 2
-    }
-    
-    func isFlightAttendantBid() -> Bool {
-        return dataSource?.position()?.type == .FlightAttendant
-    }
+
 }

@@ -7,32 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "013D1D18-E485-4D4C-9EF6-D1BDA58198C9"
-            shouldBeEnabled = "Yes"
+            uuid = "CC49CA1F-F98A-4A4D-BF2C-8533C59E9BA0"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/BIBidFileDownload.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "144"
-            endingLineNumber = "144"
-            landmarkName = "retrievePrelogonCredential()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "2239C191-B88A-4C26-87AA-A1C1564EB76C"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidFileDownload.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "147"
-            endingLineNumber = "147"
-            landmarkName = "retrieveSessionCredential()"
+            startingLineNumber = "132"
+            endingLineNumber = "132"
+            landmarkName = "downloadBidDataFiles()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -13,13 +13,16 @@ class CBCredentialsPageVC: UIViewController {
     @IBOutlet weak var txtPassword: customUITextField!
     @IBOutlet weak var showPasswordBtn: UIButton!
     @IBOutlet weak var lblTitle: UILabel!
-    
+    var bidDownload = BIBidFileDownload()
     var isFromHistoric : Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupUI()
+        if CBUtils.isRunningOnSimulator(){
+            self.txtUserID.text = DevUserID
+            self.txtPassword.text = DevUserPassword
+        }
     }
     
     @IBAction func showPasswordAction(_ sender: UIButton) {
@@ -33,9 +36,42 @@ class CBCredentialsPageVC: UIViewController {
     }
     
     @IBAction func btnGoAction(_ sender: UIButton) {
-        loginAction()
+        goAction()
+        
     }
-    
+    func goAction(){
+        UserDefaults.standard.set(txtUserID.text, forKey: KCBEmpNumWithPrefix)
+        if (txtUserID.text!.count < 2) || (txtUserID.text!.count > 8) {
+            self.shakeTextField(textField: txtUserID)
+            return
+        }else if (txtPassword.text!.count < 4){
+            self.shakeTextField(textField: txtPassword)
+            return
+        }else{
+            var userID = txtUserID.text!
+            if txtUserID.text!.prefix(1) != "x" && txtUserID.text!.prefix(1) != "e" {
+                if txtUserID.text! == DevUserID {
+                    userID = "x\(txtUserID.text!)"
+                } else {
+                    userID = "e\(txtUserID.text!)"
+                }
+            }
+            txtUserID.text! = userID
+            bidDownload.retrievePreLogonKey(completionHandler: { (response:String?) in
+                let preLoginKey = response!
+                CBGlobalMethods.shared.secretKey = preLoginKey
+                print("preLoginKey: \(preLoginKey)")
+                DispatchQueue.main.async {
+                    self.bidDownload.retrieveSessionKey(username: self.txtUserID.text!, password: self.txtPassword.text!, preloginKey: preLoginKey, completionHandler: { (response:String?) in
+                        print("Response2: \(response!)")
+                        
+                    })
+                }
+             
+            })
+//            self.loginAction()
+        }
+    }
     func setupUI(){
         txtUserID.delegate = self
         txtPassword.delegate = self
@@ -48,49 +84,49 @@ class CBCredentialsPageVC: UIViewController {
         }else{
             lblTitle.text = "New Bid Data"
         }
-        
         showPasswordBtn.setImage(UIImage(named: "showPwd")?.withRenderingMode(.alwaysTemplate), for: .normal)
         showPasswordBtn.tintColor = .label
-        
         txtUserID.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtUserID.frame.height))
         txtUserID.leftViewMode = .always
         txtPassword.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtPassword.frame.height))
         txtPassword.leftViewMode = .always
     }
     
-    func verifyBidInfoFileDownload(completion: @escaping (_ shouldDownload: Bool, _ shouldOpen: Bool) -> Void) {
-        
+    func stringFormatter(_ string: String) -> String {
+        var encodedString = string.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        encodedString = encodedString.replacingOccurrences(of: "+", with: "%2B")
+        return encodedString
     }
-    
-    
 }
-
-
-
-
-
-
-
 
 
 
 extension CBCredentialsPageVC: UITextFieldDelegate {
     
+    
+    func shakeTextField(textField: UITextField){
+        let animation = CABasicAnimation(keyPath: "position")
+        animation.duration = 0.07
+        animation.repeatCount = 3
+        animation.autoreverses = true
+        animation.fromValue = NSValue(cgPoint: CGPoint(x: textField.center.x - 10, y: textField.center.y))
+        animation.toValue = NSValue(cgPoint: CGPoint(x: textField.center.x + 10, y: textField.center.y))
+        textField.layer.add(animation, forKey: "position")
+        textField.attributedPlaceholder = NSAttributedString(string: textField.placeholder ?? "", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
+    }
+    
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         var shouldChangeCharacters: Bool = true
-
         if textField == txtUserID {
             var validUserid: Bool = true
             let inverseSet = CharacterSet(charactersIn: "0123456789").inverted
             let components = string.components(separatedBy: inverseSet)
             let filtered = components.joined(separator: "")
-
             if let currentText = textField.text {
                 // Allow deletion
                 if string.isEmpty {
                     return true
                 }
-
                 // Full replacement scenario
                 if range.length == currentText.count {
                     if string.hasPrefix("e") || string.hasPrefix("x") {
@@ -107,7 +143,6 @@ extension CBCredentialsPageVC: UITextFieldDelegate {
                         return false
                     }
                 }
-
                 // Prevent extra leading 'e' or 'x'
                 if currentText.hasPrefix("e") || currentText.hasPrefix("x") {
                     if string == "e" || string == "x" {
@@ -120,7 +155,6 @@ extension CBCredentialsPageVC: UITextFieldDelegate {
                     }
                 }
             }
-
             if range.location == 0 {
                 validUserid = false
                 if string == "" {
@@ -135,7 +169,6 @@ extension CBCredentialsPageVC: UITextFieldDelegate {
                 }
                 return isValid
             }
-
             if !validUserid {
                 textField.shakeTextField()
                 shouldChangeCharacters = false
@@ -159,18 +192,10 @@ extension CBCredentialsPageVC: UITextFieldDelegate {
     }
     
     func loginAction(){
-        var userIDParam = txtUserID.text!
-        if txtUserID.text!.prefix(1) != "x" && txtUserID.text!.prefix(1) != "e" {
-            if txtUserID.text! == DevUserID {
-                userIDParam = "x\(txtUserID.text!)"
-            } else {
-                userIDParam = "e\(txtUserID.text!)"
-            }
-        }
-        txtUserID.text! = userIDParam
+
         UserDefaults.standard.set(txtUserID.text, forKey: KCBEmpNumWithPrefix)
         
-        
+        self.bidDownload.downloadBidDataFiles()
         
         
         self.dismiss(animated: false)
