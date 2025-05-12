@@ -10,7 +10,7 @@ import UIKit
 import CloudKit
 
 public final class CBGlobalMethods: NSObject {
-    var activityView: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
+//    var activityView: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
     // Can't init is singleton
     private override init() { }
     
@@ -31,7 +31,7 @@ public final class CBGlobalMethods: NSObject {
     var password: String?
     var secretKey: String?
     var isBulkDownload: Bool = false
-    var activityIndicatorView = UIActivityIndicatorView()
+//    var activityIndicatorView = UIActivityIndicatorView()
     var isNewsFirstTimeDisply: Bool = false
     
     var selectedBidPeriod: BIBidPeriod?
@@ -444,11 +444,11 @@ public final class CBGlobalMethods: NSObject {
 //    }
     
     //To hide activity indicator with custom background color
-    func hideActivityIndicator(){
-        DispatchQueue.main.async {
-            self.activityIndicatorView.stopAnimating()
-        }
-    }
+//    func hideActivityIndicator(){
+//        DispatchQueue.main.async {
+//            self.activityIndicatorView.stopAnimating()
+//        }
+//    }
     
     //Activity indicator with custom message, background color and height
 //    func showCustomActivityIndicatoronMainThread(message: String, bgcolor: UIColor, height: CGFloat) {
