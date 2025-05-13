@@ -28,6 +28,8 @@ class CBLineSortsTVC: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
+        
         NotificationCenter.default.addObserver(self, selector: #selector(updateLines), name: NSNotification.Name("refreshLines"), object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(deleteCellRow), name: Notification.Name("DeleteCellNotification"), object: nil)
@@ -36,12 +38,26 @@ class CBLineSortsTVC: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         NotificationCenter.default.removeObserver("refreshLines")
         NotificationCenter.default.removeObserver("DeleteCellNotification")
+        NotificationCenter.default.removeObserver("SortBidListAction")
     }
     
     func setupUI(){
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
         btnSortTheBidlist.backgroundColor = .systemRed
         btnSortTheScratchpad.backgroundColor = .systemGreen
+    }
+    
+    @objc func setupLayoutView() {
+        if AppData.shared.isBidListSort {
+            self.btnFilter.isHidden = true
+            self.btnPreset.isHidden = true
+            self.btnBids.isHidden = true
+        }
+        else {
+            self.btnFilter.isHidden = false
+            self.btnPreset.isHidden = false
+            self.btnBids.isHidden = false
+        }
     }
     
     @IBAction func btnFilterAction(_ sender: Any) {
