@@ -34,7 +34,7 @@ class BIBidFileDownload: NSObject{
     var urlRequest:URLRequest?
     var downloadType:BIBidFileDownloadType = .biBidDataDownloadType
     weak var delegate:BIBidFileDownloadDelegate!
-
+    var dataSource:BIBidInfoDataSource = BIBidInfoDataSource()
     static let kVendor = "CrewBidPad"
     
 //    init?(dataSource: BIBidFileDownloadDataSource, delegate: BIBidFileDownloadDelegate) {
@@ -57,9 +57,7 @@ class BIBidFileDownload: NSObject{
     
     
     //MARK: File Download
-    func downloadBidDataFilesWithFinishedHandler(_ finishedHandler: @escaping () -> Void, _ progressHandler: @escaping (Float) -> Void, _ errorHandler: @escaping (Error) -> Void){
-        // needs code
-    }
+
     
     
     func getPosition(from type: Int) -> String {
@@ -75,66 +73,27 @@ class BIBidFileDownload: NSObject{
     
     
     func downloadBidDataFiles(){
-        let app = UIApplication.shared.delegate as! AppDelegate
-        switch app.objNetworkType {
-        case .free:
-            let alert = AlertService.showAlert(title: "Sorry", message: "You cannot get needed access via SouthwestWifi or 2Wire. Try again later when you are safely on the ground and have another internet access.", actions: nil)
-            let topVC = self.getTopViewController()
-            topVC?.present(alert, animated: true)
+        var dict:[String:Any] = [:]
+        dict["domicile"] = self.dataSource.base
+        dict["EmpNum"] = self.dataSource.employeeNumber
+        dict["Round"] = self.dataSource.round
+        switch self.dataSource.position{
+        case .Captain: dict["Position"] = "CP"
             break
-        default:break
+        case .FirstOfficer: dict["Position"] = "FO"
+            break
+        case .FlightAttendant: dict["Position"] = "FA"
+            break
         }
-        self.downloadType = .biBidDataDownloadType
-        let fileManager = FileManager.default
-        let downloadURL = bidInfo.downloadDirectory()
-
-        do {
-            try fileManager.createDirectory(at: downloadURL, withIntermediateDirectories: true, attributes: nil)
-        } catch {
-            var bidInfoError: NSError?
-            BIBidInfoError.setError(&bidInfoError, for: .downloadDirectoryCreation, underlyingError: error as NSError)
-            self.notifyDelegateError(bidInfoError!)
-            return
-        }
-        let filesToDownload = self.bidDataFiles()
-        self.filesCount = Float(filesToDownload.count)
-        self.filesToDownloadEnumerator = filesToDownload.makeIterator()
-        if app.isMockData{
-            self.downloadMockDataTripText()
-            print("Beginning download")
-                let fileName = bidDataFilename()
-                guard let url = URL(string: "http://www.wbidmax.com/downloads/MockData/\(fileName)") else {
-                    print("Invalid URL")
-                    return
-                }
-                do{
-                    let urlData = try Data(contentsOf: url)
-                    print("Got the data!")
-                    let destinationURL = bidInfo.downloadDirectory().appendingPathComponent(fileName)
-                    print("Saving to \(destinationURL)")
-                    try urlData.write(to: destinationURL)
-                    print("Saved bid data file to: \(destinationURL)")
-                    // Initialize URLRequest to third-party URL
-                    if let thirdPartyURL = thirdPartyURL() {
-                        urlRequest = URLRequest(url: thirdPartyURL,cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeout)
-                    }
-                }catch{
-                    print("Failed to download or save bid data: \(error.localizedDescription)")
-                }
-        }else if app.isHistoricBid{
-                //-----------needs code----------
-        }else{
-            if let thirdPartyURL = thirdPartyURL() {
-                self.urlRequest = URLRequest(url: thirdPartyURL,cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeout)
-            }
-        }
- 
-//        self.getPreLogonKey()
+        dict["Year"] = self.dataSource.year
+        dict["Month"] = self.dataSource.month
+        dict["secretEmpNum"] = self.dataSource.employeeNumber
+    
     }
     
     func retrievePreLogonKey(completionHandler: ((String?) -> Void)?){
         var thirdPartyURL = "https://www27.swalife.com/webbid3pty/ThirdParty"
-        if UserDefaults.standard.bool(forKey: "IsQAEnabled") == true {
+        if UserDefaults.standard.string(forKey: "IsQATest") == "YES" {
             thirdPartyURL = "https://www27.swalifeqa.com/webbid3pty/ThirdParty"
         }
         GetPreLogonKey(serviceURL: thirdPartyURL, completionHandler: completionHandler)
@@ -180,7 +139,7 @@ class BIBidFileDownload: NSObject{
         let jsonString = "CREDENTIALS="+preloginKey+"&REQUEST=LOGON&UID="+username+"&PWD="+escapedString(password) as String
         print("Session Key Request: \(jsonString)")
         var thirdPartyURL = "https://www27.swalife.com/webbid3pty/ThirdParty"
-        if UserDefaults.standard.bool(forKey: "IsQAEnabled") == true {
+        if UserDefaults.standard.string(forKey: "IsQATest") == "YES" {
             thirdPartyURL = "https://www27.swalifeqa.com/webbid3pty/ThirdParty"
         }
         getSessionKey(serviceURL: thirdPartyURL, jsonDataString: jsonString, completionHandler: completionHandler)

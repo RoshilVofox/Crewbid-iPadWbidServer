@@ -61,14 +61,16 @@ class CBBiddataDownloadVC: UIViewController {
     var empNum : String?
     var selectedDomicile : String?
     var month :  Int?
-    var isFromHistoric : Bool = false
-    var Year : Int?
+    var isHistoricBid : Bool = false
+    var loginType: LoginType = .newBid
+    var isNewBid : Bool = false
+    var year : Int?
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        if isFromHistoric {
+        if isHistoricBid {
             self.setYearTitle()
             self.setEnabledMonthForHistoricBidData()
         }
@@ -83,12 +85,22 @@ class CBBiddataDownloadVC: UIViewController {
             self.shakeView(view: self.viewRound)
         } else if month == nil {
             self.shakeView(view: self.viewMonth)
-        } else if Year == nil {
+        } else if year == nil {
             self.shakeView(view: self.viewYear)
         } else {
+//=======================================
+            print("Base:\(self.selectedDomicile!) Position:\(self.selectedPosition!) Rnd:\(self.selectedRound!) EmpNo:\(self.empNum ?? "default_EmpNum") Month:\(self.month!) Year:\(self.year!)")
+//=======================================
             let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
-            vc.isFromHistoric = self.isFromHistoric
+            vc.isNewBid = self.isNewBid
+            vc.isHistoricBid = self.isHistoricBid
+            vc.selectedDomicile = self.selectedDomicile
+            vc.selectedPosition = self.selectedPosition
+            vc.selectedRound = self.selectedRound
+            vc.empNum = self.empNum
+            vc.month = self.month
+            vc.year = self.year
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
@@ -252,8 +264,8 @@ class CBBiddataDownloadVC: UIViewController {
         if sender.tag == 60{
             let currentDate = Date()
             let indexYear = Calendar.current.component(.year, from: currentDate)
-            Year = indexYear - 2
-            if isFromHistoric{
+            year = indexYear - 2
+            if isHistoricBid{
                 let btnArray:[UIButton] = [btnJAN,btnFEB,btnMAR,btnAPR,btnMAY,btnJUN,btnJUL,btnAUG,btnSEP,btnOCT,btnNOV,btnDEC]
                 for button in btnArray{
                     button.isUserInteractionEnabled = true
@@ -263,8 +275,8 @@ class CBBiddataDownloadVC: UIViewController {
         }else if sender.tag == 61{
             let currentDate = Date()
             let indexYear = Calendar.current.component(.year, from: currentDate)
-            Year = indexYear - 1
-            if isFromHistoric{
+            year = indexYear - 1
+            if isHistoricBid{
                 let btnArray:[UIButton] = [btnJAN,btnFEB,btnMAR,btnAPR,btnMAY,btnJUN,btnJUL,btnAUG,btnSEP,btnOCT,btnNOV,btnDEC]
                 for button in btnArray{
                     button.isUserInteractionEnabled = true
@@ -274,8 +286,8 @@ class CBBiddataDownloadVC: UIViewController {
         }else if sender.tag == 62{
             let currentDate = Date()
             let indexYear = Calendar.current.component(.year, from: currentDate)
-            Year = indexYear
-            if isFromHistoric{
+            year = indexYear
+            if isHistoricBid{
                 let btnArray:[UIButton] = [btnJAN,btnFEB,btnMAR,btnAPR,btnMAY,btnJUN,btnJUL,btnAUG,btnSEP,btnOCT,btnNOV,btnDEC]
                 let monthInt = Calendar.current.component(.month, from: Date())
                 let currentMonth:Int = monthInt
@@ -322,8 +334,9 @@ class CBBiddataDownloadVC: UIViewController {
     
     func setupUI(){
         //Title setup
-        if isFromHistoric == true {
+        if isHistoricBid == true {
             lblTitle.text = "Historic Bid Data"
+            loginType = .historicBid
         }else{
             lblTitle.text = "New Bid Data"
         }
@@ -335,13 +348,13 @@ class CBBiddataDownloadVC: UIViewController {
         btnPreviousYear.setTitle("\(year-1)", for: .normal)
         btnCurrentYear.setTitle("\(year)", for: .normal)
         month = indexMonth
-        Year = year
+        self.year = year
         if month == 12{
-            Year = year - 1
+            self.year = year - 1
         }
         
         
-        if !isFromHistoric {
+        if !isHistoricBid {
             //Year view hiding for new bid period
             viewYear.isHidden = true
             let btnArray : [UIButton] = [btnJAN,btnFEB,btnMAR,btnAPR,btnMAY,btnJUN,btnJUL,btnAUG,btnSEP,btnOCT,btnNOV,btnDEC]
@@ -365,7 +378,7 @@ class CBBiddataDownloadVC: UIViewController {
                 }
             }
         }
-        if isFromHistoric {
+        if isHistoricBid {
             viewYear.isHidden = false
             let btnArray : [UIButton] = [btnJAN,btnFEB,btnMAR,btnAPR,btnMAY,btnJUN,btnJUL,btnAUG,btnSEP,btnOCT,btnNOV,btnDEC]
             let monthInt = Calendar.current.component(.month, from: Date())
@@ -401,12 +414,12 @@ class CBBiddataDownloadVC: UIViewController {
     
     //Automatic navigation
     func navigationAction() {
-        if selectedDomicile == nil || selectedPosition == nil || selectedRound == nil || month == nil || Year == nil {
+        if selectedDomicile == nil || selectedPosition == nil || selectedRound == nil || month == nil || year == nil {
             return
         } else {
             let storyboard : UIStoryboard = UIStoryboard(name: "BidInfo", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
-            vc.isFromHistoric = self.isFromHistoric
+            vc.isHistoricBid = self.isHistoricBid
 //            vc.preferredContentSize = CGSize(width: 600, height: 500)
             self.navigationController?.pushViewController(vc, animated: true)
 //            NotificationCenter.default.post(name: NSNotification.Name("contentSizechanging"), object: CGSize(width: 600, height: 540))

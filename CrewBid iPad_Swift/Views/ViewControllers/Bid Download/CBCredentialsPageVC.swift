@@ -14,8 +14,15 @@ class CBCredentialsPageVC: UIViewController {
     @IBOutlet weak var showPasswordBtn: UIButton!
     @IBOutlet weak var lblTitle: UILabel!
     var bidDownload = BIBidFileDownload()
-    var isFromHistoric : Bool = false
-    
+    var isHistoricBid : Bool = false
+    var isNewBid:Bool = false
+    var selectedRound:Int?
+    var selectedPosition:String?
+    var selectedDomicile:String?
+    var empNum:String?
+    var month:Int?
+    var year:Int?
+    var loginType:LoginType = .newBid
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -48,28 +55,7 @@ class CBCredentialsPageVC: UIViewController {
             self.shakeTextField(textField: txtPassword)
             return
         }else{
-            var userID = txtUserID.text!
-            if txtUserID.text!.prefix(1) != "x" && txtUserID.text!.prefix(1) != "e" {
-                if txtUserID.text! == DevUserID {
-                    userID = "x\(txtUserID.text!)"
-                } else {
-                    userID = "e\(txtUserID.text!)"
-                }
-            }
-            txtUserID.text! = userID
-            bidDownload.retrievePreLogonKey(completionHandler: { (response:String?) in
-                let preLoginKey = response!
-                CBGlobalMethods.shared.secretKey = preLoginKey
-                print("preLoginKey: \(preLoginKey)")
-                DispatchQueue.main.async {
-                    self.bidDownload.retrieveSessionKey(username: self.txtUserID.text!, password: self.txtPassword.text!, preloginKey: preLoginKey, completionHandler: { (response:String?) in
-                        print("Response2: \(response!)")
-                        
-                    })
-                }
-             
-            })
-//            self.loginAction()
+            self.loginAction()
         }
     }
     func setupUI(){
@@ -79,7 +65,7 @@ class CBCredentialsPageVC: UIViewController {
         txtUserID.textContentType = .username
         txtPassword.textContentType = .password
         
-        if isFromHistoric == true {
+        if isHistoricBid == true {
             lblTitle.text = "Historic Bid Data"
         }else{
             lblTitle.text = "New Bid Data"
@@ -194,7 +180,27 @@ extension CBCredentialsPageVC: UITextFieldDelegate {
     func loginAction(){
 
         UserDefaults.standard.set(txtUserID.text, forKey: KCBEmpNumWithPrefix)
-        
+        var userID = txtUserID.text!
+        if txtUserID.text!.prefix(1) != "x" && txtUserID.text!.prefix(1) != "e" {
+            if txtUserID.text! == DevUserID {
+                userID = "x\(txtUserID.text!)"
+            } else {
+                userID = "e\(txtUserID.text!)"
+            }
+        }
+        txtUserID.text! = userID
+        bidDownload.retrievePreLogonKey(completionHandler: { (response:String?) in
+            let preLoginKey = response!
+            CBGlobalMethods.shared.secretKey = preLoginKey
+            print("preLoginKey: \(preLoginKey)")
+            DispatchQueue.main.async {
+                self.bidDownload.retrieveSessionKey(username: self.txtUserID.text!, password: self.txtPassword.text!, preloginKey: preLoginKey, completionHandler: { (response:String?) in
+                    print("Response2: \(response!)")
+                    
+                })
+            }
+         
+        })
         self.bidDownload.downloadBidDataFiles()
         
         

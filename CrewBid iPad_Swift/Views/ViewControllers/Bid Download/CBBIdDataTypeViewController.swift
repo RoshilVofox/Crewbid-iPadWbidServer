@@ -25,6 +25,7 @@ class CBBIdDataTypeViewController: UIViewController {
     @IBAction func btnNewBidPeriod(_ sender: Any) {
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBDefaultEmployeeVC") as! CBDefaultEmployeeVC
+        vc.isNewBid = true
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -33,7 +34,7 @@ class CBBIdDataTypeViewController: UIViewController {
         let ok = UIAlertAction(title: "OK", style: .default) { (action) in
             let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "CBBiddataDownloadVC") as! CBBiddataDownloadVC
-            vc.isFromHistoric = true
+            vc.isHistoricBid = true
             self.navigationController?.pushViewController(vc, animated: true)
         }
         dialogMessage.addAction(ok)
