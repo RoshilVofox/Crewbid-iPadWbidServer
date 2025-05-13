@@ -971,7 +971,7 @@
                                                                 <constraint firstAttribute="height" constant="29" id="GVg-wU-BHb"/>
                                                                 <constraint firstAttribute="width" constant="427" id="o6e-ep-9mO"/>
                                                             </constraints>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tu4-Qo-4CN" userLabel="View All Days">
@@ -2425,6 +2425,9 @@
                                                 <constraint firstAttribute="bottom" secondItem="RAH-73-iHP" secondAttribute="bottom" id="uMq-je-Pzl"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="titleLabel" destination="ymb-mx-Zr1" id="dde-UD-E3g"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CommutingRuleCell" rowHeight="250" id="GSd-kf-1Bn" customClass="CBCommutingRuleCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="1290" width="652" height="250"/>
@@ -2693,6 +2696,9 @@
                                                 <constraint firstItem="jAd-oO-3FB" firstAttribute="top" secondItem="toA-2b-2Tf" secondAttribute="topMargin" constant="16" id="zex-TU-jV1"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="titleLabel" destination="aZP-oC-i0N" id="Ykh-87-YMp"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="DayMonthRuleCell" rowHeight="275" id="eOY-em-E7u" customClass="CBDayMonthRuleCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="1540" width="652" height="275"/>
@@ -5164,6 +5170,9 @@
                                                 <constraint firstItem="82M-g5-nN3" firstAttribute="leading" secondItem="8Kz-Z4-l3J" secondAttribute="trailing" constant="15" id="xI8-dP-6fO"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="titleLabel" destination="4oo-Zg-fxX" id="cxd-Gh-Uag"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CityLineSortCell" rowHeight="56" id="IPe-Kz-DIb" customClass="CBLineSortCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="106" width="580" height="56"/>
@@ -5508,6 +5517,9 @@
                                                 <constraint firstItem="H3a-A2-Q1N" firstAttribute="leading" secondItem="aBe-O0-8eQ" secondAttribute="trailing" constant="16" id="v3u-h7-xIm"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="titleLabel" destination="POF-DZ-g44" id="ceE-5O-wJm"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="DayMonthLineSortCell" rowHeight="290" id="kIk-yx-12w" userLabel="Days of the Month Sort Cell" customClass="CBDayMonthSortCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="432" width="580" height="290"/>
@@ -5694,6 +5706,9 @@
                                                 <constraint firstAttribute="trailing" secondItem="H5V-A8-kEH" secondAttribute="trailing" id="uXt-d5-Bzo"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="btnTitle" destination="n7S-EO-Jnj" id="eoN-WV-Oib"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="flagSortCell" rowHeight="265" id="V5b-51-wXo" customClass="CBFlagSortCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="778" width="580" height="265"/>

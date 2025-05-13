@@ -98,7 +98,6 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
         } else {
 //            MARK: in the case of commute auto
             if item["name"] as? String == "Commuting - Auto" {
-                print("commute auto")
                 if let presentingVC = self.presentingViewController {
                     self.dismiss(animated: true) {
                         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
@@ -112,8 +111,9 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
             else {
                 let newRow = [
                     "category": item["category"] as! Int,
-                    "type": item["type"] as? Int ?? 0
-                ]
+                    "type": item["type"] as? Int ?? 0,
+                    "title": item["name"] as? String ?? "",
+                ] as [String : Any]
                 AppData.shared.filtersToBeAddedInTable.append(newRow)
                 NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
                 self.dismiss(animated: true, completion: nil)

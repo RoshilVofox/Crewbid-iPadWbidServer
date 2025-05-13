@@ -23,11 +23,13 @@ class CBLineSortsTVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         cellIdentifiers.append("LineSortCell")
-        print("hi")
+
         setupUI()
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
+        
         NotificationCenter.default.addObserver(self, selector: #selector(updateLines), name: NSNotification.Name("refreshLines"), object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(deleteCellRow), name: Notification.Name("DeleteCellNotification"), object: nil)
@@ -36,12 +38,26 @@ class CBLineSortsTVC: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         NotificationCenter.default.removeObserver("refreshLines")
         NotificationCenter.default.removeObserver("DeleteCellNotification")
+        NotificationCenter.default.removeObserver("SortBidListAction")
     }
     
     func setupUI(){
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
         btnSortTheBidlist.backgroundColor = .systemRed
         btnSortTheScratchpad.backgroundColor = .systemGreen
+    }
+    
+    @objc func setupLayoutView() {
+        if AppData.shared.isBidListSort {
+            self.btnFilter.isHidden = true
+            self.btnPreset.isHidden = true
+            self.btnBids.isHidden = true
+        }
+        else {
+            self.btnFilter.isHidden = false
+            self.btnPreset.isHidden = false
+            self.btnBids.isHidden = false
+        }
     }
     
     @IBAction func btnFilterAction(_ sender: Any) {
@@ -136,6 +152,7 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
         var cellIdentifier = kLineSortCellIdentifier
         let category = lineSort["category"] as? Int
         let type = lineSort["type"] as? Int
+        let title = lineSort["title"] as? String
         
         if ((category == BILineSortCategory.BICitiesLineSortCategory.rawValue &&
              type != BICityLineSortType.BICitiesLineSortTypeNonConusLegs.rawValue) ||
@@ -173,6 +190,7 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
         }
        else if  cellIdentifier == kCommutingLineSortCellIdentifier {
             let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CBCommutingSortCell
+           cell.titleLabel.text = title
             return cell
         }
         else if  cellIdentifier == kDaysOffLineSortCellIdentifier {
@@ -181,9 +199,11 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
          }
         else if  cellIdentifier == kCommutabilityLineSortCellIdentifier {
              let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CBCommutabilitySortCell
+            cell.btnTitle.setTitle(title, for: .normal)
              return cell
          }
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CBLineSortCell
+        cell.titleLabel.text = title
         return cell
         
     }
@@ -191,7 +211,6 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let lineSort = AppData.shared.sortsToBeAddedInTable[indexPath.row]
         let category = lineSort["category"] as? Int
-        let type = lineSort["type"] as? Int
         
         if category == BILineSortCategory.BICommutingLineSortCategory.rawValue {
             return 270.0

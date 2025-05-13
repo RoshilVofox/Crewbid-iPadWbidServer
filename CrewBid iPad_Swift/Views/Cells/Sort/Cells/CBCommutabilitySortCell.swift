@@ -9,6 +9,7 @@ import UIKit
 
 class CBCommutabilitySortCell: UITableViewCell {
 
+    @IBOutlet weak var btnTitle: UIButton!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
