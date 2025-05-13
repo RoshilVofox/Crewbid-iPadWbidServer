@@ -52,11 +52,17 @@ class CBLineSortsTVC: UIViewController {
             self.btnFilter.isHidden = true
             self.btnPreset.isHidden = true
             self.btnBids.isHidden = true
+            btnSortTheBidlist.backgroundColor = .systemGreen
+            btnSortTheScratchpad.backgroundColor = .systemRed
+            
         }
         else {
             self.btnFilter.isHidden = false
             self.btnPreset.isHidden = false
             self.btnBids.isHidden = false
+            btnSortTheBidlist.backgroundColor = .systemRed
+            btnSortTheScratchpad.backgroundColor = .systemGreen
+            
         }
     }
     
@@ -95,11 +101,11 @@ class CBLineSortsTVC: UIViewController {
     
     @IBAction func btnSortTheBidListAction(_ sender: Any) {
         if btnSortTheBidlist.backgroundColor == .systemRed {
-            btnSortTheBidlist.backgroundColor = .systemGreen
-            btnSortTheScratchpad.backgroundColor = .systemRed
-            AppData.shared.isBidListSort = true
             let alert = UIAlertController(title: "Confirmation", message: "Do you want to sort the bid list?", preferredStyle: .alert)
             let yesAction = UIAlertAction(title: "Yes", style: .default) { _ in
+                self.btnSortTheBidlist.backgroundColor = .systemGreen
+                self.btnSortTheScratchpad.backgroundColor = .systemRed
+                AppData.shared.isBidListSort = true
                 NotificationCenter.default.post(name: NSNotification.Name("SortBidListAction"), object: self)
                 self.btnFilter.isHidden = true
                 self.btnPreset.isHidden = true

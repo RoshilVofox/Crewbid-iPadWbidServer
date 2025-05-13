@@ -8,7 +8,7 @@
 import UIKit
 
 class CBBidListVC: BaseViewController {
-
+    
     @IBOutlet weak var btnNormalView: UIButton!
     @IBOutlet weak var btnCalendarView: UIButton!
     @IBOutlet weak var btnExpandedView: UIButton!
@@ -32,29 +32,46 @@ class CBBidListVC: BaseViewController {
         btnExpandedView.layer.borderWidth = 1
         btnExpandedView.layer.borderColor = UIColor.lightGray.cgColor
     }
-
+    
     @IBAction func btnFiltersAction(_ sender: Any) {
-        AppData.shared.isBidListSort = false
-        NotificationCenter.default.post(name: NSNotification.Name("SortBidListAction"), object: self)
-
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBFilterRulesTableVC") as! CBFilterRulesTableVC
-
-        // Setup new VC
-        vc.view.frame = self.view.bounds
-        vc.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        self.addChild(vc)
-
-        // Perform flip transition from current view to new VC's view
-        UIView.transition(with: self.view, duration: 0.65, options: .transitionFlipFromLeft,
-                          animations: {
-                              self.view.addSubview(vc.view)
-                          },
-                          completion: { _ in
-                              vc.didMove(toParent: self)
-                          })
+        // Check if AppData.shared.isBidListSort is true
+        if AppData.shared.isBidListSort == true {
+            // Remove the existing child view controller if there is one
+            if let currentChildVC = self.children.first {
+                currentChildVC.willMove(toParent: nil)
+                currentChildVC.view.removeFromSuperview()
+                currentChildVC.removeFromParent()
+            }
+            
+            // Update the sort flag
+            AppData.shared.isBidListSort = false
+            
+            // Post a notification
+            NotificationCenter.default.post(name: NSNotification.Name("SortBidListAction"), object: self)
+            
+            
+            // Setup the new VC
+            vc.view.frame = self.view.bounds
+            vc.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            self.addChild(vc)
+            
+            // Perform flip transition from current view to the new VC's view
+            UIView.transition(with: self.view, duration: 0.65, options: .transitionFlipFromLeft,
+                              animations: {
+                self.view.addSubview(vc.view)
+            },
+                              completion: { _ in
+                vc.didMove(toParent: self)
+            })
+        } else {
+            self.navigationController?.pushViewController(vc, animated: false)
+            UIView.transition(from: self.view, to: vc.view, duration: 0.65, options: [.transitionFlipFromLeft])
+        }
     }
-
+    
+    
     
     @IBAction func btnActionsTapped(_ sender: Any) {
         let storyboard : UIStoryboard = UIStoryboard(name: "BidDocument", bundle: nil)
