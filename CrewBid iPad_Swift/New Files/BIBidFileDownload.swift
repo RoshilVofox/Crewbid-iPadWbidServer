@@ -13,50 +13,33 @@ protocol BIBidFileDownloadDelegate: AnyObject {
     func bidFileDownloadDidFinish(_ bidFileDownload: BIBidFileDownload)
     func bidFileDownload(_ bidFileDownload: BIBidFileDownload, didFailWithError error: Error)
 }
-protocol BIBidFileDownloadDataSource: BIBidInfoDataSource {
-    func userid() -> String
-    func password() -> String
+class BIBidFileDownloadDataSource: BIBidInfoDataSource {
+    var userid = String()
+    var password = String()
 }
 
 
 
-class BIBidFileDownload: NSObject{
+class BIBidFileDownload: NSObject, URLSessionDataDelegate{
 
     var bidInfo = BIBidInfo()
     var prelogonConnection:URLSession!
+    var sessionConnection:URLSession!
     var prelogonCredential:String?
     var sessionCredential: String?
     var downloadeedText:String?
     var connectionLog:NSString?
     var filesCount:Float?
     var filesToDownloadEnumerator: IndexingIterator<[String]>?
-    var urlData:Data?
+    var urlData = Data()
     var urlRequest:URLRequest?
     var downloadType:BIBidFileDownloadType = .biBidDataDownloadType
     weak var delegate:BIBidFileDownloadDelegate!
-    var dataSource:BIBidInfoDataSource = BIBidInfoDataSource()
+    var dataSource:BIBidFileDownloadDataSource = BIBidFileDownloadDataSource()
+    var finishedBlock: BIFinishedBlock?
+    var progressHandler: BIProgressBlock?
+    var errorHandler: BIErrorBlock?
     static let kVendor = "CrewBidPad"
-    
-//    init?(dataSource: BIBidFileDownloadDataSource, delegate: BIBidFileDownloadDelegate) {
-//        super.init()
-//        bidInfo.dataSource = dataSource
-//        self.delegate = delegate
-//        
-//        // Check that data source can provide valid info.
-//        if dataSource.month() == nil ||
-//           dataSource.base() == nil ||
-//           dataSource.position() == nil ||
-//           dataSource.round() == nil {
-//            print("Data source missing a property")
-//            return nil
-//        }
-//        
-//        connectionLog = NSMutableString(capacity: 2048)
-//  
-//    }
-    
-    
-    //MARK: File Download
 
     
     
@@ -135,6 +118,62 @@ class BIBidFileDownload: NSObject{
         }
         task.resume()
     }
+//MARK: ============ delegate method
+    func checkCrewBidLogin() {
+        self.urlRequest = URLRequest(url: self.thirdPartyURL()!,cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeout)
+        print("URL RQ: \(String(describing: self.urlRequest))")
+        retrievePrelogonCredential()
+    }
+    
+    func retrievePrelogonCredential(){
+        self.prelogonConnection = URLSession(configuration: .default, delegate: self, delegateQueue: .main)
+        let dataTask = self.prelogonConnection.dataTask(with: self.urlRequest!)
+        dataTask.resume()
+    }
+    func retrieveSessionCredential(){
+//        self.sessionConnectionProcess()
+        self.prelogonCredential = nil
+        
+    }
+    func sessionConnectionProcess(){
+        let userID = self.dataSource.userid
+        let password = self.dataSource.password
+        let escapedPwd = self.stringByAddingPercentEscapes(to: password)!
+        let postString = String(format: "CREDENTIALS=%@&REQUEST=LOGON&UID=%@&PWD=%@",self.prelogonCredential!, userID, escapedPwd)
+        print("PostString: \(postString)")
+        let postData = postString.data(using: .utf8, allowLossyConversion: true)!
+        let postLength = String(postData.count)
+        self.urlRequest?.httpMethod = "POST"
+        self.urlRequest?.setValue(postLength, forHTTPHeaderField: "Content-Length")
+        self.urlRequest?.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        self.urlRequest?.httpBody = postData
+        
+        self.sessionConnection = URLSession(configuration: .default, delegate: self, delegateQueue: .main)
+        let dataTask = self.sessionConnection.dataTask(with: self.urlRequest!)
+        dataTask.resume()
+    }
+    
+    func urlSession(_ session: URLSession,dataTask: URLSessionDataTask,didReceive data: Data) {
+        self.urlData.append(data)
+        if self.prelogonConnection == session {
+            
+        }else if self.sessionConnection == session {
+            
+        }
+    }
+    func urlSession(_ session: URLSession,dataTask: URLSessionDataTask,willCacheResponse proposedResponse: CachedURLResponse,completionHandler: @escaping (CachedURLResponse?) -> Void) {
+        if self.prelogonConnection == session {
+            let dataString = String(data: self.urlData, encoding: .utf8)
+            self.prelogonCredential = self.stringByAddingPercentEscapes(to: dataString!)!
+            print("PrelogonKey: \(dataString ?? "default")")
+            self.retrieveSessionCredential()
+        }else if self.sessionConnection == session {
+            let dataString = String(data: self.urlData, encoding: .utf8)
+            self.sessionCredential = self.stringByAddingPercentEscapes(to: dataString!)!
+            print("SessionKey: \(dataString ?? "default")")
+        }
+    }
+//====================
     func retrieveSessionKey(username: String, password: String, preloginKey: String, completionHandler:((String?) -> Void)?){
         let jsonString = "CREDENTIALS="+preloginKey+"&REQUEST=LOGON&UID="+username+"&PWD="+escapedString(password) as String
         print("Session Key Request: \(jsonString)")

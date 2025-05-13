@@ -22,6 +22,8 @@ class CBCredentialsPageVC: UIViewController {
     var empNum:String?
     var month:Int?
     var year:Int?
+    var userid:String?
+    var password:String?
     var loginType:LoginType = .newBid
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,8 +45,9 @@ class CBCredentialsPageVC: UIViewController {
     }
     
     @IBAction func btnGoAction(_ sender: UIButton) {
-        goAction()
-        
+//    MARK: ======================
+//        goAction()
+        self.bidDownload.checkCrewBidLogin()
     }
     func goAction(){
         UserDefaults.standard.set(txtUserID.text, forKey: KCBEmpNumWithPrefix)
@@ -178,7 +181,7 @@ extension CBCredentialsPageVC: UITextFieldDelegate {
     }
     
     func loginAction(){
-
+        
         UserDefaults.standard.set(txtUserID.text, forKey: KCBEmpNumWithPrefix)
         var userID = txtUserID.text!
         if txtUserID.text!.prefix(1) != "x" && txtUserID.text!.prefix(1) != "e" {
@@ -216,3 +219,4 @@ extension CBCredentialsPageVC: UITextFieldDelegate {
         }
     }
 }
+
