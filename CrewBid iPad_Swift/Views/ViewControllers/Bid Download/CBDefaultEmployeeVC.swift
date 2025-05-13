@@ -7,10 +7,11 @@
 
 import UIKit
 
-class CBDefaultEmployeeVC: UIViewController {
+class CBDefaultEmployeeVC: BaseViewController {
 
     @IBOutlet weak var textEmpNum: customUITextField!
-    
+    var isHistoricBid:Bool = false
+    var isNewBid:Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -26,9 +27,16 @@ class CBDefaultEmployeeVC: UIViewController {
     }
     
     @IBAction func btnNextAction(_ sender: Any) {
-        let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "CBBiddataDownloadVC") as! CBBiddataDownloadVC
-        self.navigationController?.pushViewController(vc, animated: true)
+        if textEmpNum.text?.count == 0{
+            shakeTextField(textField: textEmpNum)
+        }else{
+            UserDefaults.standard.set(textEmpNum.text!, forKey: kCBEmployeeNumberDefaultKey)
+            let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "CBBiddataDownloadVC") as! CBBiddataDownloadVC
+            vc.empNum = self.textEmpNum.text
+            vc.isNewBid = self.isNewBid
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
 }
 

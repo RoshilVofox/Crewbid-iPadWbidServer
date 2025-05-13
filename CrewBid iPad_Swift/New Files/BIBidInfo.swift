@@ -7,7 +7,9 @@
 
 import Foundation
 
-
+typealias BIFinishedBlock = () -> Void
+typealias BIProgressBlock = (Float) -> Void
+typealias BIErrorBlock = (Error) -> Void
 class BIBidInfoDataSource {
     var year = Int()
     var month  = Int()
@@ -17,10 +19,10 @@ class BIBidInfoDataSource {
     var employeeNumber = String()
     var swaptimizerID = String()
 }
+
 class BIBidInfo:NSObject{
     private var app:AppDelegate!
     weak var dataSource: BIBidInfoDataSource!
-    
     //MARK: Directories
     static func tempDirectory() -> URL {
         return FileManager.default.temporaryDirectory
