@@ -40,17 +40,19 @@ class CBDocumentsCollectionViewController: BaseViewController {
             self.present(vc, animated: true)
         }
         else {
-            guard !selectedRows.isEmpty else { return }
-            let sortedIndices = selectedRows.sorted(by: >)
-            for index in sortedIndices {
-                collectionViewData.remove(at: index)
-            }
-            let indexPaths = sortedIndices.map { IndexPath(item: $0, section: 0) }
-            collectionView.deleteItems(at: indexPaths)
-            selectedRows.removeAll()
-            //            MARK: wait
-            //            bidDownloadButton.setImage(UIImage(systemName: "trash"), for: .normal)
+           deleteCellRow()
         }
+    }
+    
+    func deleteCellRow() {
+        guard !selectedRows.isEmpty else { return }
+        let sortedIndices = selectedRows.sorted(by: >)
+        for index in sortedIndices {
+            collectionViewData.remove(at: index)
+        }
+        let indexPaths = sortedIndices.map { IndexPath(item: $0, section: 0) }
+        collectionView.deleteItems(at: indexPaths)
+        selectedRows.removeAll()
     }
     
     @IBAction func settingsAction(_ sender: Any) {
