@@ -8,20 +8,16 @@
 import Foundation
 
 let kURLConnectionTimeout = 90.0
-protocol BIBidFileDownloadDelegate: AnyObject {
-    func bidFileDownload(_ bidFileDownload: BIBidFileDownload, didUpdateProgress progress: Float)
-    func bidFileDownloadDidFinish(_ bidFileDownload: BIBidFileDownload)
-    func bidFileDownload(_ bidFileDownload: BIBidFileDownload, didFailWithError error: Error)
-}
-class BIBidFileDownloadDataSource: BIBidInfoDataSource {
-    var userid = String()
-    var password = String()
-}
+//protocol BIBidFileDownloadDelegate: AnyObject {
+//    func bidFileDownload(_ bidFileDownload: BIBidFileDownload, didUpdateProgress progress: Float)
+//    func bidFileDownloadDidFinish(_ bidFileDownload: BIBidFileDownload)
+//    func bidFileDownload(_ bidFileDownload: BIBidFileDownload, didFailWithError error: Error)
+//}
 
 
 
 class BIBidFileDownload: NSObject, URLSessionDataDelegate{
-
+    
     var bidInfo = BIBidInfo()
     var prelogonConnection:URLSession!
     var sessionConnection:URLSession!
@@ -31,11 +27,10 @@ class BIBidFileDownload: NSObject, URLSessionDataDelegate{
     var connectionLog:NSString?
     var filesCount:Float?
     var filesToDownloadEnumerator: IndexingIterator<[String]>?
-    var urlData = Data()
+    var preLogonData = Data()
+    var sessionData = Data()
     var urlRequest:URLRequest?
     var downloadType:BIBidFileDownloadType = .biBidDataDownloadType
-    weak var delegate:BIBidFileDownloadDelegate!
-    var dataSource:BIBidFileDownloadDataSource = BIBidFileDownloadDataSource()
     var finishedBlock: BIFinishedBlock?
     var progressHandler: BIProgressBlock?
     var errorHandler: BIErrorBlock?
@@ -53,27 +48,8 @@ class BIBidFileDownload: NSObject, URLSessionDataDelegate{
             return "FA"
         }
     }
-    
-    
-    func downloadBidDataFiles(){
-        var dict:[String:Any] = [:]
-        dict["domicile"] = self.dataSource.base
-        dict["EmpNum"] = self.dataSource.employeeNumber
-        dict["Round"] = self.dataSource.round
-        switch self.dataSource.position{
-        case .Captain: dict["Position"] = "CP"
-            break
-        case .FirstOfficer: dict["Position"] = "FO"
-            break
-        case .FlightAttendant: dict["Position"] = "FA"
-            break
-        }
-        dict["Year"] = self.dataSource.year
-        dict["Month"] = self.dataSource.month
-        dict["secretEmpNum"] = self.dataSource.employeeNumber
-    
-    }
-    
+
+//MARK: Closure method
     func retrievePreLogonKey(completionHandler: ((String?) -> Void)?){
         var thirdPartyURL = "https://www27.swalife.com/webbid3pty/ThirdParty"
         if UserDefaults.standard.string(forKey: "IsQATest") == "YES" {
@@ -118,62 +94,6 @@ class BIBidFileDownload: NSObject, URLSessionDataDelegate{
         }
         task.resume()
     }
-//MARK: ============ delegate method
-    func checkCrewBidLogin() {
-        self.urlRequest = URLRequest(url: self.thirdPartyURL()!,cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeout)
-        print("URL RQ: \(String(describing: self.urlRequest))")
-        retrievePrelogonCredential()
-    }
-    
-    func retrievePrelogonCredential(){
-        self.prelogonConnection = URLSession(configuration: .default, delegate: self, delegateQueue: .main)
-        let dataTask = self.prelogonConnection.dataTask(with: self.urlRequest!)
-        dataTask.resume()
-    }
-    func retrieveSessionCredential(){
-//        self.sessionConnectionProcess()
-        self.prelogonCredential = nil
-        
-    }
-    func sessionConnectionProcess(){
-        let userID = self.dataSource.userid
-        let password = self.dataSource.password
-        let escapedPwd = self.stringByAddingPercentEscapes(to: password)!
-        let postString = String(format: "CREDENTIALS=%@&REQUEST=LOGON&UID=%@&PWD=%@",self.prelogonCredential!, userID, escapedPwd)
-        print("PostString: \(postString)")
-        let postData = postString.data(using: .utf8, allowLossyConversion: true)!
-        let postLength = String(postData.count)
-        self.urlRequest?.httpMethod = "POST"
-        self.urlRequest?.setValue(postLength, forHTTPHeaderField: "Content-Length")
-        self.urlRequest?.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        self.urlRequest?.httpBody = postData
-        
-        self.sessionConnection = URLSession(configuration: .default, delegate: self, delegateQueue: .main)
-        let dataTask = self.sessionConnection.dataTask(with: self.urlRequest!)
-        dataTask.resume()
-    }
-    
-    func urlSession(_ session: URLSession,dataTask: URLSessionDataTask,didReceive data: Data) {
-        self.urlData.append(data)
-        if self.prelogonConnection == session {
-            
-        }else if self.sessionConnection == session {
-            
-        }
-    }
-    func urlSession(_ session: URLSession,dataTask: URLSessionDataTask,willCacheResponse proposedResponse: CachedURLResponse,completionHandler: @escaping (CachedURLResponse?) -> Void) {
-        if self.prelogonConnection == session {
-            let dataString = String(data: self.urlData, encoding: .utf8)
-            self.prelogonCredential = self.stringByAddingPercentEscapes(to: dataString!)!
-            print("PrelogonKey: \(dataString ?? "default")")
-            self.retrieveSessionCredential()
-        }else if self.sessionConnection == session {
-            let dataString = String(data: self.urlData, encoding: .utf8)
-            self.sessionCredential = self.stringByAddingPercentEscapes(to: dataString!)!
-            print("SessionKey: \(dataString ?? "default")")
-        }
-    }
-//====================
     func retrieveSessionKey(username: String, password: String, preloginKey: String, completionHandler:((String?) -> Void)?){
         let jsonString = "CREDENTIALS="+preloginKey+"&REQUEST=LOGON&UID="+username+"&PWD="+escapedString(password) as String
         print("Session Key Request: \(jsonString)")
@@ -214,39 +134,86 @@ class BIBidFileDownload: NSObject, URLSessionDataDelegate{
                 completionHandler?(nil)
                 return
             }
-            print("Session Credentials: \(dataValue)")
             completionHandler?(dataValue)
         }
         task.resume()
     }
+//MARK: ============ delegate method
+    func checkCrewBidLogin() {
+        self.urlRequest = URLRequest(url: self.thirdPartyURL()!,cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeout)
+        retrievePrelogonCredential()
+    }
     
+    func retrievePrelogonCredential(){
+        self.prelogonConnection = URLSession(configuration: .default, delegate: self, delegateQueue: .main)
+        let dataTask = self.prelogonConnection.dataTask(with: self.urlRequest!)
+        dataTask.resume()
+    }
+    func retrieveSessionCredential(){
+        self.sessionConnectionProcess()
+        self.prelogonCredential = nil
+        
+    }
+    func sessionConnectionProcess(){
+        if let dataSource = BIBidDataManager.shared.dataSource{
+        let userID = dataSource.userid
+        let password = dataSource.password
+        let escapedPwd = self.stringByAddingPercentEscapes(to: password)!
+        let postString = String(format: "CREDENTIALS=%@&REQUEST=LOGON&UID=%@&PWD=%@",self.prelogonCredential!, userID,escapedPwd)
+        let postData = postString.data(using: .utf8, allowLossyConversion: true)!
+        let postLength = String(postData.count)
+        self.urlRequest?.httpMethod = "POST"
+        self.urlRequest?.setValue(postLength, forHTTPHeaderField: "Content-Length")
+        self.urlRequest?.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        self.urlRequest?.httpBody = postData
+        self.sessionConnection = URLSession(configuration: .default, delegate: self, delegateQueue: .main)
+        let dataTask = self.sessionConnection.dataTask(with: self.urlRequest!)
+        dataTask.resume()
+        }
+    }
+    
+    func urlSession(_ session: URLSession,dataTask: URLSessionDataTask,didReceive data: Data) {
+        if self.prelogonConnection == session {
+            self.preLogonData.append(data)
+        }else if self.sessionConnection == session {
+            self.sessionData.append(data)
+        }
+    }
+    func urlSession(_ session: URLSession,dataTask: URLSessionDataTask,willCacheResponse proposedResponse: CachedURLResponse,completionHandler: @escaping (CachedURLResponse?) -> Void) {
+        if self.prelogonConnection == session {
+            let dataString = String(data: self.preLogonData, encoding: .utf8)
+            self.prelogonCredential = stringFormatter(dataString!)
+            print("PrelogonKey: \(dataString ?? "default")")
+            self.retrieveSessionCredential()
+        }else if self.sessionConnection == session {
+            let dataString = String(data: self.sessionData, encoding: .utf8)
+            self.sessionCredential = dataString!
+            print("SessionKey: \(dataString ?? "default")")
+        }
+
+    }
+//====================
+
+    func stringFormatter(_ string: String) -> String {
+        var encodedString = string.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        encodedString = encodedString.replacingOccurrences(of: "+", with: "%2B")
+        return encodedString
+    }
     
     func escapedString(_ stringValue: String) -> String {
         return stringValue.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? stringValue
     }
     
-
-    
-    
-
-
-    
-    func getHistoricalData(postString: String, urlString: String) -> Data?{
-        var returnData:Data?
-        return returnData
-    }
-    
-    
-    func sendSynchronousRequest(_ request: URLRequest,
-                                returningResponse responsePtr: inout URLResponse?,
-                                error errorPtr: inout NSError?) -> Data? {
-        var result:Data?
-        return result
-    }
-    
     
     func bidDataFiles() -> [String] {
-        var bidDataFiles = [String]()
+        var bidDataFiles:[String] = []
+        let app = UIApplication.shared.delegate as! AppDelegate
+        if app.isMockData || app.isHistoricBid{
+            bidDataFiles.append(self.textDataFilename())
+        }else{
+            bidDataFiles.append(self.bidDataFilename())
+            bidDataFiles.append(self.textDataFilename())
+        }
         return bidDataFiles
     }
     func downloadMockDataTripText(){

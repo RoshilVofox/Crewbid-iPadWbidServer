@@ -10,19 +10,29 @@ import Foundation
 typealias BIFinishedBlock = () -> Void
 typealias BIProgressBlock = (Float) -> Void
 typealias BIErrorBlock = (Error) -> Void
+
 class BIBidInfoDataSource {
-    var year = Int()
-    var month  = Int()
-    var base = String()
-    var position : BICrewPositionType = .Captain
-    var round = Int()
-    var employeeNumber = String()
-    var swaptimizerID = String()
+    var userid: String = ""
+    var password: String = ""
+    var year: Int = 0
+    var month: Int = 0
+    var base: String = ""
+    var position: BICrewPositionType = .Captain
+    var round: Int = 0
+    var employeeNumber: String = ""
+    var swaptimizerID: String = ""
+
 }
+class BIBidDataManager{
+    static let shared = BIBidDataManager()
+    private init(){}
+    var dataSource: BIBidInfoDataSource?
+}
+
 
 class BIBidInfo:NSObject{
     private var app:AppDelegate!
-    weak var dataSource: BIBidInfoDataSource!
+    weak var dataSource = BIBidDataManager.shared.dataSource
     //MARK: Directories
     static func tempDirectory() -> URL {
         return FileManager.default.temporaryDirectory
@@ -56,12 +66,15 @@ class BIBidInfo:NSObject{
     }
     
     func textFilenameBase() -> String {
-        let base = dataSource.base
-        let shortName = dataSource.position
+        let base = dataSource?.base
+        let shortName = dataSource?.position
         return "\(String(describing: base))\(String(describing: shortName))"
     }
     
     func bidDocumentFilename() -> String {
+        guard let dataSource = dataSource else{
+            return "Unknown.crewbiddoc"
+        }
         // Month and year formatting
         let monthYearFormatter = DateFormatter()
         monthYearFormatter.dateFormat = "MMM yyyy"

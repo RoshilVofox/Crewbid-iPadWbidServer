@@ -32,6 +32,8 @@ class CBDocumentsCollectionViewController: BaseViewController {
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBNewBidVC") as! CBNewBidVC
         vc.preferredContentSize = CGSize(width: 600, height: 550)
+        vc.modalPresentationStyle = .formSheet
+        vc.isModalInPresentation = true
         self.present(vc, animated: true)
     }
     

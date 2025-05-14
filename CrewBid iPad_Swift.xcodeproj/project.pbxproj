@@ -1633,9 +1633,9 @@
 		F4CF5A1F2D891A3800A351DB = {
 			isa = PBXGroup;
 			children = (
-				F41EBE8E2DC4DB20001413DE /* CrewBid iPad_Swift */,
 				8BEADE892DC4A4DB00B3BDF2 /* Frameworks */,
 				F4CF5A292D891A3800A351DB /* Products */,
+				F41EBE8E2DC4DB20001413DE /* CrewBid iPad_Swift */,
 			);
 			sourceTree = "<group>";
 		};

@@ -14,6 +14,7 @@ class CBCredentialsPageVC: UIViewController {
     @IBOutlet weak var showPasswordBtn: UIButton!
     @IBOutlet weak var lblTitle: UILabel!
     var bidDownload = BIBidFileDownload()
+    var dataSource = BIBidInfoDataSource()
     var isHistoricBid : Bool = false
     var isNewBid:Bool = false
     var selectedRound:Int?
@@ -47,6 +48,15 @@ class CBCredentialsPageVC: UIViewController {
     @IBAction func btnGoAction(_ sender: UIButton) {
 //    MARK: ======================
 //        goAction()
+        //MARK: passing data to get session credential
+        dataSource.userid = txtUserID.text!
+        dataSource.password = txtPassword.text!
+        dataSource.month = month!
+        dataSource.year = year!
+        dataSource.round = selectedRound!
+        dataSource.employeeNumber = empNum!
+        BIBidDataManager.shared.dataSource = dataSource
+        //MARK: need to add completion handler to navigate to scratchpad view
         self.bidDownload.checkCrewBidLogin()
     }
     func goAction(){
@@ -204,7 +214,7 @@ extension CBCredentialsPageVC: UITextFieldDelegate {
             }
          
         })
-        self.bidDownload.downloadBidDataFiles()
+
         
         
         self.dismiss(animated: false)
