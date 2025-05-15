@@ -11,6 +11,7 @@ typealias BIFinishedBlock = () -> Void
 typealias BIProgressBlock = (Float) -> Void
 typealias BIErrorBlock = (Error) -> Void
 
+// for passing data with delegate method
 class BIBidInfoDataSource {
     var userid: String = ""
     var password: String = ""
@@ -21,14 +22,13 @@ class BIBidInfoDataSource {
     var round: Int = 0
     var employeeNumber: String = ""
     var swaptimizerID: String = ""
-
 }
 class BIBidDataManager{
     static let shared = BIBidDataManager()
     private init(){}
     var dataSource: BIBidInfoDataSource?
 }
-
+//=====================================
 
 class BIBidInfo:NSObject{
     private var app:AppDelegate!

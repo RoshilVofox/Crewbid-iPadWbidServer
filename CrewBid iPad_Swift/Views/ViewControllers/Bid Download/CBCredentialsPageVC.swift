@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CBCredentialsPageVC: UIViewController {
+class CBCredentialsPageVC: BaseViewController {
     
     @IBOutlet weak var txtUserID: customUITextField!
     @IBOutlet weak var txtPassword: customUITextField!
@@ -15,6 +15,7 @@ class CBCredentialsPageVC: UIViewController {
     @IBOutlet weak var lblTitle: UILabel!
     var bidDownload = BIBidFileDownload()
     var dataSource = BIBidInfoDataSource()
+    let reachability = try? Reachability()
     var isHistoricBid : Bool = false
     var isNewBid:Bool = false
     var selectedRound:Int?
@@ -35,49 +36,11 @@ class CBCredentialsPageVC: UIViewController {
         }
     }
     
-    @IBAction func showPasswordAction(_ sender: UIButton) {
-        txtPassword.isSecureTextEntry = !txtPassword.isSecureTextEntry
-        let icon = UIImage(named: txtPassword.isSecureTextEntry ? "showPwd" : "hidePwd")
-        sender.setImage(icon , for: .normal)
-    }
-    
-    @IBAction func btnBackAction(_ sender: UIButton) {
-        self.navigationController?.popViewController(animated: true)
-    }
-    
-    @IBAction func btnGoAction(_ sender: UIButton) {
-//    MARK: ======================
-//        goAction()
-        //MARK: passing data to get session credential
-        dataSource.userid = txtUserID.text!
-        dataSource.password = txtPassword.text!
-        dataSource.month = month!
-        dataSource.year = year!
-        dataSource.round = selectedRound!
-        dataSource.employeeNumber = empNum!
-        BIBidDataManager.shared.dataSource = dataSource
-        //MARK: need to add completion handler to navigate to scratchpad view
-        self.bidDownload.checkCrewBidLogin()
-    }
-    func goAction(){
-        UserDefaults.standard.set(txtUserID.text, forKey: KCBEmpNumWithPrefix)
-        if (txtUserID.text!.count < 2) || (txtUserID.text!.count > 8) {
-            self.shakeTextField(textField: txtUserID)
-            return
-        }else if (txtPassword.text!.count < 4){
-            self.shakeTextField(textField: txtPassword)
-            return
-        }else{
-            self.loginAction()
-        }
-    }
     func setupUI(){
         txtUserID.delegate = self
         txtPassword.delegate = self
-        
         txtUserID.textContentType = .username
         txtPassword.textContentType = .password
-        
         if isHistoricBid == true {
             lblTitle.text = "Historic Bid Data"
         }else{
@@ -89,6 +52,132 @@ class CBCredentialsPageVC: UIViewController {
         txtUserID.leftViewMode = .always
         txtPassword.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtPassword.frame.height))
         txtPassword.leftViewMode = .always
+        NotificationCenter.default.addObserver(self, selector: #selector(dismissVC), name: NSNotification.Name(rawValue: "dismissLoginView"), object: nil)
+        
+    }
+    @objc func dismissVC() {
+        DispatchQueue.main.async {
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+    @IBAction func showPasswordAction(_ sender: UIButton) {
+        txtPassword.isSecureTextEntry = !txtPassword.isSecureTextEntry
+        let icon = UIImage(named: txtPassword.isSecureTextEntry ? "showPwd" : "hidePwd")
+        sender.setImage(icon , for: .normal)
+    }
+    
+    @IBAction func btnBackAction(_ sender: UIButton) {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    @IBAction func btnGoAction(_ sender: UIButton) {
+        goAction()
+        //MARK: passing data to get session credential
+//        dataSource.userid = txtUserID.text!
+//        dataSource.password = txtPassword.text!
+//        dataSource.month = month!
+//        dataSource.year = year!
+//        dataSource.round = selectedRound!
+//        dataSource.employeeNumber = empNum!
+//        BIBidDataManager.shared.dataSource = dataSource
+        //MARK: need to add completion handler to navigate to scratchpad view
+//        self.bidDownload.checkCrewBidLogin()
+    }
+
+
+    func goAction(){
+        if (txtUserID.text!.count < 2) || (txtUserID.text!.count > 8) {
+            self.shakeTextField(textField: txtUserID)
+            return
+        }else if (txtPassword.text!.count < 4){
+            self.shakeTextField(textField: txtPassword)
+            return
+        }
+        var userID = txtUserID.text!
+        if txtUserID.text!.prefix(1) != "x" && txtUserID.text!.prefix(1) != "e" {
+            if txtUserID.text! == DevUserID {
+                userID = "x\(txtUserID.text!)"
+            } else {
+                userID = "e\(txtUserID.text!)"
+            }
+        }
+        txtUserID.text! = userID
+        view.endEditing(true)
+        self.checkLoginCredentials(userID: getUserIdAfterValidation(userId: self.txtUserID.text!), pwd: self.txtPassword.text!, completionHandler: { (response:String?) in
+            print(response?.description ?? "no response")
+            if response == "hideHud"{
+                DispatchQueue.main.async {
+                    let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBAlertVC") as! CBAlertVC
+                    vc.fromView = self
+                    self.present(vc, animated: true)
+                }
+                return
+            }
+        })
+    }
+
+    func checkLoginCredentials(userID:String,pwd:String,completionHandler:((String?) ->Void)?){
+        if !reachability!.isReachable{
+            let alert = AlertService.showAlert(title: Warning, message: NetworkNotAvailable, actions: nil)
+            self.present(alert, animated: true)
+            return
+        }
+        self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
+        UserDefaults.standard.set(txtUserID.text, forKey: KCBEmpNumWithPrefix)
+
+        bidDownload.retrievePreLogonKey(completionHandler: { (response:String?) in
+            print("preLoginKey: \(response!)")
+            DispatchQueue.main.async {
+                self.bidDownload.retrieveSessionKey(username: self.txtUserID.text!, password: self.txtPassword.text!, preloginKey: response!, completionHandler: { (response:String?) in
+                    DispatchQueue.main.async {
+                        self.view.hideActivityIndicator()
+                    }
+                    print("Response2: \(response!)")
+                    if (response ?? "error").description.lowercased().contains("error"){
+                        completionHandler!("hideHud")
+                        return
+                    }
+                    CBGlobalMethods.shared.secretKey = response?.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines).addingPercentEncoding(withAllowedCharacters: .letters)!
+                        if CBGlobalMethods.shared.secretKey != nil{
+                            DispatchQueue.main.async {
+                            if let userID = self.txtUserID.text,let pwd = self.txtPassword.text{
+                                let success = KeychainHelper.save(account: userID, service: "SaveLoginDetails", value:pwd)
+                                if success{
+                                    print("Saved to keychain")
+                                }else{
+                                    print("Error saving to keychain")
+                                }
+                                let username = KeychainHelper.retrieveUsername(forService: "SaveLoginDetails")
+                                if username!.count>1{
+                                    if userID != username!{
+                                        KeychainHelper.delete(account: username!, service: "SaveLoginDetails")
+                                    }
+                                }
+                            }
+                        }
+                       //need to add custom alert with attributed string
+                            
+                        DispatchQueue.main.async {
+                            self.dismiss(animated: false)
+                            self.loginActions()
+                                
+                        }
+                    }
+                })
+            }
+        })
+    }
+
+    func loginActions(){
+        let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
+        vc.modalPresentationStyle = .fullScreen
+        vc.modalTransitionStyle = .coverVertical
+        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let window = scene.windows.first,
+           let rootVC = window.rootViewController {
+            rootVC.present(vc, animated: true, completion: nil)
+        }
     }
     
     func stringFormatter(_ string: String) -> String {
@@ -99,20 +188,7 @@ class CBCredentialsPageVC: UIViewController {
 }
 
 
-
 extension CBCredentialsPageVC: UITextFieldDelegate {
-    
-    
-    func shakeTextField(textField: UITextField){
-        let animation = CABasicAnimation(keyPath: "position")
-        animation.duration = 0.07
-        animation.repeatCount = 3
-        animation.autoreverses = true
-        animation.fromValue = NSValue(cgPoint: CGPoint(x: textField.center.x - 10, y: textField.center.y))
-        animation.toValue = NSValue(cgPoint: CGPoint(x: textField.center.x + 10, y: textField.center.y))
-        textField.layer.add(animation, forKey: "position")
-        textField.attributedPlaceholder = NSAttributedString(string: textField.placeholder ?? "", attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
-    }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         var shouldChangeCharacters: Bool = true
@@ -190,43 +266,6 @@ extension CBCredentialsPageVC: UITextFieldDelegate {
         textField.layer.borderColor = UIColor.gray.cgColor
     }
     
-    func loginAction(){
-        
-        UserDefaults.standard.set(txtUserID.text, forKey: KCBEmpNumWithPrefix)
-        var userID = txtUserID.text!
-        if txtUserID.text!.prefix(1) != "x" && txtUserID.text!.prefix(1) != "e" {
-            if txtUserID.text! == DevUserID {
-                userID = "x\(txtUserID.text!)"
-            } else {
-                userID = "e\(txtUserID.text!)"
-            }
-        }
-        txtUserID.text! = userID
-        bidDownload.retrievePreLogonKey(completionHandler: { (response:String?) in
-            let preLoginKey = response!
-            CBGlobalMethods.shared.secretKey = preLoginKey
-            print("preLoginKey: \(preLoginKey)")
-            DispatchQueue.main.async {
-                self.bidDownload.retrieveSessionKey(username: self.txtUserID.text!, password: self.txtPassword.text!, preloginKey: preLoginKey, completionHandler: { (response:String?) in
-                    print("Response2: \(response!)")
-                    
-                })
-            }
-         
-        })
-
-        
-        
-        self.dismiss(animated: false)
-        let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
-        vc.modalPresentationStyle = .fullScreen
-        vc.modalTransitionStyle = .coverVertical
-        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = scene.windows.first,
-           let rootVC = window.rootViewController {
-            rootVC.present(vc, animated: true, completion: nil)
-        }
-    }
+    
 }
 

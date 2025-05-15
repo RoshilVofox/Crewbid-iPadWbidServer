@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CBBidDocumentController: UIViewController {
+class CBBidDocumentController: BaseViewController {
 
     @IBOutlet weak var btnHome: UIButton!
     @IBOutlet weak var btnSettings: UIButton!
