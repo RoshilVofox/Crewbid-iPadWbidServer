@@ -77,4 +77,31 @@ class CBUtils{
                     }
                 }
             }
+    static func shortMonthName(month: Int, uc: Bool) -> String {
+        switch month {
+        case 1, 13: return uc ? "JAN" : "Jan"
+        case 2:     return uc ? "FEB" : "Feb"
+        case 3:     return uc ? "MAR" : "Mar"
+        case 4:     return uc ? "APR" : "Apr"
+        case 5:     return uc ? "MAY" : "May"
+        case 6:     return uc ? "JUN" : "Jun"
+        case 7:     return uc ? "JUL" : "Jul"
+        case 8:     return uc ? "AUG" : "Aug"
+        case 9:     return uc ? "SEP" : "Sep"
+        case 10:    return uc ? "OCT" : "Oct"
+        case 11:    return uc ? "NOV" : "Nov"
+        case 12, 0: return uc ? "DEC" : "Dec"
+        default:    return ""
+        }
+    }
+    static func shortName(for type: BICrewPositionType) -> String {
+        switch type {
+        case .Captain:
+            return "CP"
+        case .FirstOfficer:
+            return "FO"
+        case .FlightAttendant:
+            return "FA"
+        }
+    }
 }

@@ -12,7 +12,36 @@ typealias BIProgressBlock = (Float) -> Void
 typealias BIErrorBlock = (Error) -> Void
 
 // for passing data with delegate method
-class BIBidInfoDataSource {
+//class BIBidInfoDataSource {
+//    var userid: String = ""
+//    var password: String = ""
+//    var year: Int = 0
+//    var month: Int = 0
+//    var base: String = ""
+//    var position: BICrewPositionType = .Captain
+//    var round: Int = 0
+//    var employeeNumber: String = ""
+//    var swaptimizerID: String = ""
+//}
+//class BIBidDataManager{
+//    static let shared = BIBidDataManager()
+//    private init(){}
+//    var dataSource: BIBidInfoDataSource?
+//}
+protocol BIBidInfoDataSource {
+    var userid: String { get set }
+    var password: String { get set }
+    var year: Int { get set }
+    var month: Int { get set }
+    var base: String { get set }
+    var position: BICrewPositionType { get set }
+    var round: Int { get set }
+    var employeeNumber: String { get set }
+    var swaptimizerID: String { get set }
+}
+class GlobalBidInfo: BIBidInfoDataSource {
+    static let shared = GlobalBidInfo()
+
     var userid: String = ""
     var password: String = ""
     var year: Int = 0
@@ -22,17 +51,14 @@ class BIBidInfoDataSource {
     var round: Int = 0
     var employeeNumber: String = ""
     var swaptimizerID: String = ""
-}
-class BIBidDataManager{
-    static let shared = BIBidDataManager()
-    private init(){}
-    var dataSource: BIBidInfoDataSource?
+
+    private init() {}
 }
 //=====================================
 
 class BIBidInfo:NSObject{
     private var app:AppDelegate!
-    weak var dataSource = BIBidDataManager.shared.dataSource
+    weak var dataSource = GlobalBidInfo.shared
     //MARK: Directories
     static func tempDirectory() -> URL {
         return FileManager.default.temporaryDirectory

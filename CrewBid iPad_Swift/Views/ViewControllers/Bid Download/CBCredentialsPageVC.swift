@@ -8,13 +8,14 @@
 import UIKit
 
 class CBCredentialsPageVC: BaseViewController {
+
+    
     
     @IBOutlet weak var txtUserID: customUITextField!
     @IBOutlet weak var txtPassword: customUITextField!
     @IBOutlet weak var showPasswordBtn: UIButton!
     @IBOutlet weak var lblTitle: UILabel!
     var bidDownload = BIBidFileDownload()
-    var dataSource = BIBidInfoDataSource()
     let reachability = try? Reachability()
     var isHistoricBid : Bool = false
     var isNewBid:Bool = false
@@ -26,6 +27,7 @@ class CBCredentialsPageVC: BaseViewController {
     var year:Int?
     var userid:String?
     var password:String?
+    var objUserAccount:CBUserAccountDetail!
     var loginType:LoginType = .newBid
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,17 +73,7 @@ class CBCredentialsPageVC: BaseViewController {
     }
     
     @IBAction func btnGoAction(_ sender: UIButton) {
-//        goAction()
-        //MARK: passing data to get session credential
-        dataSource.userid = txtUserID.text!
-        dataSource.password = txtPassword.text!
-        dataSource.month = month!
-        dataSource.year = year!
-        dataSource.round = selectedRound!
-        dataSource.employeeNumber = empNum!
-        BIBidDataManager.shared.dataSource = dataSource
-        //MARK: need to add completion handler to navigate to scratchpad view
-//        self.bidDownload.checkCrewBidLogin()
+        goAction()
     }
 
 
@@ -105,7 +97,7 @@ class CBCredentialsPageVC: BaseViewController {
         view.endEditing(true)
         self.checkLoginCredentials(userID: getUserIdAfterValidation(userId: self.txtUserID.text!), pwd: self.txtPassword.text!, completionHandler: { (response:String?) in
             print(response?.description ?? "no response")
-            if response == "hideHud"{
+            if response == "error"{
                 DispatchQueue.main.async {
                     let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBAlertVC") as! CBAlertVC
                     vc.fromView = self
@@ -122,51 +114,48 @@ class CBCredentialsPageVC: BaseViewController {
             self.present(alert, animated: true)
             return
         }
+        //passing data to access it later
+        GlobalBidInfo.shared.userid = txtUserID.text!
+        GlobalBidInfo.shared.password = txtPassword.text!
+        GlobalBidInfo.shared.month = month!
+        GlobalBidInfo.shared.year = year!
+        GlobalBidInfo.shared.round = selectedRound!
+        GlobalBidInfo.shared.employeeNumber = empNum!
+
         self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
         UserDefaults.standard.set(txtUserID.text, forKey: KCBEmpNumWithPrefix)
 
-        bidDownload.retrievePreLogonKey(completionHandler: { (response:String?) in
-            print("preLoginKey: \(response!)")
-            DispatchQueue.main.async {
-                self.bidDownload.retrieveSessionKey(username: self.txtUserID.text!, password: self.txtPassword.text!, preloginKey: response!, completionHandler: { (response:String?) in
-                    DispatchQueue.main.async {
-                        self.view.hideActivityIndicator()
-                    }
-                    print("Response2: \(response!)")
-                    if (response ?? "error").description.lowercased().contains("error"){
-                        completionHandler!("hideHud")
-                        return
-                    }
-                    CBGlobalMethods.shared.secretKey = response?.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines).addingPercentEncoding(withAllowedCharacters: .letters)!
-                        if CBGlobalMethods.shared.secretKey != nil{
-                            DispatchQueue.main.async {
-                            if let userID = self.txtUserID.text,let pwd = self.txtPassword.text{
-                                let success = KeychainHelper.save(account: userID, service: "SaveLoginDetails", value:pwd)
-                                if success{
-                                    print("Saved to keychain")
-                                }else{
-                                    print("Error saving to keychain")
-                                }
-                                let username = KeychainHelper.retrieveUsername(forService: "SaveLoginDetails")
-                                if username!.count>1{
-                                    if userID != username!{
-                                        KeychainHelper.delete(account: username!, service: "SaveLoginDetails")
-                                    }
-                                }
-                            }
-                        }
-                            
-                        DispatchQueue.main.async {
-                            self.dismiss(animated: false)
-                            self.loginActions()
-                                
-                        }
-                    }
-                })
+        bidDownload.checkCrewBidLogin(dataSource: GlobalBidInfo.shared, delegate: nil, finishedHandler: {
+            print("Finish")
+        }, progressHandler: {_ in }, errorHandler: {error in
+            self.view.hideActivityIndicator()
+            if self.checkLoginError(error as NSError, searchString: "Login failed"){
+                self.logBidSubmissionProcess(error: error as NSError)
+                if let account = KeychainHelper.retrieveUsername(forService: "SaveLoginDetails") {
+                    KeychainHelper.delete(account: account, service: "SaveLoginDetails")
+                }
             }
         })
+        
     }
-
+    
+    func getAttributedMessage(from text: String, for targetText: String) -> NSMutableAttributedString {
+        let messageFont = UIFont.systemFont(ofSize: 20)
+        let boldFont = UIFont.boldSystemFont(ofSize: 24)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        let fullRange = NSRange(location: 0, length: text.utf16.count)
+        let targetRange = (text as NSString).range(of: targetText)
+        let attributedString = NSMutableAttributedString(string: text)
+        attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: fullRange)
+        attributedString.addAttribute(.font, value: messageFont, range: fullRange)
+        if targetRange.location != NSNotFound {
+            attributedString.addAttribute(.font, value: boldFont, range: targetRange)
+        }
+        return attributedString
+    }
+    
+    
     func loginActions(){
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
@@ -183,6 +172,114 @@ class CBCredentialsPageVC: BaseViewController {
         var encodedString = string.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         encodedString = encodedString.replacingOccurrences(of: "+", with: "%2B")
         return encodedString
+    }
+    
+    
+    func checkLoginError(_ error: NSError, searchString: String) -> Bool {
+        var errorFlag = false
+        var alertMessage = "Unknown error."
+        var failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
+        if failureReason == nil,
+           let underlyingError = error.userInfo[NSUnderlyingErrorKey] as? NSError {
+            failureReason = underlyingError.localizedDescription
+        }
+        if let reason = failureReason,
+           let suggestion = error.localizedRecoverySuggestion {
+            alertMessage = "\(reason)\n\n\(suggestion)"
+        }
+        if alertMessage.lowercased().contains(searchString.lowercased()){
+            errorFlag = true
+        }
+        return errorFlag
+    }
+    
+    
+    func logBidSubmissionProcess(error:NSError){
+        let SWAMessage = error.userInfo["SWAMessage"] as? String ?? ""
+        var mailInfo: [String:Any] = [:]
+        let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        if let userid = self.userid, userid.contains("e"){
+            let clean = self.userid?.replacingOccurrences(of: "e", with: "").trimmingCharacters(in: .symbols)
+            mailInfo["EmployeeNumber"] = Int(clean!)
+        }else if let userid = self.userid, userid.contains("x"){
+            let clean = self.userid?.replacingOccurrences(of: "x", with: "").trimmingCharacters(in: .symbols)
+            mailInfo["EmployeeNumber"] = Int(clean!)
+        }else{
+            mailInfo["EmployeeNumber"] = 0
+        }
+        mailInfo["Event"] = "bad password"
+        mailInfo["Base"] = self.selectedDomicile
+        mailInfo["SWAMessage"] = SWAMessage
+        mailInfo["Month"] = CBUtils.shortMonthName(month: self.month!, uc: false)
+        mailInfo["Position"] = CBUtils.shortName(for: self.positionType(from: self.selectedPosition)!)
+//        let roundString: String
+//        if self.selectedRound == 1 {
+//            roundString = "M"
+//        } else if self.selectedRound == 2 {
+//            roundString = "S"
+//        } else {
+//            roundString = ""
+//        }
+
+        mailInfo["Round"] = round
+        mailInfo["Message"] = "bad password"
+        mailInfo["OperatingSystemNum"] = "iPad OS"
+        mailInfo["VersionNumber"] = appVersion
+        mailInfo["PlatformNumber"] = "iPad"
+        mailInfo["BidForEmpNum"] = 0
+        mailInfo["BuddyBid1"] = 0
+        mailInfo["BuddyBid2"] = 0
+        mailInfo["BuddyBid3"] = 0
+        let app = UIApplication.shared.delegate as! AppDelegate
+        let now = Date()
+        let timestamp = Int(now.timeIntervalSince1970 * 1000)
+        let dateStarted = "/Date(\(timestamp)+0800)/"
+        mailInfo["Date"] = dateStarted
+        mailInfo["IpAddress"] = app.IPAddress
+
+        if app.objNetworkType == .free {
+//            let event = CBOfflineEvents()
+            mailInfo["Message"] = "SouthWestWifi bad password"
+//            event.addOfflineEvent(mailInfo)
+            return
+        }
+
+        guard let url = URL(string: "\(app.Domain!)LogCrewBidSubmitBidDetails/") else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: mailInfo, options: [])
+            request.httpBody = jsonData
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        } catch {
+            print("Failed to serialize JSON: \(error)")
+            return
+        }
+
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data,
+               let httpResponse = response as? HTTPURLResponse,
+               httpResponse.statusCode == 200,
+               response?.mimeType?.contains("application/json") == true {
+            }
+        }
+        task.resume()
+    }
+    
+    func positionType(from string: String?) -> BICrewPositionType? {
+        guard let string = string?.lowercased() else { return nil }
+        
+        switch string {
+        case "captain":
+            return .Captain
+        case "firstofficer", "first officer":
+            return .FirstOfficer
+        case "flightattendant", "flight attendant":
+            return .FlightAttendant
+        default:
+            return nil
+        }
     }
 }
 
