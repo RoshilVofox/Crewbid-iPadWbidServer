@@ -24,6 +24,9 @@ class AppData {
     ]
     
     var sortsToBeAddedInTable: [[String: Any]] = []
+    
+    var postion = "FA"
+    var Round = 1
 
     
     private init() {}  // Prevents outside instantiation

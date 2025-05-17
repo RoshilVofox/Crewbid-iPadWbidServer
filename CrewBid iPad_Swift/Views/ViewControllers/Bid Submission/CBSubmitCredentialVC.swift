@@ -25,18 +25,13 @@ class CBSubmitCredentialVC: UIViewController {
         super.viewDidAppear(animated)
         txtPassword.delegate = self
         txtEmpNum.delegate = self
+        txtEmpNum.becomeFirstResponder()
         
         finalAlert()
-        
-        self.view.showActivityIndicator()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-            self.view.hideActivityIndicator()
-        }
     }
 
     @IBAction func btnDismissActiomn(_ sender: Any) {
-        self.dismiss(animated: true)
+        self.navigationController?.popViewController(animated: true)
     }
     
     @IBAction func btnGoAction(_ sender: Any) {

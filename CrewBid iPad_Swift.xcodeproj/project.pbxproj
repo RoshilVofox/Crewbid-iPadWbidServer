@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		35162E032DCDBEA600BD8E2E /* UIView+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35162E022DCDBEA600BD8E2E /* UIView+extensions.swift */; };
+		353FC68F2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */; };
+		353FC6912DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */; };
+		35F6C8B12DD843840072BAD9 /* JobShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F6C8B02DD843840072BAD9 /* JobShareViewController.swift */; };
+		35F6C8B32DD856B40072BAD9 /* CBAvoidaceBidViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F6C8B22DD856B40072BAD9 /* CBAvoidaceBidViewController.swift */; };
 		8B0044192DC72AA900CAEF82 /* CBPresetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */; };
 		8B38C5642DCA24C200845E3F /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 8B38C5632DCA24C200845E3F /* IQKeyboardManagerSwift */; };
 		8B5F03282DC8D99F006A4E85 /* CBBrightnessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F03272DC8D99F006A4E85 /* CBBrightnessViewController.swift */; };
@@ -331,6 +335,10 @@
 
 /* Begin PBXFileReference section */
 		35162E022DCDBEA600BD8E2E /* UIView+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+extensions.swift"; sourceTree = "<group>"; };
+		353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
+		353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBConfirmSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
+		35F6C8B02DD843840072BAD9 /* JobShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobShareViewController.swift; sourceTree = "<group>"; };
+		35F6C8B22DD856B40072BAD9 /* CBAvoidaceBidViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBAvoidaceBidViewController.swift; sourceTree = "<group>"; };
 		8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPresetCell.swift; sourceTree = "<group>"; };
 		8B5F03272DC8D99F006A4E85 /* CBBrightnessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBrightnessViewController.swift; sourceTree = "<group>"; };
 		8B77C52A2DC7973B00E5B3B4 /* AppData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
@@ -676,6 +684,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		35F6C8AF2DD843590072BAD9 /* JobShare */ = {
+			isa = PBXGroup;
+			children = (
+				35F6C8B02DD843840072BAD9 /* JobShareViewController.swift */,
+			);
+			path = JobShare;
+			sourceTree = "<group>";
+		};
 		8B0044172DC72A9200CAEF82 /* Preset */ = {
 			isa = PBXGroup;
 			children = (
@@ -1222,6 +1238,9 @@
 				F41EBE5E2DC4DB20001413DE /* CBSubmissionCertifyVC.swift */,
 				F41EBE5F2DC4DB20001413DE /* CBSubmitCredentialVC.swift */,
 				F41EBE602DC4DB20001413DE /* SubmissionErrorVC.swift */,
+				353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */,
+				353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */,
+				35F6C8B22DD856B40072BAD9 /* CBAvoidaceBidViewController.swift */,
 			);
 			path = "Bid Submission";
 			sourceTree = "<group>";
@@ -1506,6 +1525,7 @@
 		F494ECD82DC5C6B6007B178E /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				35F6C8AF2DD843590072BAD9 /* JobShare */,
 				8B5F03262DC8D979006A4E85 /* Brightness */,
 				F41EBDF32DC4DB20001413DE /* Awards */,
 				F41EBDFB2DC4DB20001413DE /* Bid Actions */,
@@ -1894,6 +1914,7 @@
 				F41EBF2E2DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift in Sources */,
 				F41EBF2F2DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld in Sources */,
 				F41EBF362DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift in Sources */,
+				35F6C8B32DD856B40072BAD9 /* CBAvoidaceBidViewController.swift in Sources */,
 				F41EBF372DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift in Sources */,
 				F41EBF382DC4DB20001413DE /* AppDelegate.swift in Sources */,
 				F41EBF392DC4DB20001413DE /* SceneDelegate.swift in Sources */,
@@ -2016,6 +2037,7 @@
 				F41EBFA22DC4DB20001413DE /* CBTextViewController.swift in Sources */,
 				F41EBFA32DC4DB20001413DE /* CBCommuteDiffVC.swift in Sources */,
 				F41EBFA42DC4DB20001413DE /* CBFlighDataChangeVC.swift in Sources */,
+				353FC6912DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift in Sources */,
 				8BA705FE2DCB5BE20090EA71 /* CityPickerCell.swift in Sources */,
 				F41EBFA52DC4DB20001413DE /* CBAlertVC.swift in Sources */,
 				F4C5D66A2DC9EBC200D86BD2 /* NSData+AES.m in Sources */,
@@ -2031,11 +2053,13 @@
 				F41EBFAC2DC4DB20001413DE /* helpMenuItemsViewController.swift in Sources */,
 				F41EBFAD2DC4DB20001413DE /* helpMenuViewController.swift in Sources */,
 				F41EBFAE2DC4DB20001413DE /* latestNewsViewController.swift in Sources */,
+				35F6C8B12DD843840072BAD9 /* JobShareViewController.swift in Sources */,
 				F41EBFAF2DC4DB20001413DE /* lineValuesViewController.swift in Sources */,
 				F41EBFB02DC4DB20001413DE /* mySubscriptionViewController.swift in Sources */,
 				F41EBFB12DC4DB20001413DE /* quickTutorialViewController.swift in Sources */,
 				F41EBFB22DC4DB20001413DE /* serviceAgreementViewController.swift in Sources */,
 				F41EBFB32DC4DB20001413DE /* swaptimizerHelpMenuViewController.swift in Sources */,
+				353FC68F2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift in Sources */,
 				F41EBFB42DC4DB20001413DE /* userAccountViewController.swift in Sources */,
 				F41EBFB52DC4DB20001413DE /* CBDocumentsCollectionViewController.swift in Sources */,
 				F41EBFB62DC4DB20001413DE /* DocumentCell.swift in Sources */,

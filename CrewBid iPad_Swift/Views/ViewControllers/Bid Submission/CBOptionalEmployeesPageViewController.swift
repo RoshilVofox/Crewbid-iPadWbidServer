@@ -35,18 +35,14 @@ class CBOptionalEmployeesPageViewController: UIViewController {
     }
     
     @IBAction func btnDismissAction(_ sender: Any) {
-        self.dismiss(animated: true, completion: nil)
+        self.navigationController?.popViewController(animated: true)
     }
     
     @IBAction func btnNextAction(_ sender: Any) {
-        if let presentingVC = self.presentingViewController {
-            self.dismiss(animated: true) {
-                let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-                let vc = storyboard.instantiateViewController(withIdentifier: "CBSubmitCredentialVC") as! CBSubmitCredentialVC
-                vc.preferredContentSize = CGSize(width: 600, height: 500)
-                presentingVC.present(vc, animated: true)
-            }
-        }
+        let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBSubmitCredentialVC") as! CBSubmitCredentialVC
+        vc.preferredContentSize = CGSize(width: 600, height: 500)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
 }
