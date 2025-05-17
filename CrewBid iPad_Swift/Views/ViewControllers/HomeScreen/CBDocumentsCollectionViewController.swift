@@ -29,6 +29,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
         viewModel.initialize()
         collectionView.delegate = self
         collectionView.dataSource = self
+        isPlusImage = true
         bdPrd = 0
     }
     
@@ -115,11 +116,12 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
         cell.layer.borderWidth = 8
         cell.layer.borderColor = CBColor.cbPurpleColor?.cgColor
         
-        collectionView.allowsMultipleSelection = true
         
         if self.editButton.currentTitle == "Edit" {
+            collectionView.allowsMultipleSelection = false
             cell.stopWiggleAnimation()
         } else {
+            collectionView.allowsMultipleSelection = true
             cell.startWiggleAnimation()
         }
         return cell
@@ -143,6 +145,7 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
             }
         }
         else {
+            bidDownloadButton.isEnabled = true
             let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
             self.navigationController?.pushViewController(vc, animated: true)

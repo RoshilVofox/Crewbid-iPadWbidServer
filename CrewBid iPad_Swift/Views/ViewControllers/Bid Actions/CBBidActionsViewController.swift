@@ -188,33 +188,22 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
             }
         }
         
+        // MARK: - Submit Bid Selection
         if item == "Submit Bid" {
-            let alert = UIAlertController(
-                title: "Submit Bid",
-                message: "Please enter Employee number (no \"e\") for whom the bid is being submitted",
-                preferredStyle: .alert
-            )
-            alert.addTextField { textField in
-                textField.placeholder = "Employee Number"
-                self.employeeNum = textField
+            if item == "Submit Bid" {
+                if let presentingVC = self.presentingViewController {
+                    self.dismiss(animated: true) {
+                        let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+                        let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedSubmitVC")
+                        vc.preferredContentSize = CGSize(width: 600, height: 500)
+                        presentingVC.present(vc, animated: true)
+                    }
+                }
             }
-            
-            //cancel
-            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
-            //add
-            let okAction = UIAlertAction(title: "OK", style: .default) { _ in
-                self.submitBidAlert()
-            }
-            alert.addAction(okAction)
-            alert.addAction(cancelAction)
-            
-            present(alert, animated: true)
         }
     }
                                           
 
-    
-    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50 // set your fixed height
     }

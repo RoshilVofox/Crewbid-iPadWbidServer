@@ -89,6 +89,9 @@ class CBBiddataDownloadVC: UIViewController {
             self.shakeView(view: self.viewYear)
         } else {
 //=======================================
+            AppData.shared.Round = self.selectedRound!
+            AppData.shared.postion = self.selectedPosition!
+//=======================================
             print("Base:\(self.selectedDomicile!) Position:\(self.selectedPosition!) Rnd:\(self.selectedRound!) EmpNo:\(self.empNum ?? "default_EmpNum") Month:\(self.month!) Year:\(self.year!)")
 //=======================================
             let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
