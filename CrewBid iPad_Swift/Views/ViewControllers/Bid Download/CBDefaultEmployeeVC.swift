@@ -43,9 +43,16 @@ class CBDefaultEmployeeVC: BaseViewController {
         let app = UIApplication.shared.delegate as! AppDelegate
         var dictAuthInfo:[String:Any] = [:]
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
-        dictAuthInfo["RequestType"] = "6";dictAuthInfo["Version"] = appVersion;dictAuthInfo["BidRound"] = "0";dictAuthInfo["Postion"] = ""
-        dictAuthInfo["EmployeeNumber"] = empNum;dictAuthInfo["FromAppNumber"] = "5";dictAuthInfo["OperatingSystem"] = "iPad OS"
-        dictAuthInfo["Month"] = "0";dictAuthInfo["Base"] = "";dictAuthInfo["Platform"] = "iPad"
+        dictAuthInfo["RequestType"] = "6"
+        dictAuthInfo["Version"] = appVersion
+        dictAuthInfo["BidRound"] = "0"
+        dictAuthInfo["Postion"] = ""
+        dictAuthInfo["EmployeeNumber"] = empNum
+        dictAuthInfo["FromAppNumber"] = "5"
+        dictAuthInfo["OperatingSystem"] = "iPad OS"
+        dictAuthInfo["Month"] = "0"
+        dictAuthInfo["Base"] = ""
+        dictAuthInfo["Platform"] = "iPad"
         let url = URL(string: "\(app.Domain!)GetCrewBidAuthorization")
         var urlRequest = URLRequest(url: url!)
         let jsonData = try! JSONSerialization.data(withJSONObject: dictAuthInfo, options: [])

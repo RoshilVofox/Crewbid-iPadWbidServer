@@ -71,15 +71,15 @@ class CBCredentialsPageVC: BaseViewController {
     }
     
     @IBAction func btnGoAction(_ sender: UIButton) {
-        goAction()
+//        goAction()
         //MARK: passing data to get session credential
-//        dataSource.userid = txtUserID.text!
-//        dataSource.password = txtPassword.text!
-//        dataSource.month = month!
-//        dataSource.year = year!
-//        dataSource.round = selectedRound!
-//        dataSource.employeeNumber = empNum!
-//        BIBidDataManager.shared.dataSource = dataSource
+        dataSource.userid = txtUserID.text!
+        dataSource.password = txtPassword.text!
+        dataSource.month = month!
+        dataSource.year = year!
+        dataSource.round = selectedRound!
+        dataSource.employeeNumber = empNum!
+        BIBidDataManager.shared.dataSource = dataSource
         //MARK: need to add completion handler to navigate to scratchpad view
 //        self.bidDownload.checkCrewBidLogin()
     }
@@ -155,7 +155,6 @@ class CBCredentialsPageVC: BaseViewController {
                                 }
                             }
                         }
-                       //need to add custom alert with attributed string
                             
                         DispatchQueue.main.async {
                             self.dismiss(animated: false)

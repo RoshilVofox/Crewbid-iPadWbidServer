@@ -194,7 +194,22 @@ class BIBidFileDownload: NSObject, URLSessionDataDelegate{
 
     }
 //====================
-
+    
+    func downloadBidDataFiles(finishedHandler: @escaping () -> Void,progressHandler: @escaping (Float) -> Void,errorHandler: @escaping (Error) -> Void) {
+        self.finishedBlock = finishedHandler
+        self.progressHandler = progressHandler
+        self.errorHandler = errorHandler
+        self.checkFlightData()
+        
+        
+    }
+    
+    func checkFlightData(){
+        DispatchQueue.main.async {
+            CBUtils.downloadFlightData{ _ in}
+        }
+    }
+    
     func stringFormatter(_ string: String) -> String {
         var encodedString = string.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         encodedString = encodedString.replacingOccurrences(of: "+", with: "%2B")

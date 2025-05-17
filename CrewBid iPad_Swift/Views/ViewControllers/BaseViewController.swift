@@ -42,5 +42,13 @@ class BaseViewController: UIViewController {
             return "e" + userId
         }
     }
+    
+    func showQuickTutorialForFirstTime(){
+        let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "quickTutorialViewController") as! quickTutorialViewController
+        vc.preferredContentSize = CGSize(width: 764, height: 630)
+        present(vc, animated: true)
+        UserDefaults.standard.set(true, forKey: "isFirstLaunch")
+    }
+    
 }
 
