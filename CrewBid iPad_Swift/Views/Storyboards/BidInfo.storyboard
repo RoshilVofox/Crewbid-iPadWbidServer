@@ -919,7 +919,9 @@
                     </view>
                     <size key="freeformSize" width="600" height="550"/>
                     <connections>
+                        <outlet property="descriptionTextView" destination="0HF-lW-0h4" id="4SO-i1-HQo"/>
                         <outlet property="textEmpNum" destination="Vxs-fn-amG" id="ZjM-f0-QwS"/>
+                        <outlet property="titleLabel" destination="p09-Ib-64s" id="3Y2-bE-DeC"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1Zm-Z2-8vb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

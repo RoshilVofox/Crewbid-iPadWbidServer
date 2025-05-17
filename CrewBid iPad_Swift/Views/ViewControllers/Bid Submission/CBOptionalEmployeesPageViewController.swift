@@ -9,7 +9,6 @@ class CBOptionalEmployeesPageViewController: UIViewController {
     @IBOutlet weak var lblOptionalUser1: UILabel!
     @IBOutlet weak var txtEmpNum2: customUITextField!
     @IBOutlet weak var lblOptionalUser2: UILabel!
-    @IBOutlet weak var txtEmpNum3: customUITextField!
     @IBOutlet weak var btnClose: UIButton!
     @IBOutlet weak var btnNext: UIButton!
     
@@ -30,6 +29,10 @@ class CBOptionalEmployeesPageViewController: UIViewController {
     func setupUI() {
         txtEmpNum1.delegate = self
         txtEmpNum2.delegate = self
+        optionalUser1Domicile.isHidden = true
+        optionalUser2Domicile.isHidden = true
+        lblOptionalUser1.text = ""
+        lblOptionalUser2.text = ""
         btnClose.setTitle("", for: .normal)
         btnNext.setTitle("", for: .normal)
     }
@@ -39,10 +42,23 @@ class CBOptionalEmployeesPageViewController: UIViewController {
     }
     
     @IBAction func btnNextAction(_ sender: Any) {
-        let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "CBSubmitCredentialVC") as! CBSubmitCredentialVC
-        vc.preferredContentSize = CGSize(width: 600, height: 500)
-        self.navigationController?.pushViewController(vc, animated: true)
+        finalAlert()
+    }
+    
+    func finalAlert() {
+        let alert = UIAlertController(
+            title: "Buddy Bidding Terms",
+            message: "By continuing, you represent that you have the permission of your buddy or buddies to Buddy Bid with them and you have taken the necessary steps inSwA lite to out them on vour BuddyBidding list.I Understand and Accept",
+            preferredStyle: .alert
+        )
+        let cancelAction = UIAlertAction(title: "OK", style: .default) { _ in
+            let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "CBSubmitCredentialVC") as! CBSubmitCredentialVC
+            vc.preferredContentSize = CGSize(width: 600, height: 500)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
     }
     
 }
