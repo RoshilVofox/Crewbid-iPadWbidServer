@@ -8,11 +8,11 @@
 import Foundation
 
 let kURLConnectionTimeout = 90.0
-//protocol BIBidFileDownloadDelegate: AnyObject {
-//    func bidFileDownload(_ bidFileDownload: BIBidFileDownload, didUpdateProgress progress: Float)
-//    func bidFileDownloadDidFinish(_ bidFileDownload: BIBidFileDownload)
-//    func bidFileDownload(_ bidFileDownload: BIBidFileDownload, didFailWithError error: Error)
-//}
+protocol BIBidFileDownloadDelegate {
+    func bidFileDownload(_ bidFileDownload: BIBidFileDownload, didUpdateProgress progress: Float)
+    func bidFileDownloadDidFinish(_ bidFileDownload: BIBidFileDownload)
+    func bidFileDownload(_ bidFileDownload: BIBidFileDownload, didFailWithError error: Error)
+}
 
 
 
@@ -30,10 +30,12 @@ class BIBidFileDownload: NSObject, URLSessionDataDelegate{
     var preLogonData = Data()
     var sessionData = Data()
     var urlRequest:URLRequest?
-    var downloadType:BIBidFileDownloadType = .biBidDataDownloadType
-    var finishedBlock: BIFinishedBlock?
-    var progressHandler: BIProgressBlock?
-    var errorHandler: BIErrorBlock?
+    var downloadType:BIBidFileDownloadType = .BIBidDataDownloadType
+    var finishedBlock: BIFinishedBlock!
+    var progressHandler: BIProgressBlock!
+    var errorHandler: BIErrorBlock!
+    var dataSource : GlobalBidInfo?
+    var deleagte : BIBidFileDownloadDelegate?
     static let kVendor = "CrewBidPad"
 
     
@@ -48,101 +50,13 @@ class BIBidFileDownload: NSObject, URLSessionDataDelegate{
             return "FA"
         }
     }
-
-//MARK: Closure method
-    func retrievePreLogonKey(completionHandler: ((String?) -> Void)?){
-        var thirdPartyURL = "https://www27.swalife.com/webbid3pty/ThirdParty"
-        if UserDefaults.standard.string(forKey: "IsQATest") == "YES" {
-            thirdPartyURL = "https://www27.swalifeqa.com/webbid3pty/ThirdParty"
-        }
-        GetPreLogonKey(serviceURL: thirdPartyURL, completionHandler: completionHandler)
-    }
-    func GetPreLogonKey(serviceURL: String, completionHandler: ((String?) -> Void)?) {
-        guard let url = URL(string: serviceURL) else {
-            print("Invalid URL: \(serviceURL)")
-            completionHandler?(nil)
-            return
-        }
-        print("URL: \(url)")
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        let config = URLSessionConfiguration.default
-        config.httpAdditionalHeaders = ["Content-Type": "application/json"]
-        let session = URLSession(configuration: config)
-        let task = session.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("Error: \(error.localizedDescription)")
-                completionHandler?(nil)
-                return
-            }
-            guard let httpResponse = response as? HTTPURLResponse else {
-                print("Invalid response")
-                completionHandler?(nil)
-                return
-            }
-            print("HTTP Status Code: \(httpResponse.statusCode)")
-            guard httpResponse.statusCode == 200, let data = data,
-                  let dataValue = String(data: data, encoding: .utf8) else {
-                print("No data or bad status code")
-                completionHandler?(nil)
-                return
-            }
-            let stringData = self.stringFormatter(dataValue)
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-            print("String Data: \(stringData)")
-            completionHandler?(stringData)
-        }
-        task.resume()
-    }
-    func retrieveSessionKey(username: String, password: String, preloginKey: String, completionHandler:((String?) -> Void)?){
-        let escapedPwd = self.stringByAddingPercentEscapes(to: password)!
-        let jsonString = "CREDENTIALS=\(preloginKey)&REQUEST=LOGON&UID=\(username)&PWD=\(escapedPwd)" as String
-        print("Session Key Request: \(jsonString)")
-        var thirdPartyURL = "https://www27.swalife.com/webbid3pty/ThirdParty"
-        if UserDefaults.standard.string(forKey: "IsQATest") == "YES" {
-            thirdPartyURL = "https://www27.swalifeqa.com/webbid3pty/ThirdParty"
-        }
-        getSessionKey(serviceURL: thirdPartyURL, jsonDataString: jsonString, completionHandler: completionHandler)
-    }
     
-    func getSessionKey(serviceURL: String, jsonDataString: String, completionHandler: ((String?) ->Void)?){
-        guard let url = URL(string: serviceURL) else {
-            print("Invalid URL: \(serviceURL)")
-            completionHandler?(nil)
-            return
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        let config = URLSessionConfiguration.default
-        config.httpAdditionalHeaders = ["Content-Type": "application/x-www-form-urlencoded"]
-        request.httpBody = jsonDataString.data(using: .utf8)
-        let session = URLSession(configuration: config)
-        let task = session.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("Error: \(error.localizedDescription)")
-                completionHandler?(nil)
-                return
-            }
-            guard let httpResponse = response as? HTTPURLResponse else {
-                print("Invalid response")
-                completionHandler?(nil)
-                return
-            }
-            print("HTTP Status Code: \(httpResponse.statusCode)")
-            guard httpResponse.statusCode == 200, let data = data,
-                  let dataValue = String(data: data, encoding: .utf8) else {
-                print("No data or bad status code")
-                completionHandler?(nil)
-                return
-            }
-            completionHandler?(dataValue)
-        }
-        task.resume()
-    }
 //MARK: ============ delegate method
-    func checkCrewBidLogin() {
+    func checkCrewBidLogin(dataSource:GlobalBidInfo,delegate:BIBidFileDownloadDelegate?,finishedHandler: @escaping () -> Void,progressHandler: @escaping (Float) -> Void,errorHandler: @escaping (Error) -> Void) {
+        self.downloadType = .BILoginChecking
         self.urlRequest = URLRequest(url: self.thirdPartyURL()!,cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeout)
         retrievePrelogonCredential()
+        finishedHandler()
     }
     
     func retrievePrelogonCredential(){
@@ -150,27 +64,29 @@ class BIBidFileDownload: NSObject, URLSessionDataDelegate{
         let dataTask = self.prelogonConnection.dataTask(with: self.urlRequest!)
         dataTask.resume()
     }
+    
     func retrieveSessionCredential(){
         self.sessionConnectionProcess()
         self.prelogonCredential = nil
-        
     }
+    
     func sessionConnectionProcess(){
-        if let dataSource = BIBidDataManager.shared.dataSource{
+        let dataSource = GlobalBidInfo.shared
         let userID = dataSource.userid
         let password = dataSource.password
         let escapedPwd = self.stringByAddingPercentEscapes(to: password)!
         let postString = String(format: "CREDENTIALS=%@&REQUEST=LOGON&UID=%@&PWD=%@",self.prelogonCredential!, userID,escapedPwd)
+        print("POSTSTR:\(userID),\(password)")
         let postData = postString.data(using: .utf8, allowLossyConversion: true)!
         let postLength = String(postData.count)
-        self.urlRequest?.httpMethod = "POST"
-        self.urlRequest?.setValue(postLength, forHTTPHeaderField: "Content-Length")
-        self.urlRequest?.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        self.urlRequest?.httpBody = postData
+        self.urlRequest!.httpMethod = "POST"
+        self.urlRequest!.setValue(postLength, forHTTPHeaderField: "Content-Length")
+        self.urlRequest!.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        self.urlRequest!.httpBody = postData
         self.sessionConnection = URLSession(configuration: .default, delegate: self, delegateQueue: .main)
         let dataTask = self.sessionConnection.dataTask(with: self.urlRequest!)
         dataTask.resume()
-        }
+        
     }
     
     func urlSession(_ session: URLSession,dataTask: URLSessionDataTask,didReceive data: Data) {
@@ -179,11 +95,12 @@ class BIBidFileDownload: NSObject, URLSessionDataDelegate{
         }else if self.sessionConnection == session {
             self.sessionData.append(data)
         }
+        //needs code
     }
     func urlSession(_ session: URLSession,dataTask: URLSessionDataTask,willCacheResponse proposedResponse: CachedURLResponse,completionHandler: @escaping (CachedURLResponse?) -> Void) {
         if self.prelogonConnection == session {
             let dataString = String(data: self.preLogonData, encoding: .utf8)
-            self.prelogonCredential = stringFormatter(dataString!)
+            self.prelogonCredential = stringByAddingPercentEscapes(to: dataString!)
             print("PrelogonKey: \(dataString ?? "default")")
             self.retrieveSessionCredential()
         }else if self.sessionConnection == session {
@@ -280,7 +197,7 @@ class BIBidFileDownload: NSObject, URLSessionDataDelegate{
     //MARK: URL Request HTTP Body
     func fileHTTPBody(for filename: String) -> Data? {
         // Bid awards should be downloaded as TXTPACKET, and all others should be downloaded as ZIPPACKET
-        let packetType = downloadType == .biBidAwardsDownloadType ? "TXTPACKET" : "ZIPPACKET"
+        let packetType = downloadType == .BIBidAwardsDownloadType ? "TXTPACKET" : "ZIPPACKET"
         let fileHTTPBodyString = "REQUEST=\(packetType)&CREDENTIALS=\(sessionCredential!)&NAME=\(filename)"
         let fileHTTPBody = fileHTTPBodyString.data(using: .utf8)
         return fileHTTPBody

@@ -80,179 +80,32 @@ enum BidActionType: String {
 }
 
 enum BIBidFileDownloadType : Int {
-    case biBidDataDownloadType
-    case biBidSubmissionDownloadType
-    case biBidAwardsDownloadType
-    case biLoginChecking
+    case BIBidDataDownloadType
+    case BIBidSubmissionDownloadType
+    case BIBidAwardsDownloadType
+    case BILoginChecking
 }
 
-let FromAppNumber = "14"
-var rawData : String = ""
 
-var hideHud : [String: Any] = ["hideHud" : true]
-var authFailed : [String: Any] = ["authFailed" : true]
-var noUserAccount : [String: Any] = ["noUserAccount" : true]
 
 let LineValueViewTag = 10000
 
-var LiveServiceURL : String {
-    var url = "https://www.auth.wbidmax.com/WBidCoreService/api/"
-    if UserDefaults.standard.bool(forKey: "isTestDBSelected") == true {
-        url = "https://www.auth.wbidmax.com/WBidCoreServiceTestDBQA/api/"
-    }
-    return url
-}
 
 let DevUserID = "x21221"
 let DevUserPassword = "Vofox2025@2$"
-
 let kCBEmployeeNumberDefaultKey = "Employee Number"
-let kCBCrewBaseDefaultKey = "Crew Base"
-let kCBCrewPositionTypeDefaultKey = "Crew Position"
-let kCBBidDocumentLastBidDateKey = "Last Bid Date"
-let kCBDefaultLineValuesKey = "Default Line Values"
-let kCBRound2DefaultLineValuesKey = "Round 2 Default Line Values"
-let kCBSwaptimizerLineValuesKey = "Swaptimizer Line Values"
-let kCBFaVacationLineValuesKey = "FA Vacation Line Values"
 let kCBHideVacationKey = "CBHideVacation"
-let kCBDefaultCommutingTimesKey = "Default Commuting Times"
-let kCBDefaultsCommutingNoMidKey = "DefaultsNoMidKey"
-let kCBVacationOverlapTripDisplayOption = "VacationOverlapTripDisplayOption"
-
-
-let kCBInternationalCitiesList = "CBInternationalCitiesList"
-let kCBNonConusCitiesList = "CBNonConusCitiesList"
-let kCBWestCoastCitiesList = "CBWestCoastCitiesList"
-let kCBEastCoastCitiesList = "CBEastCoastCitiesList"
-let kCBAllCitiesList = "CBAllCitiesList"
-let kCBSelectedInternationalCities = "CBSelectedInternationalCities"
-let kCBSelectedNonConusCities = "CBSelectedNonConusCities"
-let kCBSelectedWestCoastCities = "CBSelectedWestCoastCities"
-let kCBSelectedEastCoastCities = "CBSelectedEastCoastCities"
-let kCBSelectedAllCities = "CBSelectedAllCities"
-let kCBHawaiiCitiesList = "CBHawaiiCitiesList"
-let kCBSelectedHawaiiCities = "CBSelectedHawaiiAllCities"
-
-
-let kCBTimeZoneSetting = "CBTimeZoneSetting"
-let kCBTimeZoneCitiesList = "CBTimeZoneCitiesList"
-let kCBInternationalCitiesDict = "CBInternationalCitiesDict"
-let kCBDisplayedExpandedBidListInstructions = "CBDisplayedExpandedBidListInstructions"
-
-let ReloadCollectionView = "ReloadCollectionView"
-let BIBidPeriodEntityName = "BidPeriod"
-
-
 let kCBHelpVideoURL = "HelpVideoURL"
 let kCBHelpVideotitles = "HelpVideotitles"
-
-
 let kCBIsPresetModified = "kCBIsPresetModified"
-let kCBPresetSyncReload = "CBPresetSyncReload"
-let KCBIsSyncEnabled = "KCBIsSyncEnabled"
-let KCBCustomizedHerbValue = "KCBCustomizedHerbValue"
-
-
-//Bid download
-let KCBSelectedBase = "KCBSelectedBase"
-let KCBHistoricSelectedYear = "HistoricSelectedYear"
-let KCBHistoricSelectedMonth = "HistoricSelectedMonth"
-let KCBSelectedPosition = "SelectedPosition"
-let KCBSelectedRound = "KCBSelectedRound"
 let KCBEmpNumWithPrefix = "KCBEmpNumWithPrefix"
-
-let KCBopenExpandedViewNotification = "KCBopenExpandedViewNotification"
-let KCBOpenCoverletter = "KCBOpenCoverletter"
-let KCBOpenSeniority = "KCBOpenSeniority"
-let KCBOpenLatestNews = "KCBOpenLatestNews"
-let KCBOpenAwardData = "KCBOpenAwardData"
-let KCBOpenretrieveAwardDownloadPage = "KCBOpenretrieveAwardDownloadPage"
-let KCBOpenLineImporter = "KCBOpenLineImporter"
-let KCBOpenShowCAP = "KCBOpenShowCAP"
-let KCBOpenAwardEmpValidationVC = "KCBOpenAwardEmpValidationVC"
-let KCBOpenAwardEmpValidationVCForAddToCal = "KCBOpenAwardEmpValidationVCForAddToCal"
-let KCBOpenLineText = "KCBOpenLineText"
-let KCBOpenTripText = "KCBOpenTripText"
-let KCBOpenFAMemo = "KCBOpenFAMemo"
-let BIDayInfoEntityName = "DayInfo"
-let BIDayEntityName = "Day"
-
-let kCBPdfSize: CGRect = CGRect(x: 20, y: 20, width: 816, height: 1056)
-
-//-------------------------------------------------------------------------------------//
-// alerts
-let Crewbid = "CrewBid 2"
 let Warning = "Warning !"
-let AppNum = 14
-let LoginFailed : String = "The combination of your employee number and password was not recognized by the company\nOnly pilots and flight attandents of Southwest Airlines will be authorized to use this app.\nCheck your employee number and CWA password and try again."
-let InvalidEmployyeNumber : String = "Please enter valid employee number."
-let enterEmployeeNumber : String = "Please enter employee number."
-let InvalidPassword : String = "Please enter valid password."
 let NetworkNotAvailable : String = "There is no internet connection"
-let CWALoginFailed : String = "We cannot validate you as an employee!\n\nYour login failed . You can try again, but CWA will lock you out after 3 attempts.\n\nIf you try again, insure you are using your employee number and your SwaLife password."
-let ResponceZero : String = "Something went wrong. Please try again ."
-let invalidAccount : String = "We checked, but no previous account exists for you.\n\nThe next view will let you create your account."
-let PositionNotSelected : String = "Please select any position to continue."
-let RoundNotSelected : String = "Please select any round to continue."
-let BaseNotSelected : String = "Please select any base to continue."
-let MonthNotSelected : String = "Please select any month to continue."
-let YearNotSelected = "Please select any year to continue."
-let UpdatePasswordSuccess = "You have saved password successfully."
-let UpdatePasswordFailure = "Password update is failed, Please try again."
-let VerifyPassword = "Incorrect Password, Please try again"
-let EmailValidFormat = "Please enter email with valid format"
-let AccountExisting = "Found Existing Account"
-let FirstName = "Please enter first name"
-let ValidFirstName = "Please enter valid first name"
-let LastName = "Please enter last name"
-let ValidLastName = "Please enter valid last name"
-let Email = "Please enter email address"
-let ConfirmEmail = "Please enter Confirm Email address"
-let Cellphone = "Please enter cell phone number"
-let CellphoneFormat = "Invalid Cell Number eg: xxx-xxx-xxxx format."
-let EmployeeNo = "Please enter Employee number"
-let ValidEmployeeNo = "Please enter valid employee number"
-let Cellcarrier = "Please select cell carrier"
-let AcceptTerms = "You have to accept the terms and condition in order to use CrewBid 2 App"
-let CreatePassword = "Please create the password"
-let ViaSmsSuccess = "Password sent via sms"
-let ViaMailSuccess = "Password sent via email,Please check your mail."
-let ViaSiteSuccess = "Password sent via wnco.com."
-let PasswordSentFail = "We are unable to send your password,Please contact Administrator."
-let PasswordLength = "Password must be 6 to 12 characters."
-let DataNotAvailable = "User account not available. Please login in CrewBid with your employee number"
-let InvalidCellPhoneFormat = "Invalid Cell Number eg:xxx-xxx-xxxx format"
-let EnterPassword = "Please enter password"
-let EnterNewPassword = "Please enter new password"
-let ReEnterPassword = "Please re-enter password"
-let EmailNotMatching = "Email Not Matching"
-let PasswordMismatch = "Please repeat same password"
-
-//-------------------------------------------------------------------------------------//
 let kCBUserInfoDictionaryKey = "UserInfoDictionary"
 let kCBExpirationDateFormat = "dd/MM/yyyy HH:mm:ss"
 let kCBIncludeDroppedTripsInProcessingKey = "CBIncludeDroppedTripsInProcessing"
-
-let kCBUserInfoEncryptedWbidExpirationDateKey = "UserInfoEncryptedWbidExpirationDateKey"
-let kCBUserInfoUserParseIDKey = "UserInfoUserParseIDKey"
-let kCBUserInfoParseObjectIDKey = "UserInfoParseObjectIDKey"
-let kCBUserInfoUserEmailKey = "UserInfoUserEmail"
 let kCBUserInfoEncryptedExpirationDateKey = "UserInfoEncryptedExpirationDateKey"
-let kCBUserInfoPurchaseTypesKey = "UserInfoPurchaseTypesKey"
-let kCBUserInfoParseClassName = "UserInfo"
-let kCBUserInfoPositionKey = "Position"
-let kCBUserInfoDecryptedExpirationDateKey = "UserInfoDecryptedExpirationDateKey"
-let kCBUserInfoDecryptedWbidExpirationDateKey = "UserInfoDecryptedWbidExpirationDateKey"
-let kCBUserInfoMarchMadnessKey = "UserInfoMarchMadnessKey"
-let kCBUserInfoMostRecentPurchaseDateKey = "MostRecentPurchaseDate"
-let kParseUserSubscriptionExpirationDate = "SubscriptionExpirationDate"
 
-let openSubscriptionPageNotification = "openSubscriptionPageNotification"
-
-let refreshLines = "refreshLines"
-let kCBFaBuddyBidsKey = "FaBuddyBids"
-let kCBFoAvoidanceBidsKey = "FoAvoidanceBids"
-//let kCBIncludeDroppedTripsInProcessingKey = "CBIncludeDroppedTripsInProcessing"
 
 public enum HTTPStatusCode: Int {
     case `continue` = 100,

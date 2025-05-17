@@ -14,9 +14,9 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidFileDownload.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "145"
-            endingLineNumber = "145"
-            landmarkName = "checkCrewBidLogin()"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "checkCrewBidLogin(dataSource:delegate:finishedHandler:progressHandler:errorHandler:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -30,8 +30,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidFileDownload.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "149"
-            endingLineNumber = "149"
+            startingLineNumber = "63"
+            endingLineNumber = "63"
             landmarkName = "retrievePrelogonCredential()"
             landmarkType = "7">
          </BreakpointContent>
