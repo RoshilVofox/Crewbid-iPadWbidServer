@@ -31,6 +31,9 @@ class CBDocumentsCollectionViewController: BaseViewController {
         collectionView.dataSource = self
         isPlusImage = true
         bdPrd = 0
+        if !UserDefaults.standard.bool(forKey: "isFirstLaunch"){
+            self.showQuickTutorialForFirstTime()
+        }
     }
     
     @IBAction func downloadBid(_ sender: Any) {
