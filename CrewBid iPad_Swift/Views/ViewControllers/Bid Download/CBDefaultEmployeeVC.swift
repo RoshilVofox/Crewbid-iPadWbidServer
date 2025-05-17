@@ -23,6 +23,7 @@ class CBDefaultEmployeeVC: BaseViewController {
         textEmpNum.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: textEmpNum.frame.height))
         textEmpNum.leftViewMode = .always
         textEmpNum.delegate = self
+        textEmpNum.text = UserDefaults.standard.string(forKey: kCBEmployeeNumberDefaultKey)
     }
     @IBAction func btnBackAction(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
@@ -32,6 +33,7 @@ class CBDefaultEmployeeVC: BaseViewController {
         if textEmpNum.text?.count == 0{
             shakeTextField(textField: textEmpNum)
         }else{
+            UserDefaults.standard.set(textEmpNum.text!, forKey: kCBEmployeeNumberDefaultKey)
             self.checkAutheticationForEmpID(self.textEmpNum.text!)
         }
     }

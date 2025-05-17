@@ -330,6 +330,7 @@
 		F4C6F9362DCB72940092C00C /* CBUserAccountDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C6F9352DCB72940092C00C /* CBUserAccountDetail.swift */; };
 		F4C6F93A2DCB78770092C00C /* SimplePing.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C6F9392DCB78770092C00C /* SimplePing.m */; };
 		F4CF5A8E2D892B9800A351DB /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = F4CF5A8D2D892B9800A351DB /* ZipArchive */; };
+		F4DF6DCD2DD5EA2700761057 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DF6DCC2DD5EA2700761057 /* KeychainHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -664,6 +665,7 @@
 		F4C6F9392DCB78770092C00C /* SimplePing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SimplePing.m; sourceTree = "<group>"; };
 		F4C6F93B2DCB85580092C00C /* CrewBid iPad_SwiftRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CrewBid iPad_SwiftRelease.entitlements"; sourceTree = "<group>"; };
 		F4CF5A282D891A3800A351DB /* CrewBid iPad_Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CrewBid iPad_Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4DF6DCC2DD5EA2700761057 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1515,6 +1517,7 @@
 				F481E9702DD0908800DED8FE /* BIBidFileDownload.swift */,
 				F481E9722DD0946000DED8FE /* BICrewPosition.swift */,
 				F481E9742DD0B26D00DED8FE /* BIBidInfoError.swift */,
+				F4DF6DCC2DD5EA2700761057 /* KeychainHelper.swift */,
 			);
 			path = "New Files";
 			sourceTree = "<group>";
@@ -2043,6 +2046,7 @@
 				F41EBFA72DC4DB20001413DE /* LoginEmbeddedController.swift in Sources */,
 				F41EBFA82DC4DB20001413DE /* CBHelpVideosController.swift in Sources */,
 				F41EBFA92DC4DB20001413DE /* contactUsViewController.swift in Sources */,
+				F4DF6DCD2DD5EA2700761057 /* KeychainHelper.swift in Sources */,
 				F41475812DC8D8290064CD25 /* KeychainItemWrapper.m in Sources */,
 				F41EBFAA2DC4DB20001413DE /* defenitionsViewController.swift in Sources */,
 				F41EBFAB2DC4DB20001413DE /* faqViewController.swift in Sources */,

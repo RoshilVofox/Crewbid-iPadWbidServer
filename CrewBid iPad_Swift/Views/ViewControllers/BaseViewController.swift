@@ -24,6 +24,23 @@ class BaseViewController: UIViewController {
         textField.attributedPlaceholder = NSAttributedString(string: textField.placeholder ?? "",
                                                              attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray])
     }
-
+    func dismissFn() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.dismiss(animated: false, completion: nil)
+        }
+    }
+    
+    
+    // Function to modify a user ID by adding a prefix if needed.
+    func getUserIdAfterValidation(userId: String) -> String {
+        // Check the first letter of the user ID.
+         // If it doesn't have a prefix, add one.
+        let firstLetter = userId.prefix(1).description
+        if firstLetter == "x" || firstLetter == "e" {
+            return userId
+        } else {
+            return "e" + userId
+        }
+    }
 }
 

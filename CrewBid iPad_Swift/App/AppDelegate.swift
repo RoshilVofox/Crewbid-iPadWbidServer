@@ -117,8 +117,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         //MARK: need code
         // for transactions
         if UserDefaults.standard.object(forKey: "FirstRun") == nil{
-            let keychainItem = KeychainItemWrapper(identifier: "SaveLoginDetails", accessGroup: nil)
-            keychainItem?.resetKeychainItem()
+             if let account = KeychainHelper.retrieveUsername(forService: "SaveLoginDetails") {
+                 KeychainHelper.delete(account: account, service: "SaveLoginDetails")
+             }
             UserDefaults.standard.set("1strun", forKey: "FirstRun")
             UserDefaults.standard.synchronize()
         }

@@ -87,7 +87,7 @@ class BIBidFileDownload: NSObject, URLSessionDataDelegate{
                 completionHandler?(nil)
                 return
             }
-            let stringData = self.escapedString(dataValue)
+            let stringData = self.stringFormatter(dataValue)
                 .trimmingCharacters(in: .whitespacesAndNewlines)
             print("String Data: \(stringData)")
             completionHandler?(stringData)
@@ -95,7 +95,8 @@ class BIBidFileDownload: NSObject, URLSessionDataDelegate{
         task.resume()
     }
     func retrieveSessionKey(username: String, password: String, preloginKey: String, completionHandler:((String?) -> Void)?){
-        let jsonString = "CREDENTIALS="+preloginKey+"&REQUEST=LOGON&UID="+username+"&PWD="+escapedString(password) as String
+        let escapedPwd = self.stringByAddingPercentEscapes(to: password)!
+        let jsonString = "CREDENTIALS=\(preloginKey)&REQUEST=LOGON&UID=\(username)&PWD=\(escapedPwd)" as String
         print("Session Key Request: \(jsonString)")
         var thirdPartyURL = "https://www27.swalife.com/webbid3pty/ThirdParty"
         if UserDefaults.standard.string(forKey: "IsQATest") == "YES" {

@@ -525,6 +525,17 @@ public final class CBGlobalMethods: NSObject {
 //        let keyChain = KeychainItemWrapper(identifier: "CrewBidWbidExpirationDate", accessGroup: nil)
 //        keyChain?.setObject(encryptedDateString(date: date), forKey: kSecAttrAccount)
 //    }
+    //new keychainHelper
+//    func saveExpiryToKeychain(date: Date) {
+//        let encryptedString = encryptedDateString(date: date)
+//        let success = KeychainHelper.save(account: "expiry", service: "CrewBidWbidExpirationDate", value: encryptedString)
+//
+//        if success {
+//            print("Encrypted expiry date saved to Keychain.")
+//        } else {
+//            print("Failed to save expiry date to Keychain.")
+//        }
+//    }
     
    // Encrypts a given date into a string.
     
