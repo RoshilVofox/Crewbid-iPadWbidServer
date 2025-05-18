@@ -8,14 +8,11 @@
 import UIKit
 
 class CBCredentialsPageVC: BaseViewController {
-
-    
     
     @IBOutlet weak var txtUserID: customUITextField!
     @IBOutlet weak var txtPassword: customUITextField!
     @IBOutlet weak var showPasswordBtn: UIButton!
     @IBOutlet weak var lblTitle: UILabel!
-    var bidDownload = BIBidFileDownload()
     let reachability = try? Reachability()
     var isHistoricBid : Bool = false
     var isNewBid:Bool = false
@@ -27,8 +24,10 @@ class CBCredentialsPageVC: BaseViewController {
     var year:Int?
     var userid:String?
     var password:String?
-    var objUserAccount:CBUserAccountDetail!
     var loginType:LoginType = .newBid
+    
+    let viewModel = CBLoginViewModel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -54,8 +53,20 @@ class CBCredentialsPageVC: BaseViewController {
         txtUserID.leftViewMode = .always
         txtPassword.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtPassword.frame.height))
         txtPassword.leftViewMode = .always
-        NotificationCenter.default.addObserver(self, selector: #selector(dismissVC), name: NSNotification.Name(rawValue: "dismissLoginView"), object: nil)
         
+        //------viewmodel--------
+        viewModel.formatter = self.stringFormatter(_:)
+        viewModel.onLoginSuccess = { sessionKey in
+            print("Session Key: \(sessionKey)")
+            self.view.hideActivityIndicator()
+            self.loginActions()
+        }
+        viewModel.onLoginFailure = { error in
+            self.view.hideActivityIndicator()
+            print("Login Failed with Error:\(error)")
+        }
+        //-----------------------
+        NotificationCenter.default.addObserver(self, selector: #selector(dismissVC), name: NSNotification.Name(rawValue: "dismissLoginView"), object: nil)
     }
     @objc func dismissVC() {
         DispatchQueue.main.async {
@@ -73,72 +84,34 @@ class CBCredentialsPageVC: BaseViewController {
     }
     
     @IBAction func btnGoAction(_ sender: UIButton) {
-        goAction()
-    }
-
-
-    func goAction(){
-        if (txtUserID.text!.count < 2) || (txtUserID.text!.count > 8) {
-            self.shakeTextField(textField: txtUserID)
-            return
-        }else if (txtPassword.text!.count < 4){
-            self.shakeTextField(textField: txtPassword)
-            return
-        }
-        var userID = txtUserID.text!
-        if txtUserID.text!.prefix(1) != "x" && txtUserID.text!.prefix(1) != "e" {
-            if txtUserID.text! == DevUserID {
-                userID = "x\(txtUserID.text!)"
-            } else {
-                userID = "e\(txtUserID.text!)"
-            }
-        }
-        txtUserID.text! = userID
-        view.endEditing(true)
-        self.checkLoginCredentials(userID: getUserIdAfterValidation(userId: self.txtUserID.text!), pwd: self.txtPassword.text!, completionHandler: { (response:String?) in
-            print(response?.description ?? "no response")
-            if response == "error"{
-                DispatchQueue.main.async {
-                    let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBAlertVC") as! CBAlertVC
-                    vc.fromView = self
-                    self.present(vc, animated: true)
-                }
-                return
-            }
-        })
-    }
-
-    func checkLoginCredentials(userID:String,pwd:String,completionHandler:((String?) ->Void)?){
-        if !reachability!.isReachable{
+        guard reachability?.isReachable == true else {
             let alert = AlertService.showAlert(title: Warning, message: NetworkNotAvailable, actions: nil)
             self.present(alert, animated: true)
             return
         }
-        //passing data to access it later
-        GlobalBidInfo.shared.userid = txtUserID.text!
-        GlobalBidInfo.shared.password = txtPassword.text!
-        GlobalBidInfo.shared.month = month!
-        GlobalBidInfo.shared.year = year!
-        GlobalBidInfo.shared.round = selectedRound!
-        GlobalBidInfo.shared.employeeNumber = empNum!
-
+        guard let rawUserID = txtUserID.text, !rawUserID.isEmpty,
+              let password = txtPassword.text, !password.isEmpty else {
+            shakeTextField(textField: txtUserID)
+            return
+        }
+        if rawUserID.count < 2 || rawUserID.count > 8 {
+            shakeTextField(textField: txtUserID)
+            return
+        } else if password.count < 4 {
+            shakeTextField(textField: txtPassword)
+            return
+        }
+        var formattedUserID = rawUserID
+        if !rawUserID.lowercased().hasPrefix("x") && !rawUserID.lowercased().hasPrefix("e") {
+            formattedUserID = (rawUserID == DevUserID) ? "x\(rawUserID)" : "e\(rawUserID)"
+        }
+        txtUserID.text = formattedUserID
+        guard let empID = self.txtUserID.text, let month = self.month, let year = self.year, let round = self.selectedRound else { return }
         self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
-        UserDefaults.standard.set(txtUserID.text, forKey: KCBEmpNumWithPrefix)
-
-        bidDownload.checkCrewBidLogin(dataSource: GlobalBidInfo.shared, delegate: nil, finishedHandler: {
-            print("Finish")
-        }, progressHandler: {_ in }, errorHandler: {error in
-            self.view.hideActivityIndicator()
-            if self.checkLoginError(error as NSError, searchString: "Login failed"){
-                self.logBidSubmissionProcess(error: error as NSError)
-                if let account = KeychainHelper.retrieveUsername(forService: "SaveLoginDetails") {
-                    KeychainHelper.delete(account: account, service: "SaveLoginDetails")
-                }
-            }
-        })
-        
+        viewModel.checkLogin(userID: formattedUserID,password: password,empNum: empID,month: month,year: year, round:round)
     }
     
+
     func getAttributedMessage(from text: String, for targetText: String) -> NSMutableAttributedString {
         let messageFont = UIFont.systemFont(ofSize: 20)
         let boldFont = UIFont.boldSystemFont(ofSize: 24)
@@ -154,17 +127,20 @@ class CBCredentialsPageVC: BaseViewController {
         }
         return attributedString
     }
-    
+    func DBAlert(title:String, message:NSAttributedString){
+        let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBAlertVC") as! CBAlertVC
+        vc.alertTitle = title
+        vc.attributedMessage = message
+        
+    }
     
     func loginActions(){
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
-        vc.modalPresentationStyle = .fullScreen
-        vc.modalTransitionStyle = .coverVertical
-        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = scene.windows.first,
-           let rootVC = window.rootViewController {
-            rootVC.present(vc, animated: true, completion: nil)
+        let docVC = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
+        if let homeNav = UIApplication.shared.windows.first?.rootViewController as? UINavigationController {
+            self.dismiss(animated: false) {
+                homeNav.pushViewController(docVC, animated: true)
+            }
         }
     }
     

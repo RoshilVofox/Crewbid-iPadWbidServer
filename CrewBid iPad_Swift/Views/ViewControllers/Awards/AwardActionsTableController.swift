@@ -41,10 +41,13 @@ extension AwardActionsTableController: UITableViewDataSource, UITableViewDelegat
         if item == "Show Awarded Line" {
             if let presentingVC = self.presentingViewController {
                 self.dismiss(animated: true) {
-                    let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-                    let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedAwardEmpValidationVC") as! EmbeddedAwardEmpValidationVC
+                    let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+                    let vc = storyboard.instantiateViewController(withIdentifier: "CBDefaultEmployeeVC") as! CBDefaultEmployeeVC
                     vc.preferredContentSize = CGSize(width: 600, height: 500)
-                    presentingVC.present(vc, animated: true)
+                    vc.type = "Show Awarded Line"
+                    let navController = UINavigationController(rootViewController: vc)
+                    navController.setNavigationBarHidden(true, animated: false)
+                    presentingVC.present(navController, animated: true)
                 }
             }
         }

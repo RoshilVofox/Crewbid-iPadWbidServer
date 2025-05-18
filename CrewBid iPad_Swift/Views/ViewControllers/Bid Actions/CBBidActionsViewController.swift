@@ -190,14 +190,15 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
         
         // MARK: - Submit Bid Selection
         if item == "Submit Bid" {
-            if item == "Submit Bid" {
-                if let presentingVC = self.presentingViewController {
-                    self.dismiss(animated: true) {
-                        let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-                        let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedSubmitVC")
-                        vc.preferredContentSize = CGSize(width: 600, height: 500)
-                        presentingVC.present(vc, animated: true)
-                    }
+            if let presentingVC = self.presentingViewController {
+                self.dismiss(animated: true) {
+                    let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+                    let vc = storyboard.instantiateViewController(withIdentifier: "CBDefaultEmployeeVC") as! CBDefaultEmployeeVC
+                    vc.preferredContentSize = CGSize(width: 600, height: 500)
+                    vc.type = "Submit employee number"
+                    let navController = UINavigationController(rootViewController: vc)
+                    navController.setNavigationBarHidden(true, animated: false)
+                    presentingVC.present(navController, animated: true)
                 }
             }
         }

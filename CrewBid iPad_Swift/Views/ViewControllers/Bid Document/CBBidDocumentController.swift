@@ -47,8 +47,12 @@ class CBBidDocumentController: BaseViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutViewForSwitch), name: NSNotification.Name("SyncSwitchStateAction"), object: nil)
     }
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
     override func viewDidDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver("SortBidListAction")
         NotificationCenter.default.removeObserver("SyncSwitchStateAction")
     }

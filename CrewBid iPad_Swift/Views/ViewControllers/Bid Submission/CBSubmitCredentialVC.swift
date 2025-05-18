@@ -27,7 +27,6 @@ class CBSubmitCredentialVC: UIViewController {
         txtEmpNum.delegate = self
         txtEmpNum.becomeFirstResponder()
         
-        finalAlert()
     }
 
     @IBAction func btnDismissActiomn(_ sender: Any) {
@@ -48,16 +47,14 @@ class CBSubmitCredentialVC: UIViewController {
     @IBAction func btnShowPasswordAction(_ sender: Any) {
     }
     
+<<<<<<< HEAD
     func finalAlert() {
-        let alert = UIAlertController(
-            title: "Buddy Bidding Terms",
-            message: "By continuing, you represent that you have the permission of your buddy or buddies to Buddy Bid with them and you have taken the necessary steps inSwA lite to out them on vour BuddyBidding list.I Understand and Accept",
-            preferredStyle: .alert
-        )
-        let cancelAction = UIAlertAction(title: "ok", style: .cancel)
-        alert.addAction(cancelAction)
-        present(alert, animated: true)
+        let alert = AlertService.showAlert(title: "Buddy Bidding Terms", message: "By continuing, you represent that you have the permission of your buddy or buddies to Buddy Bid with them and you have taken the necessary steps inSwA lite to out them on vour BuddyBidding list.I Understand and Accept", actions: nil)
+        self.present(alert, animated: true)
     }
+=======
+    
+>>>>>>> 7d0128f99bc5731f714db4875d31f0b42e13b1dc
 }
 
 extension CBSubmitCredentialVC: UITextFieldDelegate {

@@ -24,6 +24,7 @@
 		8BFCEE9E2DC4F62F0068C00B /* Box.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEE9D2DC4F62F0068C00B /* Box.png */; };
 		8BFCEEA02DC4F6400068C00B /* Chat.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEE9F2DC4F6400068C00B /* Chat.png */; };
 		8BFCEEA22DC4F6DB0068C00B /* oneMonth.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEEA12DC4F6DB0068C00B /* oneMonth.png */; };
+		F407B2A12DD9AE5B003E4042 /* EndPoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = F407B2A02DD9AE5B003E4042 /* EndPoints.swift */; };
 		F41475812DC8D8290064CD25 /* KeychainItemWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = F41475802DC8D8290064CD25 /* KeychainItemWrapper.m */; };
 		F41475842DC8E1980064CD25 /* AlertService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41475832DC8E1980064CD25 /* AlertService.swift */; };
 		F41EBE902DC4DB20001413DE /* ThirdPartyURL.plist in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD5A2DC4DB20001413DE /* ThirdPartyURL.plist */; };
@@ -315,6 +316,9 @@
 		F41EBFBC2DC4DB20001413DE /* CBSyncInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE8A2DC4DB20001413DE /* CBSyncInfoViewController.swift */; };
 		F41EBFBD2DC4DB20001413DE /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE8C2DC4DB20001413DE /* BaseViewController.swift */; };
 		F41EBFC32DC4E19A001413DE /* DocumentsCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBFC22DC4E19A001413DE /* DocumentsCollectionViewModel.swift */; };
+		F4400BD62DD9BA370066C7E0 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4400BD52DD9BA370066C7E0 /* APIService.swift */; };
+		F4400BD82DD9DB1C0066C7E0 /* CBDefaultEmployeeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4400BD72DD9DB1C0066C7E0 /* CBDefaultEmployeeViewModel.swift */; };
+		F4400BDA2DD9E5D60066C7E0 /* CBLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4400BD92DD9E5D60066C7E0 /* CBLoginViewModel.swift */; };
 		F481E96A2DD05ED200DED8FE /* CBUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F481E9692DD05ED200DED8FE /* CBUtils.swift */; };
 		F481E96F2DD0906C00DED8FE /* BIBidInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F481E96E2DD0906B00DED8FE /* BIBidInfo.swift */; };
 		F481E9712DD0908800DED8FE /* BIBidFileDownload.swift in Sources */ = {isa = PBXBuildFile; fileRef = F481E9702DD0908800DED8FE /* BIBidFileDownload.swift */; };
@@ -345,12 +349,13 @@
 		8BA705FB2DCB5BB80090EA71 /* ArrivalDepartureTimeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrivalDepartureTimeCell.swift; sourceTree = "<group>"; };
 		8BA705FD2DCB5BE20090EA71 /* CityPickerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityPickerCell.swift; sourceTree = "<group>"; };
 		8BAEE8022DCC68BD002EF328 /* Nofiication.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Nofiication.txt; sourceTree = "<group>"; };
-		8BAEE8072DCC73E3002EF328 /* MBProgressHUD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MBProgressHUD.h; path = "CrewBid iPad_Swift/Utilities/MBProgressHUD.h"; sourceTree = SOURCE_ROOT; };
-		8BAEE8082DCC73E3002EF328 /* MBProgressHUD.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MBProgressHUD.m; path = "CrewBid iPad_Swift/Utilities/MBProgressHUD.m"; sourceTree = SOURCE_ROOT; };
+		8BAEE8072DCC73E3002EF328 /* MBProgressHUD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MBProgressHUD.h; path = "CrewBid iPad_Swift/Utilities/ProgressHUD/MBProgressHUD.h"; sourceTree = SOURCE_ROOT; };
+		8BAEE8082DCC73E3002EF328 /* MBProgressHUD.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MBProgressHUD.m; path = "CrewBid iPad_Swift/Utilities/ProgressHUD/MBProgressHUD.m"; sourceTree = SOURCE_ROOT; };
 		8BEADE8A2DC4A4DB00B3BDF2 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		8BFCEE9D2DC4F62F0068C00B /* Box.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Box.png; sourceTree = "<group>"; };
 		8BFCEE9F2DC4F6400068C00B /* Chat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Chat.png; sourceTree = "<group>"; };
 		8BFCEEA12DC4F6DB0068C00B /* oneMonth.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = oneMonth.png; sourceTree = "<group>"; };
+		F407B2A02DD9AE5B003E4042 /* EndPoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndPoints.swift; sourceTree = "<group>"; };
 		F414757D2DC8D6520064CD25 /* CrewBid iPad_Swift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CrewBid iPad_Swift.entitlements"; sourceTree = "<group>"; };
 		F414757F2DC8D8290064CD25 /* KeychainItemWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeychainItemWrapper.h; sourceTree = "<group>"; };
 		F41475802DC8D8290064CD25 /* KeychainItemWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeychainItemWrapper.m; sourceTree = "<group>"; };
@@ -647,6 +652,9 @@
 		F41EBE8C2DC4DB20001413DE /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		F41EBE8F2DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CrewBid_iPad_Swift.xcdatamodel; sourceTree = "<group>"; };
 		F41EBFC22DC4E19A001413DE /* DocumentsCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentsCollectionViewModel.swift; sourceTree = "<group>"; };
+		F4400BD52DD9BA370066C7E0 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
+		F4400BD72DD9DB1C0066C7E0 /* CBDefaultEmployeeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBDefaultEmployeeViewModel.swift; sourceTree = "<group>"; };
+		F4400BD92DD9E5D60066C7E0 /* CBLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLoginViewModel.swift; sourceTree = "<group>"; };
 		F481E9692DD05ED200DED8FE /* CBUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUtils.swift; sourceTree = "<group>"; };
 		F481E96E2DD0906B00DED8FE /* BIBidInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIBidInfo.swift; sourceTree = "<group>"; };
 		F481E9702DD0908800DED8FE /* BIBidFileDownload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIBidFileDownload.swift; sourceTree = "<group>"; };
@@ -731,6 +739,33 @@
 				8BEADE8A2DC4A4DB00B3BDF2 /* WebKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F407B29D2DD993DC003E4042 /* ProgressHUD */ = {
+			isa = PBXGroup;
+			children = (
+				8BAEE8072DCC73E3002EF328 /* MBProgressHUD.h */,
+				8BAEE8082DCC73E3002EF328 /* MBProgressHUD.m */,
+			);
+			path = ProgressHUD;
+			sourceTree = "<group>";
+		};
+		F407B29E2DD9940D003E4042 /* PingService */ = {
+			isa = PBXGroup;
+			children = (
+				F4C6F9392DCB78770092C00C /* SimplePing.m */,
+				F4C6F9322DCB45440092C00C /* SimplePing.h */,
+			);
+			path = PingService;
+			sourceTree = "<group>";
+		};
+		F407B29F2DD9AE17003E4042 /* Service Handler */ = {
+			isa = PBXGroup;
+			children = (
+				F407B2A02DD9AE5B003E4042 /* EndPoints.swift */,
+				F4400BD52DD9BA370066C7E0 /* APIService.swift */,
+			);
+			path = "Service Handler";
 			sourceTree = "<group>";
 		};
 		F414757E2DC8D8220064CD25 /* StoreKit */ = {
@@ -1373,6 +1408,7 @@
 		F41EBE8E2DC4DB20001413DE /* CrewBid iPad_Swift */ = {
 			isa = PBXGroup;
 			children = (
+				F407B29F2DD9AE17003E4042 /* Service Handler */,
 				F481E96D2DD0905700DED8FE /* New Files */,
 				8BAEE8012DCC68AF002EF328 /* Notes for developer */,
 				F4C6F93B2DCB85580092C00C /* CrewBid iPad_SwiftRelease.entitlements */,
@@ -1391,6 +1427,8 @@
 			isa = PBXGroup;
 			children = (
 				F41EBFC22DC4E19A001413DE /* DocumentsCollectionViewModel.swift */,
+				F4400BD72DD9DB1C0066C7E0 /* CBDefaultEmployeeViewModel.swift */,
+				F4400BD92DD9E5D60066C7E0 /* CBLoginViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -1572,11 +1610,9 @@
 		F494ECDC2DC5C8F9007B178E /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				8BAEE8072DCC73E3002EF328 /* MBProgressHUD.h */,
-				8BAEE8082DCC73E3002EF328 /* MBProgressHUD.m */,
+				F407B29D2DD993DC003E4042 /* ProgressHUD */,
 				F4C6F9352DCB72940092C00C /* CBUserAccountDetail.swift */,
-				F4C6F9392DCB78770092C00C /* SimplePing.m */,
-				F4C6F9322DCB45440092C00C /* SimplePing.h */,
+				F407B29E2DD9940D003E4042 /* PingService */,
 				F41EBDD42DC4DB20001413DE /* Helpers */,
 				F41475832DC8E1980064CD25 /* AlertService.swift */,
 				35162E022DCDBEA600BD8E2E /* UIView+extensions.swift */,
@@ -1883,6 +1919,7 @@
 				F41EBF0E2DC4DB20001413DE /* VideoCollectionViewCell.swift in Sources */,
 				F41EBF0F2DC4DB20001413DE /* BIBidPeriod+CoreDataClass.swift in Sources */,
 				F41EBF102DC4DB20001413DE /* BIBidPeriod+CoreDataProperties.swift in Sources */,
+				F407B2A12DD9AE5B003E4042 /* EndPoints.swift in Sources */,
 				F41EBF112DC4DB20001413DE /* BIBidReceipt+CoreDataClass.swift in Sources */,
 				F41EBF122DC4DB20001413DE /* BIBidReceipt+CoreDataProperties.swift in Sources */,
 				F41EBF132DC4DB20001413DE /* BIFilterRule+CoreDataClass.swift in Sources */,
@@ -1915,6 +1952,7 @@
 				F41EBF2F2DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld in Sources */,
 				F41EBF362DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift in Sources */,
 				35F6C8B32DD856B40072BAD9 /* CBAvoidaceBidViewController.swift in Sources */,
+				F4400BD62DD9BA370066C7E0 /* APIService.swift in Sources */,
 				F41EBF372DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift in Sources */,
 				F41EBF382DC4DB20001413DE /* AppDelegate.swift in Sources */,
 				F41EBF392DC4DB20001413DE /* SceneDelegate.swift in Sources */,
@@ -2003,6 +2041,7 @@
 				F41EBF832DC4DB20001413DE /* CommuteCityViewController.swift in Sources */,
 				F41EBF842DC4DB20001413DE /* CBBidActionsVC.swift in Sources */,
 				F41EBF852DC4DB20001413DE /* CBBidlineViewTableViewCell.swift in Sources */,
+				F4400BDA2DD9E5D60066C7E0 /* CBLoginViewModel.swift in Sources */,
 				F41EBF862DC4DB20001413DE /* CBBidListCalenderViewCell.swift in Sources */,
 				F41EBF872DC4DB20001413DE /* InnerCollectionViewCell.swift in Sources */,
 				F41EBF882DC4DB20001413DE /* CBBidListSortOptions.swift in Sources */,
@@ -2057,6 +2096,7 @@
 				F41EBFAF2DC4DB20001413DE /* lineValuesViewController.swift in Sources */,
 				F41EBFB02DC4DB20001413DE /* mySubscriptionViewController.swift in Sources */,
 				F41EBFB12DC4DB20001413DE /* quickTutorialViewController.swift in Sources */,
+				F4400BD82DD9DB1C0066C7E0 /* CBDefaultEmployeeViewModel.swift in Sources */,
 				F41EBFB22DC4DB20001413DE /* serviceAgreementViewController.swift in Sources */,
 				F41EBFB32DC4DB20001413DE /* swaptimizerHelpMenuViewController.swift in Sources */,
 				353FC68F2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift in Sources */,
