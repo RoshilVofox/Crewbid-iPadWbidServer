@@ -11,6 +11,7 @@ enum NetworkError: Error {
     case invalidURL
     case noData
     case decodingError
+    case unauthorized
     case other(Error)
 }
 struct AuthResult{
@@ -109,7 +110,13 @@ class APIService{
             guard let data = data, let responseString = String(data: data, encoding: .utf8) else {
                 completion(.failure(.noData))
                 return}
-            completion(.success(responseString))
+            if responseString.contains("BADCREDENTIALS") ||
+                        responseString.uppercased().contains("LOGIN FAILED") ||
+                        responseString.contains("AUTHENTICATION FAILED") {
+                        completion(.failure(.unauthorized))
+                    } else {
+                        completion(.success(responseString))
+                    }
         }.resume()
     }
     

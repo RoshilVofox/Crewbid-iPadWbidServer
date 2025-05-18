@@ -64,6 +64,9 @@ class CBCredentialsPageVC: BaseViewController {
         viewModel.onLoginFailure = { error in
             self.view.hideActivityIndicator()
             print("Login Failed with Error:\(error)")
+            
+                //MARK: need to add alert to show if wrong credential
+            
         }
         //-----------------------
         NotificationCenter.default.addObserver(self, selector: #selector(dismissVC), name: NSNotification.Name(rawValue: "dismissLoginView"), object: nil)
@@ -84,6 +87,9 @@ class CBCredentialsPageVC: BaseViewController {
     }
     
     @IBAction func btnGoAction(_ sender: UIButton) {
+        self.login()
+    }
+    func login(){
         guard reachability?.isReachable == true else {
             let alert = AlertService.showAlert(title: Warning, message: NetworkNotAvailable, actions: nil)
             self.present(alert, animated: true)
@@ -110,7 +116,6 @@ class CBCredentialsPageVC: BaseViewController {
         self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
         viewModel.checkLogin(userID: formattedUserID,password: password,empNum: empID,month: month,year: year, round:round)
     }
-    
 
     func getAttributedMessage(from text: String, for targetText: String) -> NSMutableAttributedString {
         let messageFont = UIFont.systemFont(ofSize: 20)
@@ -261,6 +266,15 @@ class CBCredentialsPageVC: BaseViewController {
 
 
 extension CBCredentialsPageVC: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == txtUserID {
+            txtPassword.becomeFirstResponder()
+        } else if textField == txtPassword {
+            txtPassword.resignFirstResponder()
+            self.login()
+        }
+        return true
+    }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         var shouldChangeCharacters: Bool = true
