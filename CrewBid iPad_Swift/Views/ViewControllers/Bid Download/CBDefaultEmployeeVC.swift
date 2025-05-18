@@ -12,7 +12,7 @@ class CBDefaultEmployeeVC: BaseViewController {
     @IBOutlet weak var textEmpNum: customUITextField!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var descriptionTextView: UITextView!
-    
+    private let viewModel = CBDefaultEmployeeViewModel()
     var type:String?
     var confirmEmpNum:String?
     var hud = MBProgressHUD()
@@ -32,6 +32,14 @@ class CBDefaultEmployeeVC: BaseViewController {
         textEmpNum.leftViewMode = .always
         textEmpNum.delegate = self
         textEmpNum.text = UserDefaults.standard.string(forKey: kCBEmployeeNumberDefaultKey)
+            viewModel.onAuthSuccess = { [weak self] result in
+                self?.view.hideActivityIndicator()
+                self?.handleAuthResult(result)
+            }
+            viewModel.onAuthFailure = { [weak self] error in
+                self?.view.hideActivityIndicator()
+                self?.showAlert(message: error.localizedDescription)
+            }
     }
     
     func titleSetup(){
@@ -59,123 +67,45 @@ class CBDefaultEmployeeVC: BaseViewController {
     }
     
     @IBAction func btnNextAction(_ sender: Any) {
-        if textEmpNum.text?.count == 0{
-            shakeTextField(textField: textEmpNum)
-        }else{
-            UserDefaults.standard.set(textEmpNum.text!, forKey: kCBEmployeeNumberDefaultKey)
-            self.checkAutheticationForEmpID(self.textEmpNum.text!)
+        guard let empID = textEmpNum.text else {
+                   shakeTextField(textField: textEmpNum)
+                   return
+               }
+               UserDefaults.standard.set(textEmpNum.text!, forKey: kCBEmployeeNumberDefaultKey)
+               self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
+               viewModel.checkAuthentication(empID: empID)
+        }
+    
+    func handleAuthResult(_ result: AuthResult) {
+        let msg = result.message ?? ""
+        guard let empID = textEmpNum.text else {return}
+        if msg == "Invalid Account" || msg == "For security purposes, all users need a CrewBid or WBidMax account.  Go to www.crewbidmax.com and create an account" {
+            showAlert(message: "User \(empID) does not have a CrewBid account. Go to www.crewbid.com to create the account.")
+        } else if msg == "Subscription Expired" && !result.isSomehowSubscribed {
+            showAlert(message: "User \(empID) does not have a valid subscription with Crewbid Account. Please Subscribe.")
+        } else if msg.contains("Your subscription to CrewBid has expired.  Go to www.crewbid.com and re-subscribe - Go to crewbid.com") && !result.isSomehowSubscribed {
+            showAlert(message: msg)
+        } else {
+            print("Valid Employee ID")
+            self.gotoNextView()
         }
     }
-    
-    func checkAutheticationForEmpID(_ empNum:String){
-        self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
-        let app = UIApplication.shared.delegate as! AppDelegate
-        var dictAuthInfo:[String:Any] = [:]
-        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
-        dictAuthInfo["RequestType"] = "6"
-        dictAuthInfo["Version"] = appVersion
-        dictAuthInfo["BidRound"] = "0"
-        dictAuthInfo["Postion"] = ""
-        dictAuthInfo["EmployeeNumber"] = empNum
-        dictAuthInfo["FromAppNumber"] = "5"
-        dictAuthInfo["OperatingSystem"] = "iPad OS"
-        dictAuthInfo["Month"] = "0"
-        dictAuthInfo["Base"] = ""
-        dictAuthInfo["Platform"] = "iPad"
-        let url = URL(string: "\(app.Domain!)GetCrewBidAuthorization")
-        var urlRequest = URLRequest(url: url!)
-        let jsonData = try! JSONSerialization.data(withJSONObject: dictAuthInfo, options: [])
-        
-        if let jsonString = String(data: jsonData, encoding: .utf8){
-            urlRequest.httpBody = jsonString.data(using: .utf8)
-        }
-        urlRequest.httpMethod = "POST"
-        urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        self.isEmpVerified = false
-        let dataTask = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
-            if let data = data{
-                let httpResponse = response as! HTTPURLResponse
-                if httpResponse.statusCode == 200{
-                    do{
-                        if let dictRes = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves) as? [String:Any]{
-                            let isCBMonthlySubscribed = dictRes["IsCBMonthlySubscribed"] as? Bool
-                            let isCBYearlySubscribed = dictRes["IsCBYearlySubscribed"] as? Bool
-                            let isFree = dictRes["IsFree"] as? Bool
-                            let isMonthlySubscribed = dictRes["IsMonthlySubscribed"] as? Bool
-                            let isYearlySubscribed = dictRes["IsYearlySubscribed"] as? Bool
-                            let isSomeHowSubscribed:Bool = isCBMonthlySubscribed! || isCBYearlySubscribed! || isFree! || isMonthlySubscribed! || isYearlySubscribed!
-                            let message = dictRes["Message"] as? String
-                            if message == "Invalid Account" || message == "For security purposes, all users need a CrewBid or WBidMax account.  Go to www.crewbidmax.com and create an account"{
-                                DispatchQueue.main.async {
-                                    let alert = AlertService.showAlert(title: "CrewBid", message: "User \(empNum) does not have a CrewBid account. Go to www.crewbid.com to create the account.", actions: [(title: "Go to crewbid.com", style: .default, handler: {_ in
-                                        if let url = URL(string: "http://www.crewbid.com/"){
-                                            UIApplication.shared.open(url,options: [:],completionHandler: nil)
-                                        }
-                                    }), (title:"Cancel", style: .cancel, handler: nil)])
-                                    self.present(alert, animated: true)
-                                    self.view.hideActivityIndicator()
-                                }
-                            }else if message == "Subscription Expired" && !isSomeHowSubscribed{
-                                DispatchQueue.main.async {
-                                    let alert = AlertService.showAlert(title: "CrewBid", message: "User \(empNum) does not have a valid subscription with Crewbid Account. Please Subscribe.", actions: nil)
-                                    self.present(alert, animated: true)
-                                    self.view.hideActivityIndicator()
-                                }
-                            }else if message!.contains("Your subscription to CrewBid has expired.  Go to www.crewbid.com and re-subscribe - Go to crewbid.com") && !isSomeHowSubscribed{
-                                DispatchQueue.main.async {
-                                    let alert = AlertService.showAlert(title: "CrewBid", message: "User \(empNum) does not have a valid subscription with Crewbid Account. Go to www.crewbid.com to Subscribe.", actions: [(title: "Go to crewbid.com", style: .default, handler: {_ in
-                                        if let url = URL(string: "http://www.crewbid.com/"){
-                                            UIApplication.shared.open(url,options: [:],completionHandler: nil)
-                                        }
-                                    }), (title:"Cancel", style: .cancel, handler: nil)])
-                                    self.present(alert, animated: true)
-                                    self.view.hideActivityIndicator()
-                                }
-                            }else{
-                                DispatchQueue.main.async {
-                                    self.view.hideActivityIndicator()
-                                    self.isEmpVerified = true
-                                    if self.type == "Show Awarded Line" {
-                                        self.goToAwardedCallendarLine()
-                                    }
-                                    else if self.type == "Submit employee number" {
-                                        self.gotoConfirmEmployeeNumber()
-                                    }
-                                    else if self.type == "Confirm Employee Number" {
-                                        self.goFromConfirmEmployeeNumber()
-                                    }
-                                    else {
-                                        self.gotoNextView()
-                                    }
-                                }
-                            }
-                        }
-                        
-                    }catch{
-                        print(error.localizedDescription)
-                    }
-                }else{
-                    self.view.hideActivityIndicator()
-                    self.isEmpVerified = true
-                    self.gotoNextView()
-                }
-            }else{
-                if let error = error{
-                    print(error.localizedDescription)
-                }
+    func showAlert(message: String) {
+        let alert = AlertService.showAlert(title: "CrewBid",message: message,actions: [(title: "Go to crewbid.com", style: .default, handler: { _ in
+            if let url = URL(string: "http://www.crewbid.com/") {
+                UIApplication.shared.open(url, options: [:])
             }
-        }
-        dataTask.resume()
+        }),(title: "Cancel", style: .cancel, handler: nil)])
+        self.present(alert, animated: true)
     }
-    
     func gotoNextView(){
-        UserDefaults.standard.set(textEmpNum.text!, forKey: kCBEmployeeNumberDefaultKey)
-        let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "CBBiddataDownloadVC") as! CBBiddataDownloadVC
-        vc.empNum = self.textEmpNum.text
-        vc.isNewBid = self.isNewBid
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
+         UserDefaults.standard.set(textEmpNum.text!, forKey: kCBEmployeeNumberDefaultKey)
+         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+         let vc = storyboard.instantiateViewController(withIdentifier: "CBBiddataDownloadVC") as! CBBiddataDownloadVC
+         vc.empNum = self.textEmpNum.text
+         vc.isNewBid = self.isNewBid
+         self.navigationController?.pushViewController(vc, animated: true)
+     }
     
     func goToAwardedCallendarLine() {
         if let presentingVC = self.presentingViewController {
@@ -303,7 +233,11 @@ extension CBDefaultEmployeeVC : UITextFieldDelegate{
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        self.checkAutheticationForEmpID(self.textEmpNum.text!)
+        guard let empID = textEmpNum.text, !empID.isEmpty else {
+             showAlert(message: "Please enter a valid employee number.")
+             return false
+         }
+        viewModel.checkAuthentication(empID: empID)
         return true
     }
     
