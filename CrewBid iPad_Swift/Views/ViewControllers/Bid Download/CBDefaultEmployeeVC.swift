@@ -67,7 +67,7 @@ class CBDefaultEmployeeVC: BaseViewController {
     }
     
     @IBAction func btnNextAction(_ sender: Any) {
-        guard let empID = textEmpNum.text else {
+        guard let empID = textEmpNum.text, !empID.isEmpty else {
                    shakeTextField(textField: textEmpNum)
                    return
                }
