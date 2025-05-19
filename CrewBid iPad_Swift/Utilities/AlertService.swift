@@ -26,4 +26,33 @@ class AlertService{
             return alert
         }
     }
+    static func showDBAlert(title: String?, attributedMessage: NSAttributedString?, from viewController: UIViewController) {
+        let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+        guard let alertVC = storyboard.instantiateViewController(withIdentifier: "CBAlertVC") as? CBAlertVC else {
+            return}
+        alertVC.modalPresentationStyle = .currentContext
+        alertVC.modalTransitionStyle = .coverVertical
+        alertVC.alertTitle = title
+        alertVC.attributedMessage = attributedMessage
+        alertVC.fromView = viewController
+        viewController.present(alertVC, animated: true)
+    }
+    
+    
+    static func getAttributedMessage(from text: String, highlight: String) -> NSMutableAttributedString {
+        let messageFont = UIFont.systemFont(ofSize: 20)
+        let boldFont = UIFont.boldSystemFont(ofSize: 24)
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        let fullRange = NSRange(location: 0, length: (text as NSString).length)
+        let boldRange = (text as NSString).range(of: highlight)
+        let attributedString = NSMutableAttributedString(string: text)
+        attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: fullRange)
+        attributedString.addAttribute(.font, value: messageFont, range: fullRange)
+
+        if boldRange.location != NSNotFound {
+            attributedString.addAttribute(.font, value: boldFont, range: boldRange)
+        }
+        return attributedString
+    }
 }
