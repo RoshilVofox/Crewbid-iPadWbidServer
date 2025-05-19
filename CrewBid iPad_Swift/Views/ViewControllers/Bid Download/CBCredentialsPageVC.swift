@@ -103,7 +103,12 @@ class CBCredentialsPageVC: BaseViewController {
     }
     
     @IBAction func btnBackAction(_ sender: UIButton) {
-        self.navigationController?.popViewController(animated: true)
+        if type == "Retrieve Awards" {
+              self.dismiss(animated: true, completion: nil)
+          }
+          else {
+              self.navigationController?.popViewController(animated: true)
+          }
     }
     
     @IBAction func btnGoAction(_ sender: UIButton) {
