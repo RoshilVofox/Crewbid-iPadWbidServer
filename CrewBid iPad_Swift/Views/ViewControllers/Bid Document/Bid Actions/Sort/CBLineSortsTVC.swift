@@ -57,6 +57,7 @@ class CBLineSortsTVC: UIViewController {
             
         }
         else {
+            self.btnBidListCount.isHidden = false
             self.btnFilter.isHidden = false
             self.btnPreset.isHidden = false
             self.btnBids.isHidden = false

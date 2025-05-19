@@ -636,7 +636,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="chT-DG-Kq1">
-                                <rect key="frame" x="8" y="84" width="284" height="304"/>
+                                <rect key="frame" x="8" y="84" width="284" height="288"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cell" id="HPs-m5-m8o">
@@ -676,7 +676,7 @@
                             <constraint firstItem="chT-DG-Kq1" firstAttribute="leading" secondItem="xrE-Qx-jCV" secondAttribute="leading" constant="8" id="7Cb-6U-r6x"/>
                             <constraint firstItem="Nbh-hO-aMa" firstAttribute="trailing" secondItem="xrE-Qx-jCV" secondAttribute="trailing" id="dBL-d0-He5"/>
                             <constraint firstItem="chT-DG-Kq1" firstAttribute="top" secondItem="Nbh-hO-aMa" secondAttribute="bottom" id="dzh-mA-KxW"/>
-                            <constraint firstItem="chT-DG-Kq1" firstAttribute="bottom" secondItem="xrE-Qx-jCV" secondAttribute="bottom" constant="8" id="ib5-ns-jFL"/>
+                            <constraint firstItem="chT-DG-Kq1" firstAttribute="bottom" secondItem="xrE-Qx-jCV" secondAttribute="bottom" constant="-8" id="ib5-ns-jFL"/>
                             <constraint firstItem="xrE-Qx-jCV" firstAttribute="trailing" secondItem="chT-DG-Kq1" secondAttribute="trailing" constant="8" id="p5A-sE-3ZA"/>
                             <constraint firstItem="Nbh-hO-aMa" firstAttribute="top" secondItem="xrE-Qx-jCV" secondAttribute="top" id="yNv-xe-hM8"/>
                             <constraint firstItem="Nbh-hO-aMa" firstAttribute="leading" secondItem="xrE-Qx-jCV" secondAttribute="leading" id="zqj-aa-dEO"/>
