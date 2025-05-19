@@ -99,7 +99,10 @@ class CBBiddataDownloadVC: UIViewController {
             vc.isNewBid = self.isNewBid
             vc.isHistoricBid = self.isHistoricBid
             vc.selectedDomicile = self.selectedDomicile
-            vc.selectedPosition = self.selectedPosition
+            if let positionCode = self.selectedPosition, let position = BICrewPositionType(from: positionCode){
+                vc.selectedPosition = position
+            }
+//            vc.selectedPosition = self.selectedPosition
             vc.selectedRound = self.selectedRound
             vc.empNum = self.empNum
             vc.month = self.month
@@ -176,7 +179,7 @@ class CBBiddataDownloadVC: UIViewController {
         case 16:selectedPosition = "FA"
         default:break
         }
-
+        
         print("Position: \(selectedPosition!)")
 //        navigationAction()
     }
@@ -343,9 +346,9 @@ class CBBiddataDownloadVC: UIViewController {
         }else{
             lblTitle.text = "New Bid Data"
         }
-        let currentDate = Date()
-        let indexMonth = Calendar.current.component(.month, from: currentDate)
-        let indexYear = Calendar.current.component(.year, from: currentDate)
+        let nextMonthDate = Calendar.current.date(byAdding: .month, value: 1, to: Date())!
+        let indexMonth = Calendar.current.component(.month, from: nextMonthDate)
+        let indexYear = Calendar.current.component(.year, from: nextMonthDate)
         let year = CBUtils.getYearforBid(month: indexMonth, year: indexYear)
         btnBeforePrevious.setTitle("\(year-2)", for: .normal)
         btnPreviousYear.setTitle("\(year-1)", for: .normal)

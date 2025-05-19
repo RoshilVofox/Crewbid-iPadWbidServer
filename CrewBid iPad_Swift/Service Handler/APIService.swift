@@ -13,6 +13,7 @@ enum NetworkError: Error {
     case decodingError
     case unauthorized
     case timeout
+    case unzipFailed
     case other(Error)
 }
 extension NetworkError {
@@ -28,6 +29,8 @@ extension NetworkError {
             return "Unauthorized request."
         case .timeout:
             return "Request timed out."
+        case .unzipFailed:
+            return "Failed to Unzip the File"
         case .other(let err):
             return err.localizedDescription
         }
@@ -141,6 +144,6 @@ class APIService{
                     }
         }.resume()
     }
-    //MARK: Downloas Bid Files
+    //MARK: Download Bid Files
     
 }
