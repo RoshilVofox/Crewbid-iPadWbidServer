@@ -17,7 +17,7 @@ class CBCredentialsPageVC: BaseViewController {
     var isHistoricBid : Bool = false
     var isNewBid:Bool = false
     var selectedRound:Int?
-    var selectedPosition:String?
+    var selectedPosition:BICrewPositionType?
     var selectedDomicile:String?
     var empNum:String?
     var month:Int?
@@ -35,8 +35,17 @@ class CBCredentialsPageVC: BaseViewController {
             self.txtUserID.text = DevUserID
             self.txtPassword.text = DevUserPassword
         }
+        NotificationCenter.default.addObserver(self, selector: #selector(showProgressView), name: Notification.Name("ShowProgressView"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(hideProgressView), name: Notification.Name("HideProgressView"), object: nil)
     }
-    
+    @objc func showProgressView() {
+        let progressVC = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBProgressVC") as! CBProgressVC
+        self.navigationController?.pushViewController(progressVC, animated: true)
+    }
+
+    @objc func hideProgressView() {
+        self.dismiss(animated: true)
+    }
     func setupUI(){
         txtUserID.delegate = self
         txtPassword.delegate = self
@@ -57,9 +66,26 @@ class CBCredentialsPageVC: BaseViewController {
         //------viewmodel--------
         viewModel.formatter = self.stringFormatter(_:)
         viewModel.onLoginSuccess = { sessionKey in
+            NotificationCenter.default.post(name: Notification.Name("ShowProgressView"), object: nil)
             print("Session Key: \(sessionKey)")
             self.view.hideActivityIndicator()
-            self.loginActions()
+            let bidInfo = BIBidInfo()
+            let filename = bidInfo.bidDataFilename()
+            print("Filename: \(filename)")
+            
+            let fileDownloader = BIBidFileDownload()
+            NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
+            fileDownloader.downloadBidFiles(sessionKey: sessionKey, filename: filename){ result in
+                switch result{
+                case .success(let fileURL):
+                    print("File unzipped at: \(fileURL)")
+                    NotificationCenter.default.post(name: Notification.Name("HideProgressView"), object: nil)
+                    self.loginActions()
+                case .failure(let error):
+                    print("Failed: \(error.localizedDescription)")
+                }
+            }
+            
         }
         viewModel.onLoginFailure = { error in
             self.view.hideActivityIndicator()
@@ -137,9 +163,9 @@ class CBCredentialsPageVC: BaseViewController {
             formattedUserID = (rawUserID == DevUserID) ? "x\(rawUserID)" : "e\(rawUserID)"
         }
         txtUserID.text = formattedUserID
-        guard let empID = self.txtUserID.text, let month = self.month, let year = self.year, let round = self.selectedRound else { return }
+        guard let empID = self.txtUserID.text, let month = self.month, let year = self.year, let round = self.selectedRound, let selectedbase = self.selectedDomicile, let position = self.selectedPosition else { return }
         self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
-        viewModel.checkLogin(userID: formattedUserID,password: password,empNum: empID,month: month,year: year, round:round)
+        viewModel.checkLogin(userID: formattedUserID,password: password,empNum: empID,month: month,year: year, round:round, base:selectedbase, position: position)
     }
 
     func getAttributedMessage(from text: String, for targetText: String) -> NSMutableAttributedString {
@@ -179,114 +205,7 @@ class CBCredentialsPageVC: BaseViewController {
         encodedString = encodedString.replacingOccurrences(of: "+", with: "%2B")
         return encodedString
     }
-    
-    
-    func checkLoginError(_ error: NSError, searchString: String) -> Bool {
-        var errorFlag = false
-        var alertMessage = "Unknown error."
-        var failureReason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String
-        if failureReason == nil,
-           let underlyingError = error.userInfo[NSUnderlyingErrorKey] as? NSError {
-            failureReason = underlyingError.localizedDescription
-        }
-        if let reason = failureReason,
-           let suggestion = error.localizedRecoverySuggestion {
-            alertMessage = "\(reason)\n\n\(suggestion)"
-        }
-        if alertMessage.lowercased().contains(searchString.lowercased()){
-            errorFlag = true
-        }
-        return errorFlag
-    }
-    
-    
-    func logBidSubmissionProcess(error:NSError){
-        let SWAMessage = error.userInfo["SWAMessage"] as? String ?? ""
-        var mailInfo: [String:Any] = [:]
-        let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-        if let userid = self.userid, userid.contains("e"){
-            let clean = self.userid?.replacingOccurrences(of: "e", with: "").trimmingCharacters(in: .symbols)
-            mailInfo["EmployeeNumber"] = Int(clean!)
-        }else if let userid = self.userid, userid.contains("x"){
-            let clean = self.userid?.replacingOccurrences(of: "x", with: "").trimmingCharacters(in: .symbols)
-            mailInfo["EmployeeNumber"] = Int(clean!)
-        }else{
-            mailInfo["EmployeeNumber"] = 0
-        }
-        mailInfo["Event"] = "bad password"
-        mailInfo["Base"] = self.selectedDomicile
-        mailInfo["SWAMessage"] = SWAMessage
-        mailInfo["Month"] = CBUtils.shortMonthName(month: self.month!, uc: false)
-        mailInfo["Position"] = CBUtils.shortName(for: self.positionType(from: self.selectedPosition)!)
-//        let roundString: String
-//        if self.selectedRound == 1 {
-//            roundString = "M"
-//        } else if self.selectedRound == 2 {
-//            roundString = "S"
-//        } else {
-//            roundString = ""
-//        }
 
-        mailInfo["Round"] = round
-        mailInfo["Message"] = "bad password"
-        mailInfo["OperatingSystemNum"] = "iPad OS"
-        mailInfo["VersionNumber"] = appVersion
-        mailInfo["PlatformNumber"] = "iPad"
-        mailInfo["BidForEmpNum"] = 0
-        mailInfo["BuddyBid1"] = 0
-        mailInfo["BuddyBid2"] = 0
-        mailInfo["BuddyBid3"] = 0
-        let app = UIApplication.shared.delegate as! AppDelegate
-        let now = Date()
-        let timestamp = Int(now.timeIntervalSince1970 * 1000)
-        let dateStarted = "/Date(\(timestamp)+0800)/"
-        mailInfo["Date"] = dateStarted
-        mailInfo["IpAddress"] = app.IPAddress
-
-        if app.objNetworkType == .free {
-//            let event = CBOfflineEvents()
-            mailInfo["Message"] = "SouthWestWifi bad password"
-//            event.addOfflineEvent(mailInfo)
-            return
-        }
-
-        guard let url = URL(string: "\(app.Domain!)LogCrewBidSubmitBidDetails/") else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-
-        do {
-            let jsonData = try JSONSerialization.data(withJSONObject: mailInfo, options: [])
-            request.httpBody = jsonData
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        } catch {
-            print("Failed to serialize JSON: \(error)")
-            return
-        }
-
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            if let data = data,
-               let httpResponse = response as? HTTPURLResponse,
-               httpResponse.statusCode == 200,
-               response?.mimeType?.contains("application/json") == true {
-            }
-        }
-        task.resume()
-    }
-    
-    func positionType(from string: String?) -> BICrewPositionType? {
-        guard let string = string?.lowercased() else { return nil }
-        
-        switch string {
-        case "captain":
-            return .Captain
-        case "firstofficer", "first officer":
-            return .FirstOfficer
-        case "flightattendant", "flight attendant":
-            return .FlightAttendant
-        default:
-            return nil
-        }
-    }
 }
 
 

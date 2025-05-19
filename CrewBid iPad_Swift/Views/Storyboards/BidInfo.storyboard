@@ -1219,33 +1219,26 @@
                                         <rect key="frame" x="0.0" y="0.0" width="350" height="340"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Checking Internet Connection:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4sp-qb-ra0">
-                                                <rect key="frame" x="0.0" y="0.0" width="350" height="68"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="350" height="85"/>
                                                 <color key="backgroundColor" name="contentBgColor"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Getting Crewbid Files:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Gd-xH-cSq">
-                                                <rect key="frame" x="0.0" y="68" width="350" height="68"/>
-                                                <color key="backgroundColor" name="contentBgColor"/>
-                                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Downloading Bid Files:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AeY-0N-n2r">
-                                                <rect key="frame" x="0.0" y="136" width="350" height="68"/>
+                                                <rect key="frame" x="0.0" y="85" width="350" height="85"/>
                                                 <color key="backgroundColor" name="contentBgColor"/>
                                                 <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Parsing Bid Files:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tDe-9Q-71G">
-                                                <rect key="frame" x="0.0" y="204" width="350" height="68"/>
+                                                <rect key="frame" x="0.0" y="170" width="350" height="85"/>
                                                 <color key="backgroundColor" name="contentBgColor"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Parsing Vacation Files:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lD7-JL-nMW">
-                                                <rect key="frame" x="0.0" y="272" width="350" height="68"/>
+                                                <rect key="frame" x="0.0" y="255" width="350" height="85"/>
                                                 <color key="backgroundColor" name="contentBgColor"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <nil key="highlightedColor"/>
@@ -1257,10 +1250,10 @@
                                         <rect key="frame" x="440" y="0.0" width="0.0" height="340"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BU9-E8-BCR">
-                                                <rect key="frame" x="0.0" y="0.0" width="0.0" height="68"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="0.0" height="85"/>
                                                 <subviews>
                                                     <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5cg-Br-drG" customClass="GRRoundButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                        <rect key="frame" x="-22.5" y="11.5" width="45" height="45"/>
+                                                        <rect key="frame" x="-22.5" y="20" width="45" height="45"/>
                                                         <color key="backgroundColor" red="1" green="0.3803921569" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="45" id="nyh-fn-WnL"/>
@@ -1268,7 +1261,7 @@
                                                         </constraints>
                                                     </button>
                                                     <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="O7V-wO-2ev">
-                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="68"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="85"/>
                                                     </activityIndicatorView>
                                                 </subviews>
                                                 <color key="backgroundColor" name="contentBgColor"/>
@@ -1281,36 +1274,11 @@
                                                     <constraint firstItem="5cg-Br-drG" firstAttribute="centerX" secondItem="BU9-E8-BCR" secondAttribute="centerX" id="w5U-qj-AbV"/>
                                                 </constraints>
                                             </view>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bAQ-rj-Uan">
-                                                <rect key="frame" x="0.0" y="68" width="0.0" height="68"/>
-                                                <subviews>
-                                                    <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UXa-WN-EGh" customClass="GRRoundButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                        <rect key="frame" x="-22.5" y="11.5" width="45" height="45"/>
-                                                        <color key="backgroundColor" red="1" green="0.3803921569" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="45" id="1Hu-L3-1v8"/>
-                                                            <constraint firstAttribute="width" constant="45" id="jNe-gm-LN1"/>
-                                                        </constraints>
-                                                    </button>
-                                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="0sY-5z-fZR">
-                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="68"/>
-                                                    </activityIndicatorView>
-                                                </subviews>
-                                                <color key="backgroundColor" name="contentBgColor"/>
-                                                <constraints>
-                                                    <constraint firstItem="0sY-5z-fZR" firstAttribute="leading" secondItem="bAQ-rj-Uan" secondAttribute="leading" id="6H9-Qc-wC3"/>
-                                                    <constraint firstAttribute="trailing" secondItem="0sY-5z-fZR" secondAttribute="trailing" id="DZq-1H-pUd"/>
-                                                    <constraint firstItem="UXa-WN-EGh" firstAttribute="centerX" secondItem="bAQ-rj-Uan" secondAttribute="centerX" id="EMr-E6-XbX"/>
-                                                    <constraint firstItem="0sY-5z-fZR" firstAttribute="top" secondItem="bAQ-rj-Uan" secondAttribute="top" id="SDl-X5-qHD"/>
-                                                    <constraint firstAttribute="bottom" secondItem="0sY-5z-fZR" secondAttribute="bottom" id="clF-gU-yTw"/>
-                                                    <constraint firstItem="UXa-WN-EGh" firstAttribute="centerY" secondItem="bAQ-rj-Uan" secondAttribute="centerY" id="xhj-jt-G37"/>
-                                                </constraints>
-                                            </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dgj-Rh-VMY">
-                                                <rect key="frame" x="0.0" y="136" width="0.0" height="68"/>
+                                                <rect key="frame" x="0.0" y="85" width="0.0" height="85"/>
                                                 <subviews>
                                                     <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lIR-Qz-o3b" customClass="GRRoundButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                        <rect key="frame" x="-22.5" y="11.5" width="45" height="45"/>
+                                                        <rect key="frame" x="-22.5" y="20" width="45" height="45"/>
                                                         <color key="backgroundColor" red="1" green="0.3803921569" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="45" id="2aZ-Lt-ubJ"/>
@@ -1318,7 +1286,7 @@
                                                         </constraints>
                                                     </button>
                                                     <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="oxc-4V-2Wl">
-                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="68"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="85"/>
                                                     </activityIndicatorView>
                                                 </subviews>
                                                 <color key="backgroundColor" name="contentBgColor"/>
@@ -1332,10 +1300,10 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="T2i-ms-PKD">
-                                                <rect key="frame" x="0.0" y="204" width="0.0" height="68"/>
+                                                <rect key="frame" x="0.0" y="170" width="0.0" height="85"/>
                                                 <subviews>
                                                     <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VwY-ga-Sx1" customClass="GRRoundButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                        <rect key="frame" x="-22.5" y="11.5" width="45" height="45"/>
+                                                        <rect key="frame" x="-22.5" y="20" width="45" height="45"/>
                                                         <color key="backgroundColor" red="1" green="0.3803921569" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="45" id="D1y-ZI-W56"/>
@@ -1343,7 +1311,7 @@
                                                         </constraints>
                                                     </button>
                                                     <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="aNz-qf-Lo3">
-                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="68"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="85"/>
                                                     </activityIndicatorView>
                                                 </subviews>
                                                 <color key="backgroundColor" name="contentBgColor"/>
@@ -1357,10 +1325,10 @@
                                                 </constraints>
                                             </view>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nyg-uP-lGo">
-                                                <rect key="frame" x="0.0" y="272" width="0.0" height="68"/>
+                                                <rect key="frame" x="0.0" y="255" width="0.0" height="85"/>
                                                 <subviews>
                                                     <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xvf-Nu-e8V" customClass="GRRoundButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                        <rect key="frame" x="-22.5" y="11.5" width="45" height="45"/>
+                                                        <rect key="frame" x="-22.5" y="20" width="45" height="45"/>
                                                         <color key="backgroundColor" red="1" green="0.3803921569" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="45" id="ecY-CD-vnK"/>
@@ -1368,7 +1336,7 @@
                                                         </constraints>
                                                     </button>
                                                     <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="ZJu-In-0HQ">
-                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="68"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="85"/>
                                                     </activityIndicatorView>
                                                 </subviews>
                                                 <color key="backgroundColor" name="contentBgColor"/>
@@ -1394,15 +1362,14 @@
                                 <rect key="frame" x="0.0" y="490" width="600" height="60"/>
                                 <color key="backgroundColor" name="TopViewColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="60" id="sd1-WI-HSF"/>
+                                    <constraint firstAttribute="height" constant="60" id="6O4-gT-D70"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xzo-VO-h5k">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Downloading Bid Data" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qft-OM-FYY">
-                                        <rect key="frame" x="0.0" y="0.0" width="175" height="60"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Downloading Bid Data" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Qft-OM-FYY">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                         <color key="textColor" name="BlackLabelColor"/>
                                         <nil key="highlightedColor"/>
@@ -1410,41 +1377,43 @@
                                 </subviews>
                                 <color key="backgroundColor" name="TopViewColor"/>
                                 <constraints>
+                                    <constraint firstItem="Qft-OM-FYY" firstAttribute="centerY" secondItem="xzo-VO-h5k" secondAttribute="centerY" id="2aC-1Z-0Zb"/>
                                     <constraint firstAttribute="height" constant="60" id="79L-7O-cQC"/>
+                                    <constraint firstAttribute="bottom" secondItem="Qft-OM-FYY" secondAttribute="bottom" id="CfX-GC-cBn"/>
+                                    <constraint firstItem="Qft-OM-FYY" firstAttribute="top" secondItem="xzo-VO-h5k" secondAttribute="top" id="KHN-dw-Czx"/>
+                                    <constraint firstItem="Qft-OM-FYY" firstAttribute="leading" secondItem="xzo-VO-h5k" secondAttribute="leading" id="Zpv-CZ-8mp"/>
+                                    <constraint firstAttribute="trailing" secondItem="Qft-OM-FYY" secondAttribute="trailing" id="vsv-Sg-bjZ"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="wyz-KN-Rhc"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="GXa-2w-4Rs" firstAttribute="leading" secondItem="wyz-KN-Rhc" secondAttribute="leading" id="70n-8o-TUe"/>
                             <constraint firstItem="xzo-VO-h5k" firstAttribute="trailing" secondItem="wyz-KN-Rhc" secondAttribute="trailing" id="74q-Ly-AOf"/>
+                            <constraint firstItem="GXa-2w-4Rs" firstAttribute="trailing" secondItem="wyz-KN-Rhc" secondAttribute="trailing" id="8sN-Z1-gIj"/>
                             <constraint firstItem="xzo-VO-h5k" firstAttribute="leading" secondItem="wyz-KN-Rhc" secondAttribute="leading" id="BTO-3x-pKK"/>
                             <constraint firstItem="wyz-KN-Rhc" firstAttribute="trailing" secondItem="Tlp-vn-iCD" secondAttribute="trailing" constant="90" id="JuW-sX-tes"/>
                             <constraint firstItem="Tlp-vn-iCD" firstAttribute="top" secondItem="xzo-VO-h5k" secondAttribute="bottom" constant="40" id="P9n-4d-7Mw"/>
-                            <constraint firstAttribute="bottom" secondItem="GXa-2w-4Rs" secondAttribute="bottom" id="gk3-GH-Yuz"/>
+                            <constraint firstAttribute="bottom" secondItem="GXa-2w-4Rs" secondAttribute="bottom" id="TlR-F3-Wuy"/>
                             <constraint firstItem="xzo-VO-h5k" firstAttribute="top" secondItem="aDA-9Y-9Hl" secondAttribute="top" id="jCX-Pq-mvu"/>
-                            <constraint firstItem="GXa-2w-4Rs" firstAttribute="trailing" secondItem="wyz-KN-Rhc" secondAttribute="trailing" id="jmf-1B-N6k"/>
                             <constraint firstItem="Tlp-vn-iCD" firstAttribute="leading" secondItem="wyz-KN-Rhc" secondAttribute="leading" constant="70" id="kkZ-ep-qNj"/>
-                            <constraint firstItem="GXa-2w-4Rs" firstAttribute="leading" secondItem="wyz-KN-Rhc" secondAttribute="leading" id="z79-PE-icX"/>
                         </constraints>
                     </view>
                     <size key="freeformSize" width="600" height="550"/>
                     <connections>
                         <outlet property="button1" destination="5cg-Br-drG" id="Y2T-Ft-z7a"/>
-                        <outlet property="button2" destination="UXa-WN-EGh" id="Vpb-vz-iaW"/>
-                        <outlet property="button3" destination="lIR-Qz-o3b" id="KvH-3l-fzn"/>
-                        <outlet property="button4" destination="VwY-ga-Sx1" id="shv-iw-fJf"/>
-                        <outlet property="button5" destination="xvf-Nu-e8V" id="zCh-tP-r2C"/>
+                        <outlet property="button2" destination="lIR-Qz-o3b" id="KvH-3l-fzn"/>
+                        <outlet property="button3" destination="VwY-ga-Sx1" id="shv-iw-fJf"/>
+                        <outlet property="button4" destination="xvf-Nu-e8V" id="zCh-tP-r2C"/>
                         <outlet property="indicator1" destination="O7V-wO-2ev" id="cSJ-vD-ku6"/>
-                        <outlet property="indicator2" destination="0sY-5z-fZR" id="gDe-sb-tGg"/>
-                        <outlet property="indicator3" destination="oxc-4V-2Wl" id="beo-EP-7GI"/>
-                        <outlet property="indicator4" destination="aNz-qf-Lo3" id="msE-No-o5o"/>
-                        <outlet property="indicator5" destination="ZJu-In-0HQ" id="PSP-h6-rWg"/>
+                        <outlet property="indicator2" destination="oxc-4V-2Wl" id="beo-EP-7GI"/>
+                        <outlet property="indicator3" destination="aNz-qf-Lo3" id="msE-No-o5o"/>
+                        <outlet property="indicator4" destination="ZJu-In-0HQ" id="PSP-h6-rWg"/>
                         <outlet property="text1" destination="4sp-qb-ra0" id="8I1-Ci-OLc"/>
-                        <outlet property="text2" destination="2Gd-xH-cSq" id="HcZ-wa-1iZ"/>
-                        <outlet property="text3" destination="AeY-0N-n2r" id="iDv-xi-8Rm"/>
-                        <outlet property="text4" destination="tDe-9Q-71G" id="tVG-XS-O0Y"/>
-                        <outlet property="text5" destination="lD7-JL-nMW" id="q24-qE-xaR"/>
+                        <outlet property="text2" destination="AeY-0N-n2r" id="iDv-xi-8Rm"/>
+                        <outlet property="text3" destination="tDe-9Q-71G" id="tVG-XS-O0Y"/>
+                        <outlet property="text4" destination="lD7-JL-nMW" id="q24-qE-xaR"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RDL-MD-GuK" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

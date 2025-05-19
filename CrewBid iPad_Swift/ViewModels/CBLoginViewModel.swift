@@ -13,14 +13,15 @@ class CBLoginViewModel{
     var onLoginFailure:((NetworkError) ->Void)?
     var formatter:((String) ->String)?
     
-    func checkLogin(userID: String, password: String, empNum: String, month: Int, year: Int, round: Int) {
+    func checkLogin(userID: String, password: String, empNum: String, month: Int, year: Int, round: Int, base: String, position: BICrewPositionType) {
         GlobalBidInfo.shared.userid = userID
         GlobalBidInfo.shared.password = password
         GlobalBidInfo.shared.employeeNumber = empNum
         GlobalBidInfo.shared.month = month
         GlobalBidInfo.shared.year = year
         GlobalBidInfo.shared.round = round
-        
+        GlobalBidInfo.shared.base = base
+        GlobalBidInfo.shared.position = position
         APIService.shared.getPreLogonCredential(from: EndPoint.shared.thirdpartyURL) {[weak self] result in
             switch result{
             case .success(let response):

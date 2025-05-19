@@ -14,7 +14,23 @@ enum BICrewPositionType : Int, CaseIterable {
     case FirstOfficer
     case FlightAttendant
 }
-
+extension BICrewPositionType {
+    init?(from code: String) {
+        switch code.uppercased() {
+        case "CP": self = .Captain
+        case "FO": self = .FirstOfficer
+        case "FA": self = .FlightAttendant
+        default: return nil
+        }
+    }
+    var character: String {
+        switch self {
+        case .Captain: return "C"
+        case .FirstOfficer: return "F"
+        case .FlightAttendant: return "A"
+        }
+    }
+}
 //timezones
 enum CBTimeZoneSetting : Int {
     case herbTime
