@@ -1460,7 +1460,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="52W-dB-z6U" userLabel="Destructive Button">
-                                <rect key="frame" x="130" y="362" width="340" height="45"/>
+                                <rect key="frame" x="130" y="260" width="340" height="45"/>
                                 <color key="backgroundColor" red="0.87058823529999996" green="0.44705882349999998" blue="0.1019607843" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="hiu-o0-XIh"/>
@@ -1508,7 +1508,7 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I6G-Tg-6hU" userLabel="Destructive Button">
-                                <rect key="frame" x="130" y="442" width="340" height="45"/>
+                                <rect key="frame" x="130" y="340" width="340" height="45"/>
                                 <color key="backgroundColor" red="0.3411764706" green="0.1333333333" blue="0.70196078429999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="Soj-ZF-jMb"/>
@@ -1527,41 +1527,20 @@
                                     <action selector="tryBtnAction:" destination="cFP-Vr-ujs" eventType="touchUpInside" id="j3z-Oa-1b2"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NzV-dg-f4V" userLabel="Destructive Button">
-                                <rect key="frame" x="130" y="279" width="340" height="45"/>
-                                <color key="backgroundColor" red="0.87058823529999996" green="0.44705882349999998" blue="0.1019607843" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="340" id="IjP-Jf-GRx"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                <size key="titleShadowOffset" width="0.0" height="-1"/>
-                                <state key="normal" title="OK">
-                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    <color key="titleShadowColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                </state>
-                                <state key="highlighted">
-                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                </state>
-                                <connections>
-                                    <action selector="cancelBtnAction:" destination="cFP-Vr-ujs" eventType="touchUpInside" id="8q2-Ib-sGm"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="nhk-ep-aIJ"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="52W-dB-z6U" firstAttribute="top" secondItem="PQr-kv-4hT" secondAttribute="bottom" constant="20" id="2VS-Y7-olj"/>
                             <constraint firstItem="8d6-Nu-o6f" firstAttribute="top" secondItem="8cx-ag-hov" secondAttribute="top" id="48s-9g-LnN"/>
                             <constraint firstItem="I6G-Tg-6hU" firstAttribute="width" secondItem="52W-dB-z6U" secondAttribute="width" id="4NB-l7-mEx"/>
                             <constraint firstItem="I6G-Tg-6hU" firstAttribute="top" secondItem="52W-dB-z6U" secondAttribute="bottom" constant="35" id="9bi-9A-JKu"/>
-                            <constraint firstItem="52W-dB-z6U" firstAttribute="width" secondItem="NzV-dg-f4V" secondAttribute="width" id="A8D-7H-w5Q"/>
                             <constraint firstItem="nhk-ep-aIJ" firstAttribute="trailing" secondItem="PQr-kv-4hT" secondAttribute="trailing" constant="20" id="CLu-Qc-go7"/>
-                            <constraint firstItem="NzV-dg-f4V" firstAttribute="centerX" secondItem="8cx-ag-hov" secondAttribute="centerX" id="F3a-Yd-uHu"/>
                             <constraint firstItem="8d6-Nu-o6f" firstAttribute="leading" secondItem="nhk-ep-aIJ" secondAttribute="leading" id="JX4-Jb-TZe"/>
                             <constraint firstItem="I6G-Tg-6hU" firstAttribute="height" secondItem="52W-dB-z6U" secondAttribute="height" id="NpK-fj-SRp"/>
                             <constraint firstItem="8d6-Nu-o6f" firstAttribute="trailing" secondItem="nhk-ep-aIJ" secondAttribute="trailing" id="SiP-lj-X7W"/>
                             <constraint firstItem="PQr-kv-4hT" firstAttribute="top" secondItem="8d6-Nu-o6f" secondAttribute="bottom" constant="40" id="kxB-hv-uPY"/>
                             <constraint firstItem="52W-dB-z6U" firstAttribute="centerX" secondItem="8cx-ag-hov" secondAttribute="centerX" id="s1j-ou-b4h"/>
-                            <constraint firstItem="52W-dB-z6U" firstAttribute="top" secondItem="PQr-kv-4hT" secondAttribute="bottom" constant="122" id="tgn-A6-Lu7"/>
                             <constraint firstItem="I6G-Tg-6hU" firstAttribute="centerX" secondItem="8cx-ag-hov" secondAttribute="centerX" id="unb-xh-c0y"/>
                             <constraint firstItem="PQr-kv-4hT" firstAttribute="leading" secondItem="nhk-ep-aIJ" secondAttribute="leading" constant="20" id="yC9-Bx-T92"/>
                         </constraints>

@@ -27,7 +27,7 @@ class CBCredentialsPageVC: BaseViewController {
     var loginType:LoginType = .newBid
     var type:String?
     let viewModel = CBLoginViewModel()
-    
+    let app = UIApplication.shared.delegate as! AppDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -63,10 +63,30 @@ class CBCredentialsPageVC: BaseViewController {
         }
         viewModel.onLoginFailure = { error in
             self.view.hideActivityIndicator()
-            print("Login Failed with Error:\(error)")
             
-                //MARK: need to add alert to show if wrong credential
-            
+            let errorString = error.localizedDescriptionString.lowercased()
+            print("Error:\(errorString)")
+            if errorString.contains("unauthorized request"){
+                if let account = KeychainHelper.retrieveUsername(forService: "SaveLoginDetails") {
+                    KeychainHelper.delete(account: account, service: "SaveLoginDetails")
+                }
+                let str1 = AlertService.getAttributedMessage(from: "To LOGIN, you need to use your SwaLife password!", highlight: "SwaLife")
+                let str2 = AlertService.getAttributedMessage(from: "\n\nMost likely, your SwaLife password has expired.", highlight: "SwaLife")
+                let str3 = AlertService.getAttributedMessage(from: "\n\nBTW, it is possible your password to LOGIN on swacrew.com is valid and your", highlight: "swacrew.com")
+                let str4 = AlertService.getAttributedMessage(from: " SwaLife password is expired.", highlight: "SwaLife")
+                let str5 = AlertService.getAttributedMessage(from: "\n\nThe only way to fix this problem is to go to the Swalife Password Manager and change your password.", highlight: "Swalife")
+                str1.append(str2)
+                str1.append(str3)
+                str1.append(str4)
+                str1.append(str5)
+                AlertService.showDBAlert(title: "Oops!", attributedMessage: str1, from: self)
+            }else if errorString.contains("timed out"){
+                if self.app.objNetworkType == .free || self.app.objNetworkType == .paid{
+                    AlertService.showDBAlert(title: "Darn it!", attributedMessage: NSAttributedString(string: "The company 3rd Party server is not responding.\nThis is not uncommon.\nYour only cources of action are to wait a while and try again, or try another internet connection.\nSometimes the internet signal on the plane is just too weak"), from: self)
+                }else if self.app.objNetworkType == .ground{
+                    AlertService.showDBAlert(title: "Darn it!", attributedMessage: NSAttributedString(string: "The company 3rd Party server is not responding.\nThis is not uncommon.\nYour only cources of action are to wait a while and try again, or try using a cellular internet connection.\n"), from: self)
+                }
+            }
         }
         //-----------------------
         NotificationCenter.default.addObserver(self, selector: #selector(dismissVC), name: NSNotification.Name(rawValue: "dismissLoginView"), object: nil)

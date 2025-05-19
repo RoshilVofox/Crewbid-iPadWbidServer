@@ -37,6 +37,7 @@ class CBAlertVC: BaseViewController {
         cancelBtn.layer.borderColor = UIColor.black.cgColor
     }
     
+
     @IBAction func tryBtnAction(_ sender: Any) {
         if let _ = self.fromView as? CBCredentialsPageVC{
             navigationController?.popViewController(animated: true)
@@ -50,7 +51,7 @@ class CBAlertVC: BaseViewController {
         navigationController?.popViewController(animated: false)
         if navigationController == nil {
             self.presentingViewController?.dismiss(animated: false, completion: {
-                if let _ = self.fromView as? CBSubmitCredentialVC {
+                if let _ = self.fromView as? CBCredentialsPageVC {
                     NotificationCenter.default.post(name: .init("dismissLoginView"), object: self)
                 }
             });

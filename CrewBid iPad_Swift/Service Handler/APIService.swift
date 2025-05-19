@@ -12,7 +12,26 @@ enum NetworkError: Error {
     case noData
     case decodingError
     case unauthorized
+    case timeout
     case other(Error)
+}
+extension NetworkError {
+    var localizedDescriptionString: String {
+        switch self {
+        case .invalidURL:
+            return "Invalid URL."
+        case .noData:
+            return "No data received."
+        case .decodingError:
+            return "Failed to decode the response."
+        case .unauthorized:
+            return "Unauthorized request."
+        case .timeout:
+            return "Request timed out."
+        case .other(let err):
+            return err.localizedDescription
+        }
+    }
 }
 struct AuthResult{
     let isSomehowSubscribed:Bool
@@ -106,6 +125,9 @@ class APIService{
         URLSession.shared.dataTask(with: request) { data, _, error in
             if let error = error {
                 completion(.failure(.other(error)))
+                return}
+            if let error = error as? URLError, error.code == .timedOut {
+                completion(.failure(.timeout))
                 return}
             guard let data = data, let responseString = String(data: data, encoding: .utf8) else {
                 completion(.failure(.noData))
