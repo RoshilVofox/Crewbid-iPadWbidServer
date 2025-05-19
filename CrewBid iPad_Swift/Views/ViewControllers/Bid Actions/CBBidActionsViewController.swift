@@ -180,10 +180,13 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
         if item == "Retrieve Awards" {
             if let presentingVC = self.presentingViewController {
                 self.dismiss(animated: true) {
-                    let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-                    let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedCredentialVC") as! EmbeddedCredentialVC
+                    let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+                    let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
                     vc.preferredContentSize = CGSize(width: 600, height: 500)
-                    presentingVC.present(vc, animated: true)
+                    vc.type = "Retrieve Awards"
+                    let navController = UINavigationController(rootViewController: vc)
+                    navController.setNavigationBarHidden(true, animated: false)
+                    presentingVC.present(navController, animated: true)
                 }
             }
         }

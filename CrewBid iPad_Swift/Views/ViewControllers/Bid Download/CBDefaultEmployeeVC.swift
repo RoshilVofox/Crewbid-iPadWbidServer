@@ -28,6 +28,7 @@ class CBDefaultEmployeeVC: BaseViewController {
     
     func setupUI(){
         titleSetup()
+        textEmpNum.becomeFirstResponder()
         textEmpNum.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: textEmpNum.frame.height))
         textEmpNum.leftViewMode = .always
         textEmpNum.delegate = self
@@ -87,7 +88,18 @@ class CBDefaultEmployeeVC: BaseViewController {
             showAlert(message: msg)
         } else {
             print("Valid Employee ID")
-            self.gotoNextView()
+            if type == "Show Awarded Line" {
+                self.goToAwardedCallendarLine()
+            }
+            else if type == "Submit employee number" {
+                self.gotoConfirmEmployeeNumber()
+            }
+            else if type == "Confirm Employee Number" {
+                self.goFromConfirmEmployeeNumber()
+            }
+            else {
+                self.gotoNextView()
+            }
         }
     }
     func showAlert(message: String) {
@@ -196,8 +208,9 @@ class CBDefaultEmployeeVC: BaseViewController {
         }
         
         let cancelAction = UIAlertAction(title: "No", style: .cancel) { _ in
-            let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-            let vc = storyboard.instantiateViewController(withIdentifier: "CBSubmitCredentialVC") as! CBSubmitCredentialVC
+            let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
+            vc.type = "Submit bid"
             vc.preferredContentSize = CGSize(width: 600, height: 500)
             self.navigationController?.pushViewController(vc, animated: true)
         }

@@ -291,7 +291,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
-                                        <color key="backgroundColor" systemColor="systemGray2Color"/>
+                                        <color key="backgroundColor" name="TopViewColor"/>
                                         <constraints>
                                             <constraint firstItem="Fak-2Q-8KE" firstAttribute="top" secondItem="oDQ-kh-oyC" secondAttribute="top" constant="10" id="2JS-NN-AQV"/>
                                             <constraint firstItem="Fak-2Q-8KE" firstAttribute="leading" secondItem="oDQ-kh-oyC" secondAttribute="leading" id="5sy-7r-ISv"/>
@@ -629,7 +629,7 @@
                                         </constraints>
                                     </view>
                                 </subviews>
-                                <color key="backgroundColor" systemColor="systemGray2Color"/>
+                                <color key="backgroundColor" name="TopViewColor"/>
                                 <constraints>
                                     <constraint firstItem="oDQ-kh-oyC" firstAttribute="top" secondItem="4pL-6V-r2M" secondAttribute="top" constant="15" id="750-qh-2Cx"/>
                                     <constraint firstAttribute="trailing" secondItem="QFg-fP-lxp" secondAttribute="trailing" constant="10" id="DMT-VR-ze1"/>
@@ -705,7 +705,7 @@
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" systemColor="systemGray2Color"/>
+                                <color key="backgroundColor" name="TopViewColor"/>
                                 <constraints>
                                     <constraint firstItem="c6o-tt-tq0" firstAttribute="centerY" secondItem="ck8-2L-03e" secondAttribute="centerY" id="DaP-05-FbS"/>
                                     <constraint firstItem="Wue-29-Nue" firstAttribute="centerY" secondItem="ck8-2L-03e" secondAttribute="centerY" id="j5L-rM-ba2"/>
@@ -812,7 +812,7 @@
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="daa-1s-JKf"/>
-                        <color key="backgroundColor" systemColor="systemGray2Color"/>
+                        <color key="backgroundColor" name="TopViewColor"/>
                         <constraints>
                             <constraint firstItem="daa-1s-JKf" firstAttribute="trailing" secondItem="YWI-hy-OrH" secondAttribute="trailing" constant="10" id="44H-sm-VLm"/>
                             <constraint firstItem="ck8-2L-03e" firstAttribute="leading" secondItem="daa-1s-JKf" secondAttribute="leading" id="9Dm-fL-6uD"/>
@@ -972,6 +972,9 @@
         <namedColor name="HomeBackGround">
             <color red="0.4309999942779541" green="0.50199997425079346" blue="0.54500001668930054" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
+        <namedColor name="TopViewColor">
+            <color red="0.70200002193450928" green="0.70200002193450928" blue="0.70200002193450928" alpha="0.90299999713897705" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <namedColor name="color_14">
             <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
@@ -979,16 +982,16 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray2Color">
-            <color red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray6Color">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

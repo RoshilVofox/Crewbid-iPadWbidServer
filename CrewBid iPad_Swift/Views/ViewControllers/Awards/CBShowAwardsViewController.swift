@@ -35,7 +35,7 @@ class CBShowAwardsViewController: UIViewController {
         let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "AwardActionsTableController") as! AwardActionsTableController
        
-        vc.preferredContentSize = CGSize(width: 310, height: 310)
+        vc.preferredContentSize = CGSize(width: 310, height: 300)
         vc.modalPresentationStyle = .custom
         let frame = CGRect(x: 15, y: 35, width: 0, height: 0)
         vc.showPopover(sourceView: btnShareAction, sourceRect: frame)
