@@ -25,7 +25,7 @@ class CBCredentialsPageVC: BaseViewController {
     var userid:String?
     var password:String?
     var loginType:LoginType = .newBid
-    
+    var type:String?
     let viewModel = CBLoginViewModel()
     
     override func viewDidLoad() {
