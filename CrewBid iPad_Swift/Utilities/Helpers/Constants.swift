@@ -120,7 +120,7 @@ let kCBUserInfoDictionaryKey = "UserInfoDictionary"
 let kCBExpirationDateFormat = "dd/MM/yyyy HH:mm:ss"
 let kCBIncludeDroppedTripsInProcessingKey = "CBIncludeDroppedTripsInProcessing"
 let kCBUserInfoEncryptedExpirationDateKey = "UserInfoEncryptedExpirationDateKey"
-
+let KCBCustomizedHerbValue = "KCBCustomizedHerbValue"
 
 public enum HTTPStatusCode: Int {
     case `continue` = 100,

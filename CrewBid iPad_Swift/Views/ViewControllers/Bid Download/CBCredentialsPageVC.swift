@@ -36,16 +36,12 @@ class CBCredentialsPageVC: BaseViewController {
             self.txtPassword.text = DevUserPassword
         }
         NotificationCenter.default.addObserver(self, selector: #selector(showProgressView), name: Notification.Name("ShowProgressView"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(hideProgressView), name: Notification.Name("HideProgressView"), object: nil)
     }
     @objc func showProgressView() {
         let progressVC = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBProgressVC") as! CBProgressVC
         self.navigationController?.pushViewController(progressVC, animated: true)
     }
 
-    @objc func hideProgressView() {
-        self.dismiss(animated: true)
-    }
     func setupUI(){
         txtUserID.delegate = self
         txtPassword.delegate = self
@@ -71,17 +67,28 @@ class CBCredentialsPageVC: BaseViewController {
             let bidInfo = BIBidInfo()
             let filename = bidInfo.bidDataFilename()
             print("Filename: \(filename)")
-            
             let fileDownloader = BIBidFileDownload()
-            NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
+            }
             fileDownloader.downloadBidFiles(sessionKey: sessionKey, filename: filename){ result in
                 switch result{
                 case .success(let fileURL):
+                    DispatchQueue.main.async {
+                                    NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+                                }
                     print("File unzipped at: \(fileURL)")
-                    NotificationCenter.default.post(name: Notification.Name("HideProgressView"), object: nil)
-                    self.loginActions()
+                    DispatchQueue.global(qos: .userInitiated).async {
+                        BIBidInfoReader().readBidData()
+                    }
+//                    DispatchQueue.main.async {
+//                        NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+//                    }
+//                    self.loginActions()
                 case .failure(let error):
+                    NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
                     print("Failed: \(error.localizedDescription)")
+                    
                 }
             }
             

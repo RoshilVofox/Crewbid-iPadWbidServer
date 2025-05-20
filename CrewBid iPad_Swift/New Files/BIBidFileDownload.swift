@@ -13,7 +13,7 @@ class BIBidFileDownload: NSObject{
     func downloadBidFiles(sessionKey:String, filename:String, completionHandler:@escaping (Result<URL, Error>) -> Void){
         let isRequestType = (filename as NSString).pathExtension.uppercased() == "TXT"
         let requestType = isRequestType ? "TXTPACKET" : "ZIPPACKET"
-        let key = sessionKey.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let key = self.stringByAddingPercentEscapes(to: sessionKey)!
         let bodyString = "REQUEST=\(requestType)&CREDENTIALS=\(key)&NAME=\(filename)"
         guard let bodyData = bodyString.data(using: .utf8), let url = URL(string: EndPoint.shared.thirdpartyURL) else {
             completionHandler(.failure(NetworkError.invalidURL))
@@ -55,6 +55,10 @@ class BIBidFileDownload: NSObject{
             }
         }
         downloadTask.resume()
+    }
+    private func stringByAddingPercentEscapes(to unescapedString: String) -> String? {
+        let allowedCharacterSet = CharacterSet(charactersIn: ";/?:@&=+$,").inverted
+        return unescapedString.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet)
     }
 }
 

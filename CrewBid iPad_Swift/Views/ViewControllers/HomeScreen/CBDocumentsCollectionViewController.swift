@@ -168,4 +168,30 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
             bidDownloadButton.isEnabled = false
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let itemsPerRow: CGFloat = 2
+        let spacing: CGFloat = 10
+        let sectionInsets = UIEdgeInsets(top: 30, left: 30, bottom: 30, right: 30)
+        let totalSpacing = sectionInsets.left + sectionInsets.right + (spacing * (itemsPerRow - 1))
+        let availableWidth = collectionView.bounds.width - totalSpacing
+        let availableHeight = collectionView.bounds.height - totalSpacing
+        let cellWidth = floor(availableWidth / itemsPerRow)
+        let cellHeight = floor(availableHeight / itemsPerRow)
+        let finalWidth = cellWidth - 60
+        let finalHeight = cellHeight - 90
+        return CGSize(width: finalWidth, height: finalHeight)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 10
+    }
+
+    func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 30
+    }
+
+    func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 50, left: 50, bottom: 50, right: 50)
+    }
 }

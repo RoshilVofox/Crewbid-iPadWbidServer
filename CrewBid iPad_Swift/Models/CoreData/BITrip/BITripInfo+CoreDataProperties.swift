@@ -9,7 +9,10 @@
 import Foundation
 import CoreData
 
-
+enum BIAMPMTripType:Int{
+    case AMTrip = 1
+    case PMTrip
+}
 extension BITripInfo {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<BITripInfo> {

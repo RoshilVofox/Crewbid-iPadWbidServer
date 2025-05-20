@@ -45,7 +45,7 @@ class CBLoginViewModel{
             
         }
     }
-    func stringFormatter(_ string: String) -> String {
+    private func stringFormatter(_ string: String) -> String {
         var encodedString = string.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         encodedString = encodedString.replacingOccurrences(of: "+", with: "%2B")
         return encodedString

@@ -44,28 +44,21 @@ class CBProgressVC: UIViewController {
             self.indicator2.color = .white
             self.indicator2.startAnimating()
         }
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
+        
         NotificationCenter.default.addObserver(self, selector: #selector(notificationAction(notification: )), name: Notification.Name("DownloadingBid"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(notificationAction(notification: )), name: Notification.Name("ParsingBid"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(notificationAction(notification: )), name: Notification.Name("ParsingVacation"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(notificationAction(notification: )), name: Notification.Name("CloseProgressView"), object: nil)
     }
-    override func viewDidDisappear(_ animated: Bool) {
-        NotificationCenter.default.removeObserver(self, name: Notification.Name("DownloadingBid"), object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notification.Name("ParsingBid"), object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notification.Name("ParsingVacation"), object: nil)
 
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     @objc func notificationAction(notification:Notification){
         let name = notification.name.rawValue
-        switch name {
-        case "DownloadingBid":
+        if name == "DownloadingBid"{
             DispatchQueue.main.async {
-                self.button1.backgroundColor = .white
-                self.button1.setImage(UIImage.init(named: "CheckBoxChecked"), for: .normal)
                 self.button2.backgroundColor = .white
                 self.button2.setImage(UIImage.init(named: "CheckBoxChecked"), for: .normal)
                 self.indicator1.isHidden = true
@@ -76,7 +69,7 @@ class CBProgressVC: UIViewController {
                 self.indicator2.stopAnimating()
                 self.indicator3.startAnimating()
             }
-        case "ParsingBid":
+        }else if name == "ParsingBid"{
             DispatchQueue.main.async {
                 self.button3.setImage(UIImage.init(named: "CheckBoxChecked"), for: .normal)
                 self.button3.backgroundColor = .white
@@ -88,7 +81,7 @@ class CBProgressVC: UIViewController {
                 self.indicator3.stopAnimating()
                 self.indicator4.startAnimating()
             }
-        case "ParsingVacation":
+        }else if name == "ParsingVacation"{
             DispatchQueue.main.async {
                 self.button4.setImage(UIImage.init(named: "CheckBoxChecked"), for: .normal)
                 self.button4.backgroundColor = .white
@@ -98,7 +91,10 @@ class CBProgressVC: UIViewController {
                 self.indicator4.isHidden = true
                 self.indicator4.stopAnimating()
             }
-        default: break
+        }else if name == "CloseProgressView"{
+            DispatchQueue.main.async {
+                self.dismiss(animated: true)
+            }
         }
     }
 }

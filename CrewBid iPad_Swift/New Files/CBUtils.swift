@@ -104,4 +104,15 @@ class CBUtils{
             return "FA"
         }
     }
+    
+    static func convertMinsToHHMM(_ totalMinutes: Int) -> Int {
+        var hours = totalMinutes / 60
+        let mins = totalMinutes % 60
+        // Simulate 24-hour overflow handling
+        if hours < 3 {
+            hours += 24  // Add 24 hours if less than 3 AM
+        }
+        let result = hours * 100 + mins
+        return result
+    }
 }

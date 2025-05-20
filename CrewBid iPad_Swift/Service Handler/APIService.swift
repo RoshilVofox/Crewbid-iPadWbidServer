@@ -113,7 +113,7 @@ class APIService{
         guard let url = URL(string: urlString) else {
             completion(.failure(.invalidURL))
             return}
-        guard let escapedPwd = password.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+        guard let escapedPwd = self.stringByAddingPercentEscapes(to: password) else {
             completion(.failure(.decodingError))
             return}
         let postString = "CREDENTIALS=\(credentials)&REQUEST=LOGON&UID=\(userID)&PWD=\(escapedPwd)"
@@ -144,6 +144,8 @@ class APIService{
                     }
         }.resume()
     }
-    //MARK: Download Bid Files
-    
+    private func stringByAddingPercentEscapes(to unescapedString: String) -> String? {
+        let allowedCharacterSet = CharacterSet(charactersIn: ";/?:@&=+$,").inverted
+        return unescapedString.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet)
+    }
 }
