@@ -64,7 +64,6 @@ class CBCredentialsPageVC: BaseViewController {
         txtPassword.leftViewMode = .always
         
         //------viewmodel--------
-        viewModel.formatter = self.stringFormatter(_:)
         viewModel.onLoginSuccess = { sessionKey in
             NotificationCenter.default.post(name: Notification.Name("ShowProgressView"), object: nil)
             print("Session Key: \(sessionKey)")
@@ -200,11 +199,7 @@ class CBCredentialsPageVC: BaseViewController {
         }
     }
     
-    func stringFormatter(_ string: String) -> String {
-        var encodedString = string.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        encodedString = encodedString.replacingOccurrences(of: "+", with: "%2B")
-        return encodedString
-    }
+
 
 }
 

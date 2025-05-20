@@ -11,7 +11,7 @@ class CBLoginViewModel{
 
     var onLoginSuccess:((String) ->Void)?
     var onLoginFailure:((NetworkError) ->Void)?
-    var formatter:((String) ->String)?
+
     
     func checkLogin(userID: String, password: String, empNum: String, month: Int, year: Int, round: Int, base: String, position: BICrewPositionType) {
         GlobalBidInfo.shared.userid = userID
@@ -26,10 +26,7 @@ class CBLoginViewModel{
             switch result{
             case .success(let response):
                 guard let self = self else {return}
-                guard let formatter = self.formatter else {
-                    return
-                }
-                let preLogonCredential = formatter(response)
+                let preLogonCredential = stringFormatter(response)
                 APIService.shared.getSessionCredential(urlString: EndPoint.shared.thirdpartyURL, credentials: preLogonCredential, userID: userID, password: password){ result in
                     DispatchQueue.main.async {
                         switch result{
@@ -47,5 +44,10 @@ class CBLoginViewModel{
             }
             
         }
+    }
+    func stringFormatter(_ string: String) -> String {
+        var encodedString = string.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        encodedString = encodedString.replacingOccurrences(of: "+", with: "%2B")
+        return encodedString
     }
 }
