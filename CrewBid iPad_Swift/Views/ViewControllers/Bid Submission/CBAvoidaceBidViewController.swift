@@ -31,9 +31,11 @@ class CBAvoidaceBidViewController: UIViewController {
     }
     
     @IBAction func btnNextAction(_ sender: Any) {
-        let storyboard = UIStoryboard(name: "BidActioms", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "CBSubmitCredentialVC") as! CBSubmitCredentialVC
-        navigationController?.pushViewController(vc, animated: true)
+        let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
+        vc.type = "Submit Bid"
+        vc.preferredContentSize = CGSize(width: 600, height: 500)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 

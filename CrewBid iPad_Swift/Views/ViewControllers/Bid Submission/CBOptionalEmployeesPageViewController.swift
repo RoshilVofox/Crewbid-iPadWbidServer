@@ -52,8 +52,9 @@ class CBOptionalEmployeesPageViewController: UIViewController {
             preferredStyle: .alert
         )
         let cancelAction = UIAlertAction(title: "OK", style: .default) { _ in
-            let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-            let vc = storyboard.instantiateViewController(withIdentifier: "CBSubmitCredentialVC") as! CBSubmitCredentialVC
+            let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
+            vc.type = "Submit Bid"
             vc.preferredContentSize = CGSize(width: 600, height: 500)
             self.navigationController?.pushViewController(vc, animated: true)
         }

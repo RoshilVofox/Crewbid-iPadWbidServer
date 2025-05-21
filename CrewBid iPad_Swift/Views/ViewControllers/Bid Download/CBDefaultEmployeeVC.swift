@@ -210,7 +210,7 @@ class CBDefaultEmployeeVC: BaseViewController {
         let cancelAction = UIAlertAction(title: "No", style: .cancel) { _ in
             let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
-            vc.type = "Submit bid"
+            vc.type = "Submit Bid"
             vc.preferredContentSize = CGSize(width: 600, height: 500)
             self.navigationController?.pushViewController(vc, animated: true)
         }
