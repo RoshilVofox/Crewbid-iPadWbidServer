@@ -41,17 +41,29 @@ class CBCredentialsPageVC: BaseViewController {
         let progressVC = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBProgressVC") as! CBProgressVC
         self.navigationController?.pushViewController(progressVC, animated: true)
     }
+    
+    func setupTitle(){
+        if type == "Retrieve Awards" {
+            lblTitle.text = "Retrieve Awards"
+        }
+        else if type == "Submit Bid" {
+            lblTitle.text = "Submit Bid"
+        }
+        else if isHistoricBid {
+            lblTitle.text = "Historic Bid Data"
+        } else {
+            lblTitle.text = "New Bid Data"
+        }
+    }
 
     func setupUI(){
+        setupTitle()
+        txtUserID.becomeFirstResponder()
         txtUserID.delegate = self
         txtPassword.delegate = self
         txtUserID.textContentType = .username
         txtPassword.textContentType = .password
-        if isHistoricBid == true {
-            lblTitle.text = "Historic Bid Data"
-        }else{
-            lblTitle.text = "New Bid Data"
-        }
+       
         showPasswordBtn.setImage(UIImage(named: "showPwd")?.withRenderingMode(.alwaysTemplate), for: .normal)
         showPasswordBtn.tintColor = .label
         txtUserID.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtUserID.frame.height))
@@ -145,6 +157,13 @@ class CBCredentialsPageVC: BaseViewController {
     
     @IBAction func btnGoAction(_ sender: UIButton) {
         self.login()
+        if type == "Retrieve Awards" {
+            self.retriveAwardsAction()
+        }
+        else if type == "Submit Bid" {
+            print("hello")
+            self.submitBidAction()
+        }
     }
     func login(){
         guard reachability?.isReachable == true else {
@@ -196,6 +215,7 @@ class CBCredentialsPageVC: BaseViewController {
         
     }
     
+//    MARK: login action
     func loginActions(){
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let docVC = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
@@ -206,8 +226,30 @@ class CBCredentialsPageVC: BaseViewController {
         }
     }
     
-
-
+//    MARK: Retrieve Awards Action
+    func retriveAwardsAction() {
+        if let presentingVC = self.presentingViewController {
+            self.dismiss(animated: true) {
+                let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+                let vc = storyboard.instantiateViewController(withIdentifier: "CBShowAwardsViewController") as! CBShowAwardsViewController
+                vc.modalPresentationStyle = .fullScreen
+                presentingVC.present(vc, animated: true)
+            }
+        }
+    }
+    
+//    MARK: Submit Award Action
+    func submitBidAction() {
+        if let presentingVC = self.presentingViewController {
+            self.dismiss(animated: true) {
+                let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+                let vc = storyboard.instantiateViewController(withIdentifier: "SubmissionErrorVC") as! SubmissionErrorVC
+                vc.preferredContentSize = CGSize(width: 600, height: 500)
+                presentingVC.present(vc, animated: true)
+            }
+        }
+    }
+    
 }
 
 
