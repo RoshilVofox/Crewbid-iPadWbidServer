@@ -115,4 +115,28 @@ class CBUtils{
         let result = hours * 100 + mins
         return result
     }
+    
+    static func thanksgivingDay(for year: Int) -> UInt {
+        switch year {
+        case 2014: return 27
+        case 2015: return 26
+        case 2016: return 24
+        case 2017: return 23
+        case 2018: return 22
+        case 2019: return 28
+        case 2020: return 26
+        case 2021: return 25
+        case 2022: return 24
+        case 2023: return 23
+        case 2024: return 28
+        default:   return 0
+        }
+    }
+    
+    static func rawTimeZoneString(forAirportCode base: String) -> String? {
+            guard let timeZones = UserDefaults.standard.dictionary(forKey: kCBTimeZoneCitiesList) as? [String: String] else {
+                return nil
+            }
+            return timeZones[base]
+        }
 }

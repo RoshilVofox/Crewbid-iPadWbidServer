@@ -327,6 +327,7 @@
 		F49849C92DC76E0100FE9426 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = F49849C82DC76E0100FE9426 /* FirebaseAnalytics */; };
 		F49849CB2DC76E0100FE9426 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = F49849CA2DC76E0100FE9426 /* FirebaseCrashlytics */; };
 		F49849CD2DC76EF900FE9426 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49849CC2DC76EF900FE9426 /* Reachability.swift */; };
+		F4A472212DDDEDA900065720 /* CBExceedingTripCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A472202DDDEDA900065720 /* CBExceedingTripCalculation.swift */; };
 		F4B545AB2DCC648F00672102 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B545AA2DCC648F00672102 /* CoreDataManager.swift */; };
 		F4C5D6642DC9E25500D86BD2 /* FBEncryptorAES.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6632DC9E25500D86BD2 /* FBEncryptorAES.m */; };
 		F4C5D6652DC9E25500D86BD2 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6622DC9E25500D86BD2 /* NSData+Base64.m */; };
@@ -662,6 +663,7 @@
 		F481E9722DD0946000DED8FE /* BICrewPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BICrewPosition.swift; sourceTree = "<group>"; };
 		F481E9742DD0B26D00DED8FE /* BIBidInfoError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIBidInfoError.swift; sourceTree = "<group>"; };
 		F49849CC2DC76EF900FE9426 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		F4A472202DDDEDA900065720 /* CBExceedingTripCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBExceedingTripCalculation.swift; sourceTree = "<group>"; };
 		F4B545AA2DCC648F00672102 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		F4C5D6602DC9E25500D86BD2 /* NSData+Base64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
 		F4C5D6612DC9E25500D86BD2 /* FBEncryptorAES.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBEncryptorAES.h; sourceTree = "<group>"; };
@@ -1559,6 +1561,7 @@
 				F481E9742DD0B26D00DED8FE /* BIBidInfoError.swift */,
 				F4DF6DCC2DD5EA2700761057 /* KeychainHelper.swift */,
 				F4DBD8352DDC5FF700423856 /* BIBidInfoReader.swift */,
+				F4A472202DDDEDA900065720 /* CBExceedingTripCalculation.swift */,
 			);
 			path = "New Files";
 			sourceTree = "<group>";
@@ -1935,6 +1938,7 @@
 				F41EBF192DC4DB20001413DE /* BIDayInfo+CoreDataClass.swift in Sources */,
 				F49849CD2DC76EF900FE9426 /* Reachability.swift in Sources */,
 				F41EBF1A2DC4DB20001413DE /* BIDayInfo+CoreDataProperties.swift in Sources */,
+				F4A472212DDDEDA900065720 /* CBExceedingTripCalculation.swift in Sources */,
 				F41EBF1D2DC4DB20001413DE /* BILeg+CoreDataClass.swift in Sources */,
 				8BAEE8092DCC73E3002EF328 /* MBProgressHUD.m in Sources */,
 				F4C5D6642DC9E25500D86BD2 /* FBEncryptorAES.m in Sources */,

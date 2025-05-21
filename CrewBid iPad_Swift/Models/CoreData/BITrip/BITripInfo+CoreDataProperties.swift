@@ -86,5 +86,11 @@ extension BITripInfo {
 }
 
 extension BITripInfo : Identifiable {
-
+    var orderedDays: [Any] {
+        return (days!.allObjects as NSArray).sortedArray(comparator: { day1, day2 in
+            let value1 = (day1 as AnyObject).value(forKeyPath: "firstLeg.departMinutes") as? NSNumber
+            let value2 = (day2 as AnyObject).value(forKeyPath: "firstLeg.departMinutes") as? NSNumber
+            return value1?.compare(value2 ?? 0) ?? .orderedSame
+        })
+    }
 }

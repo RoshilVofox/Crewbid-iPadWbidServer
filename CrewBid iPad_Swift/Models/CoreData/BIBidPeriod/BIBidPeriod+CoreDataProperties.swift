@@ -144,6 +144,7 @@ extension BIBidPeriod {
     @NSManaged public var vacationArrayFromServer: VacationArrayFromServer?
     @NSManaged public var vacations: NSSet?
     @NSManaged public var lineFilters: NSSet?
+    @NSManaged public var bidByEmpID: String?
 
 }
 
@@ -335,5 +336,21 @@ extension BIBidPeriod {
 }
 
 extension BIBidPeriod : Identifiable {
-
+    
+    func isFABid() -> Bool {
+        let dataSource = GlobalBidInfo.shared
+        let isFABid = BICrewPositionType.FlightAttendant.rawValue == dataSource.position.rawValue
+        return isFABid
+    }
+    func isFirstRoundBid() -> Bool {
+        let dataSource = GlobalBidInfo.shared
+        let isFirstRoundBid = dataSource.round == 1
+        return isFirstRoundBid
+    }
+    
+    func isSecondRoundBid() -> Bool {
+        let dataSource = GlobalBidInfo.shared
+        let isSecondRoundBid = dataSource.round == 2
+        return isSecondRoundBid
+    }
 }

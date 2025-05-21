@@ -10,6 +10,7 @@ import Foundation
 import CoreData
 
 
+
 extension BILine {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<BILine> {

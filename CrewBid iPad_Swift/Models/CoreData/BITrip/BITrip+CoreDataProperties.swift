@@ -79,5 +79,53 @@ extension BITrip {
 }
 
 extension BITrip : Identifiable {
+    static func staticTime(for trip: BITrip, line: BILine, key: String, timeZone: String) -> String? {
+        guard let bidPeriod = line.bidPeriod else { return nil }
+        if bidPeriod.isFirstRoundBid() || !bidPeriod.isFABid() || !trip.isReserve {
+            return nil}
+        let type = trip.line?.faReserveLineType?.intValue ?? BIFaReserveLineType.NoType.rawValue
+        var timeStr: String?
+        switch type {
+        case BIFaReserveLineType.SnrAMres.rawValue:
+            timeStr = (key == "depart") ? "0300" : "1100"
+        case BIFaReserveLineType.SnrPMres.rawValue:
+            timeStr = (key == "depart") ? "1000" : "1800"
+        case BIFaReserveLineType.JnrAMres.rawValue:
+            timeStr = (key == "depart") ? "0300" : "1500"
+        case BIFaReserveLineType.JnrPMres.rawValue:
+            timeStr = (key == "depart") ? "1000" : "2200"
+        case BIFaReserveLineType.JnrLateRes.rawValue:
+            timeStr = (key == "depart") ? "1500" : "0259"
+        default:
+            break
+        }
+        guard let timeStrUnwrapped = timeStr else { return nil }
+        let timeZoneSetting = UserDefaults.standard.integer(forKey: kCBTimeZoneSetting)
+        if timeZoneSetting == CBTimeZoneSetting.localTime.rawValue {
+            return timeStrUnwrapped
+        }
 
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HHmm"
+        formatter.timeZone = TimeZone(identifier: timeZone)
+
+        guard let localTime = formatter.date(from: timeStrUnwrapped) else {
+            return nil
+        }
+
+        formatter.timeZone = TimeZone(identifier: "US/Central")
+        return formatter.string(from: localTime)
+    }
+    
+    var isReserve: Bool {
+        if line?.bidPeriod?.isFABid() == true {
+            return isReserveFa?.boolValue ?? false
+        } else {
+            if let number = info?.number, number.count > 1 {
+                let index = number.index(number.startIndex, offsetBy: 1)
+                return number[index] >= "W"
+            }
+            return false
+        }
+    }
 }

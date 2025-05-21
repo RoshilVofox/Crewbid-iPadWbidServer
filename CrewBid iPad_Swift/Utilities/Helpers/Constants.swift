@@ -121,6 +121,8 @@ let kCBExpirationDateFormat = "dd/MM/yyyy HH:mm:ss"
 let kCBIncludeDroppedTripsInProcessingKey = "CBIncludeDroppedTripsInProcessing"
 let kCBUserInfoEncryptedExpirationDateKey = "UserInfoEncryptedExpirationDateKey"
 let KCBCustomizedHerbValue = "KCBCustomizedHerbValue"
+let kCBTimeZoneCitiesList = "CBTimeZoneCitiesList"
+let kCBTimeZoneSetting = "CBTimeZoneSetting"
 
 public enum HTTPStatusCode: Int {
     case `continue` = 100,
