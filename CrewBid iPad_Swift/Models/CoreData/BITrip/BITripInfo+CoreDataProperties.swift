@@ -93,4 +93,10 @@ extension BITripInfo : Identifiable {
             return value1?.compare(value2 ?? 0) ?? .orderedSame
         })
     }
+    var isPilotReserve: Bool {
+        guard number!.count > 1 else { return false }
+        let index = number!.index(number!.startIndex, offsetBy: 1)
+        return number![index] >= "W"
+    }
+    
 }
