@@ -50,36 +50,6 @@
             endingLineNumber = "1112"
             landmarkName = "setPropertiesForTripInfoRecord1(tripInfo:record1:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "3FA39F5A-384C-4118-B6B5-747FC9263BA2 - 3ec5371b03562883"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "CrewBid_iPad_Swift.BIBidInfoReader.setPropertiesForTripInfoRecord1(tripInfo: CrewBid_iPad_Swift.BITripInfo, record1: Swift.String) -&gt; Swift.Bool"
-                  moduleName = "CrewBid iPad_Swift.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/fayaz/Documents/GitHub/Crewbid-iPadWbidServer/CrewBid%20iPad_Swift/New%20Files/BIBidInfoReader.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1111"
-                  endingLineNumber = "1111">
-               </Location>
-               <Location
-                  uuid = "3FA39F5A-384C-4118-B6B5-747FC9263BA2 - 3ec5371b035628a2"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "CrewBid_iPad_Swift.BIBidInfoReader.setPropertiesForTripInfoRecord1(tripInfo: CrewBid_iPad_Swift.BITripInfo, record1: Swift.String) -&gt; Swift.Bool"
-                  moduleName = "CrewBid iPad_Swift.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/fayaz/Documents/GitHub/Crewbid-iPadWbidServer/CrewBid%20iPad_Swift/New%20Files/BIBidInfoReader.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1112"
-                  endingLineNumber = "1112">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -95,7 +65,7 @@
             startingLineNumber = "1230"
             endingLineNumber = "1230"
             landmarkName = "readDaysInfoTripsInfoRecord2(tripInfo:record2:context:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -127,7 +97,7 @@
             startingLineNumber = "1259"
             endingLineNumber = "1259"
             landmarkName = "readLegInfoForTrips(tripInfo:record5:record6:context:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -205,7 +175,7 @@
             startingLineNumber = "1182"
             endingLineNumber = "1182"
             landmarkName = "readDaysInfoTripsInfoRecord2(tripInfo:record2:context:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -221,7 +191,7 @@
             startingLineNumber = "1193"
             endingLineNumber = "1193"
             landmarkName = "readDaysInfoTripsInfoRecord2(tripInfo:record2:context:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -237,7 +207,7 @@
             startingLineNumber = "1204"
             endingLineNumber = "1204"
             landmarkName = "readDaysInfoTripsInfoRecord2(tripInfo:record2:context:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
