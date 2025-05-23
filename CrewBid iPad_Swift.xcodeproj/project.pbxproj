@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		350B8B3F2DDEDBFF005D5E76 /* CBVacationDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350B8B3E2DDEDBFF005D5E76 /* CBVacationDownloader.swift */; };
 		35162E032DCDBEA600BD8E2E /* UIView+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35162E022DCDBEA600BD8E2E /* UIView+extensions.swift */; };
 		353FC68F2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */; };
 		353FC6912DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */; };
@@ -340,6 +341,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		350B8B3E2DDEDBFF005D5E76 /* CBVacationDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBVacationDownloader.swift; sourceTree = "<group>"; };
 		35162E022DCDBEA600BD8E2E /* UIView+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+extensions.swift"; sourceTree = "<group>"; };
 		353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
 		353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBConfirmSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
@@ -1562,6 +1564,7 @@
 				F4DF6DCC2DD5EA2700761057 /* KeychainHelper.swift */,
 				F4DBD8352DDC5FF700423856 /* BIBidInfoReader.swift */,
 				F4A472202DDDEDA900065720 /* CBExceedingTripCalculation.swift */,
+				350B8B3E2DDEDBFF005D5E76 /* CBVacationDownloader.swift */,
 			);
 			path = "New Files";
 			sourceTree = "<group>";
@@ -1945,6 +1948,7 @@
 				F4C5D6652DC9E25500D86BD2 /* NSData+Base64.m in Sources */,
 				F41EBF1E2DC4DB20001413DE /* BILeg+CoreDataProperties.swift in Sources */,
 				F41EBF1F2DC4DB20001413DE /* BILegInfo+CoreDataClass.swift in Sources */,
+				350B8B3F2DDEDBFF005D5E76 /* CBVacationDownloader.swift in Sources */,
 				F41EBF202DC4DB20001413DE /* BILegInfo+CoreDataProperties.swift in Sources */,
 				F41EBF212DC4DB20001413DE /* BILine+CoreDataClass.swift in Sources */,
 				F41EBF222DC4DB20001413DE /* BILine+CoreDataProperties.swift in Sources */,
