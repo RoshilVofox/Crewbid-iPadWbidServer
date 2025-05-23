@@ -79,11 +79,11 @@ extension BITrip {
 }
 
 extension BITrip : Identifiable {
-    static func staticTime(for trip: BITrip, line: BILine, key: String, timeZone: String) -> String? {
+    static func staticTimeForReserveType(trip: BITrip, line: BILine, key: String, timeZone: String) -> String? {
         guard let bidPeriod = line.bidPeriod else { return nil }
         if bidPeriod.isFirstRoundBid() || !bidPeriod.isFABid() || !trip.isReserve {
             return nil}
-        let type = trip.line?.faReserveLineType?.intValue ?? BIFaReserveLineType.NoType.rawValue
+        let type = trip.line?.faReserveLineType?.intValue
         var timeStr: String?
         switch type {
         case BIFaReserveLineType.SnrAMres.rawValue:
