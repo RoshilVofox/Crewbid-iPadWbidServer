@@ -19,21 +19,59 @@ class BIBidInfoReader{
     var dhEndCities:[String] = []
     let tripNumberRegex = "[A-Z]{2}[1-9A-Z]{2}"
     let cityRegex = "[A-Z]{3}"
+    let tripNumberRange = NSRange(location: 0, length: 4)
+    let tripCalendarDaysCountRange = NSRange(location: 18, length: 1)
+    let tripDepartTimeRange = NSRange(location: 22, length: 4)
+    let tripReturnTimeRange = NSRange(location: 29, length: 4)
+    let tripAmPmRange = NSRange(location: 36, length: 1)
+    let tripDutyPeriodsCountRange = NSRange(location: 42, length: 1)
+    let nonDigitCharacters = CharacterSet.decimalDigits.inverted
+    
+    let tripMaxDaysCount = 10
+    let dayInterval = 7
+    let dayCityRangeLocation = 5
+    let dayCityRangeLength = 3
+    let dayPayIntegerRangeLocation = 8
+    let dayPayIntegerRangeLength = 2
+    let dayPayDecimalRangeLocation = 10
+    let dayPayDecimalRangeLength = 2
+    let legRecord5Interval = 12
+    let legTypeCharIndex = 0
+    let legDepartMinutesRangeLocation = 1
+    let legDepartMinutesRangeLength = 5
+    let legDutyBreakCharIndex = 6
+    let legArriveMinuteRangeLocation = 7
+    let legArriveMinuteRangeLength = 5
+    var legRecord6Interval = 15
+    let legFlightRangeLocation = 0
+    let legFlightRangeLength = 6
+    let legDepartCityRangeLocation = 6
+    let legDepartCityRangeLength = 3
+    let legArriveCityRangeLocation = 9
+    let legArriveCityRangeLength = 3
+    let legAircraftChangeCharIndex = 12
+    let legEquipmentCharIndex = 12
+    let legEquipmentCharIndexForReserveLine = 13
+    let legEquipmentRangeLength = 3
+    let whitespace = CharacterSet.whitespaces
     var cityPredicate:NSPredicate?
     var tripNumberPredicate:NSPredicate?
     var tripsCount:Float = 0
     var linesCount:Float = 0
     var bidPeriod:BIBidPeriod?
     let calendarData = BICalendarData()
-    let app = UIApplication.shared.delegate as! AppDelegate
     var thanksgivingDay: UInt = 0
     var includeDroppedTrips:Bool?
+    var intlCities:[String:Any] = [:]
+    var moc:NSManagedObjectContext?
+    
     func readBidData(){
         if !self.isFABid() && self.isSecondRoundBid(){
             // check paper bid user vacation
         }
         self.initializeReadingVariables()
         var success:Bool = false
+        
         if self.isFABid(){
             if self.isSecondRoundBid(){
                 tripsCount = round(tripsCount/1.9145)
@@ -67,19 +105,294 @@ class BIBidInfoReader{
     private func initializeReadingVariables(){
         tripNumberPredicate = NSPredicate(format: "SELF MATCHES %@", tripNumberRegex)
         cityPredicate = NSPredicate(format: "SELF MATCHES %@", cityRegex)
+        
+        let tripsDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.tripFileName)
+        let linesFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.lineFileName)
+        if !FileManager.default.fileExists(atPath: tripsDataFileURL.path) || !FileManager.default.fileExists(atPath: linesFileURL.path){
+            return}
+        do {
+            let tripsData = try NSString(contentsOf: tripsDataFileURL, encoding: String.Encoding.utf8.rawValue)
+            tripsData.enumerateLines { (trip, stop) in
+                if trip.first == "*"{
+                    stop.pointee = true
+                }else if trip.count > 4 && trip[trip.index(trip.startIndex, offsetBy: 4)] == "1"{
+                    self.tripsCount += 1
+                }
+            }
+            
+            let linesData = try NSString(contentsOf: linesFileURL, encoding: String.Encoding.utf8.rawValue)
+            linesData.enumerateLines { (line, stop) in
+                if line.first == "*"{
+                    stop.pointee = true
+                }else{
+                    self.linesCount += 1
+                }
+            }
+        }catch{
+            print("Error reading files: \(error.localizedDescription)")
+        }
+        DispatchQueue.main.async {
+            let app = UIApplication.shared.delegate as! AppDelegate
+            self.bidPeriod?.isHistoric = app.isHistoricBid as NSNumber
+        }
+        self.moc = CoreDataManager.shared.persistentContainer.newBackgroundContext()
+        self.bidPeriod = BIBidPeriod(context: self.moc!)
+        
+        self.bidPeriod?.year = self.dataSource.year as NSNumber
+        self.bidPeriod?.month = self.dataSource.month as NSNumber
+        self.bidPeriod?.positionType = self.dataSource.position.rawValue as NSNumber
+        self.bidPeriod?.round = self.dataSource.round as NSNumber
+        self.bidPeriod?.appVersion = CBUtils.AppVersion()
+        
+        let secretEnabled = UserDefaults.standard.string(forKey: "isHistoricSecretVDSwitchEnabled")
+        if secretEnabled == "YES"{
+            self.bidPeriod?.crewIdentifier = Int(UserDefaults.standard.string(forKey: "SecretVDuserName")!) as? NSNumber
+        }else{
+            self.bidPeriod?.crewIdentifier = Int(self.dataSource.employeeNumber) as? NSNumber
+        }
+        self.thanksgivingDay = CBUtils.thanksgivingDay(for: (self.bidPeriod?.year!.intValue)!)
+        self.includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
+//        self.intlCities = UserDefaults.standard.object(forKey: kCBInternationalCitiesDict) as! [String : Any]
+        //need to create the cities list
+        
+        self.bidPeriod?.isAllLinesTrashed = false
+        
     }
     
-    //Read Trips file
+    //MARK: Read Trips file
     private func readTrips() -> Bool{
-        return true
+        var success = true
+        
+        let moc = CoreDataManager.shared.persistentContainer.newBackgroundContext()
+        moc.undoManager = nil
+        let tripsDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.tripFileName)
+        if !FileManager.default.fileExists(atPath: tripsDataFileURL.path){
+            return false}
+        do{
+            let tripsData = try NSString(contentsOf: tripsDataFileURL, encoding: String.Encoding.utf8.rawValue)
+            
+            var counter = 0
+            let recordLength = 80
+            let recordTypeCharIndex = 4
+            var tripInfo:BITripInfo?
+            var briefMinutes = 0
+            var debriefMinutes = 0
+            var record6Count = 0
+            var digits = ""
+            var addString = ""
+            var appendString = ""
+            var record5 = ""
+            var record6 = ""
+            let briefHoursRange = NSRange(location: 69, length: 2)
+            let briefMinutesRange = NSRange(location: 71, length: 2)
+            let debriefHoursRange = NSRange(location: 73, length: 2)
+            let debriefMinutesRange = NSRange(location: 75, length: 2)
+            let legInfoRange = NSRange(location: 5, length: 72)
+            let record6CountRange = NSRange(location: 79, length: 1)
+
+            var trips:[String:BITripInfo] = [:]
+            tripsData.enumerateLines { (info, stop) in
+                if info.first == "*"{
+                    stop.pointee = true
+                    return
+                }
+                if recordLength != info.length{
+                    //handle error
+                    stop.pointee = true
+                    success = false
+                    return
+                }
+                switch info.character(at: recordTypeCharIndex){
+                    //Record 1
+                    // Trip number, AM or PM, length (number of calendar days), number
+                    // of duty periods.
+                case "1": counter += 1
+                    if counter%10 == 0{
+                       if moc.hasChanges{
+                            do{
+                                try moc.save()
+                            }catch{
+                                //handle error
+                                print("Error saving context in readTrips(): \(error)")
+                                success = false
+                                stop.pointee = true
+                                return
+                            }
+                        }
+                    }
+                    tripInfo = BITripInfo(context: moc)
+                    //set trip info properties for record 1
+                    if !self.setPropertiesForTripInfoRecord1(tripInfo: tripInfo!, record1: info){
+                        //handle error
+                        success = false
+                        stop.pointee = true
+                        return
+                    }
+                    trips[(tripInfo?.number)!] = tripInfo
+                    record5 = ""
+                    record6 = ""
+                    break
+                    
+                    //Record 2
+                    // Day overnight cities and pay.
+                case "2":
+                    if !self.readDaysInfoTripsInfoRecord2(tripInfo: tripInfo!, record2: info, context: moc){
+                        //handle error
+                        success = false
+                        stop.pointee = true
+                        return
+                    }
+                    break
+                    
+                    //Record 3
+                    //Trip brief and debrief minutes
+                case "3":
+                    if let char = tripInfo?.number!.dropFirst().first, char >= "W" {
+                        tripInfo?.briefMinutes = 0
+                        tripInfo?.debriefMinutes = 0
+                    }else{
+                        //brief minutes
+                        var startIndex = info.index(info.startIndex, offsetBy: briefHoursRange.location)
+                        var endIndex = info.index(startIndex, offsetBy: briefHoursRange.length)
+                        digits = String(info[startIndex..<endIndex])
+                        if !self.isDigitString(digits, trimWhitespace: false){
+                            //handle error
+                            success = false
+                            stop.pointee = true
+                            return
+                        }
+                        briefMinutes = (digits as NSString).integerValue * 60
+                        startIndex = info.index(info.startIndex, offsetBy: briefMinutesRange.location)
+                        endIndex = info.index(startIndex, offsetBy: briefMinutesRange.length)
+                        digits = String(info[startIndex..<endIndex])
+                        if !self.isDigitString(digits, trimWhitespace: false){
+                            //handle error
+                            success = false
+                            stop.pointee = true
+                            return
+                        }
+                        briefMinutes += (digits as NSString).integerValue
+                        tripInfo?.briefMinutes = briefMinutes as NSNumber
+                        
+                        //debrief minutes
+                        startIndex = info.index(info.startIndex, offsetBy: debriefHoursRange.location)
+                        endIndex = info.index(startIndex, offsetBy: debriefHoursRange.length)
+                        digits = String(info[startIndex..<endIndex])
+                        if !self.isDigitString(digits, trimWhitespace: false){
+                            //handle error
+                            success = false
+                            stop.pointee = true
+                            return
+                        }
+                        debriefMinutes = (digits as NSString).integerValue * 60
+                        
+                        startIndex = info.index(info.startIndex, offsetBy: debriefMinutesRange.location)
+                        endIndex = info.index(startIndex, offsetBy: debriefMinutesRange.length)
+                        digits = String(info[startIndex..<endIndex])
+                        if !self.isDigitString(digits, trimWhitespace: false){
+                            success = false
+                            stop.pointee = true
+                            return
+                        }
+                        debriefMinutes += (digits as NSString).integerValue
+                        tripInfo?.debriefMinutes = debriefMinutes as NSNumber
+                        
+                    }
+                    if let char = tripInfo?.number!.dropFirst().first, char >= "W" {
+                        if (self.bidPeriod?.positionType?.intValue == BICrewPositionType.Captain.rawValue)||(self.bidPeriod?.positionType?.intValue == BICrewPositionType.FirstOfficer.rawValue) {
+                            var startIndex = info.index(info.startIndex, offsetBy: briefHoursRange.location)
+                            var endIndex = info.index(startIndex, offsetBy: briefHoursRange.length)
+                            digits = String(info[startIndex..<endIndex])
+                            startIndex = info.index(info.startIndex, offsetBy: briefMinutesRange.location)
+                            endIndex = info.index(startIndex, offsetBy: briefMinutesRange.length)
+                            addString = String(info[startIndex..<endIndex])
+                            appendString = digits.appending(addString)
+                            tripInfo?.departTime = Int(appendString) as? NSNumber
+                            
+                            //Latest Arrival
+                            var tripReturnTime = tripInfo?.returnTime?.intValue
+                            if tripReturnTime! < 400{
+                                tripReturnTime! += 2400
+                                tripInfo?.returnTime = tripReturnTime as? NSNumber
+                            }
+                            
+                        }
+                        
+                    }
+                    break
+                    
+                    //Record 5
+                    // Legs international, deadhead, depart and arrive minutes
+                    // (since midnight of the first day of trip), duty break, and,
+                    // number of type 6 records.
+                case "5":
+                    //Append Legs data to record 5
+                    let range = Range(legInfoRange, in: info)!
+                        record5 += String(info[range])
+                        if legInfoRange.length == record5.length{
+                            let startIndex = info.index(info.startIndex, offsetBy: record6CountRange.location)
+                            let endIndex = info.index(startIndex, offsetBy: record6CountRange.length)
+                            digits = String(info[startIndex..<endIndex])
+                            if !self.isDigitString(digits, trimWhitespace: false){
+                                //handle error
+                                success = false
+                                stop.pointee = true
+                                return
+                            }
+                            record6Count = (digits as NSString).integerValue
+                        }
+                    
+                    break
+                    //Record 6
+                    // Legs flight number, depart and arrive city, equipment, and
+                    // aircraft change.
+                case "6":
+                    // Append legs data to record 6
+                    let range = Range(legInfoRange, in: info)!
+                        record6 += String(info[range])
+                        // If this is the last record6, read legs info
+                        if record6.length/legInfoRange.length == record6Count{
+                            if !self.readLegInfoForTrips(tripInfo: tripInfo!, record5: record5, record6: record6, context: moc){
+                                //handle error
+                                success = false
+                                stop.pointee = true
+                                return
+                            }
+                        }
+                    
+                    break
+                default:
+                    //handle error
+                    success = false
+                    stop.pointee = true
+                    return
+                }
+            }
+            
+            if moc.hasChanges{
+                try moc.save()
+            }else{
+                //handle error
+                success = false
+            }
+            if success{
+                self.trips = trips
+            }
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+            }
+        }catch{
+            print("Error reading file: \(error)")
+        }
+        return success
     }
     
-    //Read Lines file
+    //MARK: Read Lines file
     private func readLines() -> Bool{
         return true
     }
     
-    //Read Trips file FA
+    //MARK: Read Trips file FA
     private func readTripsFA() -> Bool{
         var success = true
         let moc = CoreDataManager().persistentContainer.newBackgroundContext()
@@ -203,7 +516,7 @@ class BIBidInfoReader{
                     if !self.isDigitString(digits, trimWhitespace: true){
                         return false
                     }
-                    let departMinutes = Int(digits)! - 1440
+                    let departMinutes = (digits as NSString).integerValue - 1440
                     leg?.departMinutes = departMinutes as NSNumber
                     
                     //Deadhead
@@ -232,7 +545,7 @@ class BIBidInfoReader{
                     if !self.isDigitString(digits, trimWhitespace: true){
                         return false
                     }
-                    let arriveMinutes = Int(digits)! - 1440
+                    let arriveMinutes = (digits as NSString).integerValue - 1440
                     leg?.arriveMinutes = arriveMinutes as NSNumber
                     
                     //Equipment
@@ -333,8 +646,9 @@ class BIBidInfoReader{
         return success
     }
     
-    //Read Lines file FA
+    //MARK: Read Lines file FA
     private func readLinesFA() -> Bool{
+        let app = UIApplication.shared.delegate as! AppDelegate
         var success = true
         let moc = CoreDataManager.shared.persistentContainer.newBackgroundContext()
         let linesDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.lineFileName)
@@ -467,14 +781,14 @@ class BIBidInfoReader{
                         success = false
                         return false
                     }
-                    blockMinutes = Int(digits)! * 60
+                    blockMinutes = (digits as NSString).integerValue * 60
                     digits = lineFile.substring(with: blockMinutesRange)
                     if !self.isDigitString(digits, trimWhitespace: true){
                         //handle error
                         success = false
                         return false
                     }
-                    blockMinutes += Int(digits)!
+                    blockMinutes += (digits as NSString).integerValue
                     line?.blockMinutes = blockMinutes as NSNumber
                     line?.actualBlockMinutes = blockMinutes as NSNumber
                     
@@ -516,7 +830,7 @@ class BIBidInfoReader{
         }catch{
             print("Error reading line file: \(error.localizedDescription)")
         }
-        return true
+        return success
     }
 
     
@@ -649,27 +963,28 @@ class BIBidInfoReader{
                 trip?.info?.amPM = BIAMPMTripType.PMTrip.rawValue as NSNumber
             }
             if line.faReserveLineType?.intValue == BIFaReserveLineType.NoType.rawValue{
-                let startIndex = tripNumber.index(tripNumber.startIndex, offsetBy: 1)
-                let endIndex = tripNumber.index(startIndex, offsetBy: 3)
-                let tripNumberSuffix = String(tripNumber[startIndex..<endIndex])
-                if tripNumberSuffix == "SAR"{
-                    //AM reserve
-                    line.faReserveLineType = BIFaReserveLineType.SnrAMres.rawValue as NSNumber
-                }else if tripNumberSuffix == "SPR"{
-                    //PM reseeve
-                    line.faReserveLineType = BIFaReserveLineType.SnrPMres.rawValue as NSNumber
-                }else if tripNumberSuffix == "JAR"{
-                    //Ready reserve
-                    line.faReserveLineType = BIFaReserveLineType.JnrAMres.rawValue as NSNumber
-                }else if tripNumberSuffix == "JPR"{
-                    //Ready reserve
-                    line.faReserveLineType = BIFaReserveLineType.JnrPMres.rawValue as NSNumber
-                }else if tripNumberSuffix == "JLR"{
-                    //Ready reserve
-                    line.faReserveLineType = BIFaReserveLineType.JnrLateRes.rawValue as NSNumber
-                }else{
-                    line.faReserveLineType = BIFaReserveLineType.NoType.rawValue as NSNumber
-                }
+                let range = NSRange(location: 1, length: 3)
+                let tripNumRange = Range(range, in: tripNumber)!
+                    let tripNumberSuffix = tripNumber[tripNumRange]
+                    if tripNumberSuffix == "SAR"{
+                        //AM reserve
+                        line.faReserveLineType = BIFaReserveLineType.SnrAMres.rawValue as NSNumber
+                    }else if tripNumberSuffix == "SPR"{
+                        //PM reseeve
+                        line.faReserveLineType = BIFaReserveLineType.SnrPMres.rawValue as NSNumber
+                    }else if tripNumberSuffix == "JAR"{
+                        //Ready reserve
+                        line.faReserveLineType = BIFaReserveLineType.JnrAMres.rawValue as NSNumber
+                    }else if tripNumberSuffix == "JPR"{
+                        //Ready reserve
+                        line.faReserveLineType = BIFaReserveLineType.JnrPMres.rawValue as NSNumber
+                    }else if tripNumberSuffix == "JLR"{
+                        //Ready reserve
+                        line.faReserveLineType = BIFaReserveLineType.JnrLateRes.rawValue as NSNumber
+                    }else{
+                        line.faReserveLineType = BIFaReserveLineType.NoType.rawValue as NSNumber
+                    }
+                
             }
             let dateString = record.substring(with: tripDateRange)
             let dateFormatter = DateFormatter()
@@ -757,7 +1072,7 @@ class BIBidInfoReader{
                         success = false
                         break
                     }
-                    trip.startDay = Int(digits) as? NSNumber
+                    trip.startDay = (digits as NSString).integerValue as NSNumber
                     let position = record.substring(with: tripPosRange)
                     trip.positionString = position
                     if position == "A"{
@@ -790,6 +1105,279 @@ class BIBidInfoReader{
         return success
     }
     
+    //MARK: trip info properties with record 1
+    private func setPropertiesForTripInfoRecord1(tripInfo:BITripInfo, record1:String) -> Bool{
+        
+        //Number
+        let numberRange = Range(tripNumberRange, in: record1)!
+            let number = String(record1[numberRange])
+            if !self.matchesTripNumberFormat(tripNumber: number){
+                return false
+            }
+            tripInfo.number = number
+        
+        
+        //length - calendar days count
+        let daysCountRange = Range(tripCalendarDaysCountRange, in: record1)!
+            let count = String(record1[daysCountRange])
+            if !self.isDigitString(count, trimWhitespace: false){
+                return false
+            }
+            tripInfo.calendarDaysCount = (count as NSString).integerValue as NSNumber
+        
+        
+        //Depart time
+        let departTimeRange = Range(tripDepartTimeRange, in: record1)!
+            let departTime = String(record1[departTimeRange])
+            if !self.isDigitString(departTime, trimWhitespace: false){
+                return false
+            }
+            tripInfo.departTime = (departTime as NSString).integerValue as NSNumber
+        
+        
+        //Return time
+        let returnTimeRange = Range(tripReturnTimeRange, in: record1)!
+            let returnTime = String(record1[returnTimeRange])
+            if !self.isDigitString(returnTime, trimWhitespace: false){
+                return false
+            }
+            tripInfo.returnTime = (returnTime as NSString).integerValue as NSNumber
+        
+        
+        //AM/PM am = 1, pm = 2
+        let ampmRange = Range(tripAmPmRange, in: record1)!
+            let ampm = Int(record1[ampmRange])
+            if ampm != 1 && ampm != 2{
+                return false
+            }
+            tripInfo.amPM = ampm as? NSNumber
+        
+        
+        let herbValueStr = UserDefaults.standard.string(forKey: KCBCustomizedHerbValue)
+        let herbValue: Int
+        if let herbValueStr = herbValueStr, !herbValueStr.isEmpty {
+            herbValue = Int(herbValueStr) ?? 0
+        } else {
+            herbValue = 1200
+        }
+        if (tripInfo.departTime!.intValue) < herbValue {
+            tripInfo.amPM = BIAMPMTripType.AMTrip.rawValue as NSNumber
+        }else{
+            tripInfo.amPM = BIAMPMTripType.PMTrip.rawValue as NSNumber
+        }
+        self.bidPeriod?.currentAmPmHerb = herbValue as NSNumber
+        
+        //Duty period count
+         let tripdutyPeriodCountRange = Range(tripDutyPeriodsCountRange, in: record1)!
+            let dutyPeriodCount = String(record1[tripdutyPeriodCountRange])
+            if !self.isDigitString(dutyPeriodCount, trimWhitespace: false){
+                return false
+            }
+            tripInfo.dutyPeriodsCount = (dutyPeriodCount as NSString).integerValue as NSNumber
+        return true
+    }
+    
+    //MARK: trip info properties with record 2
+    private func readDaysInfoTripsInfoRecord2(tripInfo:BITripInfo, record2:String, context:NSManagedObjectContext) -> Bool{
+        var prevDay:BIDayInfo?
+        var overNightsInBase = 0
+        let base = UserDefaults.standard.string(forKey: kCBCrewBaseDefaultKey)
+        for dayIndex in 0..<tripMaxDaysCount {
+            let cityRangeStart = dayCityRangeLocation + dayIndex * dayInterval
+            
+            //Stop when reaching end of the day
+            if record2.character(at: cityRangeStart) == " "{
+                break
+            }
+            
+            //City
+            var range = NSRange(location: cityRangeStart, length: dayCityRangeLength)
+            let cityRange = Range(range, in: record2)
+            let city = String(record2[cityRange!])
+            if !(cityPredicate?.evaluate(with: city))!{
+                return false
+            }
+            if city == base{
+                overNightsInBase += 1
+            }
+            
+            //Pay
+            range = NSRange(location: dayPayIntegerRangeLocation + dayIndex * dayInterval, length: dayPayIntegerRangeLength)
+            var digits:String
+            let dayPayIntRange = Range(range, in: record2)
+            digits = String(record2[dayPayIntRange!])
+            
+                //Reserve trips have leading space for pay
+                if tripInfo.number?.character(at: 1) == "W"{
+                    digits = digits.trimmingCharacters(in: .whitespaces)
+                }
+                if !self.isDigitString(digits, trimWhitespace: false){
+                    return false
+                }
+                var pay = (digits as NSString).floatValue
+                
+                range = NSRange(location: dayPayDecimalRangeLocation + dayIndex * dayInterval, length: dayPayDecimalRangeLength)
+                let dayPayDecRange = Range(range, in: record2)
+                digits = String(record2[dayPayDecRange!])
+               
+                
+                if !self.isDigitString(digits, trimWhitespace: false){
+                    return false
+                }
+                pay += (digits as NSString).floatValue / 60
+                
+                //Create day
+                let dayInfo = BIDayInfo(context: context)
+                dayInfo.city = city
+                dayInfo.pay = pay as NSNumber
+                dayInfo.trip = tripInfo
+                
+                //First Day
+                if dayIndex == 0{
+                    tripInfo.firstDay = dayInfo
+                }
+                //Previous day/next day
+                dayInfo.previousDay = prevDay
+                prevDay = dayInfo
+            
+        }
+        tripInfo.overnightsInBase = overNightsInBase - 1 as NSNumber
+        return true
+    }
+    
+    //MARK: leg info properties with record5 and record6
+    private func readLegInfoForTrips(tripInfo:BITripInfo, record5:String, record6:String, context:NSManagedObjectContext) -> Bool{
+        var day = tripInfo.firstDay
+        var prevLeg : BILegInfo?
+        //Get max possible number of legs in record5 and 6
+        let maxRecord5Legs = record5.length/legRecord5Interval
+        let maxRecord6Legs = record6.length/legRecord6Interval
+        let maxLegs = min(maxRecord5Legs, maxRecord6Legs)
+        
+        //Read the legs
+        for legIndex in 0..<maxLegs{
+            let leg = BILegInfo(context: context)
+            var isDutyBreak:Bool = false
+            var range = NSRange(location: legDepartMinutesRangeLocation + legRecord5Interval * legIndex, length: legDepartMinutesRangeLength)
+            let departRange = Range(range, in: record5)!
+            var digits = String(record5[departRange])
+                if !self.isDigitString(digits, trimWhitespace: true){
+                    return false
+                }
+                let departMinutes = (digits as NSString).integerValue
+                if departMinutes == 0{
+                    break
+                }
+                leg.departMinutes = departMinutes as NSNumber
+                
+                //Deadhead
+                var index = record5.index(record5.startIndex, offsetBy: legTypeCharIndex + legRecord5Interval * legIndex)
+                let isDeadhead = record5[index] == "2"
+                leg.isDeadhead = isDeadhead as NSNumber
+                
+                //Duty break
+                index = record5.index(record5.startIndex, offsetBy: legDutyBreakCharIndex + legRecord5Interval * legIndex)
+                isDutyBreak = record5[index] == "9"
+                leg.isDutyBreak = isDutyBreak as NSNumber
+                if isDutyBreak{
+                    day = day?.nextDay
+                }
+            
+                //Arrive minutes
+            range = NSRange(location: legArriveMinuteRangeLocation + legRecord5Interval * legIndex, length: legArriveMinuteRangeLength)
+            let arriveRange = Range(range, in: record5)!
+                 digits = String(record5[arriveRange])
+                if !self.isDigitString(digits, trimWhitespace: true){
+                    return false
+                }
+                let arriveMinutes = (digits as NSString).integerValue
+                leg.arriveMinutes = arriveMinutes as NSNumber
+            
+              
+            // Flight. Trim whitespace. Remove DH in first two characters. Remove
+            // leading zeros.
+            range = NSRange(location: legFlightRangeLocation + legRecord6Interval * legIndex, length: legFlightRangeLength)
+            let flightRange = Range(range, in: record6)!
+                var flight = String(record6[flightRange])
+                if !self.isDigitString(flight, trimWhitespace: true){
+                    if !flight.hasPrefix("DH"){
+                        legRecord6Interval = 18
+                    }
+                    if tripInfo.isPilotReserve{
+                        legRecord6Interval = 15
+                    }
+                    flight = String(record6[Range(NSRange(location: legFlightRangeLocation + legRecord6Interval * legIndex, length: legFlightRangeLength), in: record6)!])
+                }
+                flight = flight.trimmingCharacters(in: .whitespaces)
+                if flight.hasPrefix("DH") {
+                    flight = String(flight.dropFirst(2))
+                }
+                leg.flight = flight
+            
+            
+            //Red eye
+            range = NSRange(location: 17 + legRecord6Interval * legIndex, length: 1)
+            let redEyeRange = Range(range, in: record6)!
+                if String(record6[redEyeRange]) == "O"{
+                    leg.isRedEyeFlight = true
+                }else{
+                    leg.isRedEyeFlight = false
+                }
+            
+                
+           //Depart city
+            range = NSRange(location: legDepartCityRangeLocation + legRecord6Interval * legIndex, length: legDepartCityRangeLength)
+            let departCityRange = Range(range, in: record6)!
+                let departCity = String(record6[departCityRange])
+                if !(cityPredicate?.evaluate(with: departCity))!{
+                    return false
+                }
+                leg.departCity = departCity
+        
+            //Arrive city
+                range = NSRange(location: legArriveCityRangeLocation + legRecord6Interval * legIndex, length: legArriveCityRangeLength)
+                let arriveCityRange = Range(range, in: record6)!
+                    let arriveCity = String(record6[arriveCityRange])
+                    if !(cityPredicate?.evaluate(with: arriveCity))!{
+                        return false
+                    }
+                    leg.arriveCity = arriveCity
+                
+                
+                //Aircraft change
+                index = record6.index(record6.startIndex, offsetBy: legAircraftChangeCharIndex + legRecord6Interval * legIndex)
+                let isAircraftChange = record6[index] == "*"
+                leg.isAircraftChange = isAircraftChange as NSNumber
+                
+                //Equipment
+                
+                if tripInfo.isPilotReserve{
+                    leg.equipment = nil
+                }else{
+                    range = NSRange(location: legEquipmentCharIndex + legRecord6Interval * legIndex, length: legEquipmentRangeLength)
+                    let equipmentRange = Range(range, in: record6)!
+                        let equipmentCharacters = String(record6[equipmentRange])
+                        leg.equipment = self.getEquipmentType(type: equipmentCharacters)
+                    
+                }
+                
+                //Previous leg
+                leg.previousLeg = prevLeg
+                prevLeg = leg
+                
+                //Day
+                leg.day = day
+                
+                //Day first leg
+                if legIndex == 0 || isDutyBreak{
+                    day?.firstLeg = leg
+                }
+                
+            
+        }
+        return true
+    }
+    
     private func isFABid() -> Bool {
         let isFABid = BICrewPositionType.FlightAttendant.rawValue == self.dataSource.position.rawValue
         return isFABid
@@ -803,6 +1391,23 @@ class BIBidInfoReader{
         let isSecondRoundBid = dataSource.round == 2
         return isSecondRoundBid
     }
+    
+    func getEquipmentType(type: String) -> String {
+        let type700 = ["73W", "73R", "7S7", "7R7"]
+        let type800 = ["73H", "7S8", "738", "7R8"]
+        let type8Max = ["7M8", "7U8", "7T8", "7V8"]
+
+        if type700.contains(type) {
+            return "7" // Equipment 700
+        } else if type800.contains(type) {
+            return "8" // Equipment 800
+        } else if type8Max.contains(type) {
+            return "6" // Equipment 8Max
+        } else {
+            return ""  // Default case
+        }
+    }
+    
     private func matchesTripNumberFormat(tripNumber:String) ->Bool{
         return tripNumber.range(of: tripNumberRegex, options: .regularExpression) != nil
     }

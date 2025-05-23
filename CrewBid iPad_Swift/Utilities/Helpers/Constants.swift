@@ -123,7 +123,8 @@ let kCBUserInfoEncryptedExpirationDateKey = "UserInfoEncryptedExpirationDateKey"
 let KCBCustomizedHerbValue = "KCBCustomizedHerbValue"
 let kCBTimeZoneCitiesList = "CBTimeZoneCitiesList"
 let kCBTimeZoneSetting = "CBTimeZoneSetting"
-
+let kCBInternationalCitiesDict = "CBInternationalCitiesDict"
+let kCBCrewBaseDefaultKey = "Crew Base"
 public enum HTTPStatusCode: Int {
     case `continue` = 100,
     switchingProtocols = 101
