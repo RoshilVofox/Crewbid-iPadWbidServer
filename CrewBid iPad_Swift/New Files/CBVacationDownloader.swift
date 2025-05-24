@@ -11,13 +11,14 @@ class CBVacationDownloader: NSObject {
     
     let kSwaptimizerUrlTest = URL(string: "https://swaptimizer2.com/secure/cgi-bin/crewbid.f-week.cgi")!
     let kSwaptimizerUrl = URL(string: "https://secure.swaptimizer2.com/cgi-bin/crewbid.cgi")!
+    let kswaptimizerAccessKey = "!evG7*5^7E"
     
     let app = UIApplication.shared.delegate as! AppDelegate
     var webData: NSMutableData?
     var bidPeriod: BIBidPeriod?
     var filesCount: Float = 0
     var urlData: NSMutableData?
-    var urlRequest: NSMutableURLRequest?
+    var urlRequest: URLRequest?
     let kURLConnectionTimeout: TimeInterval = 20.0
     let kURLConnectionTimeoutVD: TimeInterval = 90.0
     enum VacationDownloadType {
@@ -31,7 +32,6 @@ class CBVacationDownloader: NSObject {
     
     //MARK: download WBID VacationFiles
     func downloadWbidVacation() {
-        print("i am here")
         let delayInSeconds = 0.1
         DispatchQueue.main.asyncAfter(deadline: .now() + delayInSeconds) {
             var vacationDetailDictionary: [String: Any] = [:]
@@ -61,7 +61,7 @@ class CBVacationDownloader: NSObject {
             vacationDetailDictionary["Round"] = "M"
             
             let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid ?? "WBID"
-        
+            
             if vacationType == "WBID" {
                 vacationDetailDictionary["isEOM"] = NSNumber(value: false)
             }
@@ -109,7 +109,7 @@ class CBVacationDownloader: NSObject {
             }
             else {
                 self.vactionDownloadType = .downloadWbidVacation
-                self.downloadWBidData(downloadWbidDetails: vacationDetailDictionary) { canDownload in
+                self.downloadWBidOrFAData(downloadWbidDetails: vacationDetailDictionary) { canDownload in
                     if(!canDownload) {
                         if self.bidPeriod?.userVacationWbidOrCrewBid == "WBIDF" {
                             print("network issue")
@@ -131,8 +131,55 @@ class CBVacationDownloader: NSObject {
         }
     }
     
-    //    MARK: downloadWBidData
-    func downloadWBidData(downloadWbidDetails: [String: Any], canDownloadVacation: @escaping (Bool) -> Void) {
+    //    MARK: FA VAcationFile
+    func downloadFAVacation() {
+        let delayInSeconds = 0.1
+        DispatchQueue.main.asyncAfter(deadline: .now() + delayInSeconds) {
+            var vacationType = self.bidPeriod?.userVacationWbidOrCrewBid
+            vacationType = "FAVacation"
+            var vacationDetailDictionary: [String: Any] = [:]
+            
+            vacationDetailDictionary["EmpNum"] = self.bidPeriod?.crewIdentifier ?? 81566
+            vacationDetailDictionary["Base"] = self.bidPeriod?.base ?? "DEN"
+            vacationDetailDictionary["Base"] = self.bidPeriod?.base ?? "DEN"
+            if let rawValue = self.bidPeriod?.positionType?.intValue,
+               let positionType = BICrewPositionType(rawValue: rawValue) {
+                let shortName = CBUtils.shortName(for: positionType)
+                vacationDetailDictionary["Position"] = shortName
+            }
+            vacationDetailDictionary["Position"] = "FA"
+            vacationDetailDictionary["Year"] = self.bidPeriod?.year ?? 2025
+            vacationDetailDictionary["Month"] = self.bidPeriod?.month ?? 6
+            vacationDetailDictionary["FromApp"] = 5
+            var round: String = ""
+            if (self.bidPeriod?.round?.intValue == 1) {
+                round = "M"
+            }
+            else if (self.bidPeriod?.round?.intValue == 2) {
+                round = "S"
+            }
+            vacationDetailDictionary["Round"] = "M"
+            if vacationType == "FAVacation" {
+                vacationDetailDictionary["isEOM"] = NSNumber(value: false)
+            }
+            else {
+                vacationDetailDictionary["isEOM"] = NSNumber(value: true)
+                vacationDetailDictionary["FAEOMStartDate"] = self.bidPeriod?.faEomSelectedDate
+            }
+            self.vactionDownloadType = .downloadFAVacation
+            self.downloadWBidOrFAData(downloadWbidDetails: vacationDetailDictionary) { canDownload in
+                if(!canDownload) {
+//                    if self.bidPeriod?.userVacationWbidOrCrewBid == "WBIDF" {
+                        print("network issue")
+//                    }
+                }
+                
+            }
+        }
+    }
+    
+    //    MARK: downloadWBid OR FA Data
+    func downloadWBidOrFAData(downloadWbidDetails: [String: Any], canDownloadVacation: @escaping (Bool) -> Void) {
         print("see me")
         var urlString = "GetCrewBidJsonVacFile"
         do {
@@ -173,26 +220,27 @@ class CBVacationDownloader: NSObject {
     func postDataForVacationDownloading(urlName: String, jsonString: String) {
         print("in post section")
         print(jsonString)
-
+        
         guard let url = URL(string: urlName) else {
             print("Invalid URL")
             return
         }
-
+        
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeoutVD)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.httpBody = jsonString.data(using: .utf8)
-
+        
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
+                print("WBID OR FA DOWNLOAD FAILed")
                 print("Request failed: \(error)")
                 DispatchQueue.main.async {
                     // self.delegate?.connectionFailed()
                 }
                 return
             }
-
+            
             guard let data = data else {
                 print("No data received")
                 DispatchQueue.main.async {
@@ -200,23 +248,115 @@ class CBVacationDownloader: NSObject {
                 }
                 return
             }
-            // Convert to NSMutableData
-            let mutableData = NSMutableData(data: data)
-            print("Received binary mutable data of size: \(mutableData.length) bytes")
-
             // Debug print as string (optional)
-            if let responseString = String(data: mutableData as Data, encoding: .utf8) {
-                print("Mutable Response String: \(responseString)")
+            if let responseString = String(data: data as Data, encoding: .utf8) {
+                                print("Mutable Response String: \(responseString)")
+                do {
+                        if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                            if let fileName = json["FileName"], !(fileName is NSNull) {
+                                print("FileName: \(fileName)")
+                            } else {
+                                print("FileName is null or missing")
+                            }
+                        }
+                    } catch {
+                        print("JSON parsing error: \(error)")
+                    }
             } else {
-                print("Received binary mutable data of size: \(mutableData.length) bytes")
+                print("Received binary mutable data of size: \(data) bytes")
             }
-
+            
             // You can also store mutableData somewhere if needed
             // self.webData = mutableData (if applicable)
         }
-
+        
         task.resume()
     }
+    
+//    MARK: download crewbid Vacation file
+    func downloadCrewbidVacationFiles(crewbidType: String) {
+        self.bidPeriod?.userVacationWbidOrCrewBid = crewbidType
+        let secretEnabled = self.bidPeriod?.secretSwitchOn ?? "NO"
+        var pilot: NSNumber?
 
-
+        var isEom = 1
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        if secretEnabled == "YES" {
+            pilot = self.bidPeriod?.crewIdentifier
+            pilot = 66226
+            self.urlRequest = URLRequest(url: kSwaptimizerUrlTest, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeout)
+        }
+        else {
+            pilot = self.bidPeriod?.swaptimizerIdentifier
+            pilot = 44126//88463
+            self.urlRequest = URLRequest(url: kSwaptimizerUrl, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeout)
+        }
+        if((pilot == nil)) {
+            print("not a valid pilot")
+            return
+        }
+        let accessKey = kswaptimizerAccessKey
+        let appVersion = CBUtils.AppVersion()
+        let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid
+        if vacationType == "CREWBIDF" {
+            isEom = 1
+        }
+        else {
+            isEom = 0
+        }
+        var postDict: [String: Any] = ["Pilot": pilot ?? 88463, "CrewBidVersion": appVersion, "AccessKey": accessKey, "FWeek": isEom]
+        self.urlRequest?.httpMethod = "POST"
+        self.urlRequest?.setValue("text/plain", forHTTPHeaderField: "Accept")
+        self.urlRequest?.setValue("text/plain", forHTTPHeaderField: "Content-Type")
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: postDict, options: [])
+            self.urlRequest?.setValue("\(jsonData.count)", forHTTPHeaderField: "Content-Length")
+            self.urlRequest?.httpBody = jsonData
+            // Use jsonData here
+        } catch {
+            print("Error serializing JSON: \(error)")
+        }
+        let task = URLSession.shared.dataTask(with: self.urlRequest!) { (data, response, error) in
+            if let error = error {
+                print("WBID OR FA DOWNLOAD FAILed")
+                print("Request failed: \(error)")
+                DispatchQueue.main.async {
+                    // self.delegate?.connectionFailed()
+                }
+                return
+            }
+            
+            guard let data = data else {
+                print("No data received")
+                DispatchQueue.main.async {
+                    // self.delegate?.connectionFailed()
+                }
+                return
+            }
+            // Debug print as string (optional)
+            if let responseString = String(data: data as Data, encoding: .utf8) {
+//                print("Mutable Response String: \(responseString)")
+                do {
+                    if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                        let pilotInfo = json["PilotInfo"] as! [String: Any] //]["HasAccount"]
+                        let hasAccount = pilotInfo["HasAccount"]
+                        if hasAccount as! Int == 0 {
+                            print("No swaptimizer account")
+                        }
+                        else if hasAccount as! Int == 1 {
+                            print("Mutable Response String: \(responseString)")
+                        }
+                        print(hasAccount)
+                    }
+                }
+                catch {
+                    print("error finding has account while parsing")
+                }
+            }
+        }
+        task.resume()
+    }
+    
+    
 }
