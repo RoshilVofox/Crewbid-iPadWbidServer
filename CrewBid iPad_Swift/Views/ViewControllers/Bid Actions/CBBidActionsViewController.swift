@@ -166,7 +166,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
         
         // MARK: - Show Awards Selection
         if item == "Show Awards" {
-            CBVacationDownloader().downloadCrewbidVacationFiles(crewbidType: "CREWBID")
+            CBVacationDownloader().downloadWbidVacation()
             if let presentingVC = self.presentingViewController {
                 self.dismiss(animated: true) {
                     let storyboard = UIStoryboard(name: "BidActions", bundle: nil)

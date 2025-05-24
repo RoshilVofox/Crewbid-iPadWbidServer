@@ -27,6 +27,7 @@ class CBVacationDownloader: NSObject {
     }
     var dataSource = GlobalBidInfo.shared
     var vactionDownloadType: VacationDownloadType?
+    var isAutoDownload = false
     
     
     
@@ -139,7 +140,7 @@ class CBVacationDownloader: NSObject {
             vacationType = "FAVacation"
             var vacationDetailDictionary: [String: Any] = [:]
             
-            vacationDetailDictionary["EmpNum"] = self.bidPeriod?.crewIdentifier ?? 81566
+            vacationDetailDictionary["EmpNum"] = self.bidPeriod?.crewIdentifier ?? 22231//81566
             vacationDetailDictionary["Base"] = self.bidPeriod?.base ?? "DEN"
             vacationDetailDictionary["Base"] = self.bidPeriod?.base ?? "DEN"
             if let rawValue = self.bidPeriod?.positionType?.intValue,
@@ -169,9 +170,9 @@ class CBVacationDownloader: NSObject {
             self.vactionDownloadType = .downloadFAVacation
             self.downloadWBidOrFAData(downloadWbidDetails: vacationDetailDictionary) { canDownload in
                 if(!canDownload) {
-//                    if self.bidPeriod?.userVacationWbidOrCrewBid == "WBIDF" {
-                        print("network issue")
-//                    }
+                    //                    if self.bidPeriod?.userVacationWbidOrCrewBid == "WBIDF" {
+                    print("network issue")
+                    //                    }
                 }
                 
             }
@@ -250,18 +251,24 @@ class CBVacationDownloader: NSObject {
             }
             // Debug print as string (optional)
             if let responseString = String(data: data as Data, encoding: .utf8) {
-                                print("Mutable Response String: \(responseString)")
+                print("Mutable Response String: \(responseString)")
                 do {
-                        if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                            if let fileName = json["FileName"], !(fileName is NSNull) {
-                                print("FileName: \(fileName)")
-                            } else {
-                                print("FileName is null or missing")
+                    if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                        if let fileName = json["FileName"], !(fileName is NSNull) {
+                            print("Vacation FileName: \(fileName)")
+                            if self.vactionDownloadType == .downloadWbidVacation {
+                                self.callToSetAutoDownloadOrValidateForWBID(jsonData: json)
                             }
+                            
+                        } else {
+                            print("FileName is null or missing")
+                            let message = json["Message"]
+                            print("message: \(message!)")
                         }
-                    } catch {
-                        print("JSON parsing error: \(error)")
                     }
+                } catch {
+                    print("JSON parsing error: \(error)")
+                }
             } else {
                 print("Received binary mutable data of size: \(data) bytes")
             }
@@ -273,12 +280,12 @@ class CBVacationDownloader: NSObject {
         task.resume()
     }
     
-//    MARK: download crewbid Vacation file
+    //    MARK: download crewbid Vacation file
     func downloadCrewbidVacationFiles(crewbidType: String) {
         self.bidPeriod?.userVacationWbidOrCrewBid = crewbidType
         let secretEnabled = self.bidPeriod?.secretSwitchOn ?? "NO"
         var pilot: NSNumber?
-
+        
         var isEom = 1
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = .decimal
@@ -336,7 +343,7 @@ class CBVacationDownloader: NSObject {
             }
             // Debug print as string (optional)
             if let responseString = String(data: data as Data, encoding: .utf8) {
-//                print("Mutable Response String: \(responseString)")
+                //                print("Mutable Response String: \(responseString)")
                 do {
                     if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                         let pilotInfo = json["PilotInfo"] as! [String: Any] //]["HasAccount"]
@@ -347,7 +354,6 @@ class CBVacationDownloader: NSObject {
                         else if hasAccount as! Int == 1 {
                             print("Mutable Response String: \(responseString)")
                         }
-                        print(hasAccount)
                     }
                 }
                 catch {
@@ -358,5 +364,40 @@ class CBVacationDownloader: NSObject {
         task.resume()
     }
     
+//    MARK: callToSetAutoDownloadOrValidateForWBID()
+    func callToSetAutoDownloadOrValidateForWBID(jsonData: [String: Any]) {
+        if(isAutoDownload) {
+            storeWBIDVacation(jsonData: jsonData)
+        }
+        else {
+            validateWBIDVacation(jsonData: jsonData)
+        }
+    }
     
+//    MARK: storeWBIDVacation()
+    func storeWBIDVacation(jsonData: [String: Any]) {
+        let file = jsonData["File"] as! [String: Any]
+        let topLevel = file["SWAPtimizer_CrewBid_Data"] as! [String: Any]
+        let header = topLevel["Header"] as! [String: Any]
+        var moc = self.bidPeriod?.managedObjectContext
+        self.bidPeriod?.faFileIntent = header["FileIdent"] as! String
+        
+        do {
+            try moc?.save()
+            print("filename saved")
+        } catch {
+            print("Error saving context: \(error)")
+        }
+        writeVacationFile(jsonData: jsonData, fileName: header["FileIdent"] as! String)
+        
+    }
+    
+//    MARK: validateWBIDVacation
+    func validateWBIDVacation(jsonData: [String: Any]) {
+        
+    }
+    
+    func writeVacationFile(jsonData: [String: Any], fileName: String) {
+        self.bidPeriod?.isFABid()
+    }
 }
