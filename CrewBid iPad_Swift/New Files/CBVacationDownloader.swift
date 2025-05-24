@@ -233,6 +233,7 @@ class CBVacationDownloader: NSObject {
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
+                print("WBID OR FA DOWNLOAD FAILed")
                 print("Request failed: \(error)")
                 DispatchQueue.main.async {
                     // self.delegate?.connectionFailed()
@@ -283,10 +284,12 @@ class CBVacationDownloader: NSObject {
         numberFormatter.numberStyle = .decimal
         if secretEnabled == "YES" {
             pilot = self.bidPeriod?.crewIdentifier
+            pilot = 66226
             self.urlRequest = URLRequest(url: kSwaptimizerUrlTest, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeout)
         }
         else {
             pilot = self.bidPeriod?.swaptimizerIdentifier
+            pilot = 44126//88463
             self.urlRequest = URLRequest(url: kSwaptimizerUrl, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeout)
         }
         if((pilot == nil)) {
@@ -302,7 +305,7 @@ class CBVacationDownloader: NSObject {
         else {
             isEom = 0
         }
-        var postDict: [String: Any] = ["Pilot": pilot, "CrewBidVersion": appVersion, "AccessKey": accessKey, "FWeek": isEom]
+        var postDict: [String: Any] = ["Pilot": pilot ?? 88463, "CrewBidVersion": appVersion, "AccessKey": accessKey, "FWeek": isEom]
         self.urlRequest?.httpMethod = "POST"
         self.urlRequest?.setValue("text/plain", forHTTPHeaderField: "Accept")
         self.urlRequest?.setValue("text/plain", forHTTPHeaderField: "Content-Type")
@@ -314,7 +317,45 @@ class CBVacationDownloader: NSObject {
         } catch {
             print("Error serializing JSON: \(error)")
         }
-        
+        let task = URLSession.shared.dataTask(with: self.urlRequest!) { (data, response, error) in
+            if let error = error {
+                print("WBID OR FA DOWNLOAD FAILed")
+                print("Request failed: \(error)")
+                DispatchQueue.main.async {
+                    // self.delegate?.connectionFailed()
+                }
+                return
+            }
+            
+            guard let data = data else {
+                print("No data received")
+                DispatchQueue.main.async {
+                    // self.delegate?.connectionFailed()
+                }
+                return
+            }
+            // Debug print as string (optional)
+            if let responseString = String(data: data as Data, encoding: .utf8) {
+//                print("Mutable Response String: \(responseString)")
+                do {
+                    if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                        let pilotInfo = json["PilotInfo"] as! [String: Any] //]["HasAccount"]
+                        let hasAccount = pilotInfo["HasAccount"]
+                        if hasAccount as! Int == 0 {
+                            print("No swaptimizer account")
+                        }
+                        else if hasAccount as! Int == 1 {
+                            print("Mutable Response String: \(responseString)")
+                        }
+                        print(hasAccount)
+                    }
+                }
+                catch {
+                    print("error finding has account while parsing")
+                }
+            }
+        }
+        task.resume()
     }
     
     
