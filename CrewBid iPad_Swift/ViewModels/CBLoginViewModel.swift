@@ -22,6 +22,7 @@ class CBLoginViewModel{
         GlobalBidInfo.shared.round = round
         GlobalBidInfo.shared.base = base
         GlobalBidInfo.shared.position = position
+        self.saveSelectionToUserDefaults()
         APIService.shared.getPreLogonCredential(from: EndPoint.shared.thirdpartyURL) {[weak self] result in
             switch result{
             case .success(let response):
@@ -49,5 +50,12 @@ class CBLoginViewModel{
         var encodedString = string.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         encodedString = encodedString.replacingOccurrences(of: "+", with: "%2B")
         return encodedString
+    }
+    
+    private func saveSelectionToUserDefaults(){
+        UserDefaults.standard.set(GlobalBidInfo.shared.base, forKey: kCBCrewBaseDefaultKey)
+        UserDefaults.standard.set(GlobalBidInfo.shared.position.rawValue, forKey: kCBCrewPositionTypeDefaultKey)
+        UserDefaults.standard.set(GlobalBidInfo.shared.employeeNumber, forKey: kCBEmployeeNumberDefaultKey)
+        UserDefaults.standard.set(GlobalBidInfo.shared.round, forKey: kCBCrewRoundTypeDefaultKey)
     }
 }

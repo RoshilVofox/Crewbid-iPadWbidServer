@@ -33,9 +33,15 @@ class BICalendarData {
     }
     
     func dateforDayOfMonth(_ dayOfMonth: Int) -> Date? {
-        var dateComponents = DateComponents()
-        let calendar = Calendar.current
-        dateComponents.day = dayOfMonth
-        return calendar.date(from: dateComponents)
+        var dc = DateComponents()
+        dc.year = GlobalBidInfo.shared.year
+        dc.month = GlobalBidInfo.shared.month
+        dc.day = dayOfMonth
+        dc.hour = 12
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale(identifier: "en_US")
+        calendar.timeZone = TimeZone(identifier: "US/Central") ?? TimeZone(identifier: "America/Chicago")!
+        let dateForDayOfMonth = calendar.date(from: dc)!
+        return dateForDayOfMonth
     }
 }

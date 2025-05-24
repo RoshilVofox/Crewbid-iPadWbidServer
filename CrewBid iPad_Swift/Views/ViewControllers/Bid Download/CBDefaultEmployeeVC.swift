@@ -32,7 +32,7 @@ class CBDefaultEmployeeVC: BaseViewController {
         textEmpNum.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: textEmpNum.frame.height))
         textEmpNum.leftViewMode = .always
         textEmpNum.delegate = self
-        textEmpNum.text = UserDefaults.standard.string(forKey: kCBEmployeeNumberDefaultKey)
+        textEmpNum.text = UserDefaults.standard.string(forKey: kCBDefaultEmployeeNumberKey)
             viewModel.onAuthSuccess = { [weak self] result in
                 self?.view.hideActivityIndicator()
                 self?.handleAuthResult(result)
@@ -72,7 +72,7 @@ class CBDefaultEmployeeVC: BaseViewController {
                    shakeTextField(textField: textEmpNum)
                    return
                }
-               UserDefaults.standard.set(textEmpNum.text!, forKey: kCBEmployeeNumberDefaultKey)
+               UserDefaults.standard.set(textEmpNum.text!, forKey: kCBDefaultEmployeeNumberKey)
                self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
                viewModel.checkAuthentication(empID: empID)
         }
@@ -111,7 +111,7 @@ class CBDefaultEmployeeVC: BaseViewController {
         self.present(alert, animated: true)
     }
     func gotoNextView(){
-         UserDefaults.standard.set(textEmpNum.text!, forKey: kCBEmployeeNumberDefaultKey)
+         UserDefaults.standard.set(textEmpNum.text!, forKey: kCBDefaultEmployeeNumberKey)
          let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
          let vc = storyboard.instantiateViewController(withIdentifier: "CBBiddataDownloadVC") as! CBBiddataDownloadVC
          vc.empNum = self.textEmpNum.text

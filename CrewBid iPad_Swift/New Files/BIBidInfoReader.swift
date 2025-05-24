@@ -13,7 +13,7 @@ class BIBidInfoReader{
     let tripFileName = "TRIPS"
     let lineFileName = "PS"
     let dataSource = GlobalBidInfo.shared
-    
+    let moc = CoreDataManager.shared.persistentContainer.newBackgroundContext()
     var trips:[String:Any] = [:]
     var dhStartCities:[String] = []
     var dhEndCities:[String] = []
@@ -26,7 +26,6 @@ class BIBidInfoReader{
     let tripAmPmRange = NSRange(location: 36, length: 1)
     let tripDutyPeriodsCountRange = NSRange(location: 42, length: 1)
     let nonDigitCharacters = CharacterSet.decimalDigits.inverted
-    
     let tripMaxDaysCount = 10
     let dayInterval = 7
     let dayCityRangeLocation = 5
@@ -63,7 +62,7 @@ class BIBidInfoReader{
     var thanksgivingDay: UInt = 0
     var includeDroppedTrips:Bool?
     var intlCities:[String:Any] = [:]
-    var moc:NSManagedObjectContext?
+//    var moc:NSManagedObjectContext?
     
     func readBidData(){
         if !self.isFABid() && self.isSecondRoundBid(){
@@ -83,8 +82,8 @@ class BIBidInfoReader{
             success = self.readTripsFA()
             if success{
                 print("Done Reading Trips FA")
-//                success = self.readLinesFA()
-//                if success{ print("Done Reading Lines FA")}
+                success = self.readLinesFA()
+                if success{ print("Done Reading Lines FA")}
             }
             
             //needs code here
@@ -92,16 +91,23 @@ class BIBidInfoReader{
         }else{
             success = self.readTrips()
             if success{
-//                print("Done Reading Trips")
-//                success = self.readLines()
-//                if success{print("Done Reading Lines")}
+                print("Done Reading Trips")
+                
+                success = self.readLines()
+                if success{
+                    print("Done Reading Lines")
+                }
+                
+                DispatchQueue.main.async {
+                    NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+                }
             }
             
             //needs code here
         }
     }
     
-    
+    //MARK: initialize Reading Variables
     private func initializeReadingVariables(){
         tripNumberPredicate = NSPredicate(format: "SELF MATCHES %@", tripNumberRegex)
         cityPredicate = NSPredicate(format: "SELF MATCHES %@", cityRegex)
@@ -131,14 +137,17 @@ class BIBidInfoReader{
         }catch{
             print("Error reading files: \(error.localizedDescription)")
         }
-        DispatchQueue.main.async {
-            let app = UIApplication.shared.delegate as! AppDelegate
-            self.bidPeriod?.isHistoric = app.isHistoricBid as NSNumber
-        }
-        self.moc = CoreDataManager.shared.persistentContainer.newBackgroundContext()
-        self.bidPeriod = BIBidPeriod(context: self.moc!)
         
+        
+        var isHistoric: NSNumber = 0
+        DispatchQueue.main.sync {
+            let app = UIApplication.shared.delegate as! AppDelegate
+            isHistoric = app.isHistoricBid as NSNumber
+        }
+        self.bidPeriod = BIBidPeriod(context: self.moc)
+        self.bidPeriod?.isHistoric = isHistoric as NSNumber
         self.bidPeriod?.year = self.dataSource.year as NSNumber
+        self.bidPeriod?.base = self.dataSource.base
         self.bidPeriod?.month = self.dataSource.month as NSNumber
         self.bidPeriod?.positionType = self.dataSource.position.rawValue as NSNumber
         self.bidPeriod?.round = self.dataSource.round as NSNumber
@@ -159,11 +168,11 @@ class BIBidInfoReader{
         
     }
     
-    //MARK: Read Trips file
+    //MARK: Read Trips file - done
     private func readTrips() -> Bool{
         var success = true
         
-        let moc = CoreDataManager.shared.persistentContainer.newBackgroundContext()
+        let moc = self.moc
         moc.undoManager = nil
         let tripsDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.tripFileName)
         if !FileManager.default.fileExists(atPath: tripsDataFileURL.path){
@@ -252,9 +261,8 @@ class BIBidInfoReader{
                         tripInfo?.debriefMinutes = 0
                     }else{
                         //brief minutes
-                        var startIndex = info.index(info.startIndex, offsetBy: briefHoursRange.location)
-                        var endIndex = info.index(startIndex, offsetBy: briefHoursRange.length)
-                        digits = String(info[startIndex..<endIndex])
+                        var range = Range(briefHoursRange, in: info)!
+                        digits = String(info[range])
                         if !self.isDigitString(digits, trimWhitespace: false){
                             //handle error
                             success = false
@@ -262,9 +270,8 @@ class BIBidInfoReader{
                             return
                         }
                         briefMinutes = (digits as NSString).integerValue * 60
-                        startIndex = info.index(info.startIndex, offsetBy: briefMinutesRange.location)
-                        endIndex = info.index(startIndex, offsetBy: briefMinutesRange.length)
-                        digits = String(info[startIndex..<endIndex])
+                        range = Range(briefMinutesRange, in: info)!
+                        digits = String(info[range])
                         if !self.isDigitString(digits, trimWhitespace: false){
                             //handle error
                             success = false
@@ -275,9 +282,8 @@ class BIBidInfoReader{
                         tripInfo?.briefMinutes = briefMinutes as NSNumber
                         
                         //debrief minutes
-                        startIndex = info.index(info.startIndex, offsetBy: debriefHoursRange.location)
-                        endIndex = info.index(startIndex, offsetBy: debriefHoursRange.length)
-                        digits = String(info[startIndex..<endIndex])
+                        range = Range(debriefHoursRange, in: info)!
+                        digits = String(info[range])
                         if !self.isDigitString(digits, trimWhitespace: false){
                             //handle error
                             success = false
@@ -285,10 +291,8 @@ class BIBidInfoReader{
                             return
                         }
                         debriefMinutes = (digits as NSString).integerValue * 60
-                        
-                        startIndex = info.index(info.startIndex, offsetBy: debriefMinutesRange.location)
-                        endIndex = info.index(startIndex, offsetBy: debriefMinutesRange.length)
-                        digits = String(info[startIndex..<endIndex])
+                        range = Range(debriefMinutesRange, in: info)!
+                        digits = String(info[range])
                         if !self.isDigitString(digits, trimWhitespace: false){
                             success = false
                             stop.pointee = true
@@ -300,12 +304,10 @@ class BIBidInfoReader{
                     }
                     if let char = tripInfo?.number!.dropFirst().first, char >= "W" {
                         if (self.bidPeriod?.positionType?.intValue == BICrewPositionType.Captain.rawValue)||(self.bidPeriod?.positionType?.intValue == BICrewPositionType.FirstOfficer.rawValue) {
-                            var startIndex = info.index(info.startIndex, offsetBy: briefHoursRange.location)
-                            var endIndex = info.index(startIndex, offsetBy: briefHoursRange.length)
-                            digits = String(info[startIndex..<endIndex])
-                            startIndex = info.index(info.startIndex, offsetBy: briefMinutesRange.location)
-                            endIndex = info.index(startIndex, offsetBy: briefMinutesRange.length)
-                            addString = String(info[startIndex..<endIndex])
+                            var range = Range(briefHoursRange, in: info)!
+                            digits = String(info[range])
+                            range = Range(briefMinutesRange, in: info)!
+                            addString = String(info[range])
                             appendString = digits.appending(addString)
                             tripInfo?.departTime = Int(appendString) as? NSNumber
                             
@@ -327,12 +329,11 @@ class BIBidInfoReader{
                     // number of type 6 records.
                 case "5":
                     //Append Legs data to record 5
-                    let range = Range(legInfoRange, in: info)!
+                    var range = Range(legInfoRange, in: info)!
                         record5 += String(info[range])
                         if legInfoRange.length == record5.length{
-                            let startIndex = info.index(info.startIndex, offsetBy: record6CountRange.location)
-                            let endIndex = info.index(startIndex, offsetBy: record6CountRange.length)
-                            digits = String(info[startIndex..<endIndex])
+                            range = Range(record6CountRange, in: info)!
+                            digits = String(info[range])
                             if !self.isDigitString(digits, trimWhitespace: false){
                                 //handle error
                                 success = false
@@ -352,7 +353,7 @@ class BIBidInfoReader{
                         record6 += String(info[range])
                         // If this is the last record6, read legs info
                         if record6.length/legInfoRange.length == record6Count{
-                            if !self.readLegInfoForTrips(tripInfo: tripInfo!, record5: record5, record6: record6, context: moc){
+                            if !self.readLegsInfoForTripInfo(tripInfo: tripInfo!, record5: record5, record6: record6, context: moc){
                                 //handle error
                                 success = false
                                 stop.pointee = true
@@ -370,7 +371,11 @@ class BIBidInfoReader{
             }
             
             if moc.hasChanges{
-                try moc.save()
+                do{
+                    try moc.save()
+                }catch{
+                    print("Error saving file: \(error)")
+                }
             }else{
                 //handle error
                 success = false
@@ -378,24 +383,256 @@ class BIBidInfoReader{
             if success{
                 self.trips = trips
             }
-            DispatchQueue.main.async {
-                NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
-            }
         }catch{
             print("Error reading file: \(error)")
         }
         return success
     }
     
-    //MARK: Read Lines file
+    //MARK: Read Lines file - done
     private func readLines() -> Bool{
-        return true
+        var success = true
+        let moc = self.moc
+        let linesDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.lineFileName)
+        if !FileManager.default.fileExists(atPath: linesDataFileURL.path){
+            return false}
+        do{
+            let linesData = try NSString(contentsOf: linesDataFileURL, encoding: String.Encoding.utf8.rawValue)
+            
+            var counter = 0
+            let numberRange = NSRange(location: 0, length: 6)
+            let typeCharIndex = 6
+            let typetopsCharIndex = 80
+            let continuedLineCharIndex = 70
+            var isContinuedLine = false
+            let payIntegerRange = NSRange(location: 71, length: 3)
+            let payFractionRange = NSRange(location: 74, length: 2)
+            var pay:Float = 0
+            let blockHoursRange = NSRange(location: 76, length: 2)
+            let blockMinutesRange = NSRange(location: 78, length: 2)
+            var blockMinutes = 0
+            var line:BILine? = nil
+            var digits:String = ""
+            var pLines:[Int:BILine] = [:]
+            self.bidPeriod?.bidByEmpID = self.dataSource.employeeNumber
+            
+            linesData.enumerateLines { (info, stop) in
+                if info.length > 80{
+                    let c = info[info.index(info.startIndex, offsetBy: typetopsCharIndex)]
+                    let EtopsStr = String(c)
+                    if EtopsStr == "E"{
+                        self.bidPeriod?.isEtopsLinesContainsInBid = true
+                        stop.pointee = true
+                    }
+                }
+            }
+            
+            linesData.enumerateLines { (info, stop) in
+                    //end of data
+                    if info.character(at: 0) == "*"{
+                        return
+                    }
+                    counter += 1
+                    if counter%10 == 0{
+                        if moc.hasChanges{
+                            do{
+                                try moc.save()
+                            }catch{
+                                //handle error
+                                print("Error saving context in readLines(): \(error)")
+                            }
+                        }
+                    }
+                    
+                    if isContinuedLine{
+                        //add trips to current line
+                        if !self.readTripsForLine(line: line!, record: info){
+                            //handle error
+                            success = false
+                            stop.pointee = true
+                            return
+                        }
+                    }else{
+                        //finalize previously read line
+                        if let currentline = line, self.bidPeriod?.isFirstRoundBid() == true{
+                            self.initDerivedPropertiesForLine(line: currentline, isReprocessing:false)
+                        }
+                        
+                        digits = (info as NSString).substring(with: numberRange)
+                        if !self.isDigitString(digits, trimWhitespace: true){
+                            //handle error
+                            success = false
+                            stop.pointee = true
+                            return
+                        }
+                        
+                        //Create Line
+                        line = BILine(context: moc)
+                        
+                        //Number
+                        line?.number = (digits as NSString).integerValue as NSNumber
+                        if self.bidPeriod?.firstLineNumber?.intValue == 0{
+                            self.bidPeriod?.firstLineNumber = line?.number
+                        }
+                        // Add the lines to the pilot lines dictionary for using in reading round 2 bidding trips
+                        pLines[line?.number as! Int] = line
+                        
+                        //Type - Hard, Reserve or Blank
+                        switch info.character(at: typeCharIndex){
+                        case "H":
+                            if self.bidPeriod?.isFirstRoundBid() == true{
+                                line?.type = BILineType.LineTypeHardConus.rawValue as NSNumber
+                            }else{
+                                line?.type = BILineType.HardLineType.rawValue as NSNumber
+                            }
+                            break
+                        case "R":
+                            line?.type = BILineType.ReserveLineType.rawValue as NSNumber
+                            break
+                        case " ":
+                            line?.type = BILineType.BlankLineType.rawValue as NSNumber
+                            break
+                        case "M":
+                            line?.type = BILineType.MixedLineType.rawValue as NSNumber
+                            break
+                        default:
+                            //handle error
+                            success = false
+                            stop.pointee = true
+                            return
+                        }
+                        
+                        //Type - ETOPS
+                        if info.length > 80{
+                            let c = info[info.index(info.startIndex, offsetBy: typetopsCharIndex)]
+                            let EtopsStr = String(c)
+                            if EtopsStr == "E"{
+                                line?.isETOPS = true
+                                if line?.type?.intValue == BILineType.ReserveLineType.rawValue{
+                                    line?.isETOPSRES = true
+                                    line?.isETOPS = false
+                                }else{
+                                    line?.isETOPSRES = false
+                                }
+                                // If line type is mixedlinetype(contains both normal and reserve trips) then we need to consider the lines as Etops Reserve line
+                                if line?.type?.intValue == BILineType.MixedLineType.rawValue{
+                                    line?.isETOPSRES = true
+                                    line?.isETOPS = false
+                                }
+                            }else{
+                                line?.isETOPS = false
+                                line?.isETOPSRES = false
+                            }
+                        }else{
+                            line?.isETOPS = false
+                            line?.isETOPSRES = false
+                        }
+                        
+                        if self.bidPeriod?.isEtopsLinesContainsInBid?.intValue == 1 {
+                            
+                            // Non-reserve ETOPS
+                            if line?.isETOPS?.intValue == 1, line?.type?.intValue != BILineType.ReserveLineType.rawValue {
+                                line?.type = NSNumber(value: BILineType.LineTypeNonReserveEtops.rawValue)
+                            }
+                            
+                            // Non-ETOPS Reserve
+                            if line?.type?.intValue == BILineType.ReserveLineType.rawValue, line?.isETOPS?.intValue == 0, line?.isETOPSRES?.intValue == 0 {
+                                line?.type = NSNumber(value: BILineType.LineTypeNonEtopsReserve.rawValue)
+                            }
+                            
+                            // ETOPS Reserve
+                            if line?.type?.intValue == BILineType.ReserveLineType.rawValue, line?.isETOPS?.intValue == 1 {
+                                line?.type = NSNumber(value: BILineType.LineTypeEtopsReserve.rawValue)
+                            }
+                            
+                            // Non-ETOPS Hard CONUS
+                            if line?.type?.intValue == BILineType.LineTypeHardConus.rawValue, line?.isETOPS?.intValue == 0 {
+                                line?.type = NSNumber(value: BILineType.LineTypeNonEtopsConUs.rawValue)
+                            }
+                            
+                            // Non-ETOPS Hard (2nd round)
+                            if self.bidPeriod?.isSecondRoundBid() == true, line?.type?.intValue == BILineType.HardLineType.rawValue, line?.isETOPS?.intValue == 0 {
+                                line?.type = NSNumber(value: BILineType.LineTypeNonEtopsHard.rawValue)
+                            }
+                            
+                            // Non-ETOPS Mixed (2nd round)
+                            if self.bidPeriod?.isSecondRoundBid() == true, line?.type?.intValue == BILineType.MixedLineType.rawValue, line?.isETOPS?.intValue == 0 {
+                                line?.type = NSNumber(value: BILineType.LineTypeNonEtopsMixed.rawValue)
+                            }
+                        }
+                        
+                        //Pay
+                        digits = (info as NSString).substring(with: payIntegerRange)
+                        if !self.isDigitString(digits, trimWhitespace: false){
+                            //handle error
+                            success = false
+                            stop.pointee = true
+                            return
+                        }
+                        pay = digits.floatValue
+                        digits = (info as NSString).substring(with: payFractionRange)
+                        if !self.isDigitString(digits, trimWhitespace: false){
+                            //handle error
+                            success = false
+                            stop.pointee = true
+                            return
+                        }
+                        pay += digits.floatValue / 60
+                        line?.pay = pay as NSNumber
+                        
+                        // actualPay is used for assingning linepay after vacation turnoff.
+                        line?.actualPay = pay as NSNumber
+                        line?.tripTfp = line?.actualPay
+                        line?.vTpLPay = line?.lineRig
+                        
+                        //Block minutes
+                        digits = (info as NSString).substring(with: blockHoursRange)
+    
+                        if !self.isDigitString(digits, trimWhitespace: true){
+                            //handle error
+                            success = false
+                            stop.pointee = true
+                            return
+                        }
+                        blockMinutes = (digits as NSString).integerValue * 60
+                        digits = (info as NSString).substring(with: blockMinutesRange)
+                        if !self.isDigitString(digits, trimWhitespace: true){
+                            //handle error
+                            success = false
+                            stop.pointee = true
+                            return
+                        }
+                        blockMinutes += (digits as NSString).integerValue
+                        line?.blockMinutes = blockMinutes as NSNumber
+                        
+                        // actual blockMinutes is used for assingning linepay after vacation turnoff.
+                        line?.actualBlockMinutes = blockMinutes as NSNumber
+                        
+                        //Read Trips
+                        if !self.readTripsForLine(line: line!, record: info){
+                            //handle error
+                            success = false
+                            stop.pointee = true
+                            return
+                        }
+                        
+                        //Set bid period
+                        line?.bidPeriod = self.bidPeriod
+                    }
+                    isContinuedLine = info.character(at: continuedLineCharIndex) == "C"
+                
+            }
+        }catch{
+            print("Error reading file: \(error)")
+        }
+        return success
+    
     }
     
     //MARK: Read Trips file FA
     private func readTripsFA() -> Bool{
         var success = true
-        let moc = CoreDataManager().persistentContainer.newBackgroundContext()
+        let moc = self.moc
         moc.undoManager = nil
         let tripsDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.tripFileName)
         if !FileManager.default.fileExists(atPath: tripsDataFileURL.path){
@@ -648,52 +885,52 @@ class BIBidInfoReader{
     
     //MARK: Read Lines file FA
     private func readLinesFA() -> Bool{
-        let app = UIApplication.shared.delegate as! AppDelegate
+        
         var success = true
-        let moc = CoreDataManager.shared.persistentContainer.newBackgroundContext()
+        let moc = self.moc
         let linesDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.lineFileName)
         if !FileManager.default.fileExists(atPath: linesDataFileURL.path){
             return false}
         do{
             let linesData = try NSString(contentsOf: linesDataFileURL, encoding: String.Encoding.utf8.rawValue)
-            
-     
 
-            
             var numberRange = NSRange(location: 4, length: 3)
             let storedValue = UserDefaults.standard.string(forKey: "PSFileFormatChange")
             if storedValue != nil {
-                if !app.isHistoricBid{
-                    if Int(storedValue!) == 0{
-                        print("Old format")
-                        numberRange = NSRange(location: 4, length: 3)
-                    }else{
-                        print("New format")
-                        numberRange = NSRange(location: 3, length: 4)
+                DispatchQueue.main.async {
+                    let app = UIApplication.shared.delegate as! AppDelegate
+                    if !app.isHistoricBid{
+                        if Int(storedValue!) == 0{
+                            print("Old format")
+                            numberRange = NSRange(location: 4, length: 3)
+                        }else{
+                            print("New format")
+                            numberRange = NSRange(location: 3, length: 4)
+                        }
                     }
-                }
-                else{
-                    var dateComponents1 = DateComponents()
-                    dateComponents1.day = 1
-                    dateComponents1.month = app.mockDataMonth
-                    dateComponents1.year = app.mockDataYear
-                    
-                    var dateComponents2 = DateComponents()
-                    dateComponents2.day = 1
-                    dateComponents2.month = Int(storedValue!)
-                    dateComponents2.year = 2024
-                    
-                    let calendar = Calendar(identifier: .gregorian)
-                    let date1 = calendar.date(from: dateComponents1)!
-                    let date2 = calendar.date(from: dateComponents2)!
-                    
-                    let result =  date1.compare(date2)
-                    if result == .orderedAscending{
-                        print("Date 1 is earlier than Date 2 - Old Format")
-                        numberRange = NSRange(location: 4, length: 3)
-                    }else{
-                        print("Date 1 is later than Date 2 - New Format")
-                        numberRange = NSRange(location: 3, length: 4)
+                    else{
+                        var dateComponents1 = DateComponents()
+                        dateComponents1.day = 1
+                        dateComponents1.month = app.mockDataMonth
+                        dateComponents1.year = app.mockDataYear
+                        
+                        var dateComponents2 = DateComponents()
+                        dateComponents2.day = 1
+                        dateComponents2.month = Int(storedValue!)
+                        dateComponents2.year = 2024
+                        
+                        let calendar = Calendar(identifier: .gregorian)
+                        let date1 = calendar.date(from: dateComponents1)!
+                        let date2 = calendar.date(from: dateComponents2)!
+                        
+                        let result =  date1.compare(date2)
+                        if result == .orderedAscending{
+                            print("Date 1 is earlier than Date 2 - Old Format")
+                            numberRange = NSRange(location: 4, length: 3)
+                        }else{
+                            print("Date 1 is later than Date 2 - New Format")
+                            numberRange = NSRange(location: 3, length: 4)
+                        }
                     }
                 }
             }else{
@@ -722,19 +959,25 @@ class BIBidInfoReader{
             var counter = 0
             var line:BILine?
             var moreLinesToRead = true
-//            var prevLine:BILine? = nil
+            var prevLine:BILine? = nil
             
             while moreLinesToRead{
                 
                 //Start new line
                 if lineFile.hasPrefix("C"){
                     counter += 1
+                    if let lineNum = line?.number{
+                        print("Line num: \(lineNum)")
+                    }else{
+                        print("Line num is nil")
+                    }
+                    //MARK:  need to check
                     if counter%10 == 0{
                         if moc.hasChanges{
                             do{
                                 try moc.save()
                             }catch{
-                                print("Error saving context: \(error)")
+                                print("Error saving context: \(error.localizedDescription)")
                                 //handle error
                                 success = false
                                 return false
@@ -743,7 +986,7 @@ class BIBidInfoReader{
                     }
                     if (line != nil){
                         self.initDerivedPropertiesForLine(line: line!, isReprocessing: false)
-//                        prevLine = line
+                        prevLine = line
                     }
                     
                     digits = lineFile.substring(with: numberRange) as String
@@ -754,10 +997,15 @@ class BIBidInfoReader{
                     }
                     
                     line = BILine(context: moc)
-                    let bidPeriod = try moc.existingObject(with: self.bidPeriod!.objectID) as! BIBidPeriod              // crashes due to nil value need to check
+                    let bidPeriod = try moc.existingObject(with: self.bidPeriod!.objectID) as? BIBidPeriod
+                    
                     line?.bidPeriod = bidPeriod
-                    bidPeriod.bidByEmpID = self.dataSource.employeeNumber
-                    line?.number = Int(digits)! as NSNumber
+                    bidPeriod?.bidByEmpID = self.dataSource.employeeNumber
+                    
+                    //Number
+                    
+                    line?.number = (digits as NSString).integerValue as NSNumber
+
                     if self.bidPeriod?.firstLineNumber?.intValue == 0 {
                         self.bidPeriod?.firstLineNumber = line?.number
                     }
@@ -805,7 +1053,7 @@ class BIBidInfoReader{
                 }else if lineFile.hasPrefix("A"){
                     line?.type = BILineType.ReserveLineType.name() as NSNumber
                     //Read trips
-                    if !self.readTripsForLine(line: line!, record: lineFile, isReserve: false){
+                    if !self.readTripsForLine(line: line!, record: lineFile, isReserve: true){
                         //handle error
                         success = false
                         return false
@@ -856,7 +1104,7 @@ class BIBidInfoReader{
         line.coHoli = 0
         line.isFA31thLineVacationCalculated = false
         line.isFA25thLineVacationCalculated = false
-        let moc = CoreDataManager.shared.persistentContainer.newBackgroundContext()
+        let moc = self.moc
         let amExpression = NSExpression(format: "SUBQUERY(trips, $TRIP, $TRIP.info.amPM == 1).@count")
         let amTripsCount = amExpression.expressionValue(with: line, context: nil) as? NSNumber
         let pmExpression = NSExpression(format: "SUBQUERY(trips, $TRIP, $TRIP.info.amPM == 2).@count")
@@ -892,15 +1140,15 @@ class BIBidInfoReader{
     
     private func readTripsForLine(line:BILine, record:NSString, isReserve:Bool) -> Bool{
         var success = true
-        let moc = CoreDataManager.shared.persistentContainer.newBackgroundContext()
+        let moc = self.moc
         var tripInfo:BITripInfo?
         var trip:BITrip?
         let tripInterval = 19
         var tripNumRange = NSRange(location: 0, length: 0)
         var tripDateRange = NSRange(location: 0, length: 0)
         var tripStartDayRange = NSRange(location: 0, length: 0)
-//        var tripMonthDateRange = NSRange(location: 0, length: 0)
-//        var tripYearRange = NSRange(location: 0, length: 0)
+        var tripMonthDateRange = NSRange(location: 0, length: 0)
+        var tripYearRange = NSRange(location: 0, length: 0)
         var tripPosRange = NSRange(location: 0, length: 0)
         let tripResvStartRange = NSRange(location: 24, length: 4)
         let tripResvEndRange = NSRange(location: 35, length: 4)
@@ -913,8 +1161,8 @@ class BIBidInfoReader{
             tripNumRange = NSRange(location: 12, length: 4)
             tripDateRange = NSRange(location: 17, length: 7)
             tripStartDayRange = NSRange(location: 17, length: 2)
-//            tripMonthDateRange = NSRange(location: 19, length: 3)
-//            tripYearRange = NSRange(location: 22, length: 2)
+            tripMonthDateRange = NSRange(location: 19, length: 3)
+            tripYearRange = NSRange(location: 22, length: 2)
             
             let tripNumber = record.substring(with: tripNumRange)
             trip = BITrip(context: moc)
@@ -1001,46 +1249,48 @@ class BIBidInfoReader{
             
             if self.isSecondRoundBid(){
                 let timeZoneStr = CBUtils.rawTimeZoneString(forAirportCode: (self.bidPeriod?.base)!)
-                let departHHMM = BITrip.staticTime(for: trip!, line: line, key: "depart", timeZone: timeZoneStr!)
+                let departHHMM = BITrip.staticTimeForReserveType(trip: trip!, line: line, key: "depart", timeZone: timeZoneStr!)
                 
                 if departHHMM != nil{
                     
                     //parse hours and minutes from the "HHmm" format
                     let hourString = departHHMM?.substring(to: 2)
-                    let minuteString = departHHMM?.substring(to: 2)
+                    let minuteString = departHHMM?.substring(from: 2)
                     let hour = Int(hourString!)
                     let minute = Int(minuteString!)
                     
                     // Create calendar and components from original date
                     var calendar = Calendar(identifier: .gregorian)
-                    calendar.locale = .current
                     calendar.timeZone = TimeZone(identifier: "GMT")!
                     
-                    var dateComponents = calendar.dateComponents([.day,.month,.year], from: trip?.startDate ?? Date())
+                    var dateComponents = calendar.dateComponents([.day,.month,.year], from: (trip?.startDate)!)
                     dateComponents.hour = hour
                     dateComponents.minute = minute
                     
-                    trip?.startDate = calendar.date(from: dateComponents)
+                    if let updatedDate = calendar.date(from: dateComponents) {
+                        trip?.startDate = updatedDate
+                    }
                 }
-                let arriveHHMM = BITrip.staticTime(for: trip!, line: line, key: "arrive", timeZone: timeZoneStr!)
+                let arriveHHMM = BITrip.staticTimeForReserveType(trip: trip!, line: line, key: "arrive", timeZone: timeZoneStr!)
                 
                 if arriveHHMM != nil{
                     
                     let hourString = arriveHHMM?.substring(to: 2)
-                    let minuteString = arriveHHMM?.substring(to: 2)
+                    let minuteString = arriveHHMM?.substring(from: 2)
                     let hour = Int(hourString!)
                     let minute = Int(minuteString!)
                     
                     // Create calendar and components from original date
                     var calendar = Calendar(identifier: .gregorian)
-                    calendar.locale = .current
                     calendar.timeZone = TimeZone(identifier: "GMT")!
                     
-                    var dateComponents = calendar.dateComponents([.day,.month,.year], from: trip?.endDate ?? Date())
+                    var dateComponents = calendar.dateComponents([.day,.month,.year], from: (trip?.endDate)!)
                     dateComponents.hour = hour
                     dateComponents.minute = minute
                     
-                    trip?.endDate = calendar.date(from: dateComponents)
+                    if let updatedDate = calendar.date(from: dateComponents) {
+                        trip?.endDate = updatedDate
+                    }
                     
                     if trip?.endDate?.compare((trip?.startDate)!) == .orderedAscending{
                         var calendar = Calendar(identifier: .gregorian)
@@ -1057,8 +1307,8 @@ class BIBidInfoReader{
             tripDateRange = NSRange(location: 16, length: 7)
             tripPosRange = NSRange(location: 30, length: 1)
             tripStartDayRange = NSRange(location: 16, length: 2)
-//            tripMonthDateRange = NSRange(location: 18, length: 3)
-//            tripYearRange = NSRange(location: 21, length: 2)
+            tripMonthDateRange = NSRange(location: 18, length: 3)
+            tripYearRange = NSRange(location: 21, length: 2)
             
             while tripNumRange.location < 69{
                 
@@ -1208,10 +1458,10 @@ class BIBidInfoReader{
             digits = String(record2[dayPayIntRange!])
             
                 //Reserve trips have leading space for pay
-                if tripInfo.number?.character(at: 1) == "W"{
+                if let c = tripInfo.number?.dropFirst().first, c <= "W" {
                     digits = digits.trimmingCharacters(in: .whitespaces)
                 }
-                if !self.isDigitString(digits, trimWhitespace: false){
+                if !self.isDigitString(digits, trimWhitespace: true){
                     return false
                 }
                 var pay = (digits as NSString).floatValue
@@ -1246,7 +1496,7 @@ class BIBidInfoReader{
     }
     
     //MARK: leg info properties with record5 and record6
-    private func readLegInfoForTrips(tripInfo:BITripInfo, record5:String, record6:String, context:NSManagedObjectContext) -> Bool{
+    private func readLegsInfoForTripInfo(tripInfo:BITripInfo, record5:String, record6:String, context:NSManagedObjectContext) -> Bool{
         var day = tripInfo.firstDay
         var prevLeg : BILegInfo?
         //Get max possible number of legs in record5 and 6
@@ -1378,6 +1628,12 @@ class BIBidInfoReader{
         return true
     }
     
+    //MARK: read trips for line
+    private func readTripsForLine(line:BILine, record:String) -> Bool{
+        return true
+    }
+    
+    
     private func isFABid() -> Bool {
         let isFABid = BICrewPositionType.FlightAttendant.rawValue == self.dataSource.position.rawValue
         return isFABid
@@ -1411,8 +1667,10 @@ class BIBidInfoReader{
     private func matchesTripNumberFormat(tripNumber:String) ->Bool{
         return tripNumber.range(of: tripNumberRegex, options: .regularExpression) != nil
     }
+    
     private func isDigitString(_ string: String, trimWhitespace: Bool) -> Bool {
-        let trimmed = trimWhitespace ? string.trimmingCharacters(in: .whitespacesAndNewlines) : string
-        return !trimmed.isEmpty && trimmed.allSatisfy { $0.isNumber }
+        
+        let trimmed = trimWhitespace ? string.trimmingCharacters(in: .whitespaces) : string
+        return trimmed.rangeOfCharacter(from: nonDigitCharacters) == nil
     }
 }
