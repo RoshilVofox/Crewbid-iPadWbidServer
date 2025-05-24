@@ -96,6 +96,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         onLaunch = true
         IQKeyboardManager.shared.isEnabled = true
         CBUtils.loadUserDefaults()
+        APIService.shared.getApplicationLoadData()
 //        FirebaseApp.configure()
 //        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(false)
 //        Crashlytics.crashlytics().checkForUnsentReports { hasUnsentReports in

@@ -301,6 +301,19 @@ extension BILine {
 
 extension BILine : Identifiable {
 
+    var orderedTrips:[Any] {
+        let allTrips = self.trips?.allObjects ?? []
+        let orderedDays = allTrips.sorted {
+            guard
+                let date1 = ($0 as AnyObject).value(forKeyPath: "startDate") as? Date,
+                let date2 = ($1 as AnyObject).value(forKeyPath: "startDate") as? Date
+            else {
+                return false
+            }
+            return date1 < date2
+        }
+        return orderedDays
+    }
 }
 
 @objc enum BILineSortCategory : Int {

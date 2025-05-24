@@ -19,7 +19,7 @@ extension BIBidPeriod {
     @NSManaged public var appVersion: String?
     @NSManaged public var aWeekDays: String?
     @NSManaged public var base: String?
-    @NSManaged public var baseLine: NSObject?
+    @NSManaged public var baseLine: NSData?
     @NSManaged public var bidLineNumbers: NSObject?
     @NSManaged public var bidListLineCount: NSNumber?
     @NSManaged public var bidPackageErrorDisplayed: NSNumber?
