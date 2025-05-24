@@ -64,7 +64,7 @@ class BIBidInfoReader{
     var intlCities:[String:Any] = [:]
 //    var moc:NSManagedObjectContext?
     
-    func readBidData(){
+    func readBidData() ->Bool{
         if !self.isFABid() && self.isSecondRoundBid(){
             // check paper bid user vacation
         }
@@ -83,7 +83,13 @@ class BIBidInfoReader{
             if success{
                 print("Done Reading Trips FA")
                 success = self.readLinesFA()
-                if success{ print("Done Reading Lines FA")}
+                if success{
+                    print("Done Reading Lines FA")
+                    DispatchQueue.main.async {
+                                    NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+                                }
+                 
+                }
             }
             
             //needs code here
@@ -96,15 +102,16 @@ class BIBidInfoReader{
                 success = self.readLines()
                 if success{
                     print("Done Reading Lines")
-                }
-                
-                DispatchQueue.main.async {
-                    NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+                    DispatchQueue.main.async {
+                                    NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+                                }
+                  
                 }
             }
             
             //needs code here
         }
+        return success
     }
     
     //MARK: initialize Reading Variables
@@ -168,7 +175,7 @@ class BIBidInfoReader{
         
     }
     
-    //MARK: Read Trips file - done
+    //MARK: Read Trips file
     private func readTrips() -> Bool{
         var success = true
         
@@ -389,7 +396,7 @@ class BIBidInfoReader{
         return success
     }
     
-    //MARK: Read Lines file - done
+    //MARK: Read Lines file
     private func readLines() -> Bool{
         var success = true
         let moc = self.moc
@@ -629,7 +636,7 @@ class BIBidInfoReader{
     
     }
     
-    //MARK: Read Trips file FA
+    //MARK: Read Trips file FA - done
     private func readTripsFA() -> Bool{
         var success = true
         let moc = self.moc
@@ -674,7 +681,7 @@ class BIBidInfoReader{
             var continueProcessing: Bool = true
             
             if moc.persistentStoreCoordinator?.persistentStores.count == 0{
-                //neeeds code
+                //handle error
                 success = false
                 continueProcessing = false
                 return false
@@ -724,7 +731,8 @@ class BIBidInfoReader{
                         return false
                     }
                     tripInfo?.number = tripNumber as? String
-                    //PAY
+                    
+                    //Pay
                     let digits = fileString.substring(with: TRIP_PAY_RANGE)
                     let tripPay:Float = digits.floatValue/60
                     tripInfo?.faPay = tripPay as NSNumber
@@ -735,6 +743,7 @@ class BIBidInfoReader{
                     tripInfo?.debriefMinutes = 30
                 }else if fileString.hasPrefix(LEG_START as String){
                    leg = BILegInfo(context: moc)
+                    
                     //Check if leg is red eye
                     if fileString.substring(with: NSRange(location: 74, length: 1)) == "0"{
                         leg?.isRedEyeFlight = true
@@ -775,7 +784,9 @@ class BIBidInfoReader{
                     leg?.arriveCity = arriveCity
                     
                     //Hawaii cities
-                    //MARK: needs code
+                    if let hawaiiCities = UserDefaults.standard.array(forKey: kCBHawaiiCitiesList) as? [String],hawaiiCities.contains(arriveCity) {
+                        tripInfo?.isETOPS = true
+                    }
                     
                     //Arrive minutes
                     digits = fileString.substring(with: NSRange(location: 42, length: 4))
@@ -873,9 +884,6 @@ class BIBidInfoReader{
             if success{
                 self.trips = faTrips
             }
-            DispatchQueue.main.async {
-                NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
-            }
         } catch {
             print("Failed to read file: \(error)")
             success = false
@@ -959,19 +967,12 @@ class BIBidInfoReader{
             var counter = 0
             var line:BILine?
             var moreLinesToRead = true
-            var prevLine:BILine? = nil
             
             while moreLinesToRead{
                 
                 //Start new line
                 if lineFile.hasPrefix("C"){
                     counter += 1
-                    if let lineNum = line?.number{
-                        print("Line num: \(lineNum)")
-                    }else{
-                        print("Line num is nil")
-                    }
-                    //MARK:  need to check
                     if counter%10 == 0{
                         if moc.hasChanges{
                             do{
@@ -986,7 +987,6 @@ class BIBidInfoReader{
                     }
                     if (line != nil){
                         self.initDerivedPropertiesForLine(line: line!, isReprocessing: false)
-                        prevLine = line
                     }
                     
                     digits = lineFile.substring(with: numberRange) as String
@@ -1003,9 +1003,9 @@ class BIBidInfoReader{
                     bidPeriod?.bidByEmpID = self.dataSource.employeeNumber
                     
                     //Number
-                    
+                   
                     line?.number = (digits as NSString).integerValue as NSNumber
-
+                
                     if self.bidPeriod?.firstLineNumber?.intValue == 0 {
                         self.bidPeriod?.firstLineNumber = line?.number
                     }
@@ -1041,6 +1041,7 @@ class BIBidInfoReader{
                     line?.actualBlockMinutes = blockMinutes as NSNumber
                     
                 }
+                
                 else if lineFile.hasPrefix("T"){
                     line?.type = BILineType.LineTypeHardConus.name() as NSNumber
                     
@@ -1074,13 +1075,103 @@ class BIBidInfoReader{
                 if lineFile.range(of: "").location != NSNotFound{
                     moreLinesToRead = false
                 }
+                
             }// while end
+            let linesFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Line")
+            linesFetch.sortDescriptors = [NSSortDescriptor(key: "number", ascending: true)]
+            let objResults = try moc.fetch(linesFetch)
+            
+            for case let line as BILine in objResults{
+                for case let trip as BITrip in line.orderedTrips{
+                    let tripOrderedDays = (trip.info?.orderedDays)!
+                    for case let dayInfo as BIDayInfo in tripOrderedDays{
+                        let dayOrderedLegs = dayInfo.orderedLegs
+                        for case let legInfo as BILegInfo in dayOrderedLegs{
+                            let arriveCity = (legInfo.arriveCity)!
+                            let isIntlCity = self.intlCities[arriveCity]
+                            if isIntlCity != nil{
+                                line.type = BILineType.LineTypeHardNonConus.rawValue as NSNumber
+                            }
+                            if legInfo.isEtopsFlight?.boolValue == true{
+                                line.isETOPS = true
+                            }
+                            else{
+                                if line.isETOPS == false{
+                                    line.isETOPS = false
+                                }
+                            }
+                        }
+                    }
+                }
+                if self.bidPeriod?.isEtopsLinesContainsInBid?.intValue == 1{
+                    if (self.bidPeriod?.isSecondRoundBid())! && line.isETOPS?.intValue == 1 && !(line.type?.intValue == BILineType.ReserveLineType.rawValue){
+                        line.type = BILineType.LineTypeNonReserveEtops.rawValue as NSNumber
+                    }
+                    if (self.bidPeriod?.isSecondRoundBid())! && line.type?.intValue == BILineType.ReserveLineType.rawValue && line.isETOPS?.intValue == 0{
+                        line.type = BILineType.LineTypeNonEtopsReserve.rawValue as NSNumber
+                    }
+                    if line.type?.intValue == BILineType.LineTypeHardConus.rawValue && line.isETOPS?.intValue == 0{
+                        line.type = BILineType.LineTypeNonEtopsConUs.rawValue as NSNumber
+                    }
+                    if line.type?.intValue == BILineType.LineTypeHardNonConus.rawValue && line.isETOPS?.intValue == 0{
+                        line.type = BILineType.LineTypeNonEtopsNonConUs.rawValue as NSNumber
+                    }
+                    if (self.bidPeriod?.isFirstRoundBid())! && line.isETOPS?.intValue == 1{
+                        line.type = BILineType.LineTypeEtopsFAFirstRound.rawValue as NSNumber
+                    }
+                }
+
+            }
+            
+            self.initDerivedPropertiesForLine(line: line!, isReprocessing: false)
+            if success && moc.hasChanges {
+                do{
+                    try moc.save()
+                }catch{
+                    //handle error
+                    print("Error saving line: \(error.localizedDescription)")
+                    success = false
+                }
+            }
+            self.saveToDictionary(context: moc)
         }catch{
             print("Error reading line file: \(error.localizedDescription)")
         }
         return success
     }
 
+    private func saveToDictionary(context:NSManagedObjectContext){
+        
+        var linesDictionary:[NSNumber: [String: Any]] = [:]
+        for case let line as BILine in (self.bidPeriod?.lines)!{
+            var dataDictionary:[String:Any] = [:]
+            let entityName = line.entity.name ?? ""
+            if let entityDescription = NSEntityDescription.entity(forEntityName: entityName, in: context){
+                let attributes = entityDescription.attributesByName
+                for key in attributes.keys{
+                    if let value = line.value(forKey: key){
+                        dataDictionary[key] = value
+                    }
+                }
+                linesDictionary[line.number!] = dataDictionary
+            }
+        }
+        let userdata: Data?
+        do {
+            userdata = try NSKeyedArchiver.archivedData(withRootObject: linesDictionary, requiringSecureCoding: false)
+        } catch {
+            print("Archiving failed: \(error)")
+            userdata = nil
+        }
+        self.bidPeriod?.baseLine = userdata as? NSData
+        if context.hasChanges{
+            do{
+                try context.save()
+            }catch{
+                print("Error saving context: \(error)")
+            }
+        }
+    }
     
     private func initDerivedPropertiesForLine(line:BILine, isReprocessing:Bool){
         self.thanksgivingDay = CBUtils.thanksgivingDay(for: self.bidPeriod?.year?.intValue ?? 2025)

@@ -130,6 +130,8 @@ let kCBTimeZoneSetting = "CBTimeZoneSetting"
 let kCBInternationalCitiesDict = "CBInternationalCitiesDict"
 let kCBAllCitiesList = "CBAllCitiesList"
 let KCBDefaultSeniorityListTableDBValues = "CBDefaultSeniorityListTableDBValues"
+let kCBHawaiiCitiesList = "CBHawaiiCitiesList"
+let kCBNonConusCitiesList = "CBNonConusCitiesList"
 public enum HTTPStatusCode: Int {
     case `continue` = 100,
     switchingProtocols = 101

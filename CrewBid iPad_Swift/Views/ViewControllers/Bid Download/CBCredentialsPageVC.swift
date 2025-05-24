@@ -80,23 +80,25 @@ class CBCredentialsPageVC: BaseViewController {
             let filename = bidInfo.bidDataFilename()
             print("Filename: \(filename)")
             let fileDownloader = BIBidFileDownload()
-            DispatchQueue.main.async {
-                NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
-            }
+            
             fileDownloader.downloadBidFiles(sessionKey: sessionKey, filename: filename){ result in
                 switch result{
                 case .success(let fileURL):
                     DispatchQueue.main.async {
-                                    NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
-                                }
+                        NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
+                    }
+                    
                     print("File unzipped at: \(fileURL)")
                     DispatchQueue.global(qos: .userInitiated).async {
-                        BIBidInfoReader().readBidData()
+                        if BIBidInfoReader().readBidData(){
+                            DispatchQueue.main.async {
+                                NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+//                                self.loginActions()
+                            }
+                        }
+                        
                     }
-//                    DispatchQueue.main.async {
-//                        NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
-//                    }
-//                    self.loginActions()
+                   
                 case .failure(let error):
                     NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
                     print("Failed: \(error.localizedDescription)")

@@ -71,5 +71,17 @@ extension BIDayInfo {
 }
 
 extension BIDayInfo : Identifiable {
-
+    var orderedLegs: [Any] {
+        let allLegs = self.legs?.allObjects ?? []
+        let orderedLegs = allLegs.sorted {
+            guard
+                let minutes1 = ($0 as AnyObject).value(forKey: "departMinutes") as? Int,
+                let minutes2 = ($1 as AnyObject).value(forKey: "departMinutes") as? Int
+            else {
+                return false
+            }
+            return minutes1 < minutes2
+        }
+        return orderedLegs
+    }
 }

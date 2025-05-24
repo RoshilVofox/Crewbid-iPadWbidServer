@@ -163,6 +163,10 @@ class CBUtils{
                              "LIR" : "YES",
                              "BZE" : "YES"]
     
+    static let hawaiiCities = ["HNL","ITO","LIH","KOA","OGG"]
+    
+    static let ncCities = ["SJU"]
+    
     static let CPRound1:[String : Any] = ["AbscenceTypeEnd" : 75,
                            "AbscenceTypeSt" : 74,
                            "AbsenceDatesEnd" : 87,
@@ -263,6 +267,9 @@ class CBUtils{
         }
         if defaults.object(forKey: KCBDefaultSeniorityListTableDBValues) == nil{
             defaults.set(CBUtils.arrayDetails, forKey: KCBDefaultSeniorityListTableDBValues)
+        }
+        if defaults.object(forKey: kCBHawaiiCitiesList) == nil{
+            defaults.set(CBUtils.hawaiiCities, forKey: kCBHawaiiCitiesList)
         }
     }
  

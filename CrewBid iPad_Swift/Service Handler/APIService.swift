@@ -46,6 +46,58 @@ class APIService{
     static let shared = APIService()
     private init() {}
     
+    func getApplicationLoadData(){
+        let app = UIApplication.shared.delegate as! AppDelegate
+        let url = EndPoint.shared.getapplicationLoadDatas
+        var urlRequest = URLRequest(url: URL(string: url)!)
+        var dict:[String:Any] = [:]
+        dict["FromApp"] = 5
+        let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: [])
+        let jsonString = String(data: jsonData!, encoding: .utf8)
+        urlRequest.httpBody = jsonString?.data(using: .utf8)
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        
+        URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
+            if let httpResponse = response as? HTTPURLResponse,let mimeType = response?.mimeType,httpResponse.statusCode == 200,mimeType.contains("application/json") {
+                do {
+                    if let res = try JSONSerialization.jsonObject(with: data!, options: .mutableLeaves) as? [String: Any] {
+                        
+                        // Handle IsNeedtoEnableVacationDifference
+                        if let isNeedToEnableVacationDifference = res["IsNeedtoEnableVacationDifference"] as? Bool {
+                            UserDefaults.standard.set(isNeedToEnableVacationDifference, forKey: "IsNeedtoEnableVacationDifference")
+                        }
+
+                        // Handle PSFileFormatChange
+                        if let isNeedToEnableFourDigitForFA = res["PSFileFormatChange"] as? NSNumber {
+                            UserDefaults.standard.set(isNeedToEnableFourDigitForFA, forKey: "PSFileFormatChange")
+                            UserDefaults.standard.synchronize()
+                            print("Value set in UserDefaults successfully.")
+                        } else {
+                            print("Value is nil. Cannot set in UserDefaults.")
+                        }
+
+                        // Handle FlightDataVersion
+                        if let flightDataVersion = res["FlightDataVersion"] as? String {
+                            let currentVersion = UserDefaults.standard.string(forKey: "FlightDataVersion")
+                            if currentVersion != flightDataVersion {
+                                UserDefaults.standard.setValue(flightDataVersion, forKey: "FlightDataVersion")
+                                UserDefaults.standard.setValue(0, forKey: "IsLatestFlightDataDownloaded")
+                            }
+                        }
+                    }
+                } catch {
+                    print("Error decoding JSON: \(error)")
+                }
+                
+            } else {
+                UserDefaults.standard.set(5, forKey: "PSFileFormatChange")
+            }
+        }.resume()
+    }
+    
+    
+    
     //MARK: Auth check for EmpID
     func checkAuthentication(bodyData: [String:Any],completion: @escaping (Result<AuthResult, NetworkError>) ->Void){
         guard let url = URL(string: EndPoint.shared.GetCrewBidAuthorization) else {
