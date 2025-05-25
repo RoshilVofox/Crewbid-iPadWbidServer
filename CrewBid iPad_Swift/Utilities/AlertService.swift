@@ -55,4 +55,49 @@ class AlertService{
         }
         return attributedString
     }
+    
+    func showAlertForTopVC(title: String?,
+                   message: String?,
+                   actions: [(title: String, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Void)?)]? = nil) {
+        
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        if let actionArray = actions, !actionArray.isEmpty {
+            for actionData in actionArray {
+                let action = UIAlertAction(title: actionData.title, style: actionData.style, handler: actionData.handler)
+                alert.addAction(action)
+            }
+        } else {
+            // Default OK action
+            let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert.addAction(okAction)
+        }
+        
+        if let currentTopVC = currentTopViewController() {
+            currentTopVC.present(alert, animated: true, completion: nil)
+        }
+    }
+
+    
+    func currentTopViewController() -> UIViewController? {
+        // Get the connected scenes
+        guard let windowScene = UIApplication.shared.connectedScenes
+                .filter({ $0.activationState == .foregroundActive })
+                .compactMap({ $0 as? UIWindowScene })
+                .first,
+              let window = windowScene.windows
+                .first(where: { $0.isKeyWindow }),
+              var topController = window.rootViewController else {
+            return nil
+        }
+        
+        // Traverse presented view controllers
+        while let presentedVC = topController.presentedViewController {
+            topController = presentedVC
+        }
+        
+        return topController
+    }
+
+
 }

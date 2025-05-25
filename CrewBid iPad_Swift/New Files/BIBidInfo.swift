@@ -7,6 +7,8 @@
 
 import Foundation
 
+typealias BIFinishedBlock = () -> Void
+
 protocol BIBidInfoDataSource {
     var userid: String { get set }
     var password: String { get set }
