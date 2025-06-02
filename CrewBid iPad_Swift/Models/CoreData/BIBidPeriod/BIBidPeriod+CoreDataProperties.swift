@@ -353,4 +353,16 @@ extension BIBidPeriod : Identifiable {
         let isSecondRoundBid = dataSource.round == 2
         return isSecondRoundBid
     }
+    func addTextFile(withText text: String, name: String) {
+        let textFile = BITextFile(context: self.managedObjectContext!)
+        textFile.text = text
+        textFile.name = name
+        addToTextFiles(textFile)
+    }
+    
+    func textFile(withName name: String) -> BITextFile? {
+        let predicate = NSPredicate(format: "name == %@", name)
+        let filtered = textFiles!.filtered(using: predicate)
+        return filtered.first as? BITextFile
+    }
 }

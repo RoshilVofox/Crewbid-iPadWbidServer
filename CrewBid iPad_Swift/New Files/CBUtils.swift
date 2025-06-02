@@ -286,6 +286,21 @@ class CBUtils{
         }
         return yearToReturn
     }
+    
+    static func numberOfDays(in month: Int, for year: Int) -> Int {
+        var components = DateComponents()
+        components.year = year
+        components.month = month
+
+        let calendar = Calendar.current
+
+        if let date = calendar.date(from: components),
+           let range = calendar.range(of: .day, in: .month, for: date) {
+            return range.count
+        }
+
+        return 0
+    }
     class func AppVersion() -> String{
         return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     }

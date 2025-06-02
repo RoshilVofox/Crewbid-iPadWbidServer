@@ -62,7 +62,8 @@ class BIBidInfoReader{
     var thanksgivingDay: UInt = 0
     var includeDroppedTrips:Bool?
     var intlCities:[String:Any] = [:]
-//    var moc:NSManagedObjectContext?
+    var dateComponents: DateComponents?
+    var defaultEmployeeNumber: String?
     
     func readBidData() ->Bool{
         if !self.isFABid() && self.isSecondRoundBid(){
@@ -86,13 +87,26 @@ class BIBidInfoReader{
                 if success{
                     print("Done Reading Lines FA")
                     DispatchQueue.main.async {
-                                    NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
-                                }
-                 
+                        NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+                    }
                 }
+                if success{
+                    if let app = UIApplication.shared.delegate as? AppDelegate{
+                        if app.isHistoricBid{
+                            success = true
+                        }else{
+                            success = self.readTextFiles()
+                        }
+                    }
+                }
+                if success && self.isFirstRoundBid(){
+                    //vacation scan
+                }
+                if success && self.isSecondRoundBid(){
+                    //vacation scan
+                }
+                
             }
-            
-            //needs code here
             
         }else{
             success = self.readTrips()
@@ -100,6 +114,46 @@ class BIBidInfoReader{
                 print("Done Reading Trips")
                 
                 success = self.readLines()
+                
+                if success && self.isSecondRoundBid(){
+//                    success = self.addSecondRoundTripsForBidPeriod()
+                }
+                if success{
+                    if let app = UIApplication.shared.delegate as? AppDelegate{
+                        if app.isHistoricBid{
+                            success = true
+                        }else{
+//                            success = self.readTripLegsPay()
+                        }
+                    }
+                    if let lines = self.bidPeriod?.lines?.allObjects as? [BILine] {
+                        for line in lines {
+//                            self.updateEndDateForRedEyeTrips(line)
+//                            self.initRigRelatedPropertiesForLine(line, isReprocessing:false)
+                        }
+                    }
+                }
+                if success{
+//                    self.addDefaultFilterRules(self.moc)
+                }
+                
+                if success{
+                    if let app = UIApplication.shared.delegate as? AppDelegate{
+                        if app.isHistoricBid{
+                            success = true
+                        }else{
+                            success =  self.readTextFiles()
+                        }
+                    }
+                }
+                if success{
+                    // needs code- seniority
+                }
+                
+                if success{
+                    //calculate workblock details
+                }
+                
                 if success{
                     print("Done Reading Lines")
                     DispatchQueue.main.async {
@@ -108,8 +162,6 @@ class BIBidInfoReader{
                   
                 }
             }
-            
-            //needs code here
         }
         return success
     }
@@ -252,7 +304,7 @@ class BIBidInfoReader{
                     //Record 2
                     // Day overnight cities and pay.
                 case "2":
-                    if !self.readDaysInfoTripsInfoRecord2(tripInfo: tripInfo!, record2: info, context: moc){
+                    if !self.readDaysInfoTripsInfoRecord2(tripInfo: tripInfo!, record2: info){
                         //handle error
                         success = false
                         stop.pointee = true
@@ -360,7 +412,7 @@ class BIBidInfoReader{
                         record6 += String(info[range])
                         // If this is the last record6, read legs info
                         if record6.length/legInfoRange.length == record6Count{
-                            if !self.readLegsInfoForTripInfo(tripInfo: tripInfo!, record5: record5, record6: record6, context: moc){
+                            if !self.readLegsInfoForTripInfo(tripInfo: tripInfo!, record5: record5, record6: record6){
                                 //handle error
                                 success = false
                                 stop.pointee = true
@@ -1226,7 +1278,172 @@ class BIBidInfoReader{
             }
             let ETC = CBExceedingTripCalculation()
             let minRigVal = ETC.calculateExceedingTripRig(line: line, calendarData: self.calendarData, minRig: Float(minRig))
+            if line.pay!.doubleValue < minRig{
+                if !isReprocessing{
+                    line.lineRig = NSNumber(value: minRigVal - line.pay!.floatValue)
+                    line.pay = minRigVal as NSNumber
+                    line.vTpLPay = NSNumber(value: (line.lineRig!.floatValue) + (line.vVacationPay!.floatValue))
+                    
+                }else{
+                    if self.includeDroppedTrips!{
+                        line.lineRig = NSNumber(value: minRigVal - line.actualPay!.floatValue)
+                        line.pay = minRigVal as NSNumber
+                        line.vTpLPay = NSNumber(value: line.lineRig!.floatValue + line.vVacationPay!.floatValue)
+                    }
+                }
+            }
+        }else{
+            let minRigVal:Float = 0
+            self.calculateFARigValue(minRigVal: minRigVal, line: line, reprocessing: isReprocessing)
+            if line.faReserveLineType!.intValue > 0{
+                self.calculateFAReserveRigValue(minRigVal: minRigVal, line: line, reprocessing: isReprocessing)
+            }
         }
+        
+        //Week day and month bits
+        if self.dateComponents == nil{
+            self.dateComponents = DateComponents()
+            self.dateComponents?.year = self.bidPeriod?.year?.intValue
+            self.dateComponents?.month = self.bidPeriod?.month?.intValue
+            self.dateComponents?.hour = 12
+        }
+        var weekdayBits: UInt = 0
+        var monthBits: UInt64 = 0
+        var tripStartMonthBits: UInt64 = 0
+        var tripEndMonthBits: UInt64 = 0
+        var weekdays = [Int](repeating: 0, count: 7)
+        for i in 0..<7{
+            weekdays[i] = 0
+        }
+        let numDaysInBidMonth = CBUtils.numberOfDays(in: (self.dateComponents?.month)!, for: (self.dateComponents?.year)!)
+        var numAircraftChanges = 0
+        var numLegs = 0
+        var numReserveDays = 0
+        var tripNumLegs = 0
+        var maxLegsInADay = 0
+        var numWorkDays = 0
+        var lineTafbMinutes = 0
+        var commutesRequired = 0
+        var passesThruBase = 0
+        var midTripPTBs = 0
+        var overnightsInBase = 0
+        var aircraftType8MaxCount = 0
+        var aircraftType7MaxCount = 0
+        var aircraftType800Count = 0
+        var aircraftType700Count = 0
+        var etopsTripsCount = 0
+        var earliestDepartureTime = 2400
+        var latestArrivalTime = 0
+        var dutyMinutes = 0
+        var dayNumLegs = 0
+        var vacationBlockMinutes = 0
+        var lineBlockMinutes = 0
+        var deadheadsCount = 0
+        var deadheadsAtStartCount = 0
+        var deadheadsAtEndCount = 0
+        var overlapDaysCount = 0
+        let minimumOvernightMinsPlaceholder = 1_000_000
+        var minimumOvernightMinutes = minimumOvernightMinsPlaceholder
+        var maximumOvernightMinutes = 0
+        var redeyesCount = 0
+        var faPay: CGFloat = 0
+        let base = self.bidPeriod!.base
+        var tripStartDates: [Date] = []
+        var tripEndDates: [Date] = []
+        
+        var df = DateFormatter()
+        let appCal = self.calendarData.bidPeriodCalendar()
+        var dayComponent = DateComponents()
+        var faPosition = BIFaPosition.FaPositionNA
+        var isFirstTrip = true
+        var faPosIsMultiple = false
+        var containsNonConUSLeg = false
+        var nonConUSLegs = 0
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale(identifier: "en_US")
+        calendar.timeZone = TimeZone(identifier: "US/Central")!
+        var departDateReport:Date?
+        var report = ""
+        var release = ""
+        var departFormatter = DateFormatter()
+        departFormatter.dateFormat = "HHmm"
+        var arriveFormatter = DateFormatter()
+        arriveFormatter.dateFormat = "HHmm"
+        
+        for case let trip as BITrip in line.trips!{
+            // Figure out the FA position of the line (A,B,C,D,M,NA)
+            if bidPeriod!.isFABid() {
+                if !faPosIsMultiple {
+                    if let tripPosRaw = trip.position?.intValue {
+                        let tripPos = BIFaPosition(rawValue: tripPosRaw)
+                        
+                        if let tripPos = tripPos {
+                            if isFirstTrip {
+                                faPosition = tripPos
+                                isFirstTrip = false
+                            }
+
+                            if faPosition != tripPos {
+                                faPosition = .FaPositionMultiple
+                                faPosIsMultiple = true
+                            } else {
+                                faPosition = tripPos
+                            }
+                        }
+                    }
+                }
+            }
+            var tripNumLegs = 0
+            
+            // Don't include the trip in any of the line calculations if it is dropped.
+            // AND if the user doesn't want to include them in the calculation
+            if isReprocessing && trip.vacationOverlapType?.intValue != 0{
+                if self.includeDroppedTrips!{
+                    trip.dropForFiltersSorts = false
+                }else{
+                    trip.dropForFiltersSorts = true
+                    continue
+                }
+            }
+            let startDay = trip.startDay?.intValue
+            let tripLength = trip.info?.calendarDaysCount?.intValue
+            
+            tripStartDates.append(trip.startDate!)
+            dayComponent.day = tripLength! - 1 // Weekday calculation below relies on this.
+            tripEndDates.append(appCal.date(byAdding: dayComponent, to: trip.startDate!)!)
+            df.dateFormat = "ddMMMyy"
+            var dateComps = DateComponents()
+            dateComps.year = trip.line?.bidPeriod?.year?.intValue
+            dateComps.month = trip.line?.bidPeriod?.month?.intValue
+            dateComps.day = trip.startDay?.intValue
+            
+            // Calculate the trip startWeekday and trip endWeekday for the commuting filter
+            let endWeekDay = tripEndDates.last
+            let startWeekdayComps = appCal.component(.weekday, from: trip.startDate!)
+            trip.startWeekday = startWeekdayComps as NSNumber
+            
+            let endWeekDayComps = appCal.component(.weekday, from: endWeekDay!)
+            trip.endWeekday = endWeekDayComps as NSNumber
+            df.dateFormat = "ddMMM"
+            var tf = DateFormatter()
+            tf.dateFormat = "HHmm"
+            
+            var departDate: Date?
+            var arriveDate: Date?
+            var blockMinutes = 0
+            var groundMinutes = 0
+            var dayBlockMinutes = 0
+            var dayDutyMinutes = 0
+            var tripBlockMinutes = 0
+            var tripDutyMinutes = 0
+            var containsMidTripPTB = false
+            let tripOrderedDays = trip.info?.orderedDays
+            var dayCount = 0
+//            var monthBitIndex = self.calendarData
+            
+            // needs code
+        }
+        
     }
     
     private func readTripsForLine(line:BILine, record:NSString, isReserve:Bool) -> Bool{
@@ -1519,9 +1736,10 @@ class BIBidInfoReader{
     }
     
     //MARK: trip info properties with record 2
-    private func readDaysInfoTripsInfoRecord2(tripInfo:BITripInfo, record2:String, context:NSManagedObjectContext) -> Bool{
+    private func readDaysInfoTripsInfoRecord2(tripInfo:BITripInfo, record2:String) -> Bool{
         var prevDay:BIDayInfo?
         var overNightsInBase = 0
+        let moc = self.moc
         let base = UserDefaults.standard.string(forKey: kCBCrewBaseDefaultKey)
         for dayIndex in 0..<tripMaxDaysCount {
             let cityRangeStart = dayCityRangeLocation + dayIndex * dayInterval
@@ -1568,7 +1786,7 @@ class BIBidInfoReader{
                 pay += (digits as NSString).floatValue / 60
                 
                 //Create day
-                let dayInfo = BIDayInfo(context: context)
+                let dayInfo = BIDayInfo(context: moc)
                 dayInfo.city = city
                 dayInfo.pay = pay as NSNumber
                 dayInfo.trip = tripInfo
@@ -1587,7 +1805,8 @@ class BIBidInfoReader{
     }
     
     //MARK: leg info properties with record5 and record6
-    private func readLegsInfoForTripInfo(tripInfo:BITripInfo, record5:String, record6:String, context:NSManagedObjectContext) -> Bool{
+    private func readLegsInfoForTripInfo(tripInfo:BITripInfo, record5:String, record6:String) -> Bool{
+        let moc = self.moc
         var day = tripInfo.firstDay
         var prevLeg : BILegInfo?
         //Get max possible number of legs in record5 and 6
@@ -1597,7 +1816,7 @@ class BIBidInfoReader{
         
         //Read the legs
         for legIndex in 0..<maxLegs{
-            let leg = BILegInfo(context: context)
+            let leg = BILegInfo(context: moc)
             var isDutyBreak:Bool = false
             var range = NSRange(location: legDepartMinutesRangeLocation + legRecord5Interval * legIndex, length: legDepartMinutesRangeLength)
             let departRange = Range(range, in: record5)!
@@ -1724,6 +1943,166 @@ class BIBidInfoReader{
         return true
     }
     
+    private func calculateFARigValue(minRigVal:Float, line: BILine, reprocessing:Bool){
+        if line.pay!.floatValue < minRigVal{
+            if !reprocessing{
+                line.lineRig = NSNumber(value: minRigVal - line.pay!.floatValue)
+                line.pay = minRigVal as NSNumber
+                line.vTpLPay = NSNumber(value: line.lineRig!.floatValue + line.vVacationPay!.floatValue)
+            }else{
+                if self.includeDroppedTrips!{
+                    line.lineRig = NSNumber(value: minRigVal - line.pay!.floatValue)
+                    line.pay = minRigVal as NSNumber
+                    line.vTpLPay = NSNumber(value: line.lineRig!.floatValue + line.vVacationPay!.floatValue)
+                }
+            }
+        }
+    }
+    
+    private func calculateFAReserveRigValue(minRigVal:Float, line: BILine, reprocessing:Bool){
+        var lineRigValue:Float = 0
+        if let rig = line.lineRig, rig.floatValue != 0 {
+            lineRigValue = (rig.floatValue)
+        }
+        let payValue = line.pay!.floatValue - lineRigValue
+        if line.pay!.floatValue != minRigVal{
+            line.pay = payValue as NSNumber
+        }
+        if line.pay!.floatValue < minRigVal{
+            if !reprocessing{
+                line.lineRig = NSNumber(value: minRigVal - line.pay!.floatValue)
+                line.pay = minRigVal as NSNumber
+                line.vTpLPay = NSNumber(value: line.lineRig!.floatValue + line.vVacationPay!.floatValue)
+            }else{
+                if self.includeDroppedTrips!{
+                    line.lineRig = NSNumber(value: minRigVal - line.pay!.floatValue)
+                    line.pay = minRigVal as NSNumber
+                    line.vTpLPay = NSNumber(value: line.lineRig!.floatValue + line.vVacationPay!.floatValue)
+                }
+            }
+        }
+    }
+    
+    private func readTextFiles() -> Bool{
+        let directoryURL = BIBidInfo().downloadDirectory()
+        
+        //Cover Letter
+        var textFileURL = directoryURL.appendingPathComponent(self.coverLetterFileName())
+        var text = ""
+        if self.isFABid(){
+            text = try! String(contentsOf: textFileURL, encoding: .ascii)
+        }else{
+            text = try! String(contentsOf: textFileURL, encoding: .utf8)
+            if text.isEmpty{
+                text = try! String(contentsOf: textFileURL, encoding: .windowsCP1252)
+            }
+        }
+        if !text.isEmpty{
+            self.bidPeriod?.addTextFile(withText: text, name: "Cover Letter")
+        }else{
+            let app = UIApplication.shared.delegate as! AppDelegate
+            if app.isMockData{
+                return true
+            }
+            return false
+        }
+        
+        //Seniority List
+        textFileURL = directoryURL.appendingPathComponent(self.seniorityListFileName())
+        text = try! String(contentsOf: textFileURL, encoding: .utf8)
+        if text.isEmpty{
+            text = try! String(contentsOf: textFileURL, encoding: .windowsCP1252)
+        }
+        if !text.isEmpty{
+            self.bidPeriod?.addTextFile(withText: text, name: "Seniority List")
+        }else{
+            //handle error
+            return false
+        }
+        
+        //Lines text
+        textFileURL = directoryURL.appendingPathComponent(self.linesTextFilename())
+        text = try! String(contentsOf: textFileURL, encoding: .utf8)
+        if !text.isEmpty{
+            self.bidPeriod?.addTextFile(withText: text, name: "Lines Text")
+        }else{
+            //handle error
+            return false
+        }
+        
+        //Trips Text
+        textFileURL = directoryURL.appendingPathComponent(self.tripsTextFilename()!)
+        text = try! String(contentsOf: textFileURL, encoding: .utf8)
+        if !text.isEmpty{
+            self.bidPeriod?.addTextFile(withText: text, name: "Trips Text")
+        }else{
+            //handle error
+            return false
+        }
+        
+        //FA Memo text
+        if self.isFABid(){
+            textFileURL = directoryURL.appendingPathComponent(self.faMemoTextFilename())
+            text = try! String(contentsOf: textFileURL, encoding: .ascii)
+            if !text.isEmpty{
+                self.bidPeriod?.addTextFile(withText: text, name: "FA Memo")
+            }
+        }
+        
+        //Save context
+        if self.moc.hasChanges {
+            do{
+                try self.moc.save()
+            }catch{
+                print("Error saving context: \(error)")
+                return false
+            }
+        }
+        return true
+    }
+    
+    private func coverLetterFileName() -> String {
+        let bidRoundStr: String
+        if isFirstRoundBid() {
+            bidRoundStr = "C"
+        } else {
+            bidRoundStr = isFABid() ? "CR" : "R"
+        }
+        return "\(textFileNameBase())\(bidRoundStr).TXT"
+    }
+    
+    private func seniorityListFileName() -> String {
+        let bidRoundStr: String
+        if isFirstRoundBid() {
+            bidRoundStr = "S"
+        } else {
+            bidRoundStr = isFABid() ? "SR" : "R"
+        }
+        return "\(textFileNameBase())\(bidRoundStr).TXT"
+    }
+    
+    private func linesTextFilename() -> String {
+        // 'N' for second round, 'L' for first round
+        let bidRoundChar: Character = isSecondRoundBid() ? "N" : "L"
+        return "\(textFileNameBase())\(bidRoundChar).TXT"
+    }
+    
+    private func textFileNameBase() ->String{
+        return "\(self.dataSource.base)\(self.dataSource.position.shortName)"
+    }
+    
+    private func tripsTextFilename() -> String? {
+        if isSecondRoundBid() && !isFABid() {
+            return nil
+        }
+        let tripTextChar: Character = (isSecondRoundBid() && isFABid()) ? "T" : "P"
+        return "\(textFileNameBase())\(tripTextChar).TXT"
+    }
+    
+    private func faMemoTextFilename() -> String {
+        let faMemoSuffix = (isSecondRoundBid() && isFABid()) ? "OR" : "O"
+        return "\(textFileNameBase())\(faMemoSuffix).TXT"
+    }
     
     private func isFABid() -> Bool {
         let isFABid = BICrewPositionType.FlightAttendant.rawValue == self.dataSource.position.rawValue

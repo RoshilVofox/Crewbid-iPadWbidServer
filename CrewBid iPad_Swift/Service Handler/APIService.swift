@@ -36,6 +36,13 @@ extension NetworkError {
         }
     }
 }
+
+extension NetworkError: LocalizedError {
+    var errorDescription: String? {
+        return self.localizedDescriptionString
+    }
+}
+
 struct AuthResult{
     let isSomehowSubscribed:Bool
     let message:String?
@@ -47,7 +54,7 @@ class APIService{
     private init() {}
     
     func getApplicationLoadData(){
-        let app = UIApplication.shared.delegate as! AppDelegate
+//        let app = UIApplication.shared.delegate as! AppDelegate
         let url = EndPoint.shared.getapplicationLoadDatas
         var urlRequest = URLRequest(url: URL(string: url)!)
         var dict:[String:Any] = [:]
