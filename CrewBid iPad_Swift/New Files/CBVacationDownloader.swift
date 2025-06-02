@@ -253,7 +253,7 @@ class CBVacationDownloader: NSObject {
             }
             // Debug print as string (optional)
             if let responseString = String(data: data as Data, encoding: .utf8) {
-                print("Mutable Response String: \(responseString)")
+//                print("Mutable Response String: \(responseString)")
                 do {
                     if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                         if let fileName = json["FileName"], !(fileName is NSNull) {
@@ -353,11 +353,11 @@ class CBVacationDownloader: NSObject {
                 do {
                     if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                         let pilotInfo = json["PilotInfo"] as! [String: Any] //]["HasAccount"]
-                        let hasAccount = pilotInfo["HasAccount"]
-                        if hasAccount as! Int == 0 {
+                        let hasAccount = (pilotInfo["HasAccount"] as? String == "1")
+                        if hasAccount == false {
                             print("No swaptimizer account")
                         }
-                        else if hasAccount as! Int == 1 {
+                        else {
                             print("Mutable Response String: \(responseString)")
                         }
                     }
@@ -370,27 +370,28 @@ class CBVacationDownloader: NSObject {
         task.resume()
     }
     
-//    MARK: callToSetAutoDownloadOrValidateForWBID()
+    //    MARK: callToSetAutoDownloadOrValidateForWBID()
     func callToSetAutoDownloadOrValidateForWBID(jsonData: [String: Any]) {
         if(isAutoDownload) {
             storeWBIDVacation(jsonData: jsonData)
         }
         else {
+
             validateWBIDVacation(jsonData: jsonData)
         }
     }
     
-//    MARK: callToSetAutoDownloadOrValidateFor FA vacation()
-       func callToSetAutoDownloadOrValidateForFA(jsonData: [String: Any]) {
-           if(isAutoDownload) {
-               storeFAVacation(jsonData: jsonData)
-           }
-           else {
-               validateFAVacation(jsonData: jsonData)
-           }
-       }
+    //    MARK: callToSetAutoDownloadOrValidateFor FA vacation()
+    func callToSetAutoDownloadOrValidateForFA(jsonData: [String: Any]) {
+        if(isAutoDownload) {
+            storeFAVacation(jsonData: jsonData)
+        }
+        else {
+            validateFAVacation(jsonData: jsonData)
+        }
+    }
     
-//    MARK: storeWBIDVacation()
+    //    MARK: storeWBIDVacation()
     func storeWBIDVacation(jsonData: [String: Any]) {
         let file = jsonData["File"] as! [String: Any]
         let topLevel = file["SWAPtimizer_CrewBid_Data"] as! [String: Any]
@@ -412,35 +413,37 @@ class CBVacationDownloader: NSObject {
         
     }
     
-//    MARK: validateWBIDVacation
+    //    MARK: validateWBIDVacation
     func validateWBIDVacation(jsonData: [String: Any]) {
         let status = jsonData["Status"] as! [String: Any]
         let pilotInfo = jsonData["PilotInfo"] as! [String: Any]
         let configInfo = jsonData["ConfigInfo"] as! [String: Any]
         let statusCode = status["Code"] as! String
         let statusMsg = status["Msg"] as! String
-        let hasAccount = (pilotInfo["HasAccount"] as? NSNumber)?.boolValue ?? false
+        let hasAccount = (pilotInfo["HasAccount"] as? String == "1")
         let dataAvailable = (pilotInfo["DataAvailable"] as? NSNumber)?.boolValue ?? false
         let hasVacation = (pilotInfo["HasVacation"] as? NSNumber)?.boolValue ?? false
-        let pilotIdentifier = (pilotInfo["Pilot"] as? NSNumber)?.intValue ?? 0
-        let yearMonth = pilotInfo["YearMonth"] as! String
+        //        let pilotIdentifier = pilotInfo["Pilot"] as? NSNumber)?.intValue ?? 0
+        let pilotIdentifier = Int(pilotInfo["Pilot"] as? String ?? "") ?? 0
+        
+        let yearMonth = configInfo["YearMonth"] as! String
         let vacayYear = Int(yearMonth.prefix(4)) ?? 0
         let vacayMonth = Int(yearMonth.dropFirst(4).prefix(2)) ?? 0
         let secretEnabled = self.bidPeriod?.secretSwitchOn
         
         if !(statusCode == "SUCCESS") {
-            AlertService().showAlertForTopVC(title: "WBidmax Server Error", message: "\(statusMsg)\nWBidmax vacation usually releases data the evening of the 4th or morning of the 5th. If you are seeing this error before data release, please try again after data has been released.", actions: nil)
+            AlertService.showAlertForTopVC(title: "WBidmax Server Error", message: "\(statusMsg)\nWBidmax vacation usually releases data the evening of the 4th or morning of the 5th. If you are seeing this error before data release, please try again after data has been released.", actions: nil)
             self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
         }
         else if (pilotIdentifier != self.bidPeriod?.swaptimizerIdentifier?.intValue && !(secretEnabled == "YES")) {
             //    The bid package for the wrong pilot got downloaded
-            AlertService().showAlertForTopVC(title: "WBidmax Error", message: "The WBidmax user ID \(pilotIdentifier) does not match the pilot for whom the bid package was downloaded \(String(describing: self.bidPeriod?.swaptimizerIdentifier)).", actions: nil)
+            AlertService.showAlertForTopVC(title: "WBidmax Error", message: "The WBidmax user ID \(pilotIdentifier) does not match the pilot for whom the bid package was downloaded \(String(describing: self.bidPeriod?.swaptimizerIdentifier)).", actions: nil)
             self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.dataNotAvailable.rawValue as NSNumber)
         }
         else if ((self.bidPeriod?.month?.intValue)! - vacayMonth == 1 || (self.bidPeriod?.month?.intValue == 1 && vacayMonth == 12)) {
             // New bid period but old month's data, so data is not yet available.
             // Alert view telling the user data is not yet available, check back later
-            AlertService().showAlertForTopVC(title: "Data Not Yet Available", message: "WBidMax vacation data is not yet available. Check back later via the Bid Actions menu(top right).", actions: nil)
+            AlertService.showAlertForTopVC(title: "Data Not Yet Available", message: "WBidMax vacation data is not yet available. Check back later via the Bid Actions menu(top right).", actions: nil)
             self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.dataNotAvailable.rawValue as NSNumber)
         }
         else if !(hasVacation) {
@@ -452,24 +455,24 @@ class CBVacationDownloader: NSObject {
             else {
                 user = String(describing: self.bidPeriod?.swaptimizerIdentifier)
             }
-            AlertService().showAlertForTopVC(title: "No Vacation", message: "No vacation next month for user \(user)", actions: nil)
+            AlertService.showAlertForTopVC(title: "No Vacation", message: "No vacation next month for user \(user)", actions: nil)
             self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.notApplicable.rawValue as NSNumber )
         }
         else if (hasVacation && !hasAccount) {
-            AlertService().showAlertForTopVC(title: "No MAX Subscription!", message: "We see that you have vacation this month, but you do not have a Max subscription.\nA Max subscription will give you access to the highly acclaimed WBidMax vacation predictions.\nTo get a Max subscription, go to www.crewbidmax.com and get a Max subscription.")
+            AlertService.showAlertForTopVC(title: "No MAX Subscription!", message: "We see that you have vacation this month, but you do not have a Max subscription.\nA Max subscription will give you access to the highly acclaimed WBidMax vacation predictions.\nTo get a Max subscription, go to www.crewbidmax.com and get a Max subscription.")
             self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.noAccount.rawValue as NSNumber )
         }
         else if (hasVacation && hasAccount && !dataAvailable)
         {
             // Alert view telling the user data is not yet available, check back later
-            AlertService().showAlertForTopVC(title: "Data Not Yet Available", message: "WBidMax vacation data is not yet available. Check back later via the Bid Actions menu(top right).")
+            AlertService.showAlertForTopVC(title: "Data Not Yet Available", message: "WBidMax vacation data is not yet available. Check back later via the Bid Actions menu(top right).")
             self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.dataNotAvailable.rawValue as NSNumber)
         }
         else if (hasVacation && hasAccount && dataAvailable)
         {
             // Check to make sure the data received is the proper file
             let seat = pilotInfo["Seat"] as! String
-            let round = pilotInfo["Round"] as! Int
+            let round = Int(configInfo["Round"] as? String ?? "") ?? 0
             let vacayBase = pilotInfo["Base"] as! String
             var rawValue = (self.bidPeriod?.positionType?.intValue)!
             var positionType = BICrewPositionType(rawValue: rawValue)!
@@ -477,31 +480,31 @@ class CBVacationDownloader: NSObject {
             
             if !(self.bidPeriod?.secretSwitchOn == "YES") {
                 if vacayMonth != self.bidPeriod?.month?.intValue ?? 0 {
-                    AlertService().showAlertForTopVC(title: "WBidmax Error", message: "The WBidmax data month \(vacayMonth) is not the same as the bid period month \(String(describing: self.bidPeriod?.month))")
+                    AlertService.showAlertForTopVC(title: "WBidmax Error", message: "The WBidmax data month \(vacayMonth) is not the same as the bid period month \(String(describing: self.bidPeriod?.month))")
                     self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
                 }
                 else if (vacayYear != self.bidPeriod?.year?.intValue) {
-                    AlertService().showAlertForTopVC(title: "WBidmax Error", message: "The WBidmax data year \(vacayYear) is not the same as the bid period year \(String(describing: self.bidPeriod?.year)).")
+                    AlertService.showAlertForTopVC(title: "WBidmax Error", message: "The WBidmax data year \(vacayYear) is not the same as the bid period year \(String(describing: self.bidPeriod?.year)).")
                     self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
                 }
                 else if !(vacayBase == self.bidPeriod?.base) {
-                    AlertService().showAlertForTopVC(title: "WBidmax Error", message: "The WBidmax data base \(vacayBase) is not the same as the bid period year \(String(describing: self.bidPeriod?.base)).")
+                    AlertService.showAlertForTopVC(title: "WBidmax Error", message: "The WBidmax data base \(vacayBase) is not the same as the bid period crew base \(String(describing: self.bidPeriod?.base)).")
                     self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
                 }
                 else if !(shortName == seat) {
-                    AlertService().showAlertForTopVC(title: "WBidmax Error", message: "The vacation data position \(seat) is not the same as the bid period position \(shortName).)")
+                    AlertService.showAlertForTopVC(title: "WBidmax Error", message: "The vacation data position \(seat) is not the same as the bid period position \(shortName).)")
                     self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
                 }
                 else if (self.bidPeriod?.round?.intValue == 2 && round == 1)
                 {
                     // It's round 2 but SWAPtimizer has not yet released round 1 data
                     // Alert view telling the user data is not yet available, check back later
-                    AlertService().showAlertForTopVC(title: "Data Not Yet Available", message: "WBidMax vacation data is not yet available. Check back later via the Bid Actions menu(top right).")
+                    AlertService.showAlertForTopVC(title: "Data Not Yet Available", message: "WBidMax vacation data is not yet available. Check back later via the Bid Actions menu(top right).")
                     self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.dataNotAvailable.rawValue as NSNumber)
                 }
                 else if (round != self.bidPeriod?.round?.intValue)
                 {
-                    AlertService().showAlertForTopVC(title: "WBidmax Error", message: "The vacation data round \(round) is not the same as the bid period round \(String(describing: self.bidPeriod?.round))")
+                    AlertService.showAlertForTopVC(title: "WBidmax Error", message: "The vacation data round \(round) is not the same as the bid period round \(String(describing: self.bidPeriod?.round))")
                     self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
                 }
                 else
@@ -515,15 +518,15 @@ class CBVacationDownloader: NSObject {
                     let fileMonth = header["BidPeriodMonth"] as! Int
                     
                     if (fileRound != round) {
-                        AlertService().showAlertForTopVC(title: "WBidmax File Mismatch", message: "The vacation round \(round) and WBidmax data file round \(fileRound) are mismatched. Perhaps you didn't bid a blank line?")
+                        AlertService.showAlertForTopVC(title: "WBidmax File Mismatch", message: "The vacation round \(round) and WBidmax data file round \(fileRound) are mismatched. Perhaps you didn't bid a blank line?")
                         self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
                     }
                     else if (fileYear != vacayYear) {
-                        AlertService().showAlertForTopVC(title: "WBidmax File Mismatch", message: "The vacation year \(vacayYear) and WBidmax data file year \(fileYear) are mismatched. Perhaps you didn't bid a blank line?")
+                        AlertService.showAlertForTopVC(title: "WBidmax File Mismatch", message: "The vacation year \(vacayYear) and WBidmax data file year \(fileYear) are mismatched. Perhaps you didn't bid a blank line?")
                         self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
                     }
                     else if (fileMonth != vacayMonth) {
-                        AlertService().showAlertForTopVC(title: "WBidmax File Mismatch", message: "The vacation month \(vacayMonth) and WBidmax data file month \(fileMonth) are mismatched. Perhaps you didn't bid a blank line?")
+                        AlertService.showAlertForTopVC(title: "WBidmax File Mismatch", message: "The vacation month \(vacayMonth) and WBidmax data file month \(fileMonth) are mismatched. Perhaps you didn't bid a blank line?")
                         self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
                     }
                     else {
@@ -561,7 +564,7 @@ class CBVacationDownloader: NSObject {
                 let header = topLevel["Header"] as! [String: Any]
                 
                 let moc = self.bidPeriod?.managedObjectContext
-                let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid;
+                let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid ?? "WBID"
                 if (vacationType == "WBID") {
                     self.bidPeriod?.wbFileIntent = header["FileIdent"] as? String
                 }
@@ -654,7 +657,7 @@ class CBVacationDownloader: NSObject {
         }
     }
     
-//    MARK: vaccation pay diffrence
+    //    MARK: vaccation pay diffrence
     func vacationPayDiffrence(jsonData: [String: Any]) {
         let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid ?? "WBID"
         var totalVacationPay = ""
@@ -706,6 +709,55 @@ class CBVacationDownloader: NSObject {
     }
     
     func vacationPayDiffrenceFA(jsonData: [String: Any]) {
+        let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid ?? "FAVacation"
+        var totalVacationPay = ""
+        var lineName = ""
+        
+        if vacationType == "FAVacation" || vacationType == "FAVacationF" || vacationType == "FAVacationEomOnly" {
+            totalVacationPay = "TotalVacationPay"
+            lineName = "Line1"
+        }
+        
+        let lines = self.bidPeriod?.lines?.allObjects as? [AnyObject] ?? []
+        var sortedLines = (lines as NSArray).sortedArray(using: [
+            NSSortDescriptor(key: "number", ascending: true)
+        ])
+        let notBlankPredicate = NSPredicate(format: "type != %d", BILineType.BlankLineType.rawValue)
+        sortedLines = (sortedLines as NSArray).filtered(using: notBlankPredicate) as? [AnyObject] ?? []
+        let file = jsonData["File"] as! [String: Any]
+        let toplevel = file["SWAPtimizer_CrewBid_Data"] as! [String: Any]
+        let vacayLines = toplevel["Lines"] as! [[String: Any]]
+        
+        //        if(sortedLines.count == vacayLines.count) {
+        var vEnumerator = vacayLines.makeIterator()
+        for line in sortedLines as! [BILine] {
+            let vLine = vEnumerator.next()
+            guard let lineNumber = line.number?.intValue else { continue }
+  
+            let resultArray = vacayLines.filter { ($0[lineName] as? Int ?? 0) == lineNumber }
+            if resultArray.isEmpty {
+                print("No match found for line \(lineNumber), JSON lines: \(vacayLines)")
+            }
+            else {
+                let vLineNumber = (vLine?[lineName] as? Int) ?? (vLine?[lineName] as? NSNumber)?.intValue ?? 0
+                if(vLineNumber == line.number?.intValue) {
+                    let lineData = vLine?["LineData"] as! [String: Any]
+                    if vacationType == "FAVacation" {
+                        line.vWBVacPay =  NSNumber(value: (lineData[totalVacationPay] as? NSNumber)?.floatValue ?? 0.0)
+                    }
+                }
+            }
+        }
+        DispatchQueue.main.async {
+            if let context = self.bidPeriod?.managedObjectContext {
+                do {
+                    try context.save()
+                } catch {
+                    print("Failed to save context: \(error)")
+                }
+            }
+        }
+        //        }
         
     }
     func finishBlock(withSwaptimizerStatus swaptimizerStatus: NSNumber?) {
@@ -737,11 +789,460 @@ class CBVacationDownloader: NSObject {
     }
     
     func validateFAVacation(jsonData: [String: Any]) {
-       
+        let status = jsonData["Status"] as! [String: Any]
+        let pilotInfo = jsonData["PilotInfo"] as! [String: Any]
+        let configInfo = jsonData["ConfigInfo"] as! [String: Any]
+        let statusCode = status["Code"] as! String
+        //        let statusMsg = status["Msg"] as! String
+        let hasAccount = (pilotInfo["HasAccount"] as? String == "1")
+        let dataAvailable = (pilotInfo["DataAvailable"] as? NSNumber)?.boolValue ?? false
+        let hasVacation = (pilotInfo["HasVacation"] as? NSNumber)?.boolValue ?? false
+        //        let pilotIdentifier = (pilotInfo["Pilot"] as? NSNumber)?.intValue ?? 0
+        let yearMonth = pilotInfo["YearMonth"] as! String
+        let vacayYear = Int(yearMonth.prefix(4)) ?? 0
+        let vacayMonth = Int(yearMonth.dropFirst(4).prefix(2)) ?? 0
+        let secretEnabled = self.bidPeriod?.secretSwitchOn
+        
+        if !(statusCode == "SUCCESS") {
+            AlertService.showAlertForTopVC(title: "Crewbid Alert", message: "Vacation Files are NOT yet ready, check back in 2 more hours.", actions: nil)
+            self.finishBlock(withSwaptimizerStatus: nil)
+        }
+        else if ((self.bidPeriod?.month?.intValue)! - vacayMonth == 1 || (self.bidPeriod?.month?.intValue == 1 && vacayMonth == 12)) {
+            // New bid period but old month's data, so data is not yet available.
+            // Alert view telling the user data is not yet available, check back later
+            AlertService.showAlertForTopVC(title: "Data Not Yet Available", message: "Vacation data is not yet available. Check back later.", actions: nil)
+            self.finishBlock(withSwaptimizerStatus: nil)
+        }
+        else if !(hasVacation) {
+            // Display StatusMsg to the user, there's an error
+            var user = ""
+            user = String(describing: self.bidPeriod?.swaptimizerIdentifier)
+            AlertService.showAlertForTopVC(title: "No Vacation", message: "No vacation next month for user \(user)", actions: nil)
+            self.finishBlock(withSwaptimizerStatus: nil )
+        }
+        else if (hasVacation && hasAccount && !dataAvailable)
+        {
+            // Alert view telling the user data is not yet available, check back later
+            AlertService.showAlertForTopVC(title: "Data Not Yet Available", message: "WBidMax vacation data is not yet available. Check back later via the Bid Actions menu(top right).")
+            self.finishBlock(withSwaptimizerStatus: nil)
+        }
+        else if (hasVacation && hasAccount && dataAvailable)
+        {
+            // Check to make sure the data received is the proper file
+            let seat = pilotInfo["Seat"] as! String
+            let round = pilotInfo["Round"] as! Int
+            let vacayBase = pilotInfo["Base"] as! String
+            var rawValue = (self.bidPeriod?.positionType?.intValue)!
+            var positionType = BICrewPositionType(rawValue: rawValue)!
+            let shortName = CBUtils.shortName(for: positionType) ?? "CM"
+            
+            
+            if vacayMonth != self.bidPeriod?.month?.intValue ?? 0 {
+                AlertService.showAlertForTopVC(title: "Error", message: "The  data month \(vacayMonth) is not the same as the bid period month \(String(describing: self.bidPeriod?.month))")
+                self.finishBlock(withSwaptimizerStatus: nil)
+            }
+            else if (vacayYear != self.bidPeriod?.year?.intValue) {
+                AlertService.showAlertForTopVC(title: " Error", message: "The  data year \(vacayYear) is not the same as the bid period year \(String(describing: self.bidPeriod?.year)).")
+                self.finishBlock(withSwaptimizerStatus: nil)
+            }
+            else if !(vacayBase == self.bidPeriod?.base) {
+                AlertService.showAlertForTopVC(title: " Error", message: "The  data base \(vacayBase) is not the same as the bid period crew base \(String(describing: self.bidPeriod?.base)).")
+                self.finishBlock(withSwaptimizerStatus: nil)
+            }
+            else if !(shortName == seat) {
+                AlertService.showAlertForTopVC(title: " Error", message: "The vacation data position \(seat) is not the same as the bid period position \(shortName).)")
+                self.finishBlock(withSwaptimizerStatus: nil)
+            }
+            else if (self.bidPeriod?.round?.intValue == 2 && round == 1)
+            {
+                // It's round 2 but SWAPtimizer has not yet released round 1 data
+                // Alert view telling the user data is not yet available, check back later
+                AlertService.showAlertForTopVC(title: "Data Not Yet Available", message: " vacation data is not yet available. Check back later .")
+                self.finishBlock(withSwaptimizerStatus: nil)
+            }
+            else if (round != self.bidPeriod?.round?.intValue)
+            {
+                AlertService.showAlertForTopVC(title: " Error", message: "The vacation data round \(round) is not the same as the bid period round \(String(describing: self.bidPeriod?.round))")
+                self.finishBlock(withSwaptimizerStatus: nil)
+            }
+            else
+            {
+                // Process the JSON file
+                let file = jsonData["File"] as! [String: Any]
+                let topLevel = file["SWAPtimizer_CrewBid_Data"] as! [String: Any]
+                let header = topLevel["Header"] as! [String: Any]
+                let fileRound = header["Round"] as! Int
+                let fileYear = header["BidPeriodYear"] as! Int
+                let fileMonth = header["BidPeriodMonth"] as! Int
+                
+                if (fileRound != round) {
+                    AlertService.showAlertForTopVC(title: "File Mismatch", message: "The vacation round \(round) and  data file round \(fileRound) are mismatched. Perhaps you didn't bid a blank line?")
+                    self.finishBlock(withSwaptimizerStatus: nil)
+                }
+                else if (fileYear != vacayYear) {
+                    AlertService.showAlertForTopVC(title: "File Mismatch", message: "The vacation year \(vacayYear) and  data file year \(fileYear) are mismatched. Perhaps you didn't bid a blank line?")
+                    self.finishBlock(withSwaptimizerStatus: nil)
+                }
+                else if (fileMonth != vacayMonth) {
+                    AlertService.showAlertForTopVC(title: "File Mismatch", message: "The vacation month \(vacayMonth) and  data file month \(fileMonth) are mismatched. Perhaps you didn't bid a blank line?")
+                    self.finishBlock(withSwaptimizerStatus: nil)
+                }
+                else {
+                    let moc = self.bidPeriod?.managedObjectContext
+                    let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid ?? "FAVacation"
+                    if (vacationType == "FAVacation") {
+                        self.bidPeriod?.faFileIntent = header["FileIdent"] as? String
+                    }
+                    else if (vacationType == "FAVacationF") {
+                        self.bidPeriod?.faFileIntentF = header["FileIdent"] as? String
+                    }
+                    else if (vacationType == "FAVacationEomOnly") {
+                        self.bidPeriod?.faFileIntentEomOnly = header["FileIdent"] as? String
+                    }
+                    do {
+                        try moc?.save()
+                        print("context in validat VWBID writevacationfile saved")
+                    }
+                    catch {
+                        print("context in validat VWBID writevacationfile not saved: \(error)")
+                    }
+                    self.writeVacationFile(jsonData: jsonData, fileName: header["FileIdent"] as! String)
+                    
+                    let delayInSeconds = 0.1
+                    DispatchQueue.main.asyncAfter(deadline: .now() + delayInSeconds) {
+                        self.processFAVacationWithJsonFile(file: file)
+                    }
+                }
+            }
+        }
+        else
+        {
+            self.finishBlock(withSwaptimizerStatus: nil)
+        }
+    }
+    
+    //    MARK: validateSWAPtimizerJSON
+    func validateSWAPtimizerJSON(jsonData: [String: Any]) {
+        let status = jsonData["Status"] as! [String: Any]
+        let pilotInfo = jsonData["PilotInfo"] as! [String: Any]
+        let configInfo = jsonData["ConfigInfo"] as! [String: Any]
+        let statusCode = status["Code"] as! String
+        let statusMsg = status["Msg"] as! String
+        let hasAccount = (pilotInfo["HasAccount"] as? String == "1")
+        let dataAvailable = (pilotInfo["DataAvailable"] as? NSNumber)?.boolValue ?? false
+        let hasVacation = (pilotInfo["HasVacation"] as? NSNumber)?.boolValue ?? false
+        //        let pilotIdentifier = pilotInfo["Pilot"] as? NSNumber)?.intValue ?? 0
+        var pilotIdentifier = Int(pilotInfo["Pilot"] as? String ?? "") ?? 0
+        
+        let yearMonth = configInfo["YearMonth"] as! String
+        let vacayYear = Int(yearMonth.prefix(4)) ?? 0
+        let vacayMonth = Int(yearMonth.dropFirst(4).prefix(2)) ?? 0
+        let secretEnabled = self.bidPeriod?.secretSwitchOn
+        
+        if self.bidPeriod?.secretSwitchOn == "YES" {
+            pilotIdentifier = self.bidPeriod?.swaptimizerIdentifier?.intValue ?? 0
+        }
+        
+        if !(statusCode == "SUCCESS") {
+            AlertService.showAlertForTopVC(title: "SWAPtimizer Server Error", message: "\(statusMsg)\n SWAPtimizer vacation usually releases data the evening of the 4th or morning of the 5th. If you are seeing this error before data release, please try again after data has been released.", actions: nil)
+            self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
+        }
+        else if (pilotIdentifier != self.bidPeriod?.swaptimizerIdentifier?.intValue && !(secretEnabled == "YES")) {
+            //    The bid package for the wrong pilot got downloaded
+            AlertService.showAlertForTopVC(title: "SWAPtimizer Error", message: "The SWAPtimizer user ID \(pilotIdentifier) does not match the pilot for whom the bid package was downloaded \(String(describing: self.bidPeriod?.swaptimizerIdentifier)).", actions: nil)
+            self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.dataNotAvailable.rawValue as NSNumber)
+        }
+        else if ((self.bidPeriod?.month?.intValue)! - vacayMonth == 1 || (self.bidPeriod?.month?.intValue == 1 && vacayMonth == 12)) {
+            // New bid period but old month's data, so data is not yet available.
+            // Alert view telling the user data is not yet available, check back later
+            AlertService.showAlertForTopVC(title: "Data Not Yet Available", message: "SWAPtimizer vacation data is not yet available. Check back later via the Bid Actions menu(top right).", actions: nil)
+            self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.dataNotAvailable.rawValue as NSNumber)
+        }
+        else if !(hasVacation) {
+            // Display StatusMsg to the user, there's an error
+            var user = ""
+            if (secretEnabled == "YES") {
+                user = UserDefaults.standard.string(forKey: "SecretVDuserName") ?? ""
+            }
+            else {
+                user = String(describing: self.bidPeriod?.swaptimizerIdentifier)
+            }
+            AlertService.showAlertForTopVC(title: "No Vacation", message: "No vacation next month for user \(user)", actions: nil)
+            self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.notApplicable.rawValue as NSNumber )
+        }
+        else if (hasVacation && !hasAccount) {
+            AlertService.showAlertForTopVC(title: "No SWAPtimizer Account!", message: "We see that you have vacation this month, but you do not have SWAPtimizer Account.\nSWAPtimizer is the gold standard of SWA vacation prediction and we highly recommend their product. Go to www.swaptimizer.com to sign up!")
+            self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.noAccount.rawValue as NSNumber )
+        }
+        else if (hasVacation && hasAccount && !dataAvailable)
+        {
+            // Alert view telling the user data is not yet available, check back later
+            AlertService.showAlertForTopVC(title: "Data Not Yet Available", message: "SWAPtimizer vacation data is not yet available. Check back later via the Bid Actions menu(top right).")
+            self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.dataNotAvailable.rawValue as NSNumber)
+        }
+        else if (hasVacation && hasAccount && dataAvailable)
+        {
+            // Check to make sure the data received is the proper file
+            let seat = pilotInfo["Seat"] as! String
+            let round = Int(configInfo["Round"] as? String ?? "") ?? 0
+            let vacayBase = pilotInfo["Base"] as! String
+            var rawValue = (self.bidPeriod?.positionType?.intValue)!
+            var positionType = BICrewPositionType(rawValue: rawValue)!
+            let shortName = CBUtils.shortName(for: positionType) ?? "CM"
+            
+            if !(self.bidPeriod?.secretSwitchOn == "YES") {
+                if vacayMonth != self.bidPeriod?.month?.intValue ?? 0 {
+                    AlertService.showAlertForTopVC(title: "SWAPtimizer Error", message: "The SWAPtimizer data month \(vacayMonth) is not the same as the bid period month \(String(describing: self.bidPeriod?.month))")
+                    self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
+                }
+                else if (vacayYear != self.bidPeriod?.year?.intValue) {
+                    AlertService.showAlertForTopVC(title: "SWAPtimizer Error", message: "The SWAPtimizer data year \(vacayYear) is not the same as the bid period year \(String(describing: self.bidPeriod?.year)).")
+                    self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
+                }
+                else if !(vacayBase == self.bidPeriod?.base) {
+                    AlertService.showAlertForTopVC(title: "SWAPtimizer Error", message: "The SWAPtimizer data base \(vacayBase) is not the same as the bid period crew base \(String(describing: self.bidPeriod?.base)).")
+                    self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
+                }
+                else if !(shortName == seat) {
+                    AlertService.showAlertForTopVC(title: "SWAPtimizer Error", message: "The vacation data position \(seat) is not the same as the bid period position \(shortName).)")
+                    self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
+                }
+                else if (self.bidPeriod?.round?.intValue == 2 && round == 1)
+                {
+                    // It's round 2 but SWAPtimizer has not yet released round 1 data
+                    // Alert view telling the user data is not yet available, check back later
+                    AlertService.showAlertForTopVC(title: "Data Not Yet Available", message: "SWAPtimizer vacation data is not yet available. Check back later via the Bid Actions menu(top right).")
+                    self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.dataNotAvailable.rawValue as NSNumber)
+                }
+                else if (round != self.bidPeriod?.round?.intValue)
+                {
+                    AlertService.showAlertForTopVC(title: "SWAPtimizer Error", message: "The vacation data round \(round) is not the same as the bid period round \(String(describing: self.bidPeriod?.round))")
+                    self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
+                }
+                else
+                {
+                    // Process the JSON file
+                    let file = jsonData["File"] as! [String: Any]
+                    let topLevel = file["SWAPtimizer_CrewBid_Data"] as! [String: Any]
+                    let header = topLevel["Header"] as! [String: Any]
+                    let fileRound = header["Round"] as! Int
+                    let fileYear = header["BidPeriodYear"] as! Int
+                    let fileMonth = header["BidPeriodMonth"] as! Int
+                    
+                    if (fileRound != round) {
+                        AlertService.showAlertForTopVC(title: "SWAPtimizer File Mismatch", message: "The vacation round \(round) and SWAPtimizer data file round \(fileRound) are mismatched. Perhaps you didn't bid a blank line?")
+                        self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
+                    }
+                    else if (fileYear != vacayYear) {
+                        AlertService.showAlertForTopVC(title: "SWAPtimizer File Mismatch", message: "The vacation year \(vacayYear) and SWAPtimizer data file year \(fileYear) are mismatched. Perhaps you didn't bid a blank line?")
+                        self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
+                    }
+                    else if (fileMonth != vacayMonth) {
+                        AlertService.showAlertForTopVC(title: "SWAPtimizer File Mismatch", message: "The vacation month \(vacayMonth) and SWAPtimizer data file month \(fileMonth) are mismatched. Perhaps you didn't bid a blank line?")
+                        self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.statusError.rawValue as NSNumber)
+                    }
+                    else {
+                        let moc = self.bidPeriod?.managedObjectContext
+                        let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid;
+                        if (vacationType == "CREWBID") {
+                            self.bidPeriod?.wbFileIntent = header["FileIdent"] as? String
+                        }
+                        else {
+                            self.bidPeriod?.wbFileIntentF = header["FileIdent"] as? String
+                        }
+                        do {
+                            try moc?.save()
+                            print("context in validat SWAPtimizer writevacationfile saved")
+                        }
+                        catch {
+                            print("context in validat SWAPtimizer writevacationfile not saved: \(error)")
+                        }
+                        
+                        self.captureVacationDetails(jsonData: jsonData)
+                        
+                        self.writeVacationFile(jsonData: jsonData, fileName: header["FileIdent"] as! String)
+                        self.bidPeriod?.swaptimizerStatus = CBSwaptimizerStatus.checked.rawValue as NSNumber
+                
+                            let delayInSeconds = 0.1
+                            DispatchQueue.main.asyncAfter(deadline: .now() + delayInSeconds) {
+                                if (self.isAutoDownload && ((self.bidPeriod?.wbFileIntent) != nil)) {
+                                    self.bidPeriod?.userVacationWbidOrCrewBid = "WBID"
+                                    let dicVactionFile = self.readVacationFile(fileName: self.bidPeriod?.wbFileIntent ?? "")
+                                    self.validateWBIDVacation(jsonData: dicVactionFile ?? [:])
+                                    return
+                                }
+                                let isFA = self.bidPeriod?.isFABid() ?? false
+                                if(isFA) {
+                                    self.processFAVacationWithJsonFile(file: file)
+                                }
+                                else {
+                                    self.processJsonFile(file: file)
+                                }
+                            }
+                    }
+                }
+            }
+            else {
+                // Process the JSON file Secret Vacation download
+                let file = jsonData["File"] as! [String: Any]
+                let topLevel = file["SWAPtimizer_CrewBid_Data"] as! [String: Any]
+                let header = topLevel["Header"] as! [String: Any]
+                
+                let moc = self.bidPeriod?.managedObjectContext
+                let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid ?? "CREWBID"
+                if (vacationType == "CREWBID") {
+                    self.bidPeriod?.wbFileIntent = header["FileIdent"] as? String
+                }
+                else if (vacationType == "CREWBIDF") {
+                    self.bidPeriod?.wbFileIntentF = header["FileIdent"] as? String
+                }
+                do {
+                    try moc?.save()
+                    print("context in validat VWBID writevacationfile saved")
+                }
+                catch {
+                    print("context in validat VWBID writevacationfile not saved: \(error)")
+                }
+                self.captureVacationDetails(jsonData: jsonData)
+                self.writeVacationFile(jsonData: jsonData, fileName: header["FileIdent"] as! String)
+                self.bidPeriod?.swaptimizerStatus = CBSwaptimizerStatus.checked.rawValue as NSNumber
+                
+                let delayInSeconds = 0.1
+                DispatchQueue.main.asyncAfter(deadline: .now() + delayInSeconds) {
+                    if (self.isAutoDownload && ((self.bidPeriod?.wbFileIntent) != nil)) {
+                        let dicVactionFile = self.readVacationFile(fileName: self.bidPeriod?.wbFileIntent ?? "")
+                        self.validateWBIDVacation(jsonData: dicVactionFile ?? [:])
+                        return
+                    }
+                    self.processJsonFile(file: file)
+                }
+                
+            }
+        }
+        else
+        {
+            self.finishBlock(withSwaptimizerStatus: CBSwaptimizerStatus.checked.rawValue as NSNumber)
+        }
+    }
+    
+    func captureVacationDetails(jsonData: [String: Any]) {
+        let app = UIApplication.shared.delegate as! AppDelegate
+        let file = jsonData["File"] as! [String: Any]
+        let topLevel = file["SWAPtimizer_CrewBid_Data"] as! [String: Any]
+        let header = topLevel["Header"] as! [String: Any]
+        var dicVacationDetails: [String: Any] = [:]
+        var sampleDic : [String: Any] = [:]
+        sampleDic["Test"] = "Test"
+        var pilotInfo = jsonData["PilotInfo"] as! [String: Any]
+        dicVacationDetails["EmpNum"] = Int(pilotInfo["Pilot"] as? String ?? "") ?? 0
+        dicVacationDetails["Base"] = header["Base"]
+        dicVacationDetails["Month"] = Int(header["BidPeriodMonth"] as? String ?? "") ?? 0
+        dicVacationDetails["Year"] = Int(header["BidPeriodYear"] as? String ?? "") ?? 0
+        dicVacationDetails["Round"] = Int(header["Round"] as? String ?? "") ?? 0
+        var position = pilotInfo["Seat"] as? String ?? ""
+        
+        if(position == "CA") {
+            position = "CP"
+        }
+        dicVacationDetails["Position"] = position
+        dicVacationDetails["SwapJsonFileName"] = header["FileIdent"]
+        if app.connectedToInternet() {
+            let url = URL(string: "\(app.Domain)SaveSwaptimizerFileToServer")
+            self.urlRequest = URLRequest(url: url!)
+            let jsonDataToSend = try! JSONSerialization.data(withJSONObject: dicVacationDetails, options: [])
+            let jsonString = String(data: jsonDataToSend, encoding: .utf8)
+            self.urlRequest?.httpBody = jsonString?.data(using: .utf8)
+            self.urlRequest?.httpMethod = "POST"
+            self.urlRequest?.setValue("852275", forHTTPHeaderField: "Content-Length")
+            let dataTask = URLSession.shared.dataTask(with: urlRequest!) { data, response, error in
+                // Handle request error
+                if let error = error as NSError?, error.code == NSURLErrorTimedOut {
+//                    MARK: need to add CBOffline events
+//                    let objEvent = CBOfflineEvents()
+                    if let monthValue = self.bidPeriod?.month {
+//                        objEvent.sendOfflineDataForTimeOut(url.absoluteString, month: monthValue)
+                    }
+                }
+
+                if let data = data {
+                    DispatchQueue.main.async {
+//                        self.hud?.hide(true)
+                    }
+                    // check status code and possibly MIME type (which shall start with "application/json"):
+                    if let httpResponse = response as? HTTPURLResponse,
+                       httpResponse.statusCode == 200,
+                       let mimeType = response?.mimeType,
+                       mimeType.contains("application/json") {
+                        // Handle successful JSON response
+                    }
+                }
+            }
+
+            dataTask.resume()
+
+        }
+        
+    }
+    
+    func readVacationFile(fileName: String) -> [String: Any]? {
+        let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid
+        var vacationData: Data = Data()
+        if vacationType == "WBID" {
+            vacationData = self.bidPeriod?.wbVacationfile as! Data
+        }
+        else if vacationType == "WBIDF" {
+            vacationData = self.bidPeriod?.wbVacationfileF as! Data
+        }
+        else if vacationType == "CREWBID" {
+            vacationData = self.bidPeriod?.cbVacationFiles as! Data
+        }
+        else if vacationType == "CREWBIDF" {
+            vacationData = self.bidPeriod?.cbVacationFilesF as! Data
+        }
+        else if vacationType == "FAVacation" {
+            vacationData = self.bidPeriod?.faVacationFiles as! Data
+        }
+        else if vacationType == "FAVacationF" {
+            let eomIndexF = fileName.suffix(1)
+            if eomIndexF == "1" {
+                vacationData = self.bidPeriod?.faVacationFilesFA1 as! Data
+            } else if eomIndexF == "2" {
+                vacationData = self.bidPeriod?.faVacationFilesFA2 as! Data
+            } else if eomIndexF == "3" {
+                vacationData = self.bidPeriod?.faVacationFilesFA3 as! Data
+            }
+        }
+        else if vacationType == "FAVacationEomOnly" {
+            let eomIndexF = fileName.suffix(1)
+            if eomIndexF == "1" {
+                vacationData = self.bidPeriod?.faVacationFilesEomOnlyFA1 as! Data
+            } else if eomIndexF == "2" {
+                vacationData = self.bidPeriod?.faVacationFilesEomOnlyFA2 as! Data
+            } else if eomIndexF == "3" {
+                vacationData = self.bidPeriod?.faVacationFilesEomOnlyFA3 as! Data
+            } else if eomIndexF == "4" {
+                vacationData = self.bidPeriod?.faVacationFilesEomOnlyFA4 as! Data
+            } else if eomIndexF == "5" {
+                vacationData = self.bidPeriod?.faVacationFilesEomOnlyFA5 as! Data
+            } else if eomIndexF == "6" {
+                vacationData = self.bidPeriod?.faVacationFilesEomOnlyFA6 as! Data
+            } else if eomIndexF == "7" {
+                vacationData = self.bidPeriod?.faVacationFilesEomOnlyFA7 as! Data
+            }
+        }
+        if vacationType == nil {
+            return nil
+        }
+        let userDic = try! JSONSerialization.jsonObject(with: vacationData, options: []) as? [String: Any]
+        return userDic
     }
     
     func processJsonFile(file: [String: Any]) {
         
     }
-
+    
+    func processFAVacationWithJsonFile(file: [String: Any]) {
+        
+    }
+    
 }

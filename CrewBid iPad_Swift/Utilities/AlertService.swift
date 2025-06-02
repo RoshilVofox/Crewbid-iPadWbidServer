@@ -56,10 +56,11 @@ class AlertService{
         return attributedString
     }
     
-    func showAlertForTopVC(title: String?,
-                   message: String?,
-                   actions: [(title: String, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Void)?)]? = nil) {
-        
+    static func showAlertForTopVC(
+        title: String?,
+        message: String?,
+        actions: [(title: String, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Void)?)]? = nil
+    ) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         if let actionArray = actions, !actionArray.isEmpty {
@@ -68,18 +69,20 @@ class AlertService{
                 alert.addAction(action)
             }
         } else {
-            // Default OK action
             let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(okAction)
         }
         
-        if let currentTopVC = currentTopViewController() {
-            currentTopVC.present(alert, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            if let currentTopVC = currentTopViewController() {
+                currentTopVC.present(alert, animated: true, completion: nil)
+            }
         }
     }
 
+
     
-    func currentTopViewController() -> UIViewController? {
+    static func currentTopViewController() -> UIViewController? {
         // Get the connected scenes
         guard let windowScene = UIApplication.shared.connectedScenes
                 .filter({ $0.activationState == .foregroundActive })
