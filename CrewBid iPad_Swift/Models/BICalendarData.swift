@@ -10,6 +10,8 @@ import CoreData
 
 class BICalendarData {
     var daysInMonth: Int = 0
+    var _calendar: Calendar = Calendar.current
+
 //    var weeksInMonth: Int = 0
 //    var year: Int
 //    var month: Int
@@ -91,18 +93,15 @@ class BICalendarData {
     }
     
     func daysBetweenDate(_ fromDateTime: Date, andDate toDateTime: Date) -> Int {
-        var fromDate: Date = Date()
-        var toDate: Date = Date()
+        let calendar = _calendar // or Calendar.current if not using _calendar
         
-        // Assuming _calendar is an instance of Calendar, e.g. Calendar.current
-        let calendar = _calendar // or use Calendar.current if _calendar is not defined
-        
-        calendar.range(of: .day, start: &fromDate, interval: nil, for: fromDateTime)
-        calendar.range(of: .day, start: &toDate, interval: nil, for: toDateTime)
-        
+        let fromDate = calendar.startOfDay(for: fromDateTime)
+        let toDate = calendar.startOfDay(for: toDateTime)
+
         let difference = calendar.dateComponents([.day], from: fromDate, to: toDate)
         return difference.day ?? 0
     }
+
 
     
     func dateforDayOfMonth(_ dayOfMonth: Int) -> Date? {

@@ -1749,12 +1749,13 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             self.base = self.bidPeriod?.base
             self.employeeNumber = self.bidPeriod?.swaptimizerIdentifier?.stringValue
             
-            let bidInfoReader = BIBidInfoReader()
-            bidInfoReader.dataSource = self
-            bidInfoReader.bidPeriod = self.bidPeriod
-            bidInfoReader.calendarData = self.calendarData
-            bidInfoReader.includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
-            bidInfoReader.intlCities = UserDefaults.standard.object(forKey: kCBInternationalCitiesDict)
+//            let bidInfoReader = BIBidInfoReader(dataSource: self, delegate: nil)
+//            bidInfoReader.dataSource = self
+//            bidInfoReader.bidPeriod = self.bidPeriod
+//            bidInfoReader.calendarData = self.calendarData
+//            bidInfoReader.includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
+//            bidInfoReader.intlCities = UserDefaults.standard.object(forKey: kCBInternationalCitiesDict) as? [String: Any]
+
 
         }
 
