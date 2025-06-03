@@ -6,9 +6,9 @@
 //
 
 import Foundation
+import CoreData
 
-
-class CBVacationDownloader: NSObject {
+class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     
     let kSwaptimizerUrlTest = URL(string: "https://swaptimizer2.com/secure/cgi-bin/crewbid.f-week.cgi")!
     let kSwaptimizerUrl = URL(string: "https://secure.swaptimizer2.com/cgi-bin/crewbid.cgi")!
@@ -30,8 +30,14 @@ class CBVacationDownloader: NSObject {
     var vactionDownloadType: VacationDownloadType?
     var isAutoDownload = false
     var finishedBlock: BIFinishedBlock?
-    
-    
+    weak var calendarData: BICalendarData?
+    var round: NSNumber?
+    var year: NSNumber?
+    var month: NSNumber?
+    var position: Int?
+    var employeeNumber: String?
+    var base: String?
+
     
     //MARK: download WBID VacationFiles
     func downloadWbidVacation() {
@@ -142,7 +148,7 @@ class CBVacationDownloader: NSObject {
             vacationType = "FAVacation"
             var vacationDetailDictionary: [String: Any] = [:]
             
-            vacationDetailDictionary["EmpNum"] = self.bidPeriod?.crewIdentifier ?? 22231//81566
+            vacationDetailDictionary["EmpNum"] = self.bidPeriod?.crewIdentifier ?? 14313//81566
             vacationDetailDictionary["Base"] = self.bidPeriod?.base ?? "DEN"
             vacationDetailDictionary["Base"] = self.bidPeriod?.base ?? "DEN"
             if let rawValue = self.bidPeriod?.positionType?.intValue,
@@ -152,7 +158,7 @@ class CBVacationDownloader: NSObject {
             }
             vacationDetailDictionary["Position"] = "FA"
             vacationDetailDictionary["Year"] = self.bidPeriod?.year ?? 2025
-            vacationDetailDictionary["Month"] = self.bidPeriod?.month ?? 6
+            vacationDetailDictionary["Month"] = self.bidPeriod?.month ?? 7
             vacationDetailDictionary["FromApp"] = 5
             var round: String = ""
             if (self.bidPeriod?.round?.intValue == 1) {
@@ -253,7 +259,7 @@ class CBVacationDownloader: NSObject {
             }
             // Debug print as string (optional)
             if let responseString = String(data: data as Data, encoding: .utf8) {
-//                print("Mutable Response String: \(responseString)")
+                print("Mutable Response String: \(responseString)")
                 do {
                     if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                         if let fileName = json["FileName"], !(fileName is NSNull) {
@@ -808,7 +814,7 @@ class CBVacationDownloader: NSObject {
         let dataAvailable = (pilotInfo["DataAvailable"] as? NSNumber)?.boolValue ?? false
         let hasVacation = (pilotInfo["HasVacation"] as? NSNumber)?.boolValue ?? false
         //        let pilotIdentifier = (pilotInfo["Pilot"] as? NSNumber)?.intValue ?? 0
-        let yearMonth = pilotInfo["YearMonth"] as! String
+        let yearMonth = configInfo["YearMonth"] as! String
         let vacayYear = Int(yearMonth.prefix(4)) ?? 0
         let vacayMonth = Int(yearMonth.dropFirst(4).prefix(2)) ?? 0
         let secretEnabled = self.bidPeriod?.secretSwitchOn
@@ -1458,8 +1464,300 @@ class CBVacationDownloader: NSObject {
         return userDic
     }
     
+//    MARK: processJsonFile
     func processJsonFile(file: [String: Any]) {
+        let thanksGivingDay = CBUtils.thanksgivingDay(for: self.bidPeriod?.year?.intValue ?? 0)
+        var vacationType = self.bidPeriod?.userVacationWbidOrCrewBid
+        var frontVO = ""
+        var frontVO1 = ""
+        var frontVO2 = ""
+        var backVO = ""
+        var backVO1 = ""
+        var backVO2 = ""
+        var carryoutVacationPay = ""
+        var effectiveVacationLength = ""
+        var longestBlockofDaysOff = ""
+        var carryoutVOPay = ""
+        var totalPay = ""
+        var flyPay = ""
+        var totalVacationPay = ""
+        var carryOutPay_Flying = ""
+        var totalDaysOff = ""
+        var daysWorked_inmonth = ""
+        var daysWorked = ""
+        var lineName = ""
+        var blockName = ""
+        var vacPayBothBp = ""
+        var vacPayNeBp = ""
+        var clawBack = ""
         
+        var vAbo = ""
+        var vAbp = ""
+        var vAne = ""
+        var vAPbo = ""
+        var vAPbp = ""
+        var vAPne = ""
+        
+        if vacationType == "WBID" || vacationType == "WBIDF" {
+            lineName = "Line1";
+            frontVO = "FrontVO";
+            frontVO1 = "FrontVO1";
+            frontVO2 = "FrontVO2";
+            blockName = "Block";
+            backVO = "BackVO";
+            backVO1 = "BackVO1";
+            backVO2 = "BackVO2";
+            
+            carryoutVacationPay = "CarryOutVacationPay";
+            effectiveVacationLength = "EffectiveVacationLength";
+            longestBlockofDaysOff = "LongestBlockofDaysOff";
+            vacPayBothBp = "VacPayBothBp";
+            vacPayNeBp = "VacPayNeBp";
+            carryoutVOPay = "CarryoutVOPay";
+            totalPay = "TotalPay";
+            flyPay = "FlyPay";
+            totalVacationPay = "TotalVacationPay";
+            carryOutPay_Flying = "CarryOutPay";
+            totalDaysOff = "TotalDaysOff";
+            
+            daysWorked_inmonth = "DaysWorkedinMonth";
+            daysWorked = "DaysWorked";
+            
+            clawBack = "ClawBack";
+            
+            vAbo = "VAbo";
+            vAbp = "VAbp";
+            vAne = "VAne";
+            vAPbo = "VAPbo";
+            vAPbp = "VAPbp";
+            vAPne = "VAPne";
+            
+        } else {
+            
+            lineName = "Line#";
+            frontVO = "Front VO";
+            frontVO1 = "Front VO1";
+            frontVO2 = "Front VO 2";
+            blockName = "*Block";
+            backVO = "Back VO";
+            backVO1 = "Back VO1";
+            backVO2 = "Back VO 2";
+            
+            carryoutVacationPay = "Carry-out Vacation Pay";
+            effectiveVacationLength = "Effective Vacation Length";
+            longestBlockofDaysOff = "Longest Block of Days Off";
+            carryoutVOPay = "Carry-out VO Pay";
+            vacPayBothBp = "VacPayBothBp";
+            vacPayNeBp = "VacPayNeBp";
+            totalPay = "Total Pay";
+            flyPay = "Fly Pay";
+            totalVacationPay = "Total Vacation Pay";
+            carryOutPay_Flying = "Carry Out Pay (Flying)";
+            
+            totalDaysOff = "Total Days Off";
+            daysWorked_inmonth = "Days Worked (in month)";
+            daysWorked = "Days Worked";
+            
+            vAbo = "VAbo";
+            vAbp = "VAbp";
+            vAne = "VAne";
+            vAPbo = "VAPbo";
+            vAPbp = "VAPbp";
+            vAPne = "VAPne";
+        }
+        let secretEnabled = self.bidPeriod?.secretSwitchOn
+        let moc = self.bidPeriod?.managedObjectContext
+        let fetchRequest: NSFetchRequest<BITrip> = BITrip.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "number", ascending: true)]
+
+        let controller = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: moc!,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
+        controller.delegate = self
+        do {
+            try controller.performFetch()
+            
+            if let trips = controller.fetchedObjects as? [BITrip] {
+                for trip in trips {
+                    trip.vacationOverlapType = 0
+                    trip.dropForFiltersSorts = false
+                    
+                    for case let day as BIDay in trip.days ?? [] {
+                        day.displayType = BIDayDisplayType.normal.rawValue as NSNumber
+                        day.redEyeDayDisplayDayType = BIDayDisplayType.normal.rawValue as NSNumber
+                    }
+                }
+            }
+            
+        } catch {
+            print("Failed to perform fetch: \(error)")
+        }
+        let topLevel = file["SWAPtimizer_CrewBid_Data"] as! [String: Any]
+        let header = topLevel["Header"] as! [String: Any]
+        let numVacayWeeks = header["NumberVacationWeeks"] as? Int
+        var vacayDates = header["VacationDates"] as! [[String: String]]
+        
+        // Figure out if we're going to hide some of the values based on the LineDataFields
+        var lineDataFields: [String] = []
+        lineDataFields = (header["LineDataFields"] as? [String])!
+        var hiddenValues: [String: Any] = [:]
+        
+//        carry out pay
+        if lineDataFields.contains(carryOutPay_Flying) {
+            hiddenValues[kCBSwaptmizerCarryOutPayHidden] = false
+        }
+        else {
+            hiddenValues[kCBSwaptmizerCarryOutPayHidden] = true
+        }
+//        Front VO
+        if lineDataFields.contains(frontVO) || lineDataFields.contains(frontVO1) || lineDataFields.contains(frontVO2) {
+            hiddenValues[kCBSwaptmizerFrontVoHidden] = false
+        }
+        else {
+            hiddenValues[kCBSwaptmizerFrontVoHidden] = true
+        }
+//        Back VO
+        if lineDataFields.contains(backVO) || lineDataFields.contains(backVO1) || lineDataFields.contains(backVO2) {
+            hiddenValues[kCBSwaptmizerBackVoHidden] = false
+        }
+        else {
+            hiddenValues[kCBSwaptmizerBackVoHidden] = true
+        }
+//        Vaccay Carry Out Pay
+        if lineDataFields.contains(carryoutVacationPay) {
+            hiddenValues[kCBSwaptmizerVacayCarryOutPayHidden] = false
+        }
+        else {
+            hiddenValues[kCBSwaptmizerVacayCarryOutPayHidden] = true
+        }
+        //  Effective vacay length
+        if lineDataFields.contains(effectiveVacationLength) {
+            hiddenValues[kCBSwaptmizerEffVacayLengthHidden] = false
+        }
+        else {
+            if vacationType == "WBID" || vacationType == "WBIDF" {
+                hiddenValues[kCBSwaptmizerEffVacayLengthHidden] = false
+            }
+            else {
+                hiddenValues[kCBSwaptmizerEffVacayLengthHidden] = true
+            }
+        }
+        // Vacation Pay Next BP
+        if lineDataFields.contains(vacPayNeBp) {
+            hiddenValues[kCBSwaptmizerVacPayNextBPHidden] = false
+        }
+        else {
+            if vacationType == "WBID" || vacationType == "WBIDF" {
+                hiddenValues[kCBSwaptmizerVacPayNextBPHidden] = false
+            }
+            else {
+                hiddenValues[kCBSwaptmizerVacPayNextBPHidden] = true
+            }
+        }
+        // Vacation Pay Both BP
+        if lineDataFields.contains(vacPayBothBp) {
+            hiddenValues[kCBSwaptmizerVacPayBothBPHidden] = false
+        }
+        else {
+            if vacationType == "WBID" || vacationType == "WBIDF" {
+                hiddenValues[kCBSwaptmizerVacPayBothBPHidden] = false
+            }
+            else {
+                hiddenValues[kCBSwaptmizerVacPayBothBPHidden] = true
+            }
+        }
+//        ClawBack
+        if vacationType == "WBID" || vacationType == "WBIDF" {
+         hiddenValues[kCBSwaptmizerClawBackHidden] = false
+        }
+        else {
+            hiddenValues[kCBSwaptmizerClawBackHidden] = true
+        }
+        //Longest Block of Days Off
+        if lineDataFields.contains(longestBlockofDaysOff) {
+            hiddenValues[kCBSwaptmizerLongestBlockofDaysOffHidden] = false
+        }
+        else {
+            hiddenValues[kCBSwaptmizerLongestBlockofDaysOffHidden] = true
+        }
+        // Carry Out Vo Pay
+        if lineDataFields.contains(carryoutVOPay) {
+            hiddenValues[kCBSwaptmizerCarryOutVoHidden] = false
+        }
+        else {
+            hiddenValues[kCBSwaptmizerCarryOutVoHidden] = true
+        }
+        UserDefaults.standard.set(hiddenValues, forKey: kCBSwaptimizerHiddenDict)
+        
+//        Delete all vacay
+        let fetchRequestForVacation: NSFetchRequest<BIVacation> = BIVacation.fetchRequest()
+        fetchRequestForVacation.includesPropertyValues = false
+        do {
+            let vacays = try self.bidPeriod?.managedObjectContext?.fetch(fetchRequest)
+            for vacay in vacays! {
+                moc?.delete(vacay)
+            }
+        } catch {
+            print("vacation fetch failed: \(error)")
+        }
+        
+        let vacayLines = topLevel["Lines"] as! [Any]
+        let totalLinesToProcess = vacayLines.count * vacayDates.count
+        var counter = 0
+        for i in 0..<vacayDates.count {
+            let df = DateFormatter()
+            df.dateFormat = "HHmmyyyydd"
+            df.timeZone = self.calendarData?.bidPeriodTimezone()
+            let vacayDict = vacayDates[i]
+            let startDateString = vacayDict["FirstDay"]!
+            let endDateString = vacayDict["LastDay"]!
+            let startDate = df.date(from: "1200" + startDateString)
+            let endDtStr = "2359" + endDateString
+            let endDate = df.date(from: endDtStr)
+            
+//           not using nsEntityDescription for now, in case of error look obj-c
+            let vacay = BIVacation(context: self.bidPeriod!.managedObjectContext!)
+            if secretEnabled == "YES" {
+                let secretVacay = BIVacation(context: (self.bidPeriod?.managedObjectContext)!)
+            }
+            vacay.bidPeriod = self.bidPeriod
+            vacay.startDate = startDate
+            vacay.endDate = endDate
+            
+            vacay.vacationType = vacationType
+            let length = (self.calendarData?.daysBetweenDate(startDate!, andDate: endDate!) ?? 0) + 1
+            vacay.length = length as NSNumber
+            
+            self.bidPeriod?.containsVacay = true
+        }
+        let includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
+        let lines = self.bidPeriod?.lines?.allObjects as? [AnyObject] ?? []
+        var sortedLines = (lines as NSArray).sortedArray(using: [
+            NSSortDescriptor(key: "number", ascending: true)
+        ])
+        let notBlankPredicate = NSPredicate(format: "type != %d", BILineType.BlankLineType.rawValue)
+        sortedLines = (sortedLines as NSArray).filtered(using: notBlankPredicate) as? [AnyObject] ?? []
+        
+        if (sortedLines.count == vacayLines.count) {
+            self.round = self.bidPeriod?.round
+            self.year = self.bidPeriod?.year
+            self.month = self.bidPeriod?.month
+            self.position = self.bidPeriod?.positionType?.intValue
+            self.base = self.bidPeriod?.base
+            self.employeeNumber = self.bidPeriod?.swaptimizerIdentifier?.stringValue
+            
+            let bidInfoReader = BIBidInfoReader()
+            bidInfoReader.dataSource = self
+            bidInfoReader.bidPeriod = self.bidPeriod
+            bidInfoReader.calendarData = self.calendarData
+            bidInfoReader.includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
+            bidInfoReader.intlCities = UserDefaults.standard.object(forKey: kCBInternationalCitiesDict)
+
+        }
+
     }
     
     func processFAVacationWithJsonFile(file: [String: Any]) {

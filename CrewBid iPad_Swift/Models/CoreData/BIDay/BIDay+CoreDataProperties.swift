@@ -18,6 +18,7 @@ extension BIDay {
 
     @NSManaged public var date: Date?
     @NSManaged public var displayType: NSNumber?
+    @NSManaged public var redEyeDayDisplayDayType: NSNumber?
     @NSManaged public var holidayPayment: NSNumber?
     @NSManaged public var info: BIDayInfo?
     @NSManaged public var legs: NSSet?
@@ -26,6 +27,15 @@ extension BIDay {
     @NSManaged public var workBlock: WorkBlockList?
 
 }
+
+@objc enum BIDayDisplayType: Int {
+    case normal
+    case fullPay     // ＄
+    case partialPay  // ￠
+    case noPay       // X
+    case inValid     // X
+}
+
 
 // MARK: Generated accessors for legs
 extension BIDay {

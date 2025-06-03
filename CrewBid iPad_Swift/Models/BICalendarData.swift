@@ -90,6 +90,21 @@ class BICalendarData {
         return formatter.string(from: date)
     }
     
+    func daysBetweenDate(_ fromDateTime: Date, andDate toDateTime: Date) -> Int {
+        var fromDate: Date = Date()
+        var toDate: Date = Date()
+        
+        // Assuming _calendar is an instance of Calendar, e.g. Calendar.current
+        let calendar = _calendar // or use Calendar.current if _calendar is not defined
+        
+        calendar.range(of: .day, start: &fromDate, interval: nil, for: fromDateTime)
+        calendar.range(of: .day, start: &toDate, interval: nil, for: toDateTime)
+        
+        let difference = calendar.dateComponents([.day], from: fromDate, to: toDate)
+        return difference.day ?? 0
+    }
+
+    
     func dateforDayOfMonth(_ dayOfMonth: Int) -> Date? {
         var dc = DateComponents()
         dc.year = GlobalBidInfo.shared.year
@@ -109,6 +124,10 @@ class BICalendarData {
         calendar.timeZone = TimeZone(identifier: "US/Central") ?? TimeZone.current
         return calendar
     }
+    func bidPeriodTimezone() -> TimeZone? {
+        return TimeZone(identifier: "US/Central")
+    }
+
     
 //    func index(for date: Date) -> Int {
 //        let components = calendar.dateComponents([.day], from: firstDateOfCalendar, to: date)
