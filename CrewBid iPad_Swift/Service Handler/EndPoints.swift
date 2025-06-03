@@ -41,5 +41,6 @@ class EndPoint {
     var getapplicationLoadDatas = "\(baseURL)GetApplicationLoadDatas"
     var getbidSubmittedData = "\(baseURL)GetBidSubmittedData"
     var getmonthlyAwardData = "\(baseURL)GetMonthlyAwardData"
+    var DownloadHistoricalBidLineAll = "\(baseURL)DownloadHistoricalBidLineAll"
 }
 

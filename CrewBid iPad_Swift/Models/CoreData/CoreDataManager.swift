@@ -19,9 +19,16 @@ class CoreDataManager{
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
+            container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+            container.viewContext.automaticallyMergesChangesFromParent = true
         })
         return container
     }()
+    
+    lazy var managedObjectContext: NSManagedObjectContext = {
+        return persistentContainer.viewContext
+    }()
+    
     lazy var managedObjectModel: NSManagedObjectModel = {
         let resource = "CrewBid_iPad_Swift"
         guard let modelURL = Bundle.main.url(forResource: resource, withExtension:"momd") else {
@@ -29,17 +36,15 @@ class CoreDataManager{
         }
         return NSManagedObjectModel(contentsOf: modelURL)!
     }()
-    lazy var persistantStoreCoordinator: NSPersistentStoreCoordinator = {
-        let storeURL = self.applicationDocumentDirectory().appendingPathComponent( "CrewBid_iPad_Swift.sqlite")
-        let coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        return persistentContainer.persistentStoreCoordinator
-    }()
     
 
     func applicationDocumentDirectory() -> URL {
         return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!
     }
     
+    func newBackgroundContext() -> NSManagedObjectContext {
+        return persistentContainer.newBackgroundContext()
+    }
     
     func saveData(){
         let context = persistentContainer.viewContext
@@ -49,6 +54,18 @@ class CoreDataManager{
             }catch{
                 print("Error saving data")
             }
+        }
+    }
+    
+    func deleteAllData(for entityName: String) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            try persistentContainer.viewContext.execute(deleteRequest)
+            try persistentContainer.viewContext.save()
+        } catch {
+            print("Failed to delete data for entity \(entityName): \(error)")
         }
     }
     

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CBBiddataDownloadVC: UIViewController {
+class CBBiddataDownloadVC: BaseViewController {
     
     // base
     @IBOutlet weak var btnATL: dataDownloadingButton!
@@ -92,8 +92,11 @@ class CBBiddataDownloadVC: UIViewController {
             AppData.shared.Round = self.selectedRound!
             AppData.shared.postion = self.selectedPosition!
 //=======================================
-            print("Base:\(self.selectedDomicile!) Position:\(self.selectedPosition!) Rnd:\(self.selectedRound!) EmpNo:\(self.empNum ?? "default_EmpNum") Month:\(self.month!) Year:\(self.year!)")
+            let emp = UserDefaults.standard.string(forKey: kCBDefaultEmployeeNumberKey)!
+            print("Base:\(self.selectedDomicile!) Position:\(self.selectedPosition!) Rnd:\(self.selectedRound!) EmpNo:\(self.empNum ?? emp) Month:\(self.month!) Year:\(self.year!)")
 //=======================================
+            self.app.mockDataMonth = self.month
+            self.app.mockDataYear = self.year
             let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
             vc.isNewBid = self.isNewBid
@@ -102,7 +105,6 @@ class CBBiddataDownloadVC: UIViewController {
             if let positionCode = self.selectedPosition, let position = BICrewPositionType(from: positionCode){
                 vc.selectedPosition = position
             }
-//            vc.selectedPosition = self.selectedPosition
             vc.selectedRound = self.selectedRound
             vc.empNum = self.empNum
             vc.month = self.month

@@ -54,7 +54,6 @@ class APIService{
     private init() {}
     
     func getApplicationLoadData(){
-//        let app = UIApplication.shared.delegate as! AppDelegate
         let url = EndPoint.shared.getapplicationLoadDatas
         var urlRequest = URLRequest(url: URL(string: url)!)
         var dict:[String:Any] = [:]

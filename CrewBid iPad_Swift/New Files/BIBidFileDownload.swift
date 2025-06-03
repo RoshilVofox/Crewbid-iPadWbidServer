@@ -10,6 +10,7 @@ import ZipArchive
 
 class BIBidFileDownload: NSObject{
     
+    //MARK: New Bid
     func downloadBidFiles(sessionKey:String, filename:String, completionHandler:@escaping (Result<URL, Error>) -> Void){
         let isRequestType = (filename as NSString).pathExtension.uppercased() == "TXT"
         let requestType = isRequestType ? "TXTPACKET" : "ZIPPACKET"
@@ -56,6 +57,39 @@ class BIBidFileDownload: NSObject{
         }
         downloadTask.resume()
     }
+    
+    //MARK: Historic Bid
+    func downloadHistoricBid(from dict:[String:Any], completion: @escaping (Result<Data, Error>) -> Void) {
+        do{
+            let data = try JSONSerialization.data(withJSONObject: dict)
+            let postString = String(data: data, encoding: .utf8)!
+            let urlString = EndPoint.shared.DownloadHistoricalBidLineAll
+            let URL = URL(string: urlString)!
+            var request = URLRequest(url: URL)
+            request.httpMethod = "POST"
+            let contentLength = String(postString.count)
+            request.setValue(contentLength, forHTTPHeaderField: "Content-Length")
+            request.httpBody = postString.data(using: .utf8)
+            
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+                guard let data = data else {
+                    completion(.failure(NSError(domain: "Empty Data", code: 0)))
+                    return
+                }
+                completion(.success(data))
+            }
+            task.resume()
+            
+        }catch{
+            print("Error in Downloading Historic Bid: \(error)")
+        }
+    }
+    
+    
     private func stringByAddingPercentEscapes(to unescapedString: String) -> String {
         let allowedCharacterSet = CharacterSet(charactersIn: ";/?:@&=+$,").inverted
         return unescapedString.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet)!
@@ -71,5 +105,8 @@ class BIBidFileDownload: NSObject{
         let allowedCharacterSet = CharacterSet.urlQueryAllowed.subtracting(CharacterSet(charactersIn: "+&="))
         return rawKey.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? rawKey
     }
+    
+
+    
 }
 
