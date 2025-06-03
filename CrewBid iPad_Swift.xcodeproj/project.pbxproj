@@ -276,7 +276,7 @@
 		F41EBF922DC4DB20001413DE /* CBReportReleaseCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE502DC4DB20001413DE /* CBReportReleaseCollectionViewController.swift */; };
 		F41EBF932DC4DB20001413DE /* CBReportReleaseCVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE512DC4DB20001413DE /* CBReportReleaseCVC.swift */; };
 		F41EBF942DC4DB20001413DE /* CBBiddataDownloadVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE542DC4DB20001413DE /* CBBiddataDownloadVC.swift */; };
-		F41EBF952DC4DB20001413DE /* CBBIdDataTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE552DC4DB20001413DE /* CBBIdDataTypeViewController.swift */; };
+		F41EBF952DC4DB20001413DE /* CBBidDataTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE552DC4DB20001413DE /* CBBidDataTypeViewController.swift */; };
 		F41EBF962DC4DB20001413DE /* CBCredentialsPageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE562DC4DB20001413DE /* CBCredentialsPageVC.swift */; };
 		F41EBF972DC4DB20001413DE /* CBDefaultEmployeeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE572DC4DB20001413DE /* CBDefaultEmployeeVC.swift */; };
 		F41EBF982DC4DB20001413DE /* CBDownloadAgainAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE582DC4DB20001413DE /* CBDownloadAgainAlertVC.swift */; };
@@ -614,7 +614,7 @@
 		F41EBE512DC4DB20001413DE /* CBReportReleaseCVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBReportReleaseCVC.swift; sourceTree = "<group>"; };
 		F41EBE522DC4DB20001413DE /* LineValues.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = LineValues.plist; sourceTree = "<group>"; };
 		F41EBE542DC4DB20001413DE /* CBBiddataDownloadVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBiddataDownloadVC.swift; sourceTree = "<group>"; };
-		F41EBE552DC4DB20001413DE /* CBBIdDataTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBIdDataTypeViewController.swift; sourceTree = "<group>"; };
+		F41EBE552DC4DB20001413DE /* CBBidDataTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidDataTypeViewController.swift; sourceTree = "<group>"; };
 		F41EBE562DC4DB20001413DE /* CBCredentialsPageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCredentialsPageVC.swift; sourceTree = "<group>"; };
 		F41EBE572DC4DB20001413DE /* CBDefaultEmployeeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBDefaultEmployeeVC.swift; sourceTree = "<group>"; };
 		F41EBE582DC4DB20001413DE /* CBDownloadAgainAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBDownloadAgainAlertVC.swift; sourceTree = "<group>"; };
@@ -1263,7 +1263,7 @@
 			isa = PBXGroup;
 			children = (
 				F41EBE542DC4DB20001413DE /* CBBiddataDownloadVC.swift */,
-				F41EBE552DC4DB20001413DE /* CBBIdDataTypeViewController.swift */,
+				F41EBE552DC4DB20001413DE /* CBBidDataTypeViewController.swift */,
 				F41EBE562DC4DB20001413DE /* CBCredentialsPageVC.swift */,
 				F41EBE572DC4DB20001413DE /* CBDefaultEmployeeVC.swift */,
 				F41EBE582DC4DB20001413DE /* CBDownloadAgainAlertVC.swift */,
@@ -2075,7 +2075,7 @@
 				F4B545AB2DCC648F00672102 /* CoreDataManager.swift in Sources */,
 				F41EBF932DC4DB20001413DE /* CBReportReleaseCVC.swift in Sources */,
 				F41EBF942DC4DB20001413DE /* CBBiddataDownloadVC.swift in Sources */,
-				F41EBF952DC4DB20001413DE /* CBBIdDataTypeViewController.swift in Sources */,
+				F41EBF952DC4DB20001413DE /* CBBidDataTypeViewController.swift in Sources */,
 				F41EBF962DC4DB20001413DE /* CBCredentialsPageVC.swift in Sources */,
 				F41EBF972DC4DB20001413DE /* CBDefaultEmployeeVC.swift in Sources */,
 				F41EBF982DC4DB20001413DE /* CBDownloadAgainAlertVC.swift in Sources */,

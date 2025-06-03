@@ -91,13 +91,13 @@ class BIBidInfoReader{
                     }
                 }
                 if success{
-                    if let app = UIApplication.shared.delegate as? AppDelegate{
-                        if app.isHistoricBid{
-                            success = true
-                        }else{
-                            success = self.readTextFiles()
-                        }
-                    }
+//                    if let app = UIApplication.shared.delegate as? AppDelegate{
+//                        if app.isHistoricBid{
+//                            success = true
+//                        }else{
+//                            success = self.readTextFiles()
+//                        }
+//                    }
                 }
                 if success && self.isFirstRoundBid(){
                     //vacation scan

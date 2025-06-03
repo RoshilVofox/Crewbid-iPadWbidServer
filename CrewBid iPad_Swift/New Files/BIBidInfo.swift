@@ -42,6 +42,12 @@ class BIBidInfo:NSObject{
     func bidDataFilename() -> String {
             return "\(dataFilenameBase()).737"
         }
+    
+    func linesTextFilename() -> String {
+        // 'L' for first round, 'N' for second round
+        let bidRoundChar: Character = isSecondRoundBid() ? "N" : "L"
+        return "\(textFilenameBase())\(bidRoundChar).TXT"
+    }
 
     private func dataFilenameBase() -> String {
         let position = dataSource.position.character
@@ -53,6 +59,10 @@ class BIBidInfo:NSObject{
 
     private func isFirstRoundBid() -> Bool {
         return dataSource.round == 1
+    }
+    
+    private func isSecondRoundBid() -> Bool {
+        return dataSource.round == 2
     }
     
     func textFilenameBase() -> String {

@@ -117,6 +117,7 @@ let LineValueViewTag = 10000
 let DevUserID = "x21221"
 let DevUserPassword = "Vofox2025@2$"
 let kCBEmployeeNumberDefaultKey = "Employee Number"
+let KCBEmpNumWithPrefix = "KCBEmpNumWithPrefix"
 let kCBCrewBaseDefaultKey = "Crew Base"
 let kCBCrewPositionTypeDefaultKey = "Crew Position"
 let kCBCrewRoundTypeDefaultKey = "Crew Round"

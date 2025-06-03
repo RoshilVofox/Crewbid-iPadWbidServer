@@ -1,5 +1,5 @@
 //
-//  CBBIdDataTypeViewController.swift
+//  CBBidDataTypeViewController.swift
 //  CrewBid iPad_Swift
 //
 //  Created by Fayaz on 20/03/25.
@@ -7,13 +7,13 @@
 
 import UIKit
 
-class CBBIdDataTypeViewController: UIViewController {
+class CBBidDataTypeViewController: UIViewController {
 
     @IBOutlet weak var btnClose: UIButton!
     @IBOutlet weak var btnHistoricBP: UIButton!
     @IBOutlet weak var btnNewBP: UIButton!
     @IBOutlet weak var viewBottom: UIView!
-    
+    let app = UIApplication.shared.delegate as! AppDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -23,6 +23,8 @@ class CBBIdDataTypeViewController: UIViewController {
     }
     
     @IBAction func btnNewBidPeriod(_ sender: Any) {
+        app.isHistoricBid = false
+        app.isMockData = false
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBDefaultEmployeeVC") as! CBDefaultEmployeeVC
         vc.isNewBid = true
@@ -30,6 +32,7 @@ class CBBIdDataTypeViewController: UIViewController {
     }
     
     @IBAction func btnHistoricBidPeriod(_ sender: Any) {
+        app.isHistoricBid = true
         let dialogMessage = UIAlertController(title: "CrewBid", message: "When viewing Historical Bid Data, WBid and SWAPTimizer Vacation will not be available.\n\nNor will you be able to accidentally submit any bid using the Historical Bid Data", preferredStyle: .alert)
         let ok = UIAlertAction(title: "OK", style: .default) { (action) in
             let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)

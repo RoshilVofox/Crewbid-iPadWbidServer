@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class CBCredentialsPageVC: BaseViewController {
     
@@ -27,7 +28,8 @@ class CBCredentialsPageVC: BaseViewController {
     var loginType:LoginType = .newBid
     var type:String?
     let viewModel = CBLoginViewModel()
-    let app = UIApplication.shared.delegate as! AppDelegate
+    let context = CoreDataManager.shared.managedObjectContext
+    let dataSource = GlobalBidInfo.shared
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -58,6 +60,7 @@ class CBCredentialsPageVC: BaseViewController {
 
     func setupUI(){
         setupTitle()
+        checkEarlyBidding()
         txtUserID.becomeFirstResponder()
         txtUserID.delegate = self
         txtPassword.delegate = self
@@ -71,41 +74,108 @@ class CBCredentialsPageVC: BaseViewController {
         txtPassword.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtPassword.frame.height))
         txtPassword.leftViewMode = .always
         
+
         //------viewmodel--------
         viewModel.onLoginSuccess = { sessionKey in
-            NotificationCenter.default.post(name: Notification.Name("ShowProgressView"), object: nil)
             print("Session Key: \(sessionKey)")
             self.view.hideActivityIndicator()
             let bidInfo = BIBidInfo()
-            let filename = bidInfo.bidDataFilename()
-            print("Filename: \(filename)")
-            let fileDownloader = BIBidFileDownload()
+            let bidFileName = bidInfo.bidDataFilename()
+            let linesTextFileName = bidInfo.linesTextFilename()
+            print("Filename: \(bidFileName)")
+            let bidDownload = BIBidFileDownload()
             
-            fileDownloader.downloadBidFiles(sessionKey: sessionKey, filename: filename){ result in
-                switch result{
-                case .success(let fileURL):
-                    DispatchQueue.main.async {
-                        NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
-                    }
-                    
-                    print("File unzipped at: \(fileURL)")
-                    DispatchQueue.global(qos: .userInitiated).async {
-                        if BIBidInfoReader().readBidData(){
-                            DispatchQueue.main.async {
-                                NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
-//                                self.loginActions()
+            if self.app.isHistoricBid{//MARK:  Historic Bid Data
+                print("Bid: Historic")
+                var dict: [String:Any] = [:]
+                if self.isSecondRoundBid() && !self.isFABid(){
+                     dict = [
+                        "Year": self.app.mockDataYear!,
+                        "Month": self.app.mockDataMonth!,
+                        "Round": self.dataSource.round,
+                        "Domicile": self.dataSource.base,
+                        "Position": self.dataSource.position.shortName,
+                        "FileName": linesTextFileName
+                        ]
+                    // needs code
+                }
+                
+                 dict = [
+                    "Year": self.app.mockDataYear!,
+                    "Month": self.app.mockDataMonth!,
+                    "Round": self.dataSource.round,
+                    "Domicile": self.dataSource.base,
+                    "Position": self.dataSource.position.shortName,
+                    "FileName": bidFileName
+                    ]
+                bidDownload.downloadHistoricBid(from: dict, completion: { result in
+                    switch result{
+                    case .success(let data):
+                        do{
+                            let jsonData = try JSONSerialization.jsonObject(with: data) as! [String: Any]
+                            let dataBytes = jsonData["Data"] as? [Any]
+                            let count = dataBytes!.count
+                            print("Count:", count)
+                            let bytes = UnsafeMutablePointer<UInt8>.allocate(capacity: count)
+                            for i in 0..<count{
+                                let str = dataBytes![i] as! String
+                                let byte = UInt8(str)!
+                                bytes[i] = byte
                             }
+                            let fileData = Data(bytes: bytes, count: count)
+                            let dataWriteURL = bidInfo.downloadDirectory().appendingPathComponent(bidFileName)
+//                          MARK:  let dataWriteSuccess =
+                            
+                            
+                        }catch{
+                            print("Error parsing JSON data: \(error)")
                         }
                         
+                    case .failure(let error):
+                        print("Error: \(error)")
                     }
-                   
-                case .failure(let error):
-                    NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
-                    print("Failed: \(error.localizedDescription)")
                     
-                }
+                })
+                
+                
+                
+            }else if self.app.isMockData{//MARK:  Mock Bid Data
+                print("Bid: Mock data")
+                
+                
+                
+            }else{//MARK:  New Bid Data
+                print("Bid: New bid")
+                NotificationCenter.default.post(name: Notification.Name("ShowProgressView"), object: nil)
+                    bidDownload.downloadBidFiles(sessionKey: sessionKey, filename: bidFileName){ result in
+                        switch result{
+                        case .success(let fileURL):
+                            DispatchQueue.main.async {
+                                NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
+                            }
+                            
+                            print("File unzipped at: \(fileURL)")
+                            DispatchQueue.global(qos: .userInitiated).async {
+                                if BIBidInfoReader().readBidData(){
+                                    DispatchQueue.main.async {
+                                        NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+                                        self.loginActions()
+                                    }
+                                }
+                                
+                            }
+                            
+                        case .failure(let error):
+                            NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+                            print("Failed: \(error.localizedDescription)")
+                            
+                        }
+                    }
             }
             
+            
+            
+
         }
         viewModel.onLoginFailure = { error in
             self.view.hideActivityIndicator()
@@ -135,13 +205,54 @@ class CBCredentialsPageVC: BaseViewController {
             }
         }
         //-----------------------
+        
+        
+        
+        
         NotificationCenter.default.addObserver(self, selector: #selector(dismissVC), name: NSNotification.Name(rawValue: "dismissLoginView"), object: nil)
     }
+
+    
+    private func checkEarlyBidding(){
+        let currentDate = Date()
+        let units: Set<Calendar.Component> = [.hour, .day, .month, .year]
+        var dc = Calendar.current.dateComponents(units, from: currentDate)
+        dc.hour = 12
+        dc.timeZone = TimeZone(identifier: "US/Central")!
+        var dayString: String? = nil
+        if selectedRound == 1{
+            if selectedPosition?.shortName == "FA"{
+                dc.day = 2
+                dayString = "2nd"
+            }else{
+                dc.day = 4
+                dayString = "4th"
+            }
+        }else{
+            if selectedPosition?.shortName == "FA"{
+                dc.day = 11
+                dayString = "11th"
+            }else{
+                dc.day = 17
+                dayString = "17th"
+            }
+        }
+        let bidReleaseDate: Date? = Calendar.current.date(from: dc)
+        if bidReleaseDate?.compare(currentDate) == .orderedDescending {
+            if !isHistoricBid{
+                let alert = AlertService.showAlert(title: "Early Bid Warning", message: "SWA guarantees that the lines will be released by noon Central Time on the \(dayString!).  Sometimes SWA releases the lines earlier. If SWA has not released the lines early, then attempting to download them now will result in a BID INFO UNAVAILABLE error.  So if you receive this error, try again later.", actions: nil)
+                self.present(alert, animated: true)
+                
+            }
+        }
+    }
+    
     @objc func dismissVC() {
         DispatchQueue.main.async {
             self.dismiss(animated: true, completion: nil)
         }
     }
+    
     @IBAction func showPasswordAction(_ sender: UIButton) {
         txtPassword.isSecureTextEntry = !txtPassword.isSecureTextEntry
         let icon = UIImage(named: txtPassword.isSecureTextEntry ? "showPwd" : "hidePwd")
@@ -158,16 +269,16 @@ class CBCredentialsPageVC: BaseViewController {
     }
     
     @IBAction func btnGoAction(_ sender: UIButton) {
-        self.login()
+        UserDefaults.standard.set(txtUserID.text, forKey: KCBEmpNumWithPrefix)
+        self.loginValidation()
         if type == "Retrieve Awards" {
             self.retriveAwardsAction()
         }
         else if type == "Submit Bid" {
-            print("hello")
             self.submitBidAction()
         }
     }
-    func login(){
+    func loginValidation(){
         guard reachability?.isReachable == true else {
             let alert = AlertService.showAlert(title: Warning, message: NetworkNotAvailable, actions: nil)
             self.present(alert, animated: true)
@@ -192,9 +303,71 @@ class CBCredentialsPageVC: BaseViewController {
         txtUserID.text = formattedUserID
         guard let empID = self.txtUserID.text, let month = self.month, let year = self.year, let round = self.selectedRound, let selectedbase = self.selectedDomicile, let position = self.selectedPosition else { return }
         self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
-        viewModel.checkLogin(userID: formattedUserID,password: password,empNum: empID,month: month,year: year, round:round, base:selectedbase, position: position)
+        
+        //--Login action--
+        if bidAlreadyExists(){
+            showAlertForExistingBid()
+        }else{
+            viewModel.checkLogin(userID: formattedUserID,password: password,empNum: empID,month: month,year: year, round:round, base:selectedbase, position: position)
+            
+        }
+        //----------------
     }
 
+    private func bidAlreadyExists() -> Bool {
+        var status = false
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+        let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: self.context)
+        fetchRequest.entity = entity
+        var array:[NSPredicate] = []
+        array.append(NSPredicate(format: "base == %@", self.dataSource.base))
+        array.append(NSPredicate(format: "round == %@", self.dataSource.round))
+        array.append(NSPredicate(format: "month == %@", self.dataSource.month))
+        array.append(NSPredicate(format: "positionType == %@", self.dataSource.position.rawValue))
+        array.append(NSPredicate(format: "year == %@", self.dataSource.year))
+        
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
+        let list = try! self.context.fetch(fetchRequest) as! [BIBidPeriod]
+        if list.count > 0 {
+            status = true
+        }
+        return status
+    }
+    
+    private func showAlertForExistingBid() {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+        let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: self.context)
+        fetchRequest.entity = entity
+        var array:[NSPredicate] = []
+        array.append(NSPredicate(format: "base == %@", self.dataSource.base))
+        array.append(NSPredicate(format: "round == %@", self.dataSource.round))
+        array.append(NSPredicate(format: "month == %@", self.dataSource.month))
+        array.append(NSPredicate(format: "positionType == %@", self.dataSource.position.rawValue))
+        array.append(NSPredicate(format: "year == %@", self.dataSource.year))
+        
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
+        let list = try! self.context.fetch(fetchRequest) as! [BIBidPeriod]
+        
+        let monthArr = ["January", "February", "March", "April", "May", "June", "July", "August","September","October","November","December"]
+        let alert = AlertService.showAlert(title: "Download Bid Again?", message: "The Bid for \(monthArr[dataSource.month-1]) \(dataSource.base) \(dataSource.position) Round \(dataSource.round) already exists. If you download it again, all existing data, including bid receipts, will be removed.", actions: [(title: "Download Again", style: .default, handler: {_ in
+            if list.count > 0 {
+                let obj = list[0]
+                self.context.delete(obj)
+//                NotificationCenter.default.post(name: NSNotification.Name(reloadCollectionView), object: nil)
+            }
+            self.loginActions()
+        }), (title: "Cancel", style: .cancel, handler: {_ in}), (title: "Open Bid", style: .default, handler: {_ in
+            if list.count > 0 {
+                let obj = list[0]
+                CBGlobalMethods.shared.selectedBidPeriod = obj
+                UserDefaults.standard.setValue(obj.round?.intValue ?? 1, forKey: "SelectedRound")
+                self.dismiss(animated: true)
+//                NotificationCenter.default.post(name: NSNotification.Name("openBidPeriodFromDownloadPage"), object: nil)
+            }
+        })])
+        self.present(alert, animated: true)
+    }
+    
     func getAttributedMessage(from text: String, for targetText: String) -> NSMutableAttributedString {
         let messageFont = UIFont.systemFont(ofSize: 20)
         let boldFont = UIFont.boldSystemFont(ofSize: 24)
@@ -251,7 +424,15 @@ class CBCredentialsPageVC: BaseViewController {
             }
         }
     }
+    private func isSecondRoundBid() -> Bool {
+        let isSecondRoundBid = dataSource.round == 2
+        return isSecondRoundBid
+    }
     
+    private func isFABid() -> Bool {
+        let isFABid = BICrewPositionType.FlightAttendant.rawValue == self.dataSource.position.rawValue
+        return isFABid
+    }
 }
 
 
@@ -261,7 +442,7 @@ extension CBCredentialsPageVC: UITextFieldDelegate {
             txtPassword.becomeFirstResponder()
         } else if textField == txtPassword {
             txtPassword.resignFirstResponder()
-            self.login()
+            self.loginValidation()
         }
         return true
     }
