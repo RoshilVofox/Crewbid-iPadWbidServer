@@ -8,6 +8,18 @@
 import Foundation
 import CoreData
 
+protocol BIBidInfoReaderDataSource: BIBidInfoDataSource {
+    func managedObjectContext() -> NSManagedObjectContext
+}
+
+protocol BIBidInfoReaderDelegate: AnyObject {
+    func bidInfoReader(_ bidInfoReader: BIBidInfoReader, didUpdateReadProgress progress: Float)
+    func bidInfoReader(_ bidInfoReader: BIBidInfoReader, didUpdateProcessProgress progress: Float)
+    func bidInfoReaderDidFinish(_ bidInfoReader: BIBidInfoReader)
+    func bidInfoReader(_ bidInfoReader: BIBidInfoReader, didFailWithError error: Error)
+}
+
+
 
 class BIBidInfoReader{
     let tripFileName = "TRIPS"
@@ -58,12 +70,33 @@ class BIBidInfoReader{
     var tripsCount:Float = 0
     var linesCount:Float = 0
     var bidPeriod:BIBidPeriod?
-    let calendarData = BICalendarData()
+    var calendarData = BICalendarData()
     var thanksgivingDay: UInt = 0
     var includeDroppedTrips:Bool?
     var intlCities:[String:Any] = [:]
     var dateComponents: DateComponents?
     var defaultEmployeeNumber: String?
+        weak var delegate: BIBidInfoReaderDelegate?
+    var app = UIApplication.shared.delegate as? AppDelegate
+    
+    init() {
+//    init(delegate: BIBidInfoReaderDelegate?) {
+//            self.delegate = delegate
+            self.app = UIApplication.shared.delegate as? AppDelegate
+
+            guard
+                dataSource.year != 0,
+                dataSource.month != 0,
+                !dataSource.base.isEmpty,
+                dataSource.position.rawValue != 3 ,
+                dataSource.round != 0,
+                !dataSource.employeeNumber.isEmpty
+            else {
+                print("Invalid GlobalBidInfo data")
+                return
+            }
+        }
+
     
     func readBidData() ->Bool{
         if !self.isFABid() && self.isSecondRoundBid(){
