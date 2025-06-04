@@ -97,7 +97,43 @@ class CBCredentialsPageVC: BaseViewController {
                         "Position": self.dataSource.position.shortName,
                         "FileName": linesTextFileName
                         ]
-                    // needs code
+                    let urlString = EndPoint.shared.DownloadHistoricalBidLineAll
+                    bidDownload.downloadHistoricBid(from: dict, urlString: urlString, completion: { result in
+                        switch result{
+                        case .success(let data):
+                            do{
+                                let jsonData = try JSONSerialization.jsonObject(with: data) as! [String: Any]
+                                let dataBytes = jsonData["Data"] as? [Any]
+                                let count = dataBytes!.count
+                                let bytes = UnsafeMutablePointer<UInt8>.allocate(capacity: count)
+                                for i in 0..<count{
+                                    let str = dataBytes![i] as! String
+                                    let byte = UInt8(str)!
+                                    bytes[i] = byte
+                                }
+                                let fileData = Data(bytes: bytes, count: count)
+                                let dataWriteURL = bidInfo.downloadDirectory().appendingPathComponent(linesTextFileName)
+                                var dataWriteSuccess:Bool
+                                do {
+                                    try fileData.write(to: dataWriteURL, options: [])
+                                     dataWriteSuccess = true
+                                } catch {
+                                    print("Error writing data to file: \(error)")
+                                     dataWriteSuccess = false
+                                }
+                                if dataWriteSuccess{
+                                    
+                                }
+                                
+                            }catch{
+                                print("Error parsing JSON data: \(error)")
+                            }
+                            
+                        case .failure(let error):
+                            print("Error: \(error)")
+                        }
+                        
+                    })
                 }
                 
                  dict = [
@@ -108,24 +144,32 @@ class CBCredentialsPageVC: BaseViewController {
                     "Position": self.dataSource.position.shortName,
                     "FileName": bidFileName
                     ]
-                bidDownload.downloadHistoricBid(from: dict, completion: { result in
+                let urlString = EndPoint.shared.DownloadHistoricalDataRest
+                bidDownload.downloadHistoricBid(from: dict,urlString: urlString, completion: { result in
                     switch result{
                     case .success(let data):
                         do{
                             let jsonData = try JSONSerialization.jsonObject(with: data) as! [String: Any]
                             let dataBytes = jsonData["Data"] as? [Any]
                             let count = dataBytes!.count
-                            print("Count:", count)
                             let bytes = UnsafeMutablePointer<UInt8>.allocate(capacity: count)
                             for i in 0..<count{
-                                let str = dataBytes![i] as! String
-                                let byte = UInt8(str)!
-                                bytes[i] = byte
+                                let str = dataBytes![i] as? Int
+                                bytes[i] = UInt8(str!)
                             }
                             let fileData = Data(bytes: bytes, count: count)
                             let dataWriteURL = bidInfo.downloadDirectory().appendingPathComponent(bidFileName)
-//                          MARK:  let dataWriteSuccess =
-                            
+                            var dataWriteSuccess:Bool
+                            do {
+                                try fileData.write(to: dataWriteURL, options: [])
+                                 dataWriteSuccess = true
+                            } catch {
+                                print("Error writing data to file: \(error)")
+                                 dataWriteSuccess = false
+                            }
+                            if dataWriteSuccess{
+                                
+                            }
                             
                         }catch{
                             print("Error parsing JSON data: \(error)")

@@ -59,11 +59,10 @@ class BIBidFileDownload: NSObject{
     }
     
     //MARK: Historic Bid
-    func downloadHistoricBid(from dict:[String:Any], completion: @escaping (Result<Data, Error>) -> Void) {
+    func downloadHistoricBid(from dict:[String:Any], urlString:String, completion: @escaping (Result<Data, Error>) -> Void) {
         do{
             let data = try JSONSerialization.data(withJSONObject: dict)
             let postString = String(data: data, encoding: .utf8)!
-            let urlString = EndPoint.shared.DownloadHistoricalBidLineAll
             let URL = URL(string: urlString)!
             var request = URLRequest(url: URL)
             request.httpMethod = "POST"
