@@ -11,12 +11,10 @@ class CBBiddataDownloadVC: BaseViewController {
     
     // base
     @IBOutlet weak var btnATL: dataDownloadingButton!
-    @IBOutlet weak var btnAUS: dataDownloadingButton!
     @IBOutlet weak var btnBNA: dataDownloadingButton!
     @IBOutlet weak var btnBWI: dataDownloadingButton!
     @IBOutlet weak var btnDAL: dataDownloadingButton!
     @IBOutlet weak var btnDEN: dataDownloadingButton!
-    @IBOutlet weak var btnFLL: dataDownloadingButton!
     @IBOutlet weak var btnHOU: dataDownloadingButton!
     @IBOutlet weak var btnLAS: dataDownloadingButton!
     @IBOutlet weak var btnLAX: dataDownloadingButton!
@@ -119,7 +117,7 @@ class CBBiddataDownloadVC: BaseViewController {
     
     @IBAction func btnBaseAction(_ sender: UIButton) {
         // Iterate over a range of button tags
-        for i in (40..<54) {
+        for i in (40..<52) {
             if i == (sender as AnyObject).tag {
                 // Update the selected domicile based on the button title
                 selectedDomicile = sender.titleLabel!.text!
@@ -136,27 +134,7 @@ class CBBiddataDownloadVC: BaseViewController {
                 
             }
         }
-                if sender.tag == 41 || sender.tag == 45{
-                    btnCP.alpha = 0.3
-                    btnFO.alpha = 0.3
-                    if #available(iOS 13.0, *) {
-                        btnCP.backgroundColor = .secondarySystemBackground
-                        btnFO.backgroundColor = .secondarySystemBackground
-                    } else {
-                        btnCP.backgroundColor = .white
-                        btnFO.backgroundColor = .white
-                    }
-                    btnCP.isUserInteractionEnabled = false
-                    btnFO.isUserInteractionEnabled = false
-                    if selectedPosition == "CP" || selectedPosition == "FO"{
-                        selectedPosition = nil
-                    }
-                }else{
-                    btnCP.alpha = 1
-                    btnFO.alpha = 1
-                    btnCP.isUserInteractionEnabled = true
-                    btnFO.isUserInteractionEnabled = true
-                }
+
         print("Base: \(selectedDomicile!)")
 //        navigationAction()
     }
