@@ -210,6 +210,8 @@ extension BILine {
     @NSManaged public var trips: NSSet?
     @NSManaged public var vacationArrayFromServer: VacationArrayFromServer?
     @NSManaged public var workBlocks: NSSet?
+    @NSManaged public var clawBack: NSNumber?
+
     
 
 }

@@ -37,6 +37,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     var position: Int?
     var employeeNumber: String?
     var base: String?
+    var progressBlock: BIProgressBlock?
 
     
     //MARK: download WBID VacationFiles
@@ -1597,7 +1598,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         }
         let topLevel = file["SWAPtimizer_CrewBid_Data"] as! [String: Any]
         let header = topLevel["Header"] as! [String: Any]
-        let numVacayWeeks = header["NumberVacationWeeks"] as? Int
+        let numVacayWeeks = header["NumberVacationWeeks"] as? Int ?? 0
         var vacayDates = header["VacationDates"] as! [[String: String]]
         
         // Figure out if we're going to hide some of the values based on the LineDataFields
@@ -1696,7 +1697,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         let fetchRequestForVacation: NSFetchRequest<BIVacation> = BIVacation.fetchRequest()
         fetchRequestForVacation.includesPropertyValues = false
         do {
-            let vacays = try self.bidPeriod?.managedObjectContext?.fetch(fetchRequest)
+            let vacays = try self.bidPeriod?.managedObjectContext?.fetch(fetchRequestForVacation)
             for vacay in vacays! {
                 moc?.delete(vacay)
             }
@@ -1704,7 +1705,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             print("vacation fetch failed: \(error)")
         }
         
-        let vacayLines = topLevel["Lines"] as! [Any]
+        let vacayLines = topLevel["Lines"] as! [[String: Any]]
         let totalLinesToProcess = vacayLines.count * vacayDates.count
         var counter = 0
         for i in 0..<vacayDates.count {
@@ -1748,18 +1749,298 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             self.position = self.bidPeriod?.positionType?.intValue
             self.base = self.bidPeriod?.base
             self.employeeNumber = self.bidPeriod?.swaptimizerIdentifier?.stringValue
+            var globalBidInfo = GlobalBidInfo.shared
+            let bidInfoReader = BIBidInfoReader()
+            //            bidInfoReader.dataSource = self
+            //            add global bid info if needed
+            //            globalBidInfo.round = self.bidPeriod?.round as? Int ?? 0
+            //            globalBidInfo.year = self.bidPeriod?.year as? Int ?? 2025
+            //            globalBidInfo.month = self.bidPeriod?.month as? Int ?? 1
+            //            globalBidInfo.position = self.bidPeriod?.positionType?.intValue ?? 0
+            bidInfoReader.bidPeriod = self.bidPeriod
+            bidInfoReader.calendarData = self.calendarData!
+            bidInfoReader.includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
+            bidInfoReader.intlCities = (UserDefaults.standard.object(forKey: kCBInternationalCitiesDict) as? [String: Any])!
             
-//            let bidInfoReader = BIBidInfoReader(dataSource: self, delegate: nil)
-//            bidInfoReader.dataSource = self
-//            bidInfoReader.bidPeriod = self.bidPeriod
-//            bidInfoReader.calendarData = self.calendarData
-//            bidInfoReader.includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
-//            bidInfoReader.intlCities = UserDefaults.standard.object(forKey: kCBInternationalCitiesDict) as? [String: Any]
+            // Reset the deadhead at start and end cities
+            let fetchRequestForDeadHeadAtStart: NSFetchRequest<BIDeadheadAtStartCity> = BIDeadheadAtStartCity.fetchRequest()
+            fetchRequestForDeadHeadAtStart.includesPropertyValues = false
+            do {
+                let cities = try self.bidPeriod?.managedObjectContext?.fetch(fetchRequestForDeadHeadAtStart)
+                for city in cities! {
+                    moc?.delete(city)
+                }
+            } catch {
+                print("deadhead at start city fetch failed: \(error)")
+            }
+            let fetchRequestForDeadHeadAtEnd: NSFetchRequest<BIDeadheadAtEndCity> = BIDeadheadAtEndCity.fetchRequest()
+            fetchRequestForDeadHeadAtEnd.includesPropertyValues = false
+            do {
+                let cities = try self.bidPeriod?.managedObjectContext?.fetch(fetchRequestForDeadHeadAtEnd)
+                for city in cities! {
+                    moc?.delete(city)
+                }
+            } catch {
+                print("deadhead at end city fetch failed: \(error)")
+            }
+            do {
+                try moc?.save()
+                print("filename saved")
+            } catch {
+                print("Error saving context: \(error)")
+            }
+            // Iterate over all the lines and fill in the stuff we need to know
+            var vEnumerator = vacayLines.makeIterator()
+            self.bidPeriod?.swaptimizerStatus = CBSwaptimizerStatus.enabled.rawValue as NSNumber
+            for line in sortedLines as! [BILine] {
+                counter += 1
+                if (counter % 10 == 0) {
+                    if let progressBlock = self.progressBlock {
+                        DispatchQueue.main.async {
+                            let progress = Float(counter) / Float(totalLinesToProcess)
+                            progressBlock(progress)
+                        }
+                    }
+                }
+                
+                let vLine = vEnumerator.next()
+                let vLineNumber = (vLine?[lineName] as? Int) ?? (vLine?[lineName] as? NSNumber)?.intValue ?? 0
+                
+                if (vLineNumber == line.number?.intValue) {
+                    let lineData = vLine?["LineData"] as! [String: Any]
+                    line.vTotalPay = lineData[totalPay] as? NSNumber
+                    line.pay = line.vTotalPay
+                    line.coHoli = 0
+                    line.vFlyPay = lineData[flyPay] as? NSNumber
+                    line.tripTfp = line.vFlyPay
+                    line.vVacationPay = lineData[totalVacationPay] as? NSNumber
+                    if let rig = line.lineRig?.floatValue, let vvp = line.vVacationPay?.floatValue {
+                        line.vTpLPay = NSNumber(value: rig + vvp)
+                    }
+                    line.vCarryOutPay = lineData[carryOutPay_Flying] as? NSNumber
+                    if let vcop = line.vCarryOutPay?.floatValue, let lp = line.pay?.floatValue {
+                        line.payPlusCo = NSNumber(value: vcop + lp)
+                    }
+                    line.vVacayCarryOutPay = lineData[carryoutVacationPay] as? NSNumber
+                    line.vVacayPayBothBP = lineData[vacPayBothBp] as? NSNumber
+                    line.vVacayPayNextBP = lineData[vacPayNeBp] as? NSNumber
+                    line.vCarryOutVOPay = lineData[carryoutVOPay] as? NSNumber
+                    line.blockMinutes = lineData[blockName] as? NSNumber
+                    line.blockHours = line.blockMinutes!.floatValue / 60 as NSNumber
+                    line.vBlockTime = line.blockMinutes!.floatValue / 60 as NSNumber
+                    line.vDaysOff = lineData[totalDaysOff] as? NSNumber
+                    line.vEffectiveVacayLength = lineData[effectiveVacationLength] as? NSNumber
+                    line.vLongestBlockofDaysOff = lineData[longestBlockofDaysOff] as? NSNumber
+                    line.vAbp = lineData[vAbp] as? NSNumber
+                    line.vAne = lineData[vAne] as? NSNumber
+                    line.vAbo = lineData[vAbo] as? NSNumber
+                    line.vAPbp = lineData[vAPbp] as? NSNumber
+                    line.vAPne = lineData[vAPne] as? NSNumber
+                    line.vAPbo = lineData[vAPbo] as? NSNumber
+                    line.clawBack = lineData[clawBack] as? NSNumber
+                    
+                    if (line.vTotalPay!.floatValue > 0 && line.vBlockTime!.intValue > 0) {
+                        line.vPayPerBlock = (line.vTotalPay!.floatValue) / (line.vBlockTime?.floatValue)! as NSNumber
+                    }
+                    else {
+                        line.vPayPerBlock = 0.0
+                        line.payPerBlockHour = 0.0
+                    }
+                    var fvVacayDates: [[String: Any]] = []
+                    if let data = vLine?["FVvacationData"] {
+                        if let array = data as? [[String: Any]] {
+                            fvVacayDates = array
+                        }
+                    }
+                    if let cfvDates = vLine?["CFVDates"] {
+                        line.cfvVacDates = cfvDates as? NSObject
+                        self.bidPeriod?.containsVacay = true
+                        self.bidPeriod?.seniorityVacayAvailable = true
+                        self.bidPeriod?.containsCFV = true
+                    }
+                    var modifiedFVVacayDates: [[String: Any]]  = []
+                    var selectedFVVacayDates: [[String: Any]]  = []
+                    
+                    let areDateRangesOverLapping = self.anyDateRangesOverlapping(vacations: fvVacayDates)
+                    if (areDateRangesOverLapping) {
+                        modifiedFVVacayDates = self.mergeDateRanges(vacationDates: fvVacayDates)
+                    }
+                    if (areDateRangesOverLapping && modifiedFVVacayDates.count > 0) {
+                        selectedFVVacayDates = fvVacayDates
+                    }
+                    for i in 0..<selectedFVVacayDates.count {
+                        let vacayDict = selectedFVVacayDates[i]
+                        var startDate = Date()
+                        var endDate = Date()
+                        if (areDateRangesOverLapping) {
+                            startDate = vacayDict["FVStartDate"] as! Date
+                            endDate = vacayDict["FVEndDate"] as! Date
+                        }
+                        else {
+                            startDate = self.getDateFromJSON(vacayDict["FVStartDate"] as? String)!
+                            endDate = self.getDateFromJSON(vacayDict["FVEndDate"] as? String)!
+                        }
+                        
+                        let dff = DateFormatter()
+                        dff.dateFormat = "yyyy-MM-dd'T'HH:mm"
+                        dff.timeZone = TimeZone(abbreviation: "GMT")
+                        let resultStart = dff.string(from: startDate)
+                        let startDateFinal = dff.date(from: resultStart)!
+                        let resultEnd = dff.string(from: endDate)
+                        let endDateFinal = dff.date(from: resultEnd)!
+                        
+                        let vacay = BIVacation(context: self.bidPeriod!.managedObjectContext!)
+                        if secretEnabled == "YES" {
+                            let secretVacay = BIVacation(context: (self.bidPeriod?.managedObjectContext)!)
+                        }
+                        vacay.line = line
+                        vacay.fvStartdate = startDateFinal
+                        vacay.fvEnddate = endDateFinal
+                        let length = (self.calendarData?.daysBetweenDate(startDateFinal, andDate: endDateFinal))! + 1
+                        vacay.fvLength = length as NSNumber
+                        self.bidPeriod?.containsVacay = true
+                        self.bidPeriod?.containsFvVacay = true
+                    }
+                    // Calculate the line's total Front VO pay and Back VO
+                    if (numVacayWeeks > 1) {
+                        var frontVoPay = 0.0
+                        var backVoPay = 0.0
+                        
+                        for i in 0..<numVacayWeeks {
+                            let frontVoKey = String(format: "Front VO%@%d", (i == 0 ? "" : " "), i + 1)
+                            let backVoKey = String(format: "Back VO%@%d", (i == 0 ? "" : " "), i + 1)
+                            
+                            let frontVoPayString = lineData[frontVoKey] as? String ?? "0.00"
+                            let backVoPayString = lineData[backVoKey] as? String ?? "0.00"
+//                            1568
+                            
+                        }
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        
+    }
+    // Function to check if any date ranges overlap in an array of ranges
+    func anyDateRangesOverlapping(vacations: [[String: Any]]) -> Bool {
+        for i in 0..<vacations.count {
+            for j in (i + 1)..<vacations.count {
+                if areDateRangesOverlapping(range1: vacations[i], range2: vacations[j]) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
 
-
+    
+    func areDateRangesOverlapping(range1: [String: Any],range2: [String: Any]) -> Bool {
+        guard
+            let start1 = getDateFromJSON(range1["FVStartDate"] as? String),
+            let end1 = getDateFromJSON(range1["FVEndDate"] as? String),
+            let start2 = getDateFromJSON(range2["FVStartDate"] as? String),
+            let end2 = getDateFromJSON(range2["FVEndDate"] as? String)
+        else {
+            return false
         }
 
+        return start1 <= end2 && start2 <= end1
     }
+
+    
+    func getDateFromJSON(_ string: String?) -> Date? {
+        guard let string = string, string.count > 1 else {
+            return nil
+        }
+
+        // Regular expression for matching /Date(1625140800000+0530)/ format
+        let pattern = #"^\/date\((-?\d+)(?:([+-])(\d{2})(\d{2}))?\)\/$"#
+        
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else {
+            return nil
+        }
+
+        let range = NSRange(location: 0, length: string.utf16.count)
+        guard let match = regex.firstMatch(in: string, options: [], range: range) else {
+            return nil
+        }
+
+        // Extract milliseconds since epoch
+        guard let millisRange = Range(match.range(at: 1), in: string),
+              let milliseconds = Double(string[millisRange]) else {
+            return nil
+        }
+
+        var seconds = milliseconds / 1000.0
+
+        // If there's a timezone offset
+        if match.range(at: 2).location != NSNotFound,
+           let signRange = Range(match.range(at: 2), in: string),
+           let hourRange = Range(match.range(at: 3), in: string),
+           let minRange = Range(match.range(at: 4), in: string) {
+
+            let sign = string[signRange]
+            let hours = Double(string[hourRange]) ?? 0
+            let minutes = Double(string[minRange]) ?? 0
+            let offset = (hours * 3600.0) + (minutes * 60.0)
+
+            seconds += (sign == "+" ? offset : -offset)
+        }
+
+        return Date(timeIntervalSince1970: seconds)
+    }
+    
+    func mergeDateRanges(vacationDates: [[String: Any]]) -> [[String: Any]] {
+        // Step 1: Convert dictionary dates to NSDate
+        var datesArray: [[String: Any]] = []
+        for dict in vacationDates {
+            let startDate = self.getDateFromJSON(dict["FVStartDate"] as? String)
+            let endDate = self.getDateFromJSON(dict["FVEndDate"] as? String)
+            datesArray.append(["startDate": startDate, "endDate": endDate])
+        }
+            
+            // Step 2: Sort the dates by start date
+            let sortDescriptor = NSSortDescriptor(key: "startDate", ascending: true)
+            let sortedDates = (datesArray as NSArray).sortedArray(using: [sortDescriptor])
+            
+            // Step 3: Merge overlapping or contiguous ranges
+            var mergedDates: [[String: Any]] = []
+            var currentRange = sortedDates.first as! [String: Any]
+            for range in sortedDates {
+                if let range = range as? [String: Any],
+                    let currentStartDate = currentRange["startDate"] as? Date,
+                    let currentEndDate = currentRange["endDate"] as? Date,
+                    let nextStartDate = range["startDate"] as? Date,
+                    let nextEndDate = range["endDate"] as? Date {
+                    
+                    if nextStartDate <= currentEndDate {
+                        // Ranges overlap or are contiguous
+                        currentRange = [
+                            "startDate": currentStartDate,
+                            "endDate": (nextEndDate > currentEndDate) ? nextEndDate : currentEndDate
+                        ]
+                    }
+                    else {
+                        // No overlap, add current range to merged list and update current range
+                        mergedDates.append(currentRange)
+                        currentRange = range
+                    }
+                }
+            }
+        mergedDates.append(currentRange) // Add the last range
+        
+        // Step 4: Convert merged date ranges back to dictionary format
+        var results: [[String: Any]] = []
+        for range in mergedDates {
+            results.append(["FVStartDate": range["startDate"],"FVEndDate": range["endDate"]])
+        }
+        
+        return results
+    }
+
     
     func processFAVacationWithJsonFile(file: [String: Any]) {
         
