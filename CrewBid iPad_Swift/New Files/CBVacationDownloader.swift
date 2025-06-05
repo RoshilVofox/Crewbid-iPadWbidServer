@@ -29,7 +29,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     var dataSource = GlobalBidInfo.shared
     var vactionDownloadType: VacationDownloadType?
     var isAutoDownload = false
-    var finishedBlock: BIFinishedBlock?
+//    var finishedBlock: BIFinishedBlock?
     weak var calendarData: BICalendarData?
     var round: NSNumber?
     var year: NSNumber?
@@ -37,7 +37,17 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     var position: Int?
     var employeeNumber: String?
     var base: String?
-    var progressBlock: BIProgressBlock?
+//    var progressBlock: BIProgressBlock?
+    
+    let kVoLabel = "VO"
+    let kVaLabel = "VA"
+    let kFrontVoFull = "FrontVO-full"
+    let kFrontVoPartial = "FrontVO-partial"
+    let kBackVoFull = "BackVO-full"
+    let kBackVoPartial = "BackVO-partial"
+    let kPullTypeFront = "Front"
+    let kPullTypeBack = "Back"
+    let kPullTypeAll = "All"
 
     
     //MARK: download WBID VacationFiles
@@ -782,11 +792,11 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             self.bidPeriod?.swaptimizerStatus = NSNumber(value: CBSwaptimizerStatus.statusError.rawValue)
         }
         
-        if let finishedBlock = self.finishedBlock {
-            DispatchQueue.main.async {
-                finishedBlock()
-            }
-        }
+//        if let finishedBlock = self.finishedBlock {
+//            DispatchQueue.main.async {
+//                finishedBlock()
+//            }
+//        }
     }
     
     func storeFAVacation(jsonData: [String: Any]) {
@@ -1793,15 +1803,15 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             var vEnumerator = vacayLines.makeIterator()
             self.bidPeriod?.swaptimizerStatus = CBSwaptimizerStatus.enabled.rawValue as NSNumber
             for line in sortedLines as! [BILine] {
-                counter += 1
-                if (counter % 10 == 0) {
-                    if let progressBlock = self.progressBlock {
-                        DispatchQueue.main.async {
-                            let progress = Float(counter) / Float(totalLinesToProcess)
-                            progressBlock(progress)
-                        }
-                    }
-                }
+//                counter += 1
+//                if (counter % 10 == 0) {
+//                    if let progressBlock = self.progressBlock {
+//                        DispatchQueue.main.async {
+//                            let progress = Float(counter) / Float(totalLinesToProcess)
+//                            progressBlock(progress)
+//                        }
+//                    }
+//                }
                 
                 let vLine = vEnumerator.next()
                 let vLineNumber = (vLine?[lineName] as? Int) ?? (vLine?[lineName] as? NSNumber)?.intValue ?? 0
@@ -1903,20 +1913,116 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     }
                     // Calculate the line's total Front VO pay and Back VO
                     if (numVacayWeeks > 1) {
-                        var frontVoPay = 0.0
-                        var backVoPay = 0.0
+                        var frontVoPay: Float = 0.0
+                        var backVoPay: Float = 0.0
                         
                         for i in 0..<numVacayWeeks {
                             let frontVoKey = String(format: "Front VO%@%d", (i == 0 ? "" : " "), i + 1)
                             let backVoKey = String(format: "Back VO%@%d", (i == 0 ? "" : " "), i + 1)
                             
-                            let frontVoPayString = lineData[frontVoKey] as? String ?? "0.00"
-                            let backVoPayString = lineData[backVoKey] as? String ?? "0.00"
-//                            1568
+                            let frontVoPayString = lineData[frontVoKey] as? String
+                            if (frontVoPayString != nil) {
+                                frontVoPay += frontVoPayString!.floatValue
+                            }
+                            let backVoPayString = lineData[backVoKey] as? String
+                            if (backVoPayString != nil) {
+                                backVoPay += backVoPayString!.floatValue
+                            }
                             
+                        }
+                        line.vFrontVoPay = frontVoPay as NSNumber
+                        line.vBackVoPay = backVoPay as NSNumber
+                    }
+                    else {
+                        line.vFrontVoPay = lineData[frontVO] as? NSNumber
+                        line.vBackVoPay = lineData[backVO] as? NSNumber
+                    }
+                    if (vacationType == "WBID" || vacationType == "WBIDF") {
+                        line.vFrontVoPay = lineData["VOFront"] as? NSNumber
+                        line.vBackVoPay = lineData["VOBack"] as? NSNumber
+                    }
+                    var workDays = (lineData[daysWorked_inmonth] as? NSNumber)?.intValue ?? 0
+                    if (((lineData[daysWorked_inmonth] as? NSNumber)?.intValue) == nil) {
+                        workDays = (lineData[daysWorked] as? NSNumber)?.intValue ?? 0
+                    }
+                    if (line.vTotalPay!.floatValue > 0 && workDays > 0) {
+                        line.vPayPerDay = (line.vTotalPay!.floatValue) / Float(workDays) as? NSNumber
+                    }
+                    else if (workDays == 0) {
+                        line.vPayPerDay = 0.0
+                    }
+                    
+                    // Set up the droppped trips for Fv Vacation.
+                    // Below the trip.vacationOverlapType is defined as default value
+                    
+                    if ((self.bidPeriod?.containsVacay) != nil) {
+                        let trips = line.trips as? Set<BITrip> ?? []
+                        let vacations = line.fvvacations as? Set<BIVacation> ?? []
+                        
+                        for vacay in vacations {
+                            let fvStartdate = vacay.fvStartdate!
+                            let fvEnddate = vacay.fvEnddate!
+                            for trip in trips {
+                                let dff = DateFormatter()
+                                dff.dateFormat = "yyyy-MM-dd"
+                                dff.timeZone = TimeZone(abbreviation: "GMT")
+                                
+                                
+                                if let tripDate = trip.startDate,
+                                   let normalizedDate = dff.date(from: dff.string(from: tripDate)),
+                                   calendarData?.isDate(normalizedDate, between: fvStartdate, and: fvEnddate) == true {
+                                    for day in trip.orderedDays {
+                                        day.displayType = BIDayDisplayType.fullPay.rawValue as NSNumber
+                                        day.redEyeDayDisplayDayType = BIDayDisplayType.fullPay.rawValue as NSNumber
+                                        trip.vacationOverlapType = BITripVacationOverlapType.none.rawValue as NSNumber
+                                    }
+                                }
+                            }
                         }
                     }
                     
+                    // Set up the trips if dropped
+                    let rawPairingsPulled = vLine!["PairingsPulled"]
+                    if rawPairingsPulled is String {
+                        continue
+                    }
+                    let pairingsPulled = rawPairingsPulled as? [[String: Any]]
+                    let trips = Array(line.trips as? Set<BITrip> ?? [])
+                    for j in 0..<pairingsPulled!.count {
+                        let df = DateFormatter()
+                        df.dateFormat = "HHmmyyyyMMdd"
+                        df.timeZone = self.calendarData?.bidPeriodTimezone()
+                        let pulledPairing = pairingsPulled![j]
+                        let pairingNumber = pulledPairing["ID"] as? String
+                        let tripNumberPredicate = NSPredicate(format: "info.number == %@", (pairingNumber)!)
+                        let tripDateString = pulledPairing["PrDate"] as! String
+                        let pullType = pulledPairing["PullType"] as? String
+                        let tripDate = df.date(from: "1200\(tripDateString)")
+                        let tripDatePredicate = NSPredicate(format: "startDate == %@", tripDate! as CVarArg)
+                        
+                        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [tripDatePredicate, tripNumberPredicate])
+                        let filteredTrips = trips.filter { compoundPredicate.evaluate(with: $0) }
+                        let trip = filteredTrips.first
+                        
+                        if (pullType == kPullTypeAll) {
+                            trip?.vacationOverlapType = BITripVacationOverlapType.full.rawValue as NSNumber
+                            trip?.dropForFiltersSorts = !includeDroppedTrips as NSNumber
+                        }
+                        else if (pullType == kPullTypeFront) {
+                            trip?.vacationOverlapType = BITripVacationOverlapType.front.rawValue as NSNumber
+                            trip?.dropForFiltersSorts = !includeDroppedTrips as NSNumber
+                        }
+                        else if (pullType == kPullTypeBack) {
+                            trip?.vacationOverlapType = BITripVacationOverlapType.back.rawValue as NSNumber
+                            trip?.dropForFiltersSorts = !includeDroppedTrips as NSNumber
+                        }
+                        // Get missingDate for RedEye Trips
+                        var missingDateIndex = -1
+                        var missingRedEyeDate: Date? = nil
+                        if (trip != nil && trip!.isRedEyeTrip) {
+                            
+                        }
+                    }
                 }
                 
             }

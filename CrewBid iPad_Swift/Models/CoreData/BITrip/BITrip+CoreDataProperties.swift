@@ -10,6 +10,7 @@ import Foundation
 import CoreData
 
 
+
 extension BITrip {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<BITrip> {
@@ -60,6 +61,14 @@ extension BITrip {
     @NSManaged public func removeFromDays(_ values: NSSet)
 
 }
+
+enum BITripVacationOverlapType: Int {
+    case none = 0
+    case front
+    case back
+    case full
+}
+
 
 // MARK: Generated accessors for legs
 extension BITrip {
@@ -116,6 +125,31 @@ extension BITrip : Identifiable {
         formatter.timeZone = TimeZone(identifier: "US/Central")
         return formatter.string(from: localTime)
     }
+    
+    var orderedDays: [BIDay] {
+        let daysArray = (self.days as? Set<BIDay>) ?? []
+
+        return daysArray.sorted { day1, day2 in
+            let minDepart1 = day1.info?.legs?.compactMap { ($0 as? BILegInfo)?.departMinutes?.intValue }.min() ?? Int.max
+            let minDepart2 = day2.info?.legs?.compactMap { ($0 as? BILegInfo)?.departMinutes?.intValue }.min() ?? Int.max
+            return minDepart1 < minDepart2
+        }
+    }
+    
+    var redEyeCount: NSNumber {
+        let myArray = legs?.allObjects
+        let predicate = NSPredicate(format: "info.isRedEyeFlight == YES")
+        let filteredArray = (myArray! as NSArray).filtered(using: predicate)
+        return NSNumber(value: filteredArray.count)
+    }
+
+
+    
+    var isRedEyeTrip: Bool {
+        return redEyeCount.intValue > 0
+    }
+
+
     
     var isReserve: Bool {
         if line?.bidPeriod?.isFABid() == true {

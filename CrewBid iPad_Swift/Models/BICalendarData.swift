@@ -102,6 +102,9 @@ class BICalendarData {
         return difference.day ?? 0
     }
 
+    func isDate(_ date: Date, between beginDate: Date, and endDate: Date) -> Bool {
+        return date >= beginDate && date <= endDate
+    }
 
     
     func dateforDayOfMonth(_ dayOfMonth: Int) -> Date? {

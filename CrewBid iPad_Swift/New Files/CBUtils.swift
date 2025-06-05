@@ -419,4 +419,70 @@ class CBUtils{
             }
             return timeZones[base]
         }
+    
+//    static func findMissingDateAndIndex(forRedEyeTrip trip: BITrip) -> [String: Any] {
+//        var missingDayIndex = -1
+//        var missingDate: Date? = nil
+//        var isMissingDateIsLastDay = false
+//        
+//        if (trip != nil && trip.isRedEyeTrip) {
+//            var calendar = Calendar(identifier: .gregorian)
+//            calendar.locale = Locale(identifier: "en_US")
+//            calendar.timeZone = TimeZone(identifier: "US/Central")!
+//            var dateComps = calendar.dateComponents([.year, .month, .day], from: trip.startDate!)
+//            let df = DateFormatter()
+//            df.dateFormat = "dd-MM-yyyy"
+//            df.timeZone = TimeZone(identifier: "US/Central")
+//            
+//            var tripDates: [String] = []
+//            tripDates.reserveCapacity(4)
+//            for dayInfo in trip.info?.orderedDays as! [BIDayInfo] {
+//                for lengInfo in dayInfo.orderedLegs as! [BILegInfo] {
+//                    dateComps.minute = lengInfo.departMinutes?.intValue
+//                    let legStartDate = calendar.date(from: dateComps)!
+//                    tripDates.append(df.string(from: legStartDate))
+//                }
+//            }
+//            let uniqueDatesSet = NSOrderedSet(array: tripDates)
+//            let uniqueDatesArray = uniqueDatesSet.array as? [String] ?? []
+//            
+//            var shouldBreak = false // Flag to break the outer loop
+//            for i in 0..<uniqueDatesArray.count - 1 where shouldBreak == false {
+//                let currentDate = df.date(from: uniqueDatesArray[i])
+//                let nextDate = df.date(from: uniqueDatesArray[i + 1])
+//                let startOfCurrentDate = calendar.startOfDay(for: currentDate!)
+//                let startOfNextDate: Date = calendar.startOfDay(for: nextDate!)
+//                
+//                let daysBetween = calendar.dateComponents([.day], from: startOfCurrentDate, to: startOfNextDate).day ?? 0
+//                if (daysBetween > 1) {
+//                    for j in 1..<daysBetween {
+//                        let missingDate = calendar.date(byAdding: .day, value: j, to: startOfCurrentDate)!
+//                        if (uniqueDatesArray.count != trip.info?.calendarDaysCount?.intValue) {
+//                            missingDayIndex = i + 1
+//                        }
+//                        else {
+//                            missingDayIndex = -1
+//                        }
+//                        missingDayIndex = i + 1
+//                        shouldBreak = true
+//                        break // Exit loop after finding the first missing date
+//                    }
+//                }
+//                else {
+//                    // This is the case where the date is missing at the end of the DutyPeriod isntead of missing in between.
+//                        // So we have added one date manually to the startDate and set the missingIndex as 1;
+//                    if (i == uniqueDatesArray.count - 1 || i == uniqueDatesArray.count - 2) {
+//                        if (daysBetween == 1) {
+//                            missingDate = calendar.date(byAdding: .day, value: 1, to: startOfNextDate)
+//                            let isFa = trip.line?.bidPeriod?.isFABid()
+//                            if (isFa!) {
+//
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+
 }
