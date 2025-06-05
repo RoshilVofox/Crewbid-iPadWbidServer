@@ -9,7 +9,7 @@ import Foundation
 import ZipArchive
 
 class BIBidFileDownload: NSObject{
-    
+    static let shared = BIBidFileDownload()
     //MARK: New Bid
     func downloadBidFiles(sessionKey:String, filename:String, completionHandler:@escaping (Result<URL, Error>) -> Void){
         let isRequestType = (filename as NSString).pathExtension.uppercased() == "TXT"

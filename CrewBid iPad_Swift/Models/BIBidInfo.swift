@@ -38,6 +38,8 @@ class GlobalBidInfo: BIBidInfoDataSource {
 
 class BIBidInfo:NSObject{
     
+    static let shared = BIBidInfo()
+    
     var dataSource = GlobalBidInfo.shared
     func bidDataFilename() -> String {
             return "\(dataFilenameBase()).737"
@@ -67,7 +69,7 @@ class BIBidInfo:NSObject{
     
     func textFilenameBase() -> String {
         let base = dataSource.base
-        let position = dataSource.position
+        let position = dataSource.position.shortName
         return "\(base)\(position)"
     }
 
