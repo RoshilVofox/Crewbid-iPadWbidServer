@@ -7,10 +7,6 @@
 
 import Foundation
 
-typealias BIFinishedBlock = () -> Void
-typealias BIProgressBlock = (Float) -> Void
-
-
 protocol BIBidInfoDataSource {
     var userid: String { get set }
     var password: String { get set }
