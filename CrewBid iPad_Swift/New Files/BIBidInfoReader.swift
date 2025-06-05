@@ -152,13 +152,12 @@ class BIBidInfoReader{
 //                    success = self.addSecondRoundTripsForBidPeriod()
                 }
                 if success{
-                    if let app = UIApplication.shared.delegate as? AppDelegate{
-                        if app.isHistoricBid{
+                        if AppState.shared.isHistoricBid{
                             success = true
                         }else{
 //                            success = self.readTripLegsPay()
                         }
-                    }
+                    
                     if let lines = self.bidPeriod?.lines?.allObjects as? [BILine] {
                         for line in lines {
 //                            self.updateEndDateForRedEyeTrips(line)
@@ -171,13 +170,11 @@ class BIBidInfoReader{
                 }
                 
                 if success{
-                    if let app = UIApplication.shared.delegate as? AppDelegate{
-                        if app.isHistoricBid{
+                        if AppState.shared.isHistoricBid{
                             success = true
                         }else{
                             success =  self.readTextFiles()
                         }
-                    }
                 }
                 if success{
                     // needs code- seniority
@@ -232,10 +229,7 @@ class BIBidInfoReader{
         
         
         var isHistoric: NSNumber = 0
-        DispatchQueue.main.sync {
-            let app = UIApplication.shared.delegate as! AppDelegate
-            isHistoric = app.isHistoricBid as NSNumber
-        }
+        isHistoric = AppState.shared.isHistoricBid as NSNumber
         self.bidPeriod = BIBidPeriod(context: self.moc)
         self.bidPeriod?.isHistoric = isHistoric as NSNumber
         self.bidPeriod?.year = self.dataSource.year as NSNumber
@@ -990,9 +984,7 @@ class BIBidInfoReader{
             var numberRange = NSRange(location: 4, length: 3)
             let storedValue = UserDefaults.standard.string(forKey: "PSFileFormatChange")
             if storedValue != nil {
-                DispatchQueue.main.async {
-                    let app = UIApplication.shared.delegate as! AppDelegate
-                    if !app.isHistoricBid{
+                    if !AppState.shared.isHistoricBid{
                         if Int(storedValue!) == 0{
                             print("Old format")
                             numberRange = NSRange(location: 4, length: 3)
@@ -1004,8 +996,8 @@ class BIBidInfoReader{
                     else{
                         var dateComponents1 = DateComponents()
                         dateComponents1.day = 1
-                        dateComponents1.month = app.mockDataMonth
-                        dateComponents1.year = app.mockDataYear
+                        dateComponents1.month = AppState.shared.mockDataMonth
+                        dateComponents1.year = AppState.shared.mockDataYear
                         
                         var dateComponents2 = DateComponents()
                         dateComponents2.day = 1
@@ -1025,7 +1017,7 @@ class BIBidInfoReader{
                             numberRange = NSRange(location: 3, length: 4)
                         }
                     }
-                }
+                
             }else{
                 print("No value found in UserDefaults for the specified key")
             }
@@ -2033,8 +2025,7 @@ class BIBidInfoReader{
         if !text.isEmpty{
             self.bidPeriod?.addTextFile(withText: text, name: "Cover Letter")
         }else{
-            let app = UIApplication.shared.delegate as! AppDelegate
-            if app.isMockData{
+            if AppState.shared.isMockData{
                 return true
             }
             return false

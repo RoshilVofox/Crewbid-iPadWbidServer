@@ -92,9 +92,16 @@ class CBBiddataDownloadVC: BaseViewController {
 //=======================================
             let emp = UserDefaults.standard.string(forKey: kCBDefaultEmployeeNumberKey)!
             print("Base:\(self.selectedDomicile!) Position:\(self.selectedPosition!) Rnd:\(self.selectedRound!) EmpNo:\(self.empNum ?? emp) Month:\(self.month!) Year:\(self.year!)")
+            GlobalBidInfo.shared.base = self.selectedDomicile!
+            if let positionCode = self.selectedPosition, let position = BICrewPositionType(from: positionCode){
+                GlobalBidInfo.shared.position = position
+            }
+            GlobalBidInfo.shared.round = self.selectedRound!
+            GlobalBidInfo.shared.month = self.month!
+            GlobalBidInfo.shared.year = self.year!
 //=======================================
-            self.app.mockDataMonth = self.month
-            self.app.mockDataYear = self.year
+            AppState.shared.mockDataMonth = self.month
+            AppState.shared.mockDataYear = self.year
             let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
             vc.isNewBid = self.isNewBid

@@ -27,7 +27,8 @@ class CBCredentialsPageVC: BaseViewController {
     var password:String?
     var loginType:LoginType = .newBid
     var type:String?
-    let viewModel = CBLoginViewModel()
+    let loginViewModel = CBLoginViewModel()
+    let bidDownloadViewModel = BIBidFileDownloadViewModel()
     let context = CoreDataManager.shared.managedObjectContext
     let dataSource = GlobalBidInfo.shared
     override func viewDidLoad() {
@@ -76,114 +77,37 @@ class CBCredentialsPageVC: BaseViewController {
         
 
         //------viewmodel--------
-        viewModel.onLoginSuccess = { sessionKey in
+        loginViewModel.onLoginSuccess = { sessionKey in
             print("Session Key: \(sessionKey)")
             self.view.hideActivityIndicator()
-            let bidInfo = BIBidInfo()
-            let bidFileName = bidInfo.bidDataFilename()
-            let linesTextFileName = bidInfo.linesTextFilename()
+            let bidFileName = BIBidInfo.shared.bidDataFilename()
+            let linesTextFileName = BIBidInfo.shared.linesTextFilename()
             print("Filename: \(bidFileName)")
-            let bidDownload = BIBidFileDownload()
-            
-            if self.app.isHistoricBid{//MARK:  Historic Bid Data
+//            let bidDownload = BIBidFileDownload()
+            if AppState.shared.isHistoricBid{
+                //MARK:  Historic Bid Data
                 print("Bid: Historic")
-                var dict: [String:Any] = [:]
                 if self.isSecondRoundBid() && !self.isFABid(){
-                     dict = [
-                        "Year": self.app.mockDataYear!,
-                        "Month": self.app.mockDataMonth!,
-                        "Round": self.dataSource.round,
-                        "Domicile": self.dataSource.base,
-                        "Position": self.dataSource.position.shortName,
-                        "FileName": linesTextFileName
-                        ]
-                    let urlString = EndPoint.shared.DownloadHistoricalBidLineAll
-                    bidDownload.downloadHistoricBid(from: dict, urlString: urlString, completion: { result in
-                        switch result{
-                        case .success(let data):
-                            do{
-                                let jsonData = try JSONSerialization.jsonObject(with: data) as! [String: Any]
-                                let dataBytes = jsonData["Data"] as? [Any]
-                                let count = dataBytes!.count
-                                let bytes = UnsafeMutablePointer<UInt8>.allocate(capacity: count)
-                                for i in 0..<count{
-                                    let str = dataBytes![i] as! String
-                                    let byte = UInt8(str)!
-                                    bytes[i] = byte
-                                }
-                                let fileData = Data(bytes: bytes, count: count)
-                                let dataWriteURL = bidInfo.downloadDirectory().appendingPathComponent(linesTextFileName)
-                                var dataWriteSuccess:Bool
-                                do {
-                                    try fileData.write(to: dataWriteURL, options: [])
-                                     dataWriteSuccess = true
-                                } catch {
-                                    print("Error writing data to file: \(error)")
-                                     dataWriteSuccess = false
-                                }
-                                if dataWriteSuccess{
-                                    
-                                }
-                                
-                            }catch{
-                                print("Error parsing JSON data: \(error)")
+                    self.bidDownloadViewModel.fetchHistoricBidLines(filename: linesTextFileName){result in
+                        DispatchQueue.main.async {
+                            switch result{
+                            case .success(let fileURL): print("File saved at: \(fileURL)")
+                            case .failure(let error): print("Historic bid download failed: \(error.localizedDescription)")
                             }
-                            
-                        case .failure(let error):
-                            print("Error: \(error)")
                         }
-                        
-                    })
-                }
-                
-                 dict = [
-                    "Year": self.app.mockDataYear!,
-                    "Month": self.app.mockDataMonth!,
-                    "Round": self.dataSource.round,
-                    "Domicile": self.dataSource.base,
-                    "Position": self.dataSource.position.shortName,
-                    "FileName": bidFileName
-                    ]
-                let urlString = EndPoint.shared.DownloadHistoricalDataRest
-                bidDownload.downloadHistoricBid(from: dict,urlString: urlString, completion: { result in
-                    switch result{
-                    case .success(let data):
-                        do{
-                            let jsonData = try JSONSerialization.jsonObject(with: data) as! [String: Any]
-                            let dataBytes = jsonData["Data"] as? [Any]
-                            let count = dataBytes!.count
-                            let bytes = UnsafeMutablePointer<UInt8>.allocate(capacity: count)
-                            for i in 0..<count{
-                                let str = dataBytes![i] as? Int
-                                bytes[i] = UInt8(str!)
-                            }
-                            let fileData = Data(bytes: bytes, count: count)
-                            let dataWriteURL = bidInfo.downloadDirectory().appendingPathComponent(bidFileName)
-                            var dataWriteSuccess:Bool
-                            do {
-                                try fileData.write(to: dataWriteURL, options: [])
-                                 dataWriteSuccess = true
-                            } catch {
-                                print("Error writing data to file: \(error)")
-                                 dataWriteSuccess = false
-                            }
-                            if dataWriteSuccess{
-                                
-                            }
-                            
-                        }catch{
-                            print("Error parsing JSON data: \(error)")
-                        }
-                        
-                    case .failure(let error):
-                        print("Error: \(error)")
                     }
-                    
-                })
-                
-                
-                
-            }else if self.app.isMockData{//MARK:  Mock Bid Data
+                }
+                self.bidDownloadViewModel.fetchHistoricBidLines(filename: bidFileName){ result in
+                    DispatchQueue.main.async {
+                        switch result{
+                        case .success(let fileURL): print("File saved at: \(fileURL)")
+                        case .failure(let error): print("Historic bid download failed: \(error.localizedDescription)")
+                        }
+                    }
+                }
+            }
+            else if AppState.shared.isMockData{
+                //MARK:  Mock Bid Data
                 print("Bid: Mock data")
                 
                 
@@ -191,37 +115,23 @@ class CBCredentialsPageVC: BaseViewController {
             }else{//MARK:  New Bid Data
                 print("Bid: New bid")
                 NotificationCenter.default.post(name: Notification.Name("ShowProgressView"), object: nil)
-                    bidDownload.downloadBidFiles(sessionKey: sessionKey, filename: bidFileName){ result in
-                        switch result{
-                        case .success(let fileURL):
-                            DispatchQueue.main.async {
-                                NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
-                            }
-                            
-                            print("File unzipped at: \(fileURL)")
-                            DispatchQueue.global(qos: .userInitiated).async {
-                                if BIBidInfoReader().readBidData(){
-                                    DispatchQueue.main.async {
-                                        NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
-                                        self.loginActions()
-                                    }
+                
+                self.bidDownloadViewModel.fetchNewBidData(sessionKey: sessionKey, fileName: bidFileName){result in
+                    switch result{
+                    case .success(let fileURL):
+                        DispatchQueue.main.async {
+                                    NotificationCenter.default.post(name: .init("DownloadingBid"), object: nil)
                                 }
-                                
-                            }
-                            
-                        case .failure(let error):
-                            NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
-                            print("Failed: \(error.localizedDescription)")
-                            
-                        }
+                        print("File unzipped at: \(fileURL)")
+                        
+                    case .failure(let error):
+                        print("Error downloading new bid: \(error.localizedDescription)")
+                        NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
                     }
+                }
             }
-            
-            
-            
-
         }
-        viewModel.onLoginFailure = { error in
+        loginViewModel.onLoginFailure = { error in
             self.view.hideActivityIndicator()
             
             let errorString = error.localizedDescriptionString.lowercased()
@@ -352,7 +262,7 @@ class CBCredentialsPageVC: BaseViewController {
         if bidAlreadyExists(){
             showAlertForExistingBid()
         }else{
-            viewModel.checkLogin(userID: formattedUserID,password: password,empNum: empID,month: month,year: year, round:round, base:selectedbase, position: position)
+            loginViewModel.checkLogin(userID: formattedUserID,password: password,empNum: empID)
             
         }
         //----------------
@@ -365,10 +275,10 @@ class CBCredentialsPageVC: BaseViewController {
         fetchRequest.entity = entity
         var array:[NSPredicate] = []
         array.append(NSPredicate(format: "base == %@", self.dataSource.base))
-        array.append(NSPredicate(format: "round == %@", self.dataSource.round))
-        array.append(NSPredicate(format: "month == %@", self.dataSource.month))
-        array.append(NSPredicate(format: "positionType == %@", self.dataSource.position.rawValue))
-        array.append(NSPredicate(format: "year == %@", self.dataSource.year))
+        array.append(NSPredicate(format: "round == %d", self.dataSource.round))
+        array.append(NSPredicate(format: "month == %d", self.dataSource.month))
+        array.append(NSPredicate(format: "positionType == %d", self.dataSource.position.rawValue))
+        array.append(NSPredicate(format: "year == %d", self.dataSource.year))
         
         fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
         let list = try! self.context.fetch(fetchRequest) as! [BIBidPeriod]
@@ -384,10 +294,10 @@ class CBCredentialsPageVC: BaseViewController {
         fetchRequest.entity = entity
         var array:[NSPredicate] = []
         array.append(NSPredicate(format: "base == %@", self.dataSource.base))
-        array.append(NSPredicate(format: "round == %@", self.dataSource.round))
-        array.append(NSPredicate(format: "month == %@", self.dataSource.month))
-        array.append(NSPredicate(format: "positionType == %@", self.dataSource.position.rawValue))
-        array.append(NSPredicate(format: "year == %@", self.dataSource.year))
+        array.append(NSPredicate(format: "round == %d", self.dataSource.round))
+        array.append(NSPredicate(format: "month == %d", self.dataSource.month))
+        array.append(NSPredicate(format: "positionType == %d", self.dataSource.position.rawValue))
+        array.append(NSPredicate(format: "year == %d", self.dataSource.year))
         
         fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
         let list = try! self.context.fetch(fetchRequest) as! [BIBidPeriod]
