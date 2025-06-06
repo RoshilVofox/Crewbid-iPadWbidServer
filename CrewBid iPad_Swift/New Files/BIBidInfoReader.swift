@@ -22,6 +22,8 @@ protocol BIBidInfoReaderDelegate: AnyObject {
 
 
 class BIBidInfoReader{
+    static let shared = BIBidInfoReader()
+    
     let tripFileName = "TRIPS"
     let lineFileName = "PS"
     let dataSource = GlobalBidInfo.shared
@@ -77,13 +79,9 @@ class BIBidInfoReader{
     var dateComponents: DateComponents?
     var defaultEmployeeNumber: String?
         weak var delegate: BIBidInfoReaderDelegate?
-    var app = UIApplication.shared.delegate as? AppDelegate
+//    var app = UIApplication.shared.delegate as? AppDelegate
     
     init() {
-//    init(delegate: BIBidInfoReaderDelegate?) {
-//            self.delegate = delegate
-            self.app = UIApplication.shared.delegate as? AppDelegate
-
             guard
                 dataSource.year != 0,
                 dataSource.month != 0,
@@ -124,13 +122,11 @@ class BIBidInfoReader{
                     }
                 }
                 if success{
-//                    if let app = UIApplication.shared.delegate as? AppDelegate{
-//                        if app.isHistoricBid{
-//                            success = true
-//                        }else{
-//                            success = self.readTextFiles()
-//                        }
-//                    }
+                    if AppState.shared.isHistoricBid{
+                        success = true
+                    }else{
+//                        success = self.readTextFiles()
+                    }
                 }
                 if success && self.isFirstRoundBid(){
                     //vacation scan
@@ -173,7 +169,7 @@ class BIBidInfoReader{
                         if AppState.shared.isHistoricBid{
                             success = true
                         }else{
-                            success =  self.readTextFiles()
+//                            success =  self.readTextFiles()
                         }
                 }
                 if success{
@@ -1213,6 +1209,7 @@ class BIBidInfoReader{
             self.saveToDictionary(context: moc)
         }catch{
             print("Error reading line file: \(error.localizedDescription)")
+            success = false
         }
         return success
     }

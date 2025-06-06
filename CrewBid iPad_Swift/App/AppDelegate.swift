@@ -35,16 +35,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     var Domain: String?
     var isNetWorkAvailable: Bool = false
     var IPAddress: String?
-//    var isMockData: Bool = false
     var onLaunch: Bool = false
     var isSenioritySecretOn: Bool = false
-//    var isHistoricBid: Bool = false
     var swaptimizerClicked: Bool = false
     var isAvailableSouthWestNetwork: Bool = false
     var objCBDocument: CBDocumentsCollectionViewController?
     var dicSSIDDetails: NSMutableDictionary?
-//    var mockDataMonth: Int?
-//    var mockDataYear: Int?
     var createEmpNo: String?
     var objReachability: Reachability?
     var isNeedToDownloadSeniorityFromServer: Bool = false

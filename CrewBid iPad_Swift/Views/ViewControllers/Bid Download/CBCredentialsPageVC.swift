@@ -80,10 +80,11 @@ class CBCredentialsPageVC: BaseViewController {
         loginViewModel.onLoginSuccess = { sessionKey in
             print("Session Key: \(sessionKey)")
             self.view.hideActivityIndicator()
+            NotificationCenter.default.post(name: Notification.Name("ShowProgressView"), object: nil)
+
             let bidFileName = BIBidInfo.shared.bidDataFilename()
             let linesTextFileName = BIBidInfo.shared.linesTextFilename()
             print("Filename: \(bidFileName)")
-//            let bidDownload = BIBidFileDownload()
             if AppState.shared.isHistoricBid{
                 //MARK:  Historic Bid Data
                 print("Bid: Historic")
@@ -100,8 +101,23 @@ class CBCredentialsPageVC: BaseViewController {
                 self.bidDownloadViewModel.fetchHistoricBidLines(filename: bidFileName){ result in
                     DispatchQueue.main.async {
                         switch result{
-                        case .success(let fileURL): print("File saved at: \(fileURL)")
-                        case .failure(let error): print("Historic bid download failed: \(error.localizedDescription)")
+                        case .success(let fileURL):
+                            print("File unzipped at: \(fileURL)")
+                            DispatchQueue.main.async {
+                                    NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
+                                }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                let success = BIBidInfoReader.shared.readBidData()
+                                if success {
+                                    NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                                NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+                                        self.loginActions()
+                                            }
+                                }
+                            }
+                        case .failure(let error):
+                            print("Historic bid download failed: \(error.localizedDescription)")
                         }
                     }
                 }
@@ -112,18 +128,26 @@ class CBCredentialsPageVC: BaseViewController {
                 
                 
                 
-            }else{//MARK:  New Bid Data
+            }
+            else{//MARK:  New Bid Data
                 print("Bid: New bid")
-                NotificationCenter.default.post(name: Notification.Name("ShowProgressView"), object: nil)
-                
                 self.bidDownloadViewModel.fetchNewBidData(sessionKey: sessionKey, fileName: bidFileName){result in
                     switch result{
                     case .success(let fileURL):
-                        DispatchQueue.main.async {
-                                    NotificationCenter.default.post(name: .init("DownloadingBid"), object: nil)
-                                }
                         print("File unzipped at: \(fileURL)")
-                        
+                        DispatchQueue.main.async {
+                                NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
+                            }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            let success = BIBidInfoReader.shared.readBidData()
+                            if success {
+                                NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                            NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+                                    self.loginActions()
+                                        }
+                            }
+                        }
                     case .failure(let error):
                         print("Error downloading new bid: \(error.localizedDescription)")
                         NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
@@ -255,13 +279,17 @@ class CBCredentialsPageVC: BaseViewController {
             formattedUserID = (rawUserID == DevUserID) ? "x\(rawUserID)" : "e\(rawUserID)"
         }
         txtUserID.text = formattedUserID
-        guard let empID = self.txtUserID.text, let month = self.month, let year = self.year, let round = self.selectedRound, let selectedbase = self.selectedDomicile, let position = self.selectedPosition else { return }
-        self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
+        guard let empID = self.txtUserID.text else { return }
+        
         
         //--Login action--
         if bidAlreadyExists(){
-            showAlertForExistingBid()
+            showAlertForExistingBid{
+                self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
+                self.loginViewModel.checkLogin(userID: formattedUserID,password: password,empNum: empID)
+            }
         }else{
+            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
             loginViewModel.checkLogin(userID: formattedUserID,password: password,empNum: empID)
             
         }
@@ -288,7 +316,7 @@ class CBCredentialsPageVC: BaseViewController {
         return status
     }
     
-    private func showAlertForExistingBid() {
+    private func showAlertForExistingBid(onRetry: @escaping () -> Void) {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
         let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: self.context)
         fetchRequest.entity = entity
@@ -307,17 +335,20 @@ class CBCredentialsPageVC: BaseViewController {
             if list.count > 0 {
                 let obj = list[0]
                 self.context.delete(obj)
+                onRetry()
 //                NotificationCenter.default.post(name: NSNotification.Name(reloadCollectionView), object: nil)
             }
-            self.loginActions()
+            
         }), (title: "Cancel", style: .cancel, handler: {_ in}), (title: "Open Bid", style: .default, handler: {_ in
             if list.count > 0 {
                 let obj = list[0]
                 CBGlobalMethods.shared.selectedBidPeriod = obj
                 UserDefaults.standard.setValue(obj.round?.intValue ?? 1, forKey: "SelectedRound")
                 self.dismiss(animated: true)
+                self.loginActions()
 //                NotificationCenter.default.post(name: NSNotification.Name("openBidPeriodFromDownloadPage"), object: nil)
             }
+            
         })])
         self.present(alert, animated: true)
     }
