@@ -1250,7 +1250,7 @@ class BIBidInfoReader{
         }
     }
     
-    private func initDerivedPropertiesForLine(line:BILine, isReprocessing:Bool){
+    func initDerivedPropertiesForLine(line:BILine, isReprocessing:Bool){
         self.thanksgivingDay = CBUtils.thanksgivingDay(for: self.bidPeriod?.year?.intValue ?? 2025)
         if isReprocessing{
             line.vTpLPay = NSNumber(value: (line.lineRig?.floatValue ?? 0) + (line.vVacationPay?.floatValue ?? 0))

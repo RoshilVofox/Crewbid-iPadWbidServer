@@ -88,4 +88,5 @@ enum CBLineValueTypes : Int {
     case CBLineValueTypecoHoli//76
     case CBLineValueTypePayPlusCO//77
     case CBLineValueTypeCoPlusHoli//78
+    case cbLineValueTypeClawBack
 }

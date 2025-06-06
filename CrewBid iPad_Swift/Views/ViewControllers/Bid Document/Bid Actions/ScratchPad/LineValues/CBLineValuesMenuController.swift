@@ -30,6 +30,11 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         return .left
     }
     
+    static let kCBFaVacationLineValuesKey = "FA Vacation Line Values"
+    static let kCBRound2DefaultLineValuesKey = "Round 2 Default Line Values"
+    static let kCBDefaultLineValuesKey = "Default Line Values"
+    static let kCBSwaptimizerLineValuesKey = "Swaptimizer Line Values"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 //        lineValuesTemp = getLineValues()
@@ -108,11 +113,34 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         values = (valueDictionary["values"]! as! NSArray)
         return values! as NSArray
     }
+    
+    static func lineValuesKeyForBidPeriod(bidPeriod: BIBidPeriod) -> String {
+        var lineValuesKey: String = ""
+        if (bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue) {
+            lineValuesKey = kCBSwaptimizerLineValuesKey;
+        }
+        else if (bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue) {
+            lineValuesKey = kCBFaVacationLineValuesKey;
+        } else {
+            let isFA = bidPeriod.isFABid()
+            lineValuesKey = bidPeriod.containsMissingTripLines!.boolValue && isFA ? kCBRound2DefaultLineValuesKey : kCBDefaultLineValuesKey
+        }
+        return lineValuesKey
+    }
+    
+    func lineValueTypeIsHiddenForPilotVacation(_ type: Int) -> Bool {
+        guard let hiddenDict = UserDefaults.standard.dictionary(forKey: kCBSwaptimizerHiddenDict) else {
+            return false
+        }
 
-    
-    
-    
-    
-   
-    
+        return (type == CBLineValueTypes.cbLineValueTypeVLength.rawValue && (hiddenDict[kCBSwaptmizerEffVacayLengthHidden] as? Bool ?? false)) ||
+        (type == CBLineValueTypes.cbLineValueTypeLongBlock.rawValue && (hiddenDict[kCBSwaptmizerLongestBlockofDaysOffHidden] as? Bool ?? false)) ||
+        (type == CBLineValueTypes.cbLineValueTypeVCarryOutPay.rawValue && (hiddenDict[kCBSwaptmizerCarryOutPayHidden] as? Bool ?? false)) ||
+        (type == CBLineValueTypes.cbLineValueTypeVVacayCarryOutPay.rawValue && (hiddenDict[kCBSwaptmizerVacayCarryOutPayHidden] as? Bool ?? false)) ||
+               (type == CBLineValueTypes.cbLineValueTypeVCarryOutVOPay.rawValue && (hiddenDict[kCBSwaptmizerCarryOutVoHidden] as? Bool ?? false)) ||
+               (type == CBLineValueTypes.cbLineValueTypeVVacayPayNext.rawValue && (hiddenDict[kCBSwaptmizerVacPayNextBPHidden] as? Bool ?? false)) ||
+               (type == CBLineValueTypes.cbLineValueTypeVVacayPayBoth.rawValue && (hiddenDict[kCBSwaptmizerVacPayBothBPHidden] as? Bool ?? false)) ||
+               (type == CBLineValueTypes.cbLineValueTypeClawBack.rawValue && (hiddenDict[kCBSwaptmizerClawBackHidden] as? Bool ?? false))
+    }
+
 }
