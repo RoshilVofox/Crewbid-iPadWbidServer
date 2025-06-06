@@ -41,7 +41,7 @@ class BIBidFileDownloadViewModel {
                         try fileData.write(to: dataWriteURL, options: [])
                         let unzipSuccess = SSZipArchive.unzipFile(atPath: dataWriteURL.path, toDestination: directoryURL.path)
                         if unzipSuccess{
-                            completion(.success(dataWriteURL))
+                            completion(.success(directoryURL))
                         }else{
                             completion(.failure(NetworkError.unzipFailed))
                         }
@@ -62,33 +62,46 @@ class BIBidFileDownloadViewModel {
     
     func fetchNewBidData(sessionKey: String, fileName: String, completion: @escaping (Result<URL, Error>) -> Void) {
         let bidDownload = BIBidFileDownload()
-        bidDownload.downloadBidFiles(sessionKey: sessionKey, filename: fileName){ result in
-            switch result{
-            case .success(let tempURL):
-                let destinationDir = BIBidInfo().downloadDirectory()
-                let destinationURL = destinationDir.appendingPathComponent(fileName)
-                do{
-                    // Create destination directory if needed
-                    try FileManager.default.createDirectory(at: destinationDir, withIntermediateDirectories: true, attributes: nil)
-                    // Remove existing file if present
-                    if FileManager.default.fileExists(atPath: destinationURL.path){
-                        try FileManager.default.removeItem(at: destinationURL)
+        let filesToDownload = BIBidInfo.shared.bidDataFiles()
+        var fileIterator = filesToDownload!.makeIterator()
+        func downloadNext() {
+            guard let nextFile = fileIterator.next() else {
+                // All files done
+                completion(.success(BIBidInfo.shared.downloadDirectory()))
+                return
+            }
+            bidDownload.downloadBidFiles(sessionKey: sessionKey, filename: nextFile){ result in
+                switch result{
+                case .success(let tempURL):
+                    let destinationDir = BIBidInfo.shared.downloadDirectory()
+                    let destinationURL = destinationDir.appendingPathComponent(fileName)
+                    do{
+                        // Create destination directory if needed
+                        try FileManager.default.createDirectory(at: destinationDir, withIntermediateDirectories: true, attributes: nil)
+                        // Remove existing file if present
+                        if FileManager.default.fileExists(atPath: destinationURL.path){
+                            try FileManager.default.removeItem(at: destinationURL)
+                        }
+                        // Move downloaded file
+                        try FileManager.default.moveItem(at: tempURL, to: destinationURL)
+                        let success = SSZipArchive.unzipFile(atPath: destinationURL.path, toDestination: destinationDir.path)
+                        if success{
+                            downloadNext()
+//                            completion(.success(destinationDir))
+                        }else{
+                            completion(.failure(NetworkError.unzipFailed))
+                        }
+                    }catch{
+                        completion(.failure(error))
                     }
-                    // Move downloaded file
-                    try FileManager.default.moveItem(at: tempURL, to: destinationURL)
-                    let success = SSZipArchive.unzipFile(atPath: destinationURL.path, toDestination: destinationDir.path)
-                    if success{
-                        completion(.success(destinationDir))
-                    }else{
-                        completion(.failure(NetworkError.unzipFailed))
-                    }
-                }catch{
+                case .failure(let error):
+                    print("Error downloading bid file: \(error)")
                     completion(.failure(error))
                 }
-            case .failure(let error):
-                print("Error downloading bid file: \(error)")
-                completion(.failure(error))
             }
         }
+        downloadNext()
     }
+
+
 }

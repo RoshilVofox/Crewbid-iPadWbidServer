@@ -137,13 +137,14 @@ class BIBidInfoReader{
                 
             }
             
-        }else{
+        }
+        else{
             success = self.readTrips()
             if success{
                 print("Done Reading Trips")
                 
                 success = self.readLines()
-                
+            }
                 if success && self.isSecondRoundBid(){
 //                    success = self.addSecondRoundTripsForBidPeriod()
                 }
@@ -186,6 +187,15 @@ class BIBidInfoReader{
                                     NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
                                 }
                   
+                }
+            
+        }
+        if success{
+            if moc.hasChanges{
+                do{
+                    try moc.save()
+                }catch{
+                    print("Error saving moc: \(error)")
                 }
             }
         }
@@ -243,11 +253,12 @@ class BIBidInfoReader{
         }
         self.thanksgivingDay = CBUtils.thanksgivingDay(for: (self.bidPeriod?.year!.intValue)!)
         self.includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
+        self.bidPeriod?.swaptimizerIdentifier = Int(self.dataSource.employeeNumber) as? NSNumber
+         
 //        self.intlCities = UserDefaults.standard.object(forKey: kCBInternationalCitiesDict) as! [String : Any]
         //need to create the cities list
         
         self.bidPeriod?.isAllLinesTrashed = false
-        
     }
     
     //MARK: Read Trips file
@@ -468,6 +479,7 @@ class BIBidInfoReader{
         }catch{
             print("Error reading file: \(error)")
         }
+        
         return success
     }
     

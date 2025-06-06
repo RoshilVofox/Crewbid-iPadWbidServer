@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class CBBidDocumentController: BaseViewController {
 
@@ -39,11 +40,11 @@ class CBBidDocumentController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         bdPrd = 1
         locHerb = true
-        
+  
         setupUI()
+
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutViewForSwitch), name: NSNotification.Name("SyncSwitchStateAction"), object: nil)
     }
