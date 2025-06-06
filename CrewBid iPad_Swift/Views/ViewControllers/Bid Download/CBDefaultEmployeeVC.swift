@@ -19,6 +19,7 @@ class CBDefaultEmployeeVC: BaseViewController {
     var isHistoricBid:Bool = false
     var isNewBid:Bool = false
     var isEmpVerified:Bool = false
+    let dataSource = GlobalBidInfo.shared
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -72,6 +73,7 @@ class CBDefaultEmployeeVC: BaseViewController {
                    shakeTextField(textField: textEmpNum)
                    return
                }
+        dataSource.employeeNumber = empID
                UserDefaults.standard.set(textEmpNum.text!, forKey: kCBDefaultEmployeeNumberKey)
                self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
                viewModel.checkAuthentication(empID: empID)

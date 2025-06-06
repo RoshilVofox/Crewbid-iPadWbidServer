@@ -29,7 +29,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     var dataSource = GlobalBidInfo.shared
     var vactionDownloadType: VacationDownloadType?
     var isAutoDownload = false
-    weak var calendarData: BICalendarData?
+    var calendarData: BICalendarData = BICalendarData()
     var round: NSNumber?
     var year: NSNumber?
     var month: NSNumber?
@@ -47,6 +47,38 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     let kPullTypeBack = "Back"
     let kPullTypeAll = "All"
 
+    override init() {
+        let ab = dataSource.position
+        let cb = dataSource.base
+        print("base\(cb) postion\(ab)")
+        let context = CoreDataManager.shared.persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
+
+        let targetRound = dataSource.round as NSNumber
+        let targetMonth = dataSource.month as NSNumber
+        let targetPosition = NSNumber(value: dataSource.position.rawValue)
+        let targetBase = dataSource.base
+        let targetYear = dataSource.year as NSNumber
+
+        fetchRequest.predicate = NSPredicate(
+            format: "round == %@ AND month == %@ AND positionType == %@ AND base == %@ AND year == %@",
+            targetRound, targetMonth, targetPosition, targetBase, targetYear
+        )
+
+        do {
+            let results = try context.fetch(fetchRequest)
+            self.bidPeriod = results.first
+            if (self.bidPeriod != nil){
+                print("Found bidPeriod: \(String(describing: bidPeriod))")
+            } else {
+                print("No matching bidPeriod found.")
+            }
+        } catch {
+            print("Fetch error: \(error)")
+        }
+
+     
+    }
     
     //MARK: download WBID VacationFiles
     func downloadWbidVacation() {
@@ -464,8 +496,8 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             //    The bid package for the wrong pilot got downloaded
             AlertService.showAlertForTopVC(title: "WBidmax Error", message: "The WBidmax user ID \(pilotIdentifier) does not match the pilot for whom the bid package was downloaded \(String(describing: self.bidPeriod?.swaptimizerIdentifier)).", actions: nil)
         }
-        else if (7 - vacayMonth == 1 || (7 == 1 && vacayMonth == 12)) {
-//        else if ((self.bidPeriod?.month?.intValue)! - vacayMonth == 1 || (self.bidPeriod?.month?.intValue == 1 && vacayMonth == 12)) {
+//        else if (7 - vacayMonth == 1 || (7 == 1 && vacayMonth == 12)) {
+        else if ((self.bidPeriod?.month?.intValue)! - vacayMonth == 1 || (self.bidPeriod?.month?.intValue == 1 && vacayMonth == 12)) {
             // New bid period but old month's data, so data is not yet available.
             // Alert view telling the user data is not yet available, check back later
             AlertService.showAlertForTopVC(title: "Data Not Yet Available", message: "WBidMax vacation data is not yet available. Check back later via the Bid Actions menu(top right).", actions: nil)
@@ -495,26 +527,26 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             let seat = pilotInfo["Seat"] as! String
             let round = Int(configInfo["Round"] as? String ?? "") ?? 0
             let vacayBase = pilotInfo["Base"] as! String
-//            var rawValue = (self.bidPeriod?.positionType?.intValue)!
-            var rawValue = 0
+            var rawValue = (self.bidPeriod?.positionType?.intValue)!
+//            var rawValue = 0
             var positionType = BICrewPositionType(rawValue: rawValue)!
             let shortName = CBUtils.shortName(for: positionType) ?? "CM"
             
             if !(self.bidPeriod?.secretSwitchOn == "YES") {
-                if vacayMonth != 7 {
-//                if vacayMonth != self.bidPeriod?.month?.intValue ?? 0 {
+//                if vacayMonth != 7 {
+                if vacayMonth != self.bidPeriod?.month?.intValue ?? 0 {
                     AlertService.showAlertForTopVC(title: "WBidmax Error", message: "The WBidmax data month \(vacayMonth) is not the same as the bid period month \(String(describing: self.bidPeriod?.month))")
                 }
-                else if (vacayYear != 2025) {
-//                else if (vacayYear != self.bidPeriod?.year?.intValue) {
+//                else if (vacayYear != 2025) {
+                else if (vacayYear != self.bidPeriod?.year?.intValue) {
                     AlertService.showAlertForTopVC(title: "WBidmax Error", message: "The WBidmax data year \(vacayYear) is not the same as the bid period year \(String(describing: self.bidPeriod?.year)).")
                 }
-                else if !(vacayBase == "ATL") {
-//                    else if !(vacayBase == self.bidPeriod?.base) {
+//                else if !(vacayBase == "ATL") {
+                    else if !(vacayBase == self.bidPeriod?.base) {
                     AlertService.showAlertForTopVC(title: "WBidmax Error", message: "The WBidmax data base \(vacayBase) is not the same as the bid period crew base \(String(describing: self.bidPeriod?.base)).")
                 }
-                else if !("CA" == seat) {
-//                else if !(shortName == seat) {
+//                else if !("CA" == seat) {
+                else if !(shortName == seat) {
                     AlertService.showAlertForTopVC(title: "WBidmax Error", message: "The vacation data position \(seat) is not the same as the bid period position \(shortName).)")
                 }
                 else if (self.bidPeriod?.round?.intValue == 2 && round == 1)
@@ -523,8 +555,8 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     // Alert view telling the user data is not yet available, check back later
                     AlertService.showAlertForTopVC(title: "Data Not Yet Available", message: "WBidMax vacation data is not yet available. Check back later via the Bid Actions menu(top right).")
                 }
-                else if (round != 1)
-//                else if (round != self.bidPeriod?.round?.intValue)
+//                else if (round != 7)
+                else if (round != self.bidPeriod?.round?.intValue)
                 {
                     AlertService.showAlertForTopVC(title: "WBidmax Error", message: "The vacation data round \(round) is not the same as the bid period round \(String(describing: self.bidPeriod?.round))")
                 }
@@ -548,8 +580,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                         AlertService.showAlertForTopVC(title: "WBidmax File Mismatch", message: "The vacation month \(vacayMonth) and WBidmax data file month \(fileMonth) are mismatched. Perhaps you didn't bid a blank line?")
                     }
                     else {
-                        let moc = CoreDataManager.shared.persistentContainer.newBackgroundContext()
-//                        let moc = self.bidPeriod?.managedObjectContext
+                        let moc = self.bidPeriod?.managedObjectContext
                         let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid;
                         if (vacationType == "WBID") {
                             self.bidPeriod?.wbFileIntent = header["FileIdent"] as? String
@@ -558,8 +589,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                             self.bidPeriod?.wbFileIntentF = header["FileIdent"] as? String
                         }
                         do {
-                            try moc.save()
-//                            try moc?.save()
+                            try moc?.save()
                             print("context in validat VWBID writevacationfile saved")
                         }
                         catch {
@@ -1413,7 +1443,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
 //    MARK: processJsonFile
     func processJsonFile(file: [String: Any]) {
         let thanksGivingDay = CBUtils.thanksgivingDay(for: self.bidPeriod?.year?.intValue ?? 0)
-        var vacationType = self.bidPeriod?.userVacationWbidOrCrewBid
+        var vacationType = self.bidPeriod?.userVacationWbidOrCrewBid ?? "WBID"
         var frontVO = ""
         var frontVO1 = ""
         var frontVO2 = ""
@@ -1655,8 +1685,8 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         var counter = 0
         for i in 0..<vacayDates.count {
             let df = DateFormatter()
-            df.dateFormat = "HHmmyyyydd"
-            df.timeZone = self.calendarData?.bidPeriodTimezone()
+            df.dateFormat = "HHmmyyyyMMdd"
+            df.timeZone = self.calendarData.bidPeriodTimezone()
             let vacayDict = vacayDates[i]
             let startDateString = vacayDict["FirstDay"]!
             let endDateString = vacayDict["LastDay"]!
@@ -1674,7 +1704,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             vacay.endDate = endDate
             
             vacay.vacationType = vacationType
-            let length = (self.calendarData?.daysBetweenDate(startDate!, andDate: endDate!) ?? 0) + 1
+            let length = (self.calendarData.daysBetweenDate(startDate!, andDate: endDate!) ?? 0) + 1
             vacay.length = length as NSNumber
             
             self.bidPeriod?.containsVacay = true
@@ -1703,7 +1733,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             //            globalBidInfo.month = self.bidPeriod?.month as? Int ?? 1
             //            globalBidInfo.position = self.bidPeriod?.positionType?.intValue ?? 0
             bidInfoReader.bidPeriod = self.bidPeriod
-            bidInfoReader.calendarData = self.calendarData!
+            bidInfoReader.calendarData = self.calendarData
             bidInfoReader.includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
             bidInfoReader.intlCities = (UserDefaults.standard.object(forKey: kCBInternationalCitiesDict) as? [String: Any])!
             
@@ -1832,7 +1862,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                         vacay.line = line
                         vacay.fvStartdate = startDateFinal
                         vacay.fvEnddate = endDateFinal
-                        let length = (self.calendarData?.daysBetweenDate(startDateFinal, andDate: endDateFinal))! + 1
+                        let length = (self.calendarData.daysBetweenDate(startDateFinal, andDate: endDateFinal)) + 1
                         vacay.fvLength = length as NSNumber
                         self.bidPeriod?.containsVacay = true
                         self.bidPeriod?.containsFvVacay = true
@@ -1896,7 +1926,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                                 
                                 if let tripDate = trip.startDate,
                                    let normalizedDate = dff.date(from: dff.string(from: tripDate)),
-                                   calendarData?.isDate(normalizedDate, between: fvStartdate, and: fvEnddate) == true {
+                                   calendarData.isDate(normalizedDate, between: fvStartdate, and: fvEnddate) == true {
                                     for day in trip.orderedDays {
                                         day.displayType = BIDayDisplayType.fullPay.rawValue as NSNumber
                                         day.redEyeDayDisplayDayType = BIDayDisplayType.fullPay.rawValue as NSNumber
@@ -1917,7 +1947,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     for j in 0..<pairingsPulled!.count {
                         let df = DateFormatter()
                         df.dateFormat = "HHmmyyyyMMdd"
-                        df.timeZone = self.calendarData?.bidPeriodTimezone()
+                        df.timeZone = self.calendarData.bidPeriodTimezone()
                         let pulledPairing = pairingsPulled![j]
                         let pairingNumber = pulledPairing["ID"] as? String
                         let tripNumberPredicate = NSPredicate(format: "info.number == %@", (pairingNumber)!)
@@ -1994,7 +2024,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 //            globalBidInfo.month = self.bidPeriod?.month as? Int ?? 1
                 //            globalBidInfo.position = self.bidPeriod?.positionType?.intValue ?? 0
                 bidInfoReader.bidPeriod = self.bidPeriod
-                bidInfoReader.calendarData = self.calendarData!
+                bidInfoReader.calendarData = self.calendarData
                 bidInfoReader.includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
                 bidInfoReader.intlCities = (UserDefaults.standard.object(forKey: kCBInternationalCitiesDict) as? [String: Any])!
                 
@@ -2042,7 +2072,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     //    MARK: getDisplayType
         func getDisplayType(date: Date, startDate: Date, endDate: Date, label: String, displayType: String) -> BIDayDisplayType.RawValue {
             var dayDisplayType = -1
-            if (self.calendarData!.isDate(date, between: startDate, and: endDate)) {
+            if (self.calendarData.isDate(date, between: startDate, and: endDate)) {
                 if label == kVaLabel {
                     dayDisplayType = BIDayDisplayType.fullPay.rawValue
                 }
@@ -2053,10 +2083,10 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     else if label == kBackVoFull {
                         dayDisplayType = BIDayDisplayType.fullPay.rawValue
                     }
-                    else if (self.calendarData!.daysBetweenDate(startDate, andDate: endDate) > 0) {
+                    else if (self.calendarData.daysBetweenDate(startDate, andDate: endDate) > 0) {
                         if displayType == kFrontVoPartial {
-                            let vaDc = self.calendarData!.bidPeriodCalendar().dateComponents([.day], from: endDate)
-                            let dayDc = self.calendarData!.bidPeriodCalendar().dateComponents([.day], from: date)
+                            let vaDc = self.calendarData.bidPeriodCalendar().dateComponents([.day], from: endDate)
+                            let dayDc = self.calendarData.bidPeriodCalendar().dateComponents([.day], from: date)
                             
                             if (vaDc.day == dayDc.day) {
                                 dayDisplayType = BIDayDisplayType.fullPay.rawValue
@@ -2066,8 +2096,8 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                             }
                         }
                         else {
-                            let vaDc = self.calendarData!.bidPeriodCalendar().dateComponents([.day], from: startDate)
-                            let dayDc = self.calendarData!.bidPeriodCalendar().dateComponents([.day], from: date)
+                            let vaDc = self.calendarData.bidPeriodCalendar().dateComponents([.day], from: startDate)
+                            let dayDc = self.calendarData.bidPeriodCalendar().dateComponents([.day], from: date)
                             if (vaDc.day == dayDc.day) {
                                 dayDisplayType = BIDayDisplayType.fullPay.rawValue
                             }
