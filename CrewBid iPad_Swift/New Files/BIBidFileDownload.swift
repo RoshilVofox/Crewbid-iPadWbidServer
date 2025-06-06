@@ -61,7 +61,6 @@ class BIBidFileDownload: NSObject{
                 completion(.success(data))
             }
             task.resume()
-            
         }catch{
             print("Error in Downloading Historic Bid: \(error)")
         }
@@ -71,19 +70,5 @@ class BIBidFileDownload: NSObject{
         let allowedCharacterSet = CharacterSet(charactersIn: ";/?:@&=+$,").inverted
         return unescapedString.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet)!
     }
-    
-    private func stringFormatter(_ string: String) -> String {
-        var encodedString = string.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        encodedString = encodedString.replacingOccurrences(of: "+", with: "%2B")
-        return encodedString
-    }
-    
-    private func properlyEncodedSessionKey(_ rawKey: String) -> String {
-        let allowedCharacterSet = CharacterSet.urlQueryAllowed.subtracting(CharacterSet(charactersIn: "+&="))
-        return rawKey.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) ?? rawKey
-    }
-    
-
-    
 }
 

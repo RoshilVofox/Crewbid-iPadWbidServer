@@ -109,6 +109,7 @@ class CBCredentialsPageVC: BaseViewController {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 let success = BIBidInfoReader.shared.readBidData()
                                 if success {
+                                    print("Done Reading Historic Bid Data")
                                     NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                                 NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)

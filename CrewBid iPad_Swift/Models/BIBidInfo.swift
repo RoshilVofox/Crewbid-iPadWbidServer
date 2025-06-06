@@ -39,9 +39,36 @@ class BIBidInfo:NSObject{
     static let shared = BIBidInfo()
     
     var dataSource = GlobalBidInfo.shared
+    
     func bidDataFilename() -> String {
             return "\(dataFilenameBase()).737"
         }
+    func textDataFilename() -> String {
+           let bidRoundChar: Character = isFirstRoundBid() ? "A" : "B"
+           return "\(textFilenameBase())\(bidRoundChar).ZIP"
+       }
+    
+    func bidDataFiles() -> [String]? {
+        var bidDataFiles:[String] = []
+        if AppState.shared.isHistoricBid || AppState.shared.isMockData {
+            bidDataFiles.append(textDataFilename())
+        }else{
+            bidDataFiles.append(bidDataFilename())
+            bidDataFiles.append(textDataFilename())
+        }
+        
+        if isSecondRoundBid() && !isFABid(){
+            let isQATest = UserDefaults.standard.string(forKey: "isQATest")
+            if isQATest == "NO"{
+                var firstRoundTextDataFilename = textFilenameBase()
+                let index = firstRoundTextDataFilename.index(firstRoundTextDataFilename.startIndex, offsetBy: 5)
+                    firstRoundTextDataFilename.replaceSubrange(index...index, with: "A")
+                bidDataFiles.append(firstRoundTextDataFilename)
+            }
+        }
+        return bidDataFiles
+    }
+    
     
     func linesTextFilename() -> String {
         // 'L' for first round, 'N' for second round
@@ -64,6 +91,11 @@ class BIBidInfo:NSObject{
     private func isSecondRoundBid() -> Bool {
         return dataSource.round == 2
     }
+    private func isFABid() -> Bool {
+        let isFABid = BICrewPositionType.FlightAttendant.rawValue == self.dataSource.position.rawValue
+        return isFABid
+    }
+    
     
     func textFilenameBase() -> String {
         let base = dataSource.base

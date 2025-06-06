@@ -96,6 +96,7 @@ class CBBiddataDownloadVC: BaseViewController {
             if let positionCode = self.selectedPosition, let position = BICrewPositionType(from: positionCode){
                 GlobalBidInfo.shared.position = position
             }
+            GlobalBidInfo.shared.employeeNumber = self.empNum ?? emp
             GlobalBidInfo.shared.round = self.selectedRound!
             GlobalBidInfo.shared.month = self.month!
             GlobalBidInfo.shared.year = self.year!
