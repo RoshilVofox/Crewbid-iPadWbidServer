@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ZipArchive
 
 class BIBidFileDownloadViewModel {
     func fetchHistoricBidLines(filename: String, completion: @escaping (Result<URL, Error>) -> Void) {
@@ -38,8 +39,12 @@ class BIBidFileDownloadViewModel {
                         let dataWriteURL = directoryURL.appendingPathComponent(filename)
                         try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
                         try fileData.write(to: dataWriteURL, options: [])
-                        completion(.success(dataWriteURL))
-                      
+                        let unzipSuccess = SSZipArchive.unzipFile(atPath: dataWriteURL.path, toDestination: directoryURL.path)
+                        if unzipSuccess{
+                            completion(.success(dataWriteURL))
+                        }else{
+                            completion(.failure(NetworkError.unzipFailed))
+                        }
                         
                     }catch{
                         print("Error parsing JSON data: \(error.localizedDescription)")
@@ -58,7 +63,32 @@ class BIBidFileDownloadViewModel {
     func fetchNewBidData(sessionKey: String, fileName: String, completion: @escaping (Result<URL, Error>) -> Void) {
         let bidDownload = BIBidFileDownload()
         bidDownload.downloadBidFiles(sessionKey: sessionKey, filename: fileName){ result in
-        completion(result)
+            switch result{
+            case .success(let tempURL):
+                let destinationDir = BIBidInfo().downloadDirectory()
+                let destinationURL = destinationDir.appendingPathComponent(fileName)
+                do{
+                    // Create destination directory if needed
+                    try FileManager.default.createDirectory(at: destinationDir, withIntermediateDirectories: true, attributes: nil)
+                    // Remove existing file if present
+                    if FileManager.default.fileExists(atPath: destinationURL.path){
+                        try FileManager.default.removeItem(at: destinationURL)
+                    }
+                    // Move downloaded file
+                    try FileManager.default.moveItem(at: tempURL, to: destinationURL)
+                    let success = SSZipArchive.unzipFile(atPath: destinationURL.path, toDestination: destinationDir.path)
+                    if success{
+                        completion(.success(destinationDir))
+                    }else{
+                        completion(.failure(NetworkError.unzipFailed))
+                    }
+                }catch{
+                    completion(.failure(error))
+                }
+            case .failure(let error):
+                print("Error downloading bid file: \(error)")
+                completion(.failure(error))
+            }
         }
     }
 }

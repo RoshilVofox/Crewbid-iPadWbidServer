@@ -102,7 +102,7 @@ class CBCredentialsPageVC: BaseViewController {
                     DispatchQueue.main.async {
                         switch result{
                         case .success(let fileURL):
-                            print("File saved at: \(fileURL)")
+                            print("File unzipped at: \(fileURL)")
                             DispatchQueue.main.async {
                                     NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
                                 }

@@ -26,34 +26,13 @@ class BIBidFileDownload: NSObject{
         config.timeoutIntervalForRequest = 120
         config.timeoutIntervalForResource = 300
         let downloadTask = URLSession.shared.downloadTask(with: request) { tempURL, _, error in
-            DispatchQueue.main.async{
-                if let error = error{
-                    completionHandler(.failure(error))
-                    return}
-                guard let tempURL = tempURL else{
-                    completionHandler(.failure(NetworkError.noData))
-                    return}
-                let destinationDir = BIBidInfo().downloadDirectory()
-                let destinationURL = destinationDir.appendingPathComponent(filename)
-                do{
-                    // Create destination directory if needed
-                    try FileManager.default.createDirectory(at: destinationDir, withIntermediateDirectories: true, attributes: nil)
-                    // Remove existing file if present
-                    if FileManager.default.fileExists(atPath: destinationURL.path){
-                        try FileManager.default.removeItem(at: destinationURL)
-                    }
-                    // Move downloaded file
-                    try FileManager.default.moveItem(at: tempURL, to: destinationURL)
-                    let success = SSZipArchive.unzipFile(atPath: destinationURL.path, toDestination: destinationDir.path)
-                    if success{
-                        completionHandler(.success(destinationDir))
-                    }else{
-                        completionHandler(.failure(NetworkError.unzipFailed))
-                    }
-                }catch{
-                    completionHandler(.failure(error))
-                }
-            }
+            if let error = error{
+                completionHandler(.failure(error))
+                return}
+            guard let tempURL = tempURL else{
+                completionHandler(.failure(NetworkError.noData))
+                return}
+            completionHandler(.success(tempURL))
         }
         downloadTask.resume()
     }
@@ -87,7 +66,6 @@ class BIBidFileDownload: NSObject{
             print("Error in Downloading Historic Bid: \(error)")
         }
     }
-    
     
     private func stringByAddingPercentEscapes(to unescapedString: String) -> String {
         let allowedCharacterSet = CharacterSet(charactersIn: ";/?:@&=+$,").inverted
