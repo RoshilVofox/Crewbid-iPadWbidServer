@@ -27,7 +27,7 @@ class BIBidInfoReader{
     let tripFileName = "TRIPS"
     let lineFileName = "PS"
     let dataSource = GlobalBidInfo.shared
-    let moc = CoreDataManager.shared.persistentContainer.newBackgroundContext()
+//    let moc = CoreDataManager.shared.persistentContainer.newBackgroundContext()
     var trips:[String:Any] = [:]
     var dhStartCities:[String] = []
     var dhEndCities:[String] = []
@@ -176,29 +176,22 @@ class BIBidInfoReader{
                 if success{
                     // needs code- seniority
                 }
-                
                 if success{
                     //calculate workblock details
                 }
-                
                 if success{
                     print("Done Reading Lines")
-                    DispatchQueue.main.async {
-                                    NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
-                                }
-                  
                 }
-            
         }
-        if success{
-            if moc.hasChanges{
-                do{
-                    try moc.save()
-                }catch{
-                    print("Error saving moc: \(error)")
-                }
-            }
-        }
+//        if success{
+//            if moc.hasChanges{
+//                do{
+//                    try moc.save()
+//                }catch{
+//                    print("Error saving moc: \(error)")
+//                }
+//            }
+//        }
         return success
     }
     
@@ -236,7 +229,8 @@ class BIBidInfoReader{
         
         var isHistoric: NSNumber = 0
         isHistoric = AppState.shared.isHistoricBid as NSNumber
-        self.bidPeriod = BIBidPeriod(context: self.moc)
+        self.bidPeriod = BIBidPeriod(context: dataSource.managedObjectContext)
+//        self.bidPeriod = BIBidPeriod(context: self.moc)
         self.bidPeriod?.isHistoric = isHistoric as NSNumber
         self.bidPeriod?.year = self.dataSource.year as NSNumber
         self.bidPeriod?.base = self.dataSource.base
@@ -265,7 +259,8 @@ class BIBidInfoReader{
     private func readTrips() -> Bool{
         var success = true
         
-        let moc = self.moc
+//        let moc = self.moc
+        let moc = dataSource.managedObjectContext
         moc.undoManager = nil
         let tripsDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.tripFileName)
         if !FileManager.default.fileExists(atPath: tripsDataFileURL.path){
@@ -486,7 +481,8 @@ class BIBidInfoReader{
     //MARK: Read Lines file
     private func readLines() -> Bool{
         var success = true
-        let moc = self.moc
+//        let moc = self.moc
+        let moc = dataSource.managedObjectContext
         let linesDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.lineFileName)
         if !FileManager.default.fileExists(atPath: linesDataFileURL.path){
             return false}
@@ -726,7 +722,8 @@ class BIBidInfoReader{
     //MARK: Read Trips file FA - done
     private func readTripsFA() -> Bool{
         var success = true
-        let moc = self.moc
+//        let moc = self.moc
+        let moc = dataSource.managedObjectContext
         moc.undoManager = nil
         let tripsDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.tripFileName)
         if !FileManager.default.fileExists(atPath: tripsDataFileURL.path){
@@ -982,7 +979,8 @@ class BIBidInfoReader{
     private func readLinesFA() -> Bool{
         
         var success = true
-        let moc = self.moc
+//        let moc = self.moc
+        let moc = dataSource.managedObjectContext
         let linesDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.lineFileName)
         if !FileManager.default.fileExists(atPath: linesDataFileURL.path){
             return false}
@@ -1281,7 +1279,8 @@ class BIBidInfoReader{
         line.coHoli = 0
         line.isFA31thLineVacationCalculated = false
         line.isFA25thLineVacationCalculated = false
-        let moc = self.moc
+//        let moc = self.moc
+        let moc = dataSource.managedObjectContext
         let amExpression = NSExpression(format: "SUBQUERY(trips, $TRIP, $TRIP.info.amPM == 1).@count")
         let amTripsCount = amExpression.expressionValue(with: line, context: nil) as? NSNumber
         let pmExpression = NSExpression(format: "SUBQUERY(trips, $TRIP, $TRIP.info.amPM == 2).@count")
@@ -1482,7 +1481,8 @@ class BIBidInfoReader{
     
     private func readTripsForLine(line:BILine, record:NSString, isReserve:Bool) -> Bool{
         var success = true
-        let moc = self.moc
+//        let moc = self.moc
+        let moc = dataSource.managedObjectContext
         var tripInfo:BITripInfo?
         var trip:BITrip?
         let tripInterval = 19
@@ -1773,7 +1773,8 @@ class BIBidInfoReader{
     private func readDaysInfoTripsInfoRecord2(tripInfo:BITripInfo, record2:String) -> Bool{
         var prevDay:BIDayInfo?
         var overNightsInBase = 0
-        let moc = self.moc
+//        let moc = self.moc
+        let moc = dataSource.managedObjectContext
         let base = UserDefaults.standard.string(forKey: kCBCrewBaseDefaultKey)
         for dayIndex in 0..<tripMaxDaysCount {
             let cityRangeStart = dayCityRangeLocation + dayIndex * dayInterval
@@ -1840,7 +1841,8 @@ class BIBidInfoReader{
     
     //MARK: leg info properties with record5 and record6
     private func readLegsInfoForTripInfo(tripInfo:BITripInfo, record5:String, record6:String) -> Bool{
-        let moc = self.moc
+//        let moc = self.moc
+        let moc = dataSource.managedObjectContext
         var day = tripInfo.firstDay
         var prevLeg : BILegInfo?
         //Get max possible number of legs in record5 and 6
@@ -2083,9 +2085,10 @@ class BIBidInfoReader{
         }
         
         //Save context
-        if self.moc.hasChanges {
+        let moc = dataSource.managedObjectContext
+        if moc.hasChanges {
             do{
-                try self.moc.save()
+                try moc.save()
             }catch{
                 print("Error saving context: \(error)")
                 return false

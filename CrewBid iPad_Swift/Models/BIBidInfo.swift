@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 
 protocol BIBidInfoDataSource {
     var userid: String { get set }
@@ -17,6 +18,7 @@ protocol BIBidInfoDataSource {
     var round: Int { get set }
     var employeeNumber: String { get set }
     var swaptimizerID: String { get set }
+    var managedObjectContext: NSManagedObjectContext { get }
 }
 class GlobalBidInfo: BIBidInfoDataSource {
     static let shared = GlobalBidInfo()
@@ -29,7 +31,10 @@ class GlobalBidInfo: BIBidInfoDataSource {
     var round: Int = 0
     var employeeNumber: String = ""
     var swaptimizerID: String = ""
-    private init() {}
+    var managedObjectContext: NSManagedObjectContext
+    private init() {
+        self.managedObjectContext = CoreDataManager.shared.persistentContainer.newBackgroundContext()
+    }
 }
 
 
