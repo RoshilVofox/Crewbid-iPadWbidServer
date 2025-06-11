@@ -99,4 +99,15 @@ extension BITripInfo : Identifiable {
         return number![index] >= "W"
     }
     
+    var tafbMinutes: NSNumber? {
+        guard
+            let lastDay = self.orderedDays.last as? BIDayInfo,
+            let lastLeg = lastDay.orderedLegs.last as? BILegInfo,
+            let firstLeg = firstDay?.firstLeg
+        else {
+            return nil
+        }
+        let tafb = lastLeg.arriveMinutes!.intValue - firstLeg.departMinutes!.intValue + briefMinutes!.intValue + debriefMinutes!.intValue
+        return NSNumber(value: tafb)
+    }
 }

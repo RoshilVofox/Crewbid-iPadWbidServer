@@ -67,6 +67,7 @@ class BIBidFileDownloadViewModel {
         func downloadNext() {
             guard let nextFile = fileIterator.next() else {
                 // All files done
+                self.performPostDownloadTasks()
                 completion(.success(BIBidInfo.shared.downloadDirectory()))
                 return
             }
@@ -102,6 +103,31 @@ class BIBidFileDownloadViewModel {
         }
         downloadNext()
     }
-
-
+//MARK: needs code
+    private func performPostDownloadTasks(){
+        checkCrewBidUpdateFile()
+        checkFlightData()
+        let dataSource = GlobalBidInfo.shared
+        if dataSource.round == 1 && dataSource.position == .FlightAttendant{
+            CBUtils.getFALISTWB4JSONFromServer()
+        }
+        if dataSource.round == 2 && dataSource.position != .FlightAttendant{
+            CBUtils.getMissingTripJSON(year: dataSource.year,month: dataSource.month,round: dataSource.round,base: dataSource.base,position: dataSource.position.shortName){ status in
+                if status{
+                    print("Missing trip JSON downloaded.")
+                }else{
+                    print("Failed to download missing trip JSON.")
+                    //alert
+                }
+            }
+        }
+    }
+    
+    private func checkCrewBidUpdateFile(){
+        //needs code
+    }
+    
+    private func checkFlightData(){
+        //needs code
+    }
 }
