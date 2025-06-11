@@ -80,7 +80,7 @@ class BICalendarData {
         dc.year = year
         dc.month = month
         dc.day = 1
-        dc.hour = 0
+        dc.hour = 12
         dateComponents = dc
         firstDateOfMonth = calendar?.date(from: dc)
         let daysInMonthRange = calendar?.range(of: .day, in: .month, for: firstDateOfMonth!)
