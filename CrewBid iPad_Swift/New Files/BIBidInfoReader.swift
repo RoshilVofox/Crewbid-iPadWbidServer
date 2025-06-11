@@ -1265,7 +1265,7 @@ class BIBidInfoReader{
                 line.tripTfp = line.actualPay
                 line.blockMinutes = line.actualBlockMinutes
                 line.vTpLPay = line.lineRig
-            }else if line.vTpLPay as! Int > 0{
+            }else if line.vTpLPay!.intValue > 0{
                 if (self.bidPeriod?.vacations!.count)! > 0{
                     line.pay = line.vTotalPay
                     line.tripTfp = line.vFlyPay
