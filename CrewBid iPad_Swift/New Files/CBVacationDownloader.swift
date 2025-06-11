@@ -46,6 +46,12 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     let kPullTypeFront = "Front"
     let kPullTypeBack = "Back"
     let kPullTypeAll = "All"
+    
+    required init(bidPeriod : BIBidPeriod) {
+//        self.controller = controller
+        self.bidPeriod = bidPeriod
+        calendarData = calendarData.initWithBidPeriod(bidPeriod: bidPeriod)!
+    }
 
     override init() {
         super.init()
@@ -506,7 +512,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         if !(statusCode == "SUCCESS") {
             AlertService.showAlertForTopVC(title: "WBidmax Server Error", message: "\(statusMsg)\nWBidmax vacation usually releases data the evening of the 4th or morning of the 5th. If you are seeing this error before data release, please try again after data has been released.", actions: nil)
         }
-        else if (pilotIdentifier != 21541 && !(secretEnabled == "YES")) {
+        else if (pilotIdentifier != Int((self.bidPeriod?.crewIdentifier)!) && !(secretEnabled == "YES")) {
 //        else if (pilotIdentifier != self.bidPeriod?.swaptimizerIdentifier?.intValue && !(secretEnabled == "YES")) {
             //    The bid package for the wrong pilot got downloaded
             AlertService.showAlertForTopVC(title: "WBidmax Error", message: "The WBidmax user ID \(pilotIdentifier) does not match the pilot for whom the bid package was downloaded \(String(describing: self.bidPeriod?.swaptimizerIdentifier)).", actions: nil)
@@ -596,7 +602,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     }
                     else {
                         let moc = self.bidPeriod?.managedObjectContext
-                        let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid;
+                        let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid ?? "WBID"
                         if (vacationType == "WBID") {
                             self.bidPeriod?.wbFileIntent = header["FileIdent"] as? String
                         }
@@ -1721,7 +1727,8 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             vacay.endDate = endDate
 //            vacationType = (self.bidPeriod?.userVacationWbidOrCrewBid)!
             vacay.vacationType = vacationType
-            let length = (self.calendarData.daysBetweenDate(startDate!, andDate: endDate!) ?? 0) + 1
+            let length = (self.calendarData.daysBetweenDate(fromDateTime: startDate!, toDateTime: endDate!)) + 1
+//            let length = (self.calendarData.daysBetweenDate(startDate!, andDate: endDate!) ?? 0) + 1
             vacay.length = length as NSNumber
             
             self.bidPeriod?.containsVacay = true
@@ -1883,7 +1890,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                         vacay.line = line
                         vacay.fvStartdate = startDateFinal
                         vacay.fvEnddate = endDateFinal
-                        let length = (self.calendarData.daysBetweenDate(startDateFinal, andDate: endDateFinal)) + 1
+                        let length = (self.calendarData.daysBetweenDate(fromDateTime: startDateFinal, toDateTime: endDateFinal)) + 1
                         vacay.fvLength = length as NSNumber
                         self.bidPeriod?.containsVacay = true
                         self.bidPeriod?.containsFvVacay = true
@@ -1947,7 +1954,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                                 
                                 if let tripDate = trip.startDate,
                                    let normalizedDate = dff.date(from: dff.string(from: tripDate)),
-                                   calendarData.isDate(normalizedDate, between: fvStartdate, and: fvEnddate) == true {
+                                   calendarData.date(date: normalizedDate, beginDate: fvStartdate, endDate: fvStartdate) == true {
                                     for day in trip.orderedDays {
                                         day.displayType = BIDayDisplayType.fullPay.rawValue as NSNumber
                                         day.redEyeDayDisplayDayType = BIDayDisplayType.fullPay.rawValue as NSNumber
@@ -1997,7 +2004,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                         var missingDateIndex = -1
                         var missingRedEyeDate: Date? = nil
                         if (trip != nil && trip!.isRedEyeTrip) {
-                            let missingDateIndex = CBUtils.findMissingIndexInRedEyeTrip(trip!)
+                            let missingDateIndex = CBUtils.findMissingIndex(inRedEyeTrip: trip!)
                             let missingRedEyeDate = CBUtils.findMissingDate(forRedEyeTrip: trip!)
                         }
                         // Enumerate over the days and give them a value based on their status inside or
@@ -2093,7 +2100,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     //    MARK: getDisplayType
         func getDisplayType(date: Date, startDate: Date, endDate: Date, label: String, displayType: String) -> BIDayDisplayType.RawValue {
             var dayDisplayType = -1
-            if (self.calendarData.isDate(date, between: startDate, and: endDate)) {
+            if (self.calendarData.date(date: date, beginDate: startDate, endDate: startDate)) {
                 if label == kVaLabel {
                     dayDisplayType = BIDayDisplayType.fullPay.rawValue
                 }
@@ -2104,10 +2111,10 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     else if label == kBackVoFull {
                         dayDisplayType = BIDayDisplayType.fullPay.rawValue
                     }
-                    else if (self.calendarData.daysBetweenDate(startDate, andDate: endDate) > 0) {
+                    else if (self.calendarData.daysBetweenDate(fromDateTime: startDate, toDateTime: startDate) > 0) {
                         if displayType == kFrontVoPartial {
-                            let vaDc = self.calendarData.bidPeriodCalendar().dateComponents([.day], from: endDate)
-                            let dayDc = self.calendarData.bidPeriodCalendar().dateComponents([.day], from: date)
+                            let vaDc = self.calendarData.bidPeriodCalendar()!.dateComponents([.day], from: endDate)
+                            let dayDc = self.calendarData.bidPeriodCalendar()!.dateComponents([.day], from: date)
                             
                             if (vaDc.day == dayDc.day) {
                                 dayDisplayType = BIDayDisplayType.fullPay.rawValue
@@ -2117,8 +2124,8 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                             }
                         }
                         else {
-                            let vaDc = self.calendarData.bidPeriodCalendar().dateComponents([.day], from: startDate)
-                            let dayDc = self.calendarData.bidPeriodCalendar().dateComponents([.day], from: date)
+                            let vaDc = self.calendarData.bidPeriodCalendar()!.dateComponents([.day], from: startDate)
+                            let dayDc = self.calendarData.bidPeriodCalendar()!.dateComponents([.day], from: date)
                             if (vaDc.day == dayDc.day) {
                                 dayDisplayType = BIDayDisplayType.fullPay.rawValue
                             }
@@ -2485,7 +2492,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             
 //            vacationType = (self.bidPeriod?.userVacationWbidOrCrewBid)!
             vacay.vacationType = vacationType
-            let length = (self.calendarData.daysBetweenDate(startDate, andDate: endDate!) ?? 0) + 1
+            let length = (self.calendarData.daysBetweenDate(fromDateTime: startDate, toDateTime: endDate!)) + 1
             vacay.length = length as NSNumber
             
             self.bidPeriod?.containsVacay = true
@@ -2784,7 +2791,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     }
     
     func getDayDatesFromTrip(trip: BITrip) -> [Date] {
-        let missingDateIndex = CBUtils.findMissingIndexInRedEyeTrip(trip)
+        let missingDateIndex = CBUtils.findMissingIndex(inRedEyeTrip: trip)
         let missingRedEyeDate = CBUtils.findMissingDate(forRedEyeTrip: trip)
         var calendar = Calendar(identifier: .gregorian)
         calendar.locale = Locale(identifier: "en_US")
