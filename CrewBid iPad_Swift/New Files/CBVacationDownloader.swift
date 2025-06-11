@@ -48,6 +48,8 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     let kPullTypeAll = "All"
 
     override init() {
+        super.init()
+        self.fetchAndPrintTripCount()
         let ab = dataSource.position
         let cb = dataSource.base
         print("base\(cb) postion\(ab)")
@@ -59,17 +61,18 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         let targetPosition = NSNumber(value: dataSource.position.rawValue)
         let targetBase = dataSource.base
         let targetYear = dataSource.year as NSNumber
+        let targetEmployee = dataSource.employeeNumber
 
         fetchRequest.predicate = NSPredicate(
-            format: "round == %@ AND month == %@ AND positionType == %@ AND base == %@ AND year == %@",
-            targetRound, targetMonth, targetPosition, targetBase, targetYear
+            format: "round == %@ AND month == %@ AND positionType == %@ AND base == %@ AND year == %@ AND crewIdentifier == %@",
+            targetRound, targetMonth, targetPosition, targetBase, targetYear, targetEmployee
         )
 
         do {
             let results = try context.fetch(fetchRequest)
             self.bidPeriod = results.first
             if (self.bidPeriod != nil){
-                print("Found bidPeriod: \(String(describing: bidPeriod))")
+                print("Found bidPeriod: ")
             } else {
                 print("No matching bidPeriod found.")
             }
@@ -201,7 +204,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             vacationType = "FAVacation"
             var vacationDetailDictionary: [String: Any] = [:]
             
-            vacationDetailDictionary["EmpNum"] = self.bidPeriod?.crewIdentifier ?? 14313//81566
+            vacationDetailDictionary["EmpNum"] = self.bidPeriod?.crewIdentifier ?? 14313//31035
             vacationDetailDictionary["Base"] = self.bidPeriod?.base ?? "DEN"
             vacationDetailDictionary["Base"] = self.bidPeriod?.base ?? "DEN"
             if let rawValue = self.bidPeriod?.positionType?.intValue,
@@ -884,7 +887,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         {
             // Check to make sure the data received is the proper file
             let seat = pilotInfo["Seat"] as! String
-            let round = pilotInfo["Round"] as! Int
+            let round = Int(configInfo["Round"] as? String ?? "") ?? 0
             let vacayBase = pilotInfo["Base"] as! String
             var rawValue = (self.bidPeriod?.positionType?.intValue)!
             var positionType = BICrewPositionType(rawValue: rawValue)!
@@ -1777,7 +1780,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             }
             do {
                 try moc?.save()
-                print("filename saved")
+                print("deadhead at start and end cities saved")
             } catch {
                 print("Error saving context: \(error)")
             }
@@ -1786,6 +1789,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             self.bidPeriod?.swaptimizerStatus = CBSwaptimizerStatus.enabled.rawValue as NSNumber
             for line in sortedLines as! [BILine] {
                 
+//                MARK: we can add progress if needed here
                 let vLine = vEnumerator.next()
                 let vLineNumber = (vLine?[lineName] as? Int) ?? (vLine?[lineName] as? NSNumber)?.intValue ?? 0
                 
@@ -1993,8 +1997,8 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                         var missingDateIndex = -1
                         var missingRedEyeDate: Date? = nil
                         if (trip != nil && trip!.isRedEyeTrip) {
-                            let missingDateIndex = CBUtils.findMissingDateAndIndex(forRedEyeTrip: trip!)
-                            let missingRedEyeDate = CBUtils.findMissingDate(for: trip!)
+                            let missingDateIndex = CBUtils.findMissingIndexInRedEyeTrip(trip!)
+                            let missingRedEyeDate = CBUtils.findMissingDate(forRedEyeTrip: trip!)
                         }
                         // Enumerate over the days and give them a value based on their status inside or
                         // outside the vacation and its overlap
@@ -2486,6 +2490,346 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             
             self.bidPeriod?.containsVacay = true
         }
+        
+        UserDefaults.standard.set(false, forKey: kCBIncludeDroppedTripsInProcessingKey)
+
+        let includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
+        let lines = self.bidPeriod?.lines?.allObjects as? [AnyObject] ?? []
+        var sortedLines = (lines as NSArray).sortedArray(using: [
+            NSSortDescriptor(key: "number", ascending: true)
+        ])
+        let notBlankPredicate = NSPredicate(format: "type != %d", BILineType.BlankLineType.rawValue)
+        sortedLines = (sortedLines as NSArray).filtered(using: notBlankPredicate) as? [AnyObject] ?? []
+        
+        self.round = self.bidPeriod?.round
+        self.year = self.bidPeriod?.year
+        self.month = self.bidPeriod?.month
+        self.position = self.bidPeriod?.positionType?.intValue
+        self.base = self.bidPeriod?.base
+        self.employeeNumber = self.bidPeriod?.swaptimizerIdentifier?.stringValue
+        var globalBidInfo = GlobalBidInfo.shared
+        let bidInfoReader = BIBidInfoReader()
+        //            bidInfoReader.dataSource = self
+        //            add global bid info if needed
+        //            globalBidInfo.round = self.bidPeriod?.round as? Int ?? 0
+        //            globalBidInfo.year = self.bidPeriod?.year as? Int ?? 2025
+        //            globalBidInfo.month = self.bidPeriod?.month as? Int ?? 1
+        //            globalBidInfo.position = self.bidPeriod?.positionType?.intValue ?? 0
+        bidInfoReader.bidPeriod = self.bidPeriod
+        bidInfoReader.calendarData = self.calendarData
+        bidInfoReader.includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
+        bidInfoReader.intlCities = (UserDefaults.standard.object(forKey: kCBInternationalCitiesDict) as? [String: Any])!
+        
+        // Reset the deadhead at start and end cities
+        let fetchRequestForDeadHeadAtStart: NSFetchRequest<BIDeadheadAtStartCity> = BIDeadheadAtStartCity.fetchRequest()
+        fetchRequestForDeadHeadAtStart.includesPropertyValues = false
+        do {
+            let cities = try self.bidPeriod?.managedObjectContext?.fetch(fetchRequestForDeadHeadAtStart)
+            for city in cities! {
+                moc?.delete(city)
+            }
+        } catch {
+            print("deadhead at start city fetch failed: \(error)")
+        }
+        let fetchRequestForDeadHeadAtEnd: NSFetchRequest<BIDeadheadAtEndCity> = BIDeadheadAtEndCity.fetchRequest()
+        fetchRequestForDeadHeadAtEnd.includesPropertyValues = false
+        do {
+            let cities = try self.bidPeriod?.managedObjectContext?.fetch(fetchRequestForDeadHeadAtEnd)
+            for city in cities! {
+                moc?.delete(city)
+            }
+        } catch {
+            print("deadhead at end city fetch failed: \(error)")
+        }
+        do {
+            try moc?.save()
+            print("deadhead at start and end cities saved")
+        } catch {
+            print("Error saving context: \(error)")
+        }
+        // Iterate over all the lines and fill in the stuff we need to know
+        var vEnumerator = vacayLines.makeIterator()
+        for line in sortedLines as! [BILine] {
+//          MARK: we can add progress if needed here
+            var vLine = vEnumerator.next()
+            let targetLine = line.number?.intValue ?? 0
+            let resultArray = vacayLines.filter {
+                ($0["Line1"] as? Int) == targetLine
+            }
+            if (resultArray.count == 0) {
+                continue
+            }
+            vLine = resultArray[0]
+            let vLineNumber = (vLine?[lineName] as? Int) ?? (vLine?[lineName] as? NSNumber)?.intValue ?? 0
+            
+            if (vLineNumber == line.number?.intValue) {
+                let lineData = vLine?["LineData"] as! [String: Any]
+                line.vTotalPay = lineData[totalPay] as? NSNumber
+                line.pay = line.vTotalPay
+                line.coHoli = 0
+                line.vFlyPay = lineData[flyPay] as? NSNumber
+                line.tripTfp = line.vFlyPay
+                line.vVacationPay = lineData[totalVacationPay] as? NSNumber
+                if let rig = line.lineRig?.floatValue, let vvp = line.vVacationPay?.floatValue {
+                    line.vTpLPay = NSNumber(value: rig + vvp)
+                }
+                line.vCarryOutPay = lineData[carryOutPay_Flying] as? NSNumber
+                if let vcop = line.vCarryOutPay?.floatValue, let lp = line.pay?.floatValue {
+                    line.payPlusCo = NSNumber(value: vcop + lp)
+                }
+                if let cph = line.coHoli?.floatValue,
+                   let cop = line.carryOutPay?.floatValue {
+                    line.coPlusHoli = NSNumber(value: cph + cop)
+                }
+                line.vVacayCarryOutPay = lineData[carryoutVacationPay] as? NSNumber
+                line.vVacayPayBothBP = lineData[vacPayBothBp] as? NSNumber
+                line.vCarryOutVOPay = lineData[carryoutVOPay] as? NSNumber
+                line.blockMinutes = lineData[blockName] as? NSNumber
+                line.blockHours = line.blockMinutes!.floatValue / 60 as NSNumber
+                line.vBlockTime = line.blockMinutes!.floatValue / 60 as NSNumber
+                line.vDaysOff = lineData[totalDaysOff] as? NSNumber
+                line.vEffectiveVacayLength = lineData[effectiveVacationLength] as? NSNumber
+                line.vLongestBlockofDaysOff = lineData[longestBlockofDaysOff] as? NSNumber
+                
+                line.vAbp = lineData[vAbp] as? NSNumber
+                line.vAne = lineData[vAne] as? NSNumber
+                line.vAbo = lineData[vAbo] as? NSNumber
+                line.vAPbp = lineData[vAPbp] as? NSNumber
+                line.vAPne = lineData[vAPne] as? NSNumber
+                line.vAPbo = lineData[vAPbo] as? NSNumber
+                line.clawBack = lineData[clawBack] as? NSNumber
+                
+                if (line.vTotalPay!.floatValue > 0 && line.vBlockTime!.intValue > 0) {
+                    line.vPayPerBlock = (line.vTotalPay!.floatValue) / (line.vBlockTime?.floatValue)! as NSNumber
+                }
+                else {
+                    line.vPayPerBlock = 0.0
+                    line.payPerBlockHour = 0.0
+                }
+                
+                // Calculate the line's total Front VO pay and Back VO
+                if (numVacayWeeks > 1) {
+                    var frontVoPay: Float = 0.0
+                    var backVoPay: Float = 0.0
+                    
+                    for i in 0..<numVacayWeeks {
+                        let frontVoKey = String(format: "Front VO%@%d", (i == 0 ? "" : " "), i + 1)
+                        let backVoKey = String(format: "Back VO%@%d", (i == 0 ? "" : " "), i + 1)
+                        
+                        let frontVoPayString = lineData[frontVoKey] as? String
+                        if (frontVoPayString != nil) {
+                            frontVoPay += frontVoPayString!.floatValue
+                        }
+                        let backVoPayString = lineData[backVoKey] as? String
+                        if (backVoPayString != nil) {
+                            backVoPay += backVoPayString!.floatValue
+                        }
+                        
+                    }
+                    line.vFrontVoPay = frontVoPay as NSNumber
+                    line.vBackVoPay = backVoPay as NSNumber
+                }
+                else {
+                    line.vFrontVoPay = lineData[frontVO] as? NSNumber
+                    line.vBackVoPay = lineData[backVO] as? NSNumber
+                }
+                if (vacationType == "FAVacation" || vacationType == "FAVacationF") {
+                    line.vFrontVoPay = lineData["VOFront"] as? NSNumber
+                    line.vBackVoPay = lineData["VOBack"] as? NSNumber
+                }
+                
+                var workDays = (lineData[daysWorked_inmonth] as? NSNumber)?.intValue ?? 0
+                if (((lineData[daysWorked_inmonth] as? NSNumber)?.intValue) == nil) {
+                    workDays = (lineData[daysWorked] as? NSNumber)?.intValue ?? 0
+                }
+                if (line.vTotalPay!.floatValue > 0 && workDays > 0) {
+                    line.vPayPerDay = (line.vTotalPay!.floatValue) / Float(workDays) as? NSNumber
+                }
+                else if (workDays == 0) {
+                    line.vPayPerDay = 0.0
+                }
+                
+                // Set up the trips if dropped
+                let rawPairingsPulled = vLine!["PairingsPulled"]
+                if rawPairingsPulled is String {
+                    continue
+                }
+                let pairingsPulled = rawPairingsPulled as? [[String: Any]]
+                let trips = Array(line.trips as? Set<BITrip> ?? [])
+                for j in 0..<pairingsPulled!.count {
+                    let df = DateFormatter()
+                    df.dateFormat = "HHmmyyyyMMdd"
+                    df.timeZone = self.calendarData.bidPeriodTimezone()
+                    let pulledPairing = pairingsPulled![j]
+                    let pairingNumber = pulledPairing["ID"] as? String
+                    let tripNumberPredicate = NSPredicate(format: "info.number == %@", (pairingNumber)!)
+                    let tripDateString = pulledPairing["PrDate"] as! String
+                    let pullType = pulledPairing["PullType"] as? String
+                    let tripDate = df.date(from: "1200\(tripDateString)")
+                    let tripDatePredicate = NSPredicate(format: "startDate == %@", tripDate! as CVarArg)
+                    
+                    let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [tripDatePredicate, tripNumberPredicate])
+                    let filteredTrips = trips.filter { compoundPredicate.evaluate(with: $0) }
+                    let trip = filteredTrips.first
+                   
+                    if (pullType == kPullTypeAll) {
+                        trip?.vacationOverlapType = BITripVacationOverlapType.full.rawValue as NSNumber
+                        trip?.dropForFiltersSorts = !includeDroppedTrips as NSNumber
+                    }
+                    else if (pullType == kPullTypeFront) {
+                        trip?.vacationOverlapType = BITripVacationOverlapType.front.rawValue as NSNumber
+                        trip?.dropForFiltersSorts = !includeDroppedTrips as NSNumber
+                    }
+                    else if (pullType == kPullTypeBack) {
+                        trip?.vacationOverlapType = BITripVacationOverlapType.back.rawValue as NSNumber
+                        trip?.dropForFiltersSorts = !includeDroppedTrips as NSNumber
+                    }
+                    // Get missingDate for RedEye Trips
+                    var missingDateIndex = -1
+                    var missingRedEyeDate: Date? = nil
+                    var tripDaysDate: [Date] = []
+                    if (trip != nil && trip!.isRedEyeTrip == true) {
+                        let missingDateIndex = CBUtils.findMissingDateAndIndex(forRedEyeTrip: trip!)
+                        let missingRedEyeDate = CBUtils.findMissingDate(forRedEyeTrip: trip!)
+                        tripDaysDate = self.getDayDatesFromTrip(trip: trip!)
+                    }
+                    // Enumerate over the days and give them a value based on their status inside or
+                    // outside the vacation and its overlap
+                    
+                    // Grab the vacation pieces
+                    let vacationPieces = (vLine!["VacationPieces"] as? [[String: Any]])!
+                    
+                    for d in 0..<(trip!.orderedDays.count) {
+                        let day = trip?.orderedDays[d]
+                        var currentDate = day?.date
+                        for k in 0..<vacationPieces.count {
+                            let currentDictionary = vacationPieces[k] as [String: Any]
+                            let label = (currentDictionary["Label"] as? String)!
+                            let displayType = (currentDictionary["DisplayType"] as? String)!
+                            let startDateString = (currentDictionary["FirstDay"] as? String)!
+                            let endDateString = (currentDictionary["LastDay"] as? String)!
+                            
+                            let startDate = (df.date(from: "0000" + startDateString))!
+                            let endDate = (df.date(from: "2359" + endDateString))!
+                            
+                            if (trip!.isRedEyeTrip) {
+                                currentDate = tripDaysDate[d]
+                                if (d == 0 && trip!.startDate! < currentDate!) {
+                                    currentDate = trip?.startDate
+                                }
+                            }
+                            if (missingDateIndex != 0 && missingRedEyeDate != nil) {
+                                let lastDay = trip?.orderedDays.last
+                                if let missingDate = missingRedEyeDate, let lastDate = lastDay?.date, missingDate < lastDate {
+                                    let displayDayType = self.getDisplayType(date: missingRedEyeDate!, startDate: startDate, endDate: endDate, label: label, displayType: displayType)
+                                    
+                                    if (displayDayType != -1) {
+                                        day?.displayType = displayDayType as NSNumber
+                                    }
+                                }
+                                else {
+                                    let displayDayType = self.getDisplayType(date: currentDate!, startDate: startDate, endDate: endDate, label: label, displayType: displayType)
+                                    if (displayDayType != -1) {
+                                        day?.displayType = displayDayType as NSNumber
+                                    }
+                                }
+                            }
+                            else {
+                                let displayDayType = self.getDisplayType(date: currentDate!, startDate: startDate, endDate: endDate, label: label, displayType: displayType)
+                                if (displayDayType != -1) {
+                                    day?.displayType = displayDayType as NSNumber
+                                }
+                            }
+                        } // End vacationPieces loop
+                        if (day?.displayType?.intValue == BIDayDisplayType.normal.rawValue) {
+                            day?.displayType = BIDayDisplayType.noPay.rawValue as NSNumber
+                        }
+                    }// End day loop
+                }// End pulled pairings loop
+            }
+            else {
+                break
+            }
+            // Re-init the derived properties of the line, ignoring the dropped trips
+            // RE-INIT the derived line properties, but ONLY IF the user doesn't want them in the default filters/sorts
+            if !UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey) {
+                bidInfoReader.initDerivedPropertiesForLine(line: line, isReprocessing: true)
+            }
+        }// End line loop
+        
+        self.bidPeriod?.vacationType = vacationType
+        self.bidPeriod?.vacationType = self.bidPeriod?.userVacationWbidOrCrewBid
+        do {
+            try moc?.save()
+            print("line core data saved from processFAVacationWithJsonFile function in CBVacationDownloader")
+        } catch {
+            print("line core data not saved from processFAVacationWithJsonFile function in CBVacationDownloader: \(error)")
+        }
+        
+        // Get rid of any hidden vacation line values
+        
+//        let lineValuesKey = CBLineValuesMenuController.lineValuesKeyForBidPeriod(bidPeriod: self.bidPeriod!)
+//        var lineValuesToDisplay = UserDefaults.standard.value(forKey: lineValuesKey) as? [Int]
+//        var valuesToRemove: [Int] = []
+//        for i in 0..<lineValuesToDisplay!.count {
+//            let valueType = lineValuesToDisplay![i]
+//            let lmvc = CBLineValuesMenuController()
+//            if (lmvc.lineValueTypeIsHiddenForPilotVacation(valueType)) {
+//                valuesToRemove.append(valueType)
+//            }
+//        }
+//        let filtered = lineValuesToDisplay?.filter { !valuesToRemove.contains($0) }
+//        lineValuesToDisplay = filtered
+        self.bidPeriod?.faVacationStatus = BIFaVacationStatus.enabled.rawValue as NSNumber
+    }
+    
+    func getDayDatesFromTrip(trip: BITrip) -> [Date] {
+        let missingDateIndex = CBUtils.findMissingIndexInRedEyeTrip(trip)
+        let missingRedEyeDate = CBUtils.findMissingDate(forRedEyeTrip: trip)
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale(identifier: "en_US")
+        calendar.timeZone = TimeZone(identifier: "US/Central")!
+        var dateComps = calendar.dateComponents([.year, .month, .day], from: trip.startDate!)
+        let df = DateFormatter()
+        df.dateFormat = "yyyy-MM-dd"
+        df.timeZone = TimeZone(identifier: "US/Central")
+        
+        var tripDates: [String] = []
+        tripDates.reserveCapacity(4)
+        for dayInfo in trip.info?.orderedDays as! [BIDayInfo] {
+            for lengInfo in dayInfo.orderedLegs as! [BILegInfo] {
+                dateComps.minute = lengInfo.departMinutes?.intValue
+                let legStartDate = calendar.date(from: dateComps)!
+                tripDates.append(df.string(from: legStartDate))
+            }
+        }
+        let uniqueDatesSet = NSOrderedSet(array: tripDates)
+        let uniqueDatesArray = uniqueDatesSet.array as? [String] ?? []
+        
+        var dateArray: [Date] = []
+        // Parse back to date from "yyyy-MM-dd" string
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy-MM-dd"
+        inputFormatter.timeZone = TimeZone(identifier: "US/Central")
+
+        for dateStr in uniqueDatesArray {
+            if let parsedDate = inputFormatter.date(from: dateStr) {
+                var dateComps = calendar.dateComponents([.year, .month, .day], from: parsedDate)
+                dateComps.hour = 0
+                dateComps.minute = 0
+                dateComps.second = 0
+
+                if let finalDate = calendar.date(from: dateComps) {
+                    dateArray.append(finalDate)
+                }
+            }
+        }
+        let lastDayDate = dateArray.last!
+        
+        if missingDateIndex != -1 && missingRedEyeDate! < lastDayDate {
+            dateArray.insert(missingRedEyeDate!, at: missingDateIndex)
+        }
+        return dateArray
     }
     
 }

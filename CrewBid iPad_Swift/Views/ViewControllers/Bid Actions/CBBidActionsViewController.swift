@@ -166,7 +166,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
         
         // MARK: - Show Awards Selection
         if item == "Show Awards" {
-            CBVacationDownloader().downloadWbidVacation()
+            CBVacationDownloader().downloadFAVacation()
             if let presentingVC = self.presentingViewController {
                 self.dismiss(animated: true) {
                     let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
