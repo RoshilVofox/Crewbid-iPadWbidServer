@@ -2437,7 +2437,7 @@ class BIBidInfoReader{
                     }
                     let dateStr = record.substring(with: tripDateRange)
                     let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "HHddMMMyy"
+                    dateFormatter.dateFormat = "hhddMMMyy"
                     dateFormatter.timeZone = TimeZone(identifier: "US/Central")!
                     let tripDate = dateFormatter.date(from: "12\(dateStr)")
                     if (tripDate != nil){
