@@ -11,8 +11,9 @@ final class AppState {
 
     var isHistoricBid: Bool = false
     var isMockData: Bool = false
+    var jsonSecretIsOn:Bool = false
     var mockDataYear: Int?
     var mockDataMonth: Int?
-
+    var missingTripInfo:[String:Any]?
     private init() {}
 }

@@ -287,23 +287,22 @@ class CBUtils{
         return yearToReturn
     }
     
-    static func numberOfDays(in month: Int, for year: Int) -> Int {
-        var components = DateComponents()
-        components.year = year
-        components.month = month
-
+    class func numberOfDays(inMonth month: Int, forYear year: Int) -> Int {
+        let dateComponents = DateComponents(year: year, month: month)
         let calendar = Calendar.current
-
-        if let date = calendar.date(from: components),
-           let range = calendar.range(of: .day, in: .month, for: date) {
-            return range.count
-        }
-
-        return 0
+        let date = calendar.date(from: dateComponents)!
+        
+        let range = calendar.range(of: .day, in: .month, for: date)!
+        let numDays = range.count
+        
+        return numDays
     }
+    
+    
     class func AppVersion() -> String{
         return Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     }
+    
     class func isRunningOnSimulator() -> Bool {
         #if targetEnvironment(simulator)
         return true
@@ -311,6 +310,100 @@ class CBUtils{
         return false
         #endif
     }
+    
+    class func findMissingIndex(inRedEyeTrip trip: BITrip) -> Int {
+        let result = findMissingDateAndIndex(forRedEyeTrip: trip)
+        return (result["missingIndex"] as? NSNumber)?.intValue ?? 0
+    }
+    
+    class func findMissingDate(forRedEyeTrip trip: BITrip) -> Date? {
+        let result = findMissingDateAndIndex(forRedEyeTrip: trip)
+        return result["missingDate"] as? Date
+    }
+    
+    class func findMissingDateAndIndex(forRedEyeTrip trip: BITrip?) -> [String: Any] {
+        var missingDayIndex = -1
+        var missingDate: Date? = nil
+        var isMissingDateIsLastDay = false
+
+        if let trip = trip, trip.isRedEyeTrip {
+            let calendar = Calendar(identifier: .gregorian)
+            var calendarWithTimeZone = calendar
+            calendarWithTimeZone.locale = Locale(identifier: "en_US")
+            calendarWithTimeZone.timeZone = TimeZone(identifier: "US/Central")!
+
+            var dateComps = calendarWithTimeZone.dateComponents([.year, .month, .day], from: trip.startDate!)
+
+            let df = DateFormatter()
+            df.dateFormat = "dd-MMM-yyyy"
+            df.timeZone = TimeZone(identifier: "US/Central")
+
+            var tripDates: [String] = []
+
+            if let orderedDays = trip.info?.orderedDays as? [BIDayInfo] {
+                for dayInfo in orderedDays {
+                    for legInfo in dayInfo.orderedLegs as? [BILegInfo] ?? [] {
+                        dateComps.minute = legInfo.departMinutes?.intValue ?? 0
+                        if let legStartDate = calendarWithTimeZone.date(from: dateComps) {
+                            tripDates.append(df.string(from: legStartDate))
+                        }
+                    }
+                }
+            }
+
+            let uniqueDatesArray = Array(NSOrderedSet(array: tripDates)) as! [String]
+
+            var shouldBreak = false
+
+            for i in 0..<uniqueDatesArray.count - 1 where !shouldBreak {
+                guard let currentDate = df.date(from: uniqueDatesArray[i]),
+                      let nextDate = df.date(from: uniqueDatesArray[i + 1]) else {
+                    continue
+                }
+
+                let startOfCurrentDate = calendarWithTimeZone.startOfDay(for: currentDate)
+                let startOfNextDate = calendarWithTimeZone.startOfDay(for: nextDate)
+
+                let daysBetween = calendarWithTimeZone.dateComponents([.day], from: startOfCurrentDate, to: startOfNextDate).day ?? 0
+
+                if daysBetween > 1 {
+                    for j in 1..<daysBetween {
+                        missingDate = calendarWithTimeZone.date(byAdding: .day, value: j, to: startOfCurrentDate)
+                        if let calendarDaysCount = trip.info?.calendarDaysCount?.intValue,
+                           uniqueDatesArray.count != calendarDaysCount {
+                            missingDayIndex = i + 1
+                        } else {
+                            missingDayIndex = -1
+                        }
+                        missingDayIndex = i + 1
+                        shouldBreak = true
+                        break
+                    }
+                } else {
+                    if i == uniqueDatesArray.count - 1 || i == uniqueDatesArray.count - 2 {
+                        if daysBetween == 1 {
+                            missingDate = calendarWithTimeZone.date(byAdding: .day, value: 1, to: startOfNextDate)
+                            if trip.line?.bidPeriod?.isFABid() == true {
+                                missingDayIndex = i + 1
+                            } else {
+                                missingDayIndex = 1
+                            }
+                            isMissingDateIsLastDay = true
+                            shouldBreak = true
+                            break
+                        }
+                    }
+                }
+            }
+        }
+
+        return [
+            "missingDate": missingDate as Any? ?? NSNull(),
+            "missingIndex": missingDayIndex,
+            "isMissingDateIsLastDay": isMissingDateIsLastDay
+        ]
+    }
+    
     class func downloadFlightData(completionHandler: @escaping (Bool) -> Void) {
             guard let url = URL(string: "http://www.wbidmax.com/downloads/swa/FlightDataJson.zip") else {
                 print("Invalid URL.")
@@ -337,6 +430,82 @@ class CBUtils{
                 completionHandler(false)
             }
         }
+    class func getFALISTWB4JSONFromServer(){
+        //needs code
+    }
+        
+    static func getMissingTripJSON(
+            year: Int,
+            month: Int,
+            round: Int,
+            base: String,
+            position: String,
+            completion: @escaping (Bool) -> Void
+        ) {
+         let app = AppState.shared
+        app.missingTripInfo = nil
+            
+            let dict: [String: Any] = [
+                "Year": year,
+                "Month": month,
+                "Round": round,
+                "Domicile": base,
+                "Position": position
+            ]
+            
+            guard let url = URL(string: EndPoint.shared.getScrappedMissedTrips) else {
+                completion(false)
+                return
+            }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: dict)
+                let jsonString = String(data: jsonData, encoding: .utf8) ?? ""
+                print("Request: \(jsonString)")
+                request.httpBody = jsonString.data(using: .utf8)
+            } catch {
+                print("JSON serialization error: \(error)")
+                completion(false)
+                return
+            }
+
+            let config = URLSessionConfiguration.default
+            config.timeoutIntervalForRequest = 30
+            config.timeoutIntervalForResource = 30
+
+            let session = URLSession(configuration: config)
+            let task = session.dataTask(with: request) { data, response, error in
+                
+                if let error = error{
+                //handle error
+                }
+                
+                guard let data = data else {
+                    completion(false)
+                    return
+                }
+
+                do {
+                    let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                    print("Response JSON: \(String(describing: json))")
+                    
+                    if app.jsonSecretIsOn {
+                        app.missingTripInfo = json
+                    }
+                    completion(true)
+                } catch {
+                    print("JSON parsing error: \(error)")
+                    completion(false)
+                }
+            }
+
+            task.resume()
+        }
+    
     
     class func parseFlightDataFile(at filePath: String) {
         let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -419,6 +588,39 @@ class CBUtils{
             }
             return timeZones[base]
         }
+    
+    static func getMissingTripJSONFromYear(year:String, month:String, round:String, base:String, position:String, finishedHandler: @escaping (Bool) -> Void){
+        let appState = AppState.shared
+        appState.missingTripInfo = nil
+        let dict:[String:Any] = ["Year":year,"Month":month,"Round":round,"Domicile":base,"Position":position]
+        let urlString = URL(string: EndPoint.shared.getScrappedMissedTrips)
+        var urlRequest = URLRequest(url: urlString!)
+        let jsonData = try! JSONSerialization.data(withJSONObject: dict)
+        let jsonString = String(data: jsonData, encoding: .utf8)!
+        urlRequest.httpBody = jsonString.data(using: .utf8)
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        let dataTask = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
+            if let error = error {
+                print("Error: \(error)")
+                finishedHandler(false)
+                return
+            }
+            if let data = data{
+                let jsonDict = try! JSONSerialization.jsonObject(with: data, options: []) as! [String:Any]
+                if appState.jsonSecretIsOn{
+                    appState.missingTripInfo = jsonDict
+                }
+                finishedHandler(true)
+            }else{
+                finishedHandler(false)
+            }
+            
+        }
+        dataTask.resume()
+    }
+    
+    
     
 //    static func findMissingDateAndIndex(forRedEyeTrip trip: BITrip) -> [String: Any] {
 //        var missingDayIndex = -1

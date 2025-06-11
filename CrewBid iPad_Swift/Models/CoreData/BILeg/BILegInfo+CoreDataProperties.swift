@@ -56,5 +56,12 @@ extension BILegInfo {
 }
 
 extension BILegInfo : Identifiable {
-
+    var blockMinutes: NSNumber {
+        let block = (arriveMinutes?.intValue ?? 0) - (departMinutes?.intValue ?? 0)
+        return NSNumber(value: block)
+    }
+    var groundMinutes: NSNumber {
+        let ground = (nextLeg?.departMinutes?.intValue ?? 0) - (arriveMinutes?.intValue ?? 0)
+        return NSNumber(value: ground)
+    }
 }
