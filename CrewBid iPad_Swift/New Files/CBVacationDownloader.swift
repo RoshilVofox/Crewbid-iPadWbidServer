@@ -1974,7 +1974,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     let trips = Array(line.trips as? Set<BITrip> ?? [])
                     for j in 0..<pairingsPulled!.count {
                         let df = DateFormatter()
-                        df.dateFormat = "hhmmyyyyMMdd"
+                        df.dateFormat = "HHmmyyyyMMdd"
                         df.timeZone = self.calendarData.bidPeriodTimezone()
                         let pulledPairing = pairingsPulled![j]
                         let pairingNumber = pulledPairing["ID"] as? String
@@ -2665,7 +2665,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 let trips = Array(line.trips as? Set<BITrip> ?? [])
                 for j in 0..<pairingsPulled!.count {
                     let df = DateFormatter()
-                    df.dateFormat = "hhmmyyyyMMdd"
+                    df.dateFormat = "HHmmyyyyMMdd"
                     df.timeZone = self.calendarData.bidPeriodTimezone()
                     let pulledPairing = pairingsPulled![j]
                     let pairingNumber = pulledPairing["ID"] as? String
