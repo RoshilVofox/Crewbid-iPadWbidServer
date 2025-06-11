@@ -1256,6 +1256,7 @@ class BIBidInfoReader{
     }
     
     func initDerivedPropertiesForLine(line:BILine, isReprocessing:Bool){
+        calendarData = calendarData.initWithBidPeriod(bidPeriod: self.bidPeriod!)!
         self.thanksgivingDay = CBUtils.thanksgivingDay(for: self.bidPeriod?.year?.intValue ?? 2025)
         if isReprocessing{
             line.vTpLPay = NSNumber(value: (line.lineRig?.floatValue ?? 0) + (line.vVacationPay?.floatValue ?? 0))
@@ -1306,7 +1307,6 @@ class BIBidInfoReader{
             default: minRig = 89.0
                 break
             }
-//            calendarData = calendarData.initWithBidPeriod(bidPeriod: self.bidPeriod!)!
             let ETC = CBExceedingTripCalculation()
             let minRigVal = ETC.calculateExceedingTripRig(line: line, calendarData: self.calendarData, minRig: Float(minRig))
             if line.pay!.doubleValue < minRig{
@@ -1381,7 +1381,6 @@ class BIBidInfoReader{
         let base = self.bidPeriod!.base
         var tripStartDates: [Date] = []
         var tripEndDates: [Date] = []
-        
         var df = DateFormatter()
         let appCal = self.calendarData.bidPeriodCalendar()
         var dayComponent = DateComponents()
@@ -2035,7 +2034,6 @@ class BIBidInfoReader{
             f.numberStyle = .decimal
             
             line.numTrips = (line.turnsCount!.intValue + line.twoDayTripsCount!.intValue + line.threeDayTripsCount!.intValue + line.fourDayTripsCount!.intValue) as NSNumber
-            
         self.initRigRelatedProperties(forLine: line, isReprocessing: isReprocessing)
         self.calculateNewProperties(forLine: line)
         self.updateEndDateForRedEyeTrips(forLine: line)
