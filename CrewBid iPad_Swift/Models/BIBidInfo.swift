@@ -125,4 +125,41 @@ class BIBidInfo:NSObject{
         let filename = "\(textFilenameBase())\(tripTextChar).TXT"
         return filename
     }
+    func coverLetterFileName() -> String {
+        let bidRoundStr: String
+        if isFirstRoundBid() {
+            bidRoundStr = "C"
+        } else {
+            bidRoundStr = isFABid() ? "CR" : "R"
+        }
+        return "\(textFileNameBase())\(bidRoundStr).TXT"
+    }
+    
+    func seniorityListFileName() -> String {
+        let bidRoundStr: String
+        if isFirstRoundBid() {
+            bidRoundStr = "S"
+        } else {
+            bidRoundStr = isFABid() ? "SR" : "R"
+        }
+        return "\(textFileNameBase())\(bidRoundStr).TXT"
+    }
+    
+    
+    func textFileNameBase() ->String{
+        return "\(self.dataSource.base)\(self.dataSource.position.shortName)"
+    }
+    
+    func tripsTextFilename() -> String? {
+        if isSecondRoundBid() && !isFABid() {
+            return nil
+        }
+        let tripTextChar: Character = (isSecondRoundBid() && isFABid()) ? "T" : "P"
+        return "\(textFileNameBase())\(tripTextChar).TXT"
+    }
+    
+    func faMemoTextFilename() -> String {
+        let faMemoSuffix = (isSecondRoundBid() && isFABid()) ? "OR" : "O"
+        return "\(textFileNameBase())\(faMemoSuffix).TXT"
+    }
 }

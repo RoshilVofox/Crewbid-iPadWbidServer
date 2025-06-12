@@ -125,12 +125,9 @@ class BIBidInfoReader{
                 success = self.readLinesFA()
                 if success{
                     print("Done Reading Lines FA")
-                    DispatchQueue.main.async {
-                        NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
-                    }
                 }
                 if success{
-//                    success = self.addDefaultFilterRules(context:dataSource.managedObjectContext)
+//                  success = self.addDefaultFilterRules(context:dataSource.managedObjectContext)
                 }
                 if success{
                     if AppState.shared.isHistoricBid{
@@ -146,9 +143,7 @@ class BIBidInfoReader{
                 if success && self.isSecondRoundBid(){
                     //vacation scan
                 }
-                
             }
-            
         }
         else{
             success = self.readTrips()
@@ -168,7 +163,6 @@ class BIBidInfoReader{
                         }else{
                             success = self.readTripLegsPay()
                         }
-                    
                     if let lines = self.bidPeriod?.lines?.allObjects as? [BILine] {
                         for line in lines {
 //                            self.updateEndDateForRedEyeTrips(line)
@@ -2061,115 +2055,6 @@ class BIBidInfoReader{
         self.updateEndDateForRedEyeTrips(forLine: line)
     }
     
-    private func addSecondRoundTripsForBidPeriod() -> Bool {
-        var success = true
-        // Open lines text file
-        // Lines text
-        let directoryURL = BIBidInfo.shared.downloadDirectory()
-        let textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.linesTextFilename())
-        let fileInfo = try! String(contentsOf: textFileURL, encoding: .utf8)
-        if fileInfo.isEmpty && AppState.shared.isMockData{
-            //handle error
-            success = false
-        }
-        // A dictionary to hold the second round trips that are created.
-        var round2Trips: [String: Any] = [:]
-        let bpLines = self.pilotLines
-        
-        for (_,value) in bpLines{
-            let line = value as? BILine
-            var r2TripsToRead: [Any] = []
-            for case let trip as BITrip in line!.trips! {
-                if self.trips[trip.number!] == nil {
-                    line?.containsPartialTrip = false
-                    r2TripsToRead.append(String(trip.number!.prefix(4)))
-                    let dupTrips = r2TripsToRead.filter { ($0 as? String)?.hasPrefix(String(trip.number!.prefix(4))) == true }
-                    
-                    let r2Trip = self.readTripFromJson(trip: trip, tripSequence: dupTrips.count, line: line!, showPPAlert: self.showAlertForPP)
-                    
-                    if r2Trip != nil {
-                        trip.info = r2Trip
-                        round2Trips[trip.number!] = r2Trip
-                    }
-                    else{
-                        //handle error
-                        success = false
-                    }
-                }
-            }
-            self.initDerivedPropertiesForLine(line: line!, isReprocessing: false)
-        }
-        return success
-    }
-    
-    private func readTripLegsPay() -> Bool{
-        var success = true
-        let fileURL = BIBidInfo.shared.downloadDirectory().appendingPathComponent(BIBidInfo.shared.tripsTextFilename())
-        let tripsText = try! String(contentsOf: fileURL, encoding: .utf8)
-        
-        if tripsText.isEmpty{
-            //handle error
-            return false
-        }
-
-        let scanner = Scanner(string: tripsText)
-        var arrCityCharSet = CharacterSet.uppercaseLetters
-        arrCityCharSet.insert(charactersIn: "*")
-        var blkCharSet = CharacterSet.decimalDigits
-        blkCharSet.insert(charactersIn: ":")
-        
-        let tripKeys = Array(self.trips.keys).sorted { "\($0)" < "\($1)" }
-        var legPay:Double = 0
-        var count = 0
-        
-        for tripNum in tripKeys{
-            
-            //scan trip number
-            _ = scanner.scanString(tripNum)
-            
-            let trip = self.trips[tripNum]! as? BITripInfo
-            
-            for case let day as BIDayInfo in trip!.orderedDays{
-                for case let leg as BILegInfo in day.orderedLegs{
-                    // check to see if trip is FA Reserve
-                    if self.bidPeriod!.isFABid() && leg.departCity == leg.arriveCity{
-                        continue
-                    }
-            
-                    // scan past leg arrive city
-                    _ = scanner.scanUpToString(leg.arriveCity!)
-                    _ = scanner.scanCharacters(from: arrCityCharSet)
-                    // if leg is reserve, depart and arrive cities are the same, so
-                    // must scan past second occurrence of leg arrive city
-                    
-                    if leg.departCity == leg.arriveCity{
-                        _ = scanner.scanUpToString(leg.arriveCity!)
-                        _ = scanner.scanCharacters(from: arrCityCharSet)
-                    }
-                    // scan past leg arrive time
-                    _ = scanner.scanInt()
-                    // scan past leg block
-                    _ = scanner.scanUpToCharacters(from: blkCharSet)
-                    _ = scanner.scanCharacters(from: blkCharSet)
-                    
-                    // scan leg pay
-                    legPay = scanner.scanDouble() ?? 0
-                    leg.pay = legPay as NSNumber
-                }// End legs loop
-            }// End day loop
-            count += 1
-        }
-        if dataSource.managedObjectContext.hasChanges {
-            do{
-                try dataSource.managedObjectContext.save()
-            }catch{
-                //Handle error
-                success = false
-            }
-        }
-        return success
-    }
-    
     private func initRigRelatedProperties(for line:BILine, isReprocessing:Bool){
         let isFABid = self.isFABid()
         let appCal = self.calendarData.bidPeriodCalendar()
@@ -2415,6 +2300,125 @@ class BIBidInfoReader{
         
     }
     
+    private func calculateNewProperties(forLine:BILine){
+        
+    }
+    
+    private func updateEndDateForRedEyeTrips(forLine:BILine){
+        
+    }
+    
+    private func addSecondRoundTripsForBidPeriod() -> Bool {
+        var success = true
+        // Open lines text file
+        // Lines text
+        let directoryURL = BIBidInfo.shared.downloadDirectory()
+        let textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.linesTextFilename())
+        let fileInfo = try! String(contentsOf: textFileURL, encoding: .utf8)
+        if fileInfo.isEmpty && AppState.shared.isMockData{
+            //handle error
+            success = false
+        }
+        // A dictionary to hold the second round trips that are created.
+        var round2Trips: [String: Any] = [:]
+        let bpLines = self.pilotLines
+        
+        for (_,value) in bpLines{
+            let line = value as? BILine
+            var r2TripsToRead: [Any] = []
+            for case let trip as BITrip in line!.trips! {
+                if self.trips[trip.number!] == nil {
+                    line?.containsPartialTrip = false
+                    r2TripsToRead.append(String(trip.number!.prefix(4)))
+                    let dupTrips = r2TripsToRead.filter { ($0 as? String)?.hasPrefix(String(trip.number!.prefix(4))) == true }
+                    
+                    let r2Trip = self.readTripFromJson(trip: trip, tripSequence: dupTrips.count, line: line!, showPPAlert: self.showAlertForPP)
+                    
+                    if r2Trip != nil {
+                        trip.info = r2Trip
+                        round2Trips[trip.number!] = r2Trip
+                    }
+                    else{
+                        //handle error
+                        success = false
+                    }
+                }
+            }
+            self.initDerivedPropertiesForLine(line: line!, isReprocessing: false)
+        }
+        return success
+    }
+    
+    private func readTripLegsPay() -> Bool{
+        var success = true
+        let fileURL = BIBidInfo.shared.downloadDirectory().appendingPathComponent(BIBidInfo.shared.tripsTextFilename())
+        let tripsText = try! String(contentsOf: fileURL, encoding: .utf8)
+        
+        if tripsText.isEmpty{
+            //handle error
+            return false
+        }
+
+        let scanner = Scanner(string: tripsText)
+        var arrCityCharSet = CharacterSet.uppercaseLetters
+        arrCityCharSet.insert(charactersIn: "*")
+        var blkCharSet = CharacterSet.decimalDigits
+        blkCharSet.insert(charactersIn: ":")
+        
+        let tripKeys = Array(self.trips.keys).sorted { "\($0)" < "\($1)" }
+        var legPay:Double = 0
+        var count = 0
+        
+        for tripNum in tripKeys{
+            
+            //scan trip number
+            _ = scanner.scanString(tripNum)
+            
+            let trip = self.trips[tripNum]! as? BITripInfo
+            
+            for case let day as BIDayInfo in trip!.orderedDays{
+                for case let leg as BILegInfo in day.orderedLegs{
+                    // check to see if trip is FA Reserve
+                    if self.bidPeriod!.isFABid() && leg.departCity == leg.arriveCity{
+                        continue
+                    }
+            
+                    // scan past leg arrive city
+                    _ = scanner.scanUpToString(leg.arriveCity!)
+                    _ = scanner.scanCharacters(from: arrCityCharSet)
+                    // if leg is reserve, depart and arrive cities are the same, so
+                    // must scan past second occurrence of leg arrive city
+                    
+                    if leg.departCity == leg.arriveCity{
+                        _ = scanner.scanUpToString(leg.arriveCity!)
+                        _ = scanner.scanCharacters(from: arrCityCharSet)
+                    }
+                    // scan past leg arrive time
+                    _ = scanner.scanInt()
+                    // scan past leg block
+                    _ = scanner.scanUpToCharacters(from: blkCharSet)
+                    _ = scanner.scanCharacters(from: blkCharSet)
+                    
+                    // scan leg pay
+                    legPay = scanner.scanDouble() ?? 0
+                    leg.pay = legPay as NSNumber
+                }// End legs loop
+            }// End day loop
+            count += 1
+        }
+        if dataSource.managedObjectContext.hasChanges {
+            do{
+                try dataSource.managedObjectContext.save()
+            }catch{
+                //Handle error
+                success = false
+            }
+        }
+        return success
+    }
+    
+   
+    
     private func holidayCalculation(for date:Date, day:BIDay, line:BILine, dayInfo:BIDayInfo, maxPay:Float) -> Float{
         var isHoliday = false
         if self.isFABid(){
@@ -2519,13 +2523,7 @@ class BIBidInfoReader{
         return false
     }
     
-    private func calculateNewProperties(forLine:BILine){
-        
-    }
-    
-    private func updateEndDateForRedEyeTrips(forLine:BILine){
-        
-    }
+
     
     private func tripRigDsitributionCalculation(for trip:BITrip){
         let isFABid = self.isFABid()
@@ -3858,10 +3856,10 @@ class BIBidInfoReader{
     }
     
     private func readTextFiles() -> Bool{
-        let directoryURL = BIBidInfo().downloadDirectory()
+        let directoryURL = BIBidInfo.shared.downloadDirectory()
         
         //Cover Letter
-        var textFileURL = directoryURL.appendingPathComponent(self.coverLetterFileName())
+        var textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.coverLetterFileName())
         var text = ""
         do{
             let data = try Data(NSData(contentsOf: textFileURL))
@@ -3891,7 +3889,7 @@ class BIBidInfoReader{
         }
         
         //Seniority List
-        textFileURL = directoryURL.appendingPathComponent(self.seniorityListFileName())
+        textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.seniorityListFileName())
         text = try! String(contentsOf: textFileURL, encoding: .utf8)
         if text.isEmpty{
             text = try! String(contentsOf: textFileURL, encoding: .windowsCP1252)
@@ -3904,7 +3902,7 @@ class BIBidInfoReader{
         }
         
         //Lines text
-        textFileURL = directoryURL.appendingPathComponent(self.linesTextFilename())
+        textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.linesTextFilename())
         text = try! String(contentsOf: textFileURL, encoding: .utf8)
         if !text.isEmpty{
             self.bidPeriod?.addTextFile(withText: text, name: "Lines Text")
@@ -3914,7 +3912,7 @@ class BIBidInfoReader{
         }
         
         //Trips Text
-        textFileURL = directoryURL.appendingPathComponent(self.tripsTextFilename()!)
+        textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.tripsTextFilename()!)
         text = try! String(contentsOf: textFileURL, encoding: .utf8)
         if !text.isEmpty{
             self.bidPeriod?.addTextFile(withText: text, name: "Trips Text")
@@ -3925,7 +3923,7 @@ class BIBidInfoReader{
         
         //FA Memo text
         if self.isFABid(){
-            textFileURL = directoryURL.appendingPathComponent(self.faMemoTextFilename())
+            textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.faMemoTextFilename())
             text = try! String(contentsOf: textFileURL, encoding: .ascii)
             if !text.isEmpty{
                 self.bidPeriod?.addTextFile(withText: text, name: "FA Memo")
@@ -4020,48 +4018,7 @@ class BIBidInfoReader{
             return lastDayOfMonth
         }
     
-    private func coverLetterFileName() -> String {
-        let bidRoundStr: String
-        if isFirstRoundBid() {
-            bidRoundStr = "C"
-        } else {
-            bidRoundStr = isFABid() ? "CR" : "R"
-        }
-        return "\(textFileNameBase())\(bidRoundStr).TXT"
-    }
-    
-    private func seniorityListFileName() -> String {
-        let bidRoundStr: String
-        if isFirstRoundBid() {
-            bidRoundStr = "S"
-        } else {
-            bidRoundStr = isFABid() ? "SR" : "R"
-        }
-        return "\(textFileNameBase())\(bidRoundStr).TXT"
-    }
-    
-    private func linesTextFilename() -> String {
-        // 'N' for second round, 'L' for first round
-        let bidRoundChar: Character = isSecondRoundBid() ? "N" : "L"
-        return "\(textFileNameBase())\(bidRoundChar).TXT"
-    }
-    
-    private func textFileNameBase() ->String{
-        return "\(self.dataSource.base)\(self.dataSource.position.shortName)"
-    }
-    
-    private func tripsTextFilename() -> String? {
-        if isSecondRoundBid() && !isFABid() {
-            return nil
-        }
-        let tripTextChar: Character = (isSecondRoundBid() && isFABid()) ? "T" : "P"
-        return "\(textFileNameBase())\(tripTextChar).TXT"
-    }
-    
-    private func faMemoTextFilename() -> String {
-        let faMemoSuffix = (isSecondRoundBid() && isFABid()) ? "OR" : "O"
-        return "\(textFileNameBase())\(faMemoSuffix).TXT"
-    }
+
     
     private func isFABid() -> Bool {
         let isFABid = BICrewPositionType.FlightAttendant.rawValue == self.dataSource.position.rawValue
