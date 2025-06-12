@@ -87,6 +87,7 @@ class BIBidInfoReader{
     var weeksInMonth:Int?
     var workBPInVac: Int = 0
     var workBP: Int = 0
+    var pilotLines:[Int:Any] = [:]
     init() {
             guard
                 dataSource.year != 0,
@@ -149,8 +150,10 @@ class BIBidInfoReader{
             success = self.readTrips()
             if success{
                 print("Done Reading Trips")
-                
                 success = self.readLines()
+                if success{
+                    print("Done Reading Lines")
+                }
             }
                 if success && self.isSecondRoundBid(){
 //                    success = self.addSecondRoundTripsForBidPeriod()
@@ -256,8 +259,6 @@ class BIBidInfoReader{
     //MARK: Read Trips file
     private func readTrips() -> Bool{
         var success = true
-        
-//        let moc = self.moc
         let moc = dataSource.managedObjectContext
         moc.undoManager = nil
         let tripsDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.tripFileName)
@@ -461,6 +462,7 @@ class BIBidInfoReader{
                     try moc.save()
                 }catch{
                     print("Error saving file: \(error)")
+                    success = false
                 }
             }else{
                 //handle error
@@ -471,6 +473,7 @@ class BIBidInfoReader{
             }
         }catch{
             print("Error reading file: \(error)")
+            success = false
         }
         
         return success
@@ -479,7 +482,6 @@ class BIBidInfoReader{
     //MARK: Read Lines file
     private func readLines() -> Bool{
         var success = true
-//        let moc = self.moc
         let moc = dataSource.managedObjectContext
         let linesDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.lineFileName)
         if !FileManager.default.fileExists(atPath: linesDataFileURL.path){
@@ -710,9 +712,25 @@ class BIBidInfoReader{
                     isContinuedLine = info.character(at: continuedLineCharIndex) == "C"
                 
             }
+            // Init last line read.
+            if self.bidPeriod!.isFirstRoundBid(){
+                self.initDerivedPropertiesForLine(line: line!, isReprocessing: false)
+            }
+            self.pilotLines = pLines
+            if success && moc.hasChanges{
+                do{
+                    try moc.save()
+                }catch{
+                    print("Error saving to context: \(error)")
+                    //handle error
+                    success =  false
+                }
+            }
         }catch{
             print("Error reading file: \(error)")
+            success = false
         }
+        self.saveToDictionary()
         return success
     
     }
@@ -720,7 +738,6 @@ class BIBidInfoReader{
     //MARK: Read Trips file FA - done
     private func readTripsFA() -> Bool{
         var success = true
-//        let moc = self.moc
         let moc = dataSource.managedObjectContext
         moc.undoManager = nil
         let tripsDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.tripFileName)
@@ -977,7 +994,6 @@ class BIBidInfoReader{
     private func readLinesFA() -> Bool{
         
         var success = true
-//        let moc = self.moc
         let moc = dataSource.managedObjectContext
         let linesDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.lineFileName)
         if !FileManager.default.fileExists(atPath: linesDataFileURL.path){
@@ -1077,6 +1093,7 @@ class BIBidInfoReader{
                         return false
                     }
                     
+                    //Create Line
                     line = BILine(context: moc)
                     let bidPeriod = try moc.existingObject(with: self.bidPeriod!.objectID) as? BIBidPeriod
                     
@@ -1214,7 +1231,7 @@ class BIBidInfoReader{
                     success = false
                 }
             }
-            self.saveToDictionary(context: moc)
+            self.saveToDictionary()
         }catch{
             print("Error reading line file: \(error.localizedDescription)")
             success = false
@@ -1222,8 +1239,8 @@ class BIBidInfoReader{
         return success
     }
 
-    private func saveToDictionary(context:NSManagedObjectContext){
-        
+    private func saveToDictionary(){
+        let context = dataSource.managedObjectContext
         var linesDictionary:[NSNumber: [String: Any]] = [:]
         for case let line as BILine in (self.bidPeriod?.lines)!{
             var dataDictionary:[String:Any] = [:]
@@ -1354,7 +1371,7 @@ class BIBidInfoReader{
         var maxLegsInADay = 0
         var numWorkDays = 0
         var lineTafbMinutes = 0
-        var commutesRequired = 0
+        let commutesRequired = 0
         var passesThruBase = 0
         var midTripPTBs = 0
         var overnightsInBase = 0
@@ -1373,15 +1390,15 @@ class BIBidInfoReader{
         var deadheadsAtStartCount = 0
         var deadheadsAtEndCount = 0
         var overlapDaysCount = 0
-        let minimumOvernightMinsPlaceholder = 1_000_000
+        let minimumOvernightMinsPlaceholder = 1000000
         var minimumOvernightMinutes = minimumOvernightMinsPlaceholder
         var maximumOvernightMinutes = 0
-        var redeyesCount = 0
+        let redeyesCount = 0
         var faPay: Float = 0
         let base = self.bidPeriod!.base
         var tripStartDates: [Date] = []
         var tripEndDates: [Date] = []
-        var df = DateFormatter()
+        let df = DateFormatter()
         let appCal = self.calendarData.bidPeriodCalendar()
         var dayComponent = DateComponents()
         var faPosition = BIFaPosition.FaPositionNA
@@ -1395,9 +1412,9 @@ class BIBidInfoReader{
         var departDateReport:Date?
         var report = ""
         var release = ""
-        var departFormatter = DateFormatter()
+        let departFormatter = DateFormatter()
         departFormatter.dateFormat = "HHmm"
-        var arriveFormatter = DateFormatter()
+        let arriveFormatter = DateFormatter()
         arriveFormatter.dateFormat = "HHmm"
         
         for case let trip as BITrip in line.trips!{
@@ -1423,7 +1440,7 @@ class BIBidInfoReader{
                     }
                 }
             }
-            var tripNumLegs = 0
+//            var tripNumLegs = 0
             
             // Don't include the trip in any of the line calculations if it is dropped.
             // AND if the user doesn't want to include them in the calculation
@@ -1470,7 +1487,7 @@ class BIBidInfoReader{
             var containsMidTripPTB = false
             let tripOrderedDays = trip.info!.orderedDays
             var dayCount = 0
-            var monthBitIndex = self.calendarData.indexForDate(date:trip.startDate!)
+            let monthBitIndex = self.calendarData.indexForDate(date:trip.startDate!)
             
             var dateCompsReport = calendar.dateComponents([.year, .month, .day], from: trip.startDate!)
             let numberFormatter = NumberFormatter()
@@ -2039,6 +2056,84 @@ class BIBidInfoReader{
         self.updateEndDateForRedEyeTrips(forLine: line)
     }
     
+    private func addSecondRoundTripsForBidPeriod() -> Bool {
+        var success = true
+        
+        // Open lines text file
+        // Lines text
+        
+        let directoryURL = BIBidInfo.shared.downloadDirectory()
+        let textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.linesTextFilename())
+        
+        let fileInfo = try! String(contentsOf: textFileURL, encoding: .utf8)
+        
+        if fileInfo.isEmpty && AppState.shared.isMockData{
+            //handle error
+            return false
+        }
+        
+        // A dictionary to hold the second round trips that are created.
+        var round2Trips: [String: BITrip] = [:]
+//        let bpLines =
+        
+        return success
+    }
+    
+    private func readTripLegsPay() -> Bool{
+        var success = true
+        let fileURL = BIBidInfo.shared.downloadDirectory().appendingPathComponent(BIBidInfo.shared.tripsTextFilename())
+        let tripsText = try! String(contentsOf: fileURL, encoding: .utf8)
+        
+        if tripsText.isEmpty{
+            //handle error
+            return false
+        }
+        
+        let scanner = Scanner(string: tripsText)
+        var arrCityCharSet = CharacterSet.uppercaseLetters
+        arrCityCharSet.insert(charactersIn: "*")
+        var blkCharSet = CharacterSet.decimalDigits
+        blkCharSet.insert(charactersIn: ":")
+        
+        let tripKeys = Array(self.trips.keys).sorted { "\($0)" < "\($1)" }
+        var legPay:Double = 0
+        var count = 0
+        
+        for tripNum in tripKeys{
+            
+            //scan trip number
+            _ = scanner.scanString(tripNum)
+            
+            let trip = self.trips[tripNum]! as? BITripInfo
+            
+            for case let day as BIDayInfo in trip!.orderedDays{
+                for case let leg as BILegInfo in day.orderedLegs{
+                    // check to see if trip is FA Reserve
+                    if self.bidPeriod!.isFABid() && leg.departCity == leg.arriveCity{
+                        continue
+                    }
+                    
+                    // scan past leg arrive city
+                    _ = scanner.scanString(leg.arriveCity!)
+                    _ = scanner.scanCharacters(from: arrCityCharSet)
+                    // if leg is reserve, depart and arrive cities are the same, so
+                    // must scan past second occurrence of leg arrive city
+                    
+                    if leg.departCity == leg.arriveCity{
+                        _ = scanner.scanString(leg.arriveCity!)
+                        _ = scanner.scanCharacters(from: arrCityCharSet)
+                    }
+                    // scan past leg arrive time
+                    _ = scanner.scanInt()
+                    // scan past leg block
+                    _ = scanner.scanUpToCharacters(from: blkCharSet)
+                    
+                }
+            }
+        }
+        return success
+    }
+    
     private func initRigRelatedProperties(forLine:BILine, isReprocessing:Bool){
         
     }
@@ -2245,8 +2340,6 @@ class BIBidInfoReader{
         var tripNumRange = NSRange(location: 0, length: 0)
         var tripDateRange = NSRange(location: 0, length: 0)
         var tripStartDayRange = NSRange(location: 0, length: 0)
-        var tripMonthDateRange = NSRange(location: 0, length: 0)
-        var tripYearRange = NSRange(location: 0, length: 0)
         var tripPosRange = NSRange(location: 0, length: 0)
         let tripResvStartRange = NSRange(location: 24, length: 4)
         let tripResvEndRange = NSRange(location: 35, length: 4)
@@ -2259,8 +2352,6 @@ class BIBidInfoReader{
             tripNumRange = NSRange(location: 12, length: 4)
             tripDateRange = NSRange(location: 17, length: 7)
             tripStartDayRange = NSRange(location: 17, length: 2)
-            tripMonthDateRange = NSRange(location: 19, length: 3)
-            tripYearRange = NSRange(location: 22, length: 2)
             
             let tripNumber = record.substring(with: tripNumRange)
             trip = BITrip(context: moc)
@@ -2334,7 +2425,7 @@ class BIBidInfoReader{
             }
             let dateString = record.substring(with: tripDateRange)
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "hhddMMMyy"
+            dateFormatter.dateFormat = "HHddMMMyy"
             let tripDate = dateFormatter.date(from: "12\(dateString)")
             let tripStartDay = record.substring(with: tripStartDayRange)
             trip?.startDay = Int(tripStartDay) as? NSNumber
@@ -2406,8 +2497,6 @@ class BIBidInfoReader{
             tripDateRange = NSRange(location: 16, length: 7)
             tripPosRange = NSRange(location: 30, length: 1)
             tripStartDayRange = NSRange(location: 16, length: 2)
-            tripMonthDateRange = NSRange(location: 18, length: 3)
-            tripYearRange = NSRange(location: 21, length: 2)
             
             while tripNumRange.location < 69{
                 

@@ -116,5 +116,13 @@ class BIBidInfo:NSObject{
         return Self.temporaryDirectory().appendingPathComponent(dataFilenameBase())
     }
 
-
+    func tripsTextFilename() -> String {
+        // Default trip text character is 'P'
+        var tripTextChar: Character = "P"
+        if isSecondRoundBid() && isFABid() {
+            tripTextChar = "T"
+        }
+        let filename = "\(textFilenameBase())\(tripTextChar).TXT"
+        return filename
+    }
 }
