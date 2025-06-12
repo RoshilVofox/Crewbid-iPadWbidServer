@@ -1974,7 +1974,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     let trips = Array(line.trips as? Set<BITrip> ?? [])
                     for j in 0..<pairingsPulled!.count {
                         let df = DateFormatter()
-                        df.dateFormat = "hhmmyyyyMMdd"
+                        df.dateFormat = "HHmmyyyyMMdd"
                         df.timeZone = self.calendarData.bidPeriodTimezone()
                         let pulledPairing = pairingsPulled![j]
                         let pairingNumber = pulledPairing["ID"] as? String
@@ -2072,18 +2072,19 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 print("line core data not saved from processJsonFile function in CBVacationDownloader: \(error)")
             }
             // Get rid of any hidden vacation line values
-            let lineValuesKey = CBLineValuesMenuController.lineValuesKeyForBidPeriod(bidPeriod: self.bidPeriod!)
-            var lineValuesToDisplay = UserDefaults.standard.value(forKey: lineValuesKey) as? [Int]
-            var valuesToRemove: [Int] = []
-            for i in 0..<lineValuesToDisplay!.count {
-                let valueType = lineValuesToDisplay![i]
-                let lmvc = CBLineValuesMenuController()
-                if (lmvc.lineValueTypeIsHiddenForPilotVacation(valueType)) {
-                    valuesToRemove.append(valueType)
-                }
-            }
-            let filtered = lineValuesToDisplay?.filter { !valuesToRemove.contains($0) }
-            lineValuesToDisplay = filtered
+            
+//            let lineValuesKey = CBLineValuesMenuController.lineValuesKeyForBidPeriod(bidPeriod: self.bidPeriod!)
+//            var lineValuesToDisplay = UserDefaults.standard.value(forKey: lineValuesKey) as? [Int]
+//            var valuesToRemove: [Int] = []
+//            for i in 0..<lineValuesToDisplay!.count {
+//                let valueType = lineValuesToDisplay![i]
+//                let lmvc = CBLineValuesMenuController()
+//                if (lmvc.lineValueTypeIsHiddenForPilotVacation(valueType)) {
+//                    valuesToRemove.append(valueType)
+//                }
+//            }
+//            let filtered = lineValuesToDisplay?.filter { !valuesToRemove.contains($0) }
+//            lineValuesToDisplay = filtered
         }
         else {
             if vacationType == "WBID" || vacationType == "WBIDF" {
@@ -2100,7 +2101,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     //    MARK: getDisplayType
         func getDisplayType(date: Date, startDate: Date, endDate: Date, label: String, displayType: String) -> BIDayDisplayType.RawValue {
             var dayDisplayType = -1
-            if (self.calendarData.date(date: date, beginDate: startDate, endDate: startDate)) {
+            if (self.calendarData.date(date: date, beginDate: startDate, endDate: endDate) == true) {
                 if label == kVaLabel {
                     dayDisplayType = BIDayDisplayType.fullPay.rawValue
                 }
@@ -2665,7 +2666,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 let trips = Array(line.trips as? Set<BITrip> ?? [])
                 for j in 0..<pairingsPulled!.count {
                     let df = DateFormatter()
-                    df.dateFormat = "hhmmyyyyMMdd"
+                    df.dateFormat = "HHmmyyyyMMdd"
                     df.timeZone = self.calendarData.bidPeriodTimezone()
                     let pulledPairing = pairingsPulled![j]
                     let pairingNumber = pulledPairing["ID"] as? String
