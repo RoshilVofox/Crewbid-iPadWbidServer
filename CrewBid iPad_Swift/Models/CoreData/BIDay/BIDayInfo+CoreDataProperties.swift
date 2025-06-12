@@ -84,4 +84,10 @@ extension BIDayInfo : Identifiable {
         }
         return orderedLegs
     }
+    
+    var dayPay: CGFloat {
+        return orderedLegs.reduce(0) { total, legInfo in
+            total + CGFloat((legInfo as! BILegInfo).pay?.floatValue ?? 0)
+        }
+    }
 }

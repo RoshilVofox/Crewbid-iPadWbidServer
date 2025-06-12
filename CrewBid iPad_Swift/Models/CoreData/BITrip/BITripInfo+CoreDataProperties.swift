@@ -110,4 +110,12 @@ extension BITripInfo : Identifiable {
         let tafb = lastLeg.arriveMinutes!.intValue - firstLeg.departMinutes!.intValue + briefMinutes!.intValue + debriefMinutes!.intValue
         return NSNumber(value: tafb)
     }
+    
+    func getDayPaySumForTrips() -> Float {
+        var dayPaySum: Float = 0.0
+        for case let day as BIDayInfo in self.orderedDays {
+            dayPaySum += day.dayPayWithRig?.floatValue ?? 0.0
+        }
+        return dayPaySum
+    }
 }

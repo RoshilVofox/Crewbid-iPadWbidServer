@@ -336,6 +336,11 @@ class CBCredentialsPageVC: BaseViewController {
             if list.count > 0 {
                 let obj = list[0]
                 self.context.delete(obj)
+                do {
+                    try self.context.save()
+                } catch {
+                    print("Failed to save context after deletion: \(error)")
+                }
                 onRetry()
 //                NotificationCenter.default.post(name: NSNotification.Name(reloadCollectionView), object: nil)
             }
@@ -344,7 +349,7 @@ class CBCredentialsPageVC: BaseViewController {
             if list.count > 0 {
                 let obj = list[0]
                 CBGlobalMethods.shared.selectedBidPeriod = obj
-                UserDefaults.standard.setValue(obj.round?.intValue ?? 1, forKey: "SelectedRound")
+                UserDefaults.standard.setValue(obj.round!.intValue, forKey: "SelectedRound")
                 self.dismiss(animated: true)
                 self.loginActions()
 //                NotificationCenter.default.post(name: NSNotification.Name("openBidPeriodFromDownloadPage"), object: nil)
