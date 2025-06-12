@@ -365,4 +365,53 @@ extension BIBidPeriod : Identifiable {
         let filtered = textFiles!.filtered(using: predicate)
         return filtered.first as? BITextFile
     }
+    func isWBidmaxOverlapWithEom() -> Bool {
+        var isNextMonth = false
+        var savedVacationObject: NSManagedObject? = nil
+        if (self.month != nil) {
+            let currentMonth = self.month as? Int
+            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "VacationArrayFromServer")
+
+            do {
+                let fetchedObjects = try self.managedObjectContext!.fetch(fetchRequest)
+                if (fetchedObjects.count > 0) {
+                    for vacationArrayFromServer in fetchedObjects {
+                        if let endDate = vacationArrayFromServer.value(forKey: "endDate") as? Date {
+                            print("endDate: \(endDate)")
+
+                            let calendar = Calendar.current
+                            let components = calendar.dateComponents([.month], from: endDate)
+                            if let monthFromDate = components.month {
+                                let isNextMonth = (monthFromDate != currentMonth)
+                                if isNextMonth {
+                                    savedVacationObject = vacationArrayFromServer
+                                    break
+                                }
+                            }
+                        }
+                    }
+
+                }
+            } catch {
+                print("Fetch failed: \(error.localizedDescription)")
+                return false
+            }
+        }
+        var isConflict = false
+        if isNextMonth == true {
+            if (self.faEomSelectedDate != nil) {
+                let selectedDate = self.faEomSelectedDate?.intValue
+                let savedEndDate = savedVacationObject!.value(forKey: "endDate") as? Date
+                if let savedEndDate = savedEndDate, !isConflict {
+                    let calendar = Calendar.current
+                    let components = calendar.dateComponents([.day], from: savedEndDate)
+                    if let vacEndDateInt = components.day {
+                        isConflict = (vacEndDateInt >= selectedDate!)
+                    }
+                }
+
+            }
+        }
+        return isConflict
+    }
 }

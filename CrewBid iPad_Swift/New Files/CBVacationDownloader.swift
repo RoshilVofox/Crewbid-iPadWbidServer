@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreData
+import UIKit
 
 class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     
@@ -29,6 +30,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     var dataSource = GlobalBidInfo.shared
     var vactionDownloadType: VacationDownloadType?
     var isAutoDownload = false
+    var EOMSelectedIndex = ""
     var calendarData: BICalendarData = BICalendarData()
     var round: NSNumber?
     var year: NSNumber?
@@ -55,11 +57,11 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
 
     override init() {
         super.init()
-        self.fetchAndPrintTripCount()
+//        self.fetchAndPrintTripCount()
         let ab = dataSource.position
         let cb = dataSource.base
         print("base\(cb) postion\(ab)")
-        let context = CoreDataManager.shared.persistentContainer.viewContext
+        let context = dataSource.managedObjectContext
         let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
 
         let targetRound = dataSource.round as NSNumber
@@ -88,17 +90,370 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
 
      
     }
-    func fetchAndPrintTripCount() {
-        let context = CoreDataManager.shared.persistentContainer.viewContext
-        let fetchRequest: NSFetchRequest<BITrip> = BITrip.fetchRequest()
-
-        do {
-            let trips = try context.fetch(fetchRequest)
-            print("Total BITrip count: \(trips.count)")
-        } catch {
-            print("Failed to fetch BITrip: \(error)")
+//    func fetchAndPrintTripCount() {
+//        let context = CoreDataManager.shared.persistentContainer.viewContext
+//        let fetchRequest: NSFetchRequest<BITrip> = BITrip.fetchRequest()
+//
+//        do {
+//            let trips = try context.fetch(fetchRequest)
+//            print("Total BITrip count: \(trips.count)")
+//        } catch {
+//            print("Failed to fetch BITrip: \(error)")
+//        }
+//    }
+    
+//    MARK: vacation File type = "CREWBID" and download
+    func downloadSwaptimizerVacationFilesWithHud() {
+        // Show activity indicator
+        if let topVC = UIApplication.topViewController() {
+            topVC.view?.showActivityIndicator(message: "Checking SWAPtimizer file.")
         }
+        
+        // Define what should happen on completion
+        let completion: () -> Void = {
+            // Hide activity indicator
+            if let topVC = UIApplication.topViewController() {
+                topVC.view?.hideActivityIndicator()
+            }
+        }
+        self.bidPeriod?.userVacationWbidOrCrewBid = "CREWBID"
+        if (self.bidPeriod?.cbFileIntent != nil) {
+            let dicVactionFile = self.readVacationFile(fileName: (self.bidPeriod?.userVacationWbidOrCrewBid)!)
+            let configInfo = dicVactionFile!["ConfigInfo"] as? [String: Any]
+            let yearMonth = configInfo!["YearMonth"] as! String
+            let vacayMonth = Int(yearMonth.dropFirst(4).prefix(2)) ?? 0
+            if (vacayMonth != self.bidPeriod?.month?.intValue) {
+                let moc = self.bidPeriod?.managedObjectContext
+                self.bidPeriod?.cbFileIntent = ""
+                do {
+                    try moc?.save()
+                    print("file name saved")
+                }
+                catch {
+                    print("file name not saved")
+                }
+//                add a function to remove vacation file from document directory
+                self.downloadCrewbidVacationFiles(crewbidType: "CREWBID")
+            }
+            else {
+                self.callToSetAutoDownloadOrValidateForSwaptimizer(jsonData: dicVactionFile!)
+            }
+        }
+        else {
+            self.downloadCrewbidVacationFiles(crewbidType: "CREWBID")
+        }
+        completion()
     }
+    
+    //    MARK: vacation File type = "CREWBIDF" and download
+        func downloadSwaptimizerEOMVacationFilesWithHud() {
+            // Show activity indicator
+            if let topVC = UIApplication.topViewController() {
+                topVC.view?.showActivityIndicator(message: "Checking SWAPtimizer file.")
+            }
+            
+            // Define what should happen on completion
+            let completion: () -> Void = {
+                // Hide activity indicator
+                if let topVC = UIApplication.topViewController() {
+                    topVC.view?.hideActivityIndicator()
+                }
+            }
+            self.bidPeriod?.userVacationWbidOrCrewBid = "CREWBIDF"
+            if (self.bidPeriod?.cbFileIntentF != nil) {
+                let dicVactionFile = self.readVacationFile(fileName: (self.bidPeriod?.userVacationWbidOrCrewBid)!)
+                let configInfo = dicVactionFile!["ConfigInfo"] as? [String: Any]
+                let yearMonth = configInfo!["YearMonth"] as! String
+                let vacayMonth = Int(yearMonth.dropFirst(4).prefix(2)) ?? 0
+                if (vacayMonth != self.bidPeriod?.month?.intValue) {
+                    let moc = self.bidPeriod?.managedObjectContext
+                    self.bidPeriod?.cbFileIntentF = ""
+                    do {
+                        try moc?.save()
+                        print("file name saved")
+                    }
+                    catch {
+                        print("file name not saved")
+                    }
+    //                add a function to remove vacation file from document directory
+                    self.downloadCrewbidVacationFiles(crewbidType: "CREWBIDF")
+                }
+                else {
+                    self.callToSetAutoDownloadOrValidateForSwaptimizer(jsonData: dicVactionFile!)
+                }
+            }
+            else {
+                self.downloadCrewbidVacationFiles(crewbidType: "CREWBIDF")
+            }
+            completion()
+        }
+    
+    //    MARK: vacation File type = "WBID" and download
+        func downloadWbidVacationFilesWithHud() {
+            // Show activity indicator
+            if let topVC = UIApplication.topViewController() {
+                topVC.view?.showActivityIndicator(message: "Checking WBidMax file.")
+            }
+            
+            // Define what should happen on completion
+            let completion: () -> Void = {
+                // Hide activity indicator
+                if let topVC = UIApplication.topViewController() {
+                    topVC.view?.hideActivityIndicator()
+                }
+            }
+            self.bidPeriod?.userVacationWbidOrCrewBid = "WBID"
+            if (self.bidPeriod?.wbFileIntent != nil) {
+                let dicVactionFile = self.readVacationFile(fileName: (self.bidPeriod?.userVacationWbidOrCrewBid)!)
+                let configInfo = dicVactionFile!["ConfigInfo"] as? [String: Any]
+                let yearMonth = configInfo!["YearMonth"] as! String
+                let vacayMonth = Int(yearMonth.dropFirst(4).prefix(2)) ?? 0
+                if (vacayMonth != self.bidPeriod?.month?.intValue) {
+                    let moc = self.bidPeriod?.managedObjectContext
+                    self.bidPeriod?.wbFileIntent = ""
+                    do {
+                        try moc?.save()
+                        print("file name saved")
+                    }
+                    catch {
+                        print("file name not saved")
+                    }
+    //                add a function to remove vacation file from document directory
+                    self.downloadWbidVacation()
+                }
+                else {
+                    self.validateWBIDVacation(jsonData: dicVactionFile!)
+                }
+            }
+            else {
+                self.downloadWbidVacation()
+            }
+            completion()
+        }
+    
+    //    MARK: vacation File type = "WBIDF" and download
+        func downloadWbidEOMVacationFilesWithHud() {
+            // Show activity indicator
+            if let topVC = UIApplication.topViewController() {
+                topVC.view?.showActivityIndicator(message: "Checking WbidMax file.")
+            }
+            
+            // Define what should happen on completion
+            let completion: () -> Void = {
+                // Hide activity indicator
+                if let topVC = UIApplication.topViewController() {
+                    topVC.view?.hideActivityIndicator()
+                }
+            }
+            self.bidPeriod?.userVacationWbidOrCrewBid = "WBIDF"
+            if (self.bidPeriod?.wbFileIntentF != nil) {
+                let dicVactionFile = self.readVacationFile(fileName: (self.bidPeriod?.userVacationWbidOrCrewBid)!)
+                let configInfo = dicVactionFile!["ConfigInfo"] as? [String: Any]
+                let yearMonth = configInfo!["YearMonth"] as! String
+                let vacayMonth = Int(yearMonth.dropFirst(4).prefix(2)) ?? 0
+                if (vacayMonth != self.bidPeriod?.month?.intValue) {
+                    let moc = self.bidPeriod?.managedObjectContext
+                    self.bidPeriod?.wbFileIntentF = ""
+                    do {
+                        try moc?.save()
+                        print("file name saved")
+                    }
+                    catch {
+                        print("file name not saved")
+                    }
+    //                add a function to remove vacation file from document directory
+                    self.downloadWbidVacation()
+                }
+                else {
+                    if (self.bidPeriod?.isWBidmaxOverlapWithEom() == true) {
+                        AlertService.showAlertForTopVC(title: "Crewbid Error", message: "Your current vacation conflict with the EOM dates, so we cannot display any EOM vacation. We will display your current vacation only.")
+                         NotificationCenter.default.post(name: Notification.Name("HandleEOMConflict"), object: self)
+                    }
+                    else {
+                        self.validateWBIDVacation(jsonData: dicVactionFile!)
+                    }
+                }
+            }
+            else {
+                self.downloadWbidVacation()
+            }
+            completion()
+        }
+    //    MARK: vacation File type = "FAVACATION" and download
+        func downloadFaVactionVacationFilesWithHud() {
+            // Show activity indicator
+            if let topVC = UIApplication.topViewController() {
+                topVC.view?.showActivityIndicator(message: "Checking Vacation file.")
+            }
+            
+            // Define what should happen on completion
+            let completion: () -> Void = {
+                // Hide activity indicator
+                if let topVC = UIApplication.topViewController() {
+                    topVC.view?.hideActivityIndicator()
+                }
+            }
+            self.bidPeriod?.userVacationWbidOrCrewBid = "FAVacation"
+            if (self.bidPeriod?.faFileIntent != nil) {
+                let dicVactionFile = self.readVacationFile(fileName: (self.bidPeriod?.userVacationWbidOrCrewBid)!)
+                let configInfo = dicVactionFile!["ConfigInfo"] as? [String: Any]
+                let yearMonth = configInfo!["YearMonth"] as! String
+                let vacayMonth = Int(yearMonth.dropFirst(4).prefix(2)) ?? 0
+                if (vacayMonth != self.bidPeriod?.month?.intValue) {
+                    let moc = self.bidPeriod?.managedObjectContext
+                    self.bidPeriod?.faFileIntent = ""
+                    do {
+                        try moc?.save()
+                        print("file name saved")
+                    }
+                    catch {
+                        print("file name not saved")
+                    }
+    //                add a function to remove vacation file from document directory
+                    self.downloadFAVacation()
+                }
+                else {
+                    self.validateFAVacation(jsonData: dicVactionFile!)
+                }
+            }
+            else {
+                self.downloadFAVacation()
+            }
+            completion()
+        }
+    
+    //    MARK: vacation File type = "FAVACATIONF" and download
+        func downloadFaVacationEOMFilesWithHud() {
+            // Show activity indicator
+            if let topVC = UIApplication.topViewController() {
+                topVC.view?.showActivityIndicator(message: "Checking Vacation file.")
+            }
+            
+            // Define what should happen on completion
+            let completion: () -> Void = {
+                // Hide activity indicator
+                if let topVC = UIApplication.topViewController() {
+                    topVC.view?.hideActivityIndicator()
+                }
+            }
+            self.bidPeriod!.userVacationWbidOrCrewBid = "FAVacationF";
+            UserDefaults.standard.set(false, forKey: kCBHideVacationKey)
+            let dicVactionFile = self.readVacationFile(fileName: (self.bidPeriod?.userVacationWbidOrCrewBid)!)
+            let file = dicVactionFile!["File"] as! [String: Any]
+            let topLevel = file["SWAPtimizer_CrewBid_Data"] as! [String: Any]
+            let header = topLevel["Header"] as! [String: Any]
+            let fileName = header["FileIdent"] as? String
+            if (fileName == self.bidPeriod?.faFileIntentF) {
+                if (EOMSelectedIndex != "") {
+                    let vacationFile = self.readVacationFile(fileName: self.setFaFileIntentFWithSelectedIndex(selectedIndex: EOMSelectedIndex)!)
+                }
+                else {
+                    let vacationFile = self.readVacationFile(fileName: self.bidPeriod?.faFileIntentF)
+                }
+                let configInfo = dicVactionFile!["ConfigInfo"] as? [String: Any]
+                let yearMonth = configInfo!["YearMonth"] as! String
+                let vacayMonth = Int(yearMonth.dropFirst(4).prefix(2)) ?? 0
+                if (vacayMonth != self.bidPeriod?.month?.intValue) {
+                    let moc = self.bidPeriod?.managedObjectContext
+                    self.bidPeriod?.faFileIntentF = ""
+                    do {
+                        try moc?.save()
+                        print("file name saved")
+                    }
+                    catch {
+                        print("file name not saved")
+                    }
+    //                add a function to remove vacation file from document directory
+                    self.downloadFAVacation()
+                }
+                else {
+                    self.validateFAVacation(jsonData: dicVactionFile!)
+                }
+            }
+            else {
+                self.downloadFAVacation()
+            }
+            completion()
+        }
+    
+    //    MARK: vacation File type = "FAVACATION_EOMOnly" and download
+    func downloadFaVacationWithOnlyEOMFilesWithHud() {
+        // Show activity indicator
+        if let topVC = UIApplication.topViewController() {
+            topVC.view?.showActivityIndicator(message: "Checking Vacation file.")
+        }
+        
+        // Define what should happen on completion
+        let completion: () -> Void = {
+            // Hide activity indicator
+            if let topVC = UIApplication.topViewController() {
+                topVC.view?.hideActivityIndicator()
+            }
+        }
+        self.bidPeriod!.userVacationWbidOrCrewBid = "FAVacationEomOnly";
+        UserDefaults.standard.set(false, forKey: kCBHideVacationKey)
+        let dicVactionFile = self.readVacationFile(fileName: (self.bidPeriod?.userVacationWbidOrCrewBid)!)
+        let file = dicVactionFile!["File"] as! [String: Any]
+        let topLevel = file["SWAPtimizer_CrewBid_Data"] as! [String: Any]
+        let header = topLevel["Header"] as! [String: Any]
+        let fileName = header["FileIdent"] as? String
+        if (fileName == self.bidPeriod?.faFileIntentF) {
+            if (EOMSelectedIndex != "") {
+                let vacationFile = self.readVacationFile(fileName: self.setFaFileIntentEomOnlyWithSelectedIndex(selectedIndex: EOMSelectedIndex)!)
+            }
+            else {
+                let vacationFile = self.readVacationFile(fileName: self.bidPeriod!.faFileIntentEomOnly!)
+            }
+            let configInfo = dicVactionFile!["ConfigInfo"] as? [String: Any]
+            let yearMonth = configInfo!["YearMonth"] as! String
+            let vacayMonth = Int(yearMonth.dropFirst(4).prefix(2)) ?? 0
+            if (vacayMonth != self.bidPeriod?.month?.intValue) {
+                let moc = self.bidPeriod?.managedObjectContext
+                self.bidPeriod?.faFileIntentF = ""
+                do {
+                    try moc?.save()
+                    print("file name saved")
+                }
+                catch {
+                    print("file name not saved")
+                }
+//                add a function to remove vacation file from document directory
+                self.downloadFAVacation()
+            }
+            else {
+                self.validateFAVacation(jsonData: dicVactionFile!)
+            }
+        }
+        else {
+            self.downloadFAVacation()
+        }
+        completion()
+    }
+    
+    func setFaFileIntentFWithSelectedIndex(selectedIndex: String) -> String? {
+        guard let lastFaFileIntentF = self.bidPeriod?.faFileIntentF, !lastFaFileIntentF.isEmpty else {
+            return nil
+        }
+
+        let index = lastFaFileIntentF.index(before: lastFaFileIntentF.endIndex)
+        var newFaFileIntentF = lastFaFileIntentF
+        newFaFileIntentF.replaceSubrange(index...index, with: selectedIndex)
+        return newFaFileIntentF
+    }
+    
+    func setFaFileIntentEomOnlyWithSelectedIndex(selectedIndex: String) -> String? {
+        guard let lastFaFileIntentEomOnly = self.bidPeriod?.faFileIntentEomOnly,
+              !lastFaFileIntentEomOnly.isEmpty else {
+            return nil
+        }
+        
+        let index = lastFaFileIntentEomOnly.index(before: lastFaFileIntentEomOnly.endIndex)
+        var newFaFileIntentEomOnly = lastFaFileIntentEomOnly
+        newFaFileIntentEomOnly.replaceSubrange(index...index, with: selectedIndex)
+        
+        return newFaFileIntentEomOnly
+    }
+
 
     
     //MARK: download WBID VacationFiles
@@ -107,10 +462,10 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + delayInSeconds) {
             var vacationDetailDictionary: [String: Any] = [:]
             if(self.bidPeriod?.swaptimizerIdentifier == nil) {
-                vacationDetailDictionary["EmpNum"] = self.bidPeriod?.crewIdentifier ?? 21541
+                vacationDetailDictionary["EmpNum"] = self.bidPeriod?.crewIdentifier ?? 0
             }
             else {
-                vacationDetailDictionary["EmpNum"] = self.bidPeriod?.swaptimizerIdentifier ?? 21541
+                vacationDetailDictionary["EmpNum"] = self.bidPeriod?.swaptimizerIdentifier ?? 0
             }
             vacationDetailDictionary["Base"] = self.bidPeriod?.base ?? "ATL"
             if let rawValue = self.bidPeriod?.positionType?.intValue,
@@ -210,7 +565,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             vacationType = "FAVacation"
             var vacationDetailDictionary: [String: Any] = [:]
             
-            vacationDetailDictionary["EmpNum"] = self.bidPeriod?.crewIdentifier ?? 14313//31035
+            vacationDetailDictionary["EmpNum"] = self.bidPeriod?.crewIdentifier ?? 0//31035
             vacationDetailDictionary["Base"] = self.bidPeriod?.base ?? "DEN"
             vacationDetailDictionary["Base"] = self.bidPeriod?.base ?? "DEN"
             if let rawValue = self.bidPeriod?.positionType?.intValue,
@@ -364,13 +719,13 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = .decimal
         if secretEnabled == "YES" {
-            pilot = self.bidPeriod?.crewIdentifier
-            pilot = 66226
+            pilot = self.bidPeriod?.crewIdentifier ?? 0
+//            pilot = 66226
             self.urlRequest = URLRequest(url: kSwaptimizerUrlTest, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeout)
         }
         else {
-            pilot = self.bidPeriod?.swaptimizerIdentifier
-            pilot = 44126//88463
+            pilot = self.bidPeriod?.swaptimizerIdentifier ?? 0
+//            pilot = 44126//88463
             self.urlRequest = URLRequest(url: kSwaptimizerUrl, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeout)
         }
         if((pilot == nil)) {
@@ -476,13 +831,15 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         let header = topLevel["Header"] as! [String: Any]
         let moc = self.bidPeriod?.managedObjectContext
         self.bidPeriod?.faFileIntent = header["FileIdent"] as? String
-        
-        do {
-            try moc?.save()
-            print("filename saved")
-        } catch {
-            print("Error saving context: \(error)")
+        if moc!.hasChanges {
+            do {
+                try moc?.save()
+                print("filename saved")
+            } catch {
+                print("Error saving context: \(error)")
+            }
         }
+        
         writeVacationFile(jsonData: jsonData, fileName: header["FileIdent"] as! String)
         let isFlightAttendant = self.bidPeriod?.isFABid() ?? false
         if(!isFlightAttendant) {
@@ -609,12 +966,14 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                         else {
                             self.bidPeriod?.wbFileIntentF = header["FileIdent"] as? String
                         }
-                        do {
-                            try moc?.save()
-                            print("context in validat VWBID writevacationfile saved")
-                        }
-                        catch {
-                            print("context in validat VWBID writevacationfile not saved: \(error)")
+                        if moc!.hasChanges {
+                            do {
+                                try moc?.save()
+                                print("context in validat VWBID writevacationfile saved")
+                            }
+                            catch {
+                                print("context in validat VWBID writevacationfile not saved: \(error)")
+                            }
                         }
                         self.writeVacationFile(jsonData: jsonData, fileName: header["FileIdent"] as! String)
                         if (isAutoDownload) {
@@ -651,12 +1010,14 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 }
                 
                 DispatchQueue.main.async {
-                    do {
-                        try moc?.save()
-                        print("context in validat VWBID writevacationfile saved")
-                    }
-                    catch {
-                        print("context in validat VWBID writevacationfile not saved: \(error)")
+                    if moc!.hasChanges {
+                        do {
+                            try moc?.save()
+                            print("context in validat VWBID writevacationfile saved")
+                        }
+                        catch {
+                            print("context in validat VWBID writevacationfile not saved: \(error)")
+                        }
                     }
                 }
             }
@@ -709,12 +1070,14 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         else {
             self.bidPeriod?.cbVacationFiles = jsonData as NSDictionary
         }
-        do {
-            try moc?.save()
-            print("context writevacationfile saved")
-        }
-        catch {
-            print("context writevacationfile not saved: \(error)")
+        if moc!.hasChanges {
+            do {
+                try moc?.save()
+                print("context writevacationfile saved")
+            }
+            catch {
+                print("context writevacationfile not saved: \(error)")
+            }
         }
         let isFlightAttendant = self.bidPeriod?.isFABid() ?? false
         if(!isFlightAttendant) {
@@ -845,12 +1208,13 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         let header = topLevel["Header"] as! [String: Any]
         var moc = self.bidPeriod?.managedObjectContext
         self.bidPeriod?.faFileIntent = header["FileIdent"] as? String
-        
-        do {
-            try moc?.save()
-            print("filename saved")
-        } catch {
-            print("Error saving context: \(error)")
+        if moc!.hasChanges {
+            do {
+                try moc?.save()
+                print("filename saved")
+            } catch {
+                print("Error saving context: \(error)")
+            }
         }
         writeVacationFile(jsonData: jsonData, fileName: header["FileIdent"] as! String)
     }
@@ -910,7 +1274,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 AlertService.showAlertForTopVC(title: " Error", message: "The  data base \(vacayBase) is not the same as the bid period crew base \(String(describing: self.bidPeriod?.base)).")
             }
             else if !(shortName == seat) {
-                AlertService.showAlertForTopVC(title: " Error", message: "The vacation data position \(seat) is not the same as the bid period position \(shortName).)")
+                AlertService.showAlertForTopVC(title: " Error", message: "The vacation data position \(seat) is not the same as the bid period position \(shortName).")
             }
             else if (self.bidPeriod?.round?.intValue == 2 && round == 1)
             {
@@ -953,12 +1317,14 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     else if (vacationType == "FAVacationEomOnly") {
                         self.bidPeriod?.faFileIntentEomOnly = header["FileIdent"] as? String
                     }
-                    do {
-                        try moc?.save()
-                        print("context in validat VWBID writevacationfile saved")
-                    }
-                    catch {
-                        print("context in validat VWBID writevacationfile not saved: \(error)")
+                    if moc!.hasChanges {
+                        do {
+                            try moc?.save()
+                            print("context in validat VWBID writevacationfile saved")
+                        }
+                        catch {
+                            print("context in validat VWBID writevacationfile not saved: \(error)")
+                        }
                     }
                     self.writeVacationFile(jsonData: jsonData, fileName: header["FileIdent"] as! String)
                     
@@ -1079,14 +1445,15 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                         else if vacationType == "CREWBIDF" {
                             self.bidPeriod?.cbFileIntentF = header["FileIdent"] as? String
                         }
-                        do {
-                            try moc?.save()
-                            print("context in validat SWAPtimizer writevacationfile saved")
+                        if moc!.hasChanges {
+                            do {
+                                try moc?.save()
+                                print("context in validat SWAPtimizer writevacationfile saved")
+                            }
+                            catch {
+                                print("context in validat SWAPtimizer writevacationfile not saved: \(error)")
+                            }
                         }
-                        catch {
-                            print("context in validat SWAPtimizer writevacationfile not saved: \(error)")
-                        }
-                        
                         self.captureVacationDetails(jsonData: jsonData)
                         
                         self.writeVacationFile(jsonData: jsonData, fileName: header["FileIdent"] as! String)
@@ -1125,12 +1492,14 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 else if (vacationType == "CREWBIDF") {
                     self.bidPeriod?.wbFileIntentF = header["FileIdent"] as? String
                 }
-                do {
-                    try moc?.save()
-                    print("context in validat VWBID writevacationfile saved")
-                }
-                catch {
-                    print("context in validat VWBID writevacationfile not saved: \(error)")
+                if moc!.hasChanges {
+                    do {
+                        try moc?.save()
+                        print("context in validat VWBID writevacationfile saved")
+                    }
+                    catch {
+                        print("context in validat VWBID writevacationfile not saved: \(error)")
+                    }
                 }
                 self.captureVacationDetails(jsonData: jsonData)
                 self.writeVacationFile(jsonData: jsonData, fileName: header["FileIdent"] as! String)
@@ -1282,15 +1651,15 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     else {
                         let moc = self.bidPeriod?.managedObjectContext
                         self.bidPeriod?.cbFileIntent = header["FileIdent"] as? String
-                        
-                        do {
-                            try moc?.save()
-                            print("context in validat SWAPtimizer writevacationfile saved")
+                        if moc!.hasChanges {
+                            do {
+                                try moc?.save()
+                                print("context in validat SWAPtimizer writevacationfile saved")
+                            }
+                            catch {
+                                print("context in validat SWAPtimizer writevacationfile not saved: \(error)")
+                            }
                         }
-                        catch {
-                            print("context in validat SWAPtimizer writevacationfile not saved: \(error)")
-                        }
-                        
                         self.captureVacationDetails(jsonData: jsonData)
                         
                         self.writeVacationFile(jsonData: jsonData, fileName: header["FileIdent"] as! String)
@@ -1323,12 +1692,14 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 
                 let moc = self.bidPeriod?.managedObjectContext
                 self.bidPeriod?.cbFileIntent = header["FileIdent"] as? String
-                do {
-                    try moc?.save()
-                    print("context in validat VWBID writevacationfile saved")
-                }
-                catch {
-                    print("context in validat VWBID writevacationfile not saved: \(error)")
+                if moc!.hasChanges {
+                    do {
+                        try moc?.save()
+                        print("context in validat VWBID writevacationfile saved")
+                    }
+                    catch {
+                        print("context in validat VWBID writevacationfile not saved: \(error)")
+                    }
                 }
                 self.captureVacationDetails(jsonData: jsonData)
                 self.writeVacationFile(jsonData: jsonData, fileName: header["FileIdent"] as! String)
@@ -1785,11 +2156,13 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             } catch {
                 print("deadhead at end city fetch failed: \(error)")
             }
-            do {
-                try moc?.save()
-                print("deadhead at start and end cities saved")
-            } catch {
-                print("Error saving context: \(error)")
+            if moc!.hasChanges {
+                do {
+                    try moc?.save()
+                    print("deadhead at start and end cities saved")
+                } catch {
+                    print("Error saving context: \(error)")
+                }
             }
             // Iterate over all the lines and fill in the stuff we need to know
             var vEnumerator = vacayLines.makeIterator()
@@ -2065,11 +2438,13 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 self.bidPeriod?.secretSwitchOn = "YES"
             }
             self.bidPeriod?.vacationType = vacationType
-            do {
-                try moc?.save()
-                print("line core data saved from processJsonFile function in CBVacationDownloader")
-            } catch {
-                print("line core data not saved from processJsonFile function in CBVacationDownloader: \(error)")
+            if moc!.hasChanges {
+                do {
+                    try moc?.save()
+                    print("line core data saved from processJsonFile function in CBVacationDownloader")
+                } catch {
+                    print("line core data not saved from processJsonFile function in CBVacationDownloader: \(error)")
+                }
             }
             // Get rid of any hidden vacation line values
             
@@ -2549,11 +2924,13 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         } catch {
             print("deadhead at end city fetch failed: \(error)")
         }
-        do {
-            try moc?.save()
-            print("deadhead at start and end cities saved")
-        } catch {
-            print("Error saving context: \(error)")
+        if moc!.hasChanges {
+            do {
+                try moc?.save()
+                print("deadhead at start and end cities saved")
+            } catch {
+                print("Error saving context: \(error)")
+            }
         }
         // Iterate over all the lines and fill in the stuff we need to know
         var vEnumerator = vacayLines.makeIterator()
@@ -2767,13 +3144,14 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         
         self.bidPeriod?.vacationType = vacationType
         self.bidPeriod?.vacationType = self.bidPeriod?.userVacationWbidOrCrewBid
-        do {
-            try moc?.save()
-            print("line core data saved from processFAVacationWithJsonFile function in CBVacationDownloader")
-        } catch {
-            print("line core data not saved from processFAVacationWithJsonFile function in CBVacationDownloader: \(error)")
+        if moc!.hasChanges {
+            do {
+                try moc?.save()
+                print("line core data saved from processFAVacationWithJsonFile function in CBVacationDownloader")
+            } catch {
+                print("line core data not saved from processFAVacationWithJsonFile function in CBVacationDownloader: \(error)")
+            }
         }
-        
         // Get rid of any hidden vacation line values
         
 //        let lineValuesKey = CBLineValuesMenuController.lineValuesKeyForBidPeriod(bidPeriod: self.bidPeriod!)
@@ -2840,4 +3218,35 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         return dateArray
     }
     
+    func deleteAllVacation() {
+        DispatchQueue.main.async {
+            guard let moc = self.bidPeriod?.managedObjectContext else { return }
+            
+            let fetchRequest: NSFetchRequest<BIVacation> = BIVacation.fetchRequest()
+            fetchRequest.includesPropertyValues = false
+            
+            do {
+                let results = try moc.fetch(fetchRequest)
+                
+                for vacation in results {
+                    moc.delete(vacation)
+                }
+                
+                if self.bidPeriod?.isFABid() == true {
+                    self.bidPeriod?.faVacationStatus = NSNumber(value: BIFaVacationStatus.noVacation.rawValue)
+                    UserDefaults.standard.set(true, forKey: kCBHideVacationKey)
+                }
+                
+                self.bidPeriod?.swaptimizerStatus = NSNumber(value: CBSwaptimizerStatus.notApplicable.rawValue)
+                self.bidPeriod?.vacationType = ""
+                self.bidPeriod?.userVacationWbidOrCrewBid = ""
+                
+                try moc.save()
+                
+            } catch {
+                print("Vacation fetch or save failed: \(error.localizedDescription)")
+            }
+        }
+    }
+
 }
