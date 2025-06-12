@@ -348,7 +348,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     let vacationFile = self.readVacationFile(fileName: self.setFaFileIntentFWithSelectedIndex(selectedIndex: EOMSelectedIndex)!)
                 }
                 else {
-                    let vacationFile = self.readVacationFile(fileName: self.bidPeriod?.faFileIntentF)
+                    let vacationFile = self.readVacationFile(fileName: (self.bidPeriod?.faFileIntentF)!)
                 }
                 let configInfo = dicVactionFile!["ConfigInfo"] as? [String: Any]
                 let yearMonth = configInfo!["YearMonth"] as! String
