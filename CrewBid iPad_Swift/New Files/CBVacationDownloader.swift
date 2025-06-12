@@ -691,8 +691,13 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                             
                         } else {
                             print("FileName is null or missing")
-                            let message = json["Message"]
-                            print("message: \(message!)")
+                            if let message = json["Message"] as? String {
+                                if message.lowercased().hasPrefix("it takes us about") {
+                                    AlertService.showAlertForTopVC(title: "EOM Vacation", message: "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of next month, then touch the EOM button\(self.eomMonth())")
+                                }
+                            }
+
+                            
                         }
                     }
                 } catch {
@@ -3247,6 +3252,23 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 print("Vacation fetch or save failed: \(error.localizedDescription)")
             }
         }
+    }
+    
+    func eomMonth() -> String {
+        let startDate = Date()
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone.current
+
+        var components = calendar.dateComponents([.year, .month, .day], from: startDate)
+        components.day = 1
+        components.month = self.bidPeriod?.month?.intValue
+        components.year = self.bidPeriod?.year?.intValue
+        let originalDate = calendar.date(from: components)!
+        var dateComponents = DateComponents()
+        dateComponents.month = 1
+        let newDate = calendar.date(byAdding: dateComponents, to: originalDate)
+        let Updatedcomponents = calendar.dateComponents([.year, .month, .day], from: newDate!)
+        return CBUtils.shortMonthName(month: Updatedcomponents.month!, uc: false)
     }
 
 }
