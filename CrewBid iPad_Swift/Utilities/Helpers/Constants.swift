@@ -140,6 +140,9 @@ let kCBAllCitiesList = "CBAllCitiesList"
 let KCBDefaultSeniorityListTableDBValues = "CBDefaultSeniorityListTableDBValues"
 let kCBHawaiiCitiesList = "CBHawaiiCitiesList"
 let kCBNonConusCitiesList = "CBNonConusCitiesList"
+
+let ReloadCollectionView = "ReloadCollectionView"
+
 public enum HTTPStatusCode: Int {
     case `continue` = 100,
     switchingProtocols = 101
