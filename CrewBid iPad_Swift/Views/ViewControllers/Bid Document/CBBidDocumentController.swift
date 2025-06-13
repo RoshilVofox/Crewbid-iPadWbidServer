@@ -37,6 +37,7 @@ class CBBidDocumentController: BaseViewController {
     
     var bdPrd:Int!
     var locHerb:Bool!
+    var dataSource = GlobalBidInfo.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,6 +60,13 @@ class CBBidDocumentController: BaseViewController {
     }
     
     func setupUI(){
+        let positionArray = ["CP","FO","FA"]
+        let index = dataSource.position.rawValue
+        lblHome.text = "(\(CBUtils.AppVersion())) " +
+                       CBGlobalMethods.shortMonthNameOf(monthInt: dataSource.month) + " " +
+                       "\(positionArray[index]) " +
+        "\(dataSource.year) \(dataSource.base) Rnd \(dataSource.round)"
+
         btnLocalHerbView.layer.borderWidth = 1
         btnLocalHerbView.layer.borderColor = UIColor.black.cgColor
         btnLocalHerbView.layer.cornerRadius = 16

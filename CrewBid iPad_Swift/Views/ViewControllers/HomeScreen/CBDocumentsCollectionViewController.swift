@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class CBDocumentsCollectionViewController: BaseViewController {
     
@@ -19,7 +20,9 @@ class CBDocumentsCollectionViewController: BaseViewController {
     
     var isPlusImage = true
     var selectedRows : [Int] = []
-    var collectionViewData = [1,2,3,4,5,6,7,8,9]
+//    var collectionViewData = [1,2,3,4,5,6,7,8,9]
+    var bidPeriodList : [BIBidPeriod] = []
+    var dataSource = GlobalBidInfo.shared
     
     let viewModel = DocumentsCollectionViewModel()
     
@@ -35,7 +38,16 @@ class CBDocumentsCollectionViewController: BaseViewController {
             self.showQuickTutorialForFirstTime()
         }
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        refreshBidPeriods()
+//        NotificationCenter.default.addObserver(self, selector: #selector(refreshBidPeriods), name: NSNotification.Name(ReloadCollectionView), object: nil)
+    }
     
+    override func viewWillDisappear(_ animated: Bool) {
+//        super.viewWillDisappear(animated)
+//        NotificationCenter.default.removeObserver(ReloadCollectionView)
+    }
     @IBAction func downloadBid(_ sender: Any) {
         if isPlusImage {
             let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
@@ -46,19 +58,36 @@ class CBDocumentsCollectionViewController: BaseViewController {
             present(vc, animated: true)
         }
         else {
-           deleteCellRow()
+            deleteCellRow()
         }
     }
     
     func deleteCellRow() {
-        guard !selectedRows.isEmpty else { return }
-        let sortedIndices = selectedRows.sorted(by: >)
-        for index in sortedIndices {
-            collectionViewData.remove(at: index)
+        if selectedRows.isEmpty {
+            return
         }
-        let indexPaths = sortedIndices.map { IndexPath(item: $0, section: 0) }
-        collectionView.deleteItems(at: indexPaths)
-        selectedRows.removeAll()
+        let alertController = UIAlertController(title: "Warning!", message: "All data, including bid receipts, will be deleted.", preferredStyle:UIAlertController.Style.alert)
+        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
+        alertController.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default)
+                                  { action -> Void in
+            // Iterate over selected rows and delete corresponding bid data
+            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "deleting...")
+            for index in self.selectedRows {
+                let obj = self.bidPeriodList[index]
+                self.dataSource.managedObjectContext.delete(obj)
+                do {
+                    try self.dataSource.managedObjectContext.save()
+                } catch {
+                    print("Error", error.localizedDescription)
+                }
+                self.selectedRows.removeAll()
+//                self.refreshBidPeriods()
+            }
+            self.refreshBidPeriods()
+            self.view.hideActivityIndicator()
+        })
+        self.present(alertController, animated: true, completion: nil)
+        return
     }
     
     @IBAction func settingsAction(_ sender: Any) {
@@ -104,13 +133,52 @@ class CBDocumentsCollectionViewController: BaseViewController {
             present(helpMenuVC, animated: true)
         }
     }
+    
+    @objc func refreshBidPeriods() {
+        DispatchQueue.main.async {
+            var qaString = ""
+            if UserDefaults.standard.bool(forKey: "IsQAEnabled") == true {
+                qaString = " (QA Mode)"
+            }
+            
+            let version = CBUtils.AppVersion()
+            if UserDefaults.standard.bool(forKey: "isTestDBSelected") {
+                self.lblHome.text = "Home (\(version)) (Test DB)" + qaString
+            } else {
+                self.lblHome.text = "Home (\(version))" + qaString
+            }
+
+            let context = self.dataSource.managedObjectContext
+            let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
+
+            do {
+                // Fetch bid periods and reverse to show newest first
+                self.bidPeriodList = try context.fetch(fetchRequest).reversed()
+            } catch {
+                print("Failed to fetch bid periods: \(error)")
+                self.bidPeriodList = []
+            }
+            if (self.bidPeriodList.count == 0) {
+                self.editButton.setTitle("Edit", for: .normal)
+                self.isPlusImage = true
+                self.bidDownloadButton.setBackgroundImage(nil, for: .normal)
+                let plusImage = UIImage(named: "plus")
+                self.bidDownloadButton.setBackgroundImage(plusImage, for: .normal)
+                self.bidDownloadButton.isEnabled = true
+            }
+
+            self.collectionView.reloadData()
+            self.editButton.isHidden = self.bidPeriodList.isEmpty
+        }
+    }
+
 }
 
 
 extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return collectionViewData.count
+        return bidPeriodList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -118,6 +186,12 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
         cell.layer.cornerRadius = 10
         cell.layer.borderWidth = 8
         cell.layer.borderColor = CBColor.cbPurpleColor?.cgColor
+        
+        let bidPeriod : BIBidPeriod = bidPeriodList[indexPath.item]
+        cell.base.text = bidPeriod.base
+        let positionArray = ["Captain","First Officer","Flight Attendant"]
+        cell.position.text = positionArray[bidPeriod.positionType!.intValue]
+        cell.monthRoundLabel.text = CBGlobalMethods.shortMonthNameOf(monthInt: bidPeriod.month!.intValue) + " " +  bidPeriod.year!.stringValue + " Round " + bidPeriod.round!.stringValue
         
         
         if self.editButton.currentTitle == "Edit" {
@@ -151,6 +225,16 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
             bidDownloadButton.isEnabled = true
             let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
+            let bidPeriod : BIBidPeriod = bidPeriodList[indexPath.item]
+            dataSource.year = (bidPeriod.year as? Int)!
+            dataSource.base = bidPeriod.base!
+            dataSource.month = (bidPeriod.month as? Int)!
+            dataSource.round = (bidPeriod.round as? Int)!
+            if let rawValue = bidPeriod.positionType as? Int,
+               let position = BICrewPositionType(rawValue: rawValue) {
+                // Successfully converted and initialized the enum
+                dataSource.position = position
+            }
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
