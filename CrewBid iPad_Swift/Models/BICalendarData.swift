@@ -520,9 +520,19 @@ class func bidPeriodCalendar() -> Calendar? {
     bidPeriodCalendar.locale = Locale(identifier: "en_US") as Locale
     if let timeZone = TimeZone(identifier: "US/Central") {
         bidPeriodCalendar.timeZone = timeZone as TimeZone
-    }
+        }
     return bidPeriodCalendar
-}
-
+    }
+    
+    func monthNumber(from month: String) -> Int? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM"
+        formatter.locale = Locale(identifier: "en_US_POSIX") // Ensures consistent parsing
+        if let date = formatter.date(from: month.capitalized) {
+            let calendar = Calendar.current
+            return calendar.component(.month, from: date)
+        }
+        return nil
+    }
 
 }

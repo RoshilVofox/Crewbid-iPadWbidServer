@@ -15,37 +15,37 @@ public class BILine: NSManagedObject {
 }
 
 enum BILineType : Int {
-    case HardLineType              // 0
-    case LineTypeHardConus         // 1
-    case LineTypeHardNonConus      // 2
-    case ReserveLineType           // 3
-    case BlankLineType             // 4
-    case MixedLineType             // 5
-    case LineTypeNonEtopsReserve   // 6
-    case LineTypeNonEtopsNonConUs  // 7
-    case LineTypeNonEtopsConUs     // 8
-    case LineTypeNonReserveEtops   // 9
-    case LineTypeNonEtopsHard      // 10
-    case LineTypeNonEtopsMixed     // 11
-    case LineTypeEtopsReserve      // 12
-    case LineTypeEtopsFAFirstRound // 13
+    case HardLine           // 0
+    case HardConUS              // 1
+    case HardNonConUS           // 2
+    case ReserveLine        // 3
+    case BlankLine          // 4
+    case MixedLine          // 5
+    case NonEtopsReserve        // 6
+    case NonEtopsNonConUS       // 7
+    case NonEtopsConUS          // 8
+    case NonReserveEtops        // 9
+    case NonEtopsHard           // 10
+    case NonEtopsMixed          // 11
+    case EtopsReserve           // 12
+    case EtopsFAFirstRound      // 13
     
     func name () -> Int {
         switch self {
-        case .HardLineType: return 0
-        case .LineTypeHardConus: return 1
-        case .LineTypeHardNonConus: return 2
-        case .ReserveLineType: return 3
-        case .BlankLineType: return 4
-        case .MixedLineType: return 5
-        case .LineTypeNonEtopsReserve: return 6
-        case .LineTypeNonEtopsNonConUs: return 7
-        case .LineTypeNonEtopsConUs: return 8
-        case .LineTypeNonReserveEtops: return 9
-        case .LineTypeNonEtopsHard: return 10
-        case .LineTypeNonEtopsMixed: return 11
-        case .LineTypeEtopsReserve: return 12
-        case .LineTypeEtopsFAFirstRound: return 13
+        case .HardLine: return 0
+        case .HardConUS: return 1
+        case .HardNonConUS: return 2
+        case .ReserveLine: return 3
+        case .BlankLine: return 4
+        case .MixedLine: return 5
+        case .NonEtopsReserve: return 6
+        case .NonEtopsNonConUS: return 7
+        case .NonEtopsConUS: return 8
+        case .NonReserveEtops: return 9
+        case .NonEtopsHard: return 10
+        case .NonEtopsMixed: return 11
+        case .EtopsReserve: return 12
+        case .EtopsFAFirstRound: return 13
         }
     }
 }

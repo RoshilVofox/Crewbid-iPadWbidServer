@@ -74,9 +74,9 @@ class CBDefaultEmployeeVC: BaseViewController {
                    return
                }
         dataSource.employeeNumber = empID
-               UserDefaults.standard.set(textEmpNum.text!, forKey: kCBDefaultEmployeeNumberKey)
-               self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
-               viewModel.checkAuthentication(empID: empID)
+        UserDefaults.standard.set(textEmpNum.text!, forKey: kCBDefaultEmployeeNumberKey)
+        self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
+        viewModel.checkAuthentication(empID: empID)
         }
     
     func handleAuthResult(_ result: AuthResult) {

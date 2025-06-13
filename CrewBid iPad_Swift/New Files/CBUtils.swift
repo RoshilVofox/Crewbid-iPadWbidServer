@@ -10,248 +10,30 @@ import ZipArchive
 
 class CBUtils{
     
-    static let timeZonesArray = ["PWM" : "US/Eastern",
-                     "MHT" : "US/Eastern",
-                     "BOS" : "US/Eastern",
-                     "PVD" : "US/Eastern",
-                     "BDL" : "US/Eastern",
-                     "ROC" : "US/Eastern",
-                     "ISP" : "US/Eastern",
-                     "LGA" : "US/Eastern",
-                     "ALB" : "US/Eastern",
-                     "BUF" : "US/Eastern",
-                     "EWR" : "US/Eastern",
-                     "PHL" : "US/Eastern",
-                     "PIT" : "US/Eastern",
-                     "BWI" : "US/Eastern",
-                     "IAD" : "US/Eastern",
-                     "DCA" : "US/Eastern",
-                     "ORF" : "US/Eastern",
-                     "RIC" : "US/Eastern",
-                     "RDU" : "US/Eastern",
-                     "CLT" : "US/Eastern",
-                     "GSP" : "US/Eastern",
-                     "CHS" : "US/Eastern",
-                     "ATL" : "US/Eastern",
-                     "JAX" : "US/Eastern",
-                     "MCO" : "US/Eastern",
-                     "TPA" : "US/Eastern",
-                     "PBI" : "US/Eastern",
-                     "FLL" : "US/Eastern",
-                     "RSW" : "US/Eastern",
-                     "EYW" : "US/Eastern",
-                     "SDF" : "US/Eastern",
-                     "CLE" : "US/Eastern",
-                     "CAK" : "US/Eastern",
-                     "CMH" : "US/Eastern",
-                     "DAY" : "US/Eastern",
-                     "DTW" : "US/Eastern",
-                     "IND" : "US/Eastern",
-                     "FNT" : "US/Eastern",
-                     "GRR" : "US/Eastern",
-                     "CVG" : "US/Eastern",
-                     // CST CITIES
-                     "ECP" : "US/Central",
-                     "BHM" : "US/Central",
-                     "BNA" : "US/Central",
-                     "MEM" : "US/Central",
-                     "PNS" : "US/Central",
-                     "MSY" : "US/Central",
-                     "JAN" : "US/Central",
-                     "STL" : "US/Central",
-                     "MDW" : "US/Central",
-                     "MKE" : "US/Central",
-                     "MSP" : "US/Central",
-                     "DSM" : "US/Central",
-                     "OMA" : "US/Central",
-                     "MCI" : "US/Central",
-                     "BKG" : "US/Central",
-                     "IAH" : "US/Central",
-                     "ICT" : "US/Central",
-                     "LIT" : "US/Central",
-                     "TUL" : "US/Central",
-                     "OKC" : "US/Central",
-                     "AMA" : "US/Central",
-                     "LBB" : "US/Central",
-                     "DAL" : "US/Central",
-                     "AUS" : "US/Central",
-                     "HOU" : "US/Central",
-                     "MAF" : "US/Central",
-                     "SAT" : "US/Central",
-                     "CRP" : "US/Central",
-                     "HRL" : "US/Central",
-                     // MST CITIES
-                     "BOI" : "US/Mountain",
-                     "SLC" : "US/Mountain",
-                     "DEN" : "US/Mountain",
-                     "ABQ" : "US/Mountain",
-                     "ELP" : "US/Mountain",
-                     // PST CITIES
-                     "SMF" : "US/Pacific",
-                     "OAK" : "US/Pacific",
-                     "SFO" : "US/Pacific",
-                     "SJC" : "US/Pacific",
-                     "BUR" : "US/Pacific",
-                     "LAX" : "US/Pacific",
-                     "ONT" : "US/Pacific",
-                     "SNA" : "US/Pacific",
-                     "SAN" : "US/Pacific",
-                     "SEA" : "US/Pacific",
-                     "GEG" : "US/Pacific",
-                     "PDX" : "US/Pacific",
-                     "LAS" : "US/Pacific",
-                     "RNO" : "US/Pacific",
-                     "LGB" : "US/Pacific",
-                     "BLI" : "US/Pacific",
-                     // ARIZONA CITIES
-                     "PHX" : "America/Phoenix",
-                     "TUS" : "America/Phoenix",
-                     "SJU" : "America/Puerto_Rico",
-                     "AUA" : "America/Aruba",
-                     "CUN" : "America/Cancun",
-                     "MBJ" : "America/Jamaica",
-                     "MEX" : "America/Mexico_City",
-                     "PUJ" : "America/Santo_Domingo",
-                     "SJD" : "America/Mazatlan",
-                     "NAS" : "America/Nassau",
-                     "PVR" : "America/Mexico_City",
-                     "SJO" : "America/Costa_Rica",
-                     "TZA" : "America/Belize",
-                     "BDA" : "Atlantic/Bermuda",
-                     "BZE" : "America/Belize",
-                     "GCM" : "America/Cayman",
-                     "HAV" : "America/Havana",
-                     "LIR" : "America/Costa_Rica",
-                     "PLS" : "America/Grand_Turk",
-                     "SNU" : "America/Havana",
-                     "VRA" : "America/Havana",
-                     "OGG" : "US/Hawaii",
-                     "HNL" : "US/Hawaii",
-                     "LIH" : "US/Hawaii",
-                     "KOA" : "US/Hawaii",
-                     "ITO" : "US/Hawaii",
-                     "HDN" : "US/Mountain",
-                     "MIA" : "US/Eastern",
-                     "PSP" : "US/Pacific",
-                     "MTJ" : "US/Mountain",
-                     "ORD" : "US/Central",
-                     "SRQ" : "US/Eastern",
-                     "BZN" : "US/Mountain",
-                     "COS" : "US/Mountain",
-                     "CZM" : "America/Cancun",
-                     "EUG" : "US/Pacific",
-                     "FAT" : "US/Pacific",
-                     "MYR" : "US/Eastern",
-                     "SAV" : "US/Eastern",
-                     "SBA" : "US/Pacific",
-                     "SYR" : "US/Eastern",
-                     "VPS" : "US/Central"]
+    static let timeZonesArray = ["PWM" : "US/Eastern", "MHT" : "US/Eastern", "BOS" : "US/Eastern", "PVD" : "US/Eastern", "BDL" : "US/Eastern", "ROC" : "US/Eastern", "ISP" : "US/Eastern", "LGA" : "US/Eastern", "ALB" : "US/Eastern", "BUF" : "US/Eastern", "EWR" : "US/Eastern", "PHL" : "US/Eastern", "PIT" : "US/Eastern", "BWI" : "US/Eastern", "IAD" : "US/Eastern", "DCA" : "US/Eastern", "ORF" : "US/Eastern", "RIC" : "US/Eastern", "RDU" : "US/Eastern", "CLT" : "US/Eastern", "GSP" : "US/Eastern", "CHS" : "US/Eastern", "ATL" : "US/Eastern", "JAX" : "US/Eastern", "MCO" : "US/Eastern", "TPA" : "US/Eastern", "PBI" : "US/Eastern", "FLL" : "US/Eastern", "RSW" : "US/Eastern", "EYW" : "US/Eastern", "SDF" : "US/Eastern", "CLE" : "US/Eastern", "CAK" : "US/Eastern", "CMH" : "US/Eastern", "DAY" : "US/Eastern", "DTW" : "US/Eastern", "IND" : "US/Eastern", "FNT" : "US/Eastern", "GRR" : "US/Eastern", "CVG" : "US/Eastern",
+        // CST CITIES
+        "ECP" : "US/Central", "BHM" : "US/Central", "BNA" : "US/Central", "MEM" : "US/Central", "PNS" : "US/Central", "MSY" : "US/Central", "JAN" : "US/Central", "STL" : "US/Central", "MDW" : "US/Central", "MKE" : "US/Central", "MSP" : "US/Central", "DSM" : "US/Central", "OMA" : "US/Central", "MCI" : "US/Central", "BKG" : "US/Central", "IAH" : "US/Central", "ICT" : "US/Central", "LIT" : "US/Central", "TUL" : "US/Central", "OKC" : "US/Central", "AMA" : "US/Central", "LBB" : "US/Central", "DAL" : "US/Central", "AUS" : "US/Central", "HOU" : "US/Central", "MAF" : "US/Central", "SAT" : "US/Central", "CRP" : "US/Central", "HRL" : "US/Central",
+        // MST CITIES
+        "BOI" : "US/Mountain","SLC" : "US/Mountain","DEN" : "US/Mountain","ABQ" : "US/Mountain","ELP" : "US/Mountain",
+        // PST CITIES
+        "SMF" : "US/Pacific","OAK" : "US/Pacific","SFO" : "US/Pacific","SJC" : "US/Pacific","BUR" : "US/Pacific","LAX" : "US/Pacific","ONT" : "US/Pacific","SNA" : "US/Pacific","SAN" : "US/Pacific","SEA" : "US/Pacific","GEG" : "US/Pacific","PDX" : "US/Pacific","LAS" : "US/Pacific","RNO" : "US/Pacific","LGB" : "US/Pacific","BLI" : "US/Pacific",
+        // ARIZONA CITIES
+        "PHX" : "America/Phoenix","TUS" : "America/Phoenix","SJU" : "America/Puerto_Rico","AUA" : "America/Aruba","CUN" : "America/Cancun","MBJ" : "America/Jamaica","MEX" : "America/Mexico_City","PUJ" : "America/Santo_Domingo","SJD" : "America/Mazatlan","NAS" : "America/Nassau","PVR" : "America/Mexico_City","SJO" : "America/Costa_Rica","TZA" : "America/Belize","BDA" : "Atlantic/Bermuda","BZE" : "America/Belize","GCM" : "America/Cayman","HAV" : "America/Havana","LIR" : "America/Costa_Rica","PLS" : "America/Grand_Turk","SNU" : "America/Havana","VRA" : "America/Havana","OGG" : "US/Hawaii","HNL" : "US/Hawaii","LIH" : "US/Hawaii","KOA" : "US/Hawaii","ITO" : "US/Hawaii","HDN" : "US/Mountain","MIA" : "US/Eastern","PSP" : "US/Pacific","MTJ" : "US/Mountain","ORD" : "US/Central","SRQ" : "US/Eastern","BZN" : "US/Mountain","COS" : "US/Mountain","CZM" : "America/Cancun","EUG" : "US/Pacific","FAT" : "US/Pacific","MYR" : "US/Eastern","SAV" : "US/Eastern","SBA" : "US/Pacific","SYR" : "US/Eastern","VPS" : "US/Central"]
     
    static let allCitiesDict = ["LGB","NAS","SJO","PVR","TZA","AUA","CUN","MBJ","MEX","PUJ","SJD","SJU","PWM","MHT","BOS","PVD","BDL","ROC","ISP","LGA","BUF","EWR","PHL","PIT","BWI","IAD","DCA","ORF","RIC","RDU","CLT","GSP","CHS","ATL","JAX","ECP","MCO","TPA","PBI","FLL","RSW","EYW","PNS","BHM","BNA","MEM","SDF","CLE","CAK","CMH","DAY","DTW","IND","FNT","GRR","MSY","JAN","STL","MDW","MKE","MSP","DSM","OMA","MCI","BKG","ICT","LIT","TUL","OKC","AMA","LBB","DAL","AUS","HOU","MAF","SAT","CRP","HRL","SEA","GEG","PDX","BOI","RNO","SMF","OAK","SFO","SJC","BUR","LAX","ONT","SNA","SAN","LAS","PHX","TUS","SLC","DEN","ABQ","ELP","ALB","CVG","BDA"]
     
-    static let intlCitiesDict = ["AUA" : "YES",
-                             "CUN" : "YES",
-                             "MBJ" : "YES",
-                             "MEX" : "YES",
-                             "PUJ" : "YES",
-                             "SJD" : "YES",
-                             "SJU" : "YES",
-                             "NAS" : "YES",
-                             "PVR" : "YES",
-                             "SJO" : "YES",
-                             "TZA" : "YES",
-                             "LIR" : "YES",
-                             "BZE" : "YES"]
+    static let intlCitiesDict = ["AUA" : "YES","CUN" : "YES","MBJ" : "YES","MEX" : "YES","PUJ" : "YES","SJD" : "YES","SJU" : "YES","NAS" : "YES","PVR" : "YES","SJO" : "YES","TZA" : "YES","LIR" : "YES","BZE" : "YES"]
     
     static let hawaiiCities = ["HNL","ITO","LIH","KOA","OGG"]
     
     static let ncCities = ["SJU"]
     
-    static let CPRound1:[String : Any] = ["AbscenceTypeEnd" : 75,
-                           "AbscenceTypeSt" : 74,
-                           "AbsenceDatesEnd" : 87,
-                           "AbsenceDatesSt" : 77,
-                           "BidTypeEnd" : 24,
-                           "BidTypeSt" : 24,
-                           "ChkPltEnd" : 71,
-                           "ChkPltSt" : 71,
-                           "EbgEnd" : 15,
-                           "EbgSt" : 15,
-                           "EmpIdEnd" : 35,
-                           "EmpIdSt" : 30,
-                           "Id" : 71,
-                           "LcEnd" : 28,
-                           "LcSt" : 28,
-                           "NameEnd" : 69,
-                           "NameSt" : 37,
-                           "Position" : "CP",
-                           "Round" : 1,
-                           "SeqNumEnd" : 4,
-                           "SeqNumSt" : 1]
-    static let CPRound2:[String : Any] = ["AbscenceTypeEnd" : 67,
-                                          "AbscenceTypeSt" : 66,
-                                          "AbsenceDatesEnd" : 79,
-                                          "AbsenceDatesSt" : 69,
-                                          "BidTypeEnd" : 14,
-                                          "BidTypeSt" : 14,
-                                          "ChkPltEnd" : 63,
-                                          "ChkPltSt" : 63,
-                                          "EbgEnd" : 22,
-                                          "EbgSt" : 22,
-                                          "EmpIdEnd" : 29,
-                                          "EmpIdSt" : 24,
-                                          "Id" : 71,
-                                          "LcEnd" : 19,
-                                          "LcSt" : 19,
-                                          "NameEnd" : 61,
-                                          "NameSt" : 31,
-                                          "Position" : "CP",
-                                          "Round" : 2,
-                                          "SeqNumEnd" : 4,
-                                          "SeqNumSt" : 1]
+    static let CPRound1:[String : Any] = ["AbscenceTypeEnd" : 75,"AbscenceTypeSt" : 74,"AbsenceDatesEnd" : 87,"AbsenceDatesSt" : 77,"BidTypeEnd" : 24,"BidTypeSt" : 24,"ChkPltEnd" : 71,"ChkPltSt" : 71,"EbgEnd" : 15,"EbgSt" : 15,"EmpIdEnd" : 35,"EmpIdSt" : 30,"Id" : 71,"LcEnd" : 28,"LcSt" : 28,"NameEnd" : 69,"NameSt" : 37,"Position" : "CP","Round" : 1,"SeqNumEnd" : 4,"SeqNumSt" : 1]
+    static let CPRound2:[String : Any] = ["AbscenceTypeEnd" : 67,"AbscenceTypeSt" : 66,"AbsenceDatesEnd" : 79,"AbsenceDatesSt" : 69,"BidTypeEnd" : 14,"BidTypeSt" : 14,"ChkPltEnd" : 63,"ChkPltSt" : 63,"EbgEnd" : 22,"EbgSt" : 22,"EmpIdEnd" : 29,"EmpIdSt" : 24,"Id" : 71,"LcEnd" : 19,"LcSt" : 19,"NameEnd" : 61,"NameSt" : 31,"Position" : "CP","Round" : 2,"SeqNumEnd" : 4,"SeqNumSt" : 1]
                                           
-    static let FORound1:[String : Any] = ["AbscenceTypeEnd" : 75,
-                                          "AbscenceTypeSt" : 74,
-                                          "AbsenceDatesEnd" : 87,
-                                          "AbsenceDatesSt" : 77,
-                                          "BidTypeEnd" : 24,
-                                          "BidTypeSt" : 24,
-                                          "ChkPltEnd" : 71,
-                                          "ChkPltSt" : 71,
-                                          "EbgEnd" : 15,
-                                          "EbgSt" : 15,
-                                          "EmpIdEnd" : 35,
-                                          "EmpIdSt" : 30,
-                                          "Id" : 71,
-                                          "LcEnd" : 28,
-                                          "LcSt" : 28,
-                                          "NameEnd" : 69,
-                                          "NameSt" : 37,
-                                          "Position" : "FO",
-                                          "Round" : 1,
-                                          "SeqNumEnd" : 4,
-                                          "SeqNumSt" : 1]
-    static let FORound2:[String : Any] = [  "AbscenceTypeEnd" : 67,
-                                            "AbscenceTypeSt" : 66,
-                                            "AbsenceDatesEnd" : 79,
-                                            "AbsenceDatesSt" : 69,
-                                            "BidTypeEnd" : 14,
-                                            "BidTypeSt" : 14,
-                                            "ChkPltEnd" : 63,
-                                            "ChkPltSt" : 63,
-                                            "EbgEnd" : 22,
-                                            "EbgSt" : 22,
-                                            "EmpIdEnd" : 29,
-                                            "EmpIdSt" : 24,
-                                            "Id" : 71,
-                                            "LcEnd" : 19,
-                                            "LcSt" : 19,
-                                            "NameEnd" : 61,
-                                            "NameSt" : 31,
-                                            "Position" : "FO",
-                                            "Round" : 2,
-                                            "SeqNumEnd" : 4,
-                                            "SeqNumSt" : 1]
+    static let FORound1:[String : Any] = ["AbscenceTypeEnd" : 75,"AbscenceTypeSt" : 74,"AbsenceDatesEnd" : 87,"AbsenceDatesSt" : 77,"BidTypeEnd" : 24,"BidTypeSt" : 24,"ChkPltEnd" : 71,"ChkPltSt" : 71,"EbgEnd" : 15,"EbgSt" : 15,"EmpIdEnd" : 35,"EmpIdSt" : 30,"Id" : 71,"LcEnd" : 28,"LcSt" : 28,"NameEnd" : 69,"NameSt" : 37,"Position" : "FO","Round" : 1,"SeqNumEnd" : 4,"SeqNumSt" : 1]
+    static let FORound2:[String : Any] = [  "AbscenceTypeEnd" : 67,"AbscenceTypeSt" : 66,"AbsenceDatesEnd" : 79,"AbsenceDatesSt" : 69,"BidTypeEnd" : 14,"BidTypeSt" : 14,"ChkPltEnd" : 63,"ChkPltSt" : 63,"EbgEnd" : 22,"EbgSt" : 22,"EmpIdEnd" : 29,"EmpIdSt" : 24,"Id" : 71,"LcEnd" : 19,"LcSt" : 19,"NameEnd" : 61,"NameSt" : 31,"Position" : "FO","Round" : 2,"SeqNumEnd" : 4,"SeqNumSt" : 1]
+    
     static let arrayDetails = [CPRound1,CPRound2,FORound1,FORound2]
     
     static func loadUserDefaults(){
@@ -434,24 +216,40 @@ class CBUtils{
         //needs code
     }
         
-    static func getMissingTripJSON(
-            year: Int,
-            month: Int,
-            round: Int,
-            base: String,
-            position: String,
-            completion: @escaping (Bool) -> Void
-        ) {
+    class func getGroundTimeBetween(reportTime: Int, releaseTime: Int) -> Int {
+        var reportTime = reportTime
+        var shouldAdd2400 = false
+
+        // Normalize times if they exceed 2400
+        if reportTime >= 2400 {
+            reportTime -= 2400
+            shouldAdd2400 = true
+        }
+
+        // Convert HHMM to minutes
+        let releaseMins = (releaseTime / 100) * 60 + (releaseTime % 100)
+        let reportMins = (reportTime / 100) * 60 + (reportTime % 100)
+
+        // Calculate the difference
+        var differenceInMinutes = reportMins - releaseMins
+
+        // Handle wrap-around to the next day
+        if differenceInMinutes < 0 {
+            differenceInMinutes += 1440
+        }
+
+        if shouldAdd2400 {
+            differenceInMinutes += 1440
+        }
+
+        return differenceInMinutes
+    }
+    
+    static func getMissingTripJSON(year: Int,month: Int,round: Int,base: String,position: String,completion: @escaping (Bool) -> Void) {
          let app = AppState.shared
         app.missingTripInfo = nil
             
-            let dict: [String: Any] = [
-                "Year": year,
-                "Month": month,
-                "Round": round,
-                "Domicile": base,
-                "Position": position
-            ]
+            let dict: [String: Any] = ["Year": year,"Month": month,"Round": round,"Domicile": base,"Position": position]
             
             guard let url = URL(string: EndPoint.shared.getScrappedMissedTrips) else {
                 completion(false)
@@ -479,10 +277,6 @@ class CBUtils{
 
             let session = URLSession(configuration: config)
             let task = session.dataTask(with: request) { data, response, error in
-                
-                if let error = error{
-                //handle error
-                }
                 
                 guard let data = data else {
                     completion(false)
@@ -563,6 +357,18 @@ class CBUtils{
         }
         let result = hours * 100 + mins
         return result
+    }
+    
+    class func convertTimeToMinutes(_ time: Int?) -> Int? {
+        guard let time = time else {
+            return nil
+        }
+        
+        let hours = time / 100
+        let minutes = time % 100
+        let totalMinutes = hours * 60 + minutes
+
+        return totalMinutes
     }
     
     static func thanksgivingDay(for year: Int) -> UInt {

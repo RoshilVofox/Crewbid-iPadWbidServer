@@ -316,6 +316,13 @@ extension BILine : Identifiable {
         }
         return orderedDays
     }
+    
+    var redEyeCount: NSNumber {
+        let allLegs = legs?.allObjects as? [BILeg] ?? []
+        let redEyeLegs = allLegs.filter { $0.info?.isRedEyeFlight == true }
+        return NSNumber(value: redEyeLegs.count)
+    }
+    
 }
 
 @objc enum BILineSortCategory : Int {
