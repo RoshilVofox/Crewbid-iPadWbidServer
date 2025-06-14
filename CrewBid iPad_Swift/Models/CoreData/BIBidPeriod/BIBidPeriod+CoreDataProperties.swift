@@ -20,7 +20,7 @@ extension BIBidPeriod {
     @NSManaged public var aWeekDays: String?
     @NSManaged public var base: String?
     @NSManaged public var baseLine: NSData?
-    @NSManaged public var bidLineNumbers: NSObject?
+    @NSManaged public var bidLineNumbers: NSArray?
     @NSManaged public var bidListLineCount: NSNumber?
     @NSManaged public var bidPackageErrorDisplayed: NSNumber?
     @NSManaged public var buddyBidder1: String?
@@ -62,7 +62,7 @@ extension BIBidPeriod {
     @NSManaged public var faVacationFilesFA2: NSObject?
     @NSManaged public var faVacationFilesFA3: NSObject?
     @NSManaged public var faVacationStatus: NSNumber?
-    @NSManaged public var filteredLineNumbers: NSObject?
+    @NSManaged public var filteredLineNumbers: NSArray?
     @NSManaged public var firstLineNumber: NSNumber?
     @NSManaged public var fWeekDays: String?
     @NSManaged public var historicSecretUser: NSNumber?

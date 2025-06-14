@@ -81,7 +81,6 @@ class CBCredentialsPageVC: BaseViewController {
             print("Session Key: \(sessionKey)")
             self.view.hideActivityIndicator()
             NotificationCenter.default.post(name: Notification.Name("ShowProgressView"), object: nil)
-
             let bidFileName = BIBidInfo.shared.bidDataFilename()
             let linesTextFileName = BIBidInfo.shared.linesTextFilename()
             print("Filename: \(bidFileName)")
@@ -281,7 +280,12 @@ class CBCredentialsPageVC: BaseViewController {
         }
         txtUserID.text = formattedUserID
         guard let empID = self.txtUserID.text else { return }
-        
+        if empID.hasPrefix("e") || empID.hasPrefix("x") {
+            let userID = String(empID.dropFirst())
+            GlobalBidInfo.shared.userid = userID
+        }else if !empID.lowercased().hasPrefix("x") && !empID.lowercased().hasPrefix("e") {
+            GlobalBidInfo.shared.userid = empID
+        }
         
         //--Login action--
         if bidAlreadyExists(){

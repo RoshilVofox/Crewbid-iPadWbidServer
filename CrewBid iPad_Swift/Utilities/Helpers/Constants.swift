@@ -388,140 +388,53 @@ var BIFilterRuleCheckstateIsNoMidVariablesKey = "isNoMid"
 
 @objc  enum BIFilterRuleCategory : Int {
     
-    case BITypeFilterRuleCategory
-    // 0
-    
-    case BIAmPmFilterRuleCategory
-    // 1
-    
-    case BIFaReserveFilterRuleCategory
-    // 2
-    
-    case BIPositionFilterRuleCategory
-    // 3
-    
-    case BIDaysOfWeekFilterRuleCategory
-    // 4
-    
-    case BITripLengthFilterRuleCategory
-    // 5
-    
-    case BIAircraftChangesFilterRuleCategory
-    // 6
-    
-    case BIAircraftTypeFilterRuleCategory
-    // 7
-    
-    case BIBlockOfDaysOffFilterRuleCategory
-    // 8
-    
-    case BIBlockTimeFilterRuleCategory
-    // 9
-    
-    case BICitiesFilterRuleCategory
-    // 10
-    
-    case BICommutesRequiredFilterRuleCategory
-    // 11
-    
-    case BICommutingFilterRuleCategory
-    // 12
-    
-    case BIDaysOfMonthFilterRuleCategory
-    // 13
-    
-    case BIDaysOffFilterRuleCategory
-    // 14
-    
-    case BIDeadheadsFilterRuleCategory
-    // 15
-    
-    case BIDutyTimeFilterRuleCategory
-    // 16
-    
-    case BIEarliestDepartureFilterRuleCategory
-    // 17
-    
-    case BILatestArrivalFilterRuleCategory
-    // 18
-    
-    case BINumLegsFilterRuleCategory
-    // 19
-    
-    case BIMaxLegsFilterRuleCategory
-    // 20
-    
-    case BIOverlapFilterRuleCategory
-    // 21
-    
-    case BIOvernightsInBaseFilterRuleCategory
-    // 22
-    
-    case BIPassesThruBaseFilterRuleCategory
-    // 23
-    
-    case BIPayFilterRuleCategory
-    // 24
-    
-    case BITafbTimeFilterRuleCategory
-    // 25
-    
-    case BINumTripsFilterRuleCategory
-    // 26
-    
-    case BIWorkDaysFilterRuleCategory
-    // 27
-    
-    case BIOvernightLengthFilterRuleCategory
-    // 28
-    
-    case BIVacationFilterRuleCategory
-    // 29
-    
-    case BIRedeyesFilterRuleCategory
-    // 30
-    
-    case BIFaVacationFilterRuleCategory
-    // 31
-    
-    case BIUserFlagFilterRuleCategory
-    // 32
-    
-    case BICommutabilityFilterRuleCategory
-    //33
-    
-    case BIOvernightCitiesBulkRuleCategory
-    //34
-    
-    case BIEtopsFilterRuleCategory
-    //35
-    
-    case BIModifiedTypeFilterCategory
-    //36
-    
-    case BIReportReleaseFilterCategory
-    //37
-    
-    case BIEtopsResFilterRuleCategory
-    //38
-    
-    case BIWorkBlockRuleCategory
-    //39
-    
-    case BIWorkBlockCountCategory
-    //40
-    case BIGTmaxFilterRuleCategory
-    //41
-    case BIGTavgFilterRuleCategory
-    //42
-    case BIOvAvgFilterRuleCategory
-    //43
-    case BI1or2OFFFilterRuleCategory
-    //44
-    case BIReserveOffDaysFilterRuleCategory
-    //45
-    case BIRedEyeTripsFilterRuleCategory
-    //46
+    case BITypeFilterRuleCategory// 0
+    case BIAmPmFilterRuleCategory// 1
+    case BIFaReserveFilterRuleCategory// 2
+    case BIPositionFilterRuleCategory    // 3
+    case BIDaysOfWeekFilterRuleCategory    // 4
+    case BITripLengthFilterRuleCategory    // 5
+    case BIAircraftChangesFilterRuleCategory    // 6
+    case BIAircraftTypeFilterRuleCategory    // 7
+    case BIBlockOfDaysOffFilterRuleCategory    // 8
+    case BIBlockTimeFilterRuleCategory    // 9
+    case BICitiesFilterRuleCategory    // 10
+    case BICommutesRequiredFilterRuleCategory    // 11
+    case BICommutingFilterRuleCategory    // 12
+    case BIDaysOfMonthFilterRuleCategory    // 13
+    case BIDaysOffFilterRuleCategory    // 14
+    case BIDeadheadsFilterRuleCategory    // 15
+    case BIDutyTimeFilterRuleCategory    // 16
+    case BIEarliestDepartureFilterRuleCategory    // 17
+    case BILatestArrivalFilterRuleCategory    // 18
+    case BINumLegsFilterRuleCategory    // 19
+    case BIMaxLegsFilterRuleCategory    // 20
+    case BIOverlapFilterRuleCategory    // 21
+    case BIOvernightsInBaseFilterRuleCategory    // 22
+    case BIPassesThruBaseFilterRuleCategory    // 23
+    case BIPayFilterRuleCategory    // 24
+    case BITafbTimeFilterRuleCategory    // 25
+    case BINumTripsFilterRuleCategory    // 26
+    case BIWorkDaysFilterRuleCategory    // 27
+    case BIOvernightLengthFilterRuleCategory    // 28
+    case BIVacationFilterRuleCategory    // 29
+    case BIRedeyesFilterRuleCategory    // 30
+    case BIFaVacationFilterRuleCategory    // 31
+    case BIUserFlagFilterRuleCategory    // 32
+    case BICommutabilityFilterRuleCategory    //33
+    case BIOvernightCitiesBulkRuleCategory    //34
+    case BIEtopsFilterRuleCategory    //35
+    case BIModifiedTypeFilterCategory    //36
+    case BIReportReleaseFilterCategory    //37
+    case BIEtopsResFilterRuleCategory    //38
+    case BIWorkBlockRuleCategory    //39
+    case BIWorkBlockCountCategory    //40
+    case BIGTmaxFilterRuleCategory    //41
+    case BIGTavgFilterRuleCategory    //42
+    case BIOvAvgFilterRuleCategory    //43
+    case BI1or2OFFFilterRuleCategory    //44
+    case BIReserveOffDaysFilterRuleCategory    //45
+    case BIRedEyeTripsFilterRuleCategory    //46
     
     func name () -> Int {
         switch self

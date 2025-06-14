@@ -1110,7 +1110,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         var sortedLines = (lines as NSArray).sortedArray(using: [
             NSSortDescriptor(key: "number", ascending: true)
         ])
-        let notBlankPredicate = NSPredicate(format: "type != %d", BILineType.BlankLineType.rawValue)
+        let notBlankPredicate = NSPredicate(format: "type != %d", BILineType.BlankLine.rawValue)
         sortedLines = (sortedLines as NSArray).filtered(using: notBlankPredicate) as? [AnyObject] ?? []
         let file = jsonData["File"] as! [String: Any]
         let toplevel = file["SWAPtimizer_CrewBid_Data"] as! [String: Any]
@@ -1157,7 +1157,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         var sortedLines = (lines as NSArray).sortedArray(using: [
             NSSortDescriptor(key: "number", ascending: true)
         ])
-        let notBlankPredicate = NSPredicate(format: "type != %d", BILineType.BlankLineType.rawValue)
+        let notBlankPredicate = NSPredicate(format: "type != %d", BILineType.BlankLine.rawValue)
         sortedLines = (sortedLines as NSArray).filtered(using: notBlankPredicate) as? [AnyObject] ?? []
         let file = jsonData["File"] as! [String: Any]
         let toplevel = file["SWAPtimizer_CrewBid_Data"] as! [String: Any]
@@ -2117,7 +2117,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         var sortedLines = (lines as NSArray).sortedArray(using: [
             NSSortDescriptor(key: "number", ascending: true)
         ])
-        let notBlankPredicate = NSPredicate(format: "type != %d", BILineType.BlankLineType.rawValue)
+        let notBlankPredicate = NSPredicate(format: "type != %d", BILineType.BlankLine.rawValue)
         sortedLines = (sortedLines as NSArray).filtered(using: notBlankPredicate) as? [AnyObject] ?? []
         
         if (sortedLines.count == vacayLines.count) {
@@ -2886,7 +2886,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         var sortedLines = (lines as NSArray).sortedArray(using: [
             NSSortDescriptor(key: "number", ascending: true)
         ])
-        let notBlankPredicate = NSPredicate(format: "type != %d", BILineType.BlankLineType.rawValue)
+        let notBlankPredicate = NSPredicate(format: "type != %d", BILineType.BlankLine.rawValue)
         sortedLines = (sortedLines as NSArray).filtered(using: notBlankPredicate) as? [AnyObject] ?? []
         
         self.round = self.bidPeriod?.round

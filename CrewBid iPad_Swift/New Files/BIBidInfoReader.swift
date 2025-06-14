@@ -24,6 +24,8 @@ protocol BIBidInfoReaderDelegate: AnyObject {
 class BIBidInfoReader{
     static let shared = BIBidInfoReader()
     
+    var isNetworkAvailable = false
+    var isSeniorityVacParsingFailed = false
     let tripFileName = "TRIPS"
     let lineFileName = "PS"
     let dataSource = GlobalBidInfo.shared
@@ -88,6 +90,7 @@ class BIBidInfoReader{
     var workBPInVac: Int = 0
     var workBP: Int = 0
     var pilotLines:[Int:Any] = [:]
+    var seniorityPositionDetails:[String:Any] = [:]
     init() {
             guard
                 dataSource.year != 0,
@@ -107,6 +110,7 @@ class BIBidInfoReader{
     func readBidData() ->Bool{
         if !self.isFABid() && self.isSecondRoundBid(){
             //MARK:  check paper bid user vacation
+//            self.checkPaperBidUserVacation()
         }
         self.initializeReadingVariables()
         var success:Bool = false
@@ -127,7 +131,7 @@ class BIBidInfoReader{
                     print("Done Reading Lines FA")
                 }
                 if success{
-//                  success = self.addDefaultFilterRules(context:dataSource.managedObjectContext)
+                  success = self.addDefaultFilterRules(context:dataSource.managedObjectContext)
                 }
                 if success{
                     if AppState.shared.isHistoricBid{
@@ -165,13 +169,13 @@ class BIBidInfoReader{
                         }
                     if let lines = self.bidPeriod?.lines?.allObjects as? [BILine] {
                         for line in lines {
-//                            self.updateEndDateForRedEyeTrips(line)
+                            self.updateEndDateForRedEyeTrips(line: line)
                             self.initRigRelatedProperties(for: line, isReprocessing: false)
                         }
                     }
                 }
                 if success{
-//                    self.addDefaultFilterRules(self.moc)
+                    success = self.addDefaultFilterRules(context: dataSource.managedObjectContext)
                 }
                 
                 if success{
@@ -183,14 +187,545 @@ class BIBidInfoReader{
                 }
                 if success{
                     //MARK: needs code- seniority
+//                    if !self.seniorityPositionDetails.isEmpty{
+//                        self.parseSeniorityWithNewFormat(dictDetails: self.seniorityPositionDetails)
+//                    }else{
+//                        let seniorityDefaultTableValues = UserDefaults.standard.array(forKey: KCBDefaultSeniorityListTableDBValues)!
+//                        for i in 0..<seniorityDefaultTableValues.count{
+//                            let dict = seniorityDefaultTableValues[i] as! [String: Any]
+//                            let position = self.dataSource.position.shortName
+//                            if dict["Position"] as! String == position && dict["Round"] as! Int == self.dataSource.round{
+//                                self.seniorityPositionDetails = dict
+//                                break
+//                            }
+//                        }
+//                        if self.isNetworkAvailable{
+//                            self.parseSeniorityWithNewFormat(dictDetails: self.seniorityPositionDetails)
+//                        }
+//                        if self.isSeniorityVacParsingFailed{
+//                            self.parseSeniorityWithNewFormat(dictDetails: self.seniorityPositionDetails)
+//                        }
+//                    }
+                }
+            }
+        if success{
+            //MARK: calculate work block
+            
+        }
+        
+        return success
+    }
+    
+    private func parseSeniorityWithNewFormat(dictDetails:[String:Any]){
+        let empNumEndPos = dictDetails["EmpIdEnd"] as! Int
+        let vacStartPos = dictDetails["AbsenceDatesSt"] as! Int
+        let vacEndPos = dictDetails["AbsenceDatesEnd"] as! Int
+        let vacTypeStartPos = dictDetails["AbscenceTypeSt"] as! Int
+        let EBGTypeStartPos = dictDetails["EbgSt"] as! Int
+        
+        let coverLetter = self.bidPeriod?.textFile(withName: "Seniority List")
+        var emp = 0
+        if AppState.shared.isSenioritySecretOn{
+            emp = Int(self.defaultEmployeeNumber!)!
+        }else{
+            emp = Int(self.dataSource.userid)!
+        }
+        
+        let secretSwitch = String(format: "%@", UserDefaults.standard.string(forKey: "SecretVDuserName") ?? "")
+        if secretSwitch.count > 1{
+            emp = Int("\(UserDefaults.standard.value(forKey: "SecretVDuserName")!)")!
+        }
+        let empString = String(emp)
+        let regex = try! NSRegularExpression(pattern: "^0*")
+        let range = regex.rangeOfFirstMatch(in: empString, options: [], range: NSRange(location: 0, length: empString.utf16.count))
+        let nsrange = NSRange(location: 0, length: empString.utf16.count)
+        let str = (empString as NSString).replacingCharacters(in: range, with: "")
+        let employee = Int(str)!
+        let employeeNumber = NSNumber(value: employee)
+        let text = coverLetter?.text
+        var stringToScan = ""
+        var scanner = Scanner(string: text!)
+        let numCharSet = CharacterSet(charactersIn: "0123456789")
+        let dateRangeCharSet = CharacterSet(charactersIn: "/-;")
+        let letterCharSet = CharacterSet.letters
+        
+        // Set the hide vacation user default to NO each time you DL a new bid pack
+        
+        UserDefaults.standard.set(false, forKey: kCBHideVacationKey)
+        if self.isFABid(){
+            stringToScan = String(format: " %ld", employeeNumber.intValue)
+        }
+        // Scan all characters before employee number plus a space
+        _ = scanner.scanUpToString(stringToScan)
+        if scanner.isAtEnd{
+            return
+        }else{
+            var eidLoc = scanner.currentIndex
+            var senNumber:String? = nil
+            if !self.isFABid(){
+                var oldLoc = scanner.currentIndex
+                _ = scanner.scanCharacters(from: numCharSet)
+                if scanner.isAtEnd || scanner.currentIndex == oldLoc{
+                    return
+                }
+                oldLoc = scanner.currentIndex
+                let EBGPosition = (empNumEndPos - EBGTypeStartPos) + 1
+                var currentOffset = text!.distance(from: text!.startIndex, to: scanner.currentIndex)
+                let ebgOffset = currentOffset - EBGPosition
+
+                if ebgOffset >= 0 && ebgOffset < text!.count {
+                    let ebgIndex = text!.index(text!.startIndex, offsetBy: ebgOffset)
+                    let EBGCharacter = String(text![ebgIndex])
+
+                    if EBGCharacter == "Y" {
+                        bidPeriod?.containsEBG = true
+                    }
+                }
+                if self.bidPeriod?.round?.intValue == 1 {
+                    let paperBidCount = self.calculatePaperBidCountAboveCurrentUser(from: text!)
+                    self.bidPeriod?.paperBidCount = paperBidCount as NSNumber
+                }
+                
+                let lenFileInfo = text!.length
+                var lineInfo = ""
+                var lineRange = NSRange(location: 0, length: 0)
+                var seniorityEmployeeScanStarted = false
+                
+                while lineRange.location < lenFileInfo{
+                    lineRange = (text! as NSString).lineRange(for: lineRange)
+                    lineInfo = (text!as NSString).substring(with: lineRange)
+                
+                    if scanner.scanString("SQ") != nil{
+                        seniorityEmployeeScanStarted = true
+                    }
+                    lineRange.location = lineRange.location + lineRange.length
+                    lineRange.length = 0
+                }
+                let offset = text!.distance(from: text!.startIndex, to: oldLoc) - empNumEndPos
+                scanner.currentIndex = text!.index(text!.startIndex, offsetBy: offset)
+                let seqLocation = text!.distance(from: text!.startIndex, to: scanner.currentIndex) - 1
+                senNumber = scanner.scanCharacters(from: numCharSet)!
+                if senNumber != nil{
+                    self.bidPeriod?.seniorityNumber = Int(senNumber!) as? NSNumber
+                }else {
+                    return
+                }
+                let vacEndPosition = seqLocation + (vacEndPos + 2)
+                let vacationStartPosition = seqLocation + vacStartPos
+                
+                //VacationType start position
+                let vacTypeStartPosition = seqLocation + vacTypeStartPos
+                let vacScanLength = vacEndPosition - vacTypeStartPosition
+                var vacScanStart = 0
+                let vacTypeRangeToSearch = NSRange(location: vacTypeStartPosition, length: 2)
+                let vacationType = (text! as NSString).substring(with: vacTypeRangeToSearch)
+                if self.dataSource.managedObjectContext.hasChanges {
+                    do{
+                        try self.dataSource.managedObjectContext.save()
+                    }catch{
+                        print("Error saving context in parseSeniorityWithNewFormat(): \(error.localizedDescription)")
+                    }
+                }
+                var myRegex = String(format: "%@", vacationType)
+                scanner = Scanner(string: text!)
+                _ = scanner.scanUpToString(stringToScan)
+                eidLoc = scanner.currentIndex
+                oldLoc = scanner.currentIndex
+                _ = scanner.scanCharacters(from: numCharSet)
+                if scanner.isAtEnd || scanner.currentIndex == oldLoc {
+                    return
+                }
+                oldLoc = scanner.currentIndex
+                
+                let employeeNoEndToVacationTypeStart = vacTypeStartPosition - (text!.distance(from: text!.startIndex, to: oldLoc) + 1)
+                vacScanStart = (text!.distance(from: text!.startIndex, to: oldLoc)) + employeeNoEndToVacationTypeStart
+                var vacRangeToSearch = NSRange(location: vacScanStart, length: vacScanLength)
+                var arrayVacations:[String] = []
+                var newSeniority:String?
+                scanner.currentIndex = text!.index(text!.startIndex, offsetBy: vacScanStart)
+                newSeniority = scanner.scanCharacters(from: numCharSet)!
+                if scanner.isAtEnd{
+                    // No vacation for that EID
+                    self.bidPeriod?.containsVacay = false
+                    return
+                }
+                if newSeniority != nil {
+                    // No vacation for that EID
+                    self.bidPeriod?.containsVacay = false
+                    return
+                }
+                _ = scanner.scanUpToString("-")
+                currentOffset = text!.distance(from: text!.startIndex, to: scanner.currentIndex)
+                let adjustedOffset = max(0, currentOffset - 9) // Prevent negative value
+                vacRangeToSearch.location = adjustedOffset
+                vacRangeToSearch.length = vacScanLength
+                if vacRangeToSearch.location + vacRangeToSearch.length > text!.length {
+                    self.bidPeriod?.containsVacay = false
+                    return
+                }
+                var vacation = (text! as NSString).substring(with: vacRangeToSearch) as NSString
+                scanner.currentIndex = text!.index(text!.startIndex, offsetBy: vacRangeToSearch.location, limitedBy: text!.endIndex)!
+                if vacation.contains(" VA"){
+                    myRegex = "VA"
+                    arrayVacations.append(vacation as String)
+                }else if vacation.contains("CFV"){
+                    myRegex = "CFV "
+                    arrayVacations.append(vacation as String)
+                }else if vacation.contains("FV"){
+                    myRegex = "FV "
+                    arrayVacations.append(vacation as String)
+                }
+                
+                if vacRangeToSearch.location + vacRangeToSearch.length <= text!.length {
+                    let regex = try! NSRegularExpression(pattern: myRegex)
+                    let searchRange = NSRange(location: vacRangeToSearch.location, length: vacRangeToSearch.length)
+                    let rangeOfFirstVacaysds = regex.rangeOfFirstMatch(in: text!, options: [], range: searchRange)
+                    if rangeOfFirstVacaysds.location == NSNotFound{
+                        if self.isFABid(){
+                            self.bidPeriod?.containsVacay = false
+                            return
+                        }
+                    }
+                }
+                
+                while (newSeniority == nil){
+                    // If it's a pilot bid, check to see if the vacay is on the next line
+                    let seniorityLocNextLine = text!.index(scanner.currentIndex, offsetBy: vacScanLength)
+                    scanner.currentIndex = seniorityLocNextLine
+                    let newSeniority = scanner.scanCharacters(from: numCharSet)
+                    if scanner.isAtEnd{
+                        break
+                    }
+                    if newSeniority != nil{
+                        // No vacation
+                        break
+                    }
                     
+                    _ = scanner.scanUpToString("-")
+                    currentOffset = text!.distance(from: text!.startIndex, to: scanner.currentIndex)
+                    let adjustedOffset = max(0, currentOffset - 9) // Prevent negative value
+                    vacRangeToSearch.location = adjustedOffset
+                    vacRangeToSearch.length = vacScanLength
+                    if vacRangeToSearch.location + vacRangeToSearch.length > text!.length{
+                        break
+                    }
+                    
+                    vacation = (text! as NSString).substring(with: vacRangeToSearch) as NSString
+                    scanner.currentIndex = text!.index(text!.startIndex, offsetBy: vacRangeToSearch.location, limitedBy: text!.endIndex)!
+                    if vacation.contains(" VA") && vacation.contains("-"){
+                        myRegex = "VA "
+                        arrayVacations.append(vacation as String)
+                    }else if vacation.contains("CFV") && vacation.contains("-"){
+                        myRegex = "CFV "
+                        arrayVacations.append(vacation as String)
+                    }else if vacation.contains(" FV") && vacation.contains("-"){
+                        myRegex = "FV "
+                        arrayVacations.append(vacation as String)
+                    }
                 }
-                if success{
-                    //MARK: calculate workblock details
+                
+                var vaCount = 0
+                if myRegex == "VA " || myRegex == "FV " || myRegex == "CFV "{
+                    for i in 0..<arrayVacations.count{
+                        let vacayRangeToSearch1 = NSRange(location: 0, length: arrayVacations[i].length)
+                        let subScanner = Scanner(string: arrayVacations[i])
+                        if myRegex == "CFV "{
+                            myRegex = (arrayVacations[i] as NSString).substring(with: NSRange(location: 0, length: 4))
+                        }else{
+                            myRegex = (arrayVacations[i] as NSString).substring(with: NSRange(location: 0, length: 3))
+                        }
+                        let rangeOfFirstVacay = (arrayVacations[i] as NSString).range(of: myRegex, range: vacayRangeToSearch1)
+                        if rangeOfFirstVacay.location != NSNotFound {
+                            vaCount += 1
+                            if let rangeStart = Range(rangeOfFirstVacay, in: text!) {
+                                let newLocation = text!.index(rangeStart.lowerBound, offsetBy: 3)
+                                subScanner.currentIndex = newLocation
+                            }
+                            var startMonth:String?
+                            var startDay:String?
+                            var endMonth:String?
+                            var endDay:String?
+                            
+                            var oldLoc = subScanner.currentIndex
+                            startDay = subScanner.scanCharacters(from: numCharSet)
+                            if subScanner.isAtEnd || subScanner.currentIndex == oldLoc {
+                                return
+                            }
+                            oldLoc = subScanner.currentIndex
+                            
+                            let months = subScanner.scanCharacters(from: letterCharSet)
+                            
+                            startMonth = String(format: "%d", self.calendarData.monthNumber(from: months!)!)
+                            
+                            // Scan the "/"
+                            _ = subScanner.scanCharacters(from: dateRangeCharSet)
+                            if subScanner.isAtEnd || subScanner.currentIndex == oldLoc {
+                                return
+                            }
+                            
+                            oldLoc = subScanner.currentIndex
+                            
+                            endDay = subScanner.scanCharacters(from: numCharSet)
+                            if subScanner.isAtEnd || subScanner.currentIndex == oldLoc {
+                                return
+                            }
+                            
+                        
+                            let endMonths = subScanner.scanCharacters(from: letterCharSet)
+                            
+                            oldLoc = subScanner.currentIndex
+                            
+                            endMonth = String(format: "%d", self.calendarData.monthNumber(from: endMonths!)!)
+                            eidLoc = oldLoc
+                            
+                            // Create the dates
+                            let cal = self.calendarData.bidPeriodCalendar()
+                            var comps = DateComponents()
+                            comps.day = Int(startDay!)
+                            comps.month = Int(startMonth!)
+                            comps.hour = 12
+                            comps.year = self.bidPeriod?.month?.intValue == 1 && Int(startMonth!) == 12 ? self.bidPeriod!.year!.intValue - 1 : self.bidPeriod?.year?.intValue
+                            
+                            let startDate = cal!.date(from: comps)!
+                            
+                            comps.day = Int(endDay!)
+                            comps.month = Int(endMonth!)
+                            comps.year = self.bidPeriod?.month?.intValue == 12 && Int(endMonth!) == 1 ? self.bidPeriod!.year!.intValue + 1 : self.bidPeriod?.year?.intValue
+                            
+                            let endDate = cal!.date(from: comps)!
+                            
+                            // Save Vacation in Vacations Entity
+                            let vacay = BIVacation(context: self.dataSource.managedObjectContext)
+                            vacay.bidPeriod = self.bidPeriod
+                            vacay.startDate = startDate
+                            vacay.endDate = endDate
+                            vacay.vacationType = myRegex.trimmingCharacters(in: .whitespacesAndNewlines)
+                            
+                            // Save Vacation in VacationArrayFromServer Entity
+                            
+                            let vacayFS = VacationArrayFromServer(context: self.dataSource.managedObjectContext)
+                            vacayFS.bidPeriod = self.bidPeriod
+                            vacayFS.startDate = startDate
+                            vacayFS.endDate = endDate
+                            vacayFS.vacationType = myRegex.trimmingCharacters(in: .whitespacesAndNewlines)
+                            
+                            let length = self.calendarData.daysBetweenDate(fromDateTime: startDate, toDateTime: endDate) + 1
+                            vacay.length = length as NSNumber
+                            self.bidPeriod?.containsVacay = true
+                            self.bidPeriod?.seniorityVacayAvailable = true
+                            
+                            if self.dataSource.managedObjectContext.hasChanges{
+                                do{
+                                    try self.dataSource.managedObjectContext.save()
+                                }catch{
+                                    print("Error saving context in parseSeniorityWithNewFormat: \(error.localizedDescription)")
+                                }
+                            }
+                        }
+                    }
+                }else{
+                    arrayVacations.removeAll()
                 }
-                if success{
-                    print("Done Reading Lines")
+                
+                if arrayVacations.count > 0 {
+                    self.bidPeriod?.containsVacay = false
+                    return
                 }
+                
+                if vaCount == 0 {
+                    self.bidPeriod?.containsVacay = false
+                    return
+                }else{
+                    self.bidPeriod?.containsVacay = true
+                    self.bidPeriod?.seniorityVacayAvailable = true
+                }
+                
+                if self.dataSource.managedObjectContext.hasChanges{
+                    do{
+                        try self.dataSource.managedObjectContext.save()
+                    }catch{
+                        print("Error saving context in parseSeniorityWithNewFormat: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+    
+    private func calculatePaperBidCountAboveCurrentUser(from text: String) -> Int {
+        let bidTypeStartPosition = 24 // 'P' position in each line
+        var pCount = 0
+        var seniorityEmployeeScanStarted = false
+
+        // Try to find the current user's employee number
+        let empNumber = self.dataSource.employeeNumber
+        let rangeToUser = text.range(of: empNumber)!
+
+        // Scan only the text before the employee number
+        let scanString = String(text[..<rangeToUser.lowerBound])
+        let lines = scanString.components(separatedBy: .newlines)
+        
+        for line in lines {
+            if seniorityEmployeeScanStarted {
+                if line.count >= bidTypeStartPosition {
+                    let index = line.index(line.startIndex, offsetBy: bidTypeStartPosition - 1)
+                    let bidTypeChar = line[index]
+                    if bidTypeChar == "P" {
+                        pCount += 1
+                    }
+                }
+            }
+
+            if line.hasPrefix("SQ") {
+                seniorityEmployeeScanStarted = true
+            }
+        }
+
+        // Check current user line (the line containing the emp number)
+        let remainingLines = text.components(separatedBy: .newlines)
+        if let currentLine = remainingLines.first(where: { $0.contains(empNumber) }),
+           currentLine.count >= bidTypeStartPosition {
+            let index = currentLine.index(currentLine.startIndex, offsetBy: bidTypeStartPosition - 1)
+            let bidTypeChar = currentLine[index]
+            if bidTypeChar == "P" {
+                pCount -= 1
+            }
+        }
+
+        return pCount
+    }
+    
+    
+    private func checkPaperBidUserVacation(){
+        var dictDetails: [String: Any] = [:]
+        let rawEmpNum = self.dataSource.employeeNumber
+        let cleanedEmpNum = rawEmpNum.replacingOccurrences(of: "x", with: "").trimmingCharacters(in: CharacterSet.symbols)
+        let empNum = Int(cleanedEmpNum)
+
+        dictDetails["EmpNum"] = empNum
+        dictDetails["Base"] = self.dataSource.base
+        dictDetails["Position"] = self.dataSource.position.shortName
+        dictDetails["Month"] = self.dataSource.month
+        dictDetails["Year"] = self.dataSource.year
+        dictDetails["Round"] = 2
+        //needs code
+    }
+    
+
+    
+    private func addDefaultFilterRules(context: NSManagedObjectContext) -> Bool{
+        var success = true
+        // Filter rule to allow hard lines only (no reserve or blank lines).
+        // For now, allow all line types.
+        var set: Set<Int> = []
+        var rule = BIFilterRule(context: context)
+        rule.category = BIFilterRuleCategory.BITypeFilterRuleCategory.rawValue as NSNumber
+        rule.type = BITypeFilterRuleType.BITypeCompoundType.rawValue as NSNumber
+        
+        if self.isFABid(){
+            if self.isFirstRoundBid(){
+                if self.bidPeriod!.isEtopsLinesContainsInBid == true{
+                    set = [BILineType.HardConUS.rawValue, BILineType.HardNonConUS.rawValue, BILineType.NonEtopsConUS.rawValue, BILineType.NonEtopsNonConUS.rawValue, BILineType.EtopsFAFirstRound.rawValue]
+                }else{
+                    set = [BILineType.HardConUS.rawValue, BILineType.HardNonConUS.rawValue]
+                }
+            }else{
+                //FA 2nd round
+                if self.bidPeriod!.isEtopsLinesContainsInBid == true{
+                    set = [BILineType.HardConUS.rawValue, BILineType.HardNonConUS.rawValue, BILineType.ReserveLine.rawValue, BILineType.NonEtopsReserve.rawValue, BILineType.NonReserveEtops.rawValue, BILineType.NonEtopsConUS.rawValue, BILineType.NonEtopsNonConUS.rawValue]
+                }else{
+                    set = [BILineType.HardConUS.rawValue, BILineType.HardNonConUS.rawValue, BILineType.ReserveLine.rawValue]
+                }
+            }
+        }else{ // is Pilot Bid
+            if self.isFirstRoundBid(){
+                if self.bidPeriod!.isEtopsLinesContainsInBid == true{
+                    set = [BILineType.HardConUS.rawValue, BILineType.HardNonConUS.rawValue, BILineType.ReserveLine.rawValue, BILineType.NonEtopsConUS.rawValue, BILineType.NonEtopsNonConUS.rawValue, BILineType.NonEtopsReserve.rawValue, BILineType.BlankLine.rawValue, BILineType.MixedLine.rawValue, BILineType.NonReserveEtops.rawValue, BILineType.EtopsReserve.rawValue]
+                }else{
+                    set = [BILineType.HardConUS.rawValue, BILineType.HardNonConUS.rawValue, BILineType.ReserveLine.rawValue, BILineType.BlankLine.rawValue, BILineType.MixedLine.rawValue]
+                }
+            }else{//Pilot 2nd round
+                if self.isFirstRoundBid(){
+                    set = [BILineType.HardLine.rawValue, BILineType.MixedLine.rawValue, BILineType.ReserveLine.rawValue, BILineType.NonEtopsHard.rawValue, BILineType.NonEtopsMixed.rawValue, BILineType.NonEtopsReserve.rawValue, BILineType.NonReserveEtops.rawValue]
+                }else{
+                    set = [BILineType.HardLine.rawValue, BILineType.MixedLine.rawValue, BILineType.ReserveLine.rawValue]
+                }
+            }
+            
+        }
+        rule.variables = ["SET": set]
+        
+        // Set Etops Filter rule
+        rule = BIFilterRule(context: context)
+        rule.category = BIFilterRuleCategory.BIEtopsFilterRuleCategory.rawValue as NSNumber
+        let etopsOn = true
+        
+        rule.variables = ["ETOPS_ON": etopsOn]
+        
+        // Set Etops Reserve Filter rule
+        rule = BIFilterRule(context: context)
+        rule.category = BIFilterRuleCategory.BIEtopsFilterRuleCategory.rawValue as NSNumber
+        let etopsResOn = true
+        
+        rule.variables = ["ETOPSRES_ON": etopsResOn]
+        
+        // Filter rule to allow both AM and PM lines.
+        rule = BIFilterRule(context: context)
+        rule.category = BIFilterRuleCategory.BIAmPmFilterRuleCategory.rawValue as NSNumber
+        rule.type = BIAmPmFilterRuleType.BIAmPmCompoundType.rawValue as NSNumber
+        
+        set = [BILineAMPM.AMLine.rawValue, BILineAMPM.PMLine.rawValue, BILineAMPM.MixedAMPMLine.rawValue, BILineAMPM.BlankAMPMLine.rawValue, BILineAMPM.RedEyeAMPMLine.rawValue]
+        rule.variables = ["SET": set]
+        
+        // Filter rule for Flight Attendant Round 2 bidding Reserve line Types
+        if self.isFABid() && self.isSecondRoundBid(){
+            rule = BIFilterRule(context: context)
+            rule.category = BIFilterRuleCategory.BIFaReserveFilterRuleCategory.rawValue as NSNumber
+            set = [BIFaReserveLineType.SnrAMres.rawValue, BIFaReserveLineType.SnrPMres.rawValue, BIFaReserveLineType.JnrAMres.rawValue, BIFaReserveLineType.JnrPMres.rawValue, BIFaReserveLineType.JnrLateRes.rawValue, BIFaReserveLineType.NoType.rawValue]
+            
+            rule.variables = ["SET": set]
+        }
+        
+        // Filter rule to allow Flight Attendant Positions A,B,C,D lines.
+        if self.isFABid(){
+            rule = BIFilterRule(context: context)
+            rule.category = BIFilterRuleCategory.BIPositionFilterRuleCategory.rawValue as NSNumber
+            rule.type = BIPositionFilterRuleType.BIPositionCompoundType.rawValue as NSNumber
+            set = [BIFaPosition.FaPositionA.rawValue, BIFaPosition.FaPositionB.rawValue, BIFaPosition.FaPositionC.rawValue, BIFaPosition.FaPositionD.rawValue, BIFaPosition.FaPositionMultiple.rawValue, BIFaPosition.FaPositionNA.rawValue]
+            rule.variables = ["SET": set]
+        }
+        // Filter rule to allow weekdays only (Mon-Fri, but no Sat or Sun).
+        // For now, allow all days of week.
+        rule = BIFilterRule(context: context)
+        rule.category = BIFilterRuleCategory.BIDaysOfWeekFilterRuleCategory.rawValue as NSNumber
+        rule.type = BIWeekdaysFilterRuleType.BIWeekdaysCompoundType.rawValue as NSNumber
+        let weekdayBits = 0
+        rule.variables = ["WEEKDAY_BITS": weekdayBits]
+        
+        // Filter rule to allow turns, two-day trips, three-day trips, but no
+        // four-day trips.
+        // For now, allow all trip lengths.
+        rule = BIFilterRule(context: context)
+        rule.category = BIFilterRuleCategory.BITripLengthFilterRuleCategory.rawValue as NSNumber
+        rule.type = BITripLengthFilterRuleType.BITripLengthCompoundType.rawValue as NSNumber
+        let turnsOn = true
+        let twodaysOn = true
+        let threedaysOn = true
+        let fourdaysOn = true
+        rule.variables = ["TURNS_ON": turnsOn, "TWO_DAYS_ON": twodaysOn, "THREE_DAYS_ON": threedaysOn, "FOUR_DAYS_ON": fourdaysOn]
+        
+        // Set bid period filtered and bid line numbers.
+        let sortDescriptor = NSSortDescriptor(key: "number", ascending: true)
+        let sortedLines = NSArray(array: self.bidPeriod!.lines!.allObjects).sortedArray(using: [sortDescriptor]) as NSArray
+        self.bidPeriod?.filteredLineNumbers = sortedLines.value(forKey: "number") as? NSArray
+        self.bidPeriod?.bidLineNumbers = []
+        
+        if context.hasChanges {
+            do{
+                try context.save()
+            }catch{
+                print("Error saving context in addDefaultFilterRules(): \(error.localizedDescription)")
+                success = false
+            }
         }
         return success
     }
@@ -226,11 +761,10 @@ class BIBidInfoReader{
             print("Error reading files: \(error.localizedDescription)")
         }
         
-        
+        self.defaultEmployeeNumber = self.dataSource.employeeNumber
         var isHistoric: NSNumber = 0
         isHistoric = AppState.shared.isHistoricBid as NSNumber
         self.bidPeriod = BIBidPeriod(context: dataSource.managedObjectContext)
-//        self.bidPeriod = BIBidPeriod(context: self.moc)
         self.bidPeriod?.isHistoric = isHistoric as NSNumber
         self.bidPeriod?.year = self.dataSource.year as NSNumber
         self.bidPeriod?.base = self.dataSource.base
@@ -570,19 +1104,19 @@ class BIBidInfoReader{
                         switch info.character(at: typeCharIndex){
                         case "H":
                             if self.bidPeriod?.isFirstRoundBid() == true{
-                                line?.type = BILineType.LineTypeHardConus.rawValue as NSNumber
+                                line?.type = BILineType.HardConUS.rawValue as NSNumber
                             }else{
-                                line?.type = BILineType.HardLineType.rawValue as NSNumber
+                                line?.type = BILineType.HardLine.rawValue as NSNumber
                             }
                             break
                         case "R":
-                            line?.type = BILineType.ReserveLineType.rawValue as NSNumber
+                            line?.type = BILineType.ReserveLine.rawValue as NSNumber
                             break
                         case " ":
-                            line?.type = BILineType.BlankLineType.rawValue as NSNumber
+                            line?.type = BILineType.BlankLine.rawValue as NSNumber
                             break
                         case "M":
-                            line?.type = BILineType.MixedLineType.rawValue as NSNumber
+                            line?.type = BILineType.MixedLine.rawValue as NSNumber
                             break
                         default:
                             //handle error
@@ -597,14 +1131,14 @@ class BIBidInfoReader{
                             let EtopsStr = String(c)
                             if EtopsStr == "E"{
                                 line?.isETOPS = true
-                                if line?.type?.intValue == BILineType.ReserveLineType.rawValue{
+                                if line?.type?.intValue == BILineType.ReserveLine.rawValue{
                                     line?.isETOPSRES = true
                                     line?.isETOPS = false
                                 }else{
                                     line?.isETOPSRES = false
                                 }
                                 // If line type is mixedlinetype(contains both normal and reserve trips) then we need to consider the lines as Etops Reserve line
-                                if line?.type?.intValue == BILineType.MixedLineType.rawValue{
+                                if line?.type?.intValue == BILineType.MixedLine.rawValue{
                                     line?.isETOPSRES = true
                                     line?.isETOPS = false
                                 }
@@ -620,33 +1154,33 @@ class BIBidInfoReader{
                         if self.bidPeriod?.isEtopsLinesContainsInBid?.intValue == 1 {
                             
                             // Non-reserve ETOPS
-                            if line?.isETOPS?.intValue == 1, line?.type?.intValue != BILineType.ReserveLineType.rawValue {
-                                line?.type = NSNumber(value: BILineType.LineTypeNonReserveEtops.rawValue)
+                            if line?.isETOPS?.intValue == 1, line?.type?.intValue != BILineType.ReserveLine.rawValue {
+                                line?.type = NSNumber(value: BILineType.NonReserveEtops.rawValue)
                             }
                             
                             // Non-ETOPS Reserve
-                            if line?.type?.intValue == BILineType.ReserveLineType.rawValue, line?.isETOPS?.intValue == 0, line?.isETOPSRES?.intValue == 0 {
-                                line?.type = NSNumber(value: BILineType.LineTypeNonEtopsReserve.rawValue)
+                            if line?.type?.intValue == BILineType.ReserveLine.rawValue, line?.isETOPS?.intValue == 0, line?.isETOPSRES?.intValue == 0 {
+                                line?.type = NSNumber(value: BILineType.NonEtopsReserve.rawValue)
                             }
                             
                             // ETOPS Reserve
-                            if line?.type?.intValue == BILineType.ReserveLineType.rawValue, line?.isETOPS?.intValue == 1 {
-                                line?.type = NSNumber(value: BILineType.LineTypeEtopsReserve.rawValue)
+                            if line?.type?.intValue == BILineType.ReserveLine.rawValue, line?.isETOPS?.intValue == 1 {
+                                line?.type = NSNumber(value: BILineType.EtopsReserve.rawValue)
                             }
                             
                             // Non-ETOPS Hard CONUS
-                            if line?.type?.intValue == BILineType.LineTypeHardConus.rawValue, line?.isETOPS?.intValue == 0 {
-                                line?.type = NSNumber(value: BILineType.LineTypeNonEtopsConUs.rawValue)
+                            if line?.type?.intValue == BILineType.HardConUS.rawValue, line?.isETOPS?.intValue == 0 {
+                                line?.type = NSNumber(value: BILineType.NonEtopsConUS.rawValue)
                             }
                             
                             // Non-ETOPS Hard (2nd round)
-                            if self.bidPeriod?.isSecondRoundBid() == true, line?.type?.intValue == BILineType.HardLineType.rawValue, line?.isETOPS?.intValue == 0 {
-                                line?.type = NSNumber(value: BILineType.LineTypeNonEtopsHard.rawValue)
+                            if self.bidPeriod?.isSecondRoundBid() == true, line?.type?.intValue == BILineType.HardLine.rawValue, line?.isETOPS?.intValue == 0 {
+                                line?.type = NSNumber(value: BILineType.NonEtopsHard.rawValue)
                             }
                             
                             // Non-ETOPS Mixed (2nd round)
-                            if self.bidPeriod?.isSecondRoundBid() == true, line?.type?.intValue == BILineType.MixedLineType.rawValue, line?.isETOPS?.intValue == 0 {
-                                line?.type = NSNumber(value: BILineType.LineTypeNonEtopsMixed.rawValue)
+                            if self.bidPeriod?.isSecondRoundBid() == true, line?.type?.intValue == BILineType.MixedLine.rawValue, line?.isETOPS?.intValue == 0 {
+                                line?.type = NSNumber(value: BILineType.NonEtopsMixed.rawValue)
                             }
                         }
                         
@@ -1140,7 +1674,7 @@ class BIBidInfoReader{
                 }
                 
                 else if lineFile.hasPrefix("T"){
-                    line?.type = BILineType.LineTypeHardConus.name() as NSNumber
+                    line?.type = BILineType.HardConUS.name() as NSNumber
                     
                     //Read trips
                     if !self.readTripsForLine(line: line!, record: lineFile, isReserve: false){
@@ -1149,7 +1683,7 @@ class BIBidInfoReader{
                         return false
                     }
                 }else if lineFile.hasPrefix("A"){
-                    line?.type = BILineType.ReserveLineType.name() as NSNumber
+                    line?.type = BILineType.ReserveLine.name() as NSNumber
                     //Read trips
                     if !self.readTripsForLine(line: line!, record: lineFile, isReserve: true){
                         //handle error
@@ -1187,7 +1721,7 @@ class BIBidInfoReader{
                             let arriveCity = (legInfo.arriveCity)!
                             let isIntlCity = self.intlCities[arriveCity]
                             if isIntlCity != nil{
-                                line.type = BILineType.LineTypeHardNonConus.rawValue as NSNumber
+                                line.type = BILineType.HardNonConUS.rawValue as NSNumber
                             }
                             if legInfo.isEtopsFlight?.boolValue == true{
                                 line.isETOPS = true
@@ -1201,20 +1735,20 @@ class BIBidInfoReader{
                     }
                 }
                 if self.bidPeriod?.isEtopsLinesContainsInBid?.intValue == 1{
-                    if (self.bidPeriod?.isSecondRoundBid())! && line.isETOPS?.intValue == 1 && !(line.type?.intValue == BILineType.ReserveLineType.rawValue){
-                        line.type = BILineType.LineTypeNonReserveEtops.rawValue as NSNumber
+                    if (self.bidPeriod?.isSecondRoundBid())! && line.isETOPS?.intValue == 1 && !(line.type?.intValue == BILineType.ReserveLine.rawValue){
+                        line.type = BILineType.NonReserveEtops.rawValue as NSNumber
                     }
-                    if (self.bidPeriod?.isSecondRoundBid())! && line.type?.intValue == BILineType.ReserveLineType.rawValue && line.isETOPS?.intValue == 0{
-                        line.type = BILineType.LineTypeNonEtopsReserve.rawValue as NSNumber
+                    if (self.bidPeriod?.isSecondRoundBid())! && line.type?.intValue == BILineType.ReserveLine.rawValue && line.isETOPS?.intValue == 0{
+                        line.type = BILineType.NonEtopsReserve.rawValue as NSNumber
                     }
-                    if line.type?.intValue == BILineType.LineTypeHardConus.rawValue && line.isETOPS?.intValue == 0{
-                        line.type = BILineType.LineTypeNonEtopsConUs.rawValue as NSNumber
+                    if line.type?.intValue == BILineType.HardConUS.rawValue && line.isETOPS?.intValue == 0{
+                        line.type = BILineType.NonEtopsConUS.rawValue as NSNumber
                     }
-                    if line.type?.intValue == BILineType.LineTypeHardNonConus.rawValue && line.isETOPS?.intValue == 0{
-                        line.type = BILineType.LineTypeNonEtopsNonConUs.rawValue as NSNumber
+                    if line.type?.intValue == BILineType.HardNonConUS.rawValue && line.isETOPS?.intValue == 0{
+                        line.type = BILineType.NonEtopsNonConUS.rawValue as NSNumber
                     }
                     if (self.bidPeriod?.isFirstRoundBid())! && line.isETOPS?.intValue == 1{
-                        line.type = BILineType.LineTypeEtopsFAFirstRound.rawValue as NSNumber
+                        line.type = BILineType.EtopsFAFirstRound.rawValue as NSNumber
                     }
                 }
 
@@ -1569,7 +2103,7 @@ class BIBidInfoReader{
                     // Passes through base
                     let arriveCity = legInfo.arriveCity
                     
-                    if !(line.type?.intValue == BILineType.ReserveLineType.rawValue) && arriveCity == base{
+                    if !(line.type?.intValue == BILineType.ReserveLine.rawValue) && arriveCity == base{
                         passesThruBase += 1
                         if dayCount > 0 && dayCount < (tripOrderedDays.count - 1){
                             midTripPTBs += 1
@@ -1585,23 +2119,23 @@ class BIBidInfoReader{
                         containsNonConUSLeg = true
                         nonConUSLegs += 1
                         if self.bidPeriod!.isFirstRoundBid(){
-                            line.type = BILineType.LineTypeHardNonConus.rawValue as NSNumber
+                            line.type = BILineType.HardNonConUS.rawValue as NSNumber
                             if line.isETOPS?.intValue == 0 && ((self.bidPeriod?.isEtopsLinesContainsInBid) != nil){
-                                line.type = BILineType.LineTypeNonEtopsNonConUs.rawValue as NSNumber
+                                line.type = BILineType.NonEtopsNonConUS.rawValue as NSNumber
                             }
                         }
                         if self.bidPeriod!.isSecondRoundBid(){
                             if self.bidPeriod!.isFABid(){
-                                line.type = BILineType.LineTypeHardNonConus.rawValue as NSNumber
+                                line.type = BILineType.HardNonConUS.rawValue as NSNumber
                                 if line.isETOPS?.intValue == 0 && ((self.bidPeriod?.isEtopsLinesContainsInBid) != nil){
-                                    line.type = BILineType.LineTypeNonEtopsNonConUs.rawValue as NSNumber
+                                    line.type = BILineType.NonEtopsNonConUS.rawValue as NSNumber
                                 }
                             }
                         }
                         if self.bidPeriod?.isEtopsLinesContainsInBid?.intValue == 1 && !self.bidPeriod!.isFABid(){
-                            if line.type?.intValue == BILineType.LineTypeHardNonConus.rawValue && line.isETOPS?.intValue == 0 &&
+                            if line.type?.intValue == BILineType.HardNonConUS.rawValue && line.isETOPS?.intValue == 0 &&
                                 ((self.bidPeriod?.isEtopsLinesContainsInBid) != nil) {
-                                line.type = BILineType.LineTypeNonEtopsNonConUs.rawValue as NSNumber
+                                line.type = BILineType.NonEtopsNonConUS.rawValue as NSNumber
                                 }
                             }
                         }
@@ -1947,7 +2481,7 @@ class BIBidInfoReader{
             }
             
             // For blank lines linerig is zero
-            if line.type?.intValue == BILineType.BlankLineType.rawValue{
+            if line.type?.intValue == BILineType.BlankLine.rawValue{
                 line.lineRig = 0
                 line.vTpLPay = line.lineRig!.floatValue + line.vVacationPay!.floatValue as NSNumber
             }
@@ -2051,8 +2585,8 @@ class BIBidInfoReader{
             
             line.numTrips = (line.turnsCount!.intValue + line.twoDayTripsCount!.intValue + line.threeDayTripsCount!.intValue + line.fourDayTripsCount!.intValue) as NSNumber
         self.initRigRelatedProperties(for: line, isReprocessing: isReprocessing)
-        self.calculateNewProperties(forLine: line)
-        self.updateEndDateForRedEyeTrips(forLine: line)
+        self.calculateNewProperties(line: line)
+        self.updateEndDateForRedEyeTrips(line: line)
     }
     
     private func initRigRelatedProperties(for line:BILine, isReprocessing:Bool){
@@ -2300,13 +2834,149 @@ class BIBidInfoReader{
         
     }
     
-    private func calculateNewProperties(forLine:BILine){
+    private func calculateNewProperties(line:BILine){
+        var gtTotal = 0
+        var gtMax = 0
+        var groundCount = 0
+        var redEyeCount = 0
         
+        for case let trip as BITrip in line.trips! {
+            if trip.dropForFiltersSorts == 0{
+                let tripOrderedDays = trip.info!.orderedDays
+                for case let dayInfo as BIDayInfo in tripOrderedDays{
+                    let dayOrderedLegs = dayInfo.orderedLegs
+                    //Calculation will only happen if there are more than one dayOrderedLegs, because if there's only one leg, it's the last leg(Over night).
+                    if dayOrderedLegs.count > 1{
+                        // If there is more than one leg ordered for the day, we should remove the last leg, which is the overnight one.
+                        let subArrayWithoutLastLeg = Array(dayOrderedLegs.dropLast())
+                        for case let legInfo as BILegInfo in subArrayWithoutLastLeg{
+                            if legInfo.isRedEyeFlight?.boolValue == true{
+                                redEyeCount += 1
+                            }
+                            var groundMinutes = 0
+                            if legInfo.nextLeg != nil {
+                                // Calculate the total ground time.
+                                groundMinutes = legInfo.groundMinutes.intValue
+                                groundCount += 1
+                                gtTotal += groundMinutes
+                            }
+                            //Check if groundMinutes is greater than the current greatest minute stored in gtMax.If gtMax.integerValue < groundMinutes then that groundMinutes will store to gtMax.
+                            if gtMax < groundMinutes{
+                                gtMax = groundMinutes
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        line.gTmax = gtMax as NSNumber
+        if groundCount != 0{
+            let doubleValue = Double(gtTotal)/Double(groundCount)
+            let roundedValue = round(doubleValue)
+            let roundedNum = NSNumber(value: roundedValue)
+            line.gTavg = roundedNum
+        }else{
+            line.gTavg = 0
+        }
+        
+        // Calculate Overnight Average (ovAvg)
+        
+        var ovMinutes = 0
+        var ovCount = 0
+        
+        for case let trip as BITrip in line.trips! {
+            if !trip.isReserve && trip.dropForFiltersSorts == 0 {
+                let tripOrderedDays = trip.orderedDays
+                
+                var missingRedEyeDate:Date!
+                if trip.isRedEyeTrip{
+                    missingRedEyeDate = CBUtils.findMissingDate(forRedEyeTrip: trip)!
+                }
+                var redEyeDatehandledForOvernight = false
+                
+                for day in tripOrderedDays {
+                    let releaseTime = (day.info?.releaseTime!.intValue)! % 2400
+                    var nextDayReportTime = (day.info?.nextDay?.reportTime?.intValue ?? 0) % 2400
+                    
+                    if trip.isRedEyeTrip{
+                        let isDaysCountSame = trip.info!.calendarDaysCount != NSNumber(value: trip.info!.orderedDays.count)
+                        if isDaysCountSame && missingRedEyeDate != nil && !redEyeDatehandledForOvernight{
+                            nextDayReportTime += 2400
+                            redEyeDatehandledForOvernight = true
+                        }
+                    }
+                    
+                    if nextDayReportTime != 0 {
+                        let minutes = CBUtils.getGroundTimeBetween(reportTime: nextDayReportTime, releaseTime: releaseTime)
+                        let hours = CBUtils.convertMinsToHHMM(minutes)
+                        let convertedMin = CBUtils.convertTimeToMinutes(hours)!
+                        ovMinutes += convertedMin
+                        ovCount += 1
+                        
+                    }
+                }
+            }
+        }
+        if ovCount != 0 {
+            let calculatedMinutes = ovMinutes / ovCount
+            line.ovAvg = calculatedMinutes as NSNumber
+        }else{
+            line.ovAvg = 0
+        }
+        
+        // One Or two days off between Workblocks
+        var oneOrTwoDaysCount = 0
+        
+        if line.workBlocks!.count > 1 {
+            let workBlocksArray = (line.workBlocks?.allObjects as? [WorkBlockList])?.sorted {
+                $0.startDateTime!.compare($1.startDateTime!) == .orderedAscending
+            }
+            
+            for i in 0..<workBlocksArray!.count - 1{
+                let currentWorkBlock = workBlocksArray![i]
+                let nextWorkBlock = workBlocksArray![i+1]
+                
+                let dateFormatter  = DateFormatter()
+                dateFormatter.dateFormat = "yyyy-MM-dd"
+                dateFormatter.timeZone = TimeZone(identifier: "GMT")
+                
+                let fromDateStr = dateFormatter.string(from: currentWorkBlock.endDateOnly!)
+                let toDateStr = dateFormatter.string(from: nextWorkBlock.startDateTime!)
+                
+                let startDate = dateFormatter.date(from: fromDateStr)
+                let endDate = dateFormatter.date(from: toDateStr)
+                
+                if startDate?.compare(endDate!) == .orderedAscending {
+                    let daysCount = BICalendarData().daysBetweenDate(fromDateTime: startDate!, toDateTime: endDate!) - 1
+                    if daysCount == 1 || daysCount == 2{
+                        oneOrTwoDaysCount += 1
+                    }
+                }
+            }
+        }else{
+            oneOrTwoDaysCount = 0
+        }
+        line.redeyes = line.redEyeCount
+        line.redEyeTrips = line.redEyeCount
+        if line.redEyeCount.intValue != 0 {
+            line.amPM = BILineAMPM.RedEyeAMPMLine.rawValue as NSNumber
+        }
+        line.oneOrTwoDaysCount = oneOrTwoDaysCount as NSNumber
+        line.payPlusCo = NSNumber(value: (line.carryOutPay!.floatValue) + (line.pay!.floatValue))
     }
     
-    private func updateEndDateForRedEyeTrips(forLine:BILine){
-        
+    private func updateEndDateForRedEyeTrips(line:BILine){
+        for case let trip as BITrip in line.trips! {
+            if trip.isRedEyeTrip{
+                if trip.info?.calendarDaysCount == trip.info!.orderedDays.count as NSNumber{
+                    if CBUtils.findMissingDate(forRedEyeTrip: trip) != nil {
+                        trip.endDate = self.calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue + ((trip.info?.orderedDays.count)!-1)+1)
+                    }
+                }
+            }
+        }
     }
+
     
     private func addSecondRoundTripsForBidPeriod() -> Bool {
         var success = true
@@ -2796,7 +3466,7 @@ class BIBidInfoReader{
             line.workDaysBP = NSNumber(value: workBP)
         }
      
-    func datesOnlyArrayFromTrip(trip: BITrip) -> [Date] {
+    private func datesOnlyArrayFromTrip(trip: BITrip) -> [Date] {
             var calendar = Calendar(identifier: .gregorian)
             calendar.locale = Locale(identifier: "en_US")
             calendar.timeZone = TimeZone(identifier: "US/Central")!
@@ -4034,7 +4704,7 @@ class BIBidInfoReader{
         return isSecondRoundBid
     }
     
-    func getEquipmentType(type: String) -> String {
+    private func getEquipmentType(type: String) -> String {
         let type700 = ["73W", "73R", "7S7", "7R7"]
         let type800 = ["73H", "7S8", "738", "7R8"]
         let type8Max = ["7M8", "7U8", "7T8", "7V8"]
@@ -4059,7 +4729,7 @@ class BIBidInfoReader{
         return trimmed.rangeOfCharacter(from: nonDigitCharacters) == nil
     }
     
-    func getDay(from date: Date) -> String {
+    private func getDay(from date: Date) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.timeZone = TimeZone(abbreviation: "GMT")
         dateFormatter.dateFormat = "EEEE"
