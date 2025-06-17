@@ -41,12 +41,12 @@ class CBDocumentsCollectionViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         refreshBidPeriods()
-//        NotificationCenter.default.addObserver(self, selector: #selector(refreshBidPeriods), name: NSNotification.Name(ReloadCollectionView), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshBidPeriods), name: Notification.Name(ReloadCollectionView), object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(animated)
-//        NotificationCenter.default.removeObserver(ReloadCollectionView)
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(ReloadCollectionView)
     }
     @IBAction func downloadBid(_ sender: Any) {
         if isPlusImage {
@@ -71,20 +71,22 @@ class CBDocumentsCollectionViewController: BaseViewController {
         alertController.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default)
                                   { action -> Void in
             // Iterate over selected rows and delete corresponding bid data
-            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "deleting...")
-            for index in self.selectedRows {
-                let obj = self.bidPeriodList[index]
-                self.dataSource.managedObjectContext.delete(obj)
-                do {
-                    try self.dataSource.managedObjectContext.save()
-                } catch {
-                    print("Error", error.localizedDescription)
+            DispatchQueue.main.async{
+                self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "deleting...")
+                for index in self.selectedRows {
+                    let obj = self.bidPeriodList[index]
+                    self.dataSource.managedObjectContext.delete(obj)
+                    do {
+                        try self.dataSource.managedObjectContext.save()
+                    } catch {
+                        print("Error", error.localizedDescription)
+                    }
+                    self.selectedRows.removeAll()
+                    //                self.refreshBidPeriods()
                 }
-                self.selectedRows.removeAll()
-//                self.refreshBidPeriods()
+                self.refreshBidPeriods()
+                self.view.hideActivityIndicator()
             }
-            self.refreshBidPeriods()
-            self.view.hideActivityIndicator()
         })
         self.present(alertController, animated: true, completion: nil)
         return
