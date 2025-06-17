@@ -102,7 +102,7 @@ extension BIBidPeriod {
     @NSManaged public var numVacations: NSNumber?
     @NSManaged public var onlyContainEOM: String?
     @NSManaged public var overNightBulk: NSObject?
-    @NSManaged public var overNightCities: NSObject?
+    @NSManaged public var overNightCities: NSArray?
     @NSManaged public var paperBidCount: NSNumber?
     @NSManaged public var paperBidVacArray: NSObject?
     @NSManaged public var positionType: NSNumber?

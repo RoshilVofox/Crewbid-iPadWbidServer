@@ -75,18 +75,18 @@ enum CBLineValueTypes : Int {
     case cbLineValueTypeVAPbo // 63
     case cbLineValueTypeETrips // 64
     case cbLineValueTypeWorkBlockCount // 65
-    case CBLineValueTypeGTmax //66
-    case CBLineValueTypeGTavg //67
-    case CBLineValueTypeVOBoth //68
-    case CBLineValueTypeOvAvg//69
-    case CBLineValueTypeReserveDaysCount//70
-    case CBLineValueTyperigADG//71
-    case CBLineValueTyperigDHR//72
-    case CBLineValueTyperigDPM//73
-    case CBLineValueTyperigTHR//74
-    case CBLineValueTypeLinePay//75
-    case CBLineValueTypecoHoli//76
-    case CBLineValueTypePayPlusCO//77
-    case CBLineValueTypeCoPlusHoli//78
+    case cBLineValueTypeGTmax //66
+    case cBLineValueTypeGTavg //67
+    case cBLineValueTypeVOBoth //68
+    case cBLineValueTypeOvAvg//69
+    case cBLineValueTypeReserveDaysCount//70
+    case cBLineValueTyperigADG//71
+    case cBLineValueTyperigDHR//72
+    case cBLineValueTyperigDPM//73
+    case cBLineValueTyperigTHR//74
+    case cBLineValueTypeLinePay//75
+    case cBLineValueTypecoHoli//76
+    case cBLineValueTypePayPlusCO//77
+    case cBLineValueTypeCoPlusHoli//78
     case cbLineValueTypeClawBack
 }

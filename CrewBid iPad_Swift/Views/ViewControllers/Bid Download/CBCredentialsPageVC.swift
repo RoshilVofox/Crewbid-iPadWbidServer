@@ -106,15 +106,21 @@ class CBCredentialsPageVC: BaseViewController {
                                     NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
                                 }
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                let success = BIBidInfoReader.shared.readBidData()
-                                if success {
-                                    print("Done Reading Historic Bid Data")
-                                    NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                                NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+                                BIBidInfoReader.shared.checkForSeniorityVacationAndReadBidInfo(){success in
+                                    if success{
                                         self.loginActions()
-                                            }
+                                    }
+                                    
                                 }
+//                                let success = BIBidInfoReader.shared.readBidData()
+//                                if success {
+//                                    print("Done Reading Historic Bid Data")
+//                                    NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+//                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+//                                                NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+//                                        self.loginActions()
+//                                            }
+//                                }
                             }
                         case .failure(let error):
                             print("Historic bid download failed: \(error.localizedDescription)")
@@ -139,14 +145,21 @@ class CBCredentialsPageVC: BaseViewController {
                                 NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
                             }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            let success = BIBidInfoReader.shared.readBidData()
-                            if success {
-                                NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                            NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+                            BIBidInfoReader.shared.checkForSeniorityVacationAndReadBidInfo(){success in
+                                if success{
                                     self.loginActions()
-                                        }
+                                }
+                                
                             }
+                            
+//                            let success = BIBidInfoReader.shared.readBidData()
+//                            if success {
+//                                NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+//                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+//                                            NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+//                                    self.loginActions()
+//                                        }
+//                            }
                         }
                     case .failure(let error):
                         print("Error downloading new bid: \(error.localizedDescription)")

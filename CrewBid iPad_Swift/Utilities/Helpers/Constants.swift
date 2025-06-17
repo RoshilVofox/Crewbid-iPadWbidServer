@@ -140,8 +140,19 @@ let kCBAllCitiesList = "CBAllCitiesList"
 let KCBDefaultSeniorityListTableDBValues = "CBDefaultSeniorityListTableDBValues"
 let kCBHawaiiCitiesList = "CBHawaiiCitiesList"
 let kCBNonConusCitiesList = "CBNonConusCitiesList"
+let kCBEastCoastCitiesList = "CBEastCoastCitiesList"
+let kCBSelectedEastCoastCities = "CBSelectedEastCoastCities"
+let kCBWestCoastCitiesList = "CBWestCoastCitiesList"
+let kCBSelectedWestCoastCities = "CBSelectedWestCoastCities"
+let kCBSelectedNonConusCities = "CBSelectedNonConusCities"
+let kCBInternationalCitiesList = "CBInternationalCitiesList"
+let kCBSelectedAllCities = "CBSelectedAllCities"
 
 let ReloadCollectionView = "ReloadCollectionView"
+let kCBFaVacationLineValuesKey = "FA Vacation Line Values"
+let kCBRound2DefaultLineValuesKey = "Round 2 Default Line Values"
+let kCBDefaultLineValuesKey = "Default Line Values"
+let kCBSwaptimizerLineValuesKey = "Swaptimizer Line Values"
 
 public enum HTTPStatusCode: Int {
     case `continue` = 100,

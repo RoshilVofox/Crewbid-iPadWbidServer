@@ -23,7 +23,8 @@ protocol BIBidInfoReaderDelegate: AnyObject {
 
 class BIBidInfoReader{
     static let shared = BIBidInfoReader()
-    
+    let InternationalCityMinutes = 75
+    let CityMinutes = 60
     var isNetworkAvailable = false
     var isSeniorityVacParsingFailed = false
     let tripFileName = "TRIPS"
@@ -91,6 +92,7 @@ class BIBidInfoReader{
     var workBP: Int = 0
     var pilotLines:[Int:Any] = [:]
     var seniorityPositionDetails:[String:Any] = [:]
+    var arrOverNightCities:[String] = []
     init() {
             guard
                 dataSource.year != 0,
@@ -105,14 +107,102 @@ class BIBidInfoReader{
             }
         }
 
+    func checkForSeniorityVacationAndReadBidInfo(completion: @escaping (Bool) -> Void){
+        self.isNetworkAvailable = false
+        self.isSeniorityVacParsingFailed = false
+        
+        let app = UIApplication.shared.delegate as! AppDelegate
+        if app.connectedToInternet(){
+            if app.objNetworkType == .free{
+                self.isSeniorityVacParsingFailed = true
+                let success = self.readBidData()
+                if success{
+                    NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+                        completion(true)
+                    }
+                }else{
+                    completion(false)
+                }
+            }else{
+                let url = URL(string: EndPoint.shared.GetAllSeniorityListFormatFromDB)
+                let urlRequest = URLRequest(url: url!)
+                
+                let dataTask = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
+                    if let error = error{
+                        print("Error in retrieving data: \(error.localizedDescription)")
+                        completion(false)
+                        //handle error
+                    }
+                    if let data = data{
+                        let httpResponse = response as! HTTPURLResponse
+                        let range = response?.mimeType?.range(of: "application/json")
+                        
+                        if httpResponse.statusCode == 200 && range != nil{
+                            do{
+                                let responseArray = try JSONSerialization.jsonObject(with: data) as! [Any]
+                                UserDefaults.standard.set(responseArray, forKey: KCBDefaultSeniorityListTableDBValues)
+                                
+                                for i in 0..<responseArray.count{
+                                    let dict = responseArray[i] as! [String:Any]
+                                    let position = self.dataSource.position.shortName
+                                    
+                                    if dict["Position"] as! String == position && dict["Round"] as! Int == self.dataSource.round{
+                                        self.seniorityPositionDetails = dict
+                                        break
+                                    }
+                                }
+                                let success = self.readBidData()
+                                if success { NotificationCenter.default.post(name:Notification.Name("ParsingBid"), object: nil)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+                                        completion(true)
+                                    }
+                                }else{
+                                    completion(false)
+                                }
+                                
+                            }catch{
+                                print("JSON parsing error: \(error.localizedDescription)")
+                                self.isNetworkAvailable = true
+                                completion(false)
+                            }
+                        }else{
+                            self.isNetworkAvailable = true
+                            completion(false)
+                        }
+                    }else{
+                        self.isNetworkAvailable = true
+                        completion(false)
+                    }
+                }
+                dataTask.resume()
+            }
+        }else{
+            self.isNetworkAvailable = true
+            let success = self.readBidData()
+            if success{
+                NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+                    completion(true)
+                }
+            }else{
+                completion(false)
+            }
+        }
+        
+    }
 
     
-    func readBidData() ->Bool{
+    private func readBidData() ->Bool{
         if !self.isFABid() && self.isSecondRoundBid(){
             //MARK:  check paper bid user vacation
 //            self.checkPaperBidUserVacation()
         }
         self.initializeReadingVariables()
+        NotificationCenter.default.post(name: NSNotification.Name(ReloadCollectionView), object: nil)
         var success:Bool = false
         
         if self.isFABid(){
@@ -142,10 +232,10 @@ class BIBidInfoReader{
                     }
                 }
                 if success && self.isFirstRoundBid(){
-                    //MARK: vacation scan
+                    self.vacationScan()
                 }
                 if success && self.isSecondRoundBid(){
-                    //vacation scan
+                    self.vacationScan()
                 }
             }
         }
@@ -186,34 +276,48 @@ class BIBidInfoReader{
                         }
                 }
                 if success{
-                    //MARK: needs code- seniority
-//                    if !self.seniorityPositionDetails.isEmpty{
-//                        self.parseSeniorityWithNewFormat(dictDetails: self.seniorityPositionDetails)
-//                    }else{
-//                        let seniorityDefaultTableValues = UserDefaults.standard.array(forKey: KCBDefaultSeniorityListTableDBValues)!
-//                        for i in 0..<seniorityDefaultTableValues.count{
-//                            let dict = seniorityDefaultTableValues[i] as! [String: Any]
-//                            let position = self.dataSource.position.shortName
-//                            if dict["Position"] as! String == position && dict["Round"] as! Int == self.dataSource.round{
-//                                self.seniorityPositionDetails = dict
-//                                break
-//                            }
-//                        }
-//                        if self.isNetworkAvailable{
-//                            self.parseSeniorityWithNewFormat(dictDetails: self.seniorityPositionDetails)
-//                        }
-//                        if self.isSeniorityVacParsingFailed{
-//                            self.parseSeniorityWithNewFormat(dictDetails: self.seniorityPositionDetails)
-//                        }
-//                    }
+                    if !self.seniorityPositionDetails.isEmpty{
+                        self.parseSeniorityWithNewFormat(dictDetails: self.seniorityPositionDetails)
+                    }else{
+                        let seniorityDefaultTableValues = UserDefaults.standard.array(forKey: KCBDefaultSeniorityListTableDBValues)!
+                        for i in 0..<seniorityDefaultTableValues.count{
+                            let dict = seniorityDefaultTableValues[i] as! [String: Any]
+                            let position = self.dataSource.position.shortName
+                            if dict["Position"] as! String == position && dict["Round"] as! Int == self.dataSource.round{
+                                self.seniorityPositionDetails = dict
+                                break
+                            }
+                        }
+                        if self.isNetworkAvailable{
+                            self.parseSeniorityWithNewFormat(dictDetails: self.seniorityPositionDetails)
+                        }
+                        if self.isSeniorityVacParsingFailed{
+                            self.parseSeniorityWithNewFormat(dictDetails: self.seniorityPositionDetails)
+                        }
+                    }
                 }
             }
         if success{
-            //MARK: calculate work block
-            
+            self.calculateWorkBlockDetails()
+            let isQATest = UserDefaults.standard.string(forKey: "isQATest")
+            self.bidPeriod?.isQAdata = isQATest
+            let moc = self.dataSource.managedObjectContext
+            if moc.hasChanges {
+                do{
+                    try moc.save()
+                }catch{
+                    print("Error saving context in parseBidData: \(error.localizedDescription)")
+                    success = false
+                }
+            }
         }
         
         return success
+    }
+    
+    private func vacationScan(){
+
+        
     }
     
     private func parseSeniorityWithNewFormat(dictDetails:[String:Any]){
@@ -223,9 +327,9 @@ class BIBidInfoReader{
         let vacTypeStartPos = dictDetails["AbscenceTypeSt"] as! Int
         let EBGTypeStartPos = dictDetails["EbgSt"] as! Int
         
-        let coverLetter = self.bidPeriod?.textFile(withName: "Seniority List")
+        let coverLetter = (self.bidPeriod?.textFile(withName: "Seniority List"))!
         var emp = 0
-        if AppState.shared.isSenioritySecretOn{
+        if !AppState.shared.isSenioritySecretOn{
             emp = Int(self.defaultEmployeeNumber!)!
         }else{
             emp = Int(self.dataSource.userid)!
@@ -238,11 +342,10 @@ class BIBidInfoReader{
         let empString = String(emp)
         let regex = try! NSRegularExpression(pattern: "^0*")
         let range = regex.rangeOfFirstMatch(in: empString, options: [], range: NSRange(location: 0, length: empString.utf16.count))
-        let nsrange = NSRange(location: 0, length: empString.utf16.count)
         let str = (empString as NSString).replacingCharacters(in: range, with: "")
         let employee = Int(str)!
         let employeeNumber = NSNumber(value: employee)
-        let text = coverLetter?.text
+        let text = coverLetter.text
         var stringToScan = ""
         var scanner = Scanner(string: text!)
         let numCharSet = CharacterSet(charactersIn: "0123456789")
@@ -252,15 +355,14 @@ class BIBidInfoReader{
         // Set the hide vacation user default to NO each time you DL a new bid pack
         
         UserDefaults.standard.set(false, forKey: kCBHideVacationKey)
-        if self.isFABid(){
-            stringToScan = String(format: " %ld", employeeNumber.intValue)
+        if !self.isFABid(){
+            stringToScan = String(format: " %ld ", employeeNumber.intValue)
         }
         // Scan all characters before employee number plus a space
         _ = scanner.scanUpToString(stringToScan)
         if scanner.isAtEnd{
             return
         }else{
-            var eidLoc = scanner.currentIndex
             var senNumber:String? = nil
             if !self.isFABid(){
                 var oldLoc = scanner.currentIndex
@@ -273,7 +375,7 @@ class BIBidInfoReader{
                 var currentOffset = text!.distance(from: text!.startIndex, to: scanner.currentIndex)
                 let ebgOffset = currentOffset - EBGPosition
 
-                if ebgOffset >= 0 && ebgOffset < text!.count {
+                if ebgOffset >= 0 && ebgOffset < text!.utf16.count {
                     let ebgIndex = text!.index(text!.startIndex, offsetBy: ebgOffset)
                     let EBGCharacter = String(text![ebgIndex])
 
@@ -286,24 +388,18 @@ class BIBidInfoReader{
                     self.bidPeriod?.paperBidCount = paperBidCount as NSNumber
                 }
                 
-                let lenFileInfo = text!.length
-                var lineInfo = ""
+                let lenFileInfo = text!.utf16.count
                 var lineRange = NSRange(location: 0, length: 0)
-                var seniorityEmployeeScanStarted = false
                 
                 while lineRange.location < lenFileInfo{
                     lineRange = (text! as NSString).lineRange(for: lineRange)
-                    lineInfo = (text!as NSString).substring(with: lineRange)
-                
-                    if scanner.scanString("SQ") != nil{
-                        seniorityEmployeeScanStarted = true
-                    }
                     lineRange.location = lineRange.location + lineRange.length
                     lineRange.length = 0
                 }
-                let offset = text!.distance(from: text!.startIndex, to: oldLoc) - empNumEndPos
-                scanner.currentIndex = text!.index(text!.startIndex, offsetBy: offset)
-                let seqLocation = text!.distance(from: text!.startIndex, to: scanner.currentIndex) - 1
+                
+                let offset = oldLoc.utf16Offset(in: text!) - empNumEndPos
+                scanner.currentIndex = (text!.utf16.index(text!.startIndex, offsetBy: offset, limitedBy: text!.utf16.endIndex)?.samePosition(in: text!))!
+                let seqLocation = scanner.currentIndex.utf16Offset(in: text!) - 1
                 senNumber = scanner.scanCharacters(from: numCharSet)!
                 if senNumber != nil{
                     self.bidPeriod?.seniorityNumber = Int(senNumber!) as? NSNumber
@@ -311,7 +407,6 @@ class BIBidInfoReader{
                     return
                 }
                 let vacEndPosition = seqLocation + (vacEndPos + 2)
-                let vacationStartPosition = seqLocation + vacStartPos
                 
                 //VacationType start position
                 let vacTypeStartPosition = seqLocation + vacTypeStartPos
@@ -329,7 +424,6 @@ class BIBidInfoReader{
                 var myRegex = String(format: "%@", vacationType)
                 scanner = Scanner(string: text!)
                 _ = scanner.scanUpToString(stringToScan)
-                eidLoc = scanner.currentIndex
                 oldLoc = scanner.currentIndex
                 _ = scanner.scanCharacters(from: numCharSet)
                 if scanner.isAtEnd || scanner.currentIndex == oldLoc {
@@ -337,25 +431,24 @@ class BIBidInfoReader{
                 }
                 oldLoc = scanner.currentIndex
                 
-                let employeeNoEndToVacationTypeStart = vacTypeStartPosition - (text!.distance(from: text!.startIndex, to: oldLoc) + 1)
-                vacScanStart = (text!.distance(from: text!.startIndex, to: oldLoc)) + employeeNoEndToVacationTypeStart
+                let employeeNoEndToVacationTypeStart = vacTypeStartPosition - (oldLoc.utf16Offset(in: text!) + 1)
+                vacScanStart = oldLoc.utf16Offset(in: text!) + employeeNoEndToVacationTypeStart
                 var vacRangeToSearch = NSRange(location: vacScanStart, length: vacScanLength)
                 var arrayVacations:[String] = []
-                var newSeniority:String?
-                scanner.currentIndex = text!.index(text!.startIndex, offsetBy: vacScanStart)
-                newSeniority = scanner.scanCharacters(from: numCharSet)!
+                scanner.currentIndex = (text!.utf16.index(text!.startIndex, offsetBy: vacScanStart, limitedBy: text!.utf16.endIndex)?.samePosition(in: text!))!
+                let newSeniority = scanner.scanCharacters(from: numCharSet) ?? ""
                 if scanner.isAtEnd{
                     // No vacation for that EID
                     self.bidPeriod?.containsVacay = false
                     return
                 }
-                if newSeniority != nil {
+                if newSeniority != "" {
                     // No vacation for that EID
                     self.bidPeriod?.containsVacay = false
                     return
                 }
                 _ = scanner.scanUpToString("-")
-                currentOffset = text!.distance(from: text!.startIndex, to: scanner.currentIndex)
+                currentOffset = scanner.currentIndex.utf16Offset(in: text!)
                 let adjustedOffset = max(0, currentOffset - 9) // Prevent negative value
                 vacRangeToSearch.location = adjustedOffset
                 vacRangeToSearch.length = vacScanLength
@@ -364,19 +457,19 @@ class BIBidInfoReader{
                     return
                 }
                 var vacation = (text! as NSString).substring(with: vacRangeToSearch) as NSString
-                scanner.currentIndex = text!.index(text!.startIndex, offsetBy: vacRangeToSearch.location, limitedBy: text!.endIndex)!
+                scanner.currentIndex = text!.utf16.index(text!.utf16.startIndex, offsetBy: vacRangeToSearch.location).samePosition(in: text!)!
                 if vacation.contains(" VA"){
-                    myRegex = "VA"
+                    myRegex = "VA "
                     arrayVacations.append(vacation as String)
                 }else if vacation.contains("CFV"){
                     myRegex = "CFV "
                     arrayVacations.append(vacation as String)
-                }else if vacation.contains("FV"){
+                }else if vacation.contains(" FV"){
                     myRegex = "FV "
                     arrayVacations.append(vacation as String)
                 }
                 
-                if vacRangeToSearch.location + vacRangeToSearch.length <= text!.length {
+                if vacRangeToSearch.location + vacRangeToSearch.length <= text!.utf16.count {
                     let regex = try! NSRegularExpression(pattern: myRegex)
                     let searchRange = NSRange(location: vacRangeToSearch.location, length: vacRangeToSearch.length)
                     let rangeOfFirstVacaysds = regex.rangeOfFirstMatch(in: text!, options: [], range: searchRange)
@@ -388,7 +481,7 @@ class BIBidInfoReader{
                     }
                 }
                 
-                while (newSeniority == nil){
+                while newSeniority.isEmpty{
                     // If it's a pilot bid, check to see if the vacay is on the next line
                     let seniorityLocNextLine = text!.index(scanner.currentIndex, offsetBy: vacScanLength)
                     scanner.currentIndex = seniorityLocNextLine
@@ -402,16 +495,16 @@ class BIBidInfoReader{
                     }
                     
                     _ = scanner.scanUpToString("-")
-                    currentOffset = text!.distance(from: text!.startIndex, to: scanner.currentIndex)
+                    currentOffset = scanner.currentIndex.utf16Offset(in: text!)
                     let adjustedOffset = max(0, currentOffset - 9) // Prevent negative value
                     vacRangeToSearch.location = adjustedOffset
                     vacRangeToSearch.length = vacScanLength
-                    if vacRangeToSearch.location + vacRangeToSearch.length > text!.length{
+                    if vacRangeToSearch.location + vacRangeToSearch.length > text!.utf16.count{
                         break
                     }
                     
                     vacation = (text! as NSString).substring(with: vacRangeToSearch) as NSString
-                    scanner.currentIndex = text!.index(text!.startIndex, offsetBy: vacRangeToSearch.location, limitedBy: text!.endIndex)!
+                    scanner.currentIndex = text!.utf16.index(text!.utf16.startIndex, offsetBy: vacRangeToSearch.location).samePosition(in: text!)!
                     if vacation.contains(" VA") && vacation.contains("-"){
                         myRegex = "VA "
                         arrayVacations.append(vacation as String)
@@ -438,7 +531,7 @@ class BIBidInfoReader{
                         if rangeOfFirstVacay.location != NSNotFound {
                             vaCount += 1
                             if let rangeStart = Range(rangeOfFirstVacay, in: text!) {
-                                let newLocation = text!.index(rangeStart.lowerBound, offsetBy: 3)
+                                let newLocation = text!.utf16.index(rangeStart.lowerBound, offsetBy: 3).samePosition(in: text!)!
                                 subScanner.currentIndex = newLocation
                             }
                             var startMonth:String?
@@ -476,7 +569,6 @@ class BIBidInfoReader{
                             oldLoc = subScanner.currentIndex
                             
                             endMonth = String(format: "%d", self.calendarData.monthNumber(from: endMonths!)!)
-                            eidLoc = oldLoc
                             
                             // Create the dates
                             let cal = self.calendarData.bidPeriodCalendar()
@@ -527,7 +619,7 @@ class BIBidInfoReader{
                     arrayVacations.removeAll()
                 }
                 
-                if arrayVacations.count > 0 {
+                if arrayVacations.isEmpty {
                     self.bidPeriod?.containsVacay = false
                     return
                 }
@@ -594,6 +686,1222 @@ class BIBidInfoReader{
         return pCount
     }
     
+    private func calculateWorkBlockDetailsWithVacation(){
+        if self.bidPeriod!.isVacationRemoved!.boolValue{
+            self.calculateWorkBlockDetails()
+            return
+        }
+        var tripStartDate:Date!
+        var tripStartDateTakeOff:Date!
+        var tripEndDate:Date!
+        var tripEndDateOnly:Date!
+        var previousTripEndDate:Date!
+        var previousTripEndDateOnly:Date!
+        var startDateTime:Date!
+        var startDateTakeOffTime:Date!
+        
+        //Iterate Lines
+        for case let line as BILine in self.bidPeriod!.lines!{
+            self.removeExistingWorkBlock(line)
+            //Initialize Trip Index
+            var tripIndex = 0
+            var back2backTripBlock = 0
+            previousTripEndDate = nil
+            let tripsData = line.trips!.allObjects
+            let sortDescriptor = NSSortDescriptor(key: "startDate", ascending: true)
+            let trips1 = (tripsData as NSArray).sortedArray(using: [sortDescriptor]) as! [BITrip]
+            let biTrips = (tripsData as NSArray).sortedArray(using: [sortDescriptor])
+            
+            //Iterate trips in line
+            var previousTrip :[String:Any]?
+            var biPreviousTrip:BITrip?
+            var arrFetchedTrip:[[String:Any]] = []
+            
+            // Need to regrnerate trip
+            let trips = self.regenerateTrip(trips1)
+            
+            var oneDayWorkBlockCount = 0
+            var twoDayWorkBlockCount = 0
+            var threeDayWorkBlockCount = 0
+            var fourDayWorkBlockCount = 0
+            var briefMins = 60
+            var debriefMins = 30
+            
+            for tripCount in 0..<trips.count{
+                let biTrip = biTrips[tripCount] as! BITrip
+                let trip = trips[tripCount]
+                tripStartDate = self.getStartDateIncludeVacation(from: trip)
+                tripStartDateTakeOff = self.getStartDateIncludeVacationWithTakeOff(from: trip)
+                tripEndDate = self.getEndDateOfTripIncludeVacation(from: trip)
+                tripEndDateOnly = self.getOnlyEndDateOfTripIncludeVacation(from: trip, biTrip: biTrip)
+                if tripCount != 0 {
+                    previousTrip = trips[tripCount-1]
+                    biPreviousTrip = biTrips[tripCount-1] as? BITrip
+                    previousTripEndDate = self.getEndDateOfTripIncludeVacation(from: previousTrip!)
+                    previousTripEndDateOnly = self.getOnlyEndDateOfTripIncludeVacation(from: previousTrip!, biTrip: biPreviousTrip!)
+                }
+                if tripIndex <= 0 {
+                    startDateTime = self.getStartDateIncludeVacation(from: trip)
+                    startDateTakeOffTime = self.getStartDateIncludeVacationWithTakeOff(from: trip)
+                }
+                if let brief = trip["briefMinutes"] as? NSNumber {
+                    briefMins = brief.intValue
+                }
+                if let debrief = trip["debriefMinutes"] as? NSNumber {
+                    debriefMins = debrief.intValue
+                }
+                if back2backTripBlock == 0 && tripCount != 0 {
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss"
+                    dateFormatter.timeZone = TimeZone(identifier: "GMT")
+                    startDateTime = self.getStartDateIncludeVacation(from: previousTrip!)
+                    startDateTakeOffTime = self.getStartDateIncludeVacationWithTakeOff(from: previousTrip!)
+                    if let brief = previousTrip!["briefMinutes"] as? NSNumber {
+                        briefMins = brief.intValue
+                    }
+                }
+                
+                //Check its continues trip
+                if previousTripEndDate == nil {
+                    back2backTripBlock += 1
+                    tripIndex += 1
+                    arrFetchedTrip.append(trip)
+                    if tripCount == trips.count-1 {
+                        //Set WorkBlock Details
+                        let workBlock1 = WorkBlockList(context: self.dataSource.managedObjectContext)
+                        workBlock1.backToBackCount = back2backTripBlock as NSNumber
+                        workBlock1.startDateTime = startDateTime
+                        workBlock1.startDateTakeOffTime = startDateTakeOffTime
+                        workBlock1.startDay = self.getDay(from: startDateTime)
+                        workBlock1.endDateTime = tripEndDate
+                        workBlock1.endDateOnly = tripEndDateOnly
+                        workBlock1.briefMinutes = briefMins as NSNumber
+                        workBlock1.deBriefMinutes = debriefMins as NSNumber
+                        workBlock1.endDay = self.getDay(from: tripEndDateOnly)
+                        workBlock1.line = line
+                        
+                        var workBlockDays:[BIDay] = []
+                        
+                        for trip1 in trips {
+                            let trip1StartDate = self.getStartDateIncludeVacation(from: trip1)
+                            let trip1EndDate = self.getEndDateOfTripIncludeVacation(from: trip1)
+                            
+                            if let days = trip1["BIDay"] as? [BIDay] {
+                                    workBlockDays.append(contentsOf: days)
+                                }
+                            if startDateTime == trip1StartDate {
+                                workBlockDays.removeAll()
+                                if let days = trip1["BIDay"] as? [BIDay] {
+                                        workBlockDays.append(contentsOf: days)
+                                    }
+                            }
+                            if tripEndDate == trip1EndDate {
+                                break
+                            }
+                        }
+                        for day in workBlockDays {
+                            let dayObj = BIDay(context: self.dataSource.managedObjectContext)
+                            dayObj.date = day.date
+                            dayObj.info = day.info
+                            dayObj.workBlock = workBlock1
+                        }
+                        
+                        let checkDomicile = self.calculateNMidCountWithVacation(from: arrFetchedTrip, workBlock: workBlock1)
+                        workBlock1.nightINDomicile = checkDomicile as? NSNumber
+                        back2backTripBlock = 0
+                        tripIndex = 0
+                        
+                        let daysCOunt = self.calendarData.daysBetweenDateForWorkBlock(from: workBlock1.startDateTime!, to: workBlock1.endDateOnly!) + 1
+                        switch daysCOunt {
+                        case 1:oneDayWorkBlockCount += 1
+                            break
+                        case 2:twoDayWorkBlockCount += 1
+                            break
+                        case 3:threeDayWorkBlockCount += 1
+                            break
+                        case 4:fourDayWorkBlockCount += 1
+                            break
+                        default:break
+                        }
+                        
+                        let triped = arrFetchedTrip.last!
+                        arrFetchedTrip = []
+                        arrFetchedTrip.append(triped)
+                    }
+                }else if self.checkIsContinuousTrip(currentTripStartDate: tripStartDate, previousTripEndDate: previousTripEndDate) {
+                    back2backTripBlock += 1
+                    tripIndex += 1
+                    arrFetchedTrip.append(trip)
+                    if tripCount == trips.count-1 {
+                        //Set WorkBlock Details
+                        let workBlock2 = WorkBlockList(context: self.dataSource.managedObjectContext)
+                        workBlock2.startDateTime = startDateTime
+                        workBlock2.startDateTakeOffTime = startDateTakeOffTime
+                        workBlock2.startDay = self.getDay(from: startDateTime!)
+                        workBlock2.endDateTime = tripEndDate
+                        workBlock2.endDateOnly = tripEndDateOnly
+                        workBlock2.briefMinutes = briefMins as NSNumber
+                        workBlock2.deBriefMinutes = debriefMins as NSNumber
+                        workBlock2.endDay = self.getDay(from: tripEndDateOnly)
+                        workBlock2.line = line
+                        
+                        var workBlockDays:[BIDay] = []
+                        for  trip1 in trips {
+                            let trip1StartDate = self.getStartDateIncludeVacation(from: trip1)
+                            let trip1EndDate = self.getEndDateOfTripIncludeVacation(from: trip1)
+                            if let days = trip1["BIDay"] as? [BIDay] {
+                                    workBlockDays.append(contentsOf: days)
+                                }
+                            if startDateTime == trip1StartDate {
+                                workBlockDays.removeAll()
+                                if let days = trip1["BIDay"] as? [BIDay] {
+                                        workBlockDays.append(contentsOf: days)
+                                    }
+                            }
+                            if tripEndDate == trip1EndDate{
+                                break
+                            }
+                        }
+                        
+                        for  day in workBlockDays {
+                            let dayObj = BIDay(context: self.dataSource.managedObjectContext)
+                            dayObj.date = day.date
+                            dayObj.info = day.info
+                            dayObj.workBlock = workBlock2
+                        }
+                        
+                        let checkDomicile = self.calculateNMidCountWithVacation(from: arrFetchedTrip, workBlock: workBlock2)
+                        workBlock2.nightINDomicile = checkDomicile as? NSNumber
+                        back2backTripBlock = 0
+                        tripIndex = 0
+                        
+                        let daysCount = self.calendarData.daysBetweenDateForWorkBlock(from: workBlock2.startDateTime!, to: workBlock2.endDateOnly!) + 1
+                        switch daysCount{
+                        case 1:oneDayWorkBlockCount += 1
+                            break
+                        case 2:twoDayWorkBlockCount += 1
+                            break
+                        case 3:threeDayWorkBlockCount += 1
+                            break
+                        case 4:fourDayWorkBlockCount += 1
+                            break
+                        default:break
+                        }
+                        let triped = arrFetchedTrip.last!
+                        arrFetchedTrip = []
+                        arrFetchedTrip.append(triped)
+                    }
+                }else{
+                    //Set WorkBlock Details
+                    let workBlock3 = WorkBlockList(context: self.dataSource.managedObjectContext)
+                    workBlock3.backToBackCount = back2backTripBlock as NSNumber
+                    workBlock3.startDateTime = startDateTime
+                    workBlock3.startDateTakeOffTime = startDateTakeOffTime
+                    workBlock3.briefMinutes = briefMins as NSNumber
+                    workBlock3.deBriefMinutes = debriefMins as NSNumber
+                    workBlock3.startDay = self.getDay(from: startDateTime)
+                    if tripIndex >= 0 {
+                        workBlock3.endDateTime = previousTripEndDate
+                        workBlock3.endDateOnly = previousTripEndDateOnly
+                        workBlock3.endDay = self.getDay(from: previousTripEndDateOnly)
+                    }else{
+                        workBlock3.endDateTime = tripEndDate
+                        workBlock3.endDay = self.getDay(from: tripEndDateOnly)
+                    }
+                    workBlock3.line = line
+                    
+                    var workBlockDays:[BIDay] = []
+                    
+                    for trip1 in trips {
+                        let trip1EndDate = self.getEndDateOfTripIncludeVacation(from: trip1)
+                        if let days = trip1["BIDay"] as? [BIDay] {
+                                workBlockDays.append(contentsOf: days)
+                            }
+                        if previousTripEndDate == trip1EndDate{
+                            break
+                        }
+                    }
+                    for day in workBlockDays {
+                        let dayObj = BIDay(context: self.dataSource.managedObjectContext)
+                        dayObj.date = day.date
+                        dayObj.info = day.info
+                        dayObj.workBlock = workBlock3
+                    }
+                    
+                    let checkDomicile = self.calculateNMidCountWithVacation(from: arrFetchedTrip, workBlock: workBlock3)
+                    workBlock3.nightINDomicile = checkDomicile as? NSNumber
+                    
+                    let daysCount = self.calendarData.daysBetweenDateForWorkBlock(from: workBlock3.startDateTime!, to: workBlock3.endDateOnly!) + 1
+                    switch daysCount{
+                    case 1:oneDayWorkBlockCount += 1
+                        break
+                    case 2:twoDayWorkBlockCount += 1
+                        break
+                    case 3:threeDayWorkBlockCount += 1
+                        break
+                    case 4:fourDayWorkBlockCount += 1
+                        break
+                    default:break
+                    }
+                    back2backTripBlock = 0
+                    tripIndex = 0
+                    
+                    arrFetchedTrip = []
+                    arrFetchedTrip.append(trip)
+                    
+                    if tripCount == trips.count-1 && tripIndex >= 0 {
+                        //Set WorkBlock Details
+                        let workBlock4 = WorkBlockList(context: self.dataSource.managedObjectContext)
+                        workBlock4.backToBackCount = back2backTripBlock as NSNumber
+                        workBlock4.startDateTime = tripStartDate
+                        workBlock4.startDateTakeOffTime = tripStartDateTakeOff
+                        workBlock4.startDay = self.getDay(from: tripStartDate)
+                        workBlock4.endDateTime = tripEndDate
+                        workBlock4.endDateOnly = tripEndDateOnly
+                        workBlock4.endDay = self.getDay(from: tripEndDateOnly)
+                        workBlock4.line = line
+                        workBlock4.briefMinutes = briefMins as NSNumber
+                        workBlock4.deBriefMinutes = debriefMins as NSNumber
+                        
+                        for trip1 in trips {
+                            let trip1StartDate = self.getStartDateIncludeVacation(from: trip1)
+                            let trip1EndDate = self.getEndDateOfTripIncludeVacation(from: trip1)
+                            if let days = trip1["BIDay"] as? [BIDay] {
+                                    workBlockDays.append(contentsOf: days)
+                                }
+                            if tripStartDate == trip1StartDate {
+                                workBlockDays.removeAll()
+                                if let days = trip1["BIDay"] as? [BIDay] {
+                                        workBlockDays.append(contentsOf: days)
+                                    }
+                            }
+                            if tripEndDate == trip1EndDate {
+                                break
+                            }
+                        }
+                        
+                        for day in workBlockDays {
+                            let dayObj = BIDay(context: self.dataSource.managedObjectContext)
+                            dayObj.date = day.date
+                            dayObj.info = day.info
+                            dayObj.workBlock = workBlock4
+                        }
+                        
+                        let checkDomicile = self.calculateNMidCountWithVacation(from: arrFetchedTrip, workBlock: workBlock4)
+                        workBlock4.nightINDomicile = checkDomicile as? NSNumber
+                        let daysCount = self.calendarData.daysBetweenDateForWorkBlock(from: workBlock4.startDateTime!, to: workBlock4.endDateOnly!) + 1
+                        switch daysCount{
+                        case 1:oneDayWorkBlockCount += 1
+                            break
+                        case 2:twoDayWorkBlockCount += 1
+                            break
+                        case 3:threeDayWorkBlockCount += 1
+                            break
+                        case 4:fourDayWorkBlockCount += 1
+                            break
+                        default:break
+                        }
+                    }
+                    tripIndex = 0
+                }
+            }
+            line.workBlock1 = oneDayWorkBlockCount as NSNumber
+            line.workBlock2 = twoDayWorkBlockCount as NSNumber
+            line.workBlock3 = threeDayWorkBlockCount as NSNumber
+            line.workBlock4 = fourDayWorkBlockCount as NSNumber
+            line.workBlockCount = line.workBlocks!.count as NSNumber
+            self.calculateNewProperties(line: line)
+        }
+        let context = self.dataSource.managedObjectContext
+        if context.hasChanges{
+            do{
+                try context.save()
+            }catch{
+                print("Error in saving context: \(error.localizedDescription)")
+            }
+        }
+        self.calculateNightInMiddle()
+    }
+    
+    private func calculateNMidCountWithVacation(from trips:[[String:Any]], workBlock:WorkBlockList) -> Int? {
+        var oneWeek = DateComponents()
+        oneWeek.day = 1
+        var nightInMiddle = 0
+        for trip in trips {
+            let tripInfoOrderedDays = trip["BITripInfo"] as! [Any]
+            let tripStartDate = trip["StartDate"] as! Date
+            var loopDate = tripStartDate
+            let tripEndDate = self.getEndDateOfTripIncludeVacation(from: trip)
+            
+            //SingleDay trip
+            if loopDate.compare(tripEndDate!) == .orderedSame && workBlock.endDateTime?.compare(tripEndDate!) != .orderedSame{
+                for case let dayInfo as BIDayInfo in tripInfoOrderedDays{
+                    let dayOrderedLegs = dayInfo.orderedLegs
+                    let legInfo = dayOrderedLegs.last as! BILegInfo
+                    if legInfo.arriveCity == self.bidPeriod?.base {
+                        nightInMiddle += 1
+                    }
+                }
+            }else{
+                //multiple day trip
+                if  workBlock.endDateTime?.compare(tripEndDate!) == .orderedSame {
+                    
+                }else{
+                    for case let dayInfo as BIDayInfo in tripInfoOrderedDays {
+                        let dayOrderedLegs = dayInfo.orderedLegs
+                        let legInfo = dayOrderedLegs.last as! BILegInfo
+                        if workBlock.endDateTime?.compare(loopDate) != .orderedSame {
+                            if legInfo.arriveCity == self.bidPeriod?.base {
+                                nightInMiddle += 1
+                            }
+                        }
+                        loopDate = Calendar.current.date(byAdding: oneWeek, to: loopDate)!
+                    }
+                }
+            }
+        }
+        return nightInMiddle
+    }
+    
+    
+    private func getStartDateIncludeVacation(from trip: [String: Any]) -> Date? {
+        var startDate:Date!
+        let tripInfoOrderedDays = trip["BITripInfo"] as! [Any]
+        let tripStartDate = trip["StartDate"] as! Date
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale.current
+        calendar.timeZone = TimeZone(identifier: "GMT")!
+        var dateComps = calendar.dateComponents([.day,.month,.year], from: tripStartDate)
+        
+        let dayInfo = tripInfoOrderedDays.first as? BIDayInfo
+        var isInternationalCity = false
+        let arrInternationalCities = (UserDefaults.standard.array(forKey: kCBInternationalCitiesList) as? [String])
+        
+        if dayInfo != nil{
+            let dayOrderedLegs = dayInfo?.orderedLegs
+            let legInfo = dayOrderedLegs?.first as? BILegInfo
+            if legInfo != nil {
+                dateComps.minute = legInfo!.departMinutes?.intValue
+                startDate = calendar.date(from: dateComps)
+                if let arriveCity = legInfo!.arriveCity {
+                    isInternationalCity = arrInternationalCities!.contains(arriveCity)
+                }
+            }
+        }
+        var updateTime:Date!
+        if isInternationalCity{
+            updateTime = startDate.addingTimeInterval(TimeInterval(-InternationalCityMinutes * 60))
+        }else{
+            updateTime = startDate.addingTimeInterval(TimeInterval(-CityMinutes * 60))
+        }
+        return updateTime
+    }
+    
+    private func getStartDateIncludeVacationWithTakeOff(from trip: [String: Any]) -> Date? {
+        var updateTime:Date!
+        let tripInfoOrderedDays = trip["BITripInfo"] as! [Any]
+        let tripStartDate = trip["StartDate"] as! Date
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale.current
+        calendar.timeZone = TimeZone(identifier: "GMT")!
+        var dateComps = calendar.dateComponents([.day,.month,.year], from: tripStartDate)
+        
+        let dayInfo = tripInfoOrderedDays.first as? BIDayInfo
+        if dayInfo != nil {
+            let dayOrderedLegs = dayInfo?.orderedLegs
+            let legInfo = dayOrderedLegs?.first as? BILegInfo
+            if legInfo != nil {
+                let briefMin = trip["briefMinutes"] as! Int
+                dateComps.minute = (legInfo?.departMinutes!.intValue)! - briefMin
+                updateTime = calendar.date(from: dateComps)!
+            }
+        }
+        return updateTime
+    }
+    
+    private func getEndDateOfTripIncludeVacation(from trip: [String: Any]) -> Date? {
+        var endDate:Date!
+        let tripInfoOrderedDays = trip["BITripInfo"] as! [Any]
+        let tripStartDate = trip["StartDate"] as! Date
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale.current
+        calendar.timeZone = TimeZone(identifier: "GMT")!
+        var dateComps = calendar.dateComponents([.day,.month,.year], from: tripStartDate)
+        let dayInfo = tripInfoOrderedDays.last as? BIDayInfo
+        if dayInfo != nil {
+            let dayOrderedLegs = dayInfo?.orderedLegs
+            let legInfo = dayOrderedLegs?.last as? BILegInfo
+            if legInfo != nil {
+                dateComps.minute = legInfo?.arriveMinutes?.intValue
+                endDate = calendar.date(from: dateComps)!
+            }
+        }
+        let tripNumber = trip["TripNumber"] as! Int
+        let tripNUmberString = String(tripNumber)
+        if tripNUmberString.length > 1{
+            let secondChar = tripNUmberString[tripNUmberString.index(tripNUmberString.startIndex, offsetBy: 1)]
+            if secondChar >= "W"{
+                var dateCompsReserve = calendar.dateComponents([.day,.month,.year], from: endDate)
+                let returnTime = trip["ReturnTime"] as! Int
+                let time = String(format: "%04d", returnTime % 2400)
+                let strHr = (time as NSString).substring(with: NSRange(location: 0, length: 2))
+                let strMin = (time as NSString).substring(with: NSRange(location: 2, length: time.length - strHr.length))
+                dateCompsReserve.hour = Int(strHr)
+                dateCompsReserve.minute = Int(strMin)
+                endDate = calendar.date(from: dateCompsReserve)!
+                let hour = dateCompsReserve.hour!
+                if hour >= 0 && hour <= 4 {
+                    var dateComponents = DateComponents()
+                    dateComponents.day = 1
+                    endDate = Calendar.current.date(byAdding: dateComponents, to: endDate)!
+                }
+            }
+        }
+        return endDate
+    }
+    
+    private func getOnlyEndDateOfTripIncludeVacation(from trip: [String: Any], biTrip: BITrip) -> Date? {
+        var endDate:Date!
+        let tripOrderedDays = trip["BIDay"] as! [Any]
+        let tripStartDate = trip["startDate"] as! Date
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale.current
+        calendar.timeZone = TimeZone(identifier: "GMT")!
+        let now = tripStartDate
+        var daysToAdd = tripOrderedDays.count
+        if biTrip.isRedEyeTrip {
+            if biTrip.info?.calendarDaysCount != NSNumber(value: biTrip.info!.orderedDays.count) {
+                if CBUtils.findMissingDate(forRedEyeTrip: biTrip) != nil {
+                    daysToAdd += 1
+                }
+            }
+        }
+        let newDate = now.addingTimeInterval(TimeInterval(60*60*24*(daysToAdd-1)))
+        let dateComps = calendar.dateComponents([.day,.month,.year], from: newDate)
+        endDate = calendar.date(from: dateComps)
+        return endDate
+    }
+    
+    private func calculateWorkBlockDetails(){
+        var tripStartDate:Date!
+        var tripStartDateTakeOff:Date!
+        var tripEndDate:Date!
+        var tripEndDateOnly:Date!
+        var previousTripEndDate:Date!
+        var previousTripEndDateOnly:Date!
+        var startDateTime:Date!
+        var startDateTakeOffTime:Date!
+        
+        //Iterate Lines
+        let bidLinesFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Line")
+        bidLinesFetch.predicate = NSPredicate(format: "type != 4")
+        bidLinesFetch.sortDescriptors = [NSSortDescriptor(key: "bidOrder", ascending: true)]
+        do{
+            let results = try self.bidPeriod!.managedObjectContext!.fetch(bidLinesFetch)
+            
+            var arrLineOvernightCity:[String] = []
+            for case let line as BILine in results {
+                   self.removeExistingWorkBlock(line)
+                    
+                    //Initialize Trip Index
+                    var tripIndex = 0
+                    var back2backTripBlock = 0
+                    previousTripEndDate = nil
+                    
+                    let tripsData = line.orderedTrips
+                    let sortDescriptor = NSSortDescriptor(key: "startDate", ascending: true)
+                    let trips = (tripsData as NSArray).sortedArray(using: [sortDescriptor])
+                    
+                    //Iterate trips in line
+                    var prevTrip: BITrip?
+                    
+                    var arrFetchedTrip:[BITrip] = []
+                    var oneDayWorkBlockCount = 0
+                    var twoDayWorkBlockCount = 0
+                    var threeDayWorkBlockCount = 0
+                    var fourDayWorkBlockCount = 0
+                    var briefMins = 60
+                    var debriefMins = 30
+                    
+                    // Need to regererate trip
+                    for tripCount in 0..<trips.count {
+                            let trip = trips[tripCount] as! BITrip
+                            //to get the overnight cities list
+                            self.getTripArriveCity(from: trip)
+                            arrLineOvernightCity.append(contentsOf: self.getTripArriveCity(trip: trip))
+                            if trip.number == "AA2L" {
+                                print("")
+                            }
+                            tripStartDate = self.getStartDate(for: trip)
+                            tripStartDateTakeOff = self.getStartDateWithTakeOff(for: trip)
+                            tripEndDate = self.getEndDateOfTrip(for: trip)
+                            //using EndDate to account for irregular datetimes in company time keeping method.
+                            tripEndDateOnly = self.getOnlyEndDateOfTrip(for: trip)!
+                            briefMins = trip.info?.briefMinutes as! Int
+                            debriefMins = trip.info?.debriefMinutes as! Int
+                            
+                            if tripCount != 0 {
+                                prevTrip = trips[tripCount - 1] as? BITrip
+                                previousTripEndDate = self.getEndDateOfTrip(for: prevTrip!)
+                                previousTripEndDateOnly = self.getOnlyEndDateOfTrip(for: prevTrip!)
+                            }
+                            if tripIndex <= 0 {
+                                startDateTime = self.getStartDate(for: trip)
+                                startDateTakeOffTime = self.getStartDateWithTakeOff(for: trip)
+                            }
+                            if back2backTripBlock == 0 && tripCount != 0 {
+                                let dateFormatter = DateFormatter()
+                                dateFormatter.dateFormat = "MM/dd/yyyy HH:mm:ss"
+                                dateFormatter.timeZone = TimeZone(identifier: "GMT")
+                                startDateTime = self.getStartDate(for: prevTrip!)
+                                startDateTakeOffTime = self.getStartDateWithTakeOff(for: prevTrip!)
+                            }
+                            var isContinousTrip = false
+                            if prevTrip != nil {
+                                isContinousTrip = self.doesTripsContinues(lastTripEndDate: prevTrip!.endDate!, currentTripStartDate: trip.startDate!)
+                            }
+                            if isContinousTrip {
+                                briefMins = prevTrip!.info!.briefMinutes as! Int
+                            }
+                            
+                            //Check if its continous trip
+                            if previousTripEndDate == nil {
+                                back2backTripBlock += 1
+                                tripIndex += 1
+                                arrFetchedTrip.append(trip)
+                                if tripCount == trips.count-1 {
+                                    //Set WorkBlock Details
+                                    let workBlock1 = WorkBlockList(context: self.dataSource.managedObjectContext)
+                                    workBlock1.backToBackCount = back2backTripBlock as NSNumber
+                                    workBlock1.startDateTime = startDateTime
+                                    workBlock1.startDateTakeOffTime = startDateTakeOffTime
+                                    workBlock1.startDay = self.getDay(from: startDateTime)
+                                    workBlock1.endDateTime = tripEndDate
+                                    workBlock1.endDateOnly = tripEndDateOnly
+                                    workBlock1.endDay = self.getDay(from: tripEndDateOnly)
+                                    workBlock1.line = line
+                                    workBlock1.briefMinutes = briefMins as NSNumber
+                                    workBlock1.deBriefMinutes = debriefMins as NSNumber
+                                    let checkDomicile = self.calculateNMidCount(trips: arrFetchedTrip, workBlock: workBlock1)
+                                    workBlock1.nightINDomicile = checkDomicile as NSNumber
+                                    
+                                    let workBlockDays = (prevTrip!.days!.allObjects) + (trip.days!.allObjects)
+                                    for case let day as BIDay in workBlockDays {
+                                        let dayObj = BIDay(context: self.dataSource.managedObjectContext)
+                                        dayObj.date = day.date
+                                        dayObj.info = day.info
+                                        dayObj.workBlock = workBlock1
+                                    }
+                                    let daysCount = self.calendarData.daysBetweenDateForWorkBlock(from: workBlock1.startDateTime!, to: workBlock1.endDateOnly!) + 1
+                                    switch daysCount{
+                                    case 1:oneDayWorkBlockCount += 1
+                                        break
+                                    case 2:twoDayWorkBlockCount += 1
+                                        break
+                                    case 3:threeDayWorkBlockCount += 1
+                                        break
+                                    case 4:fourDayWorkBlockCount += 1
+                                        break
+                                    default:break
+                                    }
+                                    back2backTripBlock = 0
+                                    tripIndex = 0
+                                    
+                                    if let triped = arrFetchedTrip.last {
+                                        arrFetchedTrip.append(triped)
+                                    }
+                                }
+                            }
+                            else if  self.checkIsContinuousTrip(currentTripStartDate: tripStartDate, previousTripEndDate: previousTripEndDate){
+                                tripIndex += 1
+                                arrFetchedTrip.append(trip)
+                                
+                                if tripCount == trips.count - 1 {
+                                    let workBlock2 = WorkBlockList(context: self.dataSource.managedObjectContext)
+                                    workBlock2.backToBackCount = back2backTripBlock as NSNumber
+                                    workBlock2.startDateTime = startDateTime
+                                    workBlock2.startDateTakeOffTime = startDateTakeOffTime
+                                    workBlock2.startDay = self.getDay(from: startDateTime)
+                                    workBlock2.endDateTime = tripEndDate
+                                    workBlock2.endDateOnly = tripEndDateOnly
+                                    workBlock2.endDay = self.getDay(from: tripEndDateOnly)
+                                    workBlock2.line = line
+                                    
+                                    var workBlockDays:[Any] = []
+                                    
+                                    for case let trip1 as BITrip in trips{
+                                        let trip1StartDate = self.getStartDate(for: trip1)
+                                        let trip1EndDate = self.getEndDateOfTrip(for: trip1)
+                                        workBlockDays.append(contentsOf: trip1.days!.allObjects)
+                                        if startDateTime == trip1StartDate {
+                                            workBlockDays.removeAll()
+                                            workBlockDays.append(contentsOf: trip1.days!.allObjects)
+                                        }
+                                        if tripEndDate == trip1EndDate {
+                                            break
+                                        }
+                                    }
+                                    
+                                    for case let day as BIDay in workBlockDays{
+                                        let dayObj = BIDay(context: self.dataSource.managedObjectContext)
+                                        dayObj.date = day.date
+                                        dayObj.info = day.info
+                                        dayObj.workBlock = workBlock2
+                                    }
+                                    
+                                    let daysCount = self.calendarData.daysBetweenDateForWorkBlock(from: workBlock2.startDateTime!, to: workBlock2.endDateOnly!) + 1
+                                    
+                                    switch daysCount{
+                                    case 1:oneDayWorkBlockCount += 1
+                                        break
+                                    case 2:twoDayWorkBlockCount += 1
+                                        break
+                                    case 3:threeDayWorkBlockCount += 1
+                                        break
+                                    case 4:fourDayWorkBlockCount += 1
+                                        break
+                                    default:break
+                                    }
+                                    
+                                    let checkDomicile = self.calculateNightInMiddleCount(trips: arrFetchedTrip, workBlock: workBlock2)
+                                    workBlock2.nightINDomicile = checkDomicile as NSNumber
+                                    back2backTripBlock = 0
+                                    tripIndex = 0
+                                    
+                                    if let triped = arrFetchedTrip.last {
+                                        arrFetchedTrip.append(triped)
+                                    }
+                                }
+                            }else{
+                                //Set WorkBlock Details
+                                let workBlock3 = WorkBlockList(context: self.dataSource.managedObjectContext)
+                                
+                                workBlock3.backToBackCount = back2backTripBlock as NSNumber
+                                workBlock3.startDateTime = startDateTime
+                                workBlock3.startDateTakeOffTime = startDateTakeOffTime
+                                workBlock3.startDay = self.getDay(from: startDateTime)
+                                workBlock3.briefMinutes = briefMins as NSNumber
+                                workBlock3.deBriefMinutes = debriefMins as NSNumber
+                                
+                                var workBlockDays:[Any] = []
+                                if tripIndex >= 0 {
+                                    workBlock3.endDateTime = previousTripEndDate
+                                    workBlock3.endDateOnly = previousTripEndDateOnly
+                                    workBlock3.endDay = self.getDay(from: previousTripEndDateOnly)
+                                    
+                                    for case let trip1 as BITrip in trips{
+                                        let trip1StartDate = self.getStartDate(for: trip1)
+                                        let trip1EndDate = self.getEndDateOfTrip(for: trip1)
+                                        workBlockDays.append(contentsOf: trip1.days!.allObjects)
+                                        
+                                        if startDateTime == trip1StartDate {
+                                            workBlockDays.removeAll()
+                                            workBlockDays.append(contentsOf: trip1.days!.allObjects)
+                                        }
+                                        
+                                        if previousTripEndDate == trip1EndDate {
+                                            break
+                                        }
+                                    }
+                                }else{
+                                    workBlock3.endDateTime = tripEndDate
+                                    workBlock3.endDay = self.getDay(from: tripEndDateOnly)
+                                    let trip1 = trips[tripCount-1] as! BITrip
+                                    workBlockDays = trip1.days!.allObjects
+                                }
+                                workBlock3.line = line
+                                
+                                for case let day as BIDay in workBlockDays {
+                                    
+                                    let dayObj = BIDay(context: self.dataSource.managedObjectContext)
+                                    
+                                    dayObj.date = day.date
+                                    dayObj.info = day.info
+                                    dayObj.workBlock = workBlock3
+                                }
+                                
+                                let daysCount = self.calendarData.daysBetweenDateForWorkBlock(from: workBlock3.startDateTime!, to: workBlock3.endDateOnly!) + 1
+                                
+                                switch daysCount{
+                                case 1:oneDayWorkBlockCount += 1
+                                    break
+                                case 2:twoDayWorkBlockCount += 1
+                                    break
+                                case 3:threeDayWorkBlockCount += 1
+                                    break
+                                case 4:fourDayWorkBlockCount += 1
+                                    break
+                                default:break
+                                }
+                                let checkDomicile = self.calculateNightInMiddleCount(trips: arrFetchedTrip, workBlock: workBlock3)
+                                workBlock3.nightINDomicile = checkDomicile as NSNumber
+                                back2backTripBlock = 0
+                                tripIndex = 0
+                                
+                                arrFetchedTrip = []
+                                arrFetchedTrip.append(trip)
+                                
+                                if tripCount == trips.count - 1 && tripIndex >= 0 {
+                                    //Set WorkBlock Details
+                                    let workBlock4 = WorkBlockList(context: self.dataSource.managedObjectContext)
+                                    
+                                    workBlock4.backToBackCount = back2backTripBlock as NSNumber
+                                    workBlock4.startDateTime = tripStartDate
+                                    workBlock4.startDateTakeOffTime = tripStartDateTakeOff
+                                    workBlock4.startDay = self.getDay(from: tripStartDate)
+                                    workBlock4.endDateTime = tripEndDate
+                                    workBlock4.endDateOnly = tripEndDateOnly
+                                    workBlock4.endDay = self.getDay(from: tripEndDateOnly)
+                                    workBlock4.line = line
+                                    workBlock4.briefMinutes = briefMins as NSNumber
+                                    workBlock4.deBriefMinutes = debriefMins as NSNumber
+                                    
+                                    let workBlockDays = trip.days!.allObjects
+                                    for case let day as BIDay in workBlockDays{
+                                        let dayObj = BIDay(context: self.dataSource.managedObjectContext)
+                                        dayObj.date = day.date
+                                        dayObj.info = day.info
+                                        dayObj.workBlock = workBlock4
+                                    }
+                                    
+                                    let daysCount = self.calendarData.daysBetweenDateForWorkBlock(from: workBlock4.startDateTime!, to: workBlock4.endDateOnly!) + 1
+                                    
+                                    switch daysCount{
+                                    case 1:oneDayWorkBlockCount += 1
+                                        break
+                                    case 2:twoDayWorkBlockCount += 1
+                                        break
+                                    case 3:threeDayWorkBlockCount += 1
+                                        break
+                                    case 4:fourDayWorkBlockCount += 1
+                                        break
+                                    default:break
+                                    }
+                                    let checkDomicile = self.calculateNightInMiddleCount(trips: arrFetchedTrip, workBlock: workBlock4)
+                                    workBlock4.nightINDomicile = checkDomicile as NSNumber
+                                    
+                                }
+                                tripIndex = 0
+                            }
+                    }
+                    
+                    line.workBlock1 = oneDayWorkBlockCount as NSNumber
+                    line.workBlock2 = twoDayWorkBlockCount as NSNumber
+                    line.workBlock3 = threeDayWorkBlockCount as NSNumber
+                    line.workBlock4 = fourDayWorkBlockCount as NSNumber
+                    line.workBlockCount = line.workBlocks!.count as NSNumber
+                    self.calculateNewProperties(line: line)
+            }
+            
+            self.bidPeriod?.overNightCities = arrOverNightCities as NSArray
+            self.bidPeriod?.isOverNightBulkApplied = "NO"
+            self.bidPeriod?.isVacationRemoved = false
+            AppState.shared.currentBidPeriod = self.bidPeriod
+            
+            if self.dataSource.managedObjectContext.hasChanges {
+                do{
+                    try self.dataSource.managedObjectContext.save()
+                }catch{
+                    print("Error in saving bid lines: \(error.localizedDescription)")
+                }
+            }
+            self.calculateNightInMiddle()
+        }catch{
+            print("Error in fetching bid lines: \(error.localizedDescription)")
+        }
+    }
+    
+    private func regenerateTrip(_ trips: [BITrip]) -> [[String: Any]] {
+        var arrRegenerateTrip: [[String: Any]] = []
+
+        for trip in trips {
+            if let data = checkAndReframeTrip(trip) {
+                arrRegenerateTrip.append(data)
+            }
+        }
+
+        return arrRegenerateTrip
+    }
+    
+    private func checkAndReframeTrip(_ trip: BITrip) -> [String: Any]? {
+        var dicTrip: [String: Any] = [:]
+        var arrOrderedDaysDay: [Any] = []
+        var arrOrderedDaysTripInfoDay: [Any] = []
+
+        for i in 0..<trip.orderedDays.count {
+            let dayInfo = trip.orderedDays[i]
+            let displayType = dayInfo.displayType?.intValue
+            if  displayType != BIDayDisplayType.fullPay.rawValue,
+               displayType != BIDayDisplayType.noPay.rawValue,
+               displayType != BIDayDisplayType.partialPay.rawValue {
+
+                arrOrderedDaysDay.append(dayInfo)
+
+                if let tripInfoDays = trip.info?.orderedDays,
+                   i < tripInfoDays.count,
+                   let tripInfoDay = tripInfoDays[i] as? BIDayInfo {
+                    arrOrderedDaysTripInfoDay.append(tripInfoDay)
+                }
+            }
+        }
+
+        if !arrOrderedDaysDay.isEmpty {
+            dicTrip["BIDay"] = arrOrderedDaysDay
+            dicTrip["StartDate"] = trip.startDate
+            dicTrip["BITripInfo"] = arrOrderedDaysTripInfoDay
+            dicTrip["briefMinutes"] = trip.info?.briefMinutes
+            dicTrip["debriefMinutes"] = trip.info?.debriefMinutes
+            dicTrip["TripNumber"] = trip.info?.number
+            dicTrip["returnTime"] = trip.info?.returnTime
+            return dicTrip
+        }
+
+        return nil
+    }
+    
+    
+    private func calculateNightInMiddle() {
+        for case let line as BILine in self.bidPeriod?.lines ?? [] {
+            autoreleasepool {
+                line.nightsInMid = 0
+                var inMiddle = 0
+
+                for case let workBlock as WorkBlockList in line.workBlocks ?? [] {
+                    inMiddle += workBlock.nightINDomicile?.intValue ?? 0
+                }
+
+                line.nightsInMid = NSNumber(value: inMiddle)
+            }
+        }
+
+        do {
+            try self.bidPeriod?.managedObjectContext?.save()
+        } catch {
+            print("Failed to save context: \(error.localizedDescription)")
+        }
+    }
+    
+    private func calculateNightInMiddleCount(trips: [BITrip], workBlock: WorkBlockList) -> Int {
+        var nightInMiddle = 0
+        let calendar = Calendar.current
+        var oneDay = DateComponents()
+        oneDay.day = 1
+
+        for trip in trips {
+            var loopDate = trip.startDate!
+            let tripEndDate = getEndDateOfTrip(for: trip)
+
+            // Single-day trip
+            if loopDate == tripEndDate && workBlock.endDateTime != tripEndDate {
+                for case let dayInfo as BIDayInfo in trip.info?.orderedDays ?? [] {
+                    if let legs = dayInfo.orderedLegs as? [BILegInfo],
+                       let lastLeg = legs.last,
+                       lastLeg.arriveCity == self.bidPeriod?.base {
+                        nightInMiddle += 1
+                    }
+                }
+            } else {
+                // Multi-day trip
+                if workBlock.endDateTime == tripEndDate {
+                    // Do nothing
+                } else {
+                    for case let dayInfo as BIDayInfo in trip.info?.orderedDays ?? [] {
+                        if let legs = dayInfo.orderedLegs as? [BILegInfo],
+                           let lastLeg = legs.last {
+                            if workBlock.endDateTime != loopDate,
+                               lastLeg.arriveCity == self.bidPeriod?.base {
+                                nightInMiddle += 1
+                            }
+                        }
+                        loopDate = calendar.date(byAdding: oneDay, to: loopDate) ?? loopDate
+                    }
+                }
+            }
+        }
+
+        return nightInMiddle
+    }
+    
+    private func checkIsContinuousTrip(currentTripStartDate: Date, previousTripEndDate: Date) -> Bool {
+        let daysBetweenTrip = self.calendarData.noOfDaysBetweenDates(startDate: previousTripEndDate, endDate: currentTripStartDate)
+        var flag = true
+        if daysBetweenTrip >= 1 {
+            flag = false
+        }
+        return flag
+    }
+    
+    
+    private func calculateNMidCount(trips: [BITrip], workBlock: WorkBlockList) -> Int {
+        var nightInMiddle = 0
+        let calendar = Calendar.current
+        let oneDay = DateComponents(day: 1)
+
+        for trip in trips {
+            var loopDate = trip.startDate!
+            let tripEndDate = getEndDateOfTrip(for: trip)
+
+            // Single-day trip
+            if loopDate == tripEndDate && workBlock.endDateTime != tripEndDate {
+                for case let dayInfo as BIDayInfo in trip.info!.orderedDays {
+                    let dayOrderedLegs = dayInfo.orderedLegs
+                    if let legInfo = dayOrderedLegs.last as? BILegInfo,
+                       legInfo.arriveCity == self.bidPeriod!.base {
+                        nightInMiddle += 1
+                    }
+                }
+            } else {
+                // Multi-day trip
+                if workBlock.endDateTime != tripEndDate {
+                    for case let dayInfo as BIDayInfo in trip.info!.orderedDays {
+                        if workBlock.endDateTime != loopDate {
+                            let dayOrderedLegs = dayInfo.orderedLegs
+                            if let legInfo = dayOrderedLegs.last as? BILegInfo,
+                               legInfo.arriveCity == self.bidPeriod!.base {
+                                nightInMiddle += 1
+                            }
+                        }
+                        loopDate = calendar.date(byAdding: oneDay, to: loopDate)!
+                    }
+                }
+            }
+        }
+
+        return nightInMiddle
+    }
+    
+    
+    private func doesTripsContinues(lastTripEndDate: Date, currentTripStartDate: Date) -> Bool {
+        let calendar = Calendar.current
+
+        // Strip the time components to compare only dates
+        guard let startOfDay1 = calendar.startOfDay(for: lastTripEndDate) as Date?,
+              let startOfDay2 = calendar.startOfDay(for: currentTripStartDate) as Date? else {
+            return false
+        }
+
+        // Get difference in days
+        let dayDifference = calendar.dateComponents([.day], from: startOfDay1, to: startOfDay2).day ?? 0
+
+        // Get year and month components
+        let components1 = calendar.dateComponents([.year, .month], from: lastTripEndDate)
+        let components2 = calendar.dateComponents([.year, .month], from: currentTripStartDate)
+
+        // Check if year and month match
+        if components1.year == components2.year && components1.month == components2.month {
+            return abs(dayDifference) == 1
+        }
+
+        return false
+    }
+    
+    
+    private func getOnlyEndDateOfTrip(for trip: BITrip) -> Date? {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale.current
+        calendar.timeZone = TimeZone(identifier: "GMT")!
+
+        guard let startDate = trip.startDate else {
+            return nil
+        }
+
+        var daysToAdd = trip.days?.count ?? 0
+
+        // Handle red-eye trips
+        if trip.isRedEyeTrip == true,
+           let calendarDaysCount = trip.info?.calendarDaysCount,
+           let orderedDaysCount = trip.info?.orderedDays.count,
+           calendarDaysCount != NSNumber(value: orderedDaysCount),
+           CBUtils.findMissingDate(forRedEyeTrip: trip) != nil {
+            daysToAdd += 1
+        }
+
+        let totalDaysToAdd = max(daysToAdd - 1, 0)
+        guard let intermediateDate = Calendar.current.date(byAdding: .day, value: totalDaysToAdd, to: startDate) else {
+            return nil
+        }
+
+        // Remove time components to return a pure date
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: intermediateDate)
+        return calendar.date(from: dateComponents)
+    }
+    
+    private func getEndDateOfTrip(for trip: BITrip) -> Date? {
+        // Special case: FA 2nd round reserve line uses endDate directly
+        if isFABid() == true,
+           bidPeriod?.isSecondRoundBid() == true,
+           trip.isReserve == true {
+            return trip.endDate
+        }
+
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale.current
+        calendar.timeZone = TimeZone(identifier: "GMT")!
+
+        var endDate: Date?
+        var dateComps = calendar.dateComponents([.year, .month, .day], from: trip.startDate!)
+
+        if let dayInfo = trip.info?.orderedDays.last as? BIDayInfo,
+           let legInfo = (dayInfo.orderedLegs as? [BILegInfo])?.last {
+
+            dateComps.minute = legInfo.arriveMinutes?.intValue ?? 0
+            endDate = calendar.date(from: dateComps)
+
+            // Adjust for early morning arrivals
+            if let endDateUnwrapped = endDate {
+                let endDateComps = calendar.dateComponents([.year, .month, .day], from: endDateUnwrapped)
+                let hourComponents = calendar.dateComponents([.hour], from: endDateUnwrapped)
+
+                if endDateComps.day == dateComps.day, (hourComponents.hour ?? 0) <= 4 {
+                    dateComps.day! += 1
+                    endDate = calendar.date(from: dateComps)
+                }
+            }
+        }
+
+        // Reserve trip ending late at night / early morning
+        if let number = trip.info?.number,
+           number.count > 1 {
+            let secondChar = number[number.index(number.startIndex, offsetBy: 1)]
+            if secondChar >= "W"{
+                if let endDateUnwrapped = endDate {
+                    var reserveComps = calendar.dateComponents([.year, .month, .day], from: endDateUnwrapped)
+                    let returnTime = trip.info?.returnTime?.intValue ?? 0
+                    let timeString = String(format: "%04d", returnTime % 2400)
+
+                    if let hour = Int(timeString.prefix(2)),
+                       let minute = Int(timeString.suffix(2)) {
+                        reserveComps.hour = hour
+                        reserveComps.minute = minute
+                        endDate = calendar.date(from: reserveComps)
+
+                        if hour >= 0 && hour <= 4 {
+                            endDate = calendar.date(byAdding: .day, value: 1, to: endDate!)
+                        }
+                    }
+                }
+            }
+        }
+
+        return endDate
+    }
+    
+    private func getStartDateWithTakeOff(for trip: BITrip) -> Date? {
+        var updateTime: Date?
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale.current
+        calendar.timeZone = TimeZone(identifier: "GMT")!
+
+        var dateComps = calendar.dateComponents([.year, .month, .day], from: trip.startDate!)
+
+        if let dayInfo = trip.info?.orderedDays.first as? BIDayInfo,
+           let legInfo = (dayInfo.orderedLegs as? [BILegInfo])?.first {
+            
+            let departMinutes = legInfo.departMinutes?.intValue ?? 0
+            let briefMinutes = trip.info?.briefMinutes?.intValue ?? 0
+            dateComps.minute = departMinutes - briefMinutes
+            updateTime = calendar.date(from: dateComps)
+        }
+
+        if let number = trip.info?.number,
+           number.count > 1 {
+            let secondChar = number[number.index(number.startIndex, offsetBy: 1)]
+            if secondChar >= "W"{
+                
+                var reserveComps = calendar.dateComponents([.year, .month, .day], from: trip.startDate!)
+                let departTime = trip.info?.departTime?.intValue ?? 0
+                let timeString = String(format: "%04d", departTime % 2400)
+                
+                if let hour = Int(timeString.prefix(2)), let minute = Int(timeString.suffix(2)) {
+                    reserveComps.hour = hour
+                    reserveComps.minute = minute
+                    updateTime = calendar.date(from: reserveComps)
+                }
+            }
+        }
+        return updateTime
+    }
+    
+    private func getStartDate(for trip: BITrip) -> Date? {
+        var startDate: Date?
+        var updateTime: Date?
+        
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale.current
+        calendar.timeZone = TimeZone(identifier: "GMT")!
+        var dateComps = calendar.dateComponents([.year, .month, .day], from: trip.startDate!)
+        
+        let dayInfo = trip.info?.orderedDays.first as? BIDayInfo
+        var isInternationalCity = false
+        
+        let arrInternationalCities = UserDefaults.standard.array(forKey: kCBInternationalCitiesList) as! [String]
+
+        if let dayInfo = dayInfo,
+           let dayOrderedLegs = dayInfo.orderedLegs as? [BILegInfo],
+           let legInfo = dayOrderedLegs.first {
+
+            dateComps.minute = legInfo.departMinutes?.intValue ?? 0
+            startDate = calendar.date(from: dateComps)
+            isInternationalCity = arrInternationalCities.contains(legInfo.arriveCity ?? "")
+        }
+
+        if let startDate = startDate {
+            if isInternationalCity {
+                updateTime = startDate.addingTimeInterval(TimeInterval(-InternationalCityMinutes * 60))
+            } else {
+                updateTime = startDate.addingTimeInterval(TimeInterval(-CityMinutes * 60))
+            }
+        }
+
+        // Check for reserve trips
+        if let number = trip.info?.number, number.count > 1 {
+            let secondChar = number[number.index(number.startIndex, offsetBy: 1)]
+            if secondChar >= "W"{
+                var reserveComps = calendar.dateComponents([.year, .month, .day], from: trip.startDate!)
+                let departTime = trip.info?.departTime?.intValue ?? 0
+                let time = String(format: "%04d", departTime % 2400)
+                
+                if let hour = Int(time.prefix(2)), let minute = Int(time.suffix(2)) {
+                    reserveComps.hour = hour
+                    reserveComps.minute = minute
+                    updateTime = calendar.date(from: reserveComps)
+                }
+            }
+        }
+
+        return updateTime
+    }
+    
+    private func getTripArriveCity(trip: BITrip) -> [String] {
+        var arrOvernightCity: [String] = []
+        for dayInfo in trip.info!.orderedDays {
+            if let dayInfo = dayInfo as? BIDayInfo,
+               let legInfo = (dayInfo.orderedLegs as? [BILegInfo])?.last,
+               let city = legInfo.arriveCity,
+               city != self.bidPeriod?.base {
+                arrOvernightCity.append(city)
+            }
+        }
+        return arrOvernightCity
+    }
+    
+    func getTripArriveCity(from trip: BITrip) {
+        var city = ""
+        if let orderedDays = trip.info?.orderedDays, let lastDay = orderedDays.last as? BIDayInfo, let domicileCity = lastDay.city {
+            for case let dayInfo as BIDayInfo in orderedDays{
+                let dayOrderedLegs = dayInfo.orderedLegs
+                let legInfo = dayOrderedLegs.last as! BILegInfo
+                city = legInfo.arriveCity!
+                if city != domicileCity && !arrOverNightCities.contains(city){
+                    arrOverNightCities.append(city)
+                }
+            }
+        }
+    }
+    
+    private func removeExistingWorkBlock(_ line: BILine){
+        line.workBlocks = NSMutableSet()
+    }
     
     private func checkPaperBidUserVacation(){
         var dictDetails: [String: Any] = [:]

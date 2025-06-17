@@ -16,5 +16,6 @@ final class AppState {
     var mockDataYear: Int?
     var mockDataMonth: Int?
     var missingTripInfo:[String:Any]?
+    var currentBidPeriod:BIBidPeriod?
     private init() {}
 }

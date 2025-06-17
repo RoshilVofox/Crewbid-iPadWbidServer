@@ -22,6 +22,8 @@ class EndPoint {
             return "https://www27.swalife.com/webbid3pty/ThirdParty"
         }
     }
+    var faListWB4Json = "http://www.wbidmax.com/downloads/swa/falistwb4.json"
+    var crewBidUpdate = "http://www.wbidmax.com/downloads/CrewBid/CrewBidUpdate.dat"
     var flightDataChange = "\(baseURL)GetVacationDifferenceData"
     var soap = "\(baseURL)soap"
     var CAPData = "\(baseURL)GetCAPData"
@@ -43,5 +45,6 @@ class EndPoint {
     var getmonthlyAwardData = "\(baseURL)GetMonthlyAwardData"
     var DownloadHistoricalBidLineAll = "\(baseURL)DownloadHistoricalBidLineAll"
     var DownloadHistoricalDataRest = "\(baseURL)DownloadHistoricalDataRest"
+    var GetAllSeniorityListFormatFromDB = "\(baseURL)GetAllSeniorityListFormatFromDB/"
 }
 

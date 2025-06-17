@@ -30,10 +30,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         return .left
     }
     
-    static let kCBFaVacationLineValuesKey = "FA Vacation Line Values"
-    static let kCBRound2DefaultLineValuesKey = "Round 2 Default Line Values"
-    static let kCBDefaultLineValuesKey = "Default Line Values"
-    static let kCBSwaptimizerLineValuesKey = "Swaptimizer Line Values"
+
     
     override func viewDidLoad() {
         super.viewDidLoad()

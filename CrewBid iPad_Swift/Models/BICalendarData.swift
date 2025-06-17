@@ -483,6 +483,22 @@ class BICalendarData {
         }
     }
     
+    func daysBetweenDateForWorkBlock(from fromDateTime: Date, to toDateTime: Date) -> Int {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.timeZone = TimeZone(identifier: "UTC")
+
+        guard let fromDateStr = dateFormatter.string(from: fromDateTime) as String?,
+              let toDateStr = dateFormatter.string(from: toDateTime) as String?,
+              let startDate = dateFormatter.date(from: fromDateStr),
+              let endDate = dateFormatter.date(from: toDateStr) else {
+            return 0
+        }
+
+        let calendar = Calendar(identifier: .gregorian)
+        let components = calendar.dateComponents([.day], from: startDate, to: endDate)
+        return components.day ?? 0
+    }
     
     
     
