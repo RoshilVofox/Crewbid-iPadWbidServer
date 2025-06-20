@@ -350,6 +350,22 @@ class CBCredentialsPageVC: BaseViewController {
         
         let monthArr = ["January", "February", "March", "April", "May", "June", "July", "August","September","October","November","December"]
         let alert = AlertService.showAlert(title: "Download Bid Again?", message: "The Bid for \(monthArr[dataSource.month-1]) \(dataSource.base) \(dataSource.position) Round \(dataSource.round) already exists. If you download it again, all existing data, including bid receipts, will be removed.", actions: [(title: "Download Again", style: .default, handler: {_ in
+            
+            // Build file path
+            let tempDir = BIBidInfo.temporaryDirectory()
+            let originalFileName = BIBidInfo.shared.dataFilenameBase()
+            let fileURL = tempDir.appendingPathComponent(originalFileName)
+             
+            // Delete the file if it exists
+            let fileManager = FileManager.default
+            if fileManager.fileExists(atPath: fileURL.path) {
+                do {
+                    try fileManager.removeItem(at: fileURL)
+                    print("Deleted file: \(fileURL.lastPathComponent)")
+                } catch {
+                    print("Failed to delete file: \(error.localizedDescription)")
+                }
+            }
             if list.count > 0 {
                 let obj = list[0]
                 self.context.delete(obj)
@@ -358,8 +374,8 @@ class CBCredentialsPageVC: BaseViewController {
                 } catch {
                     print("Failed to save context after deletion: \(error)")
                 }
+                NotificationCenter.default.post(name: NSNotification.Name(ReloadCollectionView), object: nil)
                 onRetry()
-//                NotificationCenter.default.post(name: NSNotification.Name(reloadCollectionView), object: nil)
             }
             
         }), (title: "Cancel", style: .cancel, handler: {_ in}), (title: "Open Bid", style: .default, handler: {_ in

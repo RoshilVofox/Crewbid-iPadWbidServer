@@ -316,13 +316,540 @@ class BIBidInfoReader{
     }
     
     private func vacationScan(){
-
+        UserDefaults.standard.set("", forKey: "Errors")
+        let pilotEidToSeniorityStandard = 31
+        let faEidToSeniority = 70
+        let pilotEidToNewHireCharacter = 29
+        let pilotEidToSeniorityNewHire = 33
+        var pilotEidToSeniority = 0
+        let numCharsLineStandard = 80
+        let numCharsLineNewHire = 42
+        var numCharsLine = 0
         
+        let coverLetter = (self.bidPeriod?.textFile(withName: "Seniority List"))! as BITextFile
+        
+        var emp = 0
+        if !AppState.shared.isSenioritySecretOn{
+            emp = Int(self.defaultEmployeeNumber!)!
+        }else{
+            emp = Int(self.dataSource.userid)!
+        }
+        let secretSwitch = UserDefaults.standard.string(forKey: "SecretVDuserName") ?? ""
+        if secretSwitch.count > 1{
+            emp = Int("\(UserDefaults.standard.value(forKey: "SecretVDuserName")!)")!
+        }
+        let empString = String(emp)
+        let regex = try! NSRegularExpression(pattern: "^0*", options: [])
+        let range = NSRange(location: 0, length: empString.utf16.count)
+        let str = regex.stringByReplacingMatches(in: empString, options: [], range: range, withTemplate: "")
+        let employee = Int(str) ?? 0
+        let employeeNumber = NSNumber(value: employee)
+        let text = coverLetter.text!
+        var numberToScan = ""
+        var stringToScan = ""
+        var vacayString = ""
+        
+        var scanner = Scanner(string: text)
+        let numCharSet = CharacterSet(charactersIn: "0123456789")
+        let dateRangeCharSet = CharacterSet(charactersIn: "/-;")
+        let newLineCharSet = CharacterSet(charactersIn: "\r\n")
+        let letterCharSet = CharacterSet.letters
+        
+        // Set the hide vacation user default to NO each time you DL a new bid pack
+        UserDefaults.standard.set(false, forKey: kCBHideVacationKey)
+        
+        if self.isFirstRoundBid(){
+            if !self.isFABid(){
+                // Add leading zeros to the employee number and pad with a space on each side
+                numberToScan = String(format: "%06d", employeeNumber.intValue)
+                stringToScan = " \(numberToScan) "
+                vacayString = "VA"
+            }else{
+                numberToScan = String(format: "%zd", employeeNumber.intValue)
+                stringToScan = "(\(numberToScan))"
+                vacayString = "VAC"
+            }
+            _ = scanner.scanUpToString(stringToScan)
+            
+            if scanner.isAtEnd{
+                UserDefaults.standard.set("You are not in the Domicile", forKey: "Errors")
+            }else{
+                let eidLoc = scanner.currentIndex.utf16Offset(in: text)
+                var senNumber = ""
+                if !self.isFABid(){
+                    // Check if we've got a new hire
+                    let location = text.index(text.startIndex, offsetBy: scanner.currentIndex.utf16Offset(in: text) - pilotEidToNewHireCharacter)
+                    let newHireCharacter = String(text[location])
+
+                    if newHireCharacter.rangeOfCharacter(from: numCharSet) == nil {
+                        // It's NOT a number → New hire case
+                        pilotEidToSeniority = pilotEidToSeniorityNewHire
+                        numCharsLine = numCharsLineNewHire
+                    } else {
+                        // It's a digit → Standard case
+                        pilotEidToSeniority = pilotEidToSeniorityStandard
+                        numCharsLine = numCharsLineStandard
+                    }
+                    // Back up 31 or 33 characters to grab the seniority number
+                    scanner.currentIndex = String.Index(utf16Offset: eidLoc - pilotEidToSeniority, in: text)
+                    senNumber = scanner.scanCharacters(from: numCharSet)!
+                    if senNumber != ""{
+                        self.bidPeriod?.seniorityNumber = Int(senNumber) as? NSNumber
+                    }else{
+                        UserDefaults.standard.set("Seniority List Error", forKey: "Errors")
+                    }
+                }
+                else{
+                    // Back up to the next line to find the new line character
+                    var offset = eidLoc - faEidToSeniority
+                    if offset < 35 {
+                        offset = eidLoc - 40
+                    }
+                    scanner.currentIndex = String.Index(utf16Offset: offset, in: text)
+
+                    _ = scanner.scanUpToCharacters(from: newLineCharSet)
+                    if scanner.isAtEnd {
+                        return
+                    }
+                    var currentOffset = scanner.currentIndex.utf16Offset(in: text)
+                    var searchRange = NSRange(location: currentOffset, length: 10)
+                    var swiftRange = Range(searchRange, in: text)
+                    var seniorityRange = text.range(of: "\\d{1}", options: .regularExpression, range: swiftRange)
+                    if seniorityRange == nil {
+                    // Back up a line and grab the seniority number there
+                    let backOffset = scanner.currentIndex.utf16Offset(in: text) - 40
+                        scanner.currentIndex = String.Index(utf16Offset: backOffset, in: text)
+                    _ = scanner.scanUpToCharacters(from: newLineCharSet)
+                    if scanner.isAtEnd {
+                        return
+                    }
+                    currentOffset = scanner.currentIndex.utf16Offset(in: text)
+                    searchRange = NSRange(location: currentOffset, length: 10)
+                    swiftRange = Range(searchRange, in: text)
+                    seniorityRange = text.range(of: "\\d{1}", options: .regularExpression, range: swiftRange)
+                    if seniorityRange != nil {
+                        let utf16Offset = seniorityRange!.lowerBound.utf16Offset(in: text)
+                        scanner.currentIndex = String.Index(utf16Offset: utf16Offset, in: text)
+                        senNumber = scanner.scanCharacters(from: numCharSet)!
+                        self.bidPeriod?.seniorityNumber = Int(senNumber) as? NSNumber
+                    }
+                    }else{
+                        let utf16Offset = seniorityRange!.lowerBound.utf16Offset(in: text)
+                        scanner.currentIndex = String.Index(utf16Offset: utf16Offset, in: text)
+                        if let scanned = scanner.scanCharacters(from: numCharSet), let seniorityNum = Int(scanned) {
+                              self.bidPeriod?.seniorityNumber = NSNumber(value: seniorityNum)
+                        } else {
+                            DispatchQueue.main.async {
+                                let alert = AlertService.showAlert(title: "Seniority List Error", message: "The Seniority List is improperly formatted, as a result, the vacation corrections for the month are currently not available. Please notify Support in the Contact us view.", actions: nil)
+                                let topVC = AlertService.currentTopViewController()
+                                topVC?.present(alert, animated: true)
+                                        
+                            }
+                            return
+                        }
+                    }
+                }
+                if dataSource.managedObjectContext.hasChanges {
+                    do{
+                        try dataSource.managedObjectContext.save()
+                    }catch{
+                        print("Error in saving context in vacationScan: \(error.localizedDescription)")
+                    }
+                }
+                // Scan backwards to see if there is any vacay
+                // Create a scan expression to search for the vacation string plus a decimal digit
+                // wildcard (i.e. VA1 or VAC1) in order to avoid people's names that contain VA or VAC
+                let myRegex = "\(vacayString)\\d{1}"
+                
+                var vacayScanLength = 0
+                var vacayScanStart = 0
+                if self.isFABid(){
+                    vacayScanLength = 50
+                    vacayScanStart = eidLoc - vacayScanLength
+                }else{
+                    vacayScanLength = 15
+                    vacayScanStart = eidLoc - vacayScanLength
+                }
+                
+                var vacayRangeToSearch = NSRange(location: vacayScanStart, length: vacayScanLength)
+                var swiftRange = Range(vacayRangeToSearch, in: text)
+                var rangeOfFirstVacay = text.range(of: myRegex, options: .regularExpression, range: swiftRange)
+                
+                if rangeOfFirstVacay == nil {
+                    // If it's a pilot bid, check to see if the vacay is on the next line
+                    if !self.isFABid() {
+                        let seniorityLocNextLine = eidLoc - pilotEidToSeniority + numCharsLine
+                        // Jump ahead a line to check for a seniority number on the next line
+                        let stringIndex = String.Index(utf16Offset: seniorityLocNextLine, in: text)
+                        scanner.currentIndex = stringIndex
+                        var newSeniority = scanner.scanCharacters(from: numCharSet)
+                        if scanner.isAtEnd {
+                            return
+                        }
+                        if newSeniority != nil{
+                            // No vacation
+                            self.bidPeriod?.containsVacay = false
+                            return
+                        }
+                        // If no seniority number, see if the line contains vacay (lines can contain SP, LM, and MD)
+                        vacayScanStart += numCharsLine
+                        vacayRangeToSearch.location = vacayScanStart
+                        swiftRange = Range(vacayRangeToSearch, in: text)
+                        rangeOfFirstVacay = text.range(of: myRegex, options: .regularExpression, range: swiftRange)
+                        
+                        while newSeniority == nil && rangeOfFirstVacay == nil {
+                            let stringIndex = String.Index(utf16Offset: numCharsLine, in: text)
+                            scanner.currentIndex = stringIndex
+                            newSeniority = scanner.scanCharacters(from: numCharSet)
+                            if scanner.isAtEnd {
+                                return
+                            }
+                            if newSeniority != nil{
+                                self.bidPeriod?.containsVacay = false
+                                return
+                            }
+                            vacayScanStart += numCharsLine
+                            vacayRangeToSearch.location = vacayScanStart
+                            // make sure that we don't go beyond the file length
+                            if vacayScanStart + vacayScanLength < text.length {
+                                swiftRange = Range(vacayRangeToSearch, in: text)
+                                rangeOfFirstVacay = text.range(of: myRegex, options: .regularExpression, range: swiftRange)
+                            }else{
+                                // Something was wrong with the formatting, so clear the seniority number and return
+                                self.bidPeriod?.seniorityNumber = nil
+                                return
+                            }
+                            if rangeOfFirstVacay != nil {
+                                break
+                            }
+                        }
+                    }else{
+                        // No vacation for that EID
+                        self.bidPeriod?.containsVacay = false
+                        return
+                    }
+                }
+                while rangeOfFirstVacay != nil {
+                    // Set the scanner at the end of the vacay string
+                    let offset = rangeOfFirstVacay!.upperBound.utf16Offset(in: text) - 1
+                    scanner.currentIndex = String.Index(utf16Offset: offset, in: text)
+                    
+                    var startMonth:String!
+                    var startDay:String!
+                    var endMonth:String!
+                    var endDay:String!
+                    
+                    // Scan the start month
+                    var oldLoc = scanner.currentIndex.utf16Offset(in: text)
+                    startMonth = scanner.scanCharacters(from: numCharSet)
+                    if scanner.isAtEnd || scanner.currentIndex.utf16Offset(in: text) == oldLoc {
+                        return
+                    }
+                    oldLoc = scanner.currentIndex.utf16Offset(in: text)
+                    // Scan the "/"
+                    _ = scanner.scanCharacters(from: dateRangeCharSet)
+                    if scanner.isAtEnd || scanner.currentIndex.utf16Offset(in: text) == oldLoc {
+                        return
+                    }
+                    oldLoc = scanner.currentIndex.utf16Offset(in: text)
+                    // Scan the start day
+                    startDay = scanner.scanCharacters(from: numCharSet)
+                    if scanner.isAtEnd || scanner.currentIndex.utf16Offset(in: text) == oldLoc {
+                        return
+                    }
+                    oldLoc = scanner.currentIndex.utf16Offset(in: text)
+                    // Scan the "- or /"
+                    _ = scanner.scanCharacters(from: dateRangeCharSet)
+                    if scanner.isAtEnd || scanner.currentIndex.utf16Offset(in: text) == oldLoc {
+                        return
+                    }
+                    oldLoc = scanner.currentIndex.utf16Offset(in: text)
+                    // Scan the end month
+                    endMonth = scanner.scanCharacters(from: numCharSet)
+                    if scanner.isAtEnd || scanner.currentIndex.utf16Offset(in: text) == oldLoc {
+                        return
+                    }
+                    oldLoc = scanner.currentIndex.utf16Offset(in: text)
+                    // Scan the "/"
+                    _ = scanner.scanCharacters(from: dateRangeCharSet)
+                    if scanner.isAtEnd || scanner.currentIndex.utf16Offset(in: text) == oldLoc {
+                        return
+                    }
+                    oldLoc = scanner.currentIndex.utf16Offset(in: text)
+                    // Scan the end day
+                    endDay = scanner.scanCharacters(from: numCharSet)
+                    if scanner.isAtEnd || scanner.currentIndex.utf16Offset(in: text) == oldLoc {
+                        return
+                    }
+                    // Create the dates
+                    let cal = self.calendarData.bidPeriodCalendar()
+                    var comps = DateComponents()
+                    comps.day = Int(startDay)
+                    comps.month = Int(startMonth)
+                    comps.hour = 12
+                    comps.year = self.bidPeriod?.month?.intValue == 1 && startMonth == "12" ? (self.bidPeriod?.year!.intValue)! - 1 : self.bidPeriod?.year?.intValue
+                    
+                    let startDate = cal!.date(from: comps)!
+                    
+                    comps.day = Int(endDay)
+                    comps.month = Int(endMonth)
+                    comps.year = self.bidPeriod?.month?.intValue == 12 && endMonth == "1" ? (self.bidPeriod?.year!.intValue)! + 1 : self.bidPeriod?.year?.intValue
+                    
+                    let endDate = cal!.date(from: comps)!
+                    
+                    let vacay = BIVacation(context: self.dataSource.managedObjectContext)
+                    vacay.bidPeriod = self.bidPeriod
+                    vacay.startDate = startDate
+                    vacay.endDate = endDate
+                    
+                    let length = self.calendarData.daysBetweenDate(fromDateTime: startDate, toDateTime: endDate) + 1
+                    vacay.length = length as NSNumber
+                    self.bidPeriod?.containsVacay = true
+                    self.bidPeriod?.seniorityVacayAvailable = true
+                    
+                    if self.dataSource.managedObjectContext.hasChanges {
+                        do{
+                            try self.dataSource.managedObjectContext.save()
+                        }catch{
+                            print("Error saving in vacationScan: \(error.localizedDescription)")
+                        }
+                    }
+                    
+                    // Check for multiple vacations
+                    
+                    if self.isFABid(){
+                        // Scan the semi-colon, if it exists
+                        _ = scanner.scanCharacters(from: dateRangeCharSet)
+                        let currentOffset = scanner.currentIndex.utf16Offset(in: text)
+                        vacayRangeToSearch = NSRange(location: currentOffset, length: 10)
+                    }else{
+                        // Jump ahead a line to check for vacay on the next line
+                        let updatedLocation = rangeOfFirstVacay!.lowerBound.utf16Offset(in: text) + 80
+                        vacayRangeToSearch = NSRange(location: updatedLocation, length: 20)
+                    }
+                    swiftRange = Range(vacayRangeToSearch, in: text)
+                    rangeOfFirstVacay = text.range(of: myRegex, options: .regularExpression, range: swiftRange)
+                    
+                    if rangeOfFirstVacay == nil {
+                        // No multiple vacations
+                        break
+                    }
+                    if !self.isFABid(){
+                        // If it's a pilot bid, check to make sure there is no seniority number to the left of the vacay
+                        // Find the crew member's seniority number
+                        let vacationToSeniorityOffset = 17
+                        let newIndex = text.index(rangeOfFirstVacay!.lowerBound, offsetBy: -vacationToSeniorityOffset, limitedBy: text.startIndex)
+                        scanner.currentIndex = newIndex!
+                        if let newSeniority = scanner.scanCharacters(from: numCharSet), !newSeniority.isEmpty{
+                            // This is someone else's vacay
+                            break
+                        }
+                    }
+                }
+            }
+        }else{// Is Second Round Bid
+            // Add leading zeros to the employee number and then pad with a space on each side
+            numberToScan = String(format: "%d", employeeNumber.intValue)
+            
+            if self.isFABid(){
+                stringToScan = "[\(numberToScan)]"
+            }else{
+                stringToScan = "\(numberToScan)"
+            }
+            vacayString = "VA"
+            
+            _ = scanner.scanUpToString(stringToScan)
+            
+            if scanner.isAtEnd {
+                return
+            }else{
+                var vacationLine:String? = nil
+                
+                var endOfLineLoc = text.utf16.distance(from: text.utf16.startIndex, to: scanner.currentIndex)
+                
+                if vacationLine != nil && vacationLine != "" {
+                    let eidLoc = text.utf16.distance(from: text.utf16.startIndex, to: scanner.currentIndex)
+                    var senNumber:String? = nil
+                    var offset = eidLoc - faEidToSeniority
+                    if offset < 35 {
+                        offset = eidLoc - 40
+                    }
+                    let safeIndex = text.utf16.index(text.utf16.startIndex, offsetBy: offset, limitedBy: text.utf16.endIndex)
+                    scanner.currentIndex = safeIndex!
+                    
+                    _ = scanner.scanUpToCharacters(from: newLineCharSet)
+                    if scanner.isAtEnd{
+                        return
+                    }
+                    var currentOffset = scanner.currentIndex.utf16Offset(in: text)
+                    var searchRange = NSRange(location: currentOffset, length: 10)
+                    var swiftRange = Range(searchRange, in: text)
+                    var seniorityRange = text.range(of: "\\d{1}", options: .regularExpression, range: swiftRange)
+                    if seniorityRange == nil {
+                        // Back up a line and grab the seniority number there
+                        currentOffset = scanner.currentIndex.utf16Offset(in: text)
+                        let newOffset = max(currentOffset - 40, 0)
+                        scanner.currentIndex = text.index(text.startIndex, offsetBy: newOffset)
+                        _ = scanner.scanUpToCharacters(from: newLineCharSet)
+                        if scanner.isAtEnd {
+                            return
+                        }
+                         searchRange = NSRange(location: currentOffset, length: 10)
+                         swiftRange = Range(searchRange, in: text)
+                         seniorityRange = text.range(of: "\\d{1}", options: .regularExpression, range: swiftRange)
+                        if seniorityRange != nil {
+                            scanner.currentIndex = seniorityRange!.lowerBound
+                            senNumber = scanner.scanCharacters(from: numCharSet)!
+                            vacationLine = scanner.scanUpToCharacters(from: newLineCharSet)
+                            if senNumber != nil {
+                                self.bidPeriod?.seniorityNumber = Int(senNumber!) as? NSNumber
+                            }
+                        }
+                    }else{
+                        scanner.currentIndex = seniorityRange!.lowerBound
+                        senNumber = scanner.scanCharacters(from: numCharSet)!
+                        vacationLine = scanner.scanUpToCharacters(from: newLineCharSet)
+                        if senNumber != nil {
+                            self.bidPeriod?.seniorityNumber = Int(senNumber!) as? NSNumber
+                        }else{
+                            DispatchQueue.main.async {
+                                let alert = AlertService.showAlert(title: "Seniority List Error", message: "The Seniority List is improperly formatted, as a result, the vacation corrections for the month are currently not available. Please notify Support in the Contact us view.", actions: nil)
+                                let topVC = AlertService.currentTopViewController()
+                                topVC?.present(alert, animated: true)
+                                        
+                            }
+                            return
+                        }
+                    }
+                }
+                
+                let myRegex = "\(vacayString) \\d{1}"
+                var rangeOfFirstVacay = vacationLine?.range(of: myRegex, options: .regularExpression)
+                
+                if rangeOfFirstVacay == nil {
+                    // No vacation for that EID
+                    self.bidPeriod?.containsVacay = false
+                    return
+                }
+                
+                while rangeOfFirstVacay != nil {
+                    // Set the scanner at the end of the vacay string;
+                    let offset = text.utf16.distance(from: text.utf16.startIndex, to: rangeOfFirstVacay!.upperBound) - 1
+                    scanner.currentIndex = text.utf16.index(text.utf16.startIndex, offsetBy: offset)
+                    
+                    var startMonth = ""
+                    var startDay = ""
+                    var endMonth = ""
+                    var endDay = ""
+                    
+                    var oldLoc = text.utf16.distance(from: text.utf16.startIndex, to: scanner.currentIndex)
+                    vacationLine = String(vacationLine!.dropFirst(oldLoc))
+                    scanner = Scanner(string: vacationLine!)
+                    
+                    // Scan the start day
+                    startDay = scanner.scanCharacters(from: numCharSet)!
+                    if scanner.isAtEnd || scanner.currentIndex.utf16Offset(in: text) == oldLoc {
+                        return
+                    }
+                    oldLoc = scanner.currentIndex.utf16Offset(in: text)
+                    
+                    // Scan the start month
+                    startMonth = scanner.scanCharacters(from: letterCharSet)!
+                    if scanner.isAtEnd || scanner.currentIndex.utf16Offset(in: text) == oldLoc {
+                        return
+                    }
+                    oldLoc = scanner.currentIndex.utf16Offset(in: text)
+                    
+                    // Scan the "-"
+                    _ = scanner.scanCharacters(from: dateRangeCharSet)
+                    if scanner.isAtEnd || scanner.currentIndex.utf16Offset(in: text) == oldLoc {
+                        return
+                    }
+                    oldLoc = scanner.currentIndex.utf16Offset(in: text)
+                    
+                    // Scan the end day
+                    endDay = scanner.scanCharacters(from: numCharSet)!
+                    if scanner.isAtEnd || scanner.currentIndex.utf16Offset(in: text) == oldLoc {
+                        return
+                    }
+                    oldLoc = scanner.currentIndex.utf16Offset(in: text)
+                   
+                    // Scan the end month
+                    endMonth = scanner.scanCharacters(from: letterCharSet)!
+                    if scanner.isAtEnd || scanner.currentIndex.utf16Offset(in: text) == oldLoc {
+                        return
+                    }
+                    oldLoc = scanner.currentIndex.utf16Offset(in: text)
+                    
+                    //Create the dates
+                    let df = DateFormatter()
+                    df.dateFormat = "HHddMMyyyy"
+                    df.timeZone = TimeZone(identifier: "US/Central")
+                    
+                    var year = self.bidPeriod?.month?.intValue == 1 && startMonth == "Dec" ? (self.bidPeriod?.year!.intValue)! - 1 : self.bidPeriod?.year?.intValue
+                    
+                    let startDateString = "\(startDay)\(startMonth)\(year!)"
+                    year = self.bidPeriod?.month?.intValue == 12 && endMonth == "Jan" ? (self.bidPeriod?.year!.intValue)! + 1 : self.bidPeriod?.year?.intValue
+                    
+                    let endDateString = "\(endDay)\(endMonth)\(year!)"
+                    
+                    let startDate = df.date(from: "12\(startDateString)")
+                    let endDate = df.date(from: "12\(endDateString)")
+                    
+                    let vacay = BIVacation(context: dataSource.managedObjectContext)
+                    vacay.bidPeriod = self.bidPeriod
+                    vacay.startDate = startDate
+                    vacay.endDate = endDate
+                    
+                    let length = self.calendarData.daysBetweenDate(fromDateTime: startDate!, toDateTime: endDate!) + 1
+                    vacay.length = length as NSNumber
+                    self.bidPeriod?.containsVacay = true
+                    self.bidPeriod?.seniorityVacayAvailable = true
+                    
+                    if dataSource.managedObjectContext.hasChanges {
+                        do{
+                            try dataSource.managedObjectContext.save()
+                        }catch{
+                            print("Error saving context in vacationScan: \(error.localizedDescription)")
+                        }
+                    }
+                    
+                    // Check for multiple vacations
+                    vacationLine = String(vacationLine![scanner.currentIndex...])
+                    rangeOfFirstVacay = vacationLine?.range(of: myRegex, options: .regularExpression)
+                    
+                    // If no more vacations were found on this line, check the next line
+                    if rangeOfFirstVacay == nil {
+                        // Reset the scanner text and set the location just before the end of line character
+                        // and then scan past it to get to the new line
+                        scanner = Scanner(string: text)
+                        scanner.currentIndex = String.Index(utf16Offset: endOfLineLoc, in: text)
+                        _ = scanner.scanCharacters(from: newLineCharSet)
+                        
+                        // Scan the full next line
+                        vacationLine = scanner.scanUpToCharacters(from: newLineCharSet)
+                        endOfLineLoc = text.utf16.distance(from: text.utf16.startIndex, to: scanner.currentIndex)
+                        
+                        // Look for a 4 digit decimal number as an indicator that the next line is a new employee
+                        
+                        let newEidRegex = "\\d{4}"
+                        let newEidRange = vacationLine?.range(of: newEidRegex, options: .regularExpression)
+                        
+                        if newEidRange != nil {
+                            // The new line is a new employee, break out of the while loop
+                            break
+                        }else{
+                            // Back to the grind of the while loop, scan for vacations.
+                            rangeOfFirstVacay = vacationLine?.range(of: myRegex, options: .regularExpression)
+                        }
+                    }
+                }
+            }
+        }
     }
     
     private func parseSeniorityWithNewFormat(dictDetails:[String:Any]){
         let empNumEndPos = dictDetails["EmpIdEnd"] as! Int
-        let vacStartPos = dictDetails["AbsenceDatesSt"] as! Int
         let vacEndPos = dictDetails["AbsenceDatesEnd"] as! Int
         let vacTypeStartPos = dictDetails["AbscenceTypeSt"] as! Int
         let EBGTypeStartPos = dictDetails["EbgSt"] as! Int
@@ -1194,7 +1721,10 @@ class BIBidInfoReader{
         
         //Iterate Lines
         let bidLinesFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Line")
-        bidLinesFetch.predicate = NSPredicate(format: "type != 4")
+        bidLinesFetch.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "type != 4"),
+            NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+        ])
         bidLinesFetch.sortDescriptors = [NSSortDescriptor(key: "bidOrder", ascending: true)]
         do{
             let results = try self.bidPeriod!.managedObjectContext!.fetch(bidLinesFetch)
@@ -1229,9 +1759,6 @@ class BIBidInfoReader{
                             //to get the overnight cities list
                             self.getTripArriveCity(from: trip)
                             arrLineOvernightCity.append(contentsOf: self.getTripArriveCity(trip: trip))
-                            if trip.number == "AA2L" {
-                                print("")
-                            }
                             tripStartDate = self.getStartDate(for: trip)
                             tripStartDateTakeOff = self.getStartDateWithTakeOff(for: trip)
                             tripEndDate = self.getEndDateOfTrip(for: trip)
@@ -1915,6 +2442,17 @@ class BIBidInfoReader{
         dictDetails["Month"] = self.dataSource.month
         dictDetails["Year"] = self.dataSource.year
         dictDetails["Round"] = 2
+        
+        let objDataBuilder = ODataBuilder()
+            objDataBuilder.getFirstRoundPaperBidVactionsAndUsers(details: dictDetails, completion: { result in
+            if result.count > 0 {
+                let dict = result[0] as? [String:Any]
+                let arr = dict!["Absences"]
+            }
+            
+        }, errorHandler: {error in
+            print("Error: \(error.localizedDescription)")
+        })
         //needs code
     }
     
@@ -2150,7 +2688,7 @@ class BIBidInfoReader{
                                 try moc.save()
                             }catch{
                                 //handle error
-                                print("Error saving context in readTrips(): \(error)")
+                                print("Error saving context in readTrips(): \(error.localizedDescription)")
                                 success = false
                                 stop.pointee = true
                                 return
@@ -2634,7 +3172,10 @@ class BIBidInfoReader{
                             do {
                                 try moc.save()
                             } catch {
-                                print("Error saving context: \(error)")
+                                print("Error saving context: \(error.localizedDescription)")
+                                if let nserror = error as NSError? {
+                                    print("Core Data Error: \(nserror), \(nserror.userInfo)")
+                                }
                                 success = false
                                 continueProcessing = false
                                 return false
@@ -2936,6 +3477,7 @@ class BIBidInfoReader{
                     
                     //Create Line
                     line = BILine(context: moc)
+                    let moc = line!.managedObjectContext!
                     let bidPeriod = try moc.existingObject(with: self.bidPeriod!.objectID) as? BIBidPeriod
                     
                     line?.bidPeriod = bidPeriod
@@ -3136,7 +3678,7 @@ class BIBidInfoReader{
         line.coHoli = 0
         line.isFA31thLineVacationCalculated = false
         line.isFA25thLineVacationCalculated = false
-        let moc = dataSource.managedObjectContext
+        let moc = self.bidPeriod!.managedObjectContext!
         let amExpression = NSExpression(format: "SUBQUERY(trips, $TRIP, $TRIP.info.amPM == 1).@count")
         let amTripsCount = amExpression.expressionValue(with: line, context: nil) as? NSNumber
         let pmExpression = NSExpression(format: "SUBQUERY(trips, $TRIP, $TRIP.info.amPM == 2).@count")
@@ -4825,7 +5367,7 @@ class BIBidInfoReader{
         let resRls1 = NSRange(location: 35, length: 2)
         let resRept2 = NSRange(location: 26, length: 2)
         let resRls2 = NSRange(location: 37, length: 2)
-        
+        calendarData = calendarData.initWithBidPeriod(bidPeriod: self.bidPeriod!)!
         if isReserve{
             tripNumRange = NSRange(location: 12, length: 4)
             tripDateRange = NSRange(location: 17, length: 7)
@@ -5384,7 +5926,7 @@ class BIBidInfoReader{
         let missingTripsArray = dict!["JsonTripData"] as! [Any]
         for i in 0..<missingTripsArray.count{
             let missingTripDict = missingTripsArray[i] as! [String:Any]
-            let tripNumWithSpecialChar = missingTripDict["TripNumb"] as! String
+            let tripNumWithSpecialChar = missingTripDict["TripNum"] as! String
             var startDay = "\(trip.startDay!)"
             if startDay.length == 1{
                 startDay = "0\(trip.startDay!)"
@@ -5394,20 +5936,20 @@ class BIBidInfoReader{
             if tripNumWithSpecialChar == tripNumWithDay{
                 tripInfo = BITripInfo(context: moc)
                 let dutyPeriodArray = missingTripDict["DutyPeriods"] as! [Any]
-                let depTime = missingTripDict["DepTime"] as! Int
-                let arrTime = missingTripDict["RetTime"] as! Int
-                let debriefMinutes = missingTripDict["DebriefTime"] as! Int
-                let briefMinutes = missingTripDict["BriefTime"] as! Int
-                let tripInfoPayJSON = missingTripDict["Tfp"] as! Float
-                let tripTAFBJSON = missingTripDict["Tafb"] as! Float
+                let depTime = missingTripDict["DepTime"] as? String
+                let arrTime = missingTripDict["RetTime"] as? String
+                let debriefMinutes = missingTripDict["DebriefTime"] as? Int
+                let briefMinutes = missingTripDict["BriefTime"] as? Int
+                let tripInfoPayJSON = missingTripDict["Tfp"] as? Float
+                let tripTAFBJSON = missingTripDict["Tafb"] as? Float
                 tripInfo?.number = trip.number?.substring(to: 4)
-                tripInfo?.departTime = depTime as NSNumber
-                tripInfo?.returnTime = arrTime as NSNumber
+                tripInfo?.departTime = Int(depTime!) as? NSNumber
+                tripInfo?.returnTime = Int(arrTime!) as? NSNumber
                 tripInfo?.partialTrip = false
-                tripInfo?.jsonPay = tripInfoPayJSON as NSNumber
-                tripInfo?.tafbJson = tripTAFBJSON as NSNumber
-                tripInfo?.debriefMinutes = debriefMinutes as NSNumber
-                tripInfo?.briefMinutes = briefMinutes as NSNumber
+                tripInfo?.jsonPay = tripInfoPayJSON as? NSNumber
+                tripInfo?.tafbJson = tripTAFBJSON as? NSNumber
+                tripInfo?.debriefMinutes = debriefMinutes as? NSNumber
+                tripInfo?.briefMinutes = briefMinutes as? NSNumber
                 
 //                var prevCity = self.bidPeriod?.base
                 prevDay = nil
@@ -5425,8 +5967,8 @@ class BIBidInfoReader{
                     var tfpRig:Float = 0
                     if i == dutyPeriodArray.count - 1{
                         // last duty period
-                        let adjRig:Float = missingTripDict["RidAdg"] as! Float
-                        let tafbRig:Float = missingTripDict["RigTafb"] as! Float
+                        let adjRig = Float((missingTripDict["RigAdg"] as? Double)!)
+                        let tafbRig = Float((missingTripDict["RigTafb"] as? Double)!)
                         if adjRig <= tafbRig{
                             tfpRig = tafbRig
                         }else if adjRig > tafbRig{
@@ -5442,20 +5984,20 @@ class BIBidInfoReader{
                         }
                         let departMin = (flightArray![k] as [String:Any])["DepTime"] as? Int
                         let arriveMin = (flightArray![k] as [String:Any])["ArrTime"] as? Int
-                        let flightNum = (flightArray![k] as [String:Any])["FltNum"] as? String
+                        let flightNum = (flightArray![k] as [String:Any])["FltNum"] as? Int
                         let isDeadHead = (flightArray![k] as [String:Any])["DeadHead"] as? Int
                         legInfo = BILegInfo(context: moc)
                         legInfo?.departCity = (flightArray![k] as [String:Any])["DepSta"] as? String
                         legInfo?.arriveCity = (flightArray![k] as [String:Any])["ArrSta"] as? String
-                        legInfo?.flight = flightNum
+                        legInfo?.flight = "\(flightNum!)"
                         legInfo?.isDeadhead = isDeadHead as? NSNumber
                         legInfo?.day = dayInfo
                         legInfo?.departMinutes = departMin as? NSNumber
                         legInfo?.arriveMinutes = arriveMin as? NSNumber
                         legInfo?.equipment = equipment
 //                        prevCity = city
-                        let legPay = (flightArray![k] as [String:Any])["Tfp"] as? Float
-                        legInfo?.pay = legPay as? NSNumber
+                        let legPay = (flightArray![k] as [String:Any])["Tfp"] as? Double
+                        legInfo?.pay = Float(legPay!) as NSNumber
                         let redEyeValue = (flightArray![k] as [String:Any])["RedEye"] as? Int
                         if redEyeValue == 1{
                             legInfo?.isRedEyeFlight = true
@@ -5890,7 +6432,7 @@ class BIBidInfoReader{
         }
         
         //Trips Text
-        textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.tripsTextFilename()!)
+        textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.tripsTextFilename())
         text = try! String(contentsOf: textFileURL, encoding: .utf8)
         if !text.isEmpty{
             self.bidPeriod?.addTextFile(withText: text, name: "Trips Text")

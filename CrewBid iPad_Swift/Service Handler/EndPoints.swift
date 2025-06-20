@@ -46,5 +46,6 @@ class EndPoint {
     var DownloadHistoricalBidLineAll = "\(baseURL)DownloadHistoricalBidLineAll"
     var DownloadHistoricalDataRest = "\(baseURL)DownloadHistoricalDataRest"
     var GetAllSeniorityListFormatFromDB = "\(baseURL)GetAllSeniorityListFormatFromDB/"
+    var getFirstRoundPaperBidVacationsAndUsers = "\(baseURL)GetFirstRoundPaperBidVacationsAndUsers"
 }
 

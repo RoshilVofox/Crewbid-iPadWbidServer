@@ -505,9 +505,9 @@ class CBUtils{
 
             do {
                 let jsonData = try JSONSerialization.data(withJSONObject: dict)
-                let jsonString = String(data: jsonData, encoding: .utf8) ?? ""
-                print("Request: \(jsonString)")
-                request.httpBody = jsonString.data(using: .utf8)
+                let jsonString = String(data: jsonData, encoding: .utf8)
+                print("Request: \(jsonString!)")
+                request.httpBody = jsonData
             } catch {
                 print("JSON serialization error: \(error)")
                 completion(false)

@@ -67,6 +67,7 @@ class CBBiddataDownloadVC: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        AppState.shared.jsonSecretIsOn = true
         setupUI()
         if isHistoricBid {
             self.setYearTitle()

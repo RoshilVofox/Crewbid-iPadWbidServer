@@ -37,6 +37,13 @@ extension BICrewPositionType {
             case .FlightAttendant: return "FA"
             }
         }
+    var longName: String {
+        switch self {
+        case .Captain: return "Captain"
+        case .FirstOfficer: return "First Officer"
+        case .FlightAttendant: return "Flight Attendant"
+        }
+    }
 }
 //timezones
 enum CBTimeZoneSetting : Int {

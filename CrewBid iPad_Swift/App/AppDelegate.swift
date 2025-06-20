@@ -512,6 +512,41 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     }
     
     // MARK: - Core Data stack
+    
+    lazy var applicationDocumentsDirectory: URL = {
+        let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return urls[urls.count-1]
+    }()
+    
+    @objc lazy var managedObjectContext: NSManagedObjectContext = {
+        var managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        managedObjectContext.persistentStoreCoordinator = self.persistentStoreCoordinator
+        return managedObjectContext
+    }()
+    
+    lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator = {
+        let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        let url = self.applicationDocumentsDirectory.appendingPathComponent("CrewBid_iPad_Swift").appendingPathExtension("sqlite")
+        
+        let coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
+        do {
+            let dic = [NSMigratePersistentStoresAutomaticallyOption : true, NSInferMappingModelAutomaticallyOption : true]
+            try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: dic)
+        } catch {
+            let dict : [String : Any] = [NSLocalizedDescriptionKey : "Failed to initialize the application's saved data" as NSString, NSLocalizedFailureReasonErrorKey : "There was an error creating or loading the application's saved data." as NSString, NSUnderlyingErrorKey: error as NSError]
+            let wrappedError = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
+            fatalError("Unresolved error \(wrappedError), \(wrappedError.userInfo)")
+        }
+        return coordinator
+    }()
+    lazy var managedObjectModel: NSManagedObjectModel = {
+        let resource = "CrewBid_iPad_Swift"
+        guard let modelURL = Bundle.main.url(forResource: resource, withExtension:"momd") else {
+            fatalError("Error loading model from bundle")
+        }
+        return NSManagedObjectModel(contentsOf: modelURL)!
+    }()
+    
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "CrewBid_iPad_Swift")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in

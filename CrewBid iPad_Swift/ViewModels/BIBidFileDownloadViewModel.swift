@@ -64,10 +64,11 @@ class BIBidFileDownloadViewModel {
         let bidDownload = BIBidFileDownload()
         let filesToDownload = BIBidInfo.shared.bidDataFiles()
         var fileIterator = filesToDownload!.makeIterator()
+        self.performPostDownloadTasks()
         func downloadNext() {
             guard let nextFile = fileIterator.next() else {
                 // All files done
-                self.performPostDownloadTasks()
+                
                 completion(.success(BIBidInfo.shared.downloadDirectory()))
                 return
             }

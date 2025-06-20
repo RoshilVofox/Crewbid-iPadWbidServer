@@ -34,6 +34,7 @@ class GlobalBidInfo: BIBidInfoDataSource {
     var managedObjectContext: NSManagedObjectContext
     private init() {
         self.managedObjectContext = CoreDataManager.shared.persistentContainer.newBackgroundContext()
+        self.managedObjectContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
     }
 }
 
@@ -63,17 +64,62 @@ class BIBidInfo:NSObject{
         }
         
         if isSecondRoundBid() && !isFABid(){
-            let isQATest = UserDefaults.standard.string(forKey: "isQATest")
-            if isQATest == "NO"{
-                var firstRoundTextDataFilename = textFilenameBase()
-                let index = firstRoundTextDataFilename.index(firstRoundTextDataFilename.startIndex, offsetBy: 5)
-                    firstRoundTextDataFilename.replaceSubrange(index...index, with: "A")
-                bidDataFiles.append(firstRoundTextDataFilename)
-            }
-        }
+            var firstRoundTextDataFilename = textDataFilename()
+                    if firstRoundTextDataFilename.count > 5 {
+                        let index = firstRoundTextDataFilename.index(firstRoundTextDataFilename.startIndex, offsetBy: 5)
+                        firstRoundTextDataFilename.replaceSubrange(index...index, with: "A")
+                        bidDataFiles.append(firstRoundTextDataFilename)
+                    } else {
+                        print("Warning: textDataFilename is too short to modify for first round")
+                    }
+                }
         return bidDataFiles
     }
     
+    func bidDocumentFileURL() -> URL {
+        let documentsDirectoryURL = self.documentsDirectory()
+        let documentFilename = bidDocumentFilename()
+        let documentFileURL = documentsDirectoryURL.appendingPathComponent(documentFilename)
+        return documentFileURL
+    }
+    
+    func documentsDirectory() -> URL {
+        let fileManager = FileManager.default
+        let directories = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
+        return directories.last!
+    }
+    
+    func bidDocumentFilename() -> String {
+        let app = AppState.shared
+        var month = dataSource.month
+        var year = dataSource.year
+        if app.isMockData || app.isHistoricBid {
+            month = app.mockDataMonth!
+            year = app.mockDataYear!
+        }
+        if let isQATest = UserDefaults.standard.string(forKey: "isQATest"), isQATest == "YES" {
+            if let testMonthStr = UserDefaults.standard.string(forKey: "QATestMonth"),
+               let testYearStr = UserDefaults.standard.string(forKey: "QATestYear"),
+               let testMonth = Int(testMonthStr),
+               let testYear = Int(testYearStr) {
+                month = testMonth
+                year = testYear
+            }
+        }
+        var components = DateComponents()
+        components.year = year
+        components.month = month
+        let calendar = Calendar.current
+        let bidMonthDate = calendar.date(from: components) ?? Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM yyyy"
+        let formattedMonth = formatter.string(from: bidMonthDate)
+        let position = dataSource.position.longName
+        let base = dataSource.base
+        let round = "Round \(dataSource.round)"
+        let filename = "\(formattedMonth) \(base) \(position) \(round).crewbiddoc"
+        return filename
+    }
     
     func linesTextFilename() -> String {
         // 'L' for first round, 'N' for second round
@@ -81,7 +127,7 @@ class BIBidInfo:NSObject{
         return "\(textFilenameBase())\(bidRoundChar).TXT"
     }
 
-    private func dataFilenameBase() -> String {
+    func dataFilenameBase() -> String {
         let position = dataSource.position.character
         let base = dataSource.base
         let round = isFirstRoundBid() ? "D" : "B"

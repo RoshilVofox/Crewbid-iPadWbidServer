@@ -333,6 +333,7 @@
 		F49849CD2DC76EF900FE9426 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49849CC2DC76EF900FE9426 /* Reachability.swift */; };
 		F4A472212DDDEDA900065720 /* CBExceedingTripCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A472202DDDEDA900065720 /* CBExceedingTripCalculation.swift */; };
 		F4B545AB2DCC648F00672102 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B545AA2DCC648F00672102 /* CoreDataManager.swift */; };
+		F4BAEFE62E055F1000109A1B /* ODataBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4BAEFE52E055F1000109A1B /* ODataBuilder.swift */; };
 		F4C5D6642DC9E25500D86BD2 /* FBEncryptorAES.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6632DC9E25500D86BD2 /* FBEncryptorAES.m */; };
 		F4C5D6652DC9E25500D86BD2 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6622DC9E25500D86BD2 /* NSData+Base64.m */; };
 		F4C5D66A2DC9EBC200D86BD2 /* NSData+AES.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6692DC9EBC200D86BD2 /* NSData+AES.m */; };
@@ -673,6 +674,7 @@
 		F49849CC2DC76EF900FE9426 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		F4A472202DDDEDA900065720 /* CBExceedingTripCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBExceedingTripCalculation.swift; sourceTree = "<group>"; };
 		F4B545AA2DCC648F00672102 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
+		F4BAEFE52E055F1000109A1B /* ODataBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ODataBuilder.swift; sourceTree = "<group>"; };
 		F4C5D6602DC9E25500D86BD2 /* NSData+Base64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
 		F4C5D6612DC9E25500D86BD2 /* FBEncryptorAES.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBEncryptorAES.h; sourceTree = "<group>"; };
 		F4C5D6622DC9E25500D86BD2 /* NSData+Base64.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
@@ -1574,6 +1576,7 @@
 				F4A472202DDDEDA900065720 /* CBExceedingTripCalculation.swift */,
 				350B8B3E2DDEDBFF005D5E76 /* CBVacationDownloader.swift */,
 				35428C282DEEE9F2009E7AC5 /* CBUserDefaults.swift */,
+				F4BAEFE52E055F1000109A1B /* ODataBuilder.swift */,
 			);
 			path = "New Files";
 			sourceTree = "<group>";
@@ -2068,6 +2071,7 @@
 				F4400BDA2DD9E5D60066C7E0 /* CBLoginViewModel.swift in Sources */,
 				F41EBF862DC4DB20001413DE /* CBBidListCalenderViewCell.swift in Sources */,
 				F41EBF872DC4DB20001413DE /* InnerCollectionViewCell.swift in Sources */,
+				F4BAEFE62E055F1000109A1B /* ODataBuilder.swift in Sources */,
 				F41EBF882DC4DB20001413DE /* CBBidListSortOptions.swift in Sources */,
 				F41EBF892DC4DB20001413DE /* BidListActionVC.swift in Sources */,
 				F481E9732DD0946000DED8FE /* BICrewPosition.swift in Sources */,
@@ -2181,7 +2185,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 7.34.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brainbagsoftware1.CrewBid;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2214,7 +2218,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 7.34.13;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brainbagsoftware1.CrewBid;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
