@@ -71,22 +71,22 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
         }
         
         // Sorts fetched results controller.
-//        let sortFetch = NSFetchRequest<BILineSort>(entityName: "LineSort")
-//        sortFetch.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
-//        sortFetch.predicate = NSPredicate(format: "isBidListSort != %@", NSNumber(value: true))
-//        self.sortsFetchController = NSFetchedResultsController(fetchRequest: sortFetch, managedObjectContext: moc!, sectionNameKeyPath: nil, cacheName: nil)
-//        self.sortsFetchController.delegate = self
-//        do{
-//            try self.sortsFetchController.performFetch()
-//        }catch{
-//            print("Sort fetch error: \(error.localizedDescription)")
-//        }
+        let sortFetch = NSFetchRequest<BILineSort>(entityName: "LineSort")
+        sortFetch.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+        sortFetch.predicate = NSPredicate(format: "isBidListSort != %@", NSNumber(value: true))
+        self.sortsFetchController = NSFetchedResultsController(fetchRequest: sortFetch, managedObjectContext: moc!, sectionNameKeyPath: nil, cacheName: nil)
+        self.sortsFetchController.delegate = self
+        do{
+            try self.sortsFetchController.performFetch()
+        }catch{
+            print("Sort fetch error: \(error.localizedDescription)")
+        }
         
         // Lines fetched results controller.
         self.notTrashedPredicate = NSPredicate(format: "isTrashed == NO")
         self.notBidPredicate = NSPredicate(format: "bidOrder == 0")
-//        let subArray = NSMutableArray(array: [self.filtersFetchController.fetchedObjects!])
-//        let subpredicates = subArray.value(forKey: "predicate")
+        let subArray = NSMutableArray(array: [self.filtersFetchController.fetchedObjects!])
+        let subpredicates = subArray.value(forKey: "predicate")
         updateLines()
     }
     
@@ -124,28 +124,28 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
         }
     }
     
-//    func fetchTrashedLinesCount(){
-//        var tempLines:[BILine] = []
-//        for case let line as BILine in CBGlobalMethods.shared.selectedBidPeriod!.lines! {
-//            tempLines.append(line)
-//        }
-//        
-//        let sort = NSSortDescriptor(key: "number", ascending: true)
-//        let sortedLines = (tempLines as NSArray).sortedArray(using: [sort]) as! [BILine]
-//        
-//        var array:[NSPredicate] = []
-//        array.append(NSPredicate(format: "isTrashed == %@", NSNumber(booleanLiteral: true)))
-//        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
-//        let predicateValue = (sortedLines as NSArray).filtered(using: predicate) as! [BILine]
-//        let isTrashedCount = predicateValue.count
-//        if isTrashedCount == 0 {
-//            self.lblTrashLineCount.isHidden = true
-//            self.lblTrashLineCount.text = "\(0)"
-//        }else{
-//            self.lblTrashLineCount.isHidden = false
-//            self.lblTrashLineCount.text = "\(isTrashedCount)"
-//        }
-//    }
+    func fetchTrashedLinesCount(){
+        var tempLines:[BILine] = []
+        for case let line as BILine in CBGlobalMethods.shared.selectedBidPeriod!.lines! {
+            tempLines.append(line)
+        }
+        
+        let sort = NSSortDescriptor(key: "number", ascending: true)
+        let sortedLines = (tempLines as NSArray).sortedArray(using: [sort]) as! [BILine]
+        
+        var array:[NSPredicate] = []
+        array.append(NSPredicate(format: "isTrashed == %@", NSNumber(booleanLiteral: true)))
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
+        let predicateValue = (sortedLines as NSArray).filtered(using: predicate) as! [BILine]
+        let isTrashedCount = predicateValue.count
+        if isTrashedCount == 0 {
+            self.lblTrashLineCount.isHidden = true
+            self.lblTrashLineCount.text = "\(0)"
+        }else{
+            self.lblTrashLineCount.isHidden = false
+            self.lblTrashLineCount.text = "\(isTrashedCount)"
+        }
+    }
     
     func showTripTextPopover(for tripButton: CBTripButton){
         if tripTextPopover == nil {
@@ -153,15 +153,15 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
                 self.dismiss(animated: true)
                 return
             }
-//            let tripText = tripButton.trip!.tripText()
-//            let tripTextController = CBTripTextViewController.instantiateFromStoryboard(withTripText: tripText, button: tripButton) as! CBTripTextViewController
-//            tripTextController.modalPresentationStyle = .custom
-//            self.tripCBButton = tripButton
-//            tripButton.setHighlighted(true)
-//            tripTextController.tripText1 = tripText
-//            tripTextController.button = tripButton
-//            tripTextController.isFromScratchpad = true
-//            tripTextController.showPopover(sourceView: tripButton)
+            let tripText = tripButton.trip!.tripText()
+            let tripTextController = CBTripTextViewController.instantiateFromStoryboard(withTripText: tripText, button: tripButton) as! CBTripTextViewController
+            tripTextController.modalPresentationStyle = .custom
+            self.tripCBButton = tripButton
+            tripButton.setHighlighted(true)
+            tripTextController.tripText1 = tripText
+            tripTextController.button = tripButton
+            tripTextController.isFromScratchpad = true
+            tripTextController.showPopover(sourceView: tripButton)
         }
     }
     
@@ -177,12 +177,12 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
     
     //Tap gesture for refresh button in trash menu.
     @objc func trashRefreshButton(_ gesture: UITapGestureRecognizer) {
-//        let storyboard : UIStoryboard = UIStoryboard(name: "BidDocument", bundle: nil)
-//        let refreshViewController = storyboard.instantiateViewController(withIdentifier: "RefreshMenuController") as! RefreshMenuController
-//        refreshViewController.popOverType = PopoverViewType.Refresh
-//        refreshViewController.modalPresentationStyle = .popover
-//        let frame = CGRect(x: btnTrash.frame.origin.x - 40, y: btnTrash.frame.origin.y + 20 , width: 0, height: 0)
-//        refreshViewController.showPopover(sourceView: self.btnTrash, sourceRect: frame)
+        let storyboard : UIStoryboard = UIStoryboard(name: "BidDocument", bundle: nil)
+        let refreshViewController = storyboard.instantiateViewController(withIdentifier: "RefreshMenuController") as! RefreshMenuController
+        refreshViewController.popOverType = PopoverViewType.Refresh
+        refreshViewController.modalPresentationStyle = .popover
+        let frame = CGRect(x: btnTrash.frame.origin.x - 40, y: btnTrash.frame.origin.y + 20 , width: 0, height: 0)
+        refreshViewController.showPopover(sourceView: self.btnTrash, sourceRect: frame)
     }
 
     @IBAction func btnFlagAction(_ sender: Any) {

@@ -33,11 +33,11 @@ class CBTripTextViewController: UIViewController, KUIPopOverUsable {
         super.viewDidLoad()
 
             }
-//    class func instantiateFromStoryboard(withTripText tripText: String, button: CBTripButton) -> Any {
-//        let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
-//        let tripTextController = storyboard.instantiateViewController(withIdentifier:"CBTripTextViewController") as! CBTripTextViewController
-//        tripTextController.tripText1 = tripText
-//        tripTextController.button = button
-//        return tripTextController
-//    }
+    class func instantiateFromStoryboard(withTripText tripText: String, button: CBTripButton) -> Any {
+        let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
+        let tripTextController = storyboard.instantiateViewController(withIdentifier:"CBTripTextViewController") as! CBTripTextViewController
+        tripTextController.tripText1 = tripText
+        tripTextController.button = button
+        return tripTextController
+    }
 }
