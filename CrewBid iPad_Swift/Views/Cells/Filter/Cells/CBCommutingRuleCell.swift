@@ -9,6 +9,8 @@ import UIKit
 
 class CBCommutingRuleCell: UITableViewCell {
     @IBOutlet weak var titleLabel: UILabel!
+    var bidPeriod: BIBidPeriod?
+    var filterRule: BIFilterRule?
     
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -8,6 +8,9 @@
 import UIKit
 
 class CBDayMonthRuleCell: UITableViewCell {
+    var filterRule: BIFilterRule?
+    var bidPeriod: BIBidPeriod?
+    var calendarData: BICalendarData?
     
     override func awakeFromNib() {
         super.awakeFromNib()

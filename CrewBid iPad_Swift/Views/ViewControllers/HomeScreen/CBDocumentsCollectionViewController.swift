@@ -153,13 +153,11 @@ class CBDocumentsCollectionViewController: BaseViewController {
             let context = self.dataSource.managedObjectContext
             let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
 
-            do {
                 // Fetch bid periods and reverse to show newest first
-                self.bidPeriodList = try context.fetch(fetchRequest).reversed()
-            } catch {
-                print("Failed to fetch bid periods: \(error)")
-                self.bidPeriodList = []
-            }
+                self.bidPeriodList = try! context.fetch(fetchRequest)
+                self.bidPeriodList = self.bidPeriodList.reversed()
+                self.collectionView.reloadData()
+            
             if (self.bidPeriodList.count == 0) {
                 self.editButton.setTitle("Edit", for: .normal)
                 self.isPlusImage = true
@@ -232,6 +230,7 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
             dataSource.base = bidPeriod.base!
             dataSource.month = (bidPeriod.month as? Int)!
             dataSource.round = (bidPeriod.round as? Int)!
+            CBGlobalMethods.shared.selectedBidPeriod = bidPeriod
             if let rawValue = bidPeriod.positionType as? Int,
                let position = BICrewPositionType(rawValue: rawValue) {
                 // Successfully converted and initialized the enum

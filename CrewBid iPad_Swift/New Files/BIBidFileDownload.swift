@@ -62,7 +62,7 @@ class BIBidFileDownload: NSObject{
             }
             task.resume()
         }catch{
-            print("Error in Downloading Historic Bid: \(error)")
+            print("Error in Downloading Historic Bid: \(error.localizedDescription)")
         }
     }
     

@@ -26,6 +26,82 @@ class CBUserFlagRuleCell: UITableViewCell {
     var kUserFlagFilterY: CGFloat = 11.0
     var bacViewColor: UIColor = .black
     var flagColor: UIColor = .gray
+    var bidPeriod: BIBidPeriod?
+    
+    private var _filterRule: BIFilterRule?
+    
+    var filterRule: BIFilterRule  {
+        get {
+            let variables = _filterRule!.variables?["SET"] as! NSSet
+            let arrVariables = NSMutableArray(array:variables.allObjects)
+            userFlagControlNoColor?.isSelected = arrVariables.contains(CBUserFlagType.none.rawValue)
+            userFlagControlYellow?.isSelected = arrVariables.contains(CBUserFlagType.yellow.rawValue)
+            userFlagControlOrange?.isSelected = arrVariables.contains(CBUserFlagType.orange.rawValue)
+            userFlagControlRed?.isSelected = arrVariables.contains(CBUserFlagType.red.rawValue)
+            userFlagControlBlue?.isSelected = arrVariables.contains(CBUserFlagType.blue.rawValue)
+            userFlagControlGreen?.isSelected = arrVariables.contains(CBUserFlagType.green.rawValue)
+            userFlagControlBrown?.isSelected = arrVariables.contains(CBUserFlagType.brown.rawValue)
+            userFlagControlPink?.isSelected = arrVariables.contains(CBUserFlagType.pink.rawValue)
+            //code to execute
+            return _filterRule!
+        }
+        set(newValue) {
+          //  _filterRule = newValue
+            if _filterRule != newValue {
+                _filterRule = newValue
+            }
+            let variables = newValue.variables?["SET"] as! NSSet
+            let arrVariables = NSMutableArray(array:variables.allObjects)
+            userFlagControlNoColor?.isSelected = arrVariables.contains(0)
+            userFlagControlYellow?.isSelected = arrVariables.contains(4)
+            userFlagControlOrange?.isSelected = arrVariables.contains(5)
+            userFlagControlRed?.isSelected = arrVariables.contains(3)
+            userFlagControlBlue?.isSelected = arrVariables.contains(1)
+            userFlagControlGreen?.isSelected = arrVariables.contains(2)
+            userFlagControlBrown?.isSelected = arrVariables.contains(6)
+            userFlagControlPink?.isSelected = arrVariables.contains(7)
+            if userFlagControlNoColor!.isSelected {
+                userFlagControlNoColor?.layer.borderWidth = 3
+            } else {
+                userFlagControlNoColor?.layer.borderWidth = 0.5
+            }
+            if userFlagControlYellow!.isSelected {
+                userFlagControlYellow?.layer.borderWidth = 3
+            } else {
+                userFlagControlYellow?.layer.borderWidth = 0.5
+            }
+            if userFlagControlOrange!.isSelected {
+                userFlagControlOrange?.layer.borderWidth = 3
+            } else {
+                userFlagControlOrange?.layer.borderWidth = 0.5
+            }
+            if userFlagControlRed!.isSelected {
+                userFlagControlRed?.layer.borderWidth = 3
+            } else {
+                userFlagControlRed?.layer.borderWidth = 0.5
+            }
+            if userFlagControlBlue!.isSelected {
+                userFlagControlBlue?.layer.borderWidth = 3
+            } else {
+                userFlagControlBlue?.layer.borderWidth = 0.5
+            }
+            if userFlagControlGreen!.isSelected {
+                userFlagControlGreen?.layer.borderWidth = 3
+            } else {
+                userFlagControlGreen?.layer.borderWidth = 0.5
+            }
+            if userFlagControlBrown!.isSelected {
+                userFlagControlBrown?.layer.borderWidth = 3
+            } else {
+                userFlagControlBrown?.layer.borderWidth = 0.5
+            }
+            if userFlagControlPink!.isSelected {
+                userFlagControlPink?.layer.borderWidth = 3
+            } else {
+                userFlagControlPink?.layer.borderWidth = 0.5
+            }
+        }
+    }
     
     
     override func awakeFromNib() {

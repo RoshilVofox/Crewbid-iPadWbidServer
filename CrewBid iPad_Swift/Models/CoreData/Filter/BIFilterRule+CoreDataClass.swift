@@ -11,8 +11,11 @@ import CoreData
 
 @objc(BIFilterRule)
 public class BIFilterRule: NSManagedObject {
-
+    
+    
 }
+
+
 enum PopoverViewType: Int {
     case Refresh
     case MockMonth

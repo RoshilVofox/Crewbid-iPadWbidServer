@@ -404,6 +404,20 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     }
     
     @IBAction func moveLinesToBidListAction(_ sender: Any) {
+        moveBidListButton.isUserInteractionEnabled = false
+        perform(#selector(moveBidLineDelay), with: nil, afterDelay: 1.0)
+//        if let sView = sender as? UIView {
+//            sView.isUserInteractionEnabled = false
+//            perform(#selector(resetButton(_:)), with: sView, afterDelay: 0.5)
+//        }
         
     }
+    
+    @objc func moveBidLineDelay() {
+        moveBidListButton.isUserInteractionEnabled = true
+    }
+//    
+//    @objc func resetButton(_ sender: UIView) {
+//        sender.isUserInteractionEnabled = true
+//    }
 }

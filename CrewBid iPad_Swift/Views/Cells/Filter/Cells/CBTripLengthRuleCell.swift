@@ -8,6 +8,8 @@
 import UIKit
 
 class CBTripLengthRuleCell: UITableViewCell {
+    var bidPeriod: BIBidPeriod?
+    var filterRule: BIFilterRule?
 
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -16,6 +16,7 @@ class CBWeekdayRuleCell: UITableViewCell {
     @IBOutlet weak var thursdayButton: CBBorderToggleButton!
     @IBOutlet weak var fridayButton: CBBorderToggleButton!
     @IBOutlet weak var saturdayButton: CBBorderToggleButton!
+    var filterRule: BIFilterRule?
     
     override func awakeFromNib() {
         super.awakeFromNib()

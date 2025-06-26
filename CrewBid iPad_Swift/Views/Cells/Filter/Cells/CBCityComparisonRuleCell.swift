@@ -15,6 +15,9 @@ class CBCityComparisonRuleCell: UITableViewCell {
     @IBOutlet weak var cityTextField: UITextField!
     @IBOutlet weak var comparisonButton: UIButton!
     
+    var bidPeriod: BIBidPeriod?
+    var filterRule: BIFilterRule?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

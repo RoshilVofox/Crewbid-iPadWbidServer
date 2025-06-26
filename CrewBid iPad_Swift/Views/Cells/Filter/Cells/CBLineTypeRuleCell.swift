@@ -25,6 +25,13 @@ class CBLineTypeRuleCell: UITableViewCell {
     var isETOPSRESON : Bool = false
     var buttonTextColor: UIColor = .white
     var backViewColor: UIColor = .white
+    var filterRule: BIFilterRule? {
+        didSet {
+            etopsButton.isSelected = false
+            etopsResButton.isSelected = false
+        }
+    }
+
     
     override func awakeFromNib() {
         super.awakeFromNib()

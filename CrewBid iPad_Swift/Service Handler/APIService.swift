@@ -93,7 +93,7 @@ class APIService{
                         }
                     }
                 } catch {
-                    print("Error decoding JSON: \(error)")
+                    print("Error decoding JSON: \(error.localizedDescription)")
                 }
                 
             } else {

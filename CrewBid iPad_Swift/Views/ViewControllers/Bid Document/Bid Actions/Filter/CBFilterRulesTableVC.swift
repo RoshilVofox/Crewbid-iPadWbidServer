@@ -7,24 +7,44 @@
 
 
 import UIKit
+import CoreData
 
-class CBFilterRulesTableVC: BaseViewController {
+enum ComparisonType: Int {
+    case atMost = 1
+    case exactly
+    case atLeast
+}
+
+
+class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelegate {
     
     @IBOutlet weak var btnAdd: UIButton!
     @IBOutlet weak var btnBids: UIButton!
     @IBOutlet weak var btnBidListCount: UIButton!
     @IBOutlet weak var objFilterTableView: UITableView!
+    var bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
+    var disabledCellIndexPaths = NSMutableArray()
+    var context: NSManagedObjectContext?
+    var filterRulesController: NSFetchedResultsController<BIFilterRule>?
+    var calendarData: BICalendarData?
+    var cellFlagBorderColor: UIColor = .systemGray
+    var filterRules = [Any]()
+
     
     var selectedFilters: [String] = []
     var cellidentifiers: [String] = []
     override func viewDidLoad() {
         super.viewDidLoad()
- 
-        initialCellidentifiers()
+        
+        bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
+        context = CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext
+        filterRules = (bidPeriod!.lineFilters!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "type", ascending: true), NSSortDescriptor(key: "category", ascending: true)]) as [Any]
+//        fetchFromFilterAndUpdateCategory()
         setupUI()
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        reloadRuleCell()
         NotificationCenter.default.addObserver(self, selector: #selector(updateLines), name: NSNotification.Name("refreshLines"), object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(deleteCellRow), name: Notification.Name("DeleteCellNotification"), object: nil)
@@ -39,14 +59,52 @@ class CBFilterRulesTableVC: BaseViewController {
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
     }
     
-    func initialCellidentifiers() {
-        for i in AppData.shared.filtersToBeAddedInTable {
-            if let category = i["category"] as? Int,
-               let type = i["type"] as? Int {
-                let item = cellIdentifier(for: category, type: type)
-                cellidentifiers.append(item!)
-            }
+//    func fetchFromFilterAndUpdateCategory() {
+//        let moc = bidPeriod?.managedObjectContext
+//        let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+//        fetchRequest.sortDescriptors = [
+//            NSSortDescriptor(key: "category", ascending: true),
+//            NSSortDescriptor(key: "type", ascending: true)
+//        ]
+//        let predicate = NSPredicate(format: "(category == 4) && (type != 0)")
+//        
+//        fetchRequest.predicate = predicate
+//        do {
+//            let objectsArray = try moc!.fetch(fetchRequest)
+//            for object in objectsArray {
+//                object.setValue(5, forKey: "category")
+//                // Update other values if needed
+//            }
+//            try moc!.save()
+//        } catch {
+//            print("Error during fetch or save: \(error)")
+//        }
+//
+//    }
+    
+    func reloadRuleCell() {
+        bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
+        let moc = CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext
+        let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(key: "category", ascending: true),
+            NSSortDescriptor(key: "type", ascending: true)
+        ]
+        self.filterRulesController = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: moc!,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+            )
+        self.filterRulesController?.delegate = self
+        do {
+            try self.filterRulesController?.performFetch()
         }
+        catch {
+            print("Failed to perform filter rule fetch: \(error.localizedDescription)")
+        }
+        let fetchedObjects = try! moc!.fetch(fetchRequest)
+        objFilterTableView.reloadData()
     }
     
     @IBAction func btnSortAction(_ sender: Any) {
@@ -74,6 +132,8 @@ class CBFilterRulesTableVC: BaseViewController {
         let title = String(format: "Add Filter")
         filterMenuController.delegate = self
         filterMenuController.navigationItem.title = title
+        filterMenuController.disabledCellIndexPaths = self.disabledCellIndexPaths
+        filterMenuController.bidPeriod = self.bidPeriod!
         filterMenuController.navigationController?.navigationBar.backgroundColor = .lightGray
         filterMenuController.menuItems = BIFilterRule.menuItemsForBidPeriod() as NSArray
         let navigationController = UINavigationController(rootViewController: filterMenuController)
@@ -197,78 +257,64 @@ class CBFilterRulesTableVC: BaseViewController {
     
 //    MARK: refresh line notification
     @objc func updateLines() {
-        let arr = AppData.shared.filtersToBeAddedInTable
-        let indexPath = arr.count - 1
-        if let category = arr[indexPath]["category"] as? Int,
-           let type = arr[indexPath]["type"] as? Int,
-           let newRow = cellIdentifier(for: category, type: type) {
-            cellidentifiers.append(newRow)
-        }
-        objFilterTableView.reloadData()
+        reloadRuleCell()
     }
 }
 extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cellidentifiers.count
+
+    func numberOfSections(in tableView: UITableView) -> Int {
+        print("Table reloaded in number of sections")
+        return (self.filterRulesController?.sections!.count)!
     }
     
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // Return the number of rows in the section
+        if let sectionInfo = filterRulesController?.sections?[section] {
+            return sectionInfo.numberOfObjects
+        }
+        // Fallback if sections is nil
+        // return filterRulesController?.fetchedObjects?.count ?? 0
+        return 0
+    }
+
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellidentifier = cellidentifiers[indexPath.row]
-        
-        let lineSort = AppData.shared.filtersToBeAddedInTable[indexPath.row]
-        let title = lineSort["title"] as? String
-        
-        if cellidentifier == kReportReleaseRuleCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: cellidentifier, for: indexPath) as! CBReportReleaseRuleCellTableViewCell
-            cell.lblTitle.text = title
-            return cell
-        }
-        else if cellidentifier == kworkBlockRuleCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: cellidentifier, for: indexPath) as! CBWorkBlockRuleCell
-            cell.titleLabel.text = title
-            return cell
-        }
-        else if cellidentifier == kComparisonFilterRuleCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: cellidentifier, for: indexPath) as! CBComparisonRuleCell
-            cell.titleLabel.text = title
-            return cell
-        }
-        else if cellidentifier == kCityComparisonFilterRuleCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: cellidentifier, for: indexPath) as! CBCityComparisonRuleCell
-            cell.titleLabel.text = title
-            return cell
-        }
-        else if cellidentifier == kCommutabilityRuleCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: cellidentifier, for: indexPath) as! CBComutabilityRuleCell
-            cell.titleLabel.text = title
-            return cell
-        }
-        else if cellidentifier == kCommutingRuleCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: cellidentifier, for: indexPath) as! CBCommutingRuleCell
-            cell.titleLabel.text = title
-            return cell
-        }
-        
-        let cell: UITableViewCell? = tableView.dequeueReusableCell(withIdentifier: cellidentifier, for: indexPath)
-        let customViewFrame = CGRect(x: 0, y: (cell?.contentView.layer.frame.maxY)! - 1, width: (cell?.contentView.frame.width)!, height: 1)
-        let borderView = UIView(frame: customViewFrame)
-        borderView.backgroundColor = UIColor.lightGray
-        cell?.addSubview(borderView)
-        return cell!
+        let rule = filterRulesController?.object(at: indexPath)
+        let cellIdentifier = self.cellIdentifier(for: rule!.category as! BIFilterRuleCategory.RawValue, type: rule!.type!.intValue)
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier!, for: indexPath)
+        self.configureCell(cell: cell, for: rule!)
+        return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch cellidentifiers[indexPath.row]{
-            case kReportReleaseRuleCell:
-            return 280
-        case kOverNightBulkRuleCell:
-            return 400
-        case kCommutingRuleCell:
-            return 250
-        case kDayMonthFilterRuleCell:
-            return 275
-        default:
-            return 56
+        let sectionInfo = self.filterRulesController?.sections?[indexPath.section] as? NSFetchedResultsSectionInfo
+        let numRows = sectionInfo?.numberOfObjects ?? 0
+        tableView.rowHeight = UITableView.automaticDimension
+        
+        if indexPath.row < numRows {
+            if let rule = self.filterRulesController!.object(at: indexPath) as? BIFilterRule {
+                if BIFilterRuleCategory.BIDaysOfMonthFilterRuleCategory.rawValue == rule.category?.intValue {
+                    return 273.0
+                } else if BIFilterRuleCategory.BICommutingFilterRuleCategory.rawValue == rule.category?.intValue {
+                    return 255.0
+                } else if BIFilterRuleCategory.BIOvernightCitiesBulkRuleCategory.rawValue == rule.category?.intValue {
+                    return 405.0
+                } else if BIFilterRuleCategory.BIEtopsFilterRuleCategory.rawValue == rule.category?.intValue {
+                    return 0.0
+                }else if BIFilterRuleCategory.BIEtopsResFilterRuleCategory.rawValue == rule.category?.intValue {
+                    return 0.0
+                } else if BIFilterRuleCategory.BICommutabilityFilterRuleCategory.rawValue == rule.category?.intValue {
+                    return 56.0
+                } else if BIFilterRuleCategory.BIReportReleaseFilterCategory.rawValue == rule.category?.intValue {
+                    return 280
+                } else {
+                    return 56.0
+                }
+            }
+            
+        }
+        else {
+            return 56.0
         }
     }
     
@@ -284,5 +330,734 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
 
         objFilterTableView.deleteRows(at: [indexPath], with: .fade)
     }
+    
+    func configureCell(cell: UITableViewCell?, for rule: BIFilterRule?) {
+        var useComparisonCell = false
+        if BIFilterRuleCategory.BITypeFilterRuleCategory.rawValue == rule?.category?.intValue {
+            //fetch etops filter
+            var ruleFetched :BIFilterRule?
+            var resultsFilter = ((CBGlobalMethods.shared.selectedBidPeriod!.lineFilters!.allObjects as NSArray).filtered(using: NSPredicate(format: "category == 35")) as NSArray).sortedArray(using: [NSSortDescriptor(key: "category", ascending: true), NSSortDescriptor(key: "type", ascending: true)])
+            
+            if resultsFilter.count > 0 {
+                ruleFetched = resultsFilter[0] as? BIFilterRule
+            }
+            
+            // Fetch EtopsRes filter
+            resultsFilter = ((CBGlobalMethods.shared.selectedBidPeriod!.lineFilters!.allObjects as NSArray).filtered(using: NSPredicate(format: "category == 38")) as NSArray).sortedArray(using: [NSSortDescriptor(key: "category", ascending: true), NSSortDescriptor(key: "type", ascending: true)])
+            var etopsResruleFetched :BIFilterRule?
+            if resultsFilter.count > 0 {
+                etopsResruleFetched = resultsFilter[0] as? BIFilterRule
+            }
+            
+            let ruleCell = cell as? CBLineTypeRuleCell
+            ruleCell?.bidPeriod = self.bidPeriod!
+            ruleCell?.etopsfilterRule = ruleFetched
+            ruleCell?.etopsResfilterRule = etopsResruleFetched
+            ruleCell?.filterRule = rule!
+            ruleCell?.buttonTextColor = self.cellFlagBorderColor
+        }
+        else if BIFilterRuleCategory.BIEtopsFilterRuleCategory.rawValue == rule?.category?.intValue {
+            let ruleCell = cell as? CBLineTypeRuleCell
+            ruleCell?.bidPeriod = self.bidPeriod!
+            ruleCell?.isHidden = true
+            ruleCell?.buttonTextColor = self.cellFlagBorderColor
+        }
+        else if BIFilterRuleCategory.BIEtopsResFilterRuleCategory.rawValue == rule?.category?.intValue {
+            let ruleCell = cell as? CBLineTypeRuleCell
+            ruleCell?.bidPeriod = self.bidPeriod!
+            ruleCell?.isHidden = true
+            ruleCell?.buttonTextColor = self.cellFlagBorderColor
+        }
+        else if BIFilterRuleCategory.BIAmPmFilterRuleCategory.rawValue == rule?.category?.intValue {
+            let ruleCell = cell as? CBAmPmRuleCell
+            ruleCell?.bidPeriod =  self.bidPeriod!
+            ruleCell?.buttonTextColor = self.cellFlagBorderColor
+            ruleCell?.filterRule = rule!
+            //ruleCell?.setredEyeLinesButton()
+        }
+        else if BIFilterRuleCategory.BIWorkBlockRuleCategory.rawValue == rule?.category?.intValue {
+            let ruleCell = cell as? CBWorkBlockRuleCell
+            useComparisonCell = false
+            ruleCell?.bidPeriod = self.bidPeriod
+            let viewToRemove: UIView? = cell?.contentView.viewWithTag(101)
+            if viewToRemove != nil {
+                viewToRemove?.removeFromSuperview()
+            }
+            
+            ruleCell?.titleLabel.text = rule?.name
+            if (rule?.variables?["DECIMAL"] != nil) {
+                let ruleValue = (rule?.variables?[BIFilterRuleValueVariablesKey] as! NSNumber).floatValue
+                let numPlaces: Double = rule!.variables!["NUMPLACES"] as! Double
+                var formatString = String ()
+                if numPlaces == 2 {
+                    formatString = String(format:"%.2f", ruleValue)
+                } else {
+                    formatString = String(format:"%.1f", ruleValue)
+                }
+                ruleCell?.valueButton.setTitle("\(formatString)", for: .normal)
+            } else {
+                let strValue = rule?.variables![BIFilterRuleValueVariablesKey]
+                let endValue = (strValue as! NSNumber).stringValue
+                ruleCell?.valueButton.setTitle("\(endValue)", for: .normal)
+            }
+            
+            var comparisonString = "At Most"
+            if rule?.comparison?.intValue == 2 {
+                comparisonString = "Exactly"
+            }else if rule?.comparison?.intValue == 3 {
+                comparisonString = "At Least"
+            }
+            
+            var ruleTypeString = "3 Day"
+            if rule?.keyPath == "workBlock1" {
+                ruleTypeString = "1 Day"
+            }
+            if rule?.keyPath == "workBlock2" {
+                ruleTypeString = "2 Day"
+            }
+            if rule?.keyPath == "workBlock3" {
+                ruleTypeString = "3 Day"
+            }
+            if rule?.keyPath == "workBlock4" {
+                ruleTypeString = "4 Day"
+            }
+            ruleCell?.ruleTypeButton.setTitle(ruleTypeString, for: .normal)
+            ruleCell?.comparisonButton.setTitle(comparisonString, for: .normal)
+            ruleCell?.filterRule = rule
+        }
+        else if BIFilterRuleCategory.BIDaysOfWeekFilterRuleCategory.rawValue == rule?.category?.intValue {
+            if BIWeekdaysFilterRuleType.BIWeekdaysCompoundType.rawValue == rule?.type?.intValue {
+                let ruleCell = cell as? CBWeekdayRuleCell
+                ruleCell?.filterRule = rule!
+            } else {
+                useComparisonCell = true
+            }
+        }
+        else if BIFilterRuleCategory.BITripLengthFilterRuleCategory.rawValue == rule?.category?.intValue {
+            if BITripLengthFilterRuleType.BITripLengthCompoundType.rawValue == rule?.type?.intValue {
+                let ruleCell = cell as? CBTripLengthRuleCell
+                ruleCell?.filterRule = rule!
+                ruleCell?.bidPeriod = bidPeriod!
+            } else {
+                useComparisonCell = true
+            }
+        }
+        else if BIFilterRuleCategory.BIPositionFilterRuleCategory.rawValue == rule?.category?.intValue  {
+            let ruleCell = cell as? CBPositionRuleCell
+            ruleCell?.filterRule = rule!
+            ruleCell?.bidPeriod = bidPeriod!
+            ruleCell?.buttonTextColor = cellFlagBorderColor
+            useComparisonCell = false
+        }
+        else if BIFilterRuleCategory.BIFaReserveFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = false
+            let ruleCell = cell as? CBFaReserveRuleCell
+            ruleCell?.backViewColor = UIColor.appColor(.contentBgColor)!
+            ruleCell?.filterRule = rule!
+            ruleCell?.buttonTextColor = cellFlagBorderColor
+        }
+        else if BIFilterRuleCategory.BICommutingFilterRuleCategory.rawValue == rule?.category?.intValue { // MANUAL
+            useComparisonCell = false
+            let ruleCell = cell as? CBCommutingRuleCell
+            ruleCell?.filterRule = rule!
+           ruleCell?.bidPeriod = self.bidPeriod!
+//            ruleCell?.CalculateCommutingManualFilter()
+        }//Flag filter page navigation
+        else if BIFilterRuleCategory.BIUserFlagFilterRuleCategory.rawValue == rule?.category?.intValue {
+            let ruleCell = cell as? CBUserFlagRuleCell
+            ruleCell?.flagColor = cellFlagBorderColor
+            ruleCell?.bacViewColor = UIColor.appColor(.contentBgColor)!
+            ruleCell?.filterRule = rule!
+            ruleCell?.bidPeriod = bidPeriod!
+            useComparisonCell = false
+        }
+        else if BIFilterRuleCategory.BIDaysOfMonthFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = false;
+            let ruleCell = cell as? CBDayMonthRuleCell
+            ruleCell?.calendarData = self.calendarData
+            ruleCell?.filterRule = rule!
+            ruleCell?.bidPeriod = bidPeriod!
+//            ruleCell?.calendarCollectionView.reloadData()
+        }
+        else if BIFilterRuleCategory.BICommutabilityFilterRuleCategory.rawValue == rule?.category?.intValue { //AUTO
+            useComparisonCell = false
+            let ruleCell = cell as? CBComutabilityRuleCell
+            ruleCell?.filterRule = rule!
+            ruleCell?.configurecommutabilityCell()
+            
+        }
+        else if BIFilterRuleCategory.BIReportReleaseFilterCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = false
+            let ruleCell = cell as? CBReportReleaseRuleCellTableViewCell
+            ruleCell?.bidPeriod = bidPeriod
+            ruleCell?.filterRule = rule;
+            ruleCell?.calendarData = calendarData
+            ruleCell?.handleExistingCases()
+        }
+        else if BIFilterRuleCategory.BIDaysOffFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true
+        }
+        else if BIFilterRuleCategory.BIBlockTimeFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true
+        }
+        else if BIFilterRuleCategory.BIAircraftChangesFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true
+        }
+        else if BIFilterRuleCategory.BIVacationFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true
+        }
+        else if BIFilterRuleCategory.BIFaVacationFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true
+        }
+        else if BIFilterRuleCategory.BIBlockOfDaysOffFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true
+        }
+        else if BIFilterRuleCategory.BIAircraftTypeFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true
+        }
+        else if BIFilterRuleCategory.BICitiesFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true
+        }
+        else if BIFilterRuleCategory.BIDeadheadsFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true;
+        }
+        else if BIFilterRuleCategory.BINumLegsFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true;
+        }
+        else if BIFilterRuleCategory.BIMaxLegsFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true;
+        }
+        else if BIFilterRuleCategory.BIDutyTimeFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true;
+        }
+        else if BIFilterRuleCategory.BIOverlapFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true;
+        }
+        else if BIFilterRuleCategory.BINumTripsFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true;
+        }
+        else if BIFilterRuleCategory.BITafbTimeFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true;
+        }
+        else if BIFilterRuleCategory.BIWorkDaysFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true;
+        }
+        else if BIFilterRuleCategory.BIPayFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true;
+        }
+        else if BIFilterRuleCategory.BIPassesThruBaseFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true;
+        }
+        else if BIFilterRuleCategory.BIOvernightsInBaseFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true;
+        }
+        else if BIFilterRuleCategory.BIOvernightLengthFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true;
+        }
+        else if BIFilterRuleCategory.BIWorkBlockCountCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true
+        }
+        else if BIFilterRuleCategory.BIReserveOffDaysFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true
+        }
+        else if BIFilterRuleCategory.BIGTmaxFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true
+        }
+        else if BIFilterRuleCategory.BIRedEyeTripsFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true
+        }
+        else if BIFilterRuleCategory.BIGTavgFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true
+        }
+        else if BIFilterRuleCategory.BIOvAvgFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true
+        }
+        else if BIFilterRuleCategory.BI1or2OFFFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = true
+        }
+        else if BIFilterRuleCategory.BIOvernightCitiesBulkRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = false
+            let ruleCell = cell as? CBOvernightBulkRuleCell
+            ruleCell?.filterRule = rule!
+            ruleCell?.bidPeriod = bidPeriod
+            ruleCell?.configureOvernightBulkCell()
+        }
+        
+        if useComparisonCell {
+            let viewToRemove: UIView? = cell?.contentView.viewWithTag(101)
+            if viewToRemove != nil {
+                viewToRemove?.removeFromSuperview()
+            }
+            let ruleCell = cell as? CBComparisonRuleCell
+            ruleCell?.modeTexttColor = self.cellFlagBorderColor
+            ruleCell?.titleLabel.text = rule?.name
+            if (rule?.variables?["DECIMAL"] != nil) {
+                let ruleValue = (rule?.variables?[BIFilterRuleValueVariablesKey] as! NSNumber).floatValue
+                var numPlaces: Double = 0.0
+                if let _ = rule!.variables!["NUMPLACES"] as? String {
+                    numPlaces = Double(rule!.variables!["NUMPLACES"] as! String)!
+                }
+                if let _ = rule!.variables!["NUMPLACES"] as? Double {
+                    numPlaces = rule!.variables!["NUMPLACES"] as! Double
+                }
+                var formatString = String ()
+                if numPlaces == 2 {
+                    formatString = String(format:"%.2f", ruleValue)
+                } else {
+                    formatString = String(format:"%.1f", ruleValue)
+                }
+                ruleCell?.valueButton.setTitle("\(formatString)", for: .normal)
+                if  BIFilterRuleCategory.BIGTavgFilterRuleCategory.rawValue == rule?.category?.intValue || BIFilterRuleCategory.BIGTmaxFilterRuleCategory.rawValue == rule?.category?.intValue {
+                    let hours = Int(ruleValue / 60)
+                    let minutes = Int(ruleValue.truncatingRemainder(dividingBy: 60))
+                    // Create a string in the format "hh:mm"
+                    let formattedTime = String(format: "%02d:%02d", hours, minutes)
+                    ruleCell?.valueButton.setTitle(formattedTime, for: .normal)
+                }
+                
+            } else {
+                let strValue = rule?.variables![BIFilterRuleValueVariablesKey]
+                let endValue = (strValue as! NSNumber).stringValue
+                ruleCell?.valueButton.setTitle("\(endValue)", for: .normal)
+            }
+            var comparisonString = "At Most"
+            if rule?.comparison?.intValue == 2 {
+                comparisonString = "Exactly"
+            }
+            else if rule?.comparison?.intValue == 3 {
+                comparisonString = "At Least"
+            }
+            ruleCell?.comparisonButton.setTitle(comparisonString, for: .normal)
+            ruleCell?.filterRule = rule
+            if BIFilterRuleCategory.BICitiesFilterRuleCategory.rawValue == rule?.category?.intValue && BICitiesFilterRuleType.BICitiesFilterRuleTypeNonConusLegs.rawValue != rule?.type?.intValue || BIFilterRuleCategory.BIDeadheadsFilterRuleCategory.rawValue == rule?.category?.intValue && BIDeadheadsFilterRuleType.BIDeadheadsAtEndType.rawValue == rule?.type?.intValue || BIDeadheadsFilterRuleType.BIDeadheadsAtStartType.rawValue == rule?.type?.intValue || BIDeadheadsFilterRuleType.BIDeadheadsAtEitherType.rawValue == rule?.type?.intValue {
+                let city = rule?.variables![BIFilterRuleCityVariablesKey]
+                let cityComparisonCell = cell as? CBCityComparisonRuleCell
+                cityComparisonCell?.cityTextField.text = city as? String
+                cityComparisonCell?.bidPeriod = bidPeriod
+                cityComparisonCell?.filterRule = rule
+            }
+            cell?.textLabel?.alpha = 1
+            cell?.isUserInteractionEnabled = true
+            cell?.contentView.alpha = 1
+            if (BIFilterRuleCategory.BIVacationFilterRuleCategory.rawValue == rule!.category?.intValue) {
+                let swapImage = UIImage(named: SwaptimizerVacationImage)
+                let swapImgView = UIImageView(frame: CGRect(x: 230.0, y: 12.0, width: 40.0, height: 40.0))
+                swapImgView.tag = 101
+                swapImgView.image = swapImage
+                cell!.contentView.addSubview(swapImgView)
+                
+                if let vacationType = self.bidPeriod!.vacationType, vacationType.count > 1 {
+                    swapImgView.alpha = 1.0
+                    cell?.textLabel?.alpha = 1.0
+                    cell!.isUserInteractionEnabled = true
+                    cell!.contentView.alpha = 1.0
+                } else {
+                    swapImgView.alpha = 0.5
+                    cell?.textLabel?.alpha = 0.5
+                    cell!.isUserInteractionEnabled = false
+                    cell!.contentView.alpha = 0.5
+                }
+            }
+            else if (BIFilterRuleCategory.BIFaVacationFilterRuleCategory.rawValue == rule!.category?.intValue) {
+                let swapImage = UIImage(named: "FA_Vacation_Image_Shadow")
+                let swapImgView = UIImageView(frame: CGRect(x: 230.0, y: 12.0, width: 40.0, height: 40.0))
+                swapImgView.tag = 101
+                swapImgView.image = swapImage
+                cell!.contentView.addSubview(swapImgView)
+                
+                let manageVacationEnabled = UserDefaults.standard.bool(forKey: kCBManageVacationEnabledKey)
+                
+                if (self.bidPeriod!.vacationType?.count ?? 0) <= 1 && !manageVacationEnabled {
+                    swapImgView.alpha = 0.5
+                    cell?.textLabel?.alpha = 0.5
+                    cell!.isUserInteractionEnabled = false
+                    cell!.contentView.alpha = 0.5
+                } else {
+                    swapImgView.alpha = 1.0
+                    cell?.textLabel?.alpha = 1.0
+                    cell!.isUserInteractionEnabled = true
+                    cell!.contentView.alpha = 1.0
+                }
+            }
+            else {
+                if let viewToRemove = cell!.contentView.viewWithTag(101) {
+                    viewToRemove.removeFromSuperview()
+                }
+                cell?.textLabel?.alpha = 1.0
+                cell!.isUserInteractionEnabled = true
+                cell!.contentView.alpha = 1.0
+            }
+        }
+    }
+//    func configureCell(cell: UITableViewCell, forFilterRule rule: BIFilterRule) {
+//        var useComparisonCell = false
+//        var useWorkBlockComparisonCell = false
+//        
+//        if (BIFilterRuleCategory.BITypeFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            let commonSortDescriptors = [
+//                NSSortDescriptor(key: "category", ascending: true),
+//                NSSortDescriptor(key: "type", ascending: true)
+//            ]
+//            let ruleCell = cell as! CBLineTypeRuleCell
+//            
+//            let fetchReuest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+//            fetchReuest.sortDescriptors = commonSortDescriptors
+//            var predicate = NSPredicate(format: "category==35")
+//            fetchReuest.predicate = predicate
+//            do {
+//                let etopsObjectsArray = try self.context.fetch(fetchReuest)
+//                if etopsObjectsArray.count > 0 {
+//                    let etopsRuleFetched = etopsObjectsArray[0]
+//                    print(etopsRuleFetched)
+//                    ruleCell.etopsfilterRule = etopsRuleFetched
+//                    
+//                }
+//            }
+//            catch {
+//                print("error fetching etops \(error.localizedDescription)")
+//            }
+//            predicate = NSPredicate(format: "category==38")
+//            fetchReuest.predicate = predicate
+//            do {
+//                let etopsResObjectsArray = try self.context.fetch(fetchReuest)
+//                if etopsResObjectsArray.count > 0 {
+//                    let etopsResRuleFetched = etopsResObjectsArray[0]
+//                    print(etopsResRuleFetched)
+//                    ruleCell.etopsResfilterRule = etopsResRuleFetched
+//                }
+//            }
+//            catch {
+//                print("error fetching etopsRES \(error.localizedDescription)")
+//            }
+//            ruleCell.bidPeriod = self.bidPeriod
+//            ruleCell.filterRule = rule
+//        }
+//        else if (BIFilterRuleCategory.BIEtopsFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            cell.isHidden = true
+//        }
+//        else if (BIFilterRuleCategory.BIEtopsResFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            cell.isHidden = true
+//        }
+//        else if (BIFilterRuleCategory.BIAmPmFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            let ruleCell = cell as! CBAmPmRuleCell
+//            ruleCell.bidPeriod = self.bidPeriod
+//            ruleCell.filterRule = rule
+//        }
+//        else if (BIFilterRuleCategory.BIWorkBlockRuleCategory.rawValue == rule.category?.intValue) {
+//            let ruleCell = cell as! CBWorkBlockRuleCell
+//            useWorkBlockComparisonCell = true
+//            useComparisonCell = false
+//            ruleCell.filterRule = rule
+//            ruleCell.bidPeriod = self.bidPeriod
+//        }
+//        else if (BIFilterRuleCategory.BIDaysOfWeekFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            if (BIWeekdaysFilterRuleType.BIWeekdaysCompoundType.rawValue == rule.type?.intValue)  {
+//                let ruleCell = cell as! CBWeekdayRuleCell
+//                ruleCell.filterRule = rule
+//            }
+//            else {
+//                useComparisonCell = true
+//            }
+//        }
+//        else if (BIFilterRuleCategory.BITripLengthFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            if (BITripLengthFilterRuleType.BITripLengthCompoundType.rawValue == rule.type?.intValue) {
+//                let ruleCell = cell as! CBTripLengthRuleCell
+//                ruleCell.filterRule = rule
+//                ruleCell.bidPeriod = self.bidPeriod
+//            }
+//            else {
+//                useComparisonCell = true
+//            }
+//        }
+//        else if (BIFilterRuleCategory.BIDaysOfMonthFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            let ruleCell = cell as! CBDayMonthRuleCell
+//            ruleCell.filterRule = rule
+//            ruleCell.bidPeriod = self.bidPeriod
+//            if let calendarData = self.calendarData {
+//                ruleCell.calendarData = calendarData
+//            } else {
+//                print("⚠️ calendarData is nil")
+//                return
+//            }
+//        }
+//        else if (BIFilterRuleCategory.BIOvernightCitiesBulkRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = false
+//            let ruleCell = cell as! CBOvernightBulkRuleCell
+//            ruleCell.configureOvernightBulkCell()
+//            ruleCell.filterRule = rule
+//            ruleCell.bidPeriod = self.bidPeriod
+//        }
+//        else if (BIFilterRuleCategory.BICommutabilityFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            // COMMUTE AUTO
+//            useComparisonCell = false
+//            let ruleCell = cell as! CBComutabilityRuleCell
+//            ruleCell.filterRule = rule
+//            ruleCell.configurecommutabilityCell()
+//        }
+//        else if (BIFilterRuleCategory.BICommutingFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            // COMMUTE MANUAL
+//            useComparisonCell = false
+//            let ruleCell = cell as! CBCommutingRuleCell
+//            ruleCell.bidPeriod = self.bidPeriod
+////            ruleCell.controllerDelegate = self
+//        }
+//        else if (BIFilterRuleCategory.BIPositionFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            let ruleCell = cell as! CBPositionRuleCell
+//            ruleCell.filterRule = rule
+//            ruleCell.bidPeriod = self.bidPeriod
+//            useComparisonCell = false
+//        }
+//        else if (BIFilterRuleCategory.BIUserFlagFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = false
+//            let ruleCell = cell as! CBLineTypeRuleCell
+//            ruleCell.bidPeriod = self.bidPeriod
+//            ruleCell.filterRule = rule
+//        }
+//        else if (BIFilterRuleCategory.BIReportReleaseFilterCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = false
+//            let ruleCell = cell as! CBReportReleaseRuleCellTableViewCell
+//            ruleCell.bidPeriod = self.bidPeriod
+//            ruleCell.filterRule = rule
+//            ruleCell.calendarDate = self.calendarData
+//            ruleCell.managedObjectContext = GlobalBidInfo.shared.managedObjectContext
+//            ruleCell.handleExistingCases()
+//        }
+//        else if (BIFilterRuleCategory.BIFaReserveFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = false
+//            let ruleCell = cell as! CBFaReserveRuleCell
+//            ruleCell.filterRule = rule
+//        }
+//        else if (BIFilterRuleCategory.BIVacationFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIRedeyesFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIAircraftTypeFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIOvernightLengthFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIBlockOfDaysOffFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BICommutesRequiredFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIDaysOffFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIOvernightsInBaseFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIPassesThruBaseFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BINumTripsFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIBlockTimeFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIOvAvgFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIDutyTimeFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIEarliestDepartureFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BILatestArrivalFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIPayFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIWorkDaysFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BITafbTimeFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIFaVacationFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BICitiesFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BI1or2OFFFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIReserveOffDaysFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIAircraftChangesFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BINumLegsFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIMaxLegsFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIDeadheadsFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIOverlapFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIWorkBlockCountCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIGTavgFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIGTmaxFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        else if (BIFilterRuleCategory.BIRedEyeTripsFilterRuleCategory.rawValue == rule.category?.intValue) {
+//            useComparisonCell = true
+//        }
+//        if useWorkBlockComparisonCell == true {
+//            if let viewToRemove = cell.contentView.viewWithTag(101) {
+//                viewToRemove.removeFromSuperview()
+//            }
+//            let ruleCell = cell as! CBWorkBlockRuleCell
+//            ruleCell.titleLabel.text = rule.name
+//            if (rule.variables!["DECIMAL"] as? Bool == true) {
+//                let ruleValue = rule.variables![BIFilterRuleValueVariablesKey] as? Float
+//                let numPlaces = rule.variables!["NUMPLACES"] as? Int
+//                let formatString = String(format: "%%.%zdf", numPlaces!)
+//                let formattedValue = String(format: formatString, ruleValue!)
+//                ruleCell.valueButton.setTitle(formattedValue, for: .normal)
+//            }
+//            else {
+//                if let number = rule.variables![BIFilterRuleValueVariablesKey] as? NSNumber {
+//                    ruleCell.valueButton.setTitle(number.stringValue, for: .normal)
+//                }
+//            }
+//            
+//            var comparisonString = "At Most"
+//            if (ComparisonType.exactly.rawValue == rule.comparison?.intValue) {
+//                comparisonString = "Exactly"
+//            }
+//            else if (3 == rule.comparison?.intValue) {
+//                comparisonString = "At Least"
+//            }
+//            ruleCell.comparisonButton.setTitle(comparisonString, for: .normal)
+//            ruleCell.filterRule = rule
+//            
+//            var ruleTypeString = "3 Day"
+//            if (rule.keyPath == "workBlock1") {
+//                ruleTypeString = "1 Day"
+//            }
+//            if (rule.keyPath == "workBlock2") {
+//                ruleTypeString = "2 Day"
+//            }
+//            if (rule.keyPath == "workBlock3") {
+//                ruleTypeString = "3 Day"
+//            }
+//            if (rule.keyPath == "workBlock4") {
+//                ruleTypeString = "4 Day"
+//            }
+//            ruleCell.ruleTypeButton.setTitle(ruleTypeString, for: .normal)
+//        }
+//        if useComparisonCell == true {
+//            if let viewToRemove = cell.contentView.viewWithTag(101) {
+//                viewToRemove.removeFromSuperview()
+//            }
+//            if cell.reuseIdentifier == "OvernightBulkRuleCell" {
+//                return
+//            }
+//            let ruleCell = cell as! CBComparisonRuleCell
+//            ruleCell.titleLabel.text = rule.name
+//            if (rule.variables!["DECIMAL"] as? Bool == true) {
+//                let ruleValue = rule.variables![BIFilterRuleValueVariablesKey] as? Float
+//                let numPlaces = rule.variables!["NUMPLACES"] as? Int
+//                let formatString = String(format: "%%.%zdf", numPlaces!)
+//                let formattedValue = String(format: formatString, ruleValue!)
+//                ruleCell.valueButton.setTitle(formattedValue, for: .normal)
+//                if (BIFilterRuleCategory.BIGTavgFilterRuleCategory.rawValue == rule.category?.intValue) {
+//                    let hours = Int(ruleValue! / 60)
+//                    let minutes = Int(ruleValue!.truncatingRemainder(dividingBy: 60))
+//                    let formattedTime = String(format: "%02d:%02d", hours, minutes)
+//                    ruleCell.valueButton.setTitle(formattedTime, for: .normal)
+//                }
+//            }
+//            else {
+//                if let number = rule.variables![BIFilterRuleValueVariablesKey] as? NSNumber {
+//                    ruleCell.valueButton.setTitle(number.stringValue, for: .normal)
+//                }
+//            }
+//            var comparisonString = "At Most"
+//            if (ComparisonType.exactly.rawValue == rule.comparison?.intValue) {
+//                comparisonString = "Exactly"
+//            }
+//            else if (ComparisonType.atLeast.rawValue == rule.comparison?.intValue) {
+//                comparisonString = "At Least"
+//            }
+//            ruleCell.comparisonButton.setTitle(comparisonString, for: .normal)
+//            ruleCell.filterRule = rule
+//            
+//            // For cities rules or deadheads at start or end, set city in cell.
+//            if ((BIFilterRuleCategory.BICitiesFilterRuleCategory.rawValue == rule.category?.intValue && BICitiesFilterRuleType.BICitiesFilterRuleTypeNonConusLegs.rawValue != rule.type?.intValue) || (BIFilterRuleCategory.BIDeadheadsFilterRuleCategory.rawValue == rule.category?.intValue && (BIDeadheadsFilterRuleType.BIDeadheadsAtEndType.rawValue == rule.type?.intValue || BIDeadheadsFilterRuleType.BIDeadheadsAtStartType.rawValue == rule.type?.intValue || BIDeadheadsFilterRuleType.BIDeadheadsAtEitherType.rawValue == rule.type?.intValue))) {
+//                let city = rule.variables![BIFilterRuleCityVariablesKey] as? String
+//                let cityComparisonCell = cell as! CBCityComparisonRuleCell
+//                cityComparisonCell.cityTextField.text = city
+//                cityComparisonCell.bidPeriod = self.bidPeriod
+//            }
+//            if (BIFilterRuleCategory.BIVacationFilterRuleCategory.rawValue == rule.category?.intValue) {
+//                let swapImage = UIImage(named: SwaptimizerVacationImage)
+//                let swapImgView = UIImageView(frame: CGRect(x: 230.0, y: 12.0, width: 40.0, height: 40.0))
+//                swapImgView.tag = 101
+//                swapImgView.image = swapImage
+//                cell.contentView.addSubview(swapImgView)
+//
+//                if let vacationType = self.bidPeriod!.vacationType, vacationType.count > 1 {
+//                    swapImgView.alpha = 1.0
+//                    cell.textLabel?.alpha = 1.0
+//                    cell.isUserInteractionEnabled = true
+//                    cell.contentView.alpha = 1.0
+//                } else {
+//                    swapImgView.alpha = 0.5
+//                    cell.textLabel?.alpha = 0.5
+//                    cell.isUserInteractionEnabled = false
+//                    cell.contentView.alpha = 0.5
+//                }
+//            }
+//            else if (BIFilterRuleCategory.BIFaVacationFilterRuleCategory.rawValue == rule.category?.intValue) {
+//                let swapImage = UIImage(named: "FA_Vacation_Image_Shadow")
+//                let swapImgView = UIImageView(frame: CGRect(x: 230.0, y: 12.0, width: 40.0, height: 40.0))
+//                swapImgView.tag = 101
+//                swapImgView.image = swapImage
+//                cell.contentView.addSubview(swapImgView)
+//
+//                let manageVacationEnabled = UserDefaults.standard.bool(forKey: kCBManageVacationEnabledKey)
+//
+//                if (self.bidPeriod!.vacationType?.count ?? 0) <= 1 && !manageVacationEnabled {
+//                    swapImgView.alpha = 0.5
+//                    cell.textLabel?.alpha = 0.5
+//                    cell.isUserInteractionEnabled = false
+//                    cell.contentView.alpha = 0.5
+//                } else {
+//                    swapImgView.alpha = 1.0
+//                    cell.textLabel?.alpha = 1.0
+//                    cell.isUserInteractionEnabled = true
+//                    cell.contentView.alpha = 1.0
+//                }
+//            }
+//            else {
+//                if let viewToRemove = cell.contentView.viewWithTag(101) {
+//                    viewToRemove.removeFromSuperview()
+//                }
+//                cell.textLabel?.alpha = 1.0
+//                cell.isUserInteractionEnabled = true
+//                cell.contentView.alpha = 1.0
+//            }
+//
+//        }
+//    }
 }
 
