@@ -1522,6 +1522,12 @@
                                                 <constraint firstItem="e80-eo-asM" firstAttribute="leading" secondItem="CUF-1y-f7m" secondAttribute="leading" id="sgD-ys-tRE"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="amLinesButton" destination="dMd-MU-dmD" id="KOx-YD-Kdw"/>
+                                            <outlet property="mixedAmPmLinesButton" destination="OjX-r0-6im" id="qyz-R8-BXv"/>
+                                            <outlet property="pmLinesButton" destination="lUu-xs-W43" id="b3X-8G-6OX"/>
+                                            <outlet property="redEyeLinesButton" destination="CrY-1k-plF" id="utV-Op-ZV2"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FaReserveRuleCell" rowHeight="56" id="X3f-kC-EUD" customClass="CBFaReserveRuleCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="442" width="652" height="56"/>
