@@ -369,10 +369,10 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
             ruleCell?.buttonTextColor = self.cellFlagBorderColor
         }
         else if BIFilterRuleCategory.BIAmPmFilterRuleCategory.rawValue == rule?.category?.intValue {
-            let ruleCell = cell as? CBAmPmRuleCell
-            ruleCell?.bidPeriod =  self.bidPeriod!
-            ruleCell?.buttonTextColor = self.cellFlagBorderColor
-            ruleCell?.filterRule = rule!
+            let ruleCell = cell as! CBAmPmRuleCell
+            ruleCell.bidPeriod =  self.bidPeriod!
+            ruleCell.buttonTextColor = self.cellFlagBorderColor
+            ruleCell.filterRule = rule!
             //ruleCell?.setredEyeLinesButton()
         }
         else if BIFilterRuleCategory.BIWorkBlockRuleCategory.rawValue == rule?.category?.intValue {
