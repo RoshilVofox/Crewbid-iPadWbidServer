@@ -104,10 +104,10 @@ class BIBidFileDownloadViewModel {
         }
         downloadNext()
     }
-//MARK: needs code
+
     private func performPostDownloadTasks(){
-        checkCrewBidUpdateFile()
-        checkFlightData()
+//        checkCrewBidUpdateFile()
+//        checkFlightData()
         let dataSource = GlobalBidInfo.shared
         if dataSource.round == 1 && dataSource.position == .FlightAttendant{
             CBUtils.getFALISTWB4JSONFromServer()
@@ -125,10 +125,14 @@ class BIBidFileDownloadViewModel {
     }
     
     private func checkCrewBidUpdateFile(){
-        //needs code
+        let app = UIApplication.shared.delegate as! AppDelegate
+        DispatchQueue.main.async {
+            CBUtils.downloadCrewBidUpdateFile(appDel: app)
+        }
     }
     
     private func checkFlightData(){
+//        CBUtils.downloadFlightData()
         //needs code
     }
 }

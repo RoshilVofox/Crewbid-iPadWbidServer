@@ -150,9 +150,9 @@ class CBUtils{
         
         
         
-        let hawaiiCities = ["HNL","ITO","LIH","KOA","OGG"]
-     
-        
+        let arrHawaiiCities = ["HNL","ITO","LIH","KOA","OGG"]
+        let hwaaii: [AnyHashable: Any] = [ kCBHawaiiCitiesList : arrHawaiiCities ]
+        UserDefaults.standard.register(defaults: hwaaii as? [String : Any] ?? [String : Any]())
         
         
         
@@ -167,42 +167,35 @@ class CBUtils{
     }
     
     
-    static func downloadCrewBidUpdateFile(appDel: AppDelegate, completion: @escaping (Bool) -> Void) {
+    static func downloadCrewBidUpdateFile(appDel: AppDelegate/*, completion: @escaping (Bool) -> Void*/) {
         // 1. Construct the URL
         guard let url = URL(string: EndPoint.shared.crewBidUpdate) else {
-            completion(false)
+//            completion(false)
             return
         }
 
-        do {
-            // 2. Download Data
-            let urlData = try Data(contentsOf: url)
-
-            // 3. Convert data to string using ASCII encoding
-            if let myString = String(data: urlData, encoding: .ascii) {
-                print(myString)
-            }
-
-            // 4. Get documents directory
             let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
             let fileURL = documentsDir.appendingPathComponent("CrewBidUpdate.txt")
+        let urlRequest = URLRequest(url: url)
+        URLSession.shared.dataTask(with: urlRequest) { data, _, error in
+            do {
+                if let data = data{
+//                    if let myString = String(data: data, encoding: .ascii) {
+//                        print(myString)
+//                    }
+                    try data.write(to: fileURL)
+                    
+                    let windowsHebrewEncoding = String.Encoding(rawValue: 0x0505)
+                    let crewBidUpdateText = try String(contentsOf: fileURL, encoding: windowsHebrewEncoding)
+                    
+                    parseCrewBidUpdateFile(text: crewBidUpdateText)
+                }
+            } catch {
+                print("Download or parsing failed:", error)
 
-            // 5. Write to file
-            try urlData.write(to: fileURL)
-
-            // 6. Read back the file using Windows Hebrew encoding
-            let windowsHebrewEncoding = String.Encoding(rawValue: 0x0505)
-            let crewBidUpdateText = try String(contentsOf: fileURL, encoding: windowsHebrewEncoding)
-
-            // 7. Parse the update text
-            parseCrewBidUpdateFile(text: crewBidUpdateText)
-
-            // 8. Completion
-            completion(true)
-        } catch {
-            print("Download or parsing failed:", error)
-            completion(false)
-        }
+            }
+        }.resume()
+        
     }
     
     static func parseCrewBidUpdateFile(text: String) {
@@ -237,8 +230,344 @@ class CBUtils{
         }
         
     }
-    
-    
+    /*
+    static func parrseCrewBidUpdateFile(_ fileContent: String) -> Bool {
+        //
+        var success:Bool = true
+        //Parse CrewBid Update file
+        if fileContent.contains("File or directory not found") || fileContent.contains("internal server error") {
+            return true
+        }
+        // 1. Initialize NSScanner with string
+        let scanner = Scanner(string: fileContent)
+        // Auto release pool for releasing local variable after usage
+        autoreleasepool {
+            //2. Load Core data version list
+            var crewBidDataVersion = CrewBidUpdateData()
+            
+            let managedContext = GlobalBidInfo.shared.managedObjectContext
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+            
+            //Create object for entity description
+            let entity = NSEntityDescription.entity(forEntityName: "CrewBidUpdateData", in: (managedContext))
+            // Set entity to fetch request
+            fetchRequest.entity = entity
+            // Execute fetch request
+            let fetchedObjects = try? managedContext.fetch(fetchRequest)
+            if fetchedObjects != nil && (fetchedObjects?.count)! > 0 {
+                crewBidDataVersion = (fetchedObjects?[0] as? CrewBidUpdateData)!
+            } else {
+                crewBidDataVersion = CrewBidUpdateData(entity: entity!, insertInto: managedContext)
+            }
+            
+            success = self.fetchCityList(crewBidDataVersion, fileContent: fileContent)
+            
+            
+            if crewBidDataVersion.cities != nil {
+                self.fetchLatestNews(crewBidDataVersion, scanner: scanner, fileContent: fileContent)
+            }
+            
+        }
+        return success
+    }
+    static func fetchLatestNews(_ crewBidVersionController: CrewBidUpdateData, scanner: Scanner, fileContent:String) {
+        //1. Scan to the latest news position
+        _ = scanner.scanUpToString("LatestNews")
+        //2. define number character set
+        let numCharSet = CharacterSet(charactersIn: "0123456789")
+        //3. Scan up to number and capture the number set
+        scanner.currentIndex = fileContent.index(scanner.currentIndex, offsetBy: 11)
+        let versionNumber = scanner.scanCharacters(from: numCharSet)
+        //4. Check if local version is  null to avoid the crash
+        if crewBidVersionController.latestNews == nil {
+            crewBidVersionController.latestNews = ""
+        }
+        //5. Check any version change is occured
+        if (crewBidVersionController.latestNews != versionNumber as String?) {
+            //6. Download the latest news from VPS directory
+            self.checkForNewsWithCompletionHandler(isDownloaded: { (responce: Bool) -> Void in
+                if responce {
+                    //7. Update the latest news version number to local core data
+                    let versionStr = versionNumber! as String
+                    crewBidVersionController.latestNews = versionStr
+                    DispatchQueue.main.async {
+                        if GlobalBidInfo.shared.managedObjectContext.hasChanges {
+                            do {
+                                try GlobalBidInfo.shared.managedObjectContext.save()
+                            } catch {
+                                print(error)
+                            }
+                        }
+                    }
+                }
+            })
+        }
+    }
+    static func fetchCityList(_ crewBidVersionController: CrewBidUpdateData, fileContent: String)-> Bool {
+        
+        var isCompleted:Bool = false
+        // 1 Scan ititial position of CityList
+        let scanner = Scanner(string: fileContent)
+        //2. define number character set
+        let numCharSet = CharacterSet(charactersIn: "0123456789")
+        //3. Scan up to number and capture the number set
+        _ = scanner.scanUpToString("Cities")
+        if scanner.isAtEnd {
+            return true
+        }
+        scanner.currentIndex = fileContent.index(scanner.currentIndex, offsetBy: 7)
+        let versionNumber = scanner.scanCharacters(from: numCharSet)
+        //4. Check if local version is  null to avoid the crash
+        if crewBidVersionController.cities == nil {
+            crewBidVersionController.cities = ""
+        }
+        //5. Check any version change is occured
+        if !(crewBidVersionController.cities == versionNumber as String?) || (UserDefaults.standard.object(forKey: kCBInternationalCitiesList) != nil) {
+            _ = scanner.scanUpToString("[Cities]")
+            scanner.currentIndex = fileContent.index(scanner.currentIndex, offsetBy: 8)
+            //6 Scan up to cites end position and store it in the list
+            
+            let citiesList = scanner.scanUpToString("[CitiesEnd]")
+            //7 make City array
+            let arrCities1: [String] = (citiesList! as String).components(separatedBy: "\n")
+            var arrCities = [String]()
+            for str in arrCities1 {
+                if str.length > 0 && str != "" && str != "\r" {
+                    arrCities.append(str)
+                }
+            }
+            
+            //8 Intialize Parse cities list
+            let arrInternatinalCities = NSMutableArray()
+            let arrWestCoastCities = NSMutableArray()
+            let arrEastCoastCities = NSMutableArray()
+            let arrAllCities = NSMutableArray()
+            let arrEstCities = NSMutableArray()
+            let arrCstCities = NSMutableArray()
+            let arrMstCities = NSMutableArray()
+            let arrPstCities = NSMutableArray()
+            let arrNonUsCities = NSMutableArray()
+            let arrHawaiiCities = NSMutableArray()
+            let dictCitiesTimeZone = NSMutableDictionary()
+            
+            //9 iterate City list
+            for cityListCount in 0..<arrCities.count {
+                let cityDetailsString = arrCities[cityListCount]
+                let tempCityDetails = cityDetailsString.components(separatedBy: "@").first!
+                // 10 Saparate city and its type
+                let arrTempCityDetails = tempCityDetails.components(separatedBy: "-")
+                
+                if cityDetailsString.contains("@") {
+                    let searchFromRange = (cityDetailsString as NSString).range(of: "@")
+                    let searchToRange = (cityDetailsString as NSString).range(of: "#")
+                    let cityTimeZone = (cityDetailsString as NSString).substring(with: NSRange(location: (searchFromRange.location + searchFromRange.length), length: (searchToRange.location - searchFromRange.location - searchFromRange.length)))
+                    dictCitiesTimeZone.addEntries(from: CBUtils.getCityWithTimeZone(from: CBUtils.removeWhiteSpace(from: arrTempCityDetails[0]), timeZone: CBUtils.removeWhiteSpace(from: cityTimeZone)))
+                }
+                
+                // 11 Add city to all cities list
+                arrAllCities.add(CBUtils.removeWhiteSpace(from: arrTempCityDetails[0]))
+                //  arrAllCities.append(self.removeWhiteSpace(arrTempCityDetails[0]))
+                //12 Check and Add cities to list
+                //W=WestCoast , E=Eastcaost, I=International,P=PstCities ,M= MstCities ,C= CstCities ,S=EstCities
+                if arrTempCityDetails.count > 1 && "\(arrTempCityDetails[1])".contains("I"){
+                    arrInternatinalCities.add(CBUtils.removeWhiteSpace(from: arrTempCityDetails[0]))
+                    //arrInternatinalCities.append(self.removeWhiteSpace(arrTempCityDetails[0]))
+                }
+                
+                if arrTempCityDetails.count > 1 && "\(arrTempCityDetails[1])".contains("W") {
+                    arrWestCoastCities.add(CBUtils.removeWhiteSpace(from: arrTempCityDetails[0]))
+                }
+                
+                if arrTempCityDetails.count > 1 && "\(arrTempCityDetails[1])".contains("E") {
+                    arrEastCoastCities.add(CBUtils.removeWhiteSpace(from: arrTempCityDetails[0]))
+                }
+                
+                if arrTempCityDetails.count > 1 && "\(arrTempCityDetails[1])".contains("P") {
+                    arrPstCities.add(CBUtils.removeWhiteSpace(from: arrTempCityDetails[0]))
+                }
+                
+                if arrTempCityDetails.count > 1 && arrTempCityDetails[1].contains("M") {
+                    arrMstCities.add(CBUtils.removeWhiteSpace(from: arrTempCityDetails[0]))
+                }
+                
+                if arrTempCityDetails.count > 1 && "\(arrTempCityDetails[1])".contains("C") {
+                    arrCstCities.add(CBUtils.removeWhiteSpace(from: arrTempCityDetails[0]))
+                }
+                
+                if arrTempCityDetails.count > 1 && "\(arrTempCityDetails[1])".contains("S") {
+                    arrEstCities.add(CBUtils.removeWhiteSpace(from: arrTempCityDetails[0]))
+                }
+                
+                if arrTempCityDetails.count > 1 && "\(arrTempCityDetails[1])".contains("N") {
+                    arrNonUsCities.add(CBUtils.removeWhiteSpace(from: arrTempCityDetails[0]))
+                }
+                if arrTempCityDetails.count > 1 && "\(arrTempCityDetails[1])".contains("H") {
+                    arrHawaiiCities.add(CBUtils.removeWhiteSpace(from: arrTempCityDetails[0]))
+                }
+            }
+            
+            //13 . Save the city details in User defaults
+            //13.1 Save all cities
+            UserDefaults.standard.set(arrAllCities, forKey: kCBAllCitiesList)
+            
+            if dictCitiesTimeZone.count > 0 {
+                let tzDict: [AnyHashable: Any] = [kCBTimeZoneCitiesList: dictCitiesTimeZone]
+                UserDefaults.standard.set(dictCitiesTimeZone, forKey: kCBTimeZoneCitiesList)
+            }
+            
+            var alls: [AnyHashable: Any] = [kCBAllCitiesList: arrAllCities]
+            UserDefaults.standard.set(arrAllCities, forKey: kCBAllCitiesList)
+            UserDefaults.standard.register(defaults: alls as? [String : Any] ?? [String : Any]())
+            
+            // Set the default selected cities. By default all are selected
+            alls = [ kCBSelectedAllCities : arrAllCities ]
+            UserDefaults.standard.set(arrAllCities, forKey: kCBSelectedAllCities)
+            UserDefaults.standard.register(defaults: alls as? [String : Any] ?? [String : Any]())
+            
+            //13.2 Save EastCoast cities
+            var eccs: [AnyHashable: Any] = [ kCBEastCoastCitiesList : arrEastCoastCities ]
+            UserDefaults.standard.set(arrEastCoastCities, forKey: kCBEastCoastCitiesList)
+            UserDefaults.standard.register(defaults: eccs as? [String : Any] ?? [String : Any]())
+            
+            // Set the default selected cities. By default all are selected
+            eccs = [ kCBSelectedEastCoastCities : arrEastCoastCities ];
+            UserDefaults.standard.set(arrEastCoastCities, forKey: kCBSelectedEastCoastCities)
+            UserDefaults.standard.register(defaults: eccs as? [String : Any] ?? [String : Any]())
+            
+            // 13.3 Save west coast cities
+            var wccs: [AnyHashable: Any] = [ kCBWestCoastCitiesList : arrWestCoastCities ]
+            UserDefaults.standard.set(arrWestCoastCities, forKey: kCBWestCoastCitiesList)
+            UserDefaults.standard.register(defaults: wccs as? [String : Any] ?? [String : Any]())
+            
+            // Set the default selected cities. By default all are selected
+            wccs = [ kCBSelectedWestCoastCities : arrWestCoastCities ]
+            UserDefaults.standard.register(defaults: wccs as? [String : Any] ?? [String : Any]())
+            UserDefaults.standard.set(arrWestCoastCities, forKey: kCBSelectedWestCoastCities)
+            
+            //13.4 Save International cities
+            var ics: [AnyHashable: Any] = [ kCBInternationalCitiesList : arrInternatinalCities ]
+            UserDefaults.standard.set(arrInternatinalCities, forKey: kCBInternationalCitiesList)
+            UserDefaults.standard.register(defaults: ics as? [String : Any] ?? [String : Any]())
+            
+            
+            var hwaaii: [AnyHashable: Any] = [ kCBHawaiiCitiesList : arrHawaiiCities ]
+            UserDefaults.standard.set(arrHawaiiCities, forKey: kCBHawaiiCitiesList)
+            UserDefaults.standard.register(defaults: hwaaii as? [String : Any] ?? [String : Any]())
+            
+            // Set the default selected cities. By default all are selected
+            hwaaii = [ kCBSelectedHawaiiCities : arrHawaiiCities ]
+            UserDefaults.standard.register(defaults: hwaaii as? [String : Any] ?? [String : Any]())
+            UserDefaults.standard.set(arrHawaiiCities, forKey: kCBSelectedHawaiiCities)
+            
+            
+            // Set the default selected cities. By default all are selected
+            ics = [ kCBSelectedInternationalCities : arrInternatinalCities ]
+            UserDefaults.standard.set(arrInternatinalCities, forKey: kCBSelectedInternationalCities)
+            UserDefaults.standard.register(defaults: ics as? [String : Any] ?? [String : Any]())
+            
+            let dicinitCity =  NSMutableDictionary ()
+            for string in arrInternatinalCities {
+                dicinitCity.setObject("YES", forKey: string as! NSCopying)
+            }
+            UserDefaults.standard.set(dicinitCity, forKey: kCBInternationalCitiesDict)
+            //14. Update the latest news version number to local core data
+            crewBidVersionController.cities = versionNumber as String?
+            //15. Save NonUsCity
+            print("\(arrInternatinalCities)")
+            print("\(arrNonUsCities)")
+            let arrcombined = NSMutableArray()
+            //Combining nonconus array and international array
+            for i in arrNonUsCities {
+                if arrInternatinalCities.contains(i){
+                    arrInternatinalCities.remove(i)
+                    arrcombined.addObjects(from: arrNonUsCities as! [Any])
+                    arrcombined.addObjects(from: arrInternatinalCities as! [Any])
+                    
+                    //arrcombined = arrNonUsCities + arrInternatinalCities
+                } else {
+                    // do something else
+                }
+            }
+            var nccs: [AnyHashable: Any] = [ kCBNonConusCitiesList : arrcombined ]
+            UserDefaults.standard.set(arrcombined, forKey: kCBNonConusCitiesList)
+            UserDefaults.standard.register(defaults: nccs as? [String : Any] ?? [String : Any]())
+            // Set the default selected cities. By default all are selected
+            UserDefaults.standard.set(arrcombined, forKey: kCBSelectedNonConusCities)
+            nccs = [ kCBSelectedNonConusCities : arrcombined ]
+            UserDefaults.standard.register(defaults: nccs as? [String : Any] ?? [String : Any]())
+            isCompleted = true
+        }
+        return isCompleted
+    }
+    static func checkForNewsWithCompletionHandler(isDownloaded: @escaping (Bool) -> Void) {
+        // 1. Check network status
+        let reachability: Reachability = try! Reachability()
+        
+        if !reachability.isReachable {
+            NotificationCenter.default.post(name: Notification.Name("NetWorkError"), object: nil)
+            isDownloaded(false)
+            return
+        }
+        // 2. Contruct URL for fetching News
+        // let error: Error?
+        let stringURL: String = "http://www.wbidmax.com/downloads/CrewBid/LatestNews.pdf"
+        guard let url = URL(string: stringURL) else {
+            print("Invalid URL")
+            isDownloaded(false)
+            return
+        }
+        
+        // 3. Fetch Latest news asynchronously using URLSession
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Error fetching news: \(error)")
+                isDownloaded(false)
+                return
+            }
+            
+            guard let urlData = data else {
+                print("No data received")
+                isDownloaded(false)
+                return
+            }
+            
+            // 4. Load save directory
+            let pdfFilePath: String = self.getLatestNewsFilePath()
+            guard let urlPath = URL(string: pdfFilePath) else {
+                print("Invalid file path")
+                isDownloaded(false)
+                return
+            }
+            
+            // 5. Write data to directory
+            do {
+                try urlData.write(to: urlPath, options: .atomic)
+                let filePath = urlPath.path
+                let fileManager = FileManager.default
+                
+                // 6. Checking if saving is successful
+                if fileManager.fileExists(atPath: filePath) {
+                    print("FILE AVAILABLE")
+                    isDownloaded(true)
+                } else {
+                    print("FILE NOT AVAILABLE")
+                    isDownloaded(false)
+                }
+            } catch {
+                print("Error saving file: \(error)")
+                isDownloaded(false)
+            }
+        }
+
+        // Start the async task
+        task.resume()
+    }
+    static func getLatestNewsFilePath() -> String {
+        let paths: [Any] = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+        let documentsDir: String = paths[0] as? String ?? ""
+        return URL(fileURLWithPath: documentsDir).appendingPathComponent("LatestNews.pdf").absoluteString
+    }
+    */
     static func getCityWithTimeZone(from cityName: String, timeZone: String) -> [String: String] {
         return [cityName: timeZone]
     }
@@ -292,6 +621,25 @@ class CBUtils{
         return result["missingDate"] as? Date
     }
     
+    class func timeZone(forAirportCode base: String) -> TimeZone {
+        // If Herb Time is the setting, return Central timezone
+        if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.herbTime.rawValue {
+            return TimeZone(identifier: "US/Central")!
+        } else {
+            return CBUtils.rawTimeZone(forAirportCode: base)
+        }
+    }
+    
+    class func rawTimeZone(forAirportCode base: String) -> TimeZone {
+        let timeZones = UserDefaults.standard.object(forKey: kCBTimeZoneCitiesList) as? [AnyHashable : Any]
+        var tz = TimeZone(identifier: "US/Central")!
+        let tzString = timeZones?[base] as? String
+        if let tzString = tzString {
+            tz = TimeZone(identifier: tzString)!
+        }
+        return tz
+    }
+    
     class func findMissingDateAndIndex(forRedEyeTrip trip: BITrip?) -> [String: Any] {
         var missingDayIndex = -1
         var missingDate: Date? = nil
@@ -311,9 +659,9 @@ class CBUtils{
 
             var tripDates: [String] = []
 
-            if let orderedDays = trip.info?.orderedDays as? [BIDayInfo] {
+            if let orderedDays = trip.info?.orderedDays() {
                 for dayInfo in orderedDays {
-                    for legInfo in dayInfo.orderedLegs as? [BILegInfo] ?? [] {
+                    for legInfo in dayInfo.orderedLegs() {
                         dateComps.minute = legInfo.departMinutes?.intValue ?? 0
                         if let legStartDate = calendarWithTimeZone.date(from: dateComps) {
                             tripDates.append(df.string(from: legStartDate))
@@ -375,48 +723,50 @@ class CBUtils{
         ]
     }
     
-    class func downloadFlightData(completionHandler: @escaping (Bool) -> Void) {
-            guard let url = URL(string: "http://www.wbidmax.com/downloads/swa/FlightDataJson.zip") else {
+    class func downloadFlightData(/*completionHandler: @escaping (Bool) -> Void*/) {
+        guard let url = URL(string: EndPoint.shared.flightdataJSON) else {
                 print("Invalid URL.")
-                completionHandler(false)
+//                completionHandler(false)
                 return
             }
-            guard let urlData = try? Data(contentsOf: url) else {
-                print("Failed to download data.")
-                completionHandler(false)
-                return
+        let urlRequest = URLRequest(url: url)
+//        let urlData = try! Data(contentsOf: url)
+            
+        let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let zipFilePath = documentsDir.appendingPathComponent("FlightDataJson.zip")
+        URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
+            if let data = data {
+                do {
+                    
+                    try data.write(to: zipFilePath, options: .atomic)
+                    let defaults = UserDefaults.standard
+                    defaults.set(1, forKey: "IsLatestFlightDataDownloaded")
+                    defaults.set(false, forKey: "IsNeedtoEnableVacationDifference")
+                    unzipFlightDataFile(at: zipFilePath.path)
+    //                completionHandler(true)
+                } catch {
+                    print("Error writing file: \(error)")
+    //                completionHandler(false)
+                }
             }
-            let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-            let zipFilePath = documentsDir.appendingPathComponent("FlightDataJson.zip")
-
-            do {
-                try urlData.write(to: zipFilePath, options: .atomic)
-                let defaults = UserDefaults.standard
-                defaults.set(1, forKey: "IsLatestFlightDataDownloaded")
-                defaults.set(false, forKey: "IsNeedtoEnableVacationDifference")
-                parseFlightDataFile(at: zipFilePath.path)
-                completionHandler(true)
-            } catch {
-                print("Error writing file: \(error)")
-                completionHandler(false)
-            }
+        }.resume()
+            
         }
     class func getFALISTWB4JSONFromServer(){
             guard let url = URL(string: EndPoint.shared.faListWB4Json) else {
                 print("Invalid URL")
                 return
             }
-            var request = URLRequest(url: url)
+            let request = URLRequest(url: url)
      
             let config = URLSessionConfiguration.default
-    //        config.timeoutIntervalForRequest = 30
-    //        config.timeoutIntervalForResource = 30
+
      
             let session = URLSession(configuration: config)
             let task = session.dataTask(with: request) { data, response, error in
                 
                 if let error = error{
-                //handle error
+                print("Error in getting FA list from server: \(error.localizedDescription)")
                 }
                 
                 if let data = data {
@@ -444,8 +794,8 @@ class CBUtils{
                 let jsonString = String(data: jsonData, encoding: .utf8)
                 
                 // Get path to the Documents directory
-                let fileManager = FileManager.default
-                let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
+//                let fileManager = FileManager.default
+//                let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
                 let fileName = "falistwb4.json"
                 let fileURL = BIBidInfo.shared.downloadDirectory().appendingPathComponent(fileName)
                 
@@ -544,25 +894,56 @@ class CBUtils{
         }
     
     
-    class func parseFlightDataFile(at filePath: String) {
+    class func unzipFlightDataFile(at filePath: String) {
         let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-                let flightDataJsonPath = documentPath.appendingPathComponent("FlightDataJson")
-                if FileManager.default.fileExists(atPath: flightDataJsonPath.path) {
-                    do {
-                        try FileManager.default.removeItem(at: flightDataJsonPath)
-                    } catch {
-                        print("Error deleting old FlightDataJson folder: \(error)")
-                    }
-                }
-                SSZipArchive.unzipFile(atPath: filePath, toDestination: documentPath.path)
-                if FileManager.default.fileExists(atPath: filePath) {
-                    do {
-                        try FileManager.default.removeItem(atPath: filePath)
-                    } catch {
-                        print("Error deleting zip file: \(error)")
-                    }
-                }
+        let flightDataJsonPath = documentPath.appendingPathComponent("FlightDataJson")
+        if FileManager.default.fileExists(atPath: flightDataJsonPath.path) {
+            do {
+                try FileManager.default.removeItem(at: flightDataJsonPath)
+            } catch {
+                print("Error deleting old FlightDataJson folder: \(error)")
             }
+        }
+        SSZipArchive.unzipFile(atPath: filePath, toDestination: documentPath.path)
+        if FileManager.default.fileExists(atPath: filePath) {
+            do {
+                try FileManager.default.removeItem(atPath: filePath)
+            } catch {
+                print("Error deleting zip file: \(error)")
+            }
+        }
+    }
+    
+    class func parseFlightData() -> [Any]{
+        var app:AppDelegate?
+        DispatchQueue.main.async {
+            app = UIApplication.shared.delegate as? AppDelegate
+        }
+        
+        var arr:[Any] = []
+        let searchPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+        let documnentPath = searchPaths[0] as String
+        let filePath = documnentPath + "/FlightDataJson/FlightDataJson.JSON"
+        if FileManager.default.fileExists(atPath: filePath) {
+            do{
+                let data = try Data(contentsOf: URL(fileURLWithPath: filePath))
+                arr = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as! [Any]
+            }catch{
+                print("Error reading flight data : \(error.localizedDescription)")
+            }
+        }else{
+            if app!.objNetworkType != .free{
+                CBUtils.downloadFlightData()
+            }else{
+                let alert = AlertService.showAlert(title: "Sorry", message: "You cannot get needed access via SouthwestWifi or 2Wire. Try again later when you are safely on the ground and have another internet access.", actions: nil)
+                let topVC = app!.getTopViewController()
+                topVC?.present(alert, animated: true)
+            }
+        }
+        return arr
+    }
+    
+    
     static func shortMonthName(month: Int, uc: Bool) -> String {
         switch month {
         case 1, 13: return uc ? "JAN" : "Jan"

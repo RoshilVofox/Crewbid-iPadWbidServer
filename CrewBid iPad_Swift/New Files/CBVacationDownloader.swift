@@ -3187,8 +3187,8 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         
         var tripDates: [String] = []
         tripDates.reserveCapacity(4)
-        for dayInfo in trip.info?.orderedDays as! [BIDayInfo] {
-            for lengInfo in dayInfo.orderedLegs as! [BILegInfo] {
+        for dayInfo in trip.info!.orderedDays() {
+            for lengInfo in dayInfo.orderedLegs() {
                 dateComps.minute = lengInfo.departMinutes?.intValue
                 let legStartDate = calendar.date(from: dateComps)!
                 tripDates.append(df.string(from: legStartDate))

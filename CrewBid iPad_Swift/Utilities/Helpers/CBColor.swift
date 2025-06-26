@@ -17,7 +17,7 @@ class CBColor: UIColor, @unchecked Sendable {
     static let faPosAColor = UIColor(red: 51 / kColorDivisor, green: 104.98 / kColorDivisor, blue: 231.999 / kColorDivisor, alpha: 1.0)
     static let faPosBColor =  UIColor(red:0.0 / kColorDivisor, green:153.0 / kColorDivisor, blue:36.975 / kColorDivisor, alpha:1.000)
     static let faPosCColor = UIColor(red:237.99 / kColorDivisor, green:177.99 / kColorDivisor, blue:16.83 / kColorDivisor, alpha:1.000)
-    static let faPosDColor = UIColor(red:213.0 / kColorDivisor, green:14.994 / kColorDivisor, blue:37.0, alpha:1.000)
+    static let faPosDColor = UIColor(red:213.0 / kColorDivisor, green:14.994 / kColorDivisor, blue:37.0/kColorDivisor, alpha:1.000)
     
     static let cbPurpleColor = UIColor(named: "PurpleColor") //UIColor(red: 76.0 / kColorDivisor, green: 23.0 / kColorDivisor, blue: 203.0 / kColorDivisor, alpha: 1.0)
     static let cbPurpleColorLoader = UIColor(red: 76.0 / kColorDivisor, green: 23.0 / kColorDivisor, blue: 203.0 / kColorDivisor, alpha: 0.5)
