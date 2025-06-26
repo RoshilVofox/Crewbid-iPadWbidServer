@@ -1050,6 +1050,87 @@ class CBUtils{
         dataTask.resume()
     }
     
+    static func checkOvernightPredicate() -> NSMutableArray {
+        var overnightPredicate : NSMutableArray = []
+        let app = UIApplication.shared.delegate as! AppDelegate
+        app
+        let fetchRequest: NSFetchRequest<OvernightBulk> = OvernightBulk.fetchRequest()
+        let context = GlobalBidInfo.shared.managedObjectContext
+        let fetchedObjects = try! context.fetch(fetchRequest)
+        let filterVars: NSMutableDictionary = [:]
+        if fetchedObjects.count > 0 {
+            print("fetched overnight")
+            var dictAllValues: NSMutableDictionary?
+            if let firstObject = fetchedObjects.first,
+               let cityStatus = firstObject.value(forKey: "citystatus"),
+               !(cityStatus is NSNull) {
+                dictAllValues = (cityStatus as AnyObject).mutableCopy() as? NSMutableDictionary
+            }
+            let yesArray = dictAllValues!.allKeys(for: String(2))
+            let noArray = dictAllValues!.allKeys(for: String(1))
+            if yesArray.count == 0 && noArray.count == 0 {
+                return overnightPredicate
+            }
+            else {
+                let set = NSSet(array: yesArray)
+                filterVars["SET"] = set
+                let avoidSet = NSSet(array: noArray)
+                filterVars["AVOIDSET"] = avoidSet
+                var formatString = "SUBQUERY(legs, $LEG,"
+                if noArray.count > 0 {
+                    let formatString = "isOvernightFiltered == 0"
+                    let format = NSPredicate(format: formatString)
+                    overnightPredicate.add(format)
+                }
+ 
+                if yesArray.count > 0 {
+                    let formatString = "SUBQUERY(days, $DAY, ($DAY.info.city IN $SET) && $DAY.trip.dropForFiltersSorts == 0).@count > 0"
+                    let format = NSPredicate(format: formatString)
+                    let substitutedPredicate = format.withSubstitutionVariables(filterVars as! [String: Any])
+                    overnightPredicate.add(substitutedPredicate)
+                }
+            }
+        }
+        return overnightPredicate
+    }
+    
+    static func GenerateOvernightCities() -> [String] {
+        var arrCities: [String] = []
+        let moc = GlobalBidInfo.shared.managedObjectContext
+        let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "type != 4")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "bidOrder", ascending: true)]
+        do {
+            let fetResults = try moc.fetch(fetchRequest)
+            for line in fetResults {
+                for case let day as BIDay in line.days ?? [] {
+                    if let city = day.info?.city,
+                       city != CBGlobalMethods.shared.selectedBidPeriod?.base,
+                       arrCities.contains(city) {
+                        let city = day.info?.city
+                        arrCities.append(city!)
+                    }
+                }
+            }
+        }
+        catch {
+            print ("error fetching bid lines \(error.localizedDescription)")
+        }
+        return arrCities
+    }
+    
+    static func commutabilitySecondCellValue() -> [String] {
+        return ["NoMiddle", "OKMiddle"]
+    }
+    
+    static func CommutabilityThirdCell() -> [String] {
+        return ["Front", "Back", "Overall"]
+    }
+    
+    static func CommutabilityFourthCell() -> [String] {
+        return [">=", "<="]
+    }
+ 
     
     
 //    static func findMissingDateAndIndex(forRedEyeTrip trip: BITrip) -> [String: Any] {
