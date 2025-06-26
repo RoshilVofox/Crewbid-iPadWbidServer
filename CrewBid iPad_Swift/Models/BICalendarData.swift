@@ -259,7 +259,9 @@ class BICalendarData {
     // Calculate the index for a given date
 
     func indexForDate(date: Date?) -> Int {
-        dateComponents = (calendar?.dateComponents([.day], from: firstDateOfCalendar!, to: date!))
+        let from = calendar?.startOfDay(for: firstDateOfCalendar!)
+        let to = calendar?.startOfDay(for: date!)
+        let dateComponents = (calendar?.dateComponents([.day], from: from!, to: to!))
         return (dateComponents?.day)!
     }
     // Calculate the index of the first day in the expanded view

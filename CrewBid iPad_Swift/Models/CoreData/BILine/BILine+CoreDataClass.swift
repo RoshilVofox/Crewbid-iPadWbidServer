@@ -16,19 +16,19 @@ public class BILine: NSManagedObject {
 
 enum BILineType : Int {
     case HardLine           // 0
-    case HardConUS              // 1
-    case HardNonConUS           // 2
+    case HardConUS          // 1
+    case HardNonConUS       // 2
     case ReserveLine        // 3
     case BlankLine          // 4
     case MixedLine          // 5
-    case NonEtopsReserve        // 6
-    case NonEtopsNonConUS       // 7
-    case NonEtopsConUS          // 8
-    case NonReserveEtops        // 9
-    case NonEtopsHard           // 10
-    case NonEtopsMixed          // 11
-    case EtopsReserve           // 12
-    case EtopsFAFirstRound      // 13
+    case NonEtopsReserve    // 6
+    case NonEtopsNonConUS   // 7
+    case NonEtopsConUS      // 8
+    case NonReserveEtops    // 9
+    case NonEtopsHard       // 10
+    case NonEtopsMixed      // 11
+    case EtopsReserve       // 12
+    case EtopsFAFirstRound  // 13
     
     func name () -> Int {
         switch self {
@@ -98,15 +98,15 @@ enum BILineAMPM : Int {
     case AMLine
     case MixedAMPMLine
     case PMLine
-    case BlankAMPMLine
     case RedEyeAMPMLine
+    case BlankAMPMLine
     func name () -> Int {
         switch self {
         case .AMLine: return 0
         case .MixedAMPMLine: return 1
         case .PMLine: return 2
-        case .BlankAMPMLine: return 3
-        case .RedEyeAMPMLine : return 4
+        case .RedEyeAMPMLine: return 3
+        case .BlankAMPMLine : return 4
         }
     }
 }

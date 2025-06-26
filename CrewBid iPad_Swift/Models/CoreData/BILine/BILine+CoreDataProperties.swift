@@ -323,6 +323,93 @@ extension BILine : Identifiable {
         return NSNumber(value: redEyeLegs.count)
     }
     
+    var isRedEyeLine: Bool {
+        return (self.redEyeCount.intValue) > 0
+    }
+    
+    func t234() -> String {
+        return "\(CInt(truncating: turnsCount!) > 9 ? "*" : turnsCount!.stringValue)\(Int(CInt(truncating: twoDayTripsCount!)))\(Int(CInt(truncating: threeDayTripsCount!)))\(Int(CInt(truncating: fourDayTripsCount!)))"
+    }
+    
+    
+    func faPositionString() -> String {
+        if !self.bidPeriod!.isFABid(){
+            return ""
+        }
+        var faPos: String = "NA"
+        var tripPos: String
+        // if there are no trips or there is no position for a trip,
+        // then fa position is NA
+        var isFirstTrip: Bool = true
+        for case let trip as BITrip in self.trips! {
+            if trip.positionString == nil {
+                tripPos = ""
+            } else {
+                tripPos = trip.positionString!
+            }
+            // trip position
+            if tripPos != "" {
+                if isFirstTrip {
+                    faPos = tripPos
+                    isFirstTrip = false
+                }
+                if !(faPos == tripPos) {
+                    faPos = "M"
+                    break
+                } else {
+                    faPos = tripPos
+                }
+            }
+        }
+        return faPos
+    }
+    
+    func faPositionColor() -> UIColor? {
+        if !self.bidPeriod!.isFABid() {
+            return nil
+        }
+        var faPos: String = "NA"
+        var tripPos: String
+        // if there are no trips or there is no position for a trip,
+        // then fa position is NA
+        var isFirstTrip: Bool = true
+        for case let trip as BITrip in self.trips! {
+            if trip.positionString == nil {
+                tripPos = ""
+            } else {
+                tripPos = trip.positionString!
+            }
+            // trip position
+            if tripPos != "" {
+                if isFirstTrip {
+                    faPos = tripPos
+                    isFirstTrip = false
+                }
+                if !(faPos == tripPos) {
+                    faPos = "M"
+                    break
+                } else {
+                    faPos = tripPos
+                }
+            }
+        }
+        // Return color based on FA Position
+
+        switch faPos {
+        case "A":
+            return CBColor.faPosAColor
+        case "B":
+            return CBColor.faPosBColor
+        case "C":
+            return CBColor.faPosCColor
+        case "D":
+            return CBColor.faPosDColor
+        case "M":
+            return .purple
+        default:
+            return nil
+        }
+    }
 }
 
 @objc enum BILineSortCategory : Int {

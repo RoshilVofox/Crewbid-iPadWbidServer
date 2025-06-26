@@ -525,6 +525,9 @@
                                         </constraints>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                         <state key="normal" image="ScrolltoLine"/>
+                                        <connections>
+                                            <action selector="btnMoveToLineAction:" destination="31h-qK-hrW" eventType="touchUpInside" id="x0b-wU-I0U"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eOX-4z-Twv">
                                         <rect key="frame" x="516" y="5" width="40" height="40"/>
@@ -643,16 +646,16 @@
                                                             <rect key="frame" x="0.0" y="0.0" width="80" height="297"/>
                                                             <subviews>
                                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="20" contentMode="left" text="XXX" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aTU-CJ-VsF" userLabel="Order Label">
-                                                                    <rect key="frame" x="0.0" y="4" width="80" height="32"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="80" height="28"/>
                                                                     <constraints>
-                                                                        <constraint firstAttribute="height" constant="32" id="gbW-YB-F15"/>
+                                                                        <constraint firstAttribute="height" constant="28" id="gbW-YB-F15"/>
                                                                     </constraints>
-                                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="24"/>
-                                                                    <color key="textColor" red="0.87147049489999995" green="0.13036397799999999" blue="0.0075293164220000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                    <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="17"/>
+                                                                    <color key="textColor" systemColor="systemRedColor"/>
                                                                     <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                 </label>
                                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="10" contentMode="left" text="###" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="vXA-iB-4uw" userLabel="Line Number Label">
-                                                                    <rect key="frame" x="0.0" y="88.5" width="80" height="40"/>
+                                                                    <rect key="frame" x="0.0" y="92.5" width="80" height="40"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="40" id="PAy-fa-K6X"/>
                                                                     </constraints>
@@ -661,7 +664,7 @@
                                                                     <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                                 </label>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JHy-8H-zYy" userLabel="Remove Line Button">
-                                                                    <rect key="frame" x="17" y="245" width="46" height="46"/>
+                                                                    <rect key="frame" x="17" y="249" width="46" height="46"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="width" constant="46" id="UbQ-dO-D8t"/>
                                                                         <constraint firstAttribute="height" constant="46" id="oVu-Pp-c9a"/>
@@ -678,18 +681,29 @@
                                                                         <action selector="removeLineAction:" destination="cFM-gM-MHG" eventType="touchUpInside" id="HkC-Cg-xfm"/>
                                                                     </connections>
                                                                 </button>
+                                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="eye.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="yiw-lo-t7N">
+                                                                    <rect key="frame" x="25" y="32.5" width="30" height="17.5"/>
+                                                                    <color key="tintColor" systemColor="systemRedColor"/>
+                                                                    <constraints>
+                                                                        <constraint firstAttribute="width" constant="30" id="8WU-U9-ZsA"/>
+                                                                        <constraint firstAttribute="height" constant="15" id="MIz-pe-TqT"/>
+                                                                    </constraints>
+                                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large"/>
+                                                                </imageView>
                                                             </subviews>
                                                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="bottom" secondItem="JHy-8H-zYy" secondAttribute="bottom" constant="6" id="0z0-hU-dWP"/>
-                                                                <constraint firstItem="aTU-CJ-VsF" firstAttribute="top" secondItem="7Ea-Op-iHy" secondAttribute="top" constant="4" id="2Ov-1z-evj"/>
+                                                                <constraint firstAttribute="bottom" secondItem="JHy-8H-zYy" secondAttribute="bottom" constant="2" id="0z0-hU-dWP"/>
+                                                                <constraint firstItem="aTU-CJ-VsF" firstAttribute="top" secondItem="7Ea-Op-iHy" secondAttribute="top" id="2Ov-1z-evj"/>
                                                                 <constraint firstAttribute="trailing" secondItem="aTU-CJ-VsF" secondAttribute="trailing" id="49I-xy-fhl"/>
                                                                 <constraint firstItem="vXA-iB-4uw" firstAttribute="leading" secondItem="7Ea-Op-iHy" secondAttribute="leading" id="FfR-7C-FRF"/>
                                                                 <constraint firstAttribute="width" constant="80" id="Fwq-14-rDg"/>
                                                                 <constraint firstItem="aTU-CJ-VsF" firstAttribute="leading" secondItem="7Ea-Op-iHy" secondAttribute="leading" id="Qq7-bY-MN0"/>
-                                                                <constraint firstItem="vXA-iB-4uw" firstAttribute="centerY" secondItem="7Ea-Op-iHy" secondAttribute="centerY" constant="-40" id="gb6-P6-a9c"/>
+                                                                <constraint firstItem="vXA-iB-4uw" firstAttribute="centerY" secondItem="7Ea-Op-iHy" secondAttribute="centerY" constant="-36" id="gb6-P6-a9c"/>
                                                                 <constraint firstAttribute="trailing" secondItem="vXA-iB-4uw" secondAttribute="trailing" id="ldf-ft-XPH"/>
                                                                 <constraint firstItem="JHy-8H-zYy" firstAttribute="leading" secondItem="7Ea-Op-iHy" secondAttribute="leading" constant="17" id="mBG-8J-cWy"/>
+                                                                <constraint firstItem="yiw-lo-t7N" firstAttribute="top" secondItem="aTU-CJ-VsF" secondAttribute="bottom" constant="6" id="vfm-0Q-fMC"/>
+                                                                <constraint firstItem="yiw-lo-t7N" firstAttribute="centerX" secondItem="7Ea-Op-iHy" secondAttribute="centerX" id="wv7-wX-SGQ"/>
                                                             </constraints>
                                                         </view>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kAb-FS-zEZ" userLabel="Line Value View">
@@ -813,6 +827,7 @@
                                             <outlet property="lineValuesView" destination="bLd-Kc-4Xb" id="Kze-hw-tgN"/>
                                             <outlet property="moveBidListButton" destination="hBD-tN-M0K" id="dCz-BE-3db"/>
                                             <outlet property="orderLabel" destination="aTU-CJ-VsF" id="bvJ-zk-Hyt"/>
+                                            <outlet property="redEyeImage" destination="yiw-lo-t7N" id="t2N-Ml-5SM"/>
                                             <outlet property="removeButton" destination="JHy-8H-zYy" id="4Fn-50-RC8"/>
                                         </connections>
                                     </tableViewCell>
@@ -6627,6 +6642,7 @@
         <image name="cc" width="21" height="21"/>
         <image name="checkBox" width="32" height="32"/>
         <image name="down-arrow" width="24" height="24"/>
+        <image name="eye.fill" catalog="system" width="128" height="80"/>
         <image name="flag" width="30" height="30"/>
         <image name="flag1" width="34" height="34"/>
         <image name="home" width="22" height="22"/>

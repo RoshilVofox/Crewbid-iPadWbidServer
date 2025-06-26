@@ -104,7 +104,7 @@ extension BIBidPeriod {
     @NSManaged public var overNightBulk: NSObject?
     @NSManaged public var overNightCities: NSArray?
     @NSManaged public var paperBidCount: NSNumber?
-    @NSManaged public var paperBidVacArray: NSObject?
+    @NSManaged public var paperBidVacArray: NSArray?
     @NSManaged public var positionType: NSNumber?
     @NSManaged public var reservedLineIndexForASort: NSNumber?
     @NSManaged public var reserveEnabledForASort: NSNumber?

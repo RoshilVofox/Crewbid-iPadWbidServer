@@ -24,6 +24,7 @@ class EndPoint {
     }
     var faListWB4Json = "http://www.wbidmax.com/downloads/swa/falistwb4.json"
     var crewBidUpdate = "http://www.wbidmax.com/downloads/CrewBid/CrewBidUpdate.dat"
+    var flightdataJSON = "http://www.wbidmax.com/downloads/swa/FlightDataJson.zip"
     var flightDataChange = "\(baseURL)GetVacationDifferenceData"
     var soap = "\(baseURL)soap"
     var CAPData = "\(baseURL)GetCAPData"

@@ -86,13 +86,34 @@ extension BITripInfo {
 }
 
 extension BITripInfo : Identifiable {
-    var orderedDays: [Any] {
-        return (days!.allObjects as NSArray).sortedArray(comparator: { day1, day2 in
-            let value1 = (day1 as AnyObject).value(forKeyPath: "firstLeg.departMinutes") as? NSNumber
-            let value2 = (day2 as AnyObject).value(forKeyPath: "firstLeg.departMinutes") as? NSNumber
-            return value1?.compare(value2 ?? 0) ?? .orderedSame
-        })
+//    var orderedDays: [Any] {
+//        return (days!.allObjects as NSArray).sortedArray(comparator: { day1, day2 in
+//            let value1 = (day1 as AnyObject).value(forKeyPath: "firstLeg.departMinutes") as? NSNumber
+//            let value2 = (day2 as AnyObject).value(forKeyPath: "firstLeg.departMinutes") as? NSNumber
+//            return value1?.compare(value2 ?? 0) ?? .orderedSame
+//        })
+//    }
+    
+    @objc public func orderedDays() -> [BIDayInfo] {
+        // Create an array to store days and populate it from the 'days' set
+
+        let arrDays : NSMutableArray = NSMutableArray()
+        for days in self.days!.allObjects {
+            arrDays.add(days)
+        }
+//         Sort the 'orderedDays' array based on the 'firstLeg' of each day
+
+        let orderedDays: [BIDayInfo]? = (arrDays.sortedArray(options: NSSortOptions(rawValue: 0), usingComparator: {(_ day1: Any, _ day2: Any) -> ComparisonResult in
+            let value1  = (day1 as AnyObject).value(forKey: "firstLeg") as! BILegInfo
+            let value2  = (day2 as AnyObject).value(forKey: "firstLeg")  as! BILegInfo
+            let value3: NSNumber  = value1.departMinutes!
+            let value4:NSNumber = value2.departMinutes!
+            let result: ComparisonResult? = value3.compare(value4)
+            return result!
+        }) as! [BIDayInfo])
+        return orderedDays!
     }
+    
     var isPilotReserve: Bool {
         guard number!.count > 1 else { return false }
         let index = number!.index(number!.startIndex, offsetBy: 1)
@@ -101,21 +122,23 @@ extension BITripInfo : Identifiable {
     
     var tafbMinutes: NSNumber? {
         guard
-            let lastDay = self.orderedDays.last as? BIDayInfo,
-            let lastLeg = lastDay.orderedLegs.last as? BILegInfo,
+            let lastDay = self.orderedDays().last,
+            let lastLeg = lastDay.orderedLegs().last,
             let firstLeg = firstDay?.firstLeg
         else {
             return nil
         }
-        let tafb = lastLeg.arriveMinutes!.intValue - firstLeg.departMinutes!.intValue + briefMinutes!.intValue + debriefMinutes!.intValue
+        let tafb = (lastLeg as AnyObject).arriveMinutes!.intValue - firstLeg.departMinutes!.intValue + briefMinutes!.intValue + debriefMinutes!.intValue
         return NSNumber(value: tafb)
+//        return 00
     }
     
     func getDayPaySumForTrips() -> Float {
-        var dayPaySum: Float = 0.0
-        for case let day as BIDayInfo in self.orderedDays {
-            dayPaySum += day.dayPayWithRig?.floatValue ?? 0.0
-        }
-        return dayPaySum
+//        var dayPaySum: Float = 0.0
+//        for case let day in self.orderedDays {
+//            dayPaySum += day.dayPayWithRig?.floatValue ?? 0.0
+//        }
+//        return dayPaySum
+        return 0.0
     }
 }

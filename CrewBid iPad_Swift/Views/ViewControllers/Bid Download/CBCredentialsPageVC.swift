@@ -31,6 +31,7 @@ class CBCredentialsPageVC: BaseViewController {
     let bidDownloadViewModel = BIBidFileDownloadViewModel()
     let context = CoreDataManager.shared.managedObjectContext
     let dataSource = GlobalBidInfo.shared
+    var bidPeriodList:[BIBidPeriod] = []
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -416,6 +417,17 @@ class CBCredentialsPageVC: BaseViewController {
     
 //    MARK: login action
     func loginActions(){
+        let context = self.dataSource.managedObjectContext
+                let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
+                do {
+                    // Fetch bid periods and reverse to show newest first
+                    self.bidPeriodList = try context.fetch(fetchRequest).reversed()
+                    CBGlobalMethods.shared.selectedBidPeriod = bidPeriodList[0]
+                } catch {
+                    print("Failed to fetch bid periods: \(error)")
+                    self.bidPeriodList = []
+                }
+        
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let docVC = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
         if let homeNav = UIApplication.shared.windows.first?.rootViewController as? UINavigationController {
