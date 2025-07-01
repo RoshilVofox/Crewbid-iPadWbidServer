@@ -399,7 +399,11 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
         cell.contentView.tag = row
         cell.index = row
         cell.tableView = scratchPadTableView
-        //function to set trip text view
+        cell.tripButtonActionBlock = {(_ tripButton: CBTripButton) -> Void in
+            DispatchQueue.main.async {
+                self.showTripTextPopover(for: tripButton)
+            }}
+
         
         let setupCircles = true
         if (bidPeriod?.isFABid())!{
@@ -417,10 +421,10 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
             
             if line.faPositionString() == "NA"{
                 cell.posNAView.alpha = 1
-                //refresh trips button funciton
+                cell.refreshTripButtons(highlightFlag: true)
             }else if line.faPositionString() == "M"{
                 cell.posMView.alpha = 1
-                //refresh trip button function
+                cell.refreshTripButtons(highlightFlag: true)
             }else{
                 if setupCircles{
                     cell.posAGrayView.alpha = 0.15
@@ -443,21 +447,22 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
                             cell.setCircle(index, withPos: posLine.faPositionString(), color: CBColor.faPosDColor, isGray: false)
                         }
                     }
-                    //needs function
-                    
+                    cell.refreshTripButtons(highlightFlag: true)
                 }
             }
         }else{
-            cell.posAGrayView.alpha = 0
-            cell.posBGrayView.alpha = 0
-            cell.posCGrayView.alpha = 0
-            cell.posDGrayView.alpha = 0
-            cell.posAView.alpha = 0
-            cell.posBView.alpha = 0
-            cell.posCView.alpha = 0
-            cell.posDView.alpha = 0
-            cell.posMView.alpha = 0
-            cell.posNAView.alpha = 0
+            cell.refreshTripButtons(highlightFlag: true)
+            
+//            cell.posAGrayView.alpha = 0
+//            cell.posBGrayView.alpha = 0
+//            cell.posCGrayView.alpha = 0
+//            cell.posDGrayView.alpha = 0
+//            cell.posAView.alpha = 0
+//            cell.posBView.alpha = 0
+//            cell.posCView.alpha = 0
+//            cell.posDView.alpha = 0
+//            cell.posMView.alpha = 0
+//            cell.posNAView.alpha = 0
         }
         
         if line.isRedEyeLine == true{
@@ -545,7 +550,7 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
                 print("Line value is nil - \(tag) - \(row) - \(CBLineValueTypes(rawValue: valueType)!)")
             }
             lineValueView?.alpha = 1
-            if CBLineValueTypes(rawValue: valueType) == .cbVacationPayDifference {
+            if CBLineValueTypes(rawValue: valueType) == .VacationPayDifference {
                 if self.bidPeriod?.cbFileIntent != nil {
                     if line.vCBVacPay!.doubleValue > 0 || line.orderedTrips.count == 0 {
                         lineValueView?.alpha = 1

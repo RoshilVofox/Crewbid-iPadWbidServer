@@ -20,7 +20,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
     weak var bidPeriod: BIBidPeriod?
     var menuItems = [Any]()
     
-    var count = 0
+
     
     var contentSize: CGSize {
         return CGSize(width: 310.0, height: UIScreen.main.bounds.height - 120)
@@ -34,42 +34,112 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        lineValuesTemp = getLineValues()
         self.navigationController?.navigationBar.isHidden = false
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         self.tableView.separatorStyle = .singleLine
         self.tableView.allowsMultipleSelection = true
-        
-// ----------------------------------
         lineValues = lineValues1()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        return lineValuesTemp.count
         return lineValues.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-//        let value = lineValuesTemp[indexPath.row] as! NSDictionary
+        let lineValuesKey = CBLineValuesMenuController.lineValuesKey(for: bidPeriod!)
+        let linevaluesToDisplay = NSMutableArray()
+        if UserDefaults.standard.object(forKey: lineValuesKey) != nil {
+            let arr = UserDefaults.standard.value(forKey: lineValuesKey) as! [Any]
+            linevaluesToDisplay.addObjects(from: arr)
+        }
         let value = lineValues[indexPath.row] as! NSDictionary
+        if linevaluesToDisplay.count > 0 {
+            let type = value.value(forKey: "type") as! NSNumber
+            if linevaluesToDisplay.contains(type) {
+                cell.setSelected(true, animated: true)
+            }else{
+                cell.setSelected(false, animated: false)
+            }
+        }
+        if cell.isSelected{
+            cell.accessoryType = .checkmark
+            selectedValuesCount += 1
+        }else{
+            cell.accessoryType = .none
+        }
+        cell.selectionStyle = .none
         let title = value["name"] as? String
         cell.textLabel?.text = title
-        cell.selectionStyle = .none
-        if (cell.isSelected) {
-            cell.accessoryType = .checkmark
-        } else {
-            cell.accessoryType = .none
+        let type = value["type"] as! Int
+        if (type > 25 && type < 39) || type == 42 || type == 50 || type == 68 || type == 52 || type == 53 || (type >= 58 && type <= 63) {
+            if cellIsHidden(for: value as! [AnyHashable : Any]) {
+                cell.isHidden = true
+            } else {
+                if (bidPeriod?.isFABid())! {
+                    let swapImage = UIImage(named: "FA_Vacation_Image_Shadow")
+                    let swapImgView = UIImageView(frame: CGRect(x: 215.0, y: 2.0, width: 40.0, height: 40.0))
+                    swapImgView.tag = 101
+                    swapImgView.image = swapImage
+                    cell.contentView.addSubview(swapImgView)
+                } else {
+                    let swapImage = UIImage(named: SwaptimizerVacationImage)
+                    let swapImgView = UIImageView(frame: CGRect(x: 215.0, y: 2.0, width: 40.0, height: 40.0))
+                    swapImgView.tag = 101
+                    swapImgView.image = swapImage
+                    cell.contentView.addSubview(swapImgView)
+                }
+            }
+        }else{
+            var viewToRemove: UIView? = cell.contentView.viewWithTag(101)
+            while (viewToRemove != nil) {
+                viewToRemove?.removeFromSuperview()
+                viewToRemove = cell.contentView.viewWithTag(101)
+            }
         }
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if count < 5{
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-            count += 1
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let value = lineValues[indexPath.row] as! NSDictionary
+        let typeNum = value.value(forKey: "type") as! NSNumber
+        let type = Int(truncating: typeNum)
+//        if self.lineValueTypeIsHidden(forPilotSecondRound: CBLineValueTypes(rawValue: type)!){
+//            return 0
+//        }
+        /*else*/ if type > 25 {
+            if self.cellIsHidden(for: value as! [AnyHashable : Any]){
+                return 0
+            }else{
+                return tableView.rowHeight
+            }
+        }else{
+            return tableView.rowHeight
         }
-        else{
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell:UITableViewCell? = tableView.cellForRow(at: indexPath)
+        let selectedValue = lineValues[indexPath.row] as! NSDictionary
+        let lineValuesKey = CBLineValuesMenuController.lineValuesKey(for: bidPeriod!)
+        let lineValuesToDisplay = NSMutableArray()
+        if UserDefaults.standard.object(forKey: lineValuesKey) != nil {
+            let arr = UserDefaults.standard.value(forKey: lineValuesKey) as! [Any]
+            lineValuesToDisplay.addObjects(from: arr)
+        }
+        if cell?.accessoryType == .checkmark {
+            cell?.setSelected(false, animated: false)
+            let type = selectedValue.value(forKey: "type") as! NSNumber
+            lineValuesToDisplay.remove(type)
+            UserDefaults.standard.set(lineValuesToDisplay, forKey: lineValuesKey)
+            tableView.reloadData()
+        }else if lineValuesToDisplay.count < 5{
+            cell?.setSelected(false, animated: false)
+            let type = selectedValue.value(forKey: "type") as! NSNumber
+            lineValuesToDisplay.add(type)
+            UserDefaults.standard.set(lineValuesToDisplay, forKey: lineValuesKey)
+            tableView.reloadData()
+        }else{
             tableView.deselectRow(at: indexPath, animated: true)
             let alert = UIAlertController(title: "Cannot select more than 5 values.", message: "Please deselect values before adding new ones.", preferredStyle: UIAlertController.Style.alert)
             alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: nil))
@@ -77,104 +147,100 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         }
     }
     
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        count -= 1
-    }
     
     @IBAction func resetAction(_ sender: Any) {
-        
+        resetStdAction()
     }
     
     class func setLineValueView(_ lineValueView: CBLineValueView, with line: BILine, forType valueType: CBLineValueTypes, bidPeriod: BIBidPeriod) {
         switch valueType {
             
-        case CBLineValueTypes.cBLineValueTypeVOBoth:
+        case .VOBoth:
             let val = (line.vBackVoPay?.floatValue ?? 0.0) + (line.vFrontVoPay?.floatValue ?? 0.0)
             lineValueView.setValue(value: String(format: "%.2f", val), forTitle: "VoBoth", andType: valueType)
             break
-        case CBLineValueTypes.cbLineValueTypeVAbp:
+        case .VAbp:
             lineValueView.setValue(value: String(format: "%.2f", line.vAbp!.floatValue), forTitle: "VAbp", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVAne:
+        case .VAne:
             lineValueView.setValue(value: String(format: "%.2f", line.vAne?.floatValue ?? 0), forTitle: "VAne", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVAbo:
+        case .VAbo:
             lineValueView.setValue(value: String(format: "%.2f", line.vAbo?.floatValue ?? 0), forTitle: "VAbo", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVAPbp:
+        case .VAPbp:
             lineValueView.setValue(value: String(format: "%.2f", line.vAPbp?.floatValue ?? 0), forTitle: "VAPbp", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVAPne:
+        case .VAPne:
             lineValueView.setValue(value: String(format: "%.2f", line.vAPne?.floatValue ?? 0), forTitle: "VAPne", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVAPbo:
+        case .VAPbo:
             lineValueView.setValue(value: String(format: "%.2f", line.vAPbo?.floatValue ?? 0) , forTitle: "VAPbo", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeAircraftChanges:
+        case .AircraftChanges:
             lineValueView.setValue(value: String(format: "%01ld", Int(truncating: line.numAircraftChanges!)), forTitle: "Chngs", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeAircraftTypeIs800:
+        case .AircraftTypeIs800:
             lineValueView.setValue(value: String(format: "%01ld", Int(truncating: line.aircraftType800Count!)), forTitle: "800s", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeAircraftTypeIs700:
+        case .AircraftTypeIs700:
             lineValueView.setValue(value: String(format: "%01ld", Int(truncating: line.aircraftType700Count!)), forTitle: "700s", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeAircraftTypeIs8Max:
+        case .AircraftTypeIs8Max:
             lineValueView.setValue(value: String(format: "%01ld", Int(truncating: line.aircraftType8MaxCount!)), forTitle: "8Max", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeAircraftTypeIs7Max:
+        case .AircraftTypeIs7Max:
             lineValueView.setValue(value: String(format: "%01ld", Int(truncating: line.aircraftType7MaxCount!)), forTitle: "7Max", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeBlockDaysOff:
+        case .BlockDaysOff:
             lineValueView.setValue(value: "\(Int(truncating: line.blockOfDaysOff!))", forTitle: "BlkOff", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeBlockTime:
+        case .BlockTime:
             lineValueView.setValue(value: String(format: "%02zd:%02zd", Int(truncating: (line.blockMinutes!)) / 60, Int(truncating: line.blockMinutes!) % 60), forTitle: "BlkHrs", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueWorkBP:
+        case .WorkBP:
             lineValueView.setValue(value: "\(Int(truncating: line.workDaysBP!))", forTitle: "Work BP", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeDaysOff:
+        case .DaysOff:
             lineValueView.setValue(value: "\(String(describing: line.daysOff!))", forTitle: "DaysOff", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeDeadheads:
+        case .Deadheads:
             lineValueView.setValue(value: "\(String(describing: line.deadheadsCount!))", forTitle: "DHs", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeDutyTime:
+        case .DutyTime:
             lineValueView.setValue(value: String(format: "%01zd:%02zd", Int(truncating: line.dutyMinutes!) / 60, Int(truncating: line.dutyMinutes!) % 60), forTitle: "DtyHrs", andType: valueType)
             break
-        case CBLineValueTypes.cBLineValueTypeGTmax:
+        case .GTmax:
             lineValueView.setValue(value: String(format: "%01zd:%02zd", Int(truncating: line.gTmax!) / 60, Int(truncating: line.gTmax!) % 60), forTitle: "GTmax", andType: valueType)
             break
-        case CBLineValueTypes.cBLineValueTypeGTavg:
+        case .GTavg:
             lineValueView.setValue(value: String(format: "%01zd:%02zd", Int(truncating: line.gTavg!) / 60, Int(truncating: line.gTavg!) % 60), forTitle: "GTavg", andType: valueType)
             break
-        case CBLineValueTypes.cbLineValueTypeDutyHoursPerDay:
+        case .DutyHoursPerDay:
             lineValueView.setValue(value: String(format: "%.2f", Float(truncating: line.dutyHoursPerDay!)), forTitle: "Dty/Day", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeNonConUsLegs:
+        case .NonConUsLegs:
             lineValueView.setValue(value: "\(String(describing: line.nonConusLegsCount!))", forTitle: "NC Legs", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeEarliestDept:
+        case .EarliestDept:
             let hours: Int = Int(truncating: line.earliestDepartureTime!) / 100
             let mins: Int = Int(truncating: line.earliestDepartureTime!) - hours * 100
             lineValueView.setValue(value: String(format: "%01zd:%02zd", hours, mins), forTitle: "EDep", andType: valueType)
@@ -198,7 +264,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
             }
             break
             
-        case CBLineValueTypes.cbLineValueTypeLatestArr:
+        case .LatestArr:
             var latestArrival: Int = line.latestArrivalTime as! Int
             if latestArrival > 2400 {
                 latestArrival -= 2400
@@ -226,105 +292,105 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
             }
             break
             
-        case CBLineValueTypes.cbLineValueTypeLegs:
+        case .Legs:
             lineValueView.setValue(value: String(format: "%d", line.numLegs!.intValue), forTitle: "Legs", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeMaxLegsInDay:
+        case .MaxLegsInDay:
             lineValueView.setValue(value: String(format: "%d", line.maxLegsInADay!.intValue), forTitle: "MLegs", andType: valueType)
             break
             
-        case CBLineValueTypes.cBLineValueTypeOvAvg:
+        case .OvAvg:
             lineValueView.setValue(value: String(format: "%01zd:%02zd", Int(truncating: line.ovAvg ?? 0) / 60, Int(truncating: line.ovAvg ?? 0) % 60), forTitle: "OvAvg", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeOvernightsInBase:
+        case .OvernightsInBase:
             lineValueView.setValue(value: String(format: "%d", line.overnightsInBase!.intValue), forTitle: "OIBs", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypePassesThruBase:
+        case .PassesThruBase:
             lineValueView.setValue(value: String(format: "%d", line.passesThruBase!.intValue), forTitle: "PTBs", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeT234:
+        case .T234:
             lineValueView.setValue(value: String(format: "%@", line.t234()), forTitle: "T234", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeTrips:
+        case .Trips:
             lineValueView.setValue(value: String(format: "%d", line.numTrips!.intValue), forTitle: "Trips", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypePay:
+        case .Pay:
             lineValueView.setValue(value: String(format: "%0.2f", line.pay!.floatValue), forTitle: "Pay", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypePayPerBlock:
+        case .PayPerBlock:
             lineValueView.setValue(value: String(format: "%0.2f", Float(truncating: line.payPerBlockHour!)), forTitle: "$/Blk", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypePayPerLeg:
+        case .PayPerLeg:
             lineValueView.setValue(value: String(format: "%0.2f", Float(truncating: line.payPerLeg!)), forTitle: "$/Leg", andType: valueType)
             if line.payPerLeg!.floatValue == Float.infinity {
                 lineValueView.setValue(value: "0.00", forTitle: "$/Leg", andType: valueType)
             }
             break
             
-        case CBLineValueTypes.cbLineValueTypePayPerTAFB:
+        case .PayPerTAFB:
             lineValueView.setValue(value: String(format: "%0.2f", Float(truncating: line.payPerTAFB!)), forTitle: "$/TAFB", andType: valueType)
             if line.payPerTAFB!.floatValue == Float.infinity{
                 lineValueView.setValue(value: "0.00", forTitle: "$/TAFB", andType: valueType)
             }
             break
             
-        case CBLineValueTypes.cbLineValueTypeTAFB:
+        case .TAFB:
             let firstValue: Int = Int(truncating: line.tafbMinutes!) / 60
             let secondValue: Int = Int(truncating: line.tafbMinutes!) % 60
             lineValueView.setValue(value: String(format: "%01zd:%02zd",Int(firstValue) , Int(secondValue)), forTitle: "TAFB", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypePayPerDay:
+        case .PayPerDay:
             lineValueView.setValue(value: String(format: "%0.2f", Float(truncating: line.payPerDay!)), forTitle: "$/Day", andType: valueType)
             if line.payPerDay!.floatValue == Float.infinity{
                 lineValueView.setValue(value: "0.00", forTitle: "$/Day", andType: valueType)
             }
             break
             
-        case CBLineValueTypes.cbLineValueTypePayPerDutyTime:
+        case .PayPerDutyTime:
             lineValueView.setValue(value: String(format: "%0.2f", Float(truncating: line.payPerDutyTime!)), forTitle: "$/Duty", andType: valueType)
             if line.payPerDutyTime!.floatValue == Float.infinity{
                 lineValueView.setValue(value: "0.00", forTitle: "$/Duty", andType: valueType)
             }
             break
             
-        case CBLineValueTypes.cbLineValueTypeCarryOutPay:
+        case .CarryOutPay:
             lineValueView.setValue(value: String(format: "%0.2f", Float(truncating: line.carryOutPay!)), forTitle: "CoPay", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeWeekends:
+        case .Weekends:
             lineValueView.setValue(value: "\(String(describing: line.weekendsCount!))", forTitle: "Wknds", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeWorkDays:
+        case .WorkDays:
             lineValueView.setValue(value: "\(String(describing: line.workDays!))", forTitle: "Work All", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVTotalPay:
+        case .VTotalPay:
             lineValueView.setValue(value: String(format: "%0.2f", line.vTotalPay!.floatValue), forTitle: "TotalPay", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVFlyPay:
+        case .VFlyPay:
             lineValueView.setValue(value: String(format: "%0.2f", line.vFlyPay!.floatValue), forTitle: "FlyPay", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVVacayPay:
+        case .VVacayPay:
             lineValueView.setValue(value: String(format: "%0.2f", line.vVacationPay!.floatValue), forTitle: "vpCu", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVCarryOutPay:
+        case .VCarryOutPay:
             lineValueView.setValue(value: String(format: "%0.1f", line.vCarryOutPay!.floatValue), forTitle: "CoFlyPay", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVBlockTime:
+        case .VBlockTime:
             let blockTime = line.vBlockTime ?? 0
             let hrs : Int = Int(truncating: blockTime)
             let minutesInHrs = Float(truncating: blockTime) - Float(truncating: hrs.asNSNumber)
@@ -332,47 +398,47 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
             lineValueView.setValue(value: String(format: "%02zd:%02zd", hrs, mins), forTitle: "BlkHrs", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVDaysOff:
+        case .VDaysOff:
             lineValueView.setValue(value: "\(String(describing: line.vDaysOff!.intValue))", forTitle: "DaysOff", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVLength:
+        case .VLength:
             lineValueView.setValue(value: "\(String(describing: line.vEffectiveVacayLength!.intValue))", forTitle: "EffLength", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeLongBlock:
+        case .LongBlock:
         lineValueView.setValue(value: String(describing: (line.vLongestBlockofDaysOff?.intValue ?? 0)), forTitle: "LonBlkoff", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVPayPerBlock:
+        case .VPayPerBlock:
             lineValueView.setValue(value: String(format: "%0.2f", line.vPayPerBlock!.floatValue), forTitle: "$/Blk", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVPayPerDay:
+        case .VPayPerDay:
             lineValueView.setValue(value: String(format: "%0.2f", line.vPayPerDay!.floatValue), forTitle: "$/Day", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVVacayCarryOutPay:
+        case .VVacayCarryOutPay:
             lineValueView.setValue(value: String(format: "%0.1f", line.vVacayCarryOutPay!.floatValue), forTitle: "CoVaPay", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVCarryOutVOPay:
+        case .VCarryOutVOPay:
             lineValueView.setValue(value: String(format: "%0.1f", line.vCarryOutVOPay!.floatValue), forTitle: "CoVoPay", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVFrontVoPay:
+        case .VFrontVoPay:
             lineValueView.setValue(value: String(format: "%0.1f", line.vFrontVoPay!.floatValue), forTitle: "FrontVO", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVBackVoPay:
+        case .VBackVoPay:
             lineValueView.setValue(value: String(format: "%0.1f", line.vBackVoPay!.floatValue), forTitle: "BackVO", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueHolidayRig:
+        case .HolidayRig:
             lineValueView.setValue(value: String(format: "%0.2f", line.holidayPay!.floatValue), forTitle: "HoliRig", andType: valueType)
             break
             
-        case CBLineValueTypes.cbVacationPayDifference:
+        case .VacationPayDifference:
             let wbidVacPay = Float(truncating: line.vWBVacPay!)
             let swaVacPay = Float(truncating: line.vCBVacPay!)
             var vDiff: Float = 0.0
@@ -384,7 +450,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
             lineValueView.setValue(value: String(format: "%0.2f", vDiff), forTitle: "vDiff", andType: valueType)
             break
             
-        case CBLineValueTypes.cbCommutabilityBacks:
+        case .CommutabilityBacks:
             if line.commutabilityBack == 0 {
                 lineValueView.setValue(value: "0", forTitle: "cmt%Ba", andType: valueType)
             }
@@ -392,7 +458,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
                 lineValueView.setValue(value: "\(String(format: "%0.2f", line.commutabilityBack!.floatValue))%", forTitle: "cmt%Ba", andType: valueType)
             }
             break
-        case CBLineValueTypes.cbCommutabilityFronts:
+        case .CommutabilityFronts:
             if line.commutabilityFront == 0 {
                 lineValueView.setValue(value: "0", forTitle: "cmt%Fr", andType: valueType)
             }
@@ -401,11 +467,11 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
             }
             break
             
-        case CBLineValueTypes.cbCommutableBacks:
+        case .CommutableBacks:
             lineValueView.setValue(value: "\(String(describing: line.commutableBacks!))", forTitle: "cmtBa", andType: valueType)
             break
             
-        case CBLineValueTypes.cbCommutableFronts:
+        case .CommutableFronts:
             if !(line.commutableFronts == nil) {
                 lineValueView.setValue(value: "\(String(describing: line.commutableFronts!))", forTitle: "cmtFr", andType: valueType)
             }
@@ -414,15 +480,15 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
             }
             break
             
-        case CBLineValueTypes.cbNightsInMid:
+        case .NightsInMid:
             lineValueView.setValue(value: "\(String(describing: line.nightsInMid!))", forTitle: "nMid", andType: valueType)
             break
             
-        case CBLineValueTypes.cbTotalCommutes:
+        case .TotalCommutes:
             lineValueView.setValue(value: "\(String(describing: line.totalCommutes!))", forTitle: "cmts", andType: valueType)
             break
             
-        case CBLineValueTypes.cbCommutabilityOverall:
+        case .CommutabilityOverall:
             if line.commutabilityOverall == 0 {
                 lineValueView.setValue(value: "0", forTitle: "cmt%Ov", andType: valueType)
             }
@@ -431,60 +497,74 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
             }
             break
             
-        case CBLineValueTypes.cbLineValueTypeLineRig:
+        case .LineRig:
             lineValueView.setValue(value: String(format: "%0.2f", line.lineRig!.floatValue), forTitle: "lineRig", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeVVacayPayNext:
+        case .VVacayPayNext:
             lineValueView.setValue(value: String(format: "%0.2f", line.vVacayPayNextBP!.floatValue), forTitle: "vpNe", andType: valueType)
             break
             
             
-        case CBLineValueTypes.cbLineValueTypeVVacayPayBoth:
+        case .VVacayPayBoth:
             lineValueView.setValue(value: String(format: "%0.2f", line.vVacayPayBothBP!.floatValue), forTitle: "vpBo", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTpLPay:
+        case .TpLPay:
             lineValueView.setValue(value: String(format: "%0.2f", line.vTpLPay!.floatValue), forTitle: "Vac+LG", andType: valueType)
             break
             
-        case CBLineValueTypes.cbLineValueTypeETrips:
+        case .ETrips:
             lineValueView.setValue(value: String(format: "%01zd", line.etopsTripsCount!.intValue), forTitle: "eTrips", andType: valueType)
             break
-        case .cbLineValueTypeWorkBlockCount:
+        case .WorkBlockCount:
             lineValueView.setValue(value: "\(line.workBlockCount?.intValue ?? 0)", forTitle: "BlkCount", andType: valueType)
             break
-        case .cBLineValueTypeReserveDaysCount:
+        case .ReserveDaysCount:
             lineValueView.setValue(value: "\(line.reserveDays?.intValue ?? 0)", forTitle: "DoR", andType: valueType)
             break
-        case .cBLineValueTyperigADG:
+        case .rigADG:
             lineValueView.setValue(value: String(format: "%0.2f", line.rigADG?.floatValue ?? 0.0), forTitle: "rigADG", andType: valueType)
             break
-        case .cBLineValueTyperigDHR:
+        case .rigDHR:
             lineValueView.setValue(value: String(format: "%0.2f", line.rigDHR?.floatValue ?? 0.0), forTitle: "rigDHR", andType: valueType)
             break
-        case .cBLineValueTyperigTHR:
+        case .rigTHR:
             lineValueView.setValue(value: String(format: "%0.2f", line.rigTHR?.floatValue ?? 0.0), forTitle: "rigTHR", andType: valueType)
             break
-        case .cBLineValueTyperigDPM:
+        case .rigDPM:
             lineValueView.setValue(value: String(format: "%0.2f", line.rigDPM?.floatValue ?? 0.0), forTitle: "rigDPM", andType: valueType)
             break
-        case .cBLineValueTypeLinePay:
+        case .LinePay:
             lineValueView.setValue(value: String(format: "%0.2f", line.tripTfp?.floatValue ?? 0.0), forTitle: "TripTfp", andType: valueType)
             break
-        case .cBLineValueTypecoHoli:
+        case .coHoli:
             lineValueView.setValue(value: String(format: "%0.2f", line.coHoli?.floatValue ?? 0.0), forTitle: "coHoli", andType: valueType)
             break
-        case .cBLineValueTypePayPlusCO:
+        case .PayPlusCO:
             lineValueView.setValue(value: String(format: "%0.2f", line.payPlusCo?.floatValue ?? 0.0), forTitle: "Pay+CO", andType: valueType)
             break
-        case .cBLineValueTypeCoPlusHoli:
+        case .CoPlusHoli:
             lineValueView.setValue(value: String(format: "%0.2f", line.coPlusHoli?.floatValue ?? 0.0), forTitle: "Co+Holi", andType: valueType)
             break
-        case .cbLineValueTypeClawBack:
+        case .ClawBack:
             lineValueView.setValue(value: String(format: "%0.2f", line.clawBack?.floatValue ?? 0.0), forTitle: "ClawBack", andType: valueType)
         }
     }
+    
+    func resetStdAction(){
+        
+    }
+    
+    func cellIsHidden(for lineValue: [AnyHashable: Any]) -> Bool {
+        if self.bidPeriod!.isFABid() {
+            return lineValue["isHiddenForFA"] as? Bool ?? false
+        } else {
+            let type = lineValue["type"] as? Int ?? 0
+            return self.lineValueTypeIsHidden(forPilotVacation:CBLineValueTypes(rawValue: type)!)
+        }
+    }
+    
     
     
     func lineValues1() -> [Any] {
@@ -492,15 +572,12 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         let path = Bundle.main.path(forResource: "LineValues", ofType: "plist")
         let valueDictionary = NSDictionary(contentsOfFile: path!)
         values = valueDictionary?["values"] as? [Any] ?? [Any]()
-//        if CBSwaptimizerStatus.enabled.rawValue == Int(truncating: (bidPeriod?.swaptimizerStatus)!) || BIFaVacationStatus.enabled.rawValue == Int(truncating: (bidPeriod?.faVacationStatus)!) {
-//            let swaptimizerFileURL = Bundle.main.path(forResource: "LineValuesVacation", ofType: "plist")
-//            let swapValuesDictionary = NSDictionary(contentsOfFile: swaptimizerFileURL!)
-//            var swapValuesArray = swapValuesDictionary?["values"] as? [Any]
-//            if ((self.bidPeriod!.fvVacationArrayFromServer?.count ?? 0) > 0){
-//                swapValuesArray?.remove(at: 3)
-//            }
-//            values = swapValuesArray! + values!
-//        }
+        if (CBSwaptimizerStatus.enabled.rawValue == self.bidPeriod?.swaptimizerStatus?.intValue) || (BIFaVacationStatus.enabled.rawValue == self.bidPeriod?.faVacationStatus?.intValue) {
+            let swaptimizerFileURL = Bundle.main.path(forResource: "LineValuesVacation", ofType: "plist")
+            let swapValuesDictionary = NSDictionary(contentsOfFile: swaptimizerFileURL!)
+            let swapValuesArray = swapValuesDictionary?["values"] as? [Any]
+            values = swapValuesArray! + values!
+        }
         return values!
     }
     
@@ -525,19 +602,29 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         return lineValuesKey
     }
     
-    func lineValueTypeIsHiddenForPilotVacation(_ type: Int) -> Bool {
+    func lineValueTypeIsHidden(forPilotVacation type: CBLineValueTypes) -> Bool {
         guard let hiddenDict = UserDefaults.standard.dictionary(forKey: kCBSwaptimizerHiddenDict) else {
             return false
         }
-
-        return (type == CBLineValueTypes.cbLineValueTypeVLength.rawValue && (hiddenDict[kCBSwaptmizerEffVacayLengthHidden] as? Bool ?? false)) ||
-        (type == CBLineValueTypes.cbLineValueTypeLongBlock.rawValue && (hiddenDict[kCBSwaptmizerLongestBlockofDaysOffHidden] as? Bool ?? false)) ||
-        (type == CBLineValueTypes.cbLineValueTypeVCarryOutPay.rawValue && (hiddenDict[kCBSwaptmizerCarryOutPayHidden] as? Bool ?? false)) ||
-        (type == CBLineValueTypes.cbLineValueTypeVVacayCarryOutPay.rawValue && (hiddenDict[kCBSwaptmizerVacayCarryOutPayHidden] as? Bool ?? false)) ||
-               (type == CBLineValueTypes.cbLineValueTypeVCarryOutVOPay.rawValue && (hiddenDict[kCBSwaptmizerCarryOutVoHidden] as? Bool ?? false)) ||
-               (type == CBLineValueTypes.cbLineValueTypeVVacayPayNext.rawValue && (hiddenDict[kCBSwaptmizerVacPayNextBPHidden] as? Bool ?? false)) ||
-               (type == CBLineValueTypes.cbLineValueTypeVVacayPayBoth.rawValue && (hiddenDict[kCBSwaptmizerVacPayBothBPHidden] as? Bool ?? false)) ||
-               (type == CBLineValueTypes.cbLineValueTypeClawBack.rawValue && (hiddenDict[kCBSwaptmizerClawBackHidden] as? Bool ?? false))
+        return (type.rawValue == CBLineValueTypes.VLength.rawValue && (hiddenDict[kCBSwaptmizerEffVacayLengthHidden] as? Bool ?? false)) ||
+        (type.rawValue == CBLineValueTypes.LongBlock.rawValue && (hiddenDict[kCBSwaptmizerLongestBlockofDaysOffHidden] as? Bool ?? false)) ||
+        (type.rawValue == CBLineValueTypes.VCarryOutPay.rawValue && (hiddenDict[kCBSwaptmizerCarryOutPayHidden] as? Bool ?? false)) ||
+        (type.rawValue == CBLineValueTypes.VVacayCarryOutPay.rawValue && (hiddenDict[kCBSwaptmizerVacayCarryOutPayHidden] as? Bool ?? false)) ||
+        (type.rawValue == CBLineValueTypes.VCarryOutVOPay.rawValue && (hiddenDict[kCBSwaptmizerCarryOutVoHidden] as? Bool ?? false)) ||
+        (type.rawValue == CBLineValueTypes.VVacayPayNext.rawValue && (hiddenDict[kCBSwaptmizerVacPayNextBPHidden] as? Bool ?? false)) ||
+        (type.rawValue == CBLineValueTypes.VVacayPayBoth.rawValue && (hiddenDict[kCBSwaptmizerVacPayBothBPHidden] as? Bool ?? false)) ||
+        (type.rawValue == CBLineValueTypes.ClawBack.rawValue && (hiddenDict[kCBSwaptmizerClawBackHidden] as? Bool ?? false))
     }
-
+    
+    
+    func lineValueTypeIsHidden(forPilotSecondRound type:CBLineValueTypes) -> Bool{
+        if (self.bidPeriod?.wbFileIntent == nil) || (self.bidPeriod?.cbFileIntent == nil) || (type == .VacationPayDifference){
+            return true
+        }
+        if (self.bidPeriod?.containsMissingTripLines!.boolValue)! && !(self.bidPeriod?.isFABid())! && type == .AircraftChanges || type == .Deadheads || type == .DutyTime || type == .Legs || type == .PayPerDutyTime || type == .PayPerLeg || type == .BlockTime || type == .PayPerBlock{
+            return true
+        }else{
+            return false
+        }
+    }
 }

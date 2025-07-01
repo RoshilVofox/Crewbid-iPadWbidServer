@@ -2481,6 +2481,7 @@ class BIBidInfoReader{
         // For now, allow all line types.
         var set: Set<Int> = []
         var rule = BIFilterRule(context: context)
+        rule.bidPeriod = bidPeriod
         rule.category = BIFilterRuleCategory.BITypeFilterRuleCategory.rawValue as NSNumber
         rule.type = BITypeFilterRuleType.BITypeCompoundType.rawValue as NSNumber
         
@@ -2519,6 +2520,7 @@ class BIBidInfoReader{
         
         // Set Etops Filter rule
         rule = BIFilterRule(context: context)
+        rule.bidPeriod = bidPeriod
         rule.category = BIFilterRuleCategory.BIEtopsFilterRuleCategory.rawValue as NSNumber
         let etopsOn = true
         
@@ -2526,6 +2528,7 @@ class BIBidInfoReader{
         
         // Set Etops Reserve Filter rule
         rule = BIFilterRule(context: context)
+        rule.bidPeriod = bidPeriod
         rule.category = BIFilterRuleCategory.BIEtopsFilterRuleCategory.rawValue as NSNumber
         let etopsResOn = true
         
@@ -2533,6 +2536,7 @@ class BIBidInfoReader{
         
         // Filter rule to allow both AM and PM lines.
         rule = BIFilterRule(context: context)
+        rule.bidPeriod = bidPeriod
         rule.category = BIFilterRuleCategory.BIAmPmFilterRuleCategory.rawValue as NSNumber
         rule.type = BIAmPmFilterRuleType.BIAmPmCompoundType.rawValue as NSNumber
         
@@ -2542,6 +2546,7 @@ class BIBidInfoReader{
         // Filter rule for Flight Attendant Round 2 bidding Reserve line Types
         if self.isFABid() && self.isSecondRoundBid(){
             rule = BIFilterRule(context: context)
+            rule.bidPeriod = bidPeriod
             rule.category = BIFilterRuleCategory.BIFaReserveFilterRuleCategory.rawValue as NSNumber
             set = [BIFaReserveLineType.SnrAMres.rawValue, BIFaReserveLineType.SnrPMres.rawValue, BIFaReserveLineType.JnrAMres.rawValue, BIFaReserveLineType.JnrPMres.rawValue, BIFaReserveLineType.JnrLateRes.rawValue, BIFaReserveLineType.NoType.rawValue]
             
@@ -2551,6 +2556,7 @@ class BIBidInfoReader{
         // Filter rule to allow Flight Attendant Positions A,B,C,D lines.
         if self.isFABid(){
             rule = BIFilterRule(context: context)
+            rule.bidPeriod = bidPeriod
             rule.category = BIFilterRuleCategory.BIPositionFilterRuleCategory.rawValue as NSNumber
             rule.type = BIPositionFilterRuleType.BIPositionCompoundType.rawValue as NSNumber
             set = [BIFaPosition.FaPositionA.rawValue, BIFaPosition.FaPositionB.rawValue, BIFaPosition.FaPositionC.rawValue, BIFaPosition.FaPositionD.rawValue, BIFaPosition.FaPositionMultiple.rawValue, BIFaPosition.FaPositionNA.rawValue]
@@ -2559,6 +2565,7 @@ class BIBidInfoReader{
         // Filter rule to allow weekdays only (Mon-Fri, but no Sat or Sun).
         // For now, allow all days of week.
         rule = BIFilterRule(context: context)
+        rule.bidPeriod = bidPeriod
         rule.category = BIFilterRuleCategory.BIDaysOfWeekFilterRuleCategory.rawValue as NSNumber
         rule.type = BIWeekdaysFilterRuleType.BIWeekdaysCompoundType.rawValue as NSNumber
         let weekdayBits = 0
@@ -2568,6 +2575,7 @@ class BIBidInfoReader{
         // four-day trips.
         // For now, allow all trip lengths.
         rule = BIFilterRule(context: context)
+        rule.bidPeriod = bidPeriod
         rule.category = BIFilterRuleCategory.BITripLengthFilterRuleCategory.rawValue as NSNumber
         rule.type = BITripLengthFilterRuleType.BITripLengthCompoundType.rawValue as NSNumber
         let turnsOn = true

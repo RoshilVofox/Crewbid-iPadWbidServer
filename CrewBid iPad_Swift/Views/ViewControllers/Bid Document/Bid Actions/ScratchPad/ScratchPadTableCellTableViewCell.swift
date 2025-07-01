@@ -46,7 +46,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     var posDGrayView: UIView = UIView()
     var posNAView: UIView = UIView()
     var posMView: UIView = UIView()
-//    var tripButtonActionBlock: CBLineCellTripButtonActionBlock?
+    var tripButtonActionBlock: CBLineCellTripButtonActionBlock?
     var daysArray:[String] = []
     var numDays = 0
     var numDays1 = 0
@@ -70,70 +70,9 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     var calendarDaysArr : [BICalendarDay] = []
     var calendarDay : [BICalendarDay] = []
     var deletedObjArray:[String] = []
-    //--------------------------
-    var selectedValues:[String] = []
-    var CalendarData: [[(day: Int?, isBidMonth: Bool)]] = []
-    var tripIndexes: [(row: Int, col: Int)] = []
-    let tripDays = [1,2,3,4,8,9,10,11,15,16,17,18,22,23,24,25]
-    let month = 5
-    let year = 2025
+    typealias CBLineCellTripButtonActionBlock = (_ tripButton: CBTripButton) -> Void
+
     
-//    to get calendar days
-    func getCalendarData(for month: Int, year: Int){
-        let calendar = Calendar.current
-        //---------Bid Month Details-----------
-        let firstDayOfBidMonth = calendar.date(from: DateComponents(year: year, month: month, day: 1))!
-        let firstWeekdayofBidMonth = calendar.component(.weekday, from: firstDayOfBidMonth)     //S,M,T,W,T,F,S as 1,2,3,4,5,6,7
-        let rangeBidMonth = calendar.range(of: .day, in: .month, for: firstDayOfBidMonth)!
-        let totalDaysinBidMonth = rangeBidMonth.count
-        //---------Previous Month Details----------
-        let lastWeekDayofPreviousMonth = firstWeekdayofBidMonth - 1     //S,M,T,W,T,F,S as 1,2,3,4,5,6,7
-        let previousMonth = calendar.date(byAdding: .month, value: -1, to: firstDayOfBidMonth)!
-        let rangePrevMonth = calendar.range(of: .day, in: .month, for: previousMonth)!
-        let totalDaysinPreviousMonth = rangePrevMonth.count
-        
-        var calendarData: [[(day:Int?,isBidMonth:Bool)]] = Array(repeating: Array(repeating: (nil,false), count: 7), count: 6)
-        
-        var currentDay = 1
-        var day = totalDaysinPreviousMonth - lastWeekDayofPreviousMonth + 1
-        
-        for col in 0..<lastWeekDayofPreviousMonth {
-            calendarData[0][col] = (day,false)
-            day += 1
-        }
-        var row = 0
-        var col = lastWeekDayofPreviousMonth
-        while currentDay <= totalDaysinBidMonth {
-            calendarData[row][col] = (currentDay,true)
-            currentDay += 1
-            col += 1
-            if col == 7{
-                col = 0
-                row += 1
-            }
-        }
-        var nextMonthDay = 1
-            for row in 0..<6 {
-                for col in 0..<7 {
-                    if calendarData[row][col].day == nil {
-                        calendarData[row][col] = (nextMonthDay,false)
-                        nextMonthDay += 1
-                    }
-                }
-            }
-        CalendarData = calendarData
-    }
-    
-    // Function to display the day and apply styles based on the bid month
-    func displayDay(for collection: CBBidListSmallCollectionViewCell, day: Int?, isBidMonth: Bool) {
-        // Display the day or placeholder if nil
-        collection.dayLabel.text = day != nil ? "\(day!)" : ""
-        
-        // Change text color if it's not part of the bid month
-        if !isBidMonth {
-            collection.dayLabel.textColor = UIColor(red: 195/255, green: 195/255, blue: 197/255, alpha: 1.0)
-        }
-    }
 
     func cellLayout(){
         let layout = UICollectionViewFlowLayout()
@@ -269,7 +208,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posText.font = posText.font.withSize(10)
         posText.text = "A"
         posAView.addSubview(posText)
-        posAView.alpha = 0.0
+        posAView.alpha = 0
         self.posAView = posView
         
         // Position A Gray
@@ -287,7 +226,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posText.font = posText.font.withSize(10)
         posText.text = "A"
         posAGrayView.addSubview(posText)
-        posAGrayView.alpha = 1.0
+        posAGrayView.alpha = 0
         
         // Position B Colored
         posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
@@ -321,7 +260,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posText.font = posText.font.withSize(10)
         posText.text = "B"
         posBGrayView.addSubview(posText)
-        posBGrayView.alpha = 1.0
+        posBGrayView.alpha = 0
         
         // Position C colored
         posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + 2 * kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
@@ -338,7 +277,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posText.tag = 7
         posText.textColor = UIColor.white
         posCView.addSubview(posText)
-        posCView.alpha = 0.0
+        posCView.alpha = 0
         
         // Position C Gray
         posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + 2 * kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
@@ -355,7 +294,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posText.font = posText.font.withSize(10)
         posText.text = "C"
         posCGrayView.addSubview(posText)
-        posCGrayView.alpha = 1.0
+        posCGrayView.alpha = 0
         
         // Position D Colored
         posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + 3 * kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
@@ -372,7 +311,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posText.tag = 7
         posText.textColor = UIColor.white
         posDView.addSubview(posText)
-        posDView.alpha = 0.0
+        posDView.alpha = 0
         
         // Position D Gray
         posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset + 3 * kCircleVerticalIncrement, width: kCircleSize, height: kCircleSize))
@@ -389,7 +328,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posText.font = posText.font.withSize(10)
         posText.text = "D"
         posDGrayView.addSubview(posText)
-        posDGrayView.alpha = 1.0
+        posDGrayView.alpha = 0
         
         // M Colored
         posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset, width: kCircleSize, height: kCircleSize))
@@ -406,7 +345,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posText.font = posText.font.withSize(10)
         posText.text = "M"
         posMView.addSubview(posText)
-        posMView.alpha = 0.0
+        posMView.alpha = 0
         
         // NA Colored
         posView = UIView(frame: CGRect(x: kCircleHorizontalOffset, y: kCircleVerticalOffset, width: kCircleSize, height: kCircleSize))
@@ -423,12 +362,8 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posText.text = "NA"
         posText.font = posText.font.withSize(10)
         posNAView.addSubview(posText)
-        posNAView.alpha = 0.0
-        //-----------------------
-        
-        getCalendarData(for: month, year: year)
-       
-        //-----------------------
+        posNAView.alpha = 0
+ 
     }
 
     @objc func longPressLineValueContainerView(_ gesture: UILongPressGestureRecognizer) {
@@ -437,6 +372,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         }
         let storyboard : UIStoryboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let lineValuesController = storyboard.instantiateViewController(withIdentifier: "CBLineValuesMenuController") as! CBLineValuesMenuController
+        lineValuesController.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         lineValuesController.modalPresentationStyle = .custom
         let touchPoint = gesture.location(in: self.lineValuesView)
         let frame = CGRect(x: lineValuesView.frame.origin.x, y: touchPoint.y - 80, width: lineValuesView.frame.width, height: lineValuesView.frame.height)
@@ -461,17 +397,10 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return calendarDaysArr.count
-//        return 42
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DayCell", for: indexPath as IndexPath) as! CBBidListSmallCollectionViewCell
-//        let row = indexPath.row/7
-//        let col = indexPath.row%7
-//        let data = CalendarData[row][col]
-//        let day = data.day
-//        let isbidmonth = data.isBidMonth
-//        displayDay(for: cell, day: day, isBidMonth: isbidmonth)
         cell.contentView.frame = cell.bounds
         cell.contentView.autoresizingMask = [.flexibleWidth,.flexibleHeight]
         let calendarDay = calendarDaysArr[indexPath.row]
@@ -486,8 +415,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        let width = floor(collectionView.frame.width / 7)
-//        return CGSize(width: width, height: 55)
         return CGSizeMake((self.contentView.frame.width - 160)/7, 45)
     }
 
