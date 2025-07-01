@@ -13,21 +13,21 @@ class CBUtils{
 
     func initialize(){
         // assigning  all the default values needed for the application
-        let defaultLineValues = [CBLineValueTypes.cbLineValueTypePay.rawValue, CBLineValueTypes.cbLineValueTypeBlockTime.rawValue, CBLineValueTypes.cbLineValueTypeAircraftChanges.rawValue,CBLineValueTypes.cbLineValueTypePayPerBlock.rawValue, CBLineValueTypes.cbLineValueTypePayPerDay.rawValue]
+        let defaultLineValues = [CBLineValueTypes.Pay.rawValue, CBLineValueTypes.BlockTime.rawValue, CBLineValueTypes.AircraftChanges.rawValue,CBLineValueTypes.PayPerBlock.rawValue, CBLineValueTypes.PayPerDay.rawValue]
         let standardDefaults = [kCBDefaultLineValuesKey : defaultLineValues]
         UserDefaults.standard.register(defaults: standardDefaults)
         
-        let defaultRound2LineValues = [CBLineValueTypes.cbLineValueTypePay.rawValue, CBLineValueTypes.cbLineValueTypeBlockDaysOff.rawValue, CBLineValueTypes.cbLineValueTypeWeekends.rawValue, CBLineValueTypes.cbLineValueTypeWorkDays.rawValue, CBLineValueTypes.cbLineValueTypePayPerDay.rawValue]
+        let defaultRound2LineValues = [CBLineValueTypes.Pay.rawValue, CBLineValueTypes.BlockDaysOff.rawValue, CBLineValueTypes.Weekends.rawValue, CBLineValueTypes.WorkDays.rawValue, CBLineValueTypes.PayPerDay.rawValue]
         let standardRound2Defaults = [ kCBRound2DefaultLineValuesKey : defaultRound2LineValues ]
         UserDefaults.standard.register(defaults: standardRound2Defaults)
         
         // Set up the swaptimizer default line values and add them to the register defaults
-        let swaptimizerLineValues = [CBLineValueTypes.cbLineValueTypeVTotalPay.rawValue, CBLineValueTypes.cbLineValueTypeVVacayPay.rawValue, CBLineValueTypes.cbLineValueTypeVBlockTime.rawValue, CBLineValueTypes.cbLineValueTypeVDaysOff.rawValue, CBLineValueTypes.cbLineValueTypeVPayPerDay.rawValue]
+        let swaptimizerLineValues = [CBLineValueTypes.VTotalPay.rawValue, CBLineValueTypes.VVacayPay.rawValue, CBLineValueTypes.VBlockTime.rawValue, CBLineValueTypes.VDaysOff.rawValue, CBLineValueTypes.VPayPerDay.rawValue]
         let swaptimizerDefaults = [kCBSwaptimizerLineValuesKey : swaptimizerLineValues]
         UserDefaults.standard.register(defaults: swaptimizerDefaults)
         
         // Set up the Fa Vacation default line values and add them to the register defaults
-        let faVacationLineValues = [CBLineValueTypes.cbLineValueTypeVTotalPay.rawValue, CBLineValueTypes.cbLineValueTypeVVacayPay.rawValue, CBLineValueTypes.cbLineValueTypeVBlockTime.rawValue, CBLineValueTypes.cbLineValueTypeVDaysOff.rawValue, CBLineValueTypes.cbLineValueTypeVPayPerDay.rawValue]
+        let faVacationLineValues = [CBLineValueTypes.VTotalPay.rawValue, CBLineValueTypes.VVacayPay.rawValue, CBLineValueTypes.VBlockTime.rawValue, CBLineValueTypes.VDaysOff.rawValue, CBLineValueTypes.VPayPerDay.rawValue]
         let faVacationDefaults = [kCBFaVacationLineValuesKey : faVacationLineValues]
         UserDefaults.standard.register(defaults: faVacationDefaults)
         

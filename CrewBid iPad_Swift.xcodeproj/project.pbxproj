@@ -673,6 +673,7 @@
 		F481E9742DD0B26D00DED8FE /* BIBidInfoError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIBidInfoError.swift; sourceTree = "<group>"; };
 		F49849CC2DC76EF900FE9426 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		F4A472202DDDEDA900065720 /* CBExceedingTripCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBExceedingTripCalculation.swift; sourceTree = "<group>"; };
+		F4A622572E13AA2000A09315 /* LineValuesVacation.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = LineValuesVacation.plist; sourceTree = "<group>"; };
 		F4B545AA2DCC648F00672102 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		F4BAEFE52E055F1000109A1B /* ODataBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ODataBuilder.swift; sourceTree = "<group>"; };
 		F4C5D6602DC9E25500D86BD2 /* NSData+Base64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
@@ -1482,6 +1483,7 @@
 		F41EBFC82DC4E4F4001413DE /* pList */ = {
 			isa = PBXGroup;
 			children = (
+				F4A622572E13AA2000A09315 /* LineValuesVacation.plist */,
 				F41EBFCC2DC4E643001413DE /* Sort */,
 				F41EBFC92DC4E502001413DE /* Filter */,
 				F41EBD5A2DC4DB20001413DE /* ThirdPartyURL.plist */,
