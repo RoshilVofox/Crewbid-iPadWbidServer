@@ -296,6 +296,9 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
             let formatString = "(info.containsMidTripPTB == 1 && dropForFiltersSorts == 0)"
             format = NSPredicate(format: formatString)
         }
+        if format == nil {
+            format = NSPredicate(value: true)
+        }
         return format!.withSubstitutionVariables(self.variables as! [String: Any])
     }
     

@@ -19,6 +19,7 @@ class CBWorkBlockRuleCell: UITableViewCell {
     var bidPeriod: BIBidPeriod?
     var bacViewColor: UIColor = .white
     var modeTexttColor: UIColor = .gray
+    var context = CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -32,9 +33,21 @@ class CBWorkBlockRuleCell: UITableViewCell {
     }
 
     @IBAction func deleteCellAction(_ sender: Any) {
-        NotificationCenter.default.post(
-                name: Notification.Name("DeleteCellNotification"),
-                object: self // Pass the cell itself as the object
-            )
+        CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
+        CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
+        CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
+        //        if (filterRule?.ruleHighlightsTrips())! {
+        //            filterRule?.deHighlightTrips()
+        //        }
+        self.bidPeriod!.managedObjectContext!.delete(filterRule!)
+        do {
+            try context?.save()
+        }
+        catch {
+            print("Error deleting object \(error.localizedDescription)")
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+        }
     }
 }

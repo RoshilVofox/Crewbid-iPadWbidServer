@@ -24,9 +24,10 @@ class CBCommutingRuleCell: UITableViewCell {
     }
     
     @IBAction func deleteCellRow(_ sender: Any) {
-        NotificationCenter.default.post(
-            name: Notification.Name("DeleteCellNotification"),
-            object: self // Pass the cell itself as the object
-        )
+//        code need to be added
+        filterRule?.managedObjectContext?.delete(filterRule!)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+        }
     }
 }

@@ -16,6 +16,7 @@ class CBComparisonRuleCell: UITableViewCell {
     
     var filterRule: BIFilterRule?
     var modeTexttColor: UIColor = .gray
+    var context = CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -35,10 +36,17 @@ class CBComparisonRuleCell: UITableViewCell {
     }
     
     @IBAction func deleteCellRow(_ sender: Any) {
-        NotificationCenter.default.post(
-            name: Notification.Name("DeleteCellNotification"),
-            object: self // Pass the cell itself as the object
-        )
+        //        code need to be added here
+        context!.delete(filterRule!)
+        do {
+            try context?.save()
+        }
+        catch {
+            print("Error deleting object \(error.localizedDescription)")
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+        }
         
     }
 }

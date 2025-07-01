@@ -40,6 +40,7 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell {
     var calendarData: BICalendarData?
     var managedObjectContext: NSManagedObjectContext?
     var rptRlsType: BIReportReleaseType?
+    let context = CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -52,11 +53,16 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell {
     }
     
     @IBAction func deleteCellRow(_ sender: Any) {
-        //MARK: Delegate
-        NotificationCenter.default.post(
-            name: Notification.Name("DeleteCellNotification"),
-            object: self // Pass the cell itself as the object
-        )
+        self.bidPeriod!.managedObjectContext!.delete(filterRule!)
+        do {
+            try context?.save()
+        }
+        catch {
+            print("Error deleting object \(error.localizedDescription)")
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+        }
     }
     
     func handleExistingCases() {

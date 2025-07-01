@@ -182,10 +182,17 @@ class CBUserFlagRuleCell: UITableViewCell {
     }
     
     @IBAction func deleteCellRow(_ sender: Any) {
-        NotificationCenter.default.post(
-            name: Notification.Name("DeleteCellNotification"),
-            object: self // Pass the cell itself as the object
-        )
+        CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
+        CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
+        CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
+        if (filterRule.ruleHighlightsTrips()) {
+            filterRule.highlightTrips()
+        }
+        self.bidPeriod!.managedObjectContext!.delete(filterRule)
+        //CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!.delete(filterRule)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+        }
     }
     
     

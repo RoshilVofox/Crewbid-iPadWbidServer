@@ -39,6 +39,11 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
         self.tableView.reloadData()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+                tableView.allowsSelection = true
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return menuItems.count
     }
@@ -183,13 +188,13 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
         if (category == BIFilterRuleCategory.BIOvernightCitiesBulkRuleCategory.rawValue) {
             self.bidPeriod.isOverNightBulkApplied = "YES";
         }
-
+        
         selectFilterMenuAt(indexPath: indexPath, with: category, and: types)
         
     }
     func selectFilterMenuAt(indexPath: IndexPath, with category: Int, and types: NSArray?) {
         let item  = menuItems.object(at: indexPath.row) as! [String: Any]
-//        for menu items which have next arrow
+        //        for menu items which have next arrow
         if let types = types as? [Any], !types.isEmpty {
             let storyboard = UIStoryboard(name: "Filter", bundle: nil)
             let subRulesTableVC = storyboard.instantiateViewController(withIdentifier: "CBRulesMenuTableVC") as! CBRulesMenuTableVC
@@ -200,7 +205,7 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
             subRulesTableVC.navigationItem.title = item["title"] as? String
             subRulesTableVC.navigationController?.navigationBar.prefersLargeTitles = false
             subRulesTableVC.delegate = delegate
-            let fetchRequset: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+            let fetchRequst: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
             var abbreviations = subRulesTableVC.menuItems.value(forKey: "abbreviation") as? NSArray
             let tempAbbreviations = abbreviations!.mutableCopy() as? NSMutableArray
             for i in 0..<abbreviations!.count {
@@ -213,8 +218,11 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
                 }
             }
             abbreviations = tempAbbreviations
-            fetchRequset.predicate = NSPredicate(format: "abbreviation IN %@", abbreviations!)
-            let results = try! self.context!.fetch(fetchRequset)
+            let predicate1 = NSPredicate(format: "bidPeriod == %@", bidPeriod)
+            let predicate2 = NSPredicate(format: "abbreviation IN %@", abbreviations!)
+            let combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
+            fetchRequst.predicate = combinedPredicate
+            let results = try! self.context!.fetch(fetchRequst)
             for linerule in results {
                 let index = abbreviations!.index(of: linerule.abbreviation)
                 if index != NSNotFound {
@@ -230,7 +238,7 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
             CBGlobalMethods.shared.selectedBidPeriod?.loadedPresetIdentifier = nil
             CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
             CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
-            //            tableView.allowsSelection = false
+                            tableView.allowsSelection = false
             var rule = BIFilterRule()
             if BIFilterRuleCategory.BICommutabilityFilterRuleCategory.rawValue != category {
                 let resultsFilter = (CBGlobalMethods.shared.selectedBidPeriod!.lineFilters!.allObjects as NSArray).filtered(using: NSPredicate(format: "category == 33")) as! [BIFilterRule]
@@ -244,7 +252,7 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
                         }),
                         (title: "Cancel", style: .cancel, handler: { _ in
                             print("Cancel tapped")
-                            //                            self.tableView.allowsSelection = true
+                                                            self.tableView.allowsSelection = true
                         })
                     ])
                     return
@@ -285,7 +293,53 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
                 rule.variables = dict
             }
             else if BIFilterRuleCategory.BICommutabilityFilterRuleCategory.rawValue == category {
+                let fetchRequestForSort: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
+                fetchRequestForSort.predicate = NSPredicate(format: "category == 4")
+                let resultSort = try! context?.fetch(fetchRequestForSort) ?? []
+                let fetchRequestForFilter: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+                fetchRequestForFilter.predicate = NSPredicate(format: "category == 12")
+                let results = try! context?.fetch(fetchRequestForFilter) ?? []
                 
+                if (results.count > 0 || resultSort.count > 0) {
+                    AlertService.showAlertForTopVC(title: "Crewbid", message: "You can only add a Commutable Line - Auto or a Commutable Line - Manual constraint, but NOT both.")
+                }
+                else {
+                    let fetchCommutablityRequset: NSFetchRequest<Commutability> = Commutability.fetchRequest()
+                    fetchCommutablityRequset.predicate = NSPredicate(format: "commutableType == %d", CommutabilityType.sort.rawValue)
+                    let fetchedObjects = try! context!.fetch(fetchCommutablityRequset) ?? []
+                    
+                    if fetchedObjects.count > 0 {
+                        rule = BIFilterRule(context: context!)
+                        rule.bidPeriod = self.bidPeriod
+                        if let dict = self.menuItems[indexPath.row] as? [String: Any] {
+                            rule.setValuesForKeys(dict)
+                        }
+                        let objCommutabilitySort = fetchedObjects[0]
+                        
+                        let objCommutabilityFilter = Commutability(context: self.bidPeriod.managedObjectContext!)
+                        
+                        objCommutabilityFilter.type = 1
+                        objCommutabilityFilter.secondCellValue = 1
+                        objCommutabilityFilter.value = 100
+                        objCommutabilityFilter.commutableType = 0
+                        objCommutabilityFilter.city = objCommutabilitySort.city
+                        objCommutabilityFilter.checkInTime = objCommutabilitySort.checkInTime
+                        objCommutabilityFilter.connectTime = objCommutabilitySort.connectTime
+                        objCommutabilityFilter.baseTime = objCommutabilitySort.baseTime
+                        do {
+                            try context!.save()
+                        }
+                        catch {
+                            print("error saving commute auto details \(error.localizedDescription)")
+                        }
+                    }
+                    else {
+                        NotificationCenter.default.post(name: Notification.Name("ShowCommutabilityFilterView"), object: self)
+                        
+//                        self.dismiss(animated: true)
+                    }
+                    
+                }
             }
             if BIFilterRuleCategory.BICommutabilityFilterRuleCategory.rawValue != category {
                 if (rule.ruleHighlightsTrips() == true) {

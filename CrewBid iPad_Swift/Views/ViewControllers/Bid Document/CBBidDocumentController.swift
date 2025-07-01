@@ -48,15 +48,18 @@ class CBBidDocumentController: BaseViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutViewForSwitch), name: NSNotification.Name("SyncSwitchStateAction"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(showCommutablilityFilterView), name: Notification.Name("ShowCommutabilityFilterView"), object: nil)
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
+        
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver("SortBidListAction")
         NotificationCenter.default.removeObserver("SyncSwitchStateAction")
+        NotificationCenter.default.removeObserver("ShowCommutabilityFilterView")
     }
     
     func setupUI(){
@@ -169,6 +172,21 @@ class CBBidDocumentController: BaseViewController {
         }
         else {
             btnSync.isHidden = true
+        }
+    }
+    
+    @objc func showCommutablilityFilterView() {
+        let topVC = AlertService.currentTopViewController()
+        let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
+        let commuteInformation = storyboard.instantiateViewController(withIdentifier: "CommuteInformation") as! CBCommuteInfoViewController
+        commuteInformation.bidPeriod = self.bidPeriod
+        commuteInformation.commutabilityType = CommutabilityType.filter
+        commuteInformation.preferredContentSize = CGSize(width: 320, height: 320)
+        print("Presenting from topVC: \(topVC)")
+        DispatchQueue.main.async {
+            topVC!.present(commuteInformation, animated: true) {
+                print("commuteInformation presented successfully")
+            }
         }
     }
     

@@ -15,6 +15,9 @@ class CBCommuteInfoViewController: UIViewController {
     @IBOutlet weak var btnNonStop: CheckBox!
     @IBOutlet weak var nonStopView: UIView!
     
+    var bidPeriod: BIBidPeriod?
+    var commutabilityType: CommutabilityType?
+    
     let checkInArray = NSArray(objects: "00:05","00:10","00:15","00:20","00:25","00:30","00:35","00:40","00:45","00:50","00:55","01:00","01:05","01:10","01:15","01:20","01:25","01:30","01:35","01:40","01:45","01:50","01:55","02:00","02:05","02:10","02:15","02:20","02:25","02:30","02:35","02:40","02:45","02:50","02:55","03:00")
     let connectTimeArray = NSArray(objects: "00:05","00:10","00:15","00:20","00:25","00:30","00:35","00:40","00:45","00:50","00:55","01:00")
     override func viewDidLoad() {

@@ -47,12 +47,10 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
         reloadRuleCell()
         NotificationCenter.default.addObserver(self, selector: #selector(updateLines), name: NSNotification.Name("refreshLines"), object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(deleteCellRow), name: Notification.Name("DeleteCellNotification"), object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         NotificationCenter.default.removeObserver("refreshLines")
-        NotificationCenter.default.removeObserver("DeleteCellNotification")
     }
     
     func setupUI(){
@@ -84,12 +82,15 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     
     func reloadRuleCell() {
         bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
-        let moc = CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext
+        let filterRules = (bidPeriod!.lineFilters!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "type", ascending: true), NSSortDescriptor(key: "category", ascending: true)]) as [Any]
+        let moc = bidPeriod?.managedObjectContext
         let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
         fetchRequest.sortDescriptors = [
             NSSortDescriptor(key: "category", ascending: true),
             NSSortDescriptor(key: "type", ascending: true)
         ]
+        fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", bidPeriod!)
+//        fetchRequest.predicate =
         self.filterRulesController = NSFetchedResultsController(
             fetchRequest: fetchRequest,
             managedObjectContext: moc!,
@@ -318,18 +319,7 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
         }
     }
     
-    //    MARK: delete cell  notification
-    @objc func deleteCellRow(_ notification: Notification) {
-        guard let cell = notification.object as? UITableViewCell,
-              let indexPath = objFilterTableView.indexPath(for: cell) else { return }
 
-        AppData.shared.filtersToBeAddedInTable.remove(at: indexPath.row)
-        cellidentifiers.remove(at: indexPath.row)
-
-        print(AppData.shared.filtersToBeAddedInTable.count)
-
-        objFilterTableView.deleteRows(at: [indexPath], with: .fade)
-    }
     
     func configureCell(cell: UITableViewCell?, for rule: BIFilterRule?) {
         var useComparisonCell = false
@@ -428,6 +418,7 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
         else if BIFilterRuleCategory.BIDaysOfWeekFilterRuleCategory.rawValue == rule?.category?.intValue {
             if BIWeekdaysFilterRuleType.BIWeekdaysCompoundType.rawValue == rule?.type?.intValue {
                 let ruleCell = cell as? CBWeekdayRuleCell
+                ruleCell?.filterRule = rule!
                 ruleCell?.filterRule = rule!
             } else {
                 useComparisonCell = true
