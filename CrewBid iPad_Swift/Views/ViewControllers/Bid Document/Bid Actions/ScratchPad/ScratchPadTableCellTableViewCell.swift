@@ -492,6 +492,23 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     }
 
     @IBAction func removeLineAction(_ sender: Any) {
+        if self.bidPeriod!.isFABid() {
+            NotificationCenter.default.post(name: NSNotification.Name("removedLines"), object: self.contentView.tag)
+        }else{
+            line?.isTrashed = true
+            do{
+                try self.bidPeriod?.managedObjectContext?.save()
+            }catch{
+                print("Error removing lines: \(error.localizedDescription)")
+            }
+            let lineNumber = line?.number as! Int
+            let number = String(lineNumber)
+            let objDeleteArray = NSMutableArray()
+            objDeleteArray.add(number)
+            NotificationCenter.default.post(name: NSNotification.Name("removedLines"), object: self.contentView.tag)
+        }
+        
+        
     }
     
     @IBAction func moveLinesToBidListAction(_ sender: Any) {

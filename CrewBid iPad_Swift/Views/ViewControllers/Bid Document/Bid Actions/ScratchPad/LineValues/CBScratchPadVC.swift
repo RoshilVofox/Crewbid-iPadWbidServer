@@ -32,6 +32,8 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
     var notTrashedPredicate: NSPredicate!
     var notBidPredicate: NSPredicate!
     var tripCBButton: CBTripButton!
+    private var maxPositionsPerLine: Int = 4
+    var userFaPosOrder:NSMutableArray!
     override func viewDidLoad() {
         super.viewDidLoad()
         scratchPadTableView.delegate = self
@@ -85,19 +87,29 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
         // Lines fetched results controller.
         self.notTrashedPredicate = NSPredicate(format: "isTrashed == NO")
         self.notBidPredicate = NSPredicate(format: "bidOrder == 0")
-        let subArray = NSMutableArray(array: [self.filtersFetchController.fetchedObjects!])
-        let subpredicates = subArray.value(forKey: "predicate")
+//        let subArray = NSMutableArray(array: [self.filtersFetchController.fetchedObjects!])
+//        let subpredicates = subArray.value(forKey: "predicate")
         updateLines()
     }
     
-    func updateLines(){
+    @objc func updateLines(){
+        self.lines.removeAll()
+        self.sectionLines.removeAll()
+        
         for case let line as BILine in CBGlobalMethods.shared.selectedBidPeriod!.lines! {
             lines.append(line)
         }
-        self.lines.sort {
-            ($0.number?.intValue ?? 0) < ($1.number?.intValue ?? 0)
-        }
         print("Lines count: \(lines.count)")
+        
+        var lineSorts = updateSorts()
+        self.lines = (lines as NSArray).sortedArray(using: lineSorts) as! [BILine]
+     
+        if self.bidPeriod!.isFABid(){
+            let positionSort = NSSortDescriptor(key: "faPosition", ascending: true)
+            lineSorts.append(positionSort)
+        }
+        
+        
         var tempArray : [BILine] = []
         var count : Int = -1
         for line in self.lines {
@@ -119,10 +131,117 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
         }
         DispatchQueue.main.async {
             self.lblScratchpadLineCount.text = "Scratchpad- \(self.lines.count) Lines"
-//            self.fetchTrashedLinesCount()
+            self.fetchTrashedLinesCount()
             self.scratchPadTableView.reloadData()
         }
     }
+    
+    func notificationObserver(){
+        NotificationCenter.default.addObserver(self, selector: #selector(updateLines), name: NSNotification.Name("refreshLines"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(removedTrashLines), name: NSNotification.Name("removedLines"), object: nil)
+        
+    }
+    
+    
+    
+    
+    
+    @objc func removedTrashLines(notification: NSNotification){
+        if self.bidPeriod!.isFABid(){
+            if let index = notification.object as? Int {
+                for line in self.sectionLines[index]{
+                    if line.isTrashed == NSNumber(true){
+                        return
+                    }
+                    line.isTrashed = NSNumber(true)
+                }
+                let temp:NSMutableArray = self.bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
+                temp.add([self.sectionLines[index][0].number!.stringValue])
+                self.bidPeriod?.lastTrashedDetails = temp
+                do{
+                    try self.bidPeriod?.managedObjectContext?.save()
+                }catch{
+                    print("Error saving removed trash lines: \(error.localizedDescription)")
+                }
+                //refreshlines notification
+                
+            }
+        }
+        else{
+            if let lineNumArray = notification.object as? NSArray {
+                let temp: NSMutableArray = self.bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
+                temp.add(lineNumArray)
+                self.bidPeriod?.lastTrashedDetails = temp
+                //refreshlines notification
+            }
+        }
+    }
+    
+    func updateSorts() -> [NSSortDescriptor] {
+        var lineSorts: [NSSortDescriptor] = []
+        do{
+            try self.sortsFetchController.performFetch()
+        }catch{
+            print("Error fetching sort: \(error.localizedDescription)")
+        }
+        let count = self.sortsFetchController.fetchedObjects?.count
+        
+        let type = NSExpression(forKeyPath: "type")
+        let typeExpDescription = NSExpressionDescription()
+        typeExpDescription.name = "type"
+        typeExpDescription.expression = type
+        typeExpDescription.expressionResultType = .integer16AttributeType
+        
+        let number = NSExpression(forKeyPath: "number")
+        let numberExpDescription = NSExpressionDescription()
+        numberExpDescription.name = "number"
+        numberExpDescription.expression = number
+        numberExpDescription.expressionResultType = .integer16AttributeType
+        
+        var addedLineNumSort = false
+        
+        let standardPosOrder: NSMutableArray = [0, 1, 2, 3]
+        let userPosOrder = NSMutableArray(capacity:maxPositionsPerLine)
+        
+        for i in 0..<count!{
+            let lineSort = self.sortsFetchController.object(at: IndexPath(row: i, section: 0))
+            
+            let manageVacationEnabled = UserDefaults.standard.bool(forKey: kCBManageVacationEnabledKey)
+            if BILineSortCategory.BISwaptimizerLineSortCategory.rawValue == lineSort.category?.intValue || BILineSortCategory.BIFaVacationLineSortCategory.rawValue == lineSort.category?.intValue && !((self.bidPeriod?.vacationType!.length)! > 0) && (manageVacationEnabled == false){
+                continue
+            }
+            if lineSort.keyPath == nil || lineSort.keyPath?.length == 0{
+                continue
+            }else{
+                if lineSort.category?.intValue == BILineSortCategory.BIPositionsLineSortCategory.rawValue{
+                    if !addedLineNumSort{
+                        let sort = NSSortDescriptor(key: numberExpDescription.name, ascending: true)
+                        lineSorts.append(sort)
+                        addedLineNumSort = true
+                    }
+                    userPosOrder.add(lineSort.type!)
+                }
+                let sort = NSSortDescriptor(key: lineSort.keyPath, ascending: lineSort.ascending!.boolValue)
+                lineSorts.append(sort)
+            }
+        }
+        for pos in userPosOrder{
+            standardPosOrder.remove(pos)
+        }
+        userPosOrder.addObjects(from: standardPosOrder as! [Any])
+        self.userFaPosOrder = userPosOrder
+        userPosOrder.add(standardPosOrder)
+        var sort = NSSortDescriptor(key: typeExpDescription.name, ascending: true)
+        sort = NSSortDescriptor(key: numberExpDescription.name, ascending: true)
+        lineSorts.append(sort)
+        
+        if self.bidPeriod!.isFABid(){
+            let positionSort = NSSortDescriptor(key: "faPosition", ascending: true)
+            lineSorts.append(positionSort)
+        }
+        return lineSorts
+    }
+    
     
     func fetchTrashedLinesCount(){
         var tempLines:[BILine] = []

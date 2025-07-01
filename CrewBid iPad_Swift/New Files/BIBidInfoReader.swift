@@ -856,8 +856,12 @@ class BIBidInfoReader{
         let vacEndPos = dictDetails["AbsenceDatesEnd"] as! Int
         let vacTypeStartPos = dictDetails["AbscenceTypeSt"] as! Int
         let EBGTypeStartPos = dictDetails["EbgSt"] as! Int
-        
-        let coverLetter = (self.bidPeriod?.textFile(withName: "Seniority List"))!
+        var text = ""
+        if let coverLetter = self.bidPeriod?.textFile(withName: "Seniority List") {
+            text = coverLetter.text!
+        } else {
+            print("")
+        }
         var emp = 0
         if !AppState.shared.isSenioritySecretOn{
             emp = Int(self.defaultEmployeeNumber!)!
@@ -875,9 +879,9 @@ class BIBidInfoReader{
         let str = (empString as NSString).replacingCharacters(in: range, with: "")
         let employee = Int(str)!
         let employeeNumber = NSNumber(value: employee)
-        let text = coverLetter.text
+//        let text = coverLetter.text
         var stringToScan = ""
-        var scanner = Scanner(string: text!)
+        var scanner = Scanner(string: text)
         let numCharSet = CharacterSet(charactersIn: "0123456789")
         let dateRangeCharSet = CharacterSet(charactersIn: "/-;")
         let letterCharSet = CharacterSet.letters
@@ -902,34 +906,34 @@ class BIBidInfoReader{
                 }
                 oldLoc = scanner.currentIndex
                 let EBGPosition = (empNumEndPos - EBGTypeStartPos) + 1
-                var currentOffset = text!.distance(from: text!.startIndex, to: scanner.currentIndex)
+                var currentOffset = text.distance(from: text.startIndex, to: scanner.currentIndex)
                 let ebgOffset = currentOffset - EBGPosition
 
-                if ebgOffset >= 0 && ebgOffset < text!.utf16.count {
-                    let ebgIndex = text!.index(text!.startIndex, offsetBy: ebgOffset)
-                    let EBGCharacter = String(text![ebgIndex])
+                if ebgOffset >= 0 && ebgOffset < text.utf16.count {
+                    let ebgIndex = text.index(text.startIndex, offsetBy: ebgOffset)
+                    let EBGCharacter = String(text[ebgIndex])
 
                     if EBGCharacter == "Y" {
                         bidPeriod?.containsEBG = true
                     }
                 }
                 if self.bidPeriod?.round?.intValue == 1 {
-                    let paperBidCount = self.calculatePaperBidCountAboveCurrentUser(from: text!)
+                    let paperBidCount = self.calculatePaperBidCountAboveCurrentUser(from: text)
                     self.bidPeriod?.paperBidCount = paperBidCount as NSNumber
                 }
                 
-                let lenFileInfo = text!.utf16.count
+                let lenFileInfo = text.utf16.count
                 var lineRange = NSRange(location: 0, length: 0)
                 
                 while lineRange.location < lenFileInfo{
-                    lineRange = (text! as NSString).lineRange(for: lineRange)
+                    lineRange = (text as NSString).lineRange(for: lineRange)
                     lineRange.location = lineRange.location + lineRange.length
                     lineRange.length = 0
                 }
                 
-                let offset = oldLoc.utf16Offset(in: text!) - empNumEndPos
-                scanner.currentIndex = (text!.utf16.index(text!.startIndex, offsetBy: offset, limitedBy: text!.utf16.endIndex)?.samePosition(in: text!))!
-                let seqLocation = scanner.currentIndex.utf16Offset(in: text!) - 1
+                let offset = oldLoc.utf16Offset(in: text) - empNumEndPos
+                scanner.currentIndex = (text.utf16.index(text.startIndex, offsetBy: offset, limitedBy: text.utf16.endIndex)?.samePosition(in: text))!
+                let seqLocation = scanner.currentIndex.utf16Offset(in: text) - 1
                 senNumber = scanner.scanCharacters(from: numCharSet)!
                 if senNumber != nil{
                     self.bidPeriod?.seniorityNumber = Int(senNumber!) as? NSNumber
@@ -943,7 +947,7 @@ class BIBidInfoReader{
                 let vacScanLength = vacEndPosition - vacTypeStartPosition
                 var vacScanStart = 0
                 let vacTypeRangeToSearch = NSRange(location: vacTypeStartPosition, length: 2)
-                let vacationType = (text! as NSString).substring(with: vacTypeRangeToSearch)
+                let vacationType = (text as NSString).substring(with: vacTypeRangeToSearch)
                 if self.dataSource.managedObjectContext.hasChanges {
                     do{
                         try self.dataSource.managedObjectContext.save()
@@ -952,7 +956,7 @@ class BIBidInfoReader{
                     }
                 }
                 var myRegex = String(format: "%@", vacationType)
-                scanner = Scanner(string: text!)
+                scanner = Scanner(string: text)
                 _ = scanner.scanUpToString(stringToScan)
                 oldLoc = scanner.currentIndex
                 _ = scanner.scanCharacters(from: numCharSet)
@@ -961,11 +965,11 @@ class BIBidInfoReader{
                 }
                 oldLoc = scanner.currentIndex
                 
-                let employeeNoEndToVacationTypeStart = vacTypeStartPosition - (oldLoc.utf16Offset(in: text!) + 1)
-                vacScanStart = oldLoc.utf16Offset(in: text!) + employeeNoEndToVacationTypeStart
+                let employeeNoEndToVacationTypeStart = vacTypeStartPosition - (oldLoc.utf16Offset(in: text) + 1)
+                vacScanStart = oldLoc.utf16Offset(in: text) + employeeNoEndToVacationTypeStart
                 var vacRangeToSearch = NSRange(location: vacScanStart, length: vacScanLength)
                 var arrayVacations:[String] = []
-                scanner.currentIndex = (text!.utf16.index(text!.startIndex, offsetBy: vacScanStart, limitedBy: text!.utf16.endIndex)?.samePosition(in: text!))!
+                scanner.currentIndex = (text.utf16.index(text.startIndex, offsetBy: vacScanStart, limitedBy: text.utf16.endIndex)?.samePosition(in: text))!
                 let newSeniority = scanner.scanCharacters(from: numCharSet) ?? ""
                 if scanner.isAtEnd{
                     // No vacation for that EID
@@ -978,16 +982,16 @@ class BIBidInfoReader{
                     return
                 }
                 _ = scanner.scanUpToString("-")
-                currentOffset = scanner.currentIndex.utf16Offset(in: text!)
+                currentOffset = scanner.currentIndex.utf16Offset(in: text)
                 let adjustedOffset = max(0, currentOffset - 9) // Prevent negative value
                 vacRangeToSearch.location = adjustedOffset
                 vacRangeToSearch.length = vacScanLength
-                if vacRangeToSearch.location + vacRangeToSearch.length > text!.length {
+                if vacRangeToSearch.location + vacRangeToSearch.length > text.length {
                     self.bidPeriod?.containsVacay = false
                     return
                 }
-                var vacation = (text! as NSString).substring(with: vacRangeToSearch) as NSString
-                scanner.currentIndex = text!.utf16.index(text!.utf16.startIndex, offsetBy: vacRangeToSearch.location).samePosition(in: text!)!
+                var vacation = (text as NSString).substring(with: vacRangeToSearch) as NSString
+                scanner.currentIndex = text.utf16.index(text.utf16.startIndex, offsetBy: vacRangeToSearch.location).samePosition(in: text)!
                 if vacation.contains(" VA"){
                     myRegex = "VA "
                     arrayVacations.append(vacation as String)
@@ -999,10 +1003,10 @@ class BIBidInfoReader{
                     arrayVacations.append(vacation as String)
                 }
                 
-                if vacRangeToSearch.location + vacRangeToSearch.length <= text!.utf16.count {
+                if vacRangeToSearch.location + vacRangeToSearch.length <= text.utf16.count {
                     let regex = try! NSRegularExpression(pattern: myRegex)
                     let searchRange = NSRange(location: vacRangeToSearch.location, length: vacRangeToSearch.length)
-                    let rangeOfFirstVacaysds = regex.rangeOfFirstMatch(in: text!, options: [], range: searchRange)
+                    let rangeOfFirstVacaysds = regex.rangeOfFirstMatch(in: text, options: [], range: searchRange)
                     if rangeOfFirstVacaysds.location == NSNotFound{
                         if self.isFABid(){
                             self.bidPeriod?.containsVacay = false
@@ -1013,7 +1017,7 @@ class BIBidInfoReader{
                 
                 while newSeniority.isEmpty{
                     // If it's a pilot bid, check to see if the vacay is on the next line
-                    let seniorityLocNextLine = text!.index(scanner.currentIndex, offsetBy: vacScanLength)
+                    let seniorityLocNextLine = text.index(scanner.currentIndex, offsetBy: vacScanLength)
                     scanner.currentIndex = seniorityLocNextLine
                     let newSeniority = scanner.scanCharacters(from: numCharSet)
                     if scanner.isAtEnd{
@@ -1025,16 +1029,16 @@ class BIBidInfoReader{
                     }
                     
                     _ = scanner.scanUpToString("-")
-                    currentOffset = scanner.currentIndex.utf16Offset(in: text!)
+                    currentOffset = scanner.currentIndex.utf16Offset(in: text)
                     let adjustedOffset = max(0, currentOffset - 9) // Prevent negative value
                     vacRangeToSearch.location = adjustedOffset
                     vacRangeToSearch.length = vacScanLength
-                    if vacRangeToSearch.location + vacRangeToSearch.length > text!.utf16.count{
+                    if vacRangeToSearch.location + vacRangeToSearch.length > text.utf16.count{
                         break
                     }
                     
-                    vacation = (text! as NSString).substring(with: vacRangeToSearch) as NSString
-                    scanner.currentIndex = text!.utf16.index(text!.utf16.startIndex, offsetBy: vacRangeToSearch.location).samePosition(in: text!)!
+                    vacation = (text as NSString).substring(with: vacRangeToSearch) as NSString
+                    scanner.currentIndex = text.utf16.index(text.utf16.startIndex, offsetBy: vacRangeToSearch.location).samePosition(in: text)!
                     if vacation.contains(" VA") && vacation.contains("-"){
                         myRegex = "VA "
                         arrayVacations.append(vacation as String)
@@ -1060,8 +1064,8 @@ class BIBidInfoReader{
                         let rangeOfFirstVacay = (arrayVacations[i] as NSString).range(of: myRegex, range: vacayRangeToSearch1)
                         if rangeOfFirstVacay.location != NSNotFound {
                             vaCount += 1
-                            if let rangeStart = Range(rangeOfFirstVacay, in: text!) {
-                                let newLocation = text!.utf16.index(rangeStart.lowerBound, offsetBy: 3).samePosition(in: text!)!
+                            if let rangeStart = Range(rangeOfFirstVacay, in: text) {
+                                let newLocation = text.utf16.index(rangeStart.lowerBound, offsetBy: 3).samePosition(in: text)!
                                 subScanner.currentIndex = newLocation
                             }
                             var startMonth:String?
