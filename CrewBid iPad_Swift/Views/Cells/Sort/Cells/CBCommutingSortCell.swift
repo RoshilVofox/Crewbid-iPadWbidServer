@@ -11,6 +11,9 @@ class CBCommutingSortCell: UITableViewCell {
 
     @IBOutlet weak var titleLabel: UILabel!
     
+    var lineSort: BILineSort!
+    var bidPeriod: BIBidPeriod!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -20,6 +23,10 @@ class CBCommutingSortCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
+    }
+    
+    func CalculateCommutingManualSort() {
+        
     }
 
     @IBAction func btnCloseAction(_ sender: Any) {

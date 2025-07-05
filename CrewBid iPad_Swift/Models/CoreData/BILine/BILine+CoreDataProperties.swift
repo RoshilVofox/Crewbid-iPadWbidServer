@@ -332,37 +332,27 @@ extension BILine : Identifiable {
     }
     
     
-    func faPositionString() -> String {
-        if !self.bidPeriod!.isFABid(){
-            return ""
-        }
-        var faPos: String = "NA"
-        var tripPos: String
-        // if there are no trips or there is no position for a trip,
-        // then fa position is NA
-        var isFirstTrip: Bool = true
-        for case let trip as BITrip in self.trips! {
-            if trip.positionString == nil {
-                tripPos = ""
-            } else {
-                tripPos = trip.positionString!
-            }
-            // trip position
-            if tripPos != "" {
+    var faPositionString: String {
+            var faPos = "NA"
+            var isFirstTrip = true
+     
+            for trip in self.trips ?? [] {
+                guard let trip = trip as? BITrip,
+                      let tripPos = trip.positionString else {
+                    continue
+                }
+     
                 if isFirstTrip {
                     faPos = tripPos
                     isFirstTrip = false
-                }
-                if !(faPos == tripPos) {
+                } else if faPos != tripPos {
                     faPos = "M"
                     break
-                } else {
-                    faPos = tripPos
                 }
             }
+     
+            return faPos
         }
-        return faPos
-    }
     
     func faPositionColor() -> UIColor? {
         if !self.bidPeriod!.isFABid() {
@@ -468,4 +458,41 @@ extension BILine : Identifiable {
     case BIDeadheadAtEndSortType
     case BIDeadheadAtBothSortType
 }
+
+@objc enum BIVacationLineSortType : Int {
+   case TotalPay           //0
+   case FlyPay            //1
+   case VacationPay       //2
+   case PayPerBlock        //3
+   case PayPerDay         //4
+   case CarryOutPay        //5
+   case BlockTime          //6
+   case DaysOff           //7
+   case EffectiveVacationLength //8
+   case FrontVoPay            // 9
+   case BackVoPay               // 10
+   case VacayCarryOutPay        // 11
+   case CarryOutVoPay          // 12
+   case LongestBlockofDaysOff  //13
+   case VacationPayBothBP       //14
+   case VacationPayNextBP //15
+   case VANe           //16
+}
+@objc enum BIPassesThruBaseLineSortType : Int {
+    case BIPassesThruBaseLineSortTypeMidTrip
+    case BIPassesThruBaseLineSortTypeStandard
+}
+
+@objc enum BIPositionsLineSortType : Int {
+    case BIPositionASortType
+    case BIPositionBSortType
+    case BIPositionCSortType
+    case BIPositionDSortType
+    case BIPositionQuickAddABCType
+}
+
+var kNameLineSortKey: String = "name"
+var kCategoryTitleLineSortKey: String = "title"
+var kCategoryTypesLineSortKey: String = "types"
+var kLineSortsSortsKey: String = "sorts"
 

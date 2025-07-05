@@ -8,6 +8,18 @@
 import UIKit
 
 class CBCommutabilitySortCell: UITableViewCell {
+    
+    var lineSort1: BILineSort!
+    
+    
+    var lineSort: BILineSort? {
+        set(newLineSort){
+           lineSort1 = newLineSort
+        }
+        get {
+            return lineSort1
+        }
+    }
 
     @IBOutlet weak var btnTitle: UIButton!
     override func awakeFromNib() {
@@ -19,6 +31,10 @@ class CBCommutabilitySortCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
+    }
+    
+    func configurecommutabilitySortCell() {
+        
     }
 
     @IBAction func btnCloseAction(_ sender: Any) {

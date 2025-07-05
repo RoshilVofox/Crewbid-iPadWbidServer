@@ -7,7 +7,21 @@
 
 import UIKit
 
+enum DaysSortType {
+    case Off
+    case Work
+    case TripStart
+}
+
 class CBDayMonthSortCell: UITableViewCell {
+    
+    var filterRule: BIFilterRule?
+    var bidPeriod: BIBidPeriod?
+    var calendarData: BICalendarData?
+    let context = CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext
+    var lineSort : BILineSort?
+    
+    var type : DaysSortType?
 
     override func awakeFromNib() {
         super.awakeFromNib()

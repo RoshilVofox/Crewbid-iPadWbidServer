@@ -36,6 +36,39 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
         super.viewDidLoad()
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: kCellReuseIdentifier)
         self.tableView.separatorInset = .zero
+        
+        var abbreviations = menuItems.value(forKey: "abbreviation") as? [Any]
+        var tempAbbreviations : [Any] = []
+        tempAbbreviations = abbreviations ?? []
+        for i in 0..<abbreviations!.count {
+            let abbreviation = abbreviations![i] as? String
+            if abbreviation != nil {
+                if (abbreviation == "LegCty") || (abbreviation == "OC") {
+                    tempAbbreviations[i] = NSNull()
+                }
+            }
+        }
+        abbreviations = tempAbbreviations
+        let results = ((CBGlobalMethods.shared.selectedBidPeriod!.lineFilters ?? NSSet()).allObjects as NSArray).filtered(using: NSPredicate(format: "abbreviation IN %@", abbreviations!))
+        let disabledCellIndexPaths = NSMutableArray(capacity: menuItems.count)
+        for case let linerule as BIFilterRule in results {
+            let index: Int = (abbreviations! as NSArray).index(of: linerule.abbreviation!)
+            if NSNotFound != index {
+                let indexPath = IndexPath(row: index, section: 0)
+                disabledCellIndexPaths.add(indexPath)
+            }
+        }
+        self.disabledCellIndexPaths = disabledCellIndexPaths
+        navigationController?.navigationBar.backgroundColor = UIColor.lightGray
+        if #available(iOS 15, *) {
+            if navigationController != nil {
+                let appearance = navigationController!.navigationBar.standardAppearance
+                navigationController?.navigationBar.compactAppearance = appearance
+                navigationController?.navigationBar.standardAppearance = appearance
+                navigationController?.navigationBar.scrollEdgeAppearance = appearance
+                navigationController?.navigationBar.compactScrollEdgeAppearance = appearance
+            }
+        }
         self.tableView.reloadData()
     }
     

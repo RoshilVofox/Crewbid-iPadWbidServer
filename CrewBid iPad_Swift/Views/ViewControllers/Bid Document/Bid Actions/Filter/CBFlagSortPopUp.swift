@@ -31,6 +31,10 @@ class CBFlagSortPopUp: UIViewController {
     @IBOutlet weak var checkBrownFlag: UIButton!
     @IBOutlet weak var checkPinkFlag: UIButton!
     
+    var lineSort: BILineSort!
+    var bidPeriod: BIBidPeriod!
+    var nextSortOrder: NSNumber!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -8,6 +8,19 @@
 import UIKit
 
 class CBFlagSortCell: UITableViewCell {
+    
+    private var lineSort1: BILineSort!
+    var lineSort2: BILineSort!
+    var bidPeriod: BIBidPeriod!
+    
+    var lineSort: BILineSort? {
+        set(newLineSort){
+           lineSort1 = newLineSort
+        }
+        get {
+            return lineSort1
+        }
+    }
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -18,6 +31,10 @@ class CBFlagSortCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
 
         // Configure the view for the selected state
+    }
+    
+    func configureFlagSortCell() {
+        
     }
 
     @IBAction func btnCloseAction(_ sender: Any) {

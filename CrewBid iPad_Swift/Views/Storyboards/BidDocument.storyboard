@@ -5199,6 +5199,9 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="LHsegment" destination="82M-g5-nN3" id="YSP-2t-23g"/>
+                                            <outlet property="cityNametxt" destination="8Kz-Z4-l3J" id="d0X-Wb-iWs"/>
+                                            <outlet property="nameLabel" destination="4oo-Zg-fxX" id="prg-m3-eqB"/>
                                             <outlet property="titleLabel" destination="4oo-Zg-fxX" id="cxd-Gh-Uag"/>
                                         </connections>
                                     </tableViewCell>
