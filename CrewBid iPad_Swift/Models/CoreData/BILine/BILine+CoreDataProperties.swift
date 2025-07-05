@@ -332,27 +332,37 @@ extension BILine : Identifiable {
     }
     
     
-    var faPositionString: String {
-            var faPos = "NA"
-            var isFirstTrip = true
-     
-            for trip in self.trips ?? [] {
-                guard let trip = trip as? BITrip,
-                      let tripPos = trip.positionString else {
-                    continue
-                }
-     
+    func faPositionString() -> String {
+        if !self.bidPeriod!.isFABid(){
+            return ""
+        }
+        var faPos: String = "NA"
+        var tripPos: String
+        // if there are no trips or there is no position for a trip,
+        // then fa position is NA
+        var isFirstTrip: Bool = true
+        for case let trip as BITrip in self.trips! {
+            if trip.positionString == nil {
+                tripPos = ""
+            } else {
+                tripPos = trip.positionString!
+            }
+            // trip position
+            if tripPos != "" {
                 if isFirstTrip {
                     faPos = tripPos
                     isFirstTrip = false
-                } else if faPos != tripPos {
+                }
+                if !(faPos == tripPos) {
                     faPos = "M"
                     break
+                } else {
+                    faPos = tripPos
                 }
             }
-     
-            return faPos
         }
+        return faPos
+    }
     
     func faPositionColor() -> UIColor? {
         if !self.bidPeriod!.isFABid() {
