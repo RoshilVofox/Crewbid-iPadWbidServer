@@ -24,8 +24,27 @@ extension BIFilterRule {
     @NSManaged public var type: NSNumber?
     @NSManaged public var variables: NSDictionary?
     @NSManaged public var bidPeriod: BIBidPeriod?
-
 }
+@objc enum CommutabilityThirdCell : Int {
+    case Front = 1
+    case Back
+    case Overall
+}
+
+@objc enum ConstraintType : Int {
+    case MoreThan = 1
+    case LessThan
+    case EqualTo
+    case NotEqualTo
+    case atAfter
+    case atBefore
+}
+
+@objc enum BIOverlapDaysFilterRuleType: Int{
+    case BIBIOverlapDaysFilterRuleTypeFront
+    case BIOverlapDaysFilterRuleTypeBack
+}
+
 @objc enum BIWeekdaysFilterRuleType : Int {
     case BIWeekdaysCompoundType
     case BIWeekendsWeekdaysType
@@ -106,17 +125,56 @@ extension BIFilterRule {
     }
 }
 
+@objc enum BIDaysOfMonthFilterRuleType : Int {
+    case BIDaysOfMonthOffType
+    case BIDaysOfMonthIncludedType
+    case BIDaysOfMonthFilterRuleTypeTripStartDates
+    case BIDaysOfMonthFilterRuleTypeTripEndDates
+    
+    func name () -> Int {
+        switch self
+        {
+        case .BIDaysOfMonthOffType: return 0
+        case .BIDaysOfMonthIncludedType: return 1
+        case .BIDaysOfMonthFilterRuleTypeTripStartDates: return 2
+        case .BIDaysOfMonthFilterRuleTypeTripEndDates: return 3
+        }
+    }
+}
+
 enum BIPassesThruBaseFilterRuleType: Int {
     case midTrip
     case standard
 }
 
 extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
-    class func menuItemsForBidPeriod() -> NSArray {
+    class func menuItemsForBidPeriod(_ bidPeriod: BIBidPeriod) -> NSArray {
         var menuItems: NSArray!
-        let ruleFileURL = Bundle.main.path(forResource: "FilterRules", ofType: "plist")
-        let ruleDictionary = NSMutableDictionary(contentsOfFile: ruleFileURL!)!
-        menuItems = (ruleDictionary["rules"]! as! NSArray)
+        // Check if it's the first round bid or flight attendant bid
+        if bidPeriod.isFirstRoundBid() || bidPeriod.isFABid(){
+            // Load FilterRules.plist for the menu items
+            let ruleFileURL = Bundle.main.path(forResource: "FilterRules", ofType: "plist")
+            let ruleDictionary = NSMutableDictionary(contentsOfFile: ruleFileURL!)!
+            menuItems = (ruleDictionary["rules"]! as! NSArray)
+        }else{
+            // Load FilterRulesRound2.plist for the menu items
+            let ruleFileURL = Bundle.main.path(forResource: "FilterRulesRound2", ofType: "plist")
+            let ruleDictionary = NSMutableDictionary(contentsOfFile: ruleFileURL!)
+            menuItems = (ruleDictionary?["rules"]! as! NSArray)
+        }
+        // Check if Swaptimizer is enabled for the bid period
+        if (bidPeriod.swaptimizerStatus ?? 0).intValue == CBSwaptimizerStatus.enabled.rawValue {
+            if bidPeriod.isFABid(){
+                // Load FilterRulesFaVacation.plist for flight attendant bids
+                let swaptimizerFileURL = Bundle.main.path(forResource: "FilterRulesFaVacation", ofType: "plist")
+                let swapRulesDictionary = NSMutableDictionary(contentsOfFile: swaptimizerFileURL!)!
+                var swapRulesArray: NSArray!
+                swapRulesArray = (swapRulesDictionary["rules"]! as! NSArray)
+                // Combine the menu items with swap rules
+                menuItems = swapRulesArray.addingObjects(from: menuItems as! [Any]) as NSArray
+            }
+        }
+        
         return menuItems! as NSArray
     }
     
@@ -194,6 +252,65 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
         catch {
             print("error executing trips fetch: \(error.localizedDescription)")
         }
+    }
+
+    
+    class func formatForCategory(category: BIFilterRuleCategory.RawValue, type: Int) -> NSPredicate {
+        var format: NSPredicate? = nil
+        switch category {
+        case BIFilterRuleCategory.BITypeFilterRuleCategory.rawValue:
+            // Predicate for filtering by type.
+
+            let formatString: String = "(type IN $SET)"
+            format = NSPredicate(format: formatString)
+        case BIFilterRuleCategory.BIEtopsFilterRuleCategory.rawValue:
+            // Predicate for filtering by ETOPS.
+
+            let formatString: String = "($ETOPS_ON == YES OR isETOPS == 0)"
+            format = NSPredicate(format: formatString)
+        case BIFilterRuleCategory.BIEtopsResFilterRuleCategory.rawValue:
+            // Predicate for filtering by ETOPS Reservations.
+
+            let formatString: String = "($ETOPSRES_ON == YES OR isETOPSRES == 0)"
+            format = NSPredicate(format: formatString)
+        case BIFilterRuleCategory.BIAmPmFilterRuleCategory.rawValue:
+            // Predicate for filtering by AM/PM.
+
+            format = NSPredicate(format: "amPM IN $SET")
+        case BIFilterRuleCategory.BIDaysOfWeekFilterRuleCategory.rawValue:
+            // Predicate for filtering by days of the week.
+
+            format = NSPredicate(format: "bitwiseAnd:with:(weekdayBits, $WEEKDAY_BITS) == 0")
+        case BIFilterRuleCategory.BITripLengthFilterRuleCategory.rawValue:
+            // Predicate for filtering by trip length.
+
+            format = NSPredicate(format: "($TURNS_ON == YES OR turnsCount == 0) AND " +
+                                    "($TWO_DAYS_ON == YES OR twoDayTripsCount == 0) AND " +
+                                    "($THREE_DAYS_ON == YES OR threeDayTripsCount == 0) AND " +
+                                    "($FOUR_DAYS_ON == YES OR fourDayTripsCount == 0)")
+        case BIFilterRuleCategory.BIDaysOfMonthFilterRuleCategory.rawValue:
+            // Predicate for filtering by days of the month.
+                // A set bit indicates a day of the month wanted off.
+            format = NSPredicate(format: "bitwiseAnd:with:(monthBits, $MONTH_BITS) == 0")
+            
+        case BIFilterRuleCategory.BIPositionFilterRuleCategory.rawValue:
+            // Predicate for filtering by position.
+
+            format = NSPredicate(format: "faPosition IN $SET")
+        case BIFilterRuleCategory.BIFaReserveFilterRuleCategory.rawValue:
+            // Predicate for filtering by FA Reserve Line Type.
+
+            format = NSPredicate(format: "faReserveLineType IN $SET")
+        case BIFilterRuleCategory.BIUserFlagFilterRuleCategory.rawValue:
+            // Predicate for filtering by User Flag Type.
+
+            let formatString: String = "userFlagType IN $SET"
+            format = NSPredicate(format: formatString)
+        default:
+            break
+        }
+        
+        return format!
     }
     
     func predicateForTripHighlight() -> NSPredicate? {
@@ -325,4 +442,241 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
         }
         return cities
     }
+    
+    
+    func predicateOperatorString() -> String {
+        var predicateOperatorString: String? = nil
+        switch (comparison ?? 0).intValue {
+        case 1:
+            predicateOperatorString = "<="
+        case 2:
+            predicateOperatorString = "=="
+        case 3:
+            predicateOperatorString = ">="
+        default:
+            predicateOperatorString = "<="
+        }
+        
+        return predicateOperatorString!
+    }
+    
+    var predicate : NSPredicate {
+        var format:NSPredicate? = nil
+        let category = self.category?.intValue
+        let type = self.type?.intValue
+        if category == BIFilterRuleCategory.BITypeFilterRuleCategory.rawValue || category == BIFilterRuleCategory.BIAmPmFilterRuleCategory.rawValue || category == BIFilterRuleCategory.BIUserFlagFilterRuleCategory.rawValue || category == BIFilterRuleCategory.BIFaReserveFilterRuleCategory.rawValue || category == BIFilterRuleCategory.BIPositionFilterRuleCategory.rawValue || category == BIFilterRuleCategory.BIEtopsFilterRuleCategory.rawValue || category == BIFilterRuleCategory.BIEtopsResFilterRuleCategory.rawValue {
+            format = BIFilterRule.formatForCategory(category: category!, type: type!)
+        }else if category == BIFilterRuleCategory.BIDaysOfWeekFilterRuleCategory.rawValue {
+            if BIWeekdaysFilterRuleType.BIWeekdaysCompoundType.rawValue == type {
+                format = BIFilterRule.formatForCategory(category: category!, type: type!)
+            }else{
+                let formatString = String(format: "%@ %@ $%@",self.keyPath!,self.predicateOperatorString(),BIFilterRuleValueVariablesKey)
+                format = NSPredicate(format: formatString)
+            }
+        }else if category == BIFilterRuleCategory.BITripLengthFilterRuleCategory.rawValue {
+            if self.abbreviation == "Su" || self.abbreviation == "Mo" || self.abbreviation == "Tu" || self.abbreviation == "Wed" || self.abbreviation == "Th" || self.abbreviation == "Fr" || self.abbreviation == "Sa" || self.abbreviation == "Wknds" {
+                if BIWeekdaysFilterRuleType.BIWeekdaysCompoundType.rawValue == type {
+                    format = BIFilterRule.formatForCategory(category: category!, type: type!)
+                }else{
+                    let formatString = String(format: "%@ %@ $%@", self.keyPath!,self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
+                    format = NSPredicate(format: formatString)
+                }
+            }else{
+                if BITripLengthFilterRuleType.BITripLengthCompoundType.rawValue == type {
+                    format = BIFilterRule.formatForCategory(category: category!, type: type!)
+                }else{
+                    let formatString = String(format: "%@ %@ $%@", self.keyPath!, self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
+                    format = NSPredicate(format: formatString)
+                }
+            }
+        }else if category == BIFilterRuleCategory.BICitiesFilterRuleCategory.rawValue && type != BICitiesFilterRuleType.BICitiesFilterRuleTypeNonConusLegs.rawValue {
+            if type == BICitiesFilterRuleType.BICitiesFilterRuleTypeEastCoast.rawValue || type == BICitiesFilterRuleType.BICitiesFilterRuleTypeWestCoast.rawValue || type == BICitiesFilterRuleType.BICitiesFilterRuleTypeNonConus.rawValue || type == BICitiesFilterRuleType.BICitiesFilterRuleTypeIntl.rawValue || type == BICitiesFilterRuleType.BICitiesFilterRuleTypeAll.rawValue || type == BICitiesFilterRuleType.BICitiesFilterRuleTypeHawaii.rawValue{
+                let formatString = String(format: "SUBQUERY(days, $DAY, ($DAY.info.city IN $SET) && $DAY.trip.dropForFiltersSorts == 0).@count %@ $%@", self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
+                format = NSPredicate(format: formatString)
+                var filterVars = self.variables as! [String : Any]
+                if filterVars["SET"] == nil {
+                    let SET = NSSet(array: self.selectedRegionalCities() as! [Any])
+                    filterVars["SET"] = SET
+                    self.variables = filterVars as NSDictionary
+                }
+            }else{
+                let city = self.variables?[BIFilterRuleCityVariablesKey]
+                if city == nil || city as! String == "" {
+                    return NSPredicate(value: true)
+                }
+                // Overnight city predicate.
+                if type == BICitiesFilterRuleType.BIOvernightCityType.rawValue {
+                    let formatString = String(format: "SUBQUERY(days, $DAY, $DAY.info.city == $%@ && $DAY.trip.dropForFiltersSorts == 0).@count %@ $%@", BIFilterRuleCityVariablesKey, self.predicateOperatorString(),BIFilterRuleValueVariablesKey)
+                    format = NSPredicate(format: formatString)
+                }
+                // Leg city predicate.
+                else{
+                    let formatString = String(format: "SUBQUERY(legs, $LEG, $LEG.info.arriveCity == $%@ && $LEG.trip.dropForFiltersSorts == 0 && $LEG.info.lastLegOfTrip == NO).@count %@ $%@", BIFilterRuleCityVariablesKey,self.predicateOperatorString(),BIFilterRuleValueVariablesKey)
+                    format = NSPredicate(format: formatString)
+                }
+            }
+        }else if category == BIFilterRuleCategory.BIOvernightCitiesBulkRuleCategory.rawValue{
+            AppState.shared.currentBidPeriod?.isOverNightBulkApplied = "YES"
+            let formatString = "isTrashed == NO"
+            format = NSPredicate(format: formatString)
+            return format!
+        }
+        else if category == BIFilterRuleCategory.BIDaysOfMonthFilterRuleCategory.rawValue{
+            if type == BIDaysOfMonthFilterRuleType.BIDaysOfMonthOffType.rawValue{
+                format = NSPredicate(format: "bitwiseAnd:with:(monthBits, $MONTH_BITS) == 0")
+            }else if type == BIDaysOfMonthFilterRuleType.BIDaysOfMonthIncludedType.rawValue{
+                format = NSPredicate(format: "bitwiseAnd:with:(monthBits, $MONTH_BITS) == ((bitwiseAnd:with:($MONTH_BITS, $MONTH_BITS)))")
+            }else if type == BIDaysOfMonthFilterRuleType.BIDaysOfMonthFilterRuleTypeTripStartDates.rawValue{
+                format = NSPredicate(format: "bitwiseAnd:with:(tripStartMonthBits, $MONTH_BITS) == 0")
+            }else if type == BIDaysOfMonthFilterRuleType.BIDaysOfMonthFilterRuleTypeTripEndDates.rawValue{
+                format = NSPredicate(format: "bitwiseAnd:with:(tripEndMonthBits, $MONTH_BITS) == 0")
+            }
+        }else if category == BIFilterRuleCategory.BICommutingFilterRuleCategory.rawValue{
+            let fetchRequest: NSFetchRequest<CommuteTime> = CommuteTime.fetchRequest()
+            do {
+                let fetchedObjects = try self.managedObjectContext!.fetch(fetchRequest)
+                
+                var formatString = ""
+                if fetchedObjects.count > 0 {
+                    formatString = "commutabilityOverall == 100"
+                }
+                if !(formatString.length > 1){
+                    formatString = "commutabilityOverall == 0"
+                }
+                format = NSPredicate(format: String(format: "(%@)", formatString))
+                
+            } catch {
+                print("Fetch error: \(error.localizedDescription)")
+            }
+            
+            
+        }else if category == BIFilterRuleCategory.BICommutabilityFilterRuleCategory.rawValue{
+            let fetchRequest:NSFetchRequest<Commutability> = Commutability.fetchRequest()
+            do{
+                let fetchedObjects = try self.managedObjectContext!.fetch(fetchRequest)
+                
+                var ObjCommutability:Commutability? = nil
+                var formatString = ""
+                if fetchedObjects.count > 0 {
+                    ObjCommutability = fetchedObjects[0]
+                    if ObjCommutability?.secondCellValue?.intValue == 1 {
+                        if ObjCommutability?.thirdCellValue?.intValue == CommutabilityThirdCell.Back.rawValue {
+                            if ObjCommutability?.type?.intValue == ConstraintType.LessThan.rawValue {
+                                formatString = String(format: "(commutabilityBack > %d)|| (nightsInMid  > 0)", (ObjCommutability?.value!.intValue)!)
+                            }else if ObjCommutability?.type?.intValue == ConstraintType.MoreThan.rawValue {
+                                formatString = String(format: "(commutabilityBack < %d) || (nightsInMid  > 0)", (ObjCommutability?.value!.intValue)!)
+                            }
+                        }else if ObjCommutability?.thirdCellValue?.intValue == CommutabilityThirdCell.Front.rawValue {
+                            if ObjCommutability?.type?.intValue == ConstraintType.LessThan.rawValue {
+                                formatString = String(format: "(commutabilityFront > %d)|| (nightsInMid  > 0)", (ObjCommutability?.value!.intValue)!)
+                            }else if ObjCommutability?.type?.intValue == ConstraintType.MoreThan.rawValue {
+                                formatString = String(format: "(commutabilityFront < %d) || (nightsInMid  > 0)", (ObjCommutability?.value!.intValue)!)
+                            }
+                        }
+                        if ObjCommutability?.thirdCellValue?.intValue == CommutabilityThirdCell.Overall.rawValue {
+                            if ObjCommutability?.type?.intValue == ConstraintType.LessThan.rawValue {
+                                formatString = String(format: "(commutabilityOverall > %d)|| (nightsInMid  > 0)", (ObjCommutability?.value!.intValue)!)
+                            }else if ObjCommutability?.type?.intValue == ConstraintType.MoreThan.rawValue {
+                                formatString = String(format: "(commutabilityOverall < %d) || (nightsInMid  > 0)", (ObjCommutability?.value!.intValue)!)
+                            }
+                        }
+                    }else{
+                        if ObjCommutability?.thirdCellValue?.intValue == CommutabilityThirdCell.Back.rawValue {
+                            if ObjCommutability?.type?.intValue == ConstraintType.LessThan.rawValue {
+                                formatString = String(format: "(commutabilityBack > %d)", (ObjCommutability?.value!.intValue)!)
+                            }else if ObjCommutability?.type?.intValue == ConstraintType.MoreThan.rawValue {
+                                formatString = String(format: "(commutabilityBack < %d)", (ObjCommutability?.value!.intValue)!)
+                            }
+                        }else if ObjCommutability?.thirdCellValue?.intValue == CommutabilityThirdCell.Front.rawValue {
+                            if ObjCommutability?.type?.intValue == ConstraintType.LessThan.rawValue {
+                                formatString = String(format: "(commutabilityFront > %d)", (ObjCommutability?.value!.intValue)!)
+                            }else if ObjCommutability?.type?.intValue == ConstraintType.MoreThan.rawValue {
+                                formatString = String(format: "(commutabilityFront < %d)", (ObjCommutability?.value!.intValue)!)
+                            }
+                        }
+                        if ObjCommutability?.thirdCellValue?.intValue == CommutabilityThirdCell.Overall.rawValue {
+                            if ObjCommutability?.type?.intValue == ConstraintType.LessThan.rawValue {
+                                formatString = String(format: "(commutabilityOverall > %d)", (ObjCommutability?.value!.intValue)!)
+                            }else if ObjCommutability?.type?.intValue == ConstraintType.MoreThan.rawValue {
+                                formatString = String(format: "(commutabilityOverall < %d)", (ObjCommutability?.value!.intValue)!)
+                            }
+                        }
+                    }
+                    if !(formatString.length > 1) {
+                        formatString = "commutabilityBack == commutabilityBack"
+                    }
+                    format = NSPredicate(format: String(format: "!(%@)", formatString))
+                }
+            }catch{
+                print("Fetch error: \(error.localizedDescription)")
+            }
+            
+        }else if category == BIFilterRuleCategory.BIDeadheadsFilterRuleCategory.rawValue && (type == BIDeadheadsFilterRuleType.BIDeadheadsAtStartType.rawValue || type == BIDeadheadsFilterRuleType.BIDeadheadsAtEndType.rawValue || type == BIDeadheadsFilterRuleType.BIDeadheadsAtEitherType.rawValue){
+            let city = self.variables![BIFilterRuleCityVariablesKey] as? String
+            if city == nil || city == "" {
+                let formatString = String(format: "%@ %@ $%@", self.keyPath!, self.predicateOperatorString(),BIFilterRuleCityVariablesKey)
+                format = NSPredicate(format: formatString)
+            }else if BIDeadheadsFilterRuleType.BIDeadheadsAtStartType.rawValue == type {
+                let formatString = String(format: """
+                SUBQUERY(legs, $LEG, ($LEG.info.firstLegOfTrip == 1 && $LEG.trip.dropForFiltersSorts == 0 && \
+                $LEG.info.isDeadhead == 1 && $LEG.info.arriveCity == $%@)).@count %@ $%@
+                """, BIFilterRuleCityVariablesKey,self.predicateOperatorString(),BIFilterRuleValueVariablesKey)
+                format = NSPredicate(format: formatString)
+            }
+            else if BIDeadheadsFilterRuleType.BIDeadheadsAtEndType.rawValue == type {
+                let formatString = String(format: """
+                SUBQUERY(legs, $LEG, ($LEG.info.lastLegOfTrip == 1 && $LEG.trip.dropForFiltersSorts == 0 && \
+                $LEG.info.isDeadhead == 1 && $LEG.info.departCity == $%@)).@count %@ $%@
+                """, BIFilterRuleCityVariablesKey, self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
+                format = NSPredicate(format: formatString)
+            }else{
+                let formatString = String(format: """
+                SUBQUERY(legs, $LEG, ($LEG.trip.dropForFiltersSorts == 0 &&(($LEG.info.firstLegOfTrip == 1 && $LEG.info.isDeadhead == 1 && $LEG.info.arriveCity == $%@)||($LEG.info.lastLegOfTrip == 1 && $LEG.info.isDeadhead == 1 && $LEG.info.departCity == $%@)))).@count %@ $%@
+                """, BIFilterRuleCityVariablesKey, BIFilterRuleCityVariablesKey, self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
+                format = NSPredicate(format: formatString)
+            }
+        }else if BIFilterRuleCategory.BIOvernightLengthFilterRuleCategory.rawValue == category {
+            var formatString = ""
+            if BIOvernightLengthFilterRuleType.BIMinimumOvernightLengthType.rawValue == type {
+                formatString = String(format: "minimumOvernightHours %@ $%@", self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
+            }else{
+                formatString = String(format: "maximumOvernightHours %@ $%@", self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
+            }
+            format = NSPredicate(format: formatString)
+        }
+        else if BIFilterRuleCategory.BIOvAvgFilterRuleCategory.rawValue == category {
+            let val = self.variables![BIFilterRuleValueVariablesKey] as! NSNumber
+            let a = val.intValue * 60
+            let formatString = String(format: "ovAvg %@ %d", self.predicateOperatorString(),a)
+            return NSPredicate(format: formatString)
+        }else if BIFilterRuleCategory.BIOverlapFilterRuleCategory.rawValue == category && BIOverlapDaysFilterRuleType.BIBIOverlapDaysFilterRuleTypeFront.rawValue == type {
+            if self.predicateOperatorString() == "<="{
+                let formatString = String(format: """
+                SUBQUERY(trips, $TRIP, $TRIP.startDay <= ($%@+1)).@count > 0
+                """, BIFilterRuleValueVariablesKey)
+                format = NSPredicate(format: formatString)
+            }else if self.predicateOperatorString() == ">="{
+                let formatString = String(format: """
+                SUBQUERY(trips, $TRIP, $TRIP.startDay < ($%@+1)).@count == 0
+                """, BIFilterRuleValueVariablesKey)
+                format = NSPredicate(format: formatString)
+            }else{
+                let formatString = String(format: """
+            (SUBQUERY(trips, $TRIP, $TRIP.startDay == ($%@+1)).@count > 0) && (SUBQUERY(trips, $TRIP, $TRIP.startDay < ($%@+1)).@count == 0)
+            """, BIFilterRuleValueVariablesKey,BIFilterRuleValueVariablesKey)
+                format = NSPredicate(format: formatString)
+            }
+        }
+        else if BIFilterRuleCategory.BIReportReleaseFilterCategory.rawValue == category {
+            let formatString = String(format: "(rptLessThanentered == NO AND rlsGreaterThanEntered == NO)")
+            format = NSPredicate(format: formatString)
+            return format!
+        }else{
+            let formatString = String(format: "%@ %@ $%@", self.keyPath!,self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
+            format = NSPredicate(format: formatString)
+        }
+        
+        return format!.withSubstitutionVariables(self.variables as! [String : Any])
+    }
+    
 }

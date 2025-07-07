@@ -318,8 +318,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2431"
-            endingLineNumber = "2431"
+            startingLineNumber = "2425"
+            endingLineNumber = "2425"
             landmarkName = "getTripArriveCity(from:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -334,8 +334,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2433"
-            endingLineNumber = "2433"
+            startingLineNumber = "2427"
+            endingLineNumber = "2427"
             landmarkName = "getTripArriveCity(from:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -350,8 +350,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1770"
-            endingLineNumber = "1770"
+            startingLineNumber = "1767"
+            endingLineNumber = "1767"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -366,8 +366,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2100"
-            endingLineNumber = "2100"
+            startingLineNumber = "2097"
+            endingLineNumber = "2097"
             landmarkName = "calculateNightInMiddle()"
             landmarkType = "7">
          </BreakpointContent>
@@ -382,8 +382,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2025"
-            endingLineNumber = "2025"
+            startingLineNumber = "2022"
+            endingLineNumber = "2022"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -398,8 +398,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2045"
-            endingLineNumber = "2045"
+            startingLineNumber = "2042"
+            endingLineNumber = "2042"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -408,326 +408,6 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "AC116D57-4B42-4298-88EF-E38204C50A1E"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1963"
-            endingLineNumber = "1963"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "DE707E46-2458-481B-B5AE-6A56073438B7"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1965"
-            endingLineNumber = "1965"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "D776C9BA-5DF6-456C-A155-5213611C6325"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1967"
-            endingLineNumber = "1967"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "1D962B17-5BC7-4D0C-BB6E-1D6FD5D24D3F"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2007"
-            endingLineNumber = "2007"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "91CB189A-529E-43AF-8502-E007C0390A2C"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2009"
-            endingLineNumber = "2009"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "74B297A5-B75E-4DC9-8BC7-CC4575E3D5A9"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2011"
-            endingLineNumber = "2011"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "4ABEB9A1-F57E-47A4-888F-5685C617F3B5"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2013"
-            endingLineNumber = "2013"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9962DBF1-EBC3-46DC-B3A3-09BAA9E7DE48"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1969"
-            endingLineNumber = "1969"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "261ADD55-0C4B-4703-9EBE-80C495C49F82"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1898"
-            endingLineNumber = "1898"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "EDE1BD96-68BA-48B8-8EB9-42217BDC9653"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1896"
-            endingLineNumber = "1896"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "DC9E2BF0-A880-4DD0-AC87-7ECFDFBBE58F"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1894"
-            endingLineNumber = "1894"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "EE754F8C-9D01-4FAD-A4FB-791B1D95409A"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1892"
-            endingLineNumber = "1892"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "208CCF94-2BEE-4E55-9749-B7DE59DE48EC"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1840"
-            endingLineNumber = "1840"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "A14043AB-6154-4CB0-A546-BC278B57C532"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1838"
-            endingLineNumber = "1838"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "30F007BD-C5B2-41D1-98A8-1932D989AEE5"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1836"
-            endingLineNumber = "1836"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "433F5459-0BF5-495E-A72B-BF344ED94A1B"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1834"
-            endingLineNumber = "1834"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9970633E-B162-4444-B1CC-D88135F245F1"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1891"
-            endingLineNumber = "1891"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "D7875742-8896-4D64-A388-58972BD0912A"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1833"
-            endingLineNumber = "1833"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "C0E50618-EBA7-44E5-A083-271006FA8E7A"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1962"
-            endingLineNumber = "1962"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "D00148AD-4A47-4B61-91F8-B59ACD4C2228"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2006"
-            endingLineNumber = "2006"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "6C179ABA-1898-46F4-B4BD-2A5456C9F19A"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -743,7 +423,167 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "D3F5BDBF-C3EF-4D3D-A1D5-D7C0581C16B4"
+            uuid = "DE707E46-2458-481B-B5AE-6A56073438B7"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1962"
+            endingLineNumber = "1962"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D776C9BA-5DF6-456C-A155-5213611C6325"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1964"
+            endingLineNumber = "1964"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1D962B17-5BC7-4D0C-BB6E-1D6FD5D24D3F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2004"
+            endingLineNumber = "2004"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "91CB189A-529E-43AF-8502-E007C0390A2C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2006"
+            endingLineNumber = "2006"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "74B297A5-B75E-4DC9-8BC7-CC4575E3D5A9"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2008"
+            endingLineNumber = "2008"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4ABEB9A1-F57E-47A4-888F-5685C617F3B5"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2010"
+            endingLineNumber = "2010"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9962DBF1-EBC3-46DC-B3A3-09BAA9E7DE48"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1966"
+            endingLineNumber = "1966"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "261ADD55-0C4B-4703-9EBE-80C495C49F82"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1895"
+            endingLineNumber = "1895"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EDE1BD96-68BA-48B8-8EB9-42217BDC9653"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1893"
+            endingLineNumber = "1893"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DC9E2BF0-A880-4DD0-AC87-7ECFDFBBE58F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1891"
+            endingLineNumber = "1891"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EE754F8C-9D01-4FAD-A4FB-791B1D95409A"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -759,6 +599,166 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "208CCF94-2BEE-4E55-9749-B7DE59DE48EC"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1837"
+            endingLineNumber = "1837"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A14043AB-6154-4CB0-A546-BC278B57C532"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1835"
+            endingLineNumber = "1835"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "30F007BD-C5B2-41D1-98A8-1932D989AEE5"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1833"
+            endingLineNumber = "1833"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "433F5459-0BF5-495E-A72B-BF344ED94A1B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1831"
+            endingLineNumber = "1831"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9970633E-B162-4444-B1CC-D88135F245F1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1888"
+            endingLineNumber = "1888"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D7875742-8896-4D64-A388-58972BD0912A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1830"
+            endingLineNumber = "1830"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C0E50618-EBA7-44E5-A083-271006FA8E7A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1959"
+            endingLineNumber = "1959"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D00148AD-4A47-4B61-91F8-B59ACD4C2228"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2003"
+            endingLineNumber = "2003"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6C179ABA-1898-46F4-B4BD-2A5456C9F19A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1957"
+            endingLineNumber = "1957"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D3F5BDBF-C3EF-4D3D-A1D5-D7C0581C16B4"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1886"
+            endingLineNumber = "1886"
+            landmarkName = "calculateWorkBlockDetails()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
             uuid = "684B8B2E-494D-4ACA-B177-1D07205AD512"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -766,8 +766,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1832"
-            endingLineNumber = "1832"
+            startingLineNumber = "1829"
+            endingLineNumber = "1829"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -782,8 +782,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1926"
-            endingLineNumber = "1926"
+            startingLineNumber = "1923"
+            endingLineNumber = "1923"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -798,8 +798,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1917"
-            endingLineNumber = "1917"
+            startingLineNumber = "1914"
+            endingLineNumber = "1914"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -814,8 +814,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1990"
-            endingLineNumber = "1990"
+            startingLineNumber = "1987"
+            endingLineNumber = "1987"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -830,8 +830,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1986"
-            endingLineNumber = "1986"
+            startingLineNumber = "1983"
+            endingLineNumber = "1983"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -846,8 +846,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1863"
-            endingLineNumber = "1863"
+            startingLineNumber = "1860"
+            endingLineNumber = "1860"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -862,8 +862,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1859"
-            endingLineNumber = "1859"
+            startingLineNumber = "1856"
+            endingLineNumber = "1856"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -878,8 +878,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1817"
-            endingLineNumber = "1817"
+            startingLineNumber = "1814"
+            endingLineNumber = "1814"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -894,8 +894,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1813"
-            endingLineNumber = "1813"
+            startingLineNumber = "1810"
+            endingLineNumber = "1810"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -910,8 +910,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1793"
-            endingLineNumber = "1793"
+            startingLineNumber = "1790"
+            endingLineNumber = "1790"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -926,8 +926,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1786"
-            endingLineNumber = "1786"
+            startingLineNumber = "1783"
+            endingLineNumber = "1783"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -958,8 +958,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1772"
-            endingLineNumber = "1772"
+            startingLineNumber = "1769"
+            endingLineNumber = "1769"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -974,8 +974,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1781"
-            endingLineNumber = "1781"
+            startingLineNumber = "1778"
+            endingLineNumber = "1778"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -990,8 +990,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2004"
-            endingLineNumber = "2004"
+            startingLineNumber = "2001"
+            endingLineNumber = "2001"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1022,8 +1022,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1798"
-            endingLineNumber = "1798"
+            startingLineNumber = "1795"
+            endingLineNumber = "1795"
             landmarkName = "calculateWorkBlockDetails()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1038,8 +1038,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5933"
-            endingLineNumber = "5933"
+            startingLineNumber = "5909"
+            endingLineNumber = "5909"
             landmarkName = "readTripsForLine(line:record:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1054,8 +1054,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5553"
-            endingLineNumber = "5553"
+            startingLineNumber = "5529"
+            endingLineNumber = "5529"
             landmarkName = "readTripsForLine(line:record:isReserve:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1070,8 +1070,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5545"
-            endingLineNumber = "5545"
+            startingLineNumber = "5521"
+            endingLineNumber = "5521"
             landmarkName = "readTripsForLine(line:record:isReserve:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1086,8 +1086,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5501"
-            endingLineNumber = "5501"
+            startingLineNumber = "5477"
+            endingLineNumber = "5477"
             landmarkName = "readTripsForLine(line:record:isReserve:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1102,8 +1102,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4866"
-            endingLineNumber = "4866"
+            startingLineNumber = "4845"
+            endingLineNumber = "4845"
             landmarkName = "updateEndDateForRedEyeTrips(line:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1150,8 +1150,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5599"
-            endingLineNumber = "5599"
+            startingLineNumber = "5575"
+            endingLineNumber = "5575"
             landmarkName = "readTripsForLine(line:record:isReserve:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1486,8 +1486,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2445"
-            endingLineNumber = "2445"
+            startingLineNumber = "2439"
+            endingLineNumber = "2439"
             landmarkName = "checkPaperBidUserVacation()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1502,8 +1502,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2455"
-            endingLineNumber = "2455"
+            startingLineNumber = "2449"
+            endingLineNumber = "2449"
             landmarkName = "checkPaperBidUserVacation()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1534,8 +1534,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2456"
-            endingLineNumber = "2456"
+            startingLineNumber = "2450"
+            endingLineNumber = "2450"
             landmarkName = "checkPaperBidUserVacation()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1566,8 +1566,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2457"
-            endingLineNumber = "2457"
+            startingLineNumber = "2451"
+            endingLineNumber = "2451"
             landmarkName = "checkPaperBidUserVacation()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1694,25 +1694,9 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2454"
-            endingLineNumber = "2454"
+            startingLineNumber = "2448"
+            endingLineNumber = "2448"
             landmarkName = "checkPaperBidUserVacation()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "D4008E6D-E1C0-4E90-AD1A-E0394498EA51"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/ViewModels/BIBidFileDownloadViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "116"
-            endingLineNumber = "116"
-            landmarkName = "performPostDownloadTasks()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1726,8 +1710,8 @@
             filePath = "CrewBid iPad_Swift/New Files/CBUtils.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "857"
-            endingLineNumber = "857"
+            startingLineNumber = "859"
+            endingLineNumber = "859"
             landmarkName = "getMissingTripJSON(year:month:round:base:position:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1742,8 +1726,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5980"
-            endingLineNumber = "5980"
+            startingLineNumber = "5956"
+            endingLineNumber = "5956"
             landmarkName = "readTripFromJson(trip:tripSequence:line:showPPAlert:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1758,8 +1742,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/HomeScreen/CBDocumentsCollectionViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "157"
-            endingLineNumber = "157"
+            startingLineNumber = "189"
+            endingLineNumber = "189"
             landmarkName = "refreshBidPeriods()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1774,8 +1758,8 @@
             filePath = "CrewBid iPad_Swift/New Files/CBUtils.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "898"
-            endingLineNumber = "898"
+            startingLineNumber = "900"
+            endingLineNumber = "900"
             landmarkName = "unzipFlightDataFile(at:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1831,22 +1815,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "4F8C9E43-4F9E-40D7-90A1-BAB58296C7DA"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "106"
-            endingLineNumber = "106"
-            landmarkName = "updateLines()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "4B1A46D9-F900-47CA-A2AD-745E9509C3FA"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -1854,8 +1822,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "324"
-            endingLineNumber = "324"
+            startingLineNumber = "412"
+            endingLineNumber = "412"
             landmarkName = "btnMoveToLineAction(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1870,73 +1838,9 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "394"
-            endingLineNumber = "394"
-            landmarkName = "configureCell(_:line:row:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "F8A1E4F2-E122-4B7A-96A1-3BF4A0BD5344"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "422"
-            endingLineNumber = "422"
-            landmarkName = "configureCell(_:line:row:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "18859FCA-1C9C-4496-A79D-D33F7D422715"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "435"
-            endingLineNumber = "435"
-            landmarkName = "configureCell(_:line:row:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "8FA84492-6335-4A99-AE7E-2047A2F11F28"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1743"
-            endingLineNumber = "1743"
-            landmarkName = "calculateWorkBlockDetails()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "EC0E8AF4-3404-4448-907A-012C2D0A4C65"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3688"
-            endingLineNumber = "3688"
-            landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
+            startingLineNumber = "534"
+            endingLineNumber = "534"
+            landmarkName = "configureCell(_:row:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1950,24 +1854,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3913"
-            endingLineNumber = "3913"
-            landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "204ECAF4-D70A-4841-B7E0-A6A34B3B6EA0"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3910"
-            endingLineNumber = "3910"
+            startingLineNumber = "3894"
+            endingLineNumber = "3894"
             landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1982,8 +1870,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3942"
-            endingLineNumber = "3942"
+            startingLineNumber = "3923"
+            endingLineNumber = "3923"
             landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2030,8 +1918,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BIBidFileDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "128"
-            endingLineNumber = "128"
+            startingLineNumber = "138"
+            endingLineNumber = "138"
             landmarkName = "checkCrewBidUpdateFile()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2062,8 +1950,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3976"
-            endingLineNumber = "3976"
+            startingLineNumber = "3957"
+            endingLineNumber = "3957"
             landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2078,8 +1966,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4056"
-            endingLineNumber = "4056"
+            startingLineNumber = "4037"
+            endingLineNumber = "4037"
             landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2094,8 +1982,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3979"
-            endingLineNumber = "3979"
+            startingLineNumber = "3960"
+            endingLineNumber = "3960"
             landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2110,8 +1998,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3989"
-            endingLineNumber = "3989"
+            startingLineNumber = "3970"
+            endingLineNumber = "3970"
             landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2126,8 +2014,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3997"
-            endingLineNumber = "3997"
+            startingLineNumber = "3978"
+            endingLineNumber = "3978"
             landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2142,8 +2030,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4009"
-            endingLineNumber = "4009"
+            startingLineNumber = "3990"
+            endingLineNumber = "3990"
             landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2158,25 +2046,9 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3920"
-            endingLineNumber = "3920"
+            startingLineNumber = "3901"
+            endingLineNumber = "3901"
             landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "F3DDE3AC-E06C-4105-93BA-B8B1D9A8FB6F"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4734"
-            endingLineNumber = "4734"
-            landmarkName = "calculateNewProperties(line:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -2190,8 +2062,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4746"
-            endingLineNumber = "4746"
+            startingLineNumber = "4725"
+            endingLineNumber = "4725"
             landmarkName = "calculateNewProperties(line:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2206,8 +2078,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3253"
-            endingLineNumber = "3253"
+            startingLineNumber = "3247"
+            endingLineNumber = "3247"
             landmarkName = "readTripsFA()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2222,8 +2094,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3255"
-            endingLineNumber = "3255"
+            startingLineNumber = "3249"
+            endingLineNumber = "3249"
             landmarkName = "readTripsFA()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2238,8 +2110,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3252"
-            endingLineNumber = "3252"
+            startingLineNumber = "3246"
+            endingLineNumber = "3246"
             landmarkName = "readTripsFA()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2254,8 +2126,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3256"
-            endingLineNumber = "3256"
+            startingLineNumber = "3250"
+            endingLineNumber = "3250"
             landmarkName = "readTripsFA()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2270,8 +2142,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3292"
-            endingLineNumber = "3292"
+            startingLineNumber = "3286"
+            endingLineNumber = "3286"
             landmarkName = "readTripsFA()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2286,8 +2158,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3291"
-            endingLineNumber = "3291"
+            startingLineNumber = "3285"
+            endingLineNumber = "3285"
             landmarkName = "readTripsFA()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2302,8 +2174,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3306"
-            endingLineNumber = "3306"
+            startingLineNumber = "3300"
+            endingLineNumber = "3300"
             landmarkName = "readTripsFA()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2318,8 +2190,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3324"
-            endingLineNumber = "3324"
+            startingLineNumber = "3318"
+            endingLineNumber = "3318"
             landmarkName = "readTripsFA()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2334,8 +2206,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3321"
-            endingLineNumber = "3321"
+            startingLineNumber = "3315"
+            endingLineNumber = "3315"
             landmarkName = "readTripsFA()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2350,8 +2222,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4854"
-            endingLineNumber = "4854"
+            startingLineNumber = "4833"
+            endingLineNumber = "4833"
             landmarkName = "calculateNewProperties(line:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2366,8 +2238,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4407"
-            endingLineNumber = "4407"
+            startingLineNumber = "4388"
+            endingLineNumber = "4388"
             landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2382,8 +2254,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4256"
-            endingLineNumber = "4256"
+            startingLineNumber = "4237"
+            endingLineNumber = "4237"
             landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2398,8 +2270,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4540"
-            endingLineNumber = "4540"
+            startingLineNumber = "4518"
+            endingLineNumber = "4518"
             landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2414,8 +2286,8 @@
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4088"
-            endingLineNumber = "4088"
+            startingLineNumber = "4069"
+            endingLineNumber = "4069"
             landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2424,6 +2296,919 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "8275836C-1D3E-435C-9CCC-AA344328E49B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4617"
+            endingLineNumber = "4617"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "904D82F6-ADAC-44AA-AE40-25A79ECB50F7"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4625"
+            endingLineNumber = "4625"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A41CD426-8B48-4C8D-B623-65BA0E864748"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4632"
+            endingLineNumber = "4632"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B0109306-8551-4A41-8F3C-CFCD1C301FCD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "3593"
+            endingLineNumber = "3593"
+            landmarkName = "readLinesFA()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "331D8DC2-2E31-4EFB-AB1C-9E2CCD537D55"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "3591"
+            endingLineNumber = "3591"
+            landmarkName = "readLinesFA()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "404D824D-E1FC-47B9-A4B3-1C35EAE65D87"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "3606"
+            endingLineNumber = "3606"
+            landmarkName = "readLinesFA()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9E0D583C-4C84-4F0D-8499-02C9EF4BCD82"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "3826"
+            endingLineNumber = "3826"
+            landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AC00A9F3-CD1A-404C-9AD0-AEDD545612B1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4395"
+            endingLineNumber = "4395"
+            landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2347D3B8-3D77-429D-B32D-2A32A10E735B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "3596"
+            endingLineNumber = "3596"
+            landmarkName = "readLinesFA()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "02D485AD-D42D-4E9B-A406-76AA3BFBA28A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "629"
+            endingLineNumber = "629"
+            landmarkName = "configureCell(_:row:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6C503C51-CC98-496E-AA19-C20FF25C9CCB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/CBUtils.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "845"
+            endingLineNumber = "845"
+            landmarkName = "getMissingTripJSON(year:month:round:base:position:completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DE323DE6-1F2B-4665-8C10-271BE66C5410"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "277"
+            endingLineNumber = "277"
+            landmarkName = "updateSorts()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3D31C6D6-27C6-4423-B1FE-549FB6EA570F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "102"
+            endingLineNumber = "102"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AB42EA34-A72C-4179-8496-C62F8C505DC8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "116"
+            endingLineNumber = "116"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B6EF2DD6-B778-4B0B-97F8-EC3124A3F891"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "121"
+            endingLineNumber = "121"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D9E6EEBB-DE90-4C9B-835D-1B9687735385"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "125"
+            endingLineNumber = "125"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "84823E70-C141-424D-B279-4DF1A7D54B32"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Models/CoreData/Filter/BIFilterRule+CoreDataProperties.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "259"
+            endingLineNumber = "259"
+            landmarkName = "formatForCategory(category:type:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DE4ED9A6-9937-44E8-9F7F-8599E76F8E3A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "87"
+            endingLineNumber = "87"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2729C3EF-DFB7-4184-A315-6EBB53059630"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "67"
+            endingLineNumber = "67"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "ACB7D556-74D4-4B7F-A0B9-413B58A6CA36"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "89"
+            endingLineNumber = "89"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "385A390B-DDB7-478F-AA13-7E3882888BAC"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Models/CoreData/Filter/BIFilterRule+CoreDataProperties.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "466"
+            endingLineNumber = "466"
+            landmarkName = "predicate"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "496F7665-65EE-4668-9AE2-DA4164D9128A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "135"
+            endingLineNumber = "135"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BE96C65E-4D74-4105-9002-99C160C8C9CD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Models/CoreData/Filter/BIFilterRule+CoreDataProperties.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "264"
+            endingLineNumber = "264"
+            landmarkName = "formatForCategory(category:type:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CC3BD4EB-A936-4316-86AE-84C617F5D58C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Models/CoreData/Filter/BIFilterRule+CoreDataProperties.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "468"
+            endingLineNumber = "468"
+            landmarkName = "predicate"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FAAA447F-E395-4242-8A7A-F38B1029839E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Models/CoreData/Filter/BIFilterRule+CoreDataProperties.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "471"
+            endingLineNumber = "471"
+            landmarkName = "predicate"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F3AB0690-DE83-4105-BCA1-851E04E11D68"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Models/CoreData/Filter/BIFilterRule+CoreDataProperties.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "479"
+            endingLineNumber = "479"
+            landmarkName = "predicate"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "4F5333AB-BFD1-4847-A997-07D04E4AA8D5"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Models/CoreData/Filter/BIFilterRule+CoreDataProperties.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "486"
+            endingLineNumber = "486"
+            landmarkName = "predicate"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3014E0C7-69E4-495D-8910-371DD6645A30"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2491"
+            endingLineNumber = "2491"
+            landmarkName = "addDefaultFilterRules(context:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EA4485C5-3514-461C-9257-5BFCCB272B98"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2493"
+            endingLineNumber = "2493"
+            landmarkName = "addDefaultFilterRules(context:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EB5DE91E-4486-41BE-9BFA-3FB0B0560642"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "175"
+            endingLineNumber = "175"
+            landmarkName = "updateLines()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B263FB52-FA85-402A-99CC-A5A405814FAD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "186"
+            endingLineNumber = "186"
+            landmarkName = "updateLines()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "96CF4EC1-9CAB-4103-8E77-FC6AC1C40831"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "211"
+            endingLineNumber = "211"
+            landmarkName = "updateTitle()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "386A2D91-7F9B-4108-8193-1E666A8AFBDA"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "133"
+            endingLineNumber = "133"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CB85B46F-035A-4F95-A090-5DFD0F949FDD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "206"
+            endingLineNumber = "206"
+            landmarkName = "updateTitle()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7E31EA5C-845F-4DFF-B7B5-D9ED0224F898"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "130"
+            endingLineNumber = "130"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0B6AB0C8-A962-4538-97F1-CB7E2A9CC35A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "152"
+            endingLineNumber = "152"
+            landmarkName = "updateLines()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D3499529-0246-4AFF-B689-246426CC9876"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "5923"
+            endingLineNumber = "5923"
+            landmarkName = "readTripFromJson(trip:tripSequence:line:showPPAlert:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "66454078-1669-42F0-931D-184391FBEDD6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Download/CBCredentialsPageVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "101"
+            endingLineNumber = "101"
+            landmarkName = "setupUI()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6BFDB9D3-8B39-41F0-B4E7-C2F6B2B62E52"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "5924"
+            endingLineNumber = "5924"
+            landmarkName = "readTripFromJson(trip:tripSequence:line:showPPAlert:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A3C20502-C596-4352-A4FF-FC22C1788284"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "5931"
+            endingLineNumber = "5931"
+            landmarkName = "readTripFromJson(trip:tripSequence:line:showPPAlert:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "57FF5389-5B57-4CCC-9BFE-916E10A7DACF"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/ViewModels/BIBidFileDownloadViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "80"
+            endingLineNumber = "80"
+            landmarkName = "fetchNewBidData(sessionKey:fileName:completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "637879B7-4AC8-4C86-A7B2-6731C0906383"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4858"
+            endingLineNumber = "4858"
+            landmarkName = "addSecondRoundTripsForBidPeriod()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D301F2D7-10B7-40A8-93E8-CABF4F39173E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/ViewModels/BIBidFileDownloadViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "39"
+            endingLineNumber = "39"
+            landmarkName = "fetchHistoricBidLines(filename:completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "868C2429-5A5B-4C46-A59E-74F66D25E763"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "601"
+            endingLineNumber = "601"
+            landmarkName = "configureCell(_:row:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "82CA90CD-83E8-41FE-A1C4-37F2D9B61C66"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "515"
+            endingLineNumber = "515"
+            landmarkName = "tableView(_:numberOfRowsInSection:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A19688A0-A037-4508-BBD3-7B72764DE401"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "492"
+            endingLineNumber = "492"
+            landmarkName = "tableView(_:numberOfRowsInSection:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F59CBDA3-9229-4E50-B3F2-AF48744F8AB8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "493"
+            endingLineNumber = "493"
+            landmarkName = "tableView(_:numberOfRowsInSection:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "80D6DA84-3208-43CB-8A64-E280A35AF9F9"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "514"
+            endingLineNumber = "514"
+            landmarkName = "tableView(_:numberOfRowsInSection:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B188756D-230A-480F-80F8-A75DA8721F61"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "591"
+            endingLineNumber = "591"
+            landmarkName = "configureCell(_:row:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "AD68233F-B8E2-4B18-B340-EE39F8DDABE8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "561"
+            endingLineNumber = "561"
+            landmarkName = "configureCell(_:row:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EDDDB0D0-B061-4F66-97BC-9B17A5194F4B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "564"
+            endingLineNumber = "564"
+            landmarkName = "configureCell(_:row:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C40570B4-1898-4629-8A21-C028093B8765"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "605"
+            endingLineNumber = "605"
+            landmarkName = "configureCell(_:row:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DDA407E0-CEBB-4AF3-B547-A60312C0E4E0"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "595"
+            endingLineNumber = "595"
+            landmarkName = "configureCell(_:row:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B5326D8E-927C-4242-ABD7-D5F005345ACB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "3066"
+            endingLineNumber = "3066"
+            landmarkName = "readLines()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C5744179-99FF-4682-99BA-19B3FAA8A413"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4671"
+            endingLineNumber = "4671"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "69FF51B2-5ACE-4611-B83E-918D458699BA"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4670"
+            endingLineNumber = "4670"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9FAD108B-4FDA-463C-BBE6-44D15D72221C"
+            shouldBeEnabled = "No"
+            condition = "line.number == 164"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4669"
+            endingLineNumber = "4669"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C0EF480D-3C50-4B59-B748-21364C99529D"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -2439,15 +3224,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "904D82F6-ADAC-44AA-AE40-25A79ECB50F7"
+            uuid = "92D83C75-2024-4A03-A79E-0F9494C45EEC"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4647"
-            endingLineNumber = "4647"
+            startingLineNumber = "4640"
+            endingLineNumber = "4640"
             landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2455,15 +3240,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "A41CD426-8B48-4C8D-B623-65BA0E864748"
+            uuid = "C8AFE154-ADCA-4209-A3C6-999BB4C89BE2"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4654"
-            endingLineNumber = "4654"
+            startingLineNumber = "4641"
+            endingLineNumber = "4641"
             landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2471,15 +3256,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "17B3C8CB-9C2C-4C03-A9BF-3716D8E6D0D2"
+            uuid = "81D8CC07-67F3-41C5-8F62-4255B65E722C"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4497"
-            endingLineNumber = "4497"
+            startingLineNumber = "4642"
+            endingLineNumber = "4642"
             landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2487,160 +3272,752 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B0109306-8551-4A41-8F3C-CFCD1C301FCD"
+            uuid = "FB869237-342E-4459-B01F-F4CA3AC6E7C2"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3599"
-            endingLineNumber = "3599"
-            landmarkName = "readLinesFA()"
+            startingLineNumber = "4679"
+            endingLineNumber = "4679"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "331D8DC2-2E31-4EFB-AB1C-9E2CCD537D55"
+            uuid = "04160224-7C0C-4021-A152-C9E4BCD63EE3"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3597"
-            endingLineNumber = "3597"
-            landmarkName = "readLinesFA()"
+            startingLineNumber = "4673"
+            endingLineNumber = "4673"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "404D824D-E1FC-47B9-A4B3-1C35EAE65D87"
+            uuid = "D16BE199-9274-4F34-9395-6E23FA08AFFA"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3615"
-            endingLineNumber = "3615"
-            landmarkName = "readLinesFA()"
+            startingLineNumber = "4676"
+            endingLineNumber = "4676"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "933EB2B8-8A80-4000-98A2-67740210ACE4"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/Models/CoreData/BILine/BILine+CoreDataProperties.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "336"
-            endingLineNumber = "336"
-            landmarkName = "faPositionString()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9E0D583C-4C84-4F0D-8499-02C9EF4BCD82"
+            uuid = "EB93EB27-B080-43B7-92F7-08666BD0888E"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3841"
-            endingLineNumber = "3841"
-            landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
+            startingLineNumber = "4615"
+            endingLineNumber = "4615"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "4B08DB4C-80D7-432F-AAA2-CA73DDD3CC43"
+            uuid = "BC348E05-5559-407E-AAEC-73D1675398BF"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3836"
-            endingLineNumber = "3836"
-            landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
+            startingLineNumber = "4623"
+            endingLineNumber = "4623"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "AC00A9F3-CD1A-404C-9AD0-AEDD545612B1"
+            uuid = "48007740-3176-4D73-8394-6BD6414B2614"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4414"
-            endingLineNumber = "4414"
-            landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
+            startingLineNumber = "4685"
+            endingLineNumber = "4685"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "8703A779-BDFE-4000-B721-B69B53D7B19D"
+            uuid = "DC6E3E45-AF4D-455C-893C-25FE3BD9410D"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3602"
-            endingLineNumber = "3602"
-            landmarkName = "readLinesFA()"
+            startingLineNumber = "4692"
+            endingLineNumber = "4692"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "2347D3B8-3D77-429D-B32D-2A32A10E735B"
+            uuid = "ED373229-F3E3-40FD-BBF6-3F6C3AAF6AEE"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3605"
-            endingLineNumber = "3605"
-            landmarkName = "readLinesFA()"
+            startingLineNumber = "3058"
+            endingLineNumber = "3058"
+            landmarkName = "readLines()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "02D485AD-D42D-4E9B-A406-76AA3BFBA28A"
+            uuid = "B864E584-78FD-442B-A6EF-67BF9E23082D"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "475"
-            endingLineNumber = "475"
-            landmarkName = "configureCell(_:line:row:)"
+            startingLineNumber = "3075"
+            endingLineNumber = "3075"
+            landmarkName = "readLines()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F53802BF-CB75-4B57-AA5B-EE3CC54BC701"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4464"
+            endingLineNumber = "4464"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "95A45424-E97C-441A-804F-ADA065B83634"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4504"
+            endingLineNumber = "4504"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CFBFFDBE-9B84-4CFD-A513-CC52F7D8419E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4631"
+            endingLineNumber = "4631"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "98189598-FB4B-4434-A831-7FBF2499C8B4"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4578"
+            endingLineNumber = "4578"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8D66EB54-DA33-43AE-9D98-A86DCCDFFD26"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4523"
+            endingLineNumber = "4523"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "36A90DE9-C8D9-468B-B1A0-5261377BA526"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4516"
+            endingLineNumber = "4516"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "ED2B5B81-06C7-4E96-A616-23840C9EBD24"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4859"
+            endingLineNumber = "4859"
+            landmarkName = "addSecondRoundTripsForBidPeriod()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "64D8E28F-9A28-4297-B4EC-58012FC67050"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4537"
+            endingLineNumber = "4537"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D98C7110-240B-465F-A70D-8766D4111554"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4508"
+            endingLineNumber = "4508"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A2C247B4-EDB5-4C22-878A-2F236D6B3687"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4474"
+            endingLineNumber = "4474"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "224C8CF3-4E6B-4C98-9AD2-667F32098A67"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4534"
+            endingLineNumber = "4534"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B3CD378E-AA6C-4BE8-B75F-E64F93892E6E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4535"
+            endingLineNumber = "4535"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "666EA5C5-97B6-4505-B57F-212F262504B1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4680"
+            endingLineNumber = "4680"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D6F9D1C1-5706-4CE8-A702-A53762E521E7"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4533"
+            endingLineNumber = "4533"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "358DEFB4-D89D-46CE-99D5-70D97B07B0D5"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/ViewModels/BIBidFileDownloadViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "79"
+            endingLineNumber = "79"
+            landmarkName = "fetchNewBidData(sessionKey:fileName:completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8EFE5561-2178-41B3-8D7C-F171C26CC667"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Models/BIBidInfo.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "bidDataFiles()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "106E17E5-5885-4A9A-80CE-79CF83F23D2F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/ViewModels/BIBidFileDownloadViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
+            landmarkName = "downloadNext()"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "21453353-70E5-4BD0-AF01-D86E27C8D8A4"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/ViewModels/BIBidFileDownloadViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "102"
+            endingLineNumber = "102"
+            landmarkName = "downloadNext()"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "41CB8610-E24E-4451-B1BB-E678FDF3459C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/ViewModels/BIBidFileDownloadViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "103"
+            endingLineNumber = "103"
+            landmarkName = "downloadNext()"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B77AC899-14AF-42FE-885A-7BE34AFB6574"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/ViewModels/BIBidFileDownloadViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "123"
+            endingLineNumber = "123"
+            landmarkName = "downloadNext()"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F3DC1C14-8EAC-438A-A100-8A85114681D6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/ViewModels/BIBidFileDownloadViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "124"
+            endingLineNumber = "124"
+            landmarkName = "downloadNext()"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "07A70361-7EA7-47FE-B2AE-F645C1647FA3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/ViewModels/BIBidFileDownloadViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "25"
+            endingLineNumber = "25"
+            landmarkName = "fetchHistoricBidLines(filename:completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6621E5D0-90B0-4A64-AC8A-24DC2E6DF49B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/ViewModels/BIBidFileDownloadViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "21"
+            endingLineNumber = "21"
+            landmarkName = "fetchHistoricBidLines(filename:completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F2140993-4A23-4E35-84E8-0316E6F5AF44"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Download/CBCredentialsPageVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "172"
+            endingLineNumber = "172"
+            landmarkName = "setupUI()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "46B3D9C9-0330-404A-B569-BDAD023CB7DA"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Download/CBCredentialsPageVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
+            landmarkName = "setupUI()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "FF357B1C-B677-42B4-8994-EA71EEE01265"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Download/CBCredentialsPageVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "92"
+            endingLineNumber = "92"
+            landmarkName = "setupUI()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7EEEAE91-1627-4EEE-B100-A26D7EA6EDEB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Download/CBCredentialsPageVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "93"
+            endingLineNumber = "93"
+            landmarkName = "setupUI()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3426D70C-010F-438F-8BD8-483A3D8DEEF1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/ViewModels/BIBidFileDownloadViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "13"
+            endingLineNumber = "13"
+            landmarkName = "fetchHistoricBidLines(filename:completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2E3227FD-E2B9-4353-9D77-905BAEA6ED9A"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Download/CBCredentialsPageVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "102"
+            endingLineNumber = "102"
+            landmarkName = "setupUI()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BB4FB5A5-87E0-4345-A81B-495A9A8A0D2B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/CBUtils.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "760"
+            endingLineNumber = "760"
+            landmarkName = "getFALISTWB4JSONFromServer()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0A0299B0-30A2-4E79-8510-DD50AE133293"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/CBUtils.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "772"
+            endingLineNumber = "772"
+            landmarkName = "getFALISTWB4JSONFromServer()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "347A5793-6A6A-4411-8C9F-0198DDFE6DF3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/CBUtils.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "768"
+            endingLineNumber = "768"
+            landmarkName = "getFALISTWB4JSONFromServer()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6A8E9720-0901-4CC8-A5B1-5543C8CAB5A5"
+            shouldBeEnabled = "No"
+            condition = "line.number == 232"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4602"
+            endingLineNumber = "4602"
+            landmarkName = "initRigRelatedProperties(for:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F21E2098-FB71-42DC-9DEB-9728A4188DA8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "5068"
+            endingLineNumber = "5068"
+            landmarkName = "tripRigDistributionCalculation(for:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3B95D7CB-E518-472B-BF7B-B0137D5B2807"
+            shouldBeEnabled = "Yes"
+            condition = "line.number == 225"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2098"
+            endingLineNumber = "2098"
+            landmarkName = "calculateNightInMiddle()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "3B95D7CB-E518-472B-BF7B-B0137D5B2807 - c8835ac7971c2696"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "CrewBid_iPad_Swift.BIBidInfoReader.calculateNightInMiddle() -&gt; ()"
+                  moduleName = "CrewBid iPad_Swift.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/fayaz/Documents/GitHub/Crewbid-iPadWbidServer/CrewBid%20iPad_Swift/New%20Files/BIBidInfoReader.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2098"
+                  endingLineNumber = "2098">
+               </Location>
+               <Location
+                  uuid = "3B95D7CB-E518-472B-BF7B-B0137D5B2807 - 6858a2d3fafe1151"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 () -&gt; () in CrewBid_iPad_Swift.BIBidInfoReader.calculateNightInMiddle() -&gt; ()"
+                  moduleName = "CrewBid iPad_Swift.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/fayaz/Documents/GitHub/Crewbid-iPadWbidServer/CrewBid%20iPad_Swift/New%20Files/BIBidInfoReader.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "2099"
+                  endingLineNumber = "2099">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "218C98F5-3674-4058-A95E-A83FE57D7AFD"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2104"
+            endingLineNumber = "2104"
+            landmarkName = "calculateNightInMiddle()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

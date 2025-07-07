@@ -154,7 +154,7 @@ let kCBSelectedWestCoastCities = "CBSelectedWestCoastCities"
 let kCBSelectedNonConusCities = "CBSelectedNonConusCities"
 let kCBInternationalCitiesList = "CBInternationalCitiesList"
 let kCBSelectedAllCities = "CBSelectedAllCities"
-
+let kCBSyncModeChangedNotification = "kCBSyncModeChangedNotification"
 let ReloadCollectionView = "ReloadCollectionView"
 let kCBFaVacationLineValuesKey = "FA Vacation Line Values"
 let kCBRound2DefaultLineValuesKey = "Round 2 Default Line Values"
@@ -378,6 +378,8 @@ var No: NSNumber {
 
 
 var BIFilterRuleEntityName: String = "FilterRule"
+var BILineSortEntityName = "LineSort"
+var BILineEntityName = "Line"
 var BIFilterRuleValueVariablesKey: String = "VALUE"
 var BIFilterRuleCityVariablesKey: String = "CITY"
 var BIFilterRuleRangeStartVariablesKey: String = "RANGESTART"
@@ -568,6 +570,18 @@ var BIFilterRuleCheckstateIsNoMidVariablesKey = "isNoMid"
         }
     }
 }
+enum BIOvernightLengthFilterRuleType : Int {
+    case BIMinimumOvernightLengthType
+    case BIMaximumOvernightLengthType
+    func name () -> Int {
+        switch self
+        {
+        case .BIMinimumOvernightLengthType:return 0
+        case .BIMaximumOvernightLengthType:return 1
+        }
+    }
+}
+
 
 enum AssetsColor {
    case bid_actions

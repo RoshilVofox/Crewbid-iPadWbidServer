@@ -37,11 +37,12 @@ class CBDocumentsCollectionViewController: BaseViewController {
         if !UserDefaults.standard.bool(forKey: "isFirstLaunch"){
             self.showQuickTutorialForFirstTime()
         }
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshBidPeriods), name: Notification.Name(ReloadCollectionView), object: nil)
+        refreshBidPeriods()
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        refreshBidPeriods()
-        NotificationCenter.default.addObserver(self, selector: #selector(refreshBidPeriods), name: Notification.Name(ReloadCollectionView), object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -63,34 +64,63 @@ class CBDocumentsCollectionViewController: BaseViewController {
     }
     
     func deleteCellRow() {
-        if selectedRows.isEmpty {
+            if selectedRows.isEmpty {
+                return
+            }
+            let alertController = UIAlertController(title: "Warning!", message: "All data, including bid receipts, will be deleted.", preferredStyle:UIAlertController.Style.alert)
+            alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
+            alertController.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default)
+                                      { action -> Void in
+                // Iterate over selected rows and delete corresponding bid data
+                self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "deleting...")
+                DispatchQueue.main.async{
+    //                self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "deleting...")
+                    for index in self.selectedRows {
+                        let obj = self.bidPeriodList[index]
+                        self.dataSource.month = (obj.month as? Int)!
+                        self.dataSource.base = obj.base!
+                        self.dataSource.round = (obj.round as? Int)!
+                        let rawValue = obj.positionType!.intValue
+                        self.dataSource.position = BICrewPositionType(rawValue: rawValue)!
+                        
+                        // Build file path
+                        let tempDir = BIBidInfo.temporaryDirectory()
+                        let originalFileName = BIBidInfo.shared.bidDataFilename()
+                        let fileNameWithoutSuffix: String
+                        if let range = originalFileName.range(of: ".737", options: .backwards) {
+                            fileNameWithoutSuffix = String(originalFileName[..<range.lowerBound])
+                        } else {
+                            fileNameWithoutSuffix = originalFileName
+                        }
+                        let fileURL = tempDir.appendingPathComponent(fileNameWithoutSuffix)
+     
+                          // Delete the file if it exists
+                          let fileManager = FileManager.default
+                          if fileManager.fileExists(atPath: fileURL.path) {
+                              do {
+                                  try fileManager.removeItem(at: fileURL)
+                                  print("✅ Deleted file: \(fileURL.lastPathComponent)")
+                              } catch {
+                                  print("❌ Failed to delete file: \(error.localizedDescription)")
+                              }
+                          }
+                        
+                        self.dataSource.managedObjectContext.delete(obj)
+                        do {
+                            try self.dataSource.managedObjectContext.save()
+                        } catch {
+                            print("Error", error.localizedDescription)
+                        }
+                        self.selectedRows.removeAll()
+                        //                self.refreshBidPeriods()
+                    }
+                    self.refreshBidPeriods()
+                    self.view.hideActivityIndicator()
+                }
+            })
+            self.present(alertController, animated: true, completion: nil)
             return
         }
-        let alertController = UIAlertController(title: "Warning!", message: "All data, including bid receipts, will be deleted.", preferredStyle:UIAlertController.Style.alert)
-        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
-        alertController.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default)
-                                  { action -> Void in
-            // Iterate over selected rows and delete corresponding bid data
-            DispatchQueue.main.async{
-                self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "deleting...")
-                for index in self.selectedRows {
-                    let obj = self.bidPeriodList[index]
-                    self.dataSource.managedObjectContext.delete(obj)
-                    do {
-                        try self.dataSource.managedObjectContext.save()
-                    } catch {
-                        print("Error", error.localizedDescription)
-                    }
-                    self.selectedRows.removeAll()
-                    //                self.refreshBidPeriods()
-                }
-                self.refreshBidPeriods()
-                self.view.hideActivityIndicator()
-            }
-        })
-        self.present(alertController, animated: true, completion: nil)
-        return
-    }
     
     @IBAction func settingsAction(_ sender: Any) {
         let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
@@ -151,12 +181,14 @@ class CBDocumentsCollectionViewController: BaseViewController {
             }
 
             let context = self.dataSource.managedObjectContext
-            let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
-
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+            let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: context)
+            fetchRequest.entity = entity
                 // Fetch bid periods and reverse to show newest first
-                self.bidPeriodList = try! context.fetch(fetchRequest)
-                self.bidPeriodList = self.bidPeriodList.reversed()
-                self.collectionView.reloadData()
+            
+            self.bidPeriodList = try! context.fetch(fetchRequest) as! [BIBidPeriod]
+            self.bidPeriodList = self.bidPeriodList.reversed()
+            self.collectionView.reloadData()
             
             if (self.bidPeriodList.count == 0) {
                 self.editButton.setTitle("Edit", for: .normal)

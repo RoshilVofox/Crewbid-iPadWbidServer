@@ -80,6 +80,9 @@ class CBUserFlagTableController: UIViewController,UITableViewDelegate,UITableVie
     var userFlags :NSMutableArray = NSMutableArray()
     var userFlagColors: NSDictionary = NSDictionary()
     var arrowDirection: UIPopoverArrowDirection = [.up,.down]
+    var line:BILine?
+    var delegate: CBUserFlagTableControllerDelegate? = nil
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()

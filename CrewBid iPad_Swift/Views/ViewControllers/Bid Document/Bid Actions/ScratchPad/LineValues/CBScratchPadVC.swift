@@ -34,6 +34,9 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
     var tripCBButton: CBTripButton!
     private var maxPositionsPerLine: Int = 4
     var userFaPosOrder:NSMutableArray!
+    var updateScratchpadTitle: Bool = true
+    var linesArray:NSMutableArray?
+    var linePosDict:NSDictionary?
     override func viewDidLoad() {
         super.viewDidLoad()
         scratchPadTableView.delegate = self
@@ -41,7 +44,6 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
         bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         ScratchPadCalendarData = ScratchPadCalendarData.initWithBidPeriod(bidPeriod: self.bidPeriod!)!
         calendarDay = ScratchPadCalendarData.calendarDays as! [BICalendarDay]
-        
         lblScratchpadLineCount.isUserInteractionEnabled = true
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleTapToScrollTop(_:)))
         tap.numberOfTapsRequired = 1
@@ -55,95 +57,183 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
         let refreshTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.trashRefreshButton))
         btnTrash.addGestureRecognizer(refreshTapGesture)
         refreshTapGesture.delaysTouchesBegan = true
-        if self.bidPeriod!.managedObjectContext!.undoManager == nil {
-            self.bidPeriod!.managedObjectContext!.undoManager = UndoManager()
-        }
-//        notificationObserver()
-        
-        // Filters fetched results controller.
-        let filterFetch = NSFetchRequest<BIFilterRule>(entityName: "FilterRule")
-        filterFetch.sortDescriptors = [NSSortDescriptor(key: "category", ascending: true),    NSSortDescriptor(key: "type", ascending: true)]
-        let moc = self.bidPeriod?.managedObjectContext
-        self.filtersFetchController = NSFetchedResultsController(fetchRequest: filterFetch, managedObjectContext: moc!, sectionNameKeyPath: nil, cacheName: nil)
-        self.filtersFetchController.delegate = self
+        notificationObserver()
         do{
-            try self.filtersFetchController.performFetch()
+            let moc = self.bidPeriod?.managedObjectContext
+            //Filters Fetched Results Controller
+            let filterFetchRequest = NSFetchRequest<BIFilterRule>(entityName: BIFilterRuleEntityName)
+            filterFetchRequest.sortDescriptors = [NSSortDescriptor(key: "category", ascending: true), NSSortDescriptor(key: "type", ascending: true)]
+            filterFetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+            filtersFetchController = NSFetchedResultsController(fetchRequest: filterFetchRequest, managedObjectContext: moc!, sectionNameKeyPath: nil, cacheName: nil)
+            filtersFetchController?.delegate = self
+            try filtersFetchController?.performFetch()
+            
+            //Sorts Fetched Results Controller
+            let sortFetchRequest = NSFetchRequest<BILineSort>(entityName: BILineSortEntityName)
+            sortFetchRequest.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+            sortFetchRequest.predicate = NSPredicate(format: "isBidListSort != %@", NSNumber(value: true))
+
+            sortsFetchController = NSFetchedResultsController(fetchRequest: sortFetchRequest, managedObjectContext: moc!, sectionNameKeyPath: nil, cacheName: nil)
+            sortsFetchController?.delegate = self
+
+            try sortsFetchController?.performFetch()
+            
+            //Lines Fetched Results Controller
+            notTrashedPredicate = NSPredicate(format: "isTrashed == NO")
+            notBidPredicate = NSPredicate(format: "bidOrder == 0")
+
+            var subpredicates = [NSPredicate]()
+            let fetched = filtersFetchController?.fetchedObjects
+            subpredicates.append(contentsOf: fetched!.compactMap { $0.predicate })
+
+            if let notBid = notBidPredicate {
+                subpredicates.insert(notBid, at: 0)
+            }
+            if let notTrashed = notTrashedPredicate {
+                subpredicates.insert(notTrashed, at: 0)
+            }
+
+            if bidPeriod!.isOverNightBulkApplied == "YES" {
+                subpredicates.append(contentsOf: CBUtils.checkOvernightPredicate())
+            }
+            
+            let lineFetch = NSFetchRequest<BILine>(entityName: BILineEntityName)
+            
+            let managedVacationEnabled = UserDefaults.standard.bool(forKey: kCBManageVacationEnabledKey)
+            if !(self.bidPeriod!.vacationType?.count ?? 0 > 1) && managedVacationEnabled == false {
+                let swaptimizerFileURL = Bundle.main.path(forResource: "FilterRulesSwaptimizer", ofType: "plist")
+                let swapRulesDict = NSDictionary(contentsOfFile: swaptimizerFileURL!)
+                let rules = swapRulesDict!["rules"] as? [[String: Any]]
+                let types = rules?.first?["types"] as? [[String: Any]]
+                var arryKeys = [String]()
+                if let types = types {
+                    for dict in types {
+                        if let key = dict["keyPath"] as? String {
+                            arryKeys.append(key)
+                        }
+                    }
+                }
+                let vacationFilters = NSMutableArray()
+                    for i in 0..<subpredicates.count {
+                        let pred = subpredicates[i] as NSPredicate
+                        for j in 0..<rules!.count {
+                            if (pred.description).contains(arryKeys[j]){
+                                vacationFilters.add(subpredicates[i])
+                            }
+                        }
+                    }
+                subpredicates.removeAll { vacationFilters.contains($0) }
+            }
+            let bidPredicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+            let combinedPredicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates + [bidPredicate])
+            lineFetch.predicate = combinedPredicate
+            let lineSorts = updateSorts()
+            lineFetch.sortDescriptors = lineSorts
+
+            linesFetchController = NSFetchedResultsController( fetchRequest: lineFetch, managedObjectContext: moc!, sectionNameKeyPath: nil, cacheName: nil)
+            linesFetchController?.delegate = self
+            try linesFetchController?.performFetch()
+            self.updateTitle()
+            self.fetchTrashedLinesCount()
+            self.updateLines()
+            self.scratchPadTableView.reloadData()
+            
         }catch{
-            print("Filter fetch error: \(error.localizedDescription)")
+            print("Error fetching rules: \(error.localizedDescription)")
         }
         
-        // Sorts fetched results controller.
-        let sortFetch = NSFetchRequest<BILineSort>(entityName: "LineSort")
-        sortFetch.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
-        sortFetch.predicate = NSPredicate(format: "isBidListSort != %@", NSNumber(value: true))
-        self.sortsFetchController = NSFetchedResultsController(fetchRequest: sortFetch, managedObjectContext: moc!, sectionNameKeyPath: nil, cacheName: nil)
-        self.sortsFetchController.delegate = self
-        do{
-            try self.sortsFetchController.performFetch()
-        }catch{
-            print("Sort fetch error: \(error.localizedDescription)")
-        }
-        
-        // Lines fetched results controller.
-        self.notTrashedPredicate = NSPredicate(format: "isTrashed == NO")
-        self.notBidPredicate = NSPredicate(format: "bidOrder == 0")
-//        let subArray = NSMutableArray(array: [self.filtersFetchController.fetchedObjects!])
-//        let subpredicates = subArray.value(forKey: "predicate")
-        updateLines()
     }
     
+    
+
     @objc func updateLines(){
-        self.lines.removeAll()
-        self.sectionLines.removeAll()
-        
-        for case let line as BILine in CBGlobalMethods.shared.selectedBidPeriod!.lines! {
-            lines.append(line)
-        }
-        print("Lines count: \(lines.count)")
-        
-        var lineSorts = updateSorts()
-        self.lines = (lines as NSArray).sortedArray(using: lineSorts) as! [BILine]
-     
+//        NotificationCenter.default.post(name: NSNotification.Name(kCBSyncModeChangedNotification), object: self)
+        let fetch = self.linesFetchController.fetchRequest
+        var lineSorts = self.updateSorts()
         if self.bidPeriod!.isFABid(){
             let positionSort = NSSortDescriptor(key: "faPosition", ascending: true)
             lineSorts.append(positionSort)
         }
-        
-        
-        var tempArray : [BILine] = []
-        var count : Int = -1
-        for line in self.lines {
-            count = count + 1
-            if tempArray.count == 0 {
-                tempArray.append(line)
-            }else{
-                if tempArray[0].number == line.number {
-                    tempArray.append(line)
-                }else{
-                    self.sectionLines.append(tempArray)
-                    tempArray = []
-                    tempArray.append(line)
+        fetch.sortDescriptors = lineSorts
+        var subpredicates = (filtersFetchController?.fetchedObjects)?.compactMap { $0.predicate } ?? []
+        subpredicates.insert(self.notBidPredicate, at: 0)
+        subpredicates.insert(self.notTrashedPredicate, at: 0)
+        let manageVacationEnabled = UserDefaults.standard.bool(forKey: kCBManageVacationEnabledKey)
+        if !(self.bidPeriod?.vacationType?.count ?? 0 > 1) && manageVacationEnabled == false{
+            let swaptimizerFileURL = Bundle.main.path(forResource: "FilterRulesSwaptimizer", ofType: "plist")
+            let faVacFileURL = Bundle.main.path(forResource: "FilterRulesFaVacation", ofType: "plist")
+            let swapRulesDict = NSDictionary(contentsOfFile: swaptimizerFileURL!)
+            let faVacDict = NSDictionary(contentsOfFile: faVacFileURL!)
+            var rules = swapRulesDict!["rules"] as? [[String: Any]]
+            var types = rules?.first?["types"] as? [[String: Any]]
+            var arryKeys = types!.compactMap { $0["keyPath"] as? String}
+            rules = faVacDict!["rules"] as? [[String: Any]]
+            types = rules?.first?["types"] as? [[String: Any]]
+            let arryKeys2 = types!.compactMap { $0["keyPath"] as? String}
+            arryKeys.append(contentsOf: arryKeys2)
+            
+            let vacationFilters = NSMutableArray()
+            
+            for i in 0..<subpredicates.count{
+                let pred = subpredicates[i]
+                for j in 0..<arryKeys.count{
+                    if (pred.description).contains(arryKeys[j]){
+                        vacationFilters.add(subpredicates[i])
+                    }
                 }
             }
-            if (count + 1) == self.lines.count {
-                self.sectionLines.append(tempArray)
-            }
+            subpredicates.removeAll { vacationFilters.contains($0) }
         }
-        DispatchQueue.main.async {
-            self.lblScratchpadLineCount.text = "Scratchpad- \(self.lines.count) Lines"
+        if self.bidPeriod?.isOverNightBulkApplied == "YES"{
+            subpredicates.append(contentsOf: CBUtils.checkOvernightPredicate())
+        }
+//        fetch.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
+        let bidPredicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+        let combinedPredicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates + [bidPredicate])
+        fetch.predicate = combinedPredicate
+        do{
+            try linesFetchController.performFetch()
+        }catch{
+            print("Fetch Error: \(error.localizedDescription)")
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
             self.fetchTrashedLinesCount()
-            self.scratchPadTableView.reloadData()
+            self.updateTitle()
+        })
+    }
+    
+    func updateTitle(){
+        if updateScratchpadTitle{
+            let linesCount = self.linesFetchController.fetchedObjects?.count
+            DispatchQueue.main.async {
+                self.lblScratchpadLineCount.text = "Scratchpad- \(linesCount ?? 0) Lines"
+            }
         }
     }
     
+    
     func notificationObserver(){
-        NotificationCenter.default.addObserver(self, selector: #selector(updateLines), name: NSNotification.Name("refreshLines"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshAllData), name: NSNotification.Name("refreshAllData"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshLineValues), name: NSNotification.Name("refreshLineValues"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(removedTrashLines), name: NSNotification.Name("removedLines"), object: nil)
         
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    @objc func refreshLineValues(){
+        self.scratchPadTableView.reloadData()
+    }
     
     
+    @objc func refreshAllData(){
+        self.updateLines()
+        self.updateTitle()
+        self.scratchPadTableView.reloadData()
+    }
     
     
     @objc func removedTrashLines(notification: NSNotification){
@@ -163,7 +253,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
                 }catch{
                     print("Error saving removed trash lines: \(error.localizedDescription)")
                 }
-                //refreshlines notification
+                NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
                 
             }
         }
@@ -172,20 +262,28 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
                 let temp: NSMutableArray = self.bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
                 temp.add(lineNumArray)
                 self.bidPeriod?.lastTrashedDetails = temp
-                //refreshlines notification
+                NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
             }
         }
     }
     
     func updateSorts() -> [NSSortDescriptor] {
-        var lineSorts: [NSSortDescriptor] = []
-        do{
-            try self.sortsFetchController.performFetch()
-        }catch{
-            print("Error fetching sort: \(error.localizedDescription)")
+        var count: Int = (bidPeriod!.lineSorts ?? NSSet()).count
+        var lineSortsArray = NSArray()
+        if count > 0 {
+            let predicate = NSPredicate(format: "isBidListSort != \(NSNumber(value: true))")
+            lineSortsArray =  ((bidPeriod!.lineSorts!.allObjects as NSArray).filtered(using: predicate) as NSArray).sortedArray(using: [NSSortDescriptor(key: "order", ascending: true)]) as NSArray
+            
+            if !((bidPeriod?.vacationType?.count ?? 0) > 0) {
+                let pr = NSPredicate(format: "category != \(NSNumber(value: BILineSortCategory.BIFaVacationLineSortCategory.rawValue))")
+                let pr2 = NSPredicate(format: "category != \(NSNumber(value: BILineSortCategory.BISwaptimizerLineSortCategory.rawValue))")
+                lineSortsArray = lineSortsArray.filtered(using: NSCompoundPredicate.init(andPredicateWithSubpredicates: [pr, pr2])) as NSArray
+            }
+            
+            count = lineSortsArray.count
         }
-        let count = self.sortsFetchController.fetchedObjects?.count
-        
+        var lineSorts : [NSSortDescriptor] = []
+        // Always get type and number for lines.
         let type = NSExpression(forKeyPath: "type")
         let typeExpDescription = NSExpressionDescription()
         typeExpDescription.name = "type"
@@ -199,48 +297,44 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
         numberExpDescription.expressionResultType = .integer16AttributeType
         
         var addedLineNumSort = false
-        
+        // Get values for all sort descriptors.
         let standardPosOrder: NSMutableArray = [0, 1, 2, 3]
         let userPosOrder = NSMutableArray(capacity:maxPositionsPerLine)
-        
-        for i in 0..<count!{
-            let lineSort = self.sortsFetchController.object(at: IndexPath(row: i, section: 0))
-            
-            let manageVacationEnabled = UserDefaults.standard.bool(forKey: kCBManageVacationEnabledKey)
-            if BILineSortCategory.BISwaptimizerLineSortCategory.rawValue == lineSort.category?.intValue || BILineSortCategory.BIFaVacationLineSortCategory.rawValue == lineSort.category?.intValue && !((self.bidPeriod?.vacationType!.length)! > 0) && (manageVacationEnabled == false){
+        for i in 0..<count {
+            let lineSort = lineSortsArray[i] as? BILineSort
+            if nil == lineSort?.keyPath || 0 == (lineSort?.keyPath?.length ?? 0) {
                 continue
-            }
-            if lineSort.keyPath == nil || lineSort.keyPath?.length == 0{
-                continue
-            }else{
-                if lineSort.category?.intValue == BILineSortCategory.BIPositionsLineSortCategory.rawValue{
-                    if !addedLineNumSort{
+            } else {
+                if lineSort?.category?.intValue == BILineSortCategory.BIPositionsLineSortCategory.rawValue {
+                    if !addedLineNumSort {
                         let sort = NSSortDescriptor(key: numberExpDescription.name, ascending: true)
                         lineSorts.append(sort)
                         addedLineNumSort = true
                     }
-                    userPosOrder.add(lineSort.type!)
+                    userPosOrder.add(lineSort?.type as Any)
                 }
-                let sort = NSSortDescriptor(key: lineSort.keyPath, ascending: lineSort.ascending!.boolValue)
-                lineSorts.append(sort)
+                let sort = NSSortDescriptor(key: lineSort?.keyPath, ascending: (lineSort?.ascending?.boolValue)!)
+              //  if lineSort?.isBidListSort == false{
+                    lineSorts.append(sort)
+              //  }
             }
         }
-        for pos in userPosOrder{
+        for pos in userPosOrder {
             standardPosOrder.remove(pos)
         }
-        userPosOrder.addObjects(from: standardPosOrder as! [Any])
-        self.userFaPosOrder = userPosOrder
         userPosOrder.add(standardPosOrder)
         var sort = NSSortDescriptor(key: typeExpDescription.name, ascending: true)
         sort = NSSortDescriptor(key: numberExpDescription.name, ascending: true)
         lineSorts.append(sort)
-        
-        if self.bidPeriod!.isFABid(){
+        // Ensure that the lines are sorted by position if FA since the position logic depends on it
+        if bidPeriod!.isFABid() {
             let positionSort = NSSortDescriptor(key: "faPosition", ascending: true)
             lineSorts.append(positionSort)
         }
         return lineSorts
     }
+    
+    
     
     
     func fetchTrashedLinesCount(){
@@ -285,13 +379,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
     }
     
     @objc func handleTapToScrollTop(_ sender: UITapGestureRecognizer) {
-        guard self.scratchPadTableView.numberOfSections > 0 else {
-            return
-        }
-        guard self.scratchPadTableView.numberOfRows(inSection: 0) > 0 else {
-            return
-        }
-        self.scratchPadTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+        self.scratchPadTableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
     }
     
     //Tap gesture for refresh button in trash menu.
@@ -327,16 +415,37 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
                 AlertService.showAlertForTopVC(title: "Line not found", message: "Line \(lineNumber) is not in the Scratchpad.  It is either filtered out, trashed, or in the Bid List.", actions: nil)
                 return
             }
-            for i in 0..<self.sectionLines.count {
-                for line in self.sectionLines[i] {
-                    let numberOnly = lineNumber.filter { $0.isNumber }
-                    if line.number?.stringValue == numberOnly {
-                        self.scratchPadTableView.scrollToRow(at: IndexPath(row: 0, section: i), at: .middle, animated: true)
-                        return
+            let lineNumPred = NSPredicate(format: "number == %@", lineNumber)
+            let fetchedLines = self.linesArray
+            let lineArray = (fetchedLines as? [Any])?.filter { lineNumPred.evaluate(with: $0) } ?? []
+            if !lineArray.isEmpty {
+                let line = lineArray.first as! BILine
+                let index = self.linesArray?.index(of: line)
+                let lineIndexPath = NSIndexPath(row: index!, section: 0)
+                if lineIndexPath.row < self.scratchPadTableView.numberOfRows(inSection: 0){
+                    self.scratchPadTableView.scrollToRow(at: lineIndexPath as IndexPath, at: .middle, animated: true)
+                }
+            }else{
+                    let num = Int(lineNumber)
+                    var theLine:BILine? = nil
+                    for case let line as BILine in fetchedLines! {
+                        if line.number?.intValue == num{
+                            theLine = line
+                            break
+                        }
+                    }
+                    if theLine != nil {
+                        let index = self.linesArray?.index(of: theLine!)
+                        let lineIndexPath = NSIndexPath(row: index!, section: 0)
+                        if lineIndexPath.row < self.scratchPadTableView.numberOfRows(inSection: 0){
+                            self.scratchPadTableView.scrollToRow(at: lineIndexPath as IndexPath, at: .middle, animated: true)
+                        }
+                    }else{
+                        AlertService.showAlertForTopVC(title: "Line not found", message: "Line \(lineNumber) is not in the Scratchpad. It is either filtered out, trashed, or in the Bid List.", actions: nil)
                     }
                 }
-            }
-            AlertService.showAlertForTopVC(title: "Line not found", message: "Line \(lineNumber) is not in the Scratchpad. It is either filtered out, trashed, or in the Bid List.", actions: nil)
+            
+            
                 
         }))
         
@@ -369,20 +478,50 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
 extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return self.sectionLines.count
+        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        self.linesArray = NSMutableArray()
+        self.linePosDict = NSDictionary()
+        let linePos = NSMutableDictionary()
+        let linesArray = NSMutableArray(array: self.linesFetchController.fetchedObjects!)
+        let linesToRemove = NSMutableIndexSet()
+        let posArray = NSMutableArray()
+        for index in 0..<linesArray.count {
+            let line = linesArray[index] as! BILine
+            if index == 0{
+                posArray.add(line.faPositionString)
+            }
+            if index > 0 {
+                let prevLine = linesArray[index - 1] as! BILine
+                if line.number?.intValue == prevLine.number?.intValue {
+                    posArray.add(line.faPositionString)
+                    linesToRemove.add(index)
+                }else{
+                    linePos.setValue(posArray.mutableCopy(), forKey: prevLine.number!.stringValue)
+                    posArray.removeAllObjects()
+                    posArray.add(line.faPositionString)
+                }
+            }
+            
+            if index == linesArray.count - 1 {
+                linePos.setValue(posArray.mutableCopy(), forKey: line.number!.stringValue)
+                posArray.removeAllObjects()
+    
+            }
+        }
+        linesArray.removeObjects(at: linesToRemove as IndexSet)
+        self.linePosDict = linePos
+        self.linesArray = linesArray
+        return linesArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ScratchPadTableCellTableViewCell") as! ScratchPadTableCellTableViewCell
-        cell.selectionStyle = .none
-        cell.availableFaLines = self.sectionLines[indexPath.section]
-        cell.orderLabel.text = "\(indexPath.section + 1)"
-        let line = self.sectionLines[indexPath.section][indexPath.row]
-        configureCell(cell, line: line, row: indexPath.section)
+        configureCell(cell, row: indexPath.row)
+        cell.controllerDelegate = self
+        cell.fromScrachpadView = true
         return cell
     }
     
@@ -390,14 +529,21 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
         return 273
     }
     
-    func configureCell(_ cell:ScratchPadTableCellTableViewCell, line:BILine, row : Int) {
+    func configureCell(_ cell:ScratchPadTableCellTableViewCell, row : Int) {
+        let line = self.linesArray![row] as! BILine
         cell.lineNumberLabel.text = line.number?.stringValue
+        cell.orderLabel.text = "\(row + 1)"
+        cell.selectionStyle = .none
+        if line.isRedEyeLine == true{
+            cell.redEyeImage.isHidden = false
+        }else{
+            cell.redEyeImage.isHidden = true
+        }
+        
         cell.calendarData = ScratchPadCalendarData
         cell.calendarDaysArr = calendarDay
         cell.bidPeriod = bidPeriod!
         cell.line = line
-        cell.contentView.tag = row
-        cell.index = row
         cell.tableView = scratchPadTableView
         cell.tripButtonActionBlock = {(_ tripButton: CBTripButton) -> Void in
             DispatchQueue.main.async {
@@ -405,8 +551,19 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
             }}
 
         
-        let setupCircles = true
+        var setupCircles = true
         if (bidPeriod?.isFABid())!{
+            
+            if row > 0 {
+                let prevLine = self.linesArray![row - 1] as! BILine
+                let line = self.linesArray![row] as! BILine
+                if line.number?.intValue == prevLine.number?.intValue{
+                    cell.isHidden = true
+                }
+            }else{
+                cell.isHidden = false
+            }
+            
             cell.removeAllTripButtons()
             cell.posAGrayView.alpha = 0
             cell.posBGrayView.alpha = 0
@@ -418,58 +575,55 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
             cell.posDView.alpha = 0
             cell.posMView.alpha = 0
             cell.posNAView.alpha = 0
-            
-            if line.faPositionString() == "NA"{
+
+            if line.faPositionString == "NA"{
                 cell.posNAView.alpha = 1
-                cell.refreshTripButtons(highlightFlag: true)
-            }else if line.faPositionString() == "M"{
+                cell.refreshTripButtons(highlightFlag: true, calendarWidth: Float(self.view.frame.size.width) - 160)
+            }else if line.faPositionString == "M"{
                 cell.posMView.alpha = 1
-                cell.refreshTripButtons(highlightFlag: true)
+                cell.refreshTripButtons(highlightFlag: true, calendarWidth: Float(self.view.frame.size.width) - 160)
             }else{
+                
+                if row > 0 {
+                    let prevLine = self.linesArray![row - 1] as! BILine
+                    let line = self.linesArray![row] as! BILine
+                    if line.number?.intValue == prevLine.number?.intValue{
+//                        setupCircles = false
+                    }
+                }
+                
                 if setupCircles{
                     cell.posAGrayView.alpha = 0.15
                     cell.posBGrayView.alpha = 0.15
                     cell.posCGrayView.alpha = 0.15
                     cell.posDGrayView.alpha = 0.15
-                    if line.number == 350{
-                        print("")
-                    }
-                    let linesFA = self.sectionLines[row]
-                    for (index,posLine) in linesFA.enumerated() {
-                        let posString = posLine.faPositionString()
-                        if posString == "A" {
-                            cell.setCircle(index, withPos: posLine.faPositionString(), color: CBColor.faPosAColor, isGray: false)
-                        }else if posString == "B" {
-                            cell.setCircle(index, withPos: posLine.faPositionString(), color: CBColor.faPosBColor, isGray: false)
-                        }else if posString == "C" {
-                            cell.setCircle(index, withPos: posLine.faPositionString(), color: CBColor.faPosCColor, isGray: false)
-                        }else {
-                            cell.setCircle(index, withPos: posLine.faPositionString(), color: CBColor.faPosDColor, isGray: false)
+                    
+                    let faPositions = self.linePosDict![line.number!.stringValue] as! [Any]
+                    
+//                    if cell.isHidden == false{
+                        for j in 0..<faPositions.count{
+                            let posString = faPositions[j] as! String
+                            if posString == "A" {
+                                cell.setCircle(j, withPos: posString, color: CBColor.faPosAColor, isGray: false)
+                            }else if posString == "B" {
+                                cell.setCircle(j, withPos: posString, color: CBColor.faPosBColor, isGray: false)
+                            }else if posString == "C" {
+                                cell.setCircle(j, withPos: posString, color: CBColor.faPosCColor, isGray: false)
+                            }else {
+                                cell.setCircle(j, withPos: posString, color: CBColor.faPosDColor, isGray: false)
+                            }
                         }
-                    }
-                    cell.refreshTripButtons(highlightFlag: true)
+//                    }
+                    cell.refreshTripButtons(highlightFlag: true, calendarWidth: Float(self.view.frame.size.width) - 160)
                 }
             }
         }else{
-            cell.refreshTripButtons(highlightFlag: true)
-            
-//            cell.posAGrayView.alpha = 0
-//            cell.posBGrayView.alpha = 0
-//            cell.posCGrayView.alpha = 0
-//            cell.posDGrayView.alpha = 0
-//            cell.posAView.alpha = 0
-//            cell.posBView.alpha = 0
-//            cell.posCView.alpha = 0
-//            cell.posDView.alpha = 0
-//            cell.posMView.alpha = 0
-//            cell.posNAView.alpha = 0
+            let orderLabel:UILabel = cell.viewWithTag(20) as! UILabel
+            orderLabel.alpha = 1
+            cell.refreshTripButtons(highlightFlag: true, calendarWidth: Float(self.view.frame.size.width) - 160)
         }
         
-        if line.isRedEyeLine == true{
-            cell.redEyeImage.isHidden = false
-        }else{
-            cell.redEyeImage.isHidden = true
-        }
+        
         
         //Set Etops line
         if line.isETOPSRES?.boolValue == true{
@@ -533,7 +687,7 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
             lineValuesToDisplay.addObjects(from: arr)
         }
         for i in 0..<lineValuesToDisplay.count {
-            let tag = 100 + i * 10
+            let tag = 10000 + i * 10
             let valueType: NSInteger
             let lineValueView = cell.viewWithTag(tag) as? CBLineValueView
             if let val = lineValuesToDisplay[i] as? NSNumber {
@@ -566,7 +720,7 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
         }
         // Set any unused lineValueViews to transparent
         for i in lineValuesToDisplay.count..<5 {
-            let tag = 100 + i * 10
+            let tag = 10000 + i * 10
             let lineValueView = cell.viewWithTag(tag) as? CBLineValueView
             lineValueView?.alpha = 0
         }
@@ -593,3 +747,59 @@ extension CBScratchPadVC: UITextFieldDelegate {
         return true
     }
 }
+
+
+/*
+ // Filters fetched results controller.
+ let filterFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "FilterRule")
+ filterFetch.sortDescriptors = [NSSortDescriptor(key: "category", ascending: true), NSSortDescriptor(key: "type", ascending: true)]
+ let moc = self.bidPeriod?.managedObjectContext
+ let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+ self.filtersFetchController = NSFetchedResultsController(fetchRequest: filterFetch, managedObjectContext: moc!, sectionNameKeyPath: nil, cacheName: nil)
+ self.filtersFetchController.delegate = self
+ do{
+     try self.filtersFetchController.performFetch()
+ }catch{
+     print("Filter fetch error: \(error.localizedDescription)")
+ }
+ 
+ // Sorts fetched results controller.
+ let sortFetch = NSFetchRequest<BILineSort>(entityName: "LineSort")
+ sortFetch.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+ sortFetch.predicate = NSPredicate(format: "isBidListSort != %@", NSNumber(value: true))
+ self.sortsFetchController = NSFetchedResultsController(fetchRequest: sortFetch, managedObjectContext: moc!, sectionNameKeyPath: nil, cacheName: nil)
+ self.sortsFetchController.delegate = self
+ do{
+     try self.sortsFetchController.performFetch()
+ }catch{
+     print("Sort fetch error: \(error.localizedDescription)")
+ }
+ 
+ // Lines fetched results controller.
+ self.notTrashedPredicate = NSPredicate(format: "isTrashed == NO")
+ self.notBidPredicate = NSPredicate(format: "bidOrder == 0")
+ let subArray = NSMutableArray(array: [self.filtersFetchController.fetchedObjects!])
+ let subpredicates = NSMutableArray(array: filtersFetchController.fetchedObjects?.compactMap {
+     ($0 as! BIFilterRule).predicate
+ } ?? [])
+ subpredicates.insert(self.notBidPredicate!, at: 0)
+ subpredicates.insert(self.notTrashedPredicate!, at: 0)
+ if self.bidPeriod?.isOverNightBulkApplied == "YES" {
+     subpredicates.addObjects(from: [CBUtils.checkOvernightPredicate()])
+ }
+ let linesFetch = NSFetchRequest<BILine>(entityName: "Line")
+ let manageVacationEnabled = UserDefaults.standard.bool(forKey: kCBManageVacationEnabledKey)
+ if !((self.bidPeriod!.vacationType!.length > 1) && manageVacationEnabled == false){
+     let swaptimizerFileURL = Bundle.main.path(forResource: "FilterRulesSwaptimizer", ofType: "plist")
+     let swapRulesDict = NSDictionary(contentsOfFile: swaptimizerFileURL!)
+     let rules = swapRulesDict!["rules"] as? [[String: Any]]
+     let types = rules?.first?["types"] as? [[String: Any]]
+     let arryKeys = types!.compactMap { $0["keyPath"] as? String
+     }
+ }
+ 
+ 
+ 
+ 
+ 
+ */

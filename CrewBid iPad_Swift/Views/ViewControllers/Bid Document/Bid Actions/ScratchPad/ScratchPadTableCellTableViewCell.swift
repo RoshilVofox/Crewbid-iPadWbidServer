@@ -7,7 +7,100 @@
 
 import UIKit
 
-class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout {
+class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout, CBUserFlagTableControllerDelegate {
+    func changeLineUserFlagTypeTo(flagType: CBUserFlagType, selectedLine: BILine?) {
+        if CBGlobalMethods.shared.selectedBidPeriod!.isFABid() {
+            for case let tempLine as BILine in CBGlobalMethods.shared.selectedBidPeriod!.lines! {
+                if selectedLine != nil {
+                    if (selectedLine!.number == tempLine.number) && (tempLine.bidOrder == 0){
+                        tempLine.userFlagType = flagType.rawValue as NSNumber
+                    }
+                }
+            }
+        }else{
+            if selectedLine != nil {
+                selectedLine!.userFlagType = flagType.rawValue as NSNumber
+            }
+        }
+        
+        var sortRule = (CBGlobalMethods.shared.selectedBidPeriod!.lineSorts!.allObjects as NSArray).filtered(using: NSPredicate(format: "category == 10")) as! [BILineSort]
+        sortRule = (sortRule as NSArray).sortedArray(using: [NSSortDescriptor.init(key: "category", ascending: true),NSSortDescriptor.init(key: "type", ascending: true)] as [NSSortDescriptor]) as! [BILineSort]
+        
+        if sortRule.count > 0 {
+            let arrayVariales = sortRule.first?.arrayVariables as! [NSNumber]
+            var userFlags = [Int]()
+            var userFlagColors = [UIColor]()
+            
+            for variable in arrayVariales{
+                switch variable.intValue {
+                case 0:
+                    userFlags.append(CBUserFlagType.none.rawValue)
+                    userFlagColors.append(.clear)
+                    break
+                case 1:
+                    userFlags.append(CBUserFlagType.blue.rawValue)
+                    userFlagColors.append(CBColor.faPosAColor)
+                    break
+                case 2:
+                    userFlags.append(CBUserFlagType.green.rawValue)
+                    userFlagColors.append(CBColor.faPosBColor)
+                    break
+                case 3:
+                    userFlags.append(CBUserFlagType.red.rawValue)
+                    userFlagColors.append(CBColor.faPosDColor)
+                    break
+                case 4:
+                    userFlags.append(CBUserFlagType.yellow.rawValue)
+                    userFlagColors.append(CBColor.faPosCColor)
+                    break
+                case 5:
+                    userFlags.append(CBUserFlagType.orange.rawValue)
+                    userFlagColors.append(.orange)
+                    break
+                case 6:
+                    userFlags.append(CBUserFlagType.brown.rawValue)
+                    userFlagColors.append(CBColor.oldbrownColor)
+                    break
+                case 7:
+                    userFlags.append(CBUserFlagType.pink.rawValue)
+                    userFlagColors.append(UIColor.systemPink.withAlphaComponent(0.8))
+                    break
+                default:break
+                }
+            }
+            reSetFlagOrder(userFlags: userFlags)
+        }else{
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
+        }
+        
+    }
+    
+    func reSetFlagOrder(userFlags: [Int]){
+        var arrIndexValue: Int
+        let lines = CBGlobalMethods.shared.selectedBidPeriod!.lines!.allObjects as! [BILine]
+        for line in lines {
+            if userFlags.contains(line.userFlagType!.intValue){
+                line.flagOrder = NSNumber(integerLiteral: 8)
+            }
+        }
+        for i in 0..<userFlags.count{
+            arrIndexValue = userFlags[i]
+            let notBlankPredicate = NSPredicate(format: "userFlagType == %d", arrIndexValue)
+            let sortedLines = CBGlobalMethods.shared.selectedBidPeriod!.lines!.allObjects.filter{
+                notBlankPredicate.evaluate(with: $0)} as! [BILine]
+            for line in sortedLines {
+                line.flagOrder = NSNumber(integerLiteral: i)
+            }
+        }
+        
+        do{
+            try self.bidPeriod?.managedObjectContext!.save()
+        }catch{
+            print("Error saving context in reSetFlagOrder: \(error.localizedDescription)")
+        }
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
+    }
+    
 
     var kCBLineValueViewWidth : CGFloat = 55.0
     var kCBLineValueViewHeight : CGFloat = 28.0
@@ -71,8 +164,8 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     var calendarDay : [BICalendarDay] = []
     var deletedObjArray:[String] = []
     typealias CBLineCellTripButtonActionBlock = (_ tripButton: CBTripButton) -> Void
-
-    
+    weak var controllerDelegate: UIViewController?
+    var fromScrachpadView:Bool?
 
     func cellLayout(){
         let layout = UICollectionViewFlowLayout()
@@ -81,10 +174,9 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         collectionView.collectionViewLayout = layout
     }
-    //--------------------------
     
     
-    func refreshTripButtons(highlightFlag:Bool) {
+    func refreshTripButtons(highlightFlag:Bool, calendarWidth:Float) {
         
     }
     
@@ -382,8 +474,8 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     @objc func showUserFlagMenu() {
         let storyboard : UIStoryboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let lineValuesController = storyboard.instantiateViewController(withIdentifier: "CBUserFlagTableController") as! CBUserFlagTableController
-//        lineValuesController.line = line
-//        lineValuesController.delegate = self
+        lineValuesController.line = line
+        lineValuesController.delegate = self
         lineValuesController.modalPresentationStyle = .popover
         lineValuesController.showPopover(sourceView: self.userFlagIconView)
         

@@ -12,7 +12,6 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var resetButton: UIButton!
-    
     var lineValuesTemp:NSArray!
     
     var selectedValuesCount: Int = 0
@@ -150,6 +149,10 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
     
     @IBAction func resetAction(_ sender: Any) {
         resetStdAction()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.post(name: NSNotification.Name("refreshAllData"), object: nil)
     }
     
     class func setLineValueView(_ lineValueView: CBLineValueView, with line: BILine, forType valueType: CBLineValueTypes, bidPeriod: BIBidPeriod) {
