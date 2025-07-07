@@ -31,14 +31,32 @@ class CBFlagSortPopUp: UIViewController {
     @IBOutlet weak var checkBrownFlag: UIButton!
     @IBOutlet weak var checkPinkFlag: UIButton!
     
+    var lineSort: BILineSort!
+    var bidPeriod: BIBidPeriod!
+    var nextSortOrder: NSNumber!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
     }
 }
-class FlagCheckTableViewCell{
+
+class FlagCheckTableViewCell: UITableViewCell{
     
     @IBOutlet weak var imgFlag: UIImageView!
     @IBOutlet weak var imgCheckBox: UIImageView!
+}
+
+extension CBFlagSortPopUp: UITableViewDataSource, UITableViewDelegate{
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "FlagCheckTableViewCell") as! FlagCheckTableViewCell
+        return cell
+    }
+    
+    
 }

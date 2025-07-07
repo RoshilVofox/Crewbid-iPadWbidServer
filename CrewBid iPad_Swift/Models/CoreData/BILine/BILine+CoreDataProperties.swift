@@ -459,3 +459,40 @@ extension BILine : Identifiable {
     case BIDeadheadAtBothSortType
 }
 
+@objc enum BIVacationLineSortType : Int {
+   case TotalPay           //0
+   case FlyPay            //1
+   case VacationPay       //2
+   case PayPerBlock        //3
+   case PayPerDay         //4
+   case CarryOutPay        //5
+   case BlockTime          //6
+   case DaysOff           //7
+   case EffectiveVacationLength //8
+   case FrontVoPay            // 9
+   case BackVoPay               // 10
+   case VacayCarryOutPay        // 11
+   case CarryOutVoPay          // 12
+   case LongestBlockofDaysOff  //13
+   case VacationPayBothBP       //14
+   case VacationPayNextBP //15
+   case VANe           //16
+}
+@objc enum BIPassesThruBaseLineSortType : Int {
+    case BIPassesThruBaseLineSortTypeMidTrip
+    case BIPassesThruBaseLineSortTypeStandard
+}
+
+@objc enum BIPositionsLineSortType : Int {
+    case BIPositionASortType
+    case BIPositionBSortType
+    case BIPositionCSortType
+    case BIPositionDSortType
+    case BIPositionQuickAddABCType
+}
+
+var kNameLineSortKey: String = "name"
+var kCategoryTitleLineSortKey: String = "title"
+var kCategoryTypesLineSortKey: String = "types"
+var kLineSortsSortsKey: String = "sorts"
+

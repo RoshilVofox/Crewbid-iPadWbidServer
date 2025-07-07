@@ -8,6 +8,18 @@
 import UIKit
 
 class CBCommutabilitySortCell: UITableViewCell {
+    
+    var lineSort1: BILineSort!
+    var context = CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext
+    
+    var lineSort: BILineSort? {
+        set(newLineSort){
+           lineSort1 = newLineSort
+        }
+        get {
+            return lineSort1
+        }
+    }
 
     @IBOutlet weak var btnTitle: UIButton!
     override func awakeFromNib() {
@@ -20,11 +32,21 @@ class CBCommutabilitySortCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
+    
+    func configurecommutabilitySortCell() {
+        
+    }
 
     @IBAction func btnCloseAction(_ sender: Any) {
-        NotificationCenter.default.post(
-            name: Notification.Name("DeleteCellNotification"),
-            object: self // Pass the cell itself as the object
-        )
+        context!.delete(lineSort!)
+        do {
+            try context?.save()
+        }
+        catch {
+            print("Error deleting object \(error.localizedDescription)")
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+        }
     }
 }

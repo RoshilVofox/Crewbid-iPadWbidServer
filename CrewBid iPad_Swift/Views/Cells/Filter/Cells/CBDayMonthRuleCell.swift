@@ -13,6 +13,7 @@ class CBDayMonthRuleCell: UITableViewCell {
     var calendarData: BICalendarData?
     let context = CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext
     
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

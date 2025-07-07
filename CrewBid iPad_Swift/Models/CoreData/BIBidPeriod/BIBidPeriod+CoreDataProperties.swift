@@ -11,11 +11,11 @@ import CoreData
 
 
 extension BIBidPeriod {
-
+    
     @nonobjc public class func fetchRequest() -> NSFetchRequest<BIBidPeriod> {
         return NSFetchRequest<BIBidPeriod>(entityName: "BidPeriod")
     }
-
+    
     @NSManaged public var appVersion: String?
     @NSManaged public var aWeekDays: String?
     @NSManaged public var base: String?
@@ -145,194 +145,194 @@ extension BIBidPeriod {
     @NSManaged public var vacations: NSSet?
     @NSManaged public var lineFilters: NSSet?
     @NSManaged public var bidByEmpID: String?
-
+    
 }
 
 // MARK: Generated accessors for awardDetails
 extension BIBidPeriod {
-
+    
     @objc(addAwardDetailsObject:)
     @NSManaged public func addToAwardDetails(_ value: AwardDetails)
-
+    
     @objc(removeAwardDetailsObject:)
     @NSManaged public func removeFromAwardDetails(_ value: AwardDetails)
-
+    
     @objc(addAwardDetails:)
     @NSManaged public func addToAwardDetails(_ values: NSSet)
-
+    
     @objc(removeAwardDetails:)
     @NSManaged public func removeFromAwardDetails(_ values: NSSet)
-
+    
 }
 
 // MARK: Generated accessors for bidReceipts
 extension BIBidPeriod {
-
+    
     @objc(addBidReceiptsObject:)
     @NSManaged public func addToBidReceipts(_ value: BIBidReceipt)
-
+    
     @objc(removeBidReceiptsObject:)
     @NSManaged public func removeFromBidReceipts(_ value: BIBidReceipt)
-
+    
     @objc(addBidReceipts:)
     @NSManaged public func addToBidReceipts(_ values: NSSet)
-
+    
     @objc(removeBidReceipts:)
     @NSManaged public func removeFromBidReceipts(_ values: NSSet)
-
+    
 }
 
 // MARK: Generated accessors for commuteTime
 extension BIBidPeriod {
-
+    
     @objc(addCommuteTimeObject:)
     @NSManaged public func addToCommuteTime(_ value: CommuteTime)
-
+    
     @objc(removeCommuteTimeObject:)
     @NSManaged public func removeFromCommuteTime(_ value: CommuteTime)
-
+    
     @objc(addCommuteTime:)
     @NSManaged public func addToCommuteTime(_ values: NSSet)
-
+    
     @objc(removeCommuteTime:)
     @NSManaged public func removeFromCommuteTime(_ values: NSSet)
-
+    
 }
 
 // MARK: Generated accessors for deadheadAtEndCities
 extension BIBidPeriod {
-
+    
     @objc(addDeadheadAtEndCitiesObject:)
     @NSManaged public func addToDeadheadAtEndCities(_ value: BIDeadheadAtEndCity)
-
+    
     @objc(removeDeadheadAtEndCitiesObject:)
     @NSManaged public func removeFromDeadheadAtEndCities(_ value: BIDeadheadAtEndCity)
-
+    
     @objc(addDeadheadAtEndCities:)
     @NSManaged public func addToDeadheadAtEndCities(_ values: NSSet)
-
+    
     @objc(removeDeadheadAtEndCities:)
     @NSManaged public func removeFromDeadheadAtEndCities(_ values: NSSet)
-
+    
 }
 
 // MARK: Generated accessors for deadheadAtStartCities
 extension BIBidPeriod {
-
+    
     @objc(addDeadheadAtStartCitiesObject:)
     @NSManaged public func addToDeadheadAtStartCities(_ value: BIDeadheadAtStartCity)
-
+    
     @objc(removeDeadheadAtStartCitiesObject:)
     @NSManaged public func removeFromDeadheadAtStartCities(_ value: BIDeadheadAtStartCity)
-
+    
     @objc(addDeadheadAtStartCities:)
     @NSManaged public func addToDeadheadAtStartCities(_ values: NSSet)
-
+    
     @objc(removeDeadheadAtStartCities:)
     @NSManaged public func removeFromDeadheadAtStartCities(_ values: NSSet)
-
+    
 }
 
 // MARK: Generated accessors for lines
 extension BIBidPeriod {
-
+    
     @objc(addLinesObject:)
     @NSManaged public func addToLines(_ value: BILine)
-
+    
     @objc(removeLinesObject:)
     @NSManaged public func removeFromLines(_ value: BILine)
-
+    
     @objc(addLines:)
     @NSManaged public func addToLines(_ values: NSSet)
-
+    
     @objc(removeLines:)
     @NSManaged public func removeFromLines(_ values: NSSet)
-
+    
 }
 
 // MARK: Generated accessors for lineSortKeyMaps
 extension BIBidPeriod {
-
+    
     @objc(addLineSortKeyMapsObject:)
     @NSManaged public func addToLineSortKeyMaps(_ value: BILineSortKeyMap)
-
+    
     @objc(removeLineSortKeyMapsObject:)
     @NSManaged public func removeFromLineSortKeyMaps(_ value: BILineSortKeyMap)
-
+    
     @objc(addLineSortKeyMaps:)
     @NSManaged public func addToLineSortKeyMaps(_ values: NSSet)
-
+    
     @objc(removeLineSortKeyMaps:)
     @NSManaged public func removeFromLineSortKeyMaps(_ values: NSSet)
-
+    
 }
 
 // MARK: Generated accessors for lineSorts
 extension BIBidPeriod {
-
+    
     @objc(addLineSortsObject:)
     @NSManaged public func addToLineSorts(_ value: BILineSort)
-
+    
     @objc(removeLineSortsObject:)
     @NSManaged public func removeFromLineSorts(_ value: BILineSort)
-
+    
     @objc(addLineSorts:)
     @NSManaged public func addToLineSorts(_ values: NSSet)
-
+    
     @objc(removeLineSorts:)
     @NSManaged public func removeFromLineSorts(_ values: NSSet)
-
+    
 }
 
 // MARK: Generated accessors for textFiles
 extension BIBidPeriod {
-
+    
     @objc(addTextFilesObject:)
     @NSManaged public func addToTextFiles(_ value: BITextFile)
-
+    
     @objc(removeTextFilesObject:)
     @NSManaged public func removeFromTextFiles(_ value: BITextFile)
-
+    
     @objc(addTextFiles:)
     @NSManaged public func addToTextFiles(_ values: NSSet)
-
+    
     @objc(removeTextFiles:)
     @NSManaged public func removeFromTextFiles(_ values: NSSet)
-
+    
 }
 
 // MARK: Generated accessors for vacations
 extension BIBidPeriod {
-
+    
     @objc(addVacationsObject:)
     @NSManaged public func addToVacations(_ value: BIVacation)
-
+    
     @objc(removeVacationsObject:)
     @NSManaged public func removeFromVacations(_ value: BIVacation)
-
+    
     @objc(addVacations:)
     @NSManaged public func addToVacations(_ values: NSSet)
-
+    
     @objc(removeVacations:)
     @NSManaged public func removeFromVacations(_ values: NSSet)
-
+    
 }
 
 // MARK: Generated accessors for lineFilters
 extension BIBidPeriod {
-
+    
     @objc(addLineFiltersObject:)
     @NSManaged public func addToLineFilters(_ value: BIFilterRule)
-
+    
     @objc(removeLineFiltersObject:)
     @NSManaged public func removeFromLineFilters(_ value: BIFilterRule)
-
+    
     @objc(addLineFilters:)
     @NSManaged public func addToLineFilters(_ values: NSSet)
-
+    
     @objc(removeLineFilters:)
     @NSManaged public func removeFromLineFilters(_ values: NSSet)
-
+    
 }
 
 extension BIBidPeriod : Identifiable {
@@ -371,14 +371,14 @@ extension BIBidPeriod : Identifiable {
         if (self.month != nil) {
             let currentMonth = self.month as? Int
             let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "VacationArrayFromServer")
-
+            
             do {
                 let fetchedObjects = try self.managedObjectContext!.fetch(fetchRequest)
                 if (fetchedObjects.count > 0) {
                     for vacationArrayFromServer in fetchedObjects {
                         if let endDate = vacationArrayFromServer.value(forKey: "endDate") as? Date {
                             print("endDate: \(endDate)")
-
+                            
                             let calendar = Calendar.current
                             let components = calendar.dateComponents([.month], from: endDate)
                             if let monthFromDate = components.month {
@@ -390,7 +390,7 @@ extension BIBidPeriod : Identifiable {
                             }
                         }
                     }
-
+                    
                 }
             } catch {
                 print("Fetch failed: \(error.localizedDescription)")
@@ -409,9 +409,289 @@ extension BIBidPeriod : Identifiable {
                         isConflict = (vacEndDateInt >= selectedDate!)
                     }
                 }
-
+                
             }
         }
         return isConflict
     }
+    
+    func newSortKey() -> String {
+        // Find the linesortkeymaps that have a nil lineSort
+        var sortKey: String? = nil
+        let unusedPredicate = NSPredicate(format: "lineSort = nil")
+        let unusedKeyMaps:NSArray = lineSortKeyMaps!.filter { unusedPredicate.evaluate(with: $0) } as NSArray
+        let unusedLineValues: Set<AnyHashable> = unusedKeyMaps.value(forKey: "lineKey") as! Set<AnyHashable>
+        if ((unusedLineValues.count) > 0) {
+            // Just grab the first object
+            sortKey = unusedLineValues.first as? String
+            // Clear out the unused key maps
+            for keyMap in unusedKeyMaps {
+                let temp = keyMap as! BILineSortKeyMap
+                managedObjectContext?.delete(temp)
+            }
+        }
+        return sortKey!
+    }
+    
+    func lineSortKeyForCityLineSort(cityLineSort: BILineSort, city: String) -> String? {
+        // This function generates a line sort key for a given city and city line sort
+        var lineSortKey: String? = nil
+        var sortKey: String? = nil
+        // Check the category of city line sort
+        if cityLineSort.category?.intValue == BILineSortCategory.BICitiesLineSortCategory.rawValue {
+            switch Int(truncating: cityLineSort.type!) {
+            case BICityLineSortType.BIOvernightCityLineSortType.rawValue:
+                sortKey = "overnightCity\(city)"
+            case BICityLineSortType.BILegCityLineSortType.rawValue:
+                sortKey = "legCity\(city)"
+            case BICityLineSortType.BICitiesLineSortTypeEastCoast.rawValue:
+                sortKey = "EastCoast"
+            case BICityLineSortType.BICitiesLineSortTypeWestCoast.rawValue:
+                sortKey = "WestCoast"
+            case BICityLineSortType.BICitiesLineSortTypeNonConus.rawValue:
+                sortKey = "NonConus"
+            case BICityLineSortType.BICitiesLineSortTypeIntl.rawValue:
+                sortKey = "International"
+            case BICityLineSortType.BICitiesLineSortTypeAll.rawValue:
+                sortKey = "AllCities"
+            case BICitiesFilterRuleType.BICitiesFilterRuleTypeHawaii.rawValue:
+                sortKey = "Hawaii"
+            default:
+                print("Unknown type for BICitiesLineSortCategory line sort.")
+            }
+        }
+        else if Int(truncating: cityLineSort.category!) == BILineSortCategory.BIDeadheadsLineSortCategory.rawValue {
+            // Determine the sort key based on the type of deadhead line sort
+
+            switch Int(truncating: cityLineSort.type!) {
+            case BIDeadheadLineSortType.BIDeadheadAtStartSortType.rawValue:
+                sortKey = "dhAtStartCity\(city)"
+            case BIDeadheadLineSortType.BIDeadheadAtEndSortType.rawValue:
+                sortKey = "dhAtEndCity\(city)"
+            case BIDeadheadLineSortType.BIDeadheadAtBothSortType.rawValue:
+                sortKey = "dhAtBothCity\(city)"
+            default:
+                print("Unknown type for BIDeadheadsLineSortCategory line sort.")
+            }
+        }
+        // If there is already a line sort map for this sort key, then use the
+        // line key that corresponds to that sort key. Otherwise, create a new line
+        // sort map for the sort key and get the line key for that map. Before
+        // returning the line key, set the line key value for all lines.
+        let sortKeyPredicate = NSPredicate(format: "sortKey == %@", sortKey!)
+        var filteredLineSortMaps: [Any] = lineSortKeyMaps!.filter { sortKeyPredicate.evaluate(with: $0) }
+        // There should be only 1 (or 0) line sort key maps for the sort key.
+        //ZAssert(filteredLineSortMaps.count < 2, @"There must not be more than one sort key map for a sort key");
+        let type = Int(truncating: cityLineSort.type!)
+        if 0 == filteredLineSortMaps.count || (Int(truncating: cityLineSort.category!) == BILineSortCategory.BICitiesLineSortCategory.rawValue && (BICityLineSortType.BICitiesLineSortTypeEastCoast.rawValue == type || BICityLineSortType.BICitiesLineSortTypeWestCoast.rawValue == type || BICityLineSortType.BICitiesLineSortTypeNonConus.rawValue == type || BICityLineSortType.BICitiesLineSortTypeIntl.rawValue == type || BICityLineSortType.BICitiesLineSortTypeHawaii.rawValue == type)) {
+            var lineSortKeyMap: BILineSortKeyMap? = nil
+            if filteredLineSortMaps.count == 0 {
+                lineSortKeyMap = BILineSortKeyMap(context: managedObjectContext!)
+                lineSortKeyMap!.lineSort = cityLineSort
+                cityLineSort.lineSortKeyMap = lineSortKeyMap
+                lineSortKeyMap!.bidPeriod = self
+                lineSortKeyMap!.sortKey = sortKey
+                // Get the next available line dynamic sort value name.
+                let lineEntity = BILine.entity()
+                var lineAttributeNames =  [String]()
+                
+                for attributeName in (lineEntity.attributesByName.keys)  {
+                    // attributeName has the type String
+                    // ...
+                    lineAttributeNames.append(attributeName)
+                }
+                let dynamicValuePredicate = NSPredicate(format: "SELF BEGINSWITH %@", "dynamicSortValue")
+                let dynamicValueNames: [Any]? = lineAttributeNames.filter { dynamicValuePredicate.evaluate(with: $0) }
+                // Find the first dynamic value name that is not in the line sort key
+                // maps names.
+                let usedLineValues: Set<AnyHashable>? = (lineSortKeyMaps?.value(forKey: "lineKey") as? Set<AnyHashable>)
+                var foundDynamicVariable: Bool = false
+                (dynamicValueNames! as NSArray).enumerateObjects({(_ obj: Any, _ idx: Int, _ stop:UnsafeMutablePointer<ObjCBool>) -> Void in
+                    if !usedLineValues!.contains(obj as! AnyHashable) {
+                        lineSortKey = obj as? String
+                        foundDynamicVariable = true
+                        //                stop = true
+                    }
+                })
+                // Check to see if all the dynamic variable slots are used up, if so, use the least-recently-used
+                // one, which will always be the first one
+                if !foundDynamicVariable {
+                    lineSortKey = newSortKey()
+                    if !(sortKey != nil) {
+                        managedObjectContext?.delete(lineSortKeyMap!)
+                        managedObjectContext?.delete(cityLineSort)
+                        return nil
+                    }
+                    if !(lineSortKey != nil) {
+                        managedObjectContext?.delete(lineSortKeyMap!)
+                        managedObjectContext?.delete(cityLineSort)
+                    }
+                }
+            }
+            else {
+                lineSortKeyMap = filteredLineSortMaps.first as? BILineSortKeyMap
+                cityLineSort.lineSortKeyMap = lineSortKeyMap
+                lineSortKey = lineSortKeyMap?.lineKey
+            }
+            lineSortKeyMap?.lineKey = lineSortKey
+            //TODO: Make predicate for fetch depend on type of sort (overnight city or leg city). No need for value expression since it is far too slow.
+            var fetch: NSFetchRequest<NSFetchRequestResult>? = nil
+            var predicate: NSPredicate? = nil
+
+            if BILineSortCategory.BICitiesLineSortCategory.rawValue == cityLineSort.category?.intValue {
+                let type = cityLineSort.type?.intValue
+                if (BICityLineSortType.BICitiesLineSortTypeEastCoast.rawValue == type || BICityLineSortType.BICitiesLineSortTypeWestCoast.rawValue == type || BICityLineSortType.BICitiesLineSortTypeNonConus.rawValue == type || BICityLineSortType.BICitiesLineSortTypeIntl.rawValue == type || BICityLineSortType.BICitiesLineSortTypeAll.rawValue == type) {
+                    fetch = NSFetchRequest(entityName: "Day")
+                    let formatString = "line == $LINE && (info.city IN $SET) && trip.dropForFiltersSorts == 0"
+                    predicate = NSPredicate(format: formatString)
+                    
+                    var filterVars = (cityLineSort.variables as? [String: Any]) ?? [:]
+                    
+                    if filterVars["SET"] == nil {
+                        let selectedCities = cityLineSort.selectedRegionalCities()
+                        filterVars["SET"] = Set(selectedCities)
+                        cityLineSort.variables = filterVars as NSDictionary
+                    }
+                    predicate = predicate?.withSubstitutionVariables(cityLineSort.variables as! [String : Any])
+                }
+                else {
+                    if BICityLineSortType.BIOvernightCityLineSortType.rawValue == cityLineSort.type?.intValue {
+                        fetch = NSFetchRequest(entityName: "Day")
+                        predicate = NSPredicate(format: "line == $LINE && info.city == %@ && trip.dropForFiltersSorts == NO", city)
+                    }
+                    else {
+                        fetch = NSFetchRequest(entityName: "Leg")
+                        predicate = NSPredicate(format: "line == $LINE && info.arriveCity == %@ && trip.dropForFiltersSorts == 0 && info.lastLegOfTrip == NO", city)
+                    }
+                }
+            }
+            else if BILineSortCategory.BIDeadheadsLineSortCategory.rawValue == cityLineSort.category?.intValue {
+                fetch = NSFetchRequest(entityName: "Leg")
+                if (BIDeadheadLineSortType.BIDeadheadAtStartSortType.rawValue == type) {
+                    predicate = NSPredicate(format: "line == $LINE && info.firstLegOfTrip == 1 && info.isDeadhead == 1 && info.arriveCity == %@ && trip.dropForFiltersSorts == 0", city)
+                }
+                else if (BIDeadheadLineSortType.BIDeadheadAtEndSortType.rawValue == type) {
+                    predicate = NSPredicate(format: "line == $LINE && info.lastLegOfTrip == 1 && trip.dropForFiltersSorts == 0 && info.isDeadhead == 1 && info.departCity == %@", city)
+                }
+                else {
+                    predicate = NSPredicate(format: "line == $LINE && (trip.dropForFiltersSorts == 0 && ((info.lastLegOfTrip == 1 && info.isDeadhead == 1 && info.departCity == %@) || (info.firstLegOfTrip == 1 && info.isDeadhead == 1 && info.arriveCity == %@)))", city, city)
+                }
+            }
+            let moc = self.managedObjectContext!
+            self.lines!.forEach { line in
+                fetch!.predicate = predicate!.withSubstitutionVariables(["LINE": line])
+                fetch!.propertiesToFetch = nil
+
+                do {
+                    let count = try moc.count(for: fetch!)
+                    (line as AnyObject).setValue(count, forKey: lineSortKey!)
+                } catch {
+                    print("Error counting fetch for line \(line): \(error)")
+                }
+            }
+
+            
+        }
+        else {
+            let lineSortKeyMap: BILineSortKeyMap = filteredLineSortMaps.first as! BILineSortKeyMap
+            cityLineSort.lineSortKeyMap = lineSortKeyMap
+            lineSortKey = lineSortKeyMap.lineKey
+        }
+        do {
+            try self.managedObjectContext?.save()
+        }
+        catch {
+            print("Error saving managed object context: \(error.localizedDescription)")
+        }
+        return lineSortKey
+    }
+    
+    func lineSortKeyForPosition( posLineSort: BILineSort) -> String? {
+        var lineSortKey:String = String()
+        // Create line sort key, depending on type of line sort and city.
+        var sortKey: String? = nil
+        var posString: String? = nil
+        // Determine sort key and position string based on the line sort type
+        
+        switch Int(truncating: posLineSort.type!) {
+        case BIPositionsLineSortType.BIPositionASortType.rawValue:
+            sortKey = "faPositionA"
+            posString = "A"
+        case BIPositionsLineSortType.BIPositionBSortType.rawValue:
+            sortKey = "faPositionB"
+            posString = "B"
+        case BIPositionsLineSortType.BIPositionASortType.rawValue:
+            sortKey = "faPositionC"
+            posString = "C"
+        case BIPositionsLineSortType.BIPositionASortType.rawValue:
+            sortKey = "faPositionD"
+            posString = "D"
+        default:
+            print("Unknown type for BIPositionsLineSortCategory line sort.")
+        }
+        // If there is already a line sort map for this sort key, then use the
+        // line key that corresponds to that sort key. Otherwise, create a new line
+        // sort map for the sort key and get the line key for that map. Before
+        // returning the line key, set the line key value for all lines.
+        let sortKeyPredicate = NSPredicate(format: "sortKey == %@", sortKey!)
+        let filteredLineSortMaps: [Any] = lineSortKeyMaps!.filter { sortKeyPredicate.evaluate(with: $0)} as [Any]
+        // There should be only 1 (or 0) line sort key maps for the sort key.
+        //ZAssert(filteredLineSortMaps.count < 2, @"There must not be more than one sort key map for a sort key");
+        if 0 == filteredLineSortMaps.count {
+            // There is no line sort key map for the sort key, so create one and
+            // set line values.
+           let lineSortKeyMap = BILineSortKeyMap(context: managedObjectContext!)
+            lineSortKeyMap.lineSort = posLineSort
+            posLineSort.lineSortKeyMap = lineSortKeyMap
+            lineSortKeyMap.bidPeriod = self
+            lineSortKeyMap.sortKey = sortKey
+            // Get the next available line dynamic sort value name.
+            let lineEntity = NSEntityDescription.entity(forEntityName: "Line", in: managedObjectContext!)
+            var lineAttributeNames = [String]()
+            for attributeName in (lineEntity?.attributesByName.keys)! {
+                lineAttributeNames.append(attributeName)
+            }
+            
+            let dynamicValuePredicate = NSPredicate(format:"SELF BEGINSWITH %@", "dynamicSortValue")
+            let dynamicValueNames: [Any]? = lineAttributeNames.filter { dynamicValuePredicate.evaluate(with: $0)}
+            // Find the first dynamic value name that is not in the line sort key
+            // maps names.
+            let usedLineValues: Set<AnyHashable>? = (lineSortKeyMaps?.value(forKey: "lineKey") as? Set<AnyHashable>)
+            var foundDynamicVariable: Bool = false
+            (dynamicValueNames! as NSArray).enumerateObjects({( _ obj: Any, _ idx: Int, _ stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                if !(usedLineValues?.contains(obj as! AnyHashable))! {
+                    lineSortKey = obj as! String
+                    foundDynamicVariable = true
+                }
+            })
+            // Check to see if all the dynamic variable slots are used up, if so, use the least-recently-used
+            // one, which will always be the first one
+            if !foundDynamicVariable {
+                lineSortKey = newSortKey()
+                if !(sortKey != nil) {
+                    managedObjectContext?.delete(lineSortKeyMap)
+                    managedObjectContext?.delete(posLineSort)
+                    return nil
+                }
+            }
+            lineSortKeyMap.lineKey = lineSortKey
+            let array = Array(lines!)
+            for (index, value) in array.enumerated() {
+                print(index)
+                let line: BILine = value as! BILine
+                if line.faPositionString() == posString {
+                    line.setValue(1, forKey: lineSortKey)
+                }
+                else {
+                    line.setValue(2, forKey: lineSortKey)
+                }
+            }
+        }
+        else {
+            let lineSortKeyMap: BILineSortKeyMap? = filteredLineSortMaps.first as? BILineSortKeyMap
+            lineSortKey = (lineSortKeyMap?.lineKey)!
+        }
+        return lineSortKey
+    }
+    
 }

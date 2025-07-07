@@ -245,7 +245,7 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
             try tripsFetchController.performFetch()
             if let fetchedObjects = tripsFetchController.fetchedObjects {
                 for trip in fetchedObjects {
-                    trip.highlightCount = NSNumber(value: trip.highlightCount?.intValue ?? 0 + 1)
+                    trip.highlightCount = (Int(truncating: trip.highlightCount!) + 1 as NSNumber)
                 }
             }
         }
@@ -420,27 +420,27 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
     }
     
     func selectedRegionalCities() -> NSArray {
-        var cities: NSArray = []
+        var cities: NSArray? = []
         let type = self.type?.intValue
         if (type == BICitiesFilterRuleType.BICitiesFilterRuleTypeEastCoast.rawValue) {
-            cities = (UserDefaults.standard.object(forKey: kCBSelectedEastCoastCities) as? NSArray)!
+            cities = (UserDefaults.standard.object(forKey: kCBSelectedEastCoastCities) as? NSArray)
         }
         else if (type == BICitiesFilterRuleType.BICitiesFilterRuleTypeWestCoast.rawValue) {
-            cities = (UserDefaults.standard.object(forKey: kCBSelectedWestCoastCities) as? NSArray)!
+            cities = (UserDefaults.standard.object(forKey: kCBSelectedWestCoastCities) as? NSArray)
         }
         else if (type == BICitiesFilterRuleType.BICitiesFilterRuleTypeNonConus.rawValue) {
-            cities = (UserDefaults.standard.object(forKey: kCBSelectedNonConusCities) as? NSArray)!
+            cities = (UserDefaults.standard.object(forKey: kCBSelectedNonConusCities) as? NSArray)
         }
         else if (type == BICitiesFilterRuleType.BICitiesFilterRuleTypeIntl.rawValue) {
-            cities = (UserDefaults.standard.object(forKey: kCBSelectedInternationalCities) as? NSArray)!
+            cities = (UserDefaults.standard.object(forKey: kCBSelectedInternationalCities) as? NSArray)
         }
         else if (type == BICitiesFilterRuleType.BICitiesFilterRuleTypeAll.rawValue) {
-            cities = (UserDefaults.standard.object(forKey: kCBSelectedAllCities) as? NSArray)!
+            cities = (UserDefaults.standard.object(forKey: kCBSelectedAllCities) as? NSArray)
         }
         else if (type == BICitiesFilterRuleType.BICitiesFilterRuleTypeHawaii.rawValue) {
-            cities = (UserDefaults.standard.object(forKey: kCBSelectedHawaiiCities) as? NSArray)!
+            cities = (UserDefaults.standard.object(forKey: kCBSelectedHawaiiCities) as? NSArray)
         }
-        return cities
+        return cities ?? []
     }
     
     

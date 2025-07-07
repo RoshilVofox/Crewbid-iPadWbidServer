@@ -11,6 +11,10 @@ class CBCommutingSortCell: UITableViewCell {
 
     @IBOutlet weak var titleLabel: UILabel!
     
+    var lineSort: BILineSort!
+    var bidPeriod: BIBidPeriod!
+    var context = CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -21,11 +25,21 @@ class CBCommutingSortCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
+    
+    func CalculateCommutingManualSort() {
+        
+    }
 
     @IBAction func btnCloseAction(_ sender: Any) {
-        NotificationCenter.default.post(
-            name: Notification.Name("DeleteCellNotification"),
-            object: self // Pass the cell itself as the object
-        )
+        context!.delete(lineSort!)
+        do {
+            try context?.save()
+        }
+        catch {
+            print("Error deleting object \(error.localizedDescription)")
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+        }
     }
 }
