@@ -3973,36 +3973,6 @@
             endingLineNumber = "2098"
             landmarkName = "calculateNightInMiddle()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "3B95D7CB-E518-472B-BF7B-B0137D5B2807 - c8835ac7971c2696"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "CrewBid_iPad_Swift.BIBidInfoReader.calculateNightInMiddle() -&gt; ()"
-                  moduleName = "CrewBid iPad_Swift.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/fayaz/Documents/GitHub/Crewbid-iPadWbidServer/CrewBid%20iPad_Swift/New%20Files/BIBidInfoReader.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "2098"
-                  endingLineNumber = "2098">
-               </Location>
-               <Location
-                  uuid = "3B95D7CB-E518-472B-BF7B-B0137D5B2807 - 6858a2d3fafe1151"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; () in CrewBid_iPad_Swift.BIBidInfoReader.calculateNightInMiddle() -&gt; ()"
-                  moduleName = "CrewBid iPad_Swift.debug.dylib"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/fayaz/Documents/GitHub/Crewbid-iPadWbidServer/CrewBid%20iPad_Swift/New%20Files/BIBidInfoReader.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "2099"
-                  endingLineNumber = "2099">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
