@@ -5221,6 +5221,9 @@
                                                     <state key="normal" image="whileClose">
                                                         <color key="titleShadowColor" name="HomeBackGround"/>
                                                     </state>
+                                                    <connections>
+                                                        <action selector="btnCloseAction:" destination="IPe-Kz-DIb" eventType="touchUpInside" id="By4-8J-eyK"/>
+                                                    </connections>
                                                 </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Tz-1C-Xjc">
                                                     <rect key="frame" x="50" y="13" width="304" height="30"/>
@@ -5265,6 +5268,8 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="LHsegment" destination="afe-aD-ZLy" id="lzb-MD-OqI"/>
+                                            <outlet property="cityNametxt" destination="pgb-5G-dtB" id="5nS-5K-FFl"/>
                                             <outlet property="nameLabel" destination="3Tz-1C-Xjc" id="Rdp-XC-I2i"/>
                                         </connections>
                                     </tableViewCell>
