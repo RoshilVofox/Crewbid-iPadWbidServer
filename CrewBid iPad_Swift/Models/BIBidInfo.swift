@@ -59,8 +59,8 @@ class BIBidInfo:NSObject{
         if AppState.shared.isHistoricBid || AppState.shared.isMockData {
             bidDataFiles.append(textDataFilename())
         }else{
-            bidDataFiles.append(bidDataFilename())
             bidDataFiles.append(textDataFilename())
+            bidDataFiles.append(bidDataFilename())
         }
         
         if isSecondRoundBid() && !isFABid(){
@@ -178,7 +178,7 @@ class BIBidInfo:NSObject{
         } else {
             bidRoundStr = isFABid() ? "CR" : "R"
         }
-        return "\(textFileNameBase())\(bidRoundStr).TXT"
+        return "\(textFilenameBase())\(bidRoundStr).TXT"
     }
     
     func seniorityListFileName() -> String {
@@ -188,24 +188,20 @@ class BIBidInfo:NSObject{
         } else {
             bidRoundStr = isFABid() ? "SR" : "R"
         }
-        return "\(textFileNameBase())\(bidRoundStr).TXT"
+        return "\(textFilenameBase())\(bidRoundStr).TXT"
     }
     
-    
-    func textFileNameBase() ->String{
-        return "\(self.dataSource.base)\(self.dataSource.position.shortName)"
-    }
     
     func tripsTextFilename() -> String? {
         if isSecondRoundBid() && !isFABid() {
             return nil
         }
         let tripTextChar: Character = (isSecondRoundBid() && isFABid()) ? "T" : "P"
-        return "\(textFileNameBase())\(tripTextChar).TXT"
+        return "\(textFilenameBase())\(tripTextChar).TXT"
     }
     
     func faMemoTextFilename() -> String {
         let faMemoSuffix = (isSecondRoundBid() && isFABid()) ? "OR" : "O"
-        return "\(textFileNameBase())\(faMemoSuffix).TXT"
+        return "\(textFilenameBase())\(faMemoSuffix).TXT"
     }
 }

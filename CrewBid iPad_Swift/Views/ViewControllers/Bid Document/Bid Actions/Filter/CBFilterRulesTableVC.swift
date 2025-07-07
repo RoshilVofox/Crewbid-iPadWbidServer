@@ -136,7 +136,7 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
         filterMenuController.disabledCellIndexPaths = self.disabledCellIndexPaths
         filterMenuController.bidPeriod = self.bidPeriod!
         filterMenuController.navigationController?.navigationBar.backgroundColor = .lightGray
-        filterMenuController.menuItems = BIFilterRule.menuItemsForBidPeriod() as NSArray
+        filterMenuController.menuItems = BIFilterRule.menuItemsForBidPeriod(CBGlobalMethods.shared.selectedBidPeriod!) as NSArray
         let navigationController = UINavigationController(rootViewController: filterMenuController)
         navigationController.navigationBar.isTranslucent = false
         navigationController.navigationBar.barTintColor = .lightGray

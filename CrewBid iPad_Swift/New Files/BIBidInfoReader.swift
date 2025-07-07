@@ -1739,9 +1739,6 @@ class BIBidInfoReader{
             var arrLineOvernightCity:[String] = []
             for case let line as BILine in results {
                    self.removeExistingWorkBlock(line)
-                if line.number == 345 {
-                    print("")
-                }
                     //Initialize Trip Index
                     var tripIndex = 0
                     var back2backTripBlock = 0
@@ -2097,17 +2094,14 @@ class BIBidInfoReader{
     
     
     private func calculateNightInMiddle() {
-        for case let line as BILine in self.bidPeriod?.lines ?? [] {
-            autoreleasepool {
+        for case let line as BILine in self.bidPeriod!.lines! {
                 line.nightsInMid = 0
                 var inMiddle = 0
 
                 for case let workBlock as WorkBlockList in line.workBlocks ?? [] {
                     inMiddle += workBlock.nightINDomicile!.intValue
                 }
-
                 line.nightsInMid = NSNumber(value: inMiddle)
-            }
         }
 
         do {
@@ -2529,7 +2523,7 @@ class BIBidInfoReader{
         // Set Etops Reserve Filter rule
         rule = BIFilterRule(context: context)
         rule.bidPeriod = bidPeriod
-        rule.category = BIFilterRuleCategory.BIEtopsFilterRuleCategory.rawValue as NSNumber
+        rule.category = BIFilterRuleCategory.BIEtopsResFilterRuleCategory.rawValue as NSNumber
         let etopsResOn = true
         
         rule.variables = ["ETOPSRES_ON": etopsResOn]
@@ -3598,9 +3592,6 @@ class BIBidInfoReader{
                             if isIntlCity != nil{
                                 line.type = BILineType.HardNonConUS.rawValue as NSNumber
                             }
-                            if line.number!.intValue == 340{
-                                print("")
-                            }
                             if legInfo.isEtopsFlight?.boolValue == true{
                                 line.isETOPS = true
                             }
@@ -3684,9 +3675,6 @@ class BIBidInfoReader{
     }
     
     func initDerivedPropertiesForLine(line:BILine, isReprocessing:Bool){
-        if line.number!.intValue == 350{
-            print("")
-        }
         calendarData = calendarData.initWithBidPeriod(bidPeriod: self.bidPeriod!)!
         self.thanksgivingDay = CBUtils.thanksgivingDay(for: self.bidPeriod?.year?.intValue ?? 2025)
         if isReprocessing{
@@ -3832,9 +3820,6 @@ class BIBidInfoReader{
         arriveFormatter.dateFormat = "HHmm"
         workBP = 0
         workBPInVac = 0
-        if line.number?.intValue == 350{
-            print("")
-        }
         for case let trip as BITrip in line.trips!{
             // Figure out the FA position of the line (A,B,C,D,M,NA)
             if bidPeriod!.isFABid() {
@@ -3905,10 +3890,6 @@ class BIBidInfoReader{
             var containsMidTripPTB = false
             let tripOrderedDays = trip.info!.orderedDays()
             var dayCount = 0
-            
-            if startDay == 30 {
-                print("")
-            }
             
             let monthBitIndex = self.calendarData.indexForDate(date:trip.startDate!)
             
@@ -4493,9 +4474,6 @@ class BIBidInfoReader{
         var rigTHR:Float = 0 // Trip Hour Ratio
         
         var vcCarryOutPay:Float = 0
-        if line.number == 350 {
-            print("")
-        }
         for case let trip as BITrip in line.trips!{
             if trip.vacationOverlapType?.intValue != 0{
                 if self.includeDroppedTrips!{
@@ -4522,12 +4500,11 @@ class BIBidInfoReader{
                 let dayOrderedLegs = dayInfo.orderedLegs()
                 
                 let day = trip.orderedDays[dayCount] as BIDay
-                if AppState.shared.isHistoricBid{
-                    if day.info?.dayPay == 0 && !isFABid{
+                if !(AppState.shared.isHistoricBid){
+                    if (day.info?.dayPay == 0) && !isFABid{
                         return
                     }
                 }
-                
                 if dayOrderedLegs.count > 0{
                     if tripOrderedDays[0] == dayInfo{
                         dateComps.minute = dayOrderedLegs[0].departMinutes!.intValue - trip.info!.briefMinutes!.intValue
@@ -4535,6 +4512,7 @@ class BIBidInfoReader{
                         dateComps.minute = dayOrderedLegs[0].departMinutes!.intValue - trip.info!.debriefMinutes!.intValue
                     }
                     departDate = appCal!.date(from: dateComps)!
+                    
                     dateComps.minute = dayOrderedLegs.last!.arriveMinutes!.intValue + trip.info!.debriefMinutes!.intValue
                     arriveDate = appCal!.date(from: dateComps)!
                     dayDutyMinutes = appCal!.dateComponents([.minute], from: departDate, to: arriveDate).minute!
@@ -4662,6 +4640,10 @@ class BIBidInfoReader{
         line.rigDPM = rigDPM as NSNumber // Duty Period Minimum
         line.rigDHR = rigDHR as NSNumber // Duty Hour Ratio
         line.rigTHR = rigTHR as NSNumber // Trip Hour Ratio
+        rigADG = 0
+        rigDPM = 0
+        rigDHR = 0
+        rigTHR = 0
         
         if isReprocessing{
             if (self.bidPeriod?.vacations?.allObjects.count)! > 0{
@@ -4689,7 +4671,7 @@ class BIBidInfoReader{
         line.coPlusHoli = NSNumber(value: (line.coHoli!.floatValue) + (line.carryOutPay!.floatValue))
         
         if line.pay!.floatValue > 0 && line.blockMinutes!.floatValue > 0 {
-            line.payPerBlockHour = NSNumber(value: (line.pay!.floatValue) * 60 / (line.blockMinutes!.floatValue))
+            line.payPerBlockHour = NSNumber(value: ((line.pay!.floatValue) * 60) / (line.blockMinutes!.floatValue))
         }
         if line.pay!.floatValue > 0 && line.numLegs!.intValue > 0 {
             line.payPerTrip = NSNumber(value: (line.pay!.floatValue) / (line.numTrips!.floatValue))
@@ -4708,13 +4690,13 @@ class BIBidInfoReader{
         }
         
         if line.pay!.floatValue > 0 && line.tafbMinutes!.intValue > 0 {
-            line.payPerTAFB = NSNumber(value: (line.pay!.floatValue) * 60 / (line.tafbMinutes!.floatValue))
+            line.payPerTAFB = NSNumber(value: ((line.pay!.floatValue) * 60) / (line.tafbMinutes!.floatValue))
         }else{
             line.payPerTAFB = 0
         }
         
         if line.pay!.floatValue > 0 && line.dutyMinutes!.intValue > 0 {
-            line.payPerDutyTime = NSNumber(value: (line.pay!.floatValue * 60 / (line.dutyMinutes!.floatValue)))
+            line.payPerDutyTime = NSNumber(value: ((line.pay!.floatValue * 60) / (line.dutyMinutes!.floatValue)))
         }else{
             line.payPerDutyTime = 0
         }
@@ -4730,13 +4712,10 @@ class BIBidInfoReader{
         var gtMax = 0
         var groundCount = 0
         var redEyeCount = 0
-        if line.number == 350{
-            print("")
-        }
         for case let trip as BITrip in line.trips! {
             if trip.dropForFiltersSorts == 0{
                 let tripOrderedDays = trip.info!.orderedDays()
-                for case let dayInfo as BIDayInfo in tripOrderedDays{
+                for dayInfo in tripOrderedDays{
                     let dayOrderedLegs = dayInfo.orderedLegs()
                     //Calculation will only happen if there are more than one dayOrderedLegs, because if there's only one leg, it's the last leg(Over night).
                     if dayOrderedLegs.count > 1{
@@ -4939,7 +4918,7 @@ class BIBidInfoReader{
             
             let trip = self.trips[tripNum]! as? BITripInfo
             
-            for case let day as BIDayInfo in trip!.orderedDays(){
+            for day in trip!.orderedDays(){
                 for case let leg in day.orderedLegs(){
                     // check to see if trip is FA Reserve
                     if self.bidPeriod!.isFABid() && leg.departCity == leg.arriveCity{
@@ -5068,9 +5047,6 @@ class BIBidInfoReader{
 
             if components.year == year, components.month == month, components.day == dayInt {
                 if month != self.bidPeriod!.month?.intValue, day.displayType?.intValue == BIDayDisplayType.normal.rawValue {
-                    if line.redeyes?.intValue != 0 {
-                        print("") // optional debug point
-                    }
                     if let dayInfo = day.info {
                         var holidayPay = dayInfo.dayPay
                         if holidayPay < 4 {
@@ -5952,7 +5928,7 @@ class BIBidInfoReader{
         var prevLeg:BILegInfo?
         let dict = AppState.shared.missingTripInfo
         
-        if dict!["JsonTripData"] is NSNull{
+        if dict?["JsonTripData"] is NSNull{
             if self.showAlertForPP == true{
                 NotificationCenter.default.post(name: Notification.Name("ShowAlert"), object: nil)
                 self.bidPeriod?.containsMissingTripLines = true

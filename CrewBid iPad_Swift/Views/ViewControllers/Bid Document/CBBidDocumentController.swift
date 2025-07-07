@@ -35,20 +35,18 @@ class CBBidDocumentController: BaseViewController {
     var bidVC: CBBidListVC!
     
     
-    var bdPrd:Int!
-    var locHerb:Bool!
+ 
     var dataSource = GlobalBidInfo.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        bdPrd = 1
-        locHerb = true
-  
+        self.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         setupUI()
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutViewForSwitch), name: NSNotification.Name("SyncSwitchStateAction"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(showCommutablilityFilterView), name: Notification.Name("ShowCommutabilityFilterView"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(ShowCommutablilitySortView), name: Notification.Name("ShowCommutabilitySortView"), object: nil)
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -100,19 +98,21 @@ class CBBidDocumentController: BaseViewController {
     }
     
     @IBAction func localHerbAction(_ sender: Any) {
-        if(locHerb){
+        if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.herbTime.rawValue{
+            UserDefaults.standard.set(CBTimeZoneSetting.localTime.rawValue, forKey: kCBTimeZoneSetting)
             localLabel.backgroundColor = UIColor.purple
             localLabel.textColor = UIColor.white
             herbLabel.backgroundColor = UIColor.white
             herbLabel.textColor = UIColor.black
-            locHerb = false
         }else{
+            UserDefaults.standard.set(CBTimeZoneSetting.herbTime.rawValue, forKey: kCBTimeZoneSetting)
             localLabel.backgroundColor = UIColor.white
             localLabel.textColor = UIColor.black
             herbLabel.backgroundColor = UIColor.purple
             herbLabel.textColor = UIColor.white
-            locHerb = true
         }
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+//        NotificationCenter.default.post(name: NSNotification.Name("amPmValueChangedFromButton"), object: self)
     }
     
     @IBAction func settingsAction(_ sender: Any) {
@@ -174,6 +174,19 @@ class CBBidDocumentController: BaseViewController {
             btnSync.isHidden = true
         }
     }
+    
+    @objc func ShowCommutablilitySortView() {
+            let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
+            let commuteInformation = storyboard.instantiateViewController(withIdentifier: "CommuteInformation") as! CBCommuteInfoViewController
+            commuteInformation.bidPeriod = self.bidPeriod
+            commuteInformation.commutabilityType = CommutabilityType.sort
+            commuteInformation.preferredContentSize = CGSize(width: 320, height: 320)
+            DispatchQueue.main.async {
+                self.present(commuteInformation, animated: true) {
+                }
+            }
+        }
+    
     
     @objc func showCommutablilityFilterView() {
         let topVC = AlertService.currentTopViewController()

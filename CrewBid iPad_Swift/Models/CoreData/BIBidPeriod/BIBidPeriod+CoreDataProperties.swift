@@ -679,7 +679,7 @@ extension BIBidPeriod : Identifiable {
             for (index, value) in array.enumerated() {
                 print(index)
                 let line: BILine = value as! BILine
-                if line.faPositionString() == posString {
+                if line.faPositionString == posString {
                     line.setValue(1, forKey: lineSortKey)
                 }
                 else {

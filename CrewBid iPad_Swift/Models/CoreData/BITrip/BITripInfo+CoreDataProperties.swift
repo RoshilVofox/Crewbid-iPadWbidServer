@@ -134,11 +134,10 @@ extension BITripInfo : Identifiable {
     }
     
     func getDayPaySumForTrips() -> Float {
-//        var dayPaySum: Float = 0.0
-//        for case let day in self.orderedDays {
-//            dayPaySum += day.dayPayWithRig?.floatValue ?? 0.0
-//        }
-//        return dayPaySum
-        return 0.0
+        var dayPaySum: Float = 0.0
+        for day in orderedDays() {
+            dayPaySum += day.dayPayWithRig?.floatValue ?? 0.0
+        }
+        return dayPaySum
     }
 }

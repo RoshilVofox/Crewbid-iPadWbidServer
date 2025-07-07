@@ -772,7 +772,7 @@ class CBUtils{
                 if let data = data {
                     do {
                         if let responseDict = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                            print("JSON Response: \(responseDict)")
+//                            print("JSON Response: \(responseDict)")
                             
                             self.writeJSONDictToFile(jsonDict: responseDict)
                         }
@@ -798,7 +798,9 @@ class CBUtils{
 //                let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
                 let fileName = "falistwb4.json"
                 let fileURL = BIBidInfo.shared.downloadDirectory().appendingPathComponent(fileName)
-                
+                if !FileManager.default.fileExists(atPath: BIBidInfo.shared.downloadDirectory().path) {
+                    try FileManager.default.createDirectory(at: BIBidInfo.shared.downloadDirectory(), withIntermediateDirectories: true)
+                }
                 // Write data to file (atomically = true writes to a temp file first, then replaces)
                 try jsonString?.data(using: .utf8)?.write(to: fileURL, options: .atomic)
                 
@@ -1019,80 +1021,52 @@ class CBUtils{
             return timeZones[base]
         }
     
-    static func getMissingTripJSONFromYear(year:String, month:String, round:String, base:String, position:String, finishedHandler: @escaping (Bool) -> Void){
-        let appState = AppState.shared
-        appState.missingTripInfo = nil
-        let dict:[String:Any] = ["Year":year,"Month":month,"Round":round,"Domicile":base,"Position":position]
-        let urlString = URL(string: EndPoint.shared.getScrappedMissedTrips)
-        var urlRequest = URLRequest(url: urlString!)
-        let jsonData = try! JSONSerialization.data(withJSONObject: dict)
-        let jsonString = String(data: jsonData, encoding: .utf8)!
-        urlRequest.httpBody = jsonString.data(using: .utf8)
-        urlRequest.httpMethod = "POST"
-        urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        let dataTask = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
-            if let error = error {
-                print("Error: \(error)")
-                finishedHandler(false)
-                return
-            }
-            if let data = data{
-                let jsonDict = try! JSONSerialization.jsonObject(with: data, options: []) as! [String:Any]
-                if appState.jsonSecretIsOn{
-                    appState.missingTripInfo = jsonDict
-                }
-                finishedHandler(true)
-            }else{
-                finishedHandler(false)
-            }
-            
-        }
-        dataTask.resume()
-    }
+
     
-    static func checkOvernightPredicate() -> NSMutableArray {
-        var overnightPredicate : NSMutableArray = []
-        let app = UIApplication.shared.delegate as! AppDelegate
-        app
-        let fetchRequest: NSFetchRequest<OvernightBulk> = OvernightBulk.fetchRequest()
-        let context = GlobalBidInfo.shared.managedObjectContext
-        let fetchedObjects = try! context.fetch(fetchRequest)
-        let filterVars: NSMutableDictionary = [:]
-        if fetchedObjects.count > 0 {
-            print("fetched overnight")
-            var dictAllValues: NSMutableDictionary?
-            if let firstObject = fetchedObjects.first,
-               let cityStatus = firstObject.value(forKey: "citystatus"),
-               !(cityStatus is NSNull) {
-                dictAllValues = (cityStatus as AnyObject).mutableCopy() as? NSMutableDictionary
-            }
-            let yesArray = dictAllValues!.allKeys(for: String(2))
-            let noArray = dictAllValues!.allKeys(for: String(1))
-            if yesArray.count == 0 && noArray.count == 0 {
-                return overnightPredicate
-            }
-            else {
-                let set = NSSet(array: yesArray)
-                filterVars["SET"] = set
-                let avoidSet = NSSet(array: noArray)
-                filterVars["AVOIDSET"] = avoidSet
-                var formatString = "SUBQUERY(legs, $LEG,"
-                if noArray.count > 0 {
+    class func checkOvernightPredicate() -> [NSPredicate] {
+            var overnightPredicate: [NSPredicate] = []
+            
+            let context = GlobalBidInfo.shared.managedObjectContext
+            
+            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "OvernightBulk")
+            
+            do {
+                let fetchedObjects = try context.fetch(fetchRequest)
+                
+                guard let firstObject = fetchedObjects.first,
+                      let cityStatusAny = firstObject.value(forKey: "citystatus"),
+                      !(cityStatusAny is NSNull),
+                      let dictAllValues = cityStatusAny as? [String: Any] else {
+                    return overnightPredicate
+                }
+                
+                let yesArray = dictAllValues.filter { $0.value as? String == "2" }.map { $0.key }
+                let noArray = dictAllValues.filter { $0.value as? String == "1" }.map { $0.key }
+                
+                if yesArray.isEmpty && noArray.isEmpty {
+                    return overnightPredicate
+                }
+                
+                var filterVars: [String: Any] = [:]
+                
+                if !noArray.isEmpty {
                     let formatString = "isOvernightFiltered == 0"
                     let format = NSPredicate(format: formatString)
-                    overnightPredicate.add(format)
+                    overnightPredicate.append(format)
                 }
- 
-                if yesArray.count > 0 {
+                
+                if !yesArray.isEmpty {
+                    filterVars["SET"] = Set(yesArray)
                     let formatString = "SUBQUERY(days, $DAY, ($DAY.info.city IN $SET) && $DAY.trip.dropForFiltersSorts == 0).@count > 0"
-                    let format = NSPredicate(format: formatString)
-                    let substitutedPredicate = format.withSubstitutionVariables(filterVars as! [String: Any])
-                    overnightPredicate.add(substitutedPredicate)
+                    let format = NSPredicate(format: formatString).withSubstitutionVariables(filterVars)
+                    overnightPredicate.append(format)
                 }
+            } catch {
+                print("Overnight fetch failed: \(error.localizedDescription)")
             }
+            
+            return overnightPredicate
         }
-        return overnightPredicate
-    }
     
     static func GenerateOvernightCities() -> [String] {
         var arrCities: [String] = []
