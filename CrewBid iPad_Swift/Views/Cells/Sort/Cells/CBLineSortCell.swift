@@ -16,6 +16,7 @@ class CBLineSortCell: UITableViewCell {
     
     var bidPeriod: BIBidPeriod?
     private var lineSort1: BILineSort!
+    var context = CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext
     var swapImgView: UIImageView!
     var lineSort: BILineSort? {
         set(newLineSort){
@@ -36,6 +37,11 @@ class CBLineSortCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        if let cityTextField = self.cityNametxt {
+            if let lineSort = self.lineSort {
+                cityTextField.text = lineSort.city
+            }
+        }
         swapImgView = UIImageView(frame: CGRect(x: self.contentView.frame.width - 310, y: (self.contentView.frame.height/2) - 15, width: 30, height: 30))
         swapImgView.isHidden = true
         self.addSubview(swapImgView)
@@ -48,9 +54,15 @@ class CBLineSortCell: UITableViewCell {
     }
 
     @IBAction func btnCloseAction(_ sender: Any) {
-        NotificationCenter.default.post(
-            name: Notification.Name("DeleteCellNotification"),
-            object: self // Pass the cell itself as the object
-        )
+        context!.delete(lineSort!)
+        do {
+            try context?.save()
+        }
+        catch {
+            print("Error deleting object \(error.localizedDescription)")
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+        }
     }
 }

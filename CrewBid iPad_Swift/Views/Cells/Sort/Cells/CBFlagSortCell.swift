@@ -12,6 +12,7 @@ class CBFlagSortCell: UITableViewCell {
     private var lineSort1: BILineSort!
     var lineSort2: BILineSort!
     var bidPeriod: BIBidPeriod!
+    var context = CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext
     
     var lineSort: BILineSort? {
         set(newLineSort){
@@ -38,9 +39,15 @@ class CBFlagSortCell: UITableViewCell {
     }
 
     @IBAction func btnCloseAction(_ sender: Any) {
-        NotificationCenter.default.post(
-            name: Notification.Name("DeleteCellNotification"),
-            object: self // Pass the cell itself as the object
-        )
+        context!.delete(lineSort!)
+        do {
+            try context?.save()
+        }
+        catch {
+            print("Error deleting object \(error.localizedDescription)")
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+        }
     }
 }

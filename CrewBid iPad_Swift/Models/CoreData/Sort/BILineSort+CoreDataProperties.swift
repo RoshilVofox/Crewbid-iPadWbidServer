@@ -28,7 +28,7 @@ extension BILineSort {
     @NSManaged public var name: String?
     @NSManaged public var order: NSNumber?
     @NSManaged public var type: NSNumber?
-    @NSManaged public var variables: NSObject?
+    @NSManaged public var variables: NSDictionary?
     @NSManaged public var bidPeriod: BIBidPeriod?
     @NSManaged public var lineSortKeyMap: BILineSortKeyMap?
 
@@ -191,27 +191,27 @@ extension BILineSort : Identifiable, NSFetchedResultsControllerDelegate {
     }
     
     func selectedRegionalCities() -> [String] {
-        var cities: [String] = []
+        var cities: [String]? = []
         let type = self.type?.intValue
         if (BICityLineSortType.BICitiesLineSortTypeEastCoast.rawValue == type) {
-            cities = UserDefaults.standard.object(forKey: kCBSelectedEastCoastCities) as! [String]
+            cities = UserDefaults.standard.object(forKey: kCBSelectedEastCoastCities) as? [String]
         }
         else if (BICityLineSortType.BICitiesLineSortTypeWestCoast.rawValue == type) {
-            cities = UserDefaults.standard.object(forKey: kCBSelectedWestCoastCities) as! [String]
+            cities = UserDefaults.standard.object(forKey: kCBSelectedWestCoastCities) as? [String]
         }
         else if (BICityLineSortType.BICitiesLineSortTypeNonConus.rawValue == type) {
-            cities = UserDefaults.standard.object(forKey: kCBSelectedNonConusCities) as! [String]
+            cities = UserDefaults.standard.object(forKey: kCBSelectedNonConusCities) as? [String]
         }
         else if (BICityLineSortType.BICitiesLineSortTypeIntl.rawValue == type) {
-            cities = UserDefaults.standard.object(forKey: kCBSelectedInternationalCities) as! [String]
+            cities = UserDefaults.standard.object(forKey: kCBSelectedInternationalCities) as? [String]
         }
         else if (BICityLineSortType.BICitiesLineSortTypeAll.rawValue == type) {
-            cities = UserDefaults.standard.object(forKey: kCBSelectedAllCities) as! [String]
+            cities = UserDefaults.standard.object(forKey: kCBSelectedAllCities) as? [String]
         }
         else if (BICityLineSortType.BICitiesLineSortTypeHawaii.rawValue == type) {
-            cities = UserDefaults.standard.object(forKey: kCBSelectedHawaiiCities) as! [String]
+            cities = UserDefaults.standard.object(forKey: kCBSelectedHawaiiCities) as? [String]
         }
-        return cities
+        return cities ?? []
     }
     
     func deHighlightTrips() {
@@ -238,7 +238,7 @@ extension BILineSort : Identifiable, NSFetchedResultsControllerDelegate {
     }
     
     func highlightTrips() {
-        let cities = UserDefaults.standard.object(forKey: kCBSelectedWestCoastCities)
+    
         let fetchRequest: NSFetchRequest<BITrip> = BITrip.fetchRequest()
         if (self.predicate() != nil) {
             fetchRequest.predicate = self.predicate()

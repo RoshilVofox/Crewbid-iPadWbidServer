@@ -52,14 +52,14 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
         else {
             predicate2 = NSPredicate(format: "isBidListSort != %@", NSNumber(value: true))
         }
-        var abbreviations = menuItems.value(forKey: "abbreviation") as? [Any]
-        var tempAbbreviations : [Any] = []
+        var abbreviations = menuItems.value(forKey: "abbreviation") as? NSArray
+        let tempAbbreviations = abbreviations!.mutableCopy() as? NSMutableArray
         for i in 0..<abbreviations!.count {
             let abbreviation = abbreviations![i]
             if !(abbreviation is NSNull) {
                 if let abbreviationStr = abbreviation as? String,
                    abbreviationStr == "LegsThru" || abbreviationStr == "OvernightCity" {
-                    tempAbbreviations[i] = NSNull()
+                    tempAbbreviations!.replaceObject(at: i, with: NSNull())
                 }
             }
         }
@@ -70,9 +70,9 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
         do {
             let results = try moc?.fetch(fetchRequest)
             let disabledCellIndexPaths = NSMutableArray(capacity: menuItems.count)
-            for lineSort in results ?? [] {
-                if let abbreviation = lineSort.abbreviation,
-                   let index = abbreviations?.firstIndex(where: { ($0 as? String) == abbreviation }) {
+            for linerule in results ?? [] {
+                let index = abbreviations!.index(of: linerule.abbreviation)
+                if index != NSNotFound {
                     let indexPath = IndexPath(row: index, section: 0)
                     disabledCellIndexPaths.add(indexPath)
                 }
@@ -224,14 +224,14 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
                 subPredicates.append(NSPredicate(format: "isBidListSort != \(NSNumber(value: true))"))
             }
             subPredicates.append(NSPredicate(format: "bidPeriod == %@", bidPeriod!))
-            var abbreviations = menuItems.value(forKey: "abbreviation") as? [Any]
-            var tempAbbreviations : [Any] = []
+            var abbreviations = menuItems.value(forKey: "abbreviation") as? NSArray
+            var tempAbbreviations = abbreviations!.mutableCopy() as? NSMutableArray
             for i in 0..<abbreviations!.count {
                 let abbreviation = abbreviations![i]
                 if !(abbreviation is NSNull) {
                     if let abbreviationStr = abbreviation as? String,
                        abbreviationStr == "LegsThru" || abbreviationStr == "OvernightCity" {
-                        tempAbbreviations[i] = NSNull()
+                        tempAbbreviations!.replaceObject(at: i, with: NSNull())
                     }
                 }
             }
@@ -242,9 +242,9 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
             do {
                 let results = try moc?.fetch(fetchRequest)
                 let disabledCellIndexPaths = NSMutableArray(capacity: menuItems.count)
-                for lineSort in results ?? [] {
-                    if let abbreviation = lineSort.abbreviation,
-                       let index = abbreviations?.firstIndex(where: { ($0 as? String) == abbreviation }) {
+                for linerule in results ?? [] {
+                    let index = abbreviations!.index(of: linerule.abbreviation)
+                    if index != NSNotFound {
                         let indexPath = IndexPath(row: index, section: 0)
                         disabledCellIndexPaths.add(indexPath)
                     }
@@ -502,12 +502,14 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
                 }
                 if lineSort.sortHighlightsTrips() {
                     lineSort.highlightTrips()
+                    lineSort.bidPeriod = self.bidPeriod
                 }
             }
             try? bidPeriod?.managedObjectContext!.save()
             NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+            self.dismissPopover(animated: true)
         }
-        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+//        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
     }
     
     func cellIsHiddenForType(type: BIVacationLineSortType) -> Bool {

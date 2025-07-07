@@ -232,7 +232,7 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
         }
        else if  cellIdentifier == kCommutingLineSortCellIdentifier {
             let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CBCommutingSortCell
-           cell.titleLabel.text = title
+//           cell.titleLabel.text = title
            self.configure(cell: cell, for: sortsFetchController.object(at: indexPath))
             return cell
         }
@@ -247,40 +247,47 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
              return cell
          }
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CBLineSortCell
-        cell.titleLabel.text = title
+//        cell.titleLabel.text = title
         self.configure(cell: cell, for: sortsFetchController.object(at: indexPath))
         return cell
         
     }
     
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        let lineSort = AppData.shared.sortsToBeAddedInTable[indexPath.row]
-//        let category = lineSort["category"] as? Int
-//        
-//        if category == BILineSortCategory.BICommutingLineSortCategory.rawValue {
-//            return 270.0
-//        }
-//        else if category == BILineSortCategory.BIDaysOffLineSortCategory.rawValue {
-//            return 330.0
-//        }
-//        else if category == BILineSortCategory.BIDaysWorkLineSortCategory.rawValue {
-//            return 330.0
-//        }
-//        else if category == BILineSortCategory.BIDaysTripStartSortCategory.rawValue {
-//            return 330.0
-//        }
-//        else if category == BILineSortCategory.BIFlagLineSortCategory.rawValue {
-//            return CGFloat(/*(sort.variables?.count)!*/ 6 * 50)
-//        }
-//        else if category == BILineSortCategory.BIDeadheadsLineSortCategory.rawValue {
-//            return 70.0
-//        }
-//        else if category == BILineSortCategory.BICommutabilityLineSortCategory.rawValue {
-//            return 70.0
-//        } else {
-//            return 70
-//        }
-//    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let sectionInfo = self.sortsFetchController.sections![indexPath.section] as? NSFetchedResultsSectionInfo
+        let numOfRows = sectionInfo?.numberOfObjects ?? 0
+        if numOfRows > indexPath.row {
+            if let sort = self.sortsFetchController.object(at: indexPath) as? BILineSort {
+                if sort.category?.intValue == BILineSortCategory.BICommutingLineSortCategory.rawValue {
+                    return 270.0
+                }
+                else if sort.category?.intValue == BILineSortCategory.BIDaysOffLineSortCategory.rawValue {
+                    return 330.0
+                }
+                else if sort.category?.intValue == BILineSortCategory.BIDaysWorkLineSortCategory.rawValue {
+                    return 330.0
+                }
+                else if sort.category?.intValue == BILineSortCategory.BIDaysTripStartSortCategory.rawValue {
+                    return 330.0
+                }
+                else if sort.category?.intValue == BILineSortCategory.BIDaysOffLineSortCategory.rawValue {
+                    return CGFloat((sort.variables?.count)! * 50)
+                }
+                else if sort.category?.intValue == BILineSortCategory.BIDeadheadsLineSortCategory.rawValue {
+                    return 70.0
+                }
+                else if sort.category?.intValue == BILineSortCategory.BICommutabilityLineSortCategory.rawValue {
+                    return 70.0
+                }
+                else {
+                    return 70.0
+                }
+            }
+        }
+        else {
+            return 70
+        }
+    }
     
     func configure(cell: UITableViewCell, for lineSort: BILineSort) {
         cell.showsReorderControl = true
@@ -292,7 +299,9 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
             myCell.bidPeriod = self.bidPeriod
             myCell.lineSort = lineSort
             myCell.swapImgView.alpha = 0.0
-            myCell.cityNametxt.text = lineSort.city
+            if let textField = myCell.cityNametxt {
+                textField.text = lineSort.city ?? ""
+            }
         }
         else if lineSort.category?.intValue == BILineSortCategory.BIDaysOffLineSortCategory.rawValue {
             let dayMonthCell = cell as! CBDayMonthSortCell
