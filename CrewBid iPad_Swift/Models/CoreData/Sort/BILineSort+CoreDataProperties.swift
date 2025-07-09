@@ -112,6 +112,29 @@ extension BILineSort : Identifiable, NSFetchedResultsControllerDelegate {
         return false
     }
     
+    public var setCity: String? {
+        set(newX){
+            // Bid period must be set before setting city so that the bid period is
+            // available to provide the line key path for sorting.
+            //ZAssert(nil != self.bidPeriod, @"Bid period must be set before setting city.");
+            // Update key path fom bid period. Raise an exception if this not a city
+            // line sort.
+            if let category = category {
+                if BILineSortCategory.BICitiesLineSortCategory.rawValue != Int(truncating: category) && BILineSortCategory.BIDeadheadsLineSortCategory.rawValue != Int(truncating: category) {
+                    print("City property can be set only for line sorts with category equal to BICitiesLineSortCategory or BIDeadheadsLineSortCategory")
+                }
+            }
+            willChangeValue(forKey: "city")
+            self.city = newX
+            didChangeValue(forKey: "city")
+            keyPath = bidPeriod?.lineSortKeyForCityLineSort(cityLineSort: self, city: newX!)
+        }
+        
+        get {
+            return temX
+        }
+    }
+    
     func predicate() -> NSPredicate? {
         var format: NSPredicate?
         var category = self.category?.intValue
@@ -259,4 +282,28 @@ extension BILineSort : Identifiable, NSFetchedResultsControllerDelegate {
             fatalError("Failed to perform fetch: \(error)")
         }
     }
+    
+    func saveSelectedCities(_ selectedCities: [Any]) {
+        if BICityLineSortType.BICitiesLineSortTypeEastCoast.rawValue == Int(truncating: type!) {
+            UserDefaults.standard.set(selectedCities, forKey: kCBSelectedEastCoastCities)
+        }
+        else if BICityLineSortType.BICitiesLineSortTypeWestCoast.rawValue == Int(truncating: type!) {
+            UserDefaults.standard.set(selectedCities, forKey: kCBSelectedWestCoastCities)
+        }
+        else if BICityLineSortType.BICitiesLineSortTypeNonConus.rawValue == Int(truncating: type!) {
+            UserDefaults.standard.set(selectedCities, forKey: kCBSelectedNonConusCities)
+        }
+        else if BICityLineSortType.BICitiesLineSortTypeIntl.rawValue == Int(truncating: type!) {
+            UserDefaults.standard.set(selectedCities, forKey: kCBSelectedInternationalCities)
+        }
+        else if BICityLineSortType.BICitiesLineSortTypeAll.rawValue == Int(truncating: type!) {
+            UserDefaults.standard.set(selectedCities, forKey: kCBSelectedAllCities)
+        }
+        else if BICityLineSortType.BICitiesLineSortTypeHawaii.rawValue == Int(truncating: type!) {
+            UserDefaults.standard.set(selectedCities, forKey: kCBSelectedHawaiiCities)
+        }
+        
+    }
 }
+
+var temX: String = String()

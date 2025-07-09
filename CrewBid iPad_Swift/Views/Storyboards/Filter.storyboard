@@ -95,6 +95,10 @@
                                                 <color key="backgroundColor" name="custom_2"/>
                                             </tableViewCell>
                                         </prototypes>
+                                        <connections>
+                                            <outlet property="dataSource" destination="ep3-gL-STD" id="liF-ba-aai"/>
+                                            <outlet property="delegate" destination="ep3-gL-STD" id="eEE-Bq-SON"/>
+                                        </connections>
                                     </tableView>
                                 </subviews>
                                 <color key="backgroundColor" name="custom_2"/>
@@ -116,6 +120,9 @@
                         </constraints>
                     </view>
                     <size key="freeformSize" width="200" height="200"/>
+                    <connections>
+                        <outlet property="tableView" destination="APa-Cd-xrX" id="GTn-dc-vPH"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wLn-7U-nbO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

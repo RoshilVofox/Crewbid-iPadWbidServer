@@ -24,6 +24,7 @@ public final class CBGlobalMethods: NSObject {
     var SelectedMonth: NSNumber?
     var SelectedRound: NSNumber?
     var SelectedBase: String?
+    var activityIndicatorView = UIActivityIndicatorView()
     var SelectedPosition: String?
     var employeeNumber: String?
     var swaptimizerId: String?
@@ -76,6 +77,30 @@ public final class CBGlobalMethods: NSObject {
         dateFormatter.timeZone = TimeZone(identifier: "US/Central")!
         let date = dateFormatter.date(from: string)
         return date
+    }
+    
+    func hideActivityIndicator(){
+        DispatchQueue.main.async {
+            self.activityIndicatorView.stopAnimating()
+        }
+    }
+    
+    // MARK: - Activity indicator
+    //To show activity indicator with custom background color
+    func showActivityIndicator(bgColor: UIColor){
+        DispatchQueue.main.async {
+            self.activityIndicatorView = UIActivityIndicatorView(frame: CGRect(x:UIScreen.main.bounds.size.width,y: UIScreen.main.bounds.size.height,width: 80,height: 80))
+            self.activityIndicatorView.layer.cornerRadius = 05
+            if #available(iOS 13.0, *) {
+                self.activityIndicatorView.style = UIActivityIndicatorView.Style.large
+            }
+            self.activityIndicatorView.isOpaque = false
+            self.activityIndicatorView.backgroundColor = bgColor.withAlphaComponent(0.7)
+            self.activityIndicatorView.center = (UIApplication.topViewController()?.view.center)!
+            self.activityIndicatorView.color = UIColor.white
+            self.activityIndicatorView.startAnimating()
+            UIApplication.topViewController()?.view.addSubview(self.activityIndicatorView)
+        }
     }
     
     // Save the expiration date to iCloud Key-Value Store

@@ -523,3 +523,8 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
         }
     }
 }
+
+protocol CBMenuTableViewControllerDelegate {
+    func menuTableViewController(menuController: CBMenuTableVC, didSelectRowAtIndexPath indexPath: IndexPath)
+    func menuTableViewControllerCitySelection(menuController: CBMenuTableVC,selectedCities: NSMutableSet )
+}
