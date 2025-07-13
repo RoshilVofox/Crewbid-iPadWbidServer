@@ -17,7 +17,7 @@ extension BILineSort {
     }
 
     @NSManaged public var abbreviation: String?
-    @NSManaged public var arrayVariables: NSObject?
+    @NSManaged public var arrayVariables: NSArray? // first it was nsObject
     @NSManaged public var ascending: NSNumber?
     @NSManaged public var category: NSNumber?
     @NSManaged public var city: String?

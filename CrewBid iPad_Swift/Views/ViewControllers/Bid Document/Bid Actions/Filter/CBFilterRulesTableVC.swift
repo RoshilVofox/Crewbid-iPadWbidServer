@@ -111,6 +111,7 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     @IBAction func btnSortAction(_ sender: Any) {
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBLineSortsTVC") as! CBLineSortsTVC
+        vc.bidPeriod = self.bidPeriod
         self.navigationController?.pushViewController(vc, animated: false)
     }
     

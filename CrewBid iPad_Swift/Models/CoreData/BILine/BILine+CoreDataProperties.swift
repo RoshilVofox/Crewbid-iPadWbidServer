@@ -34,7 +34,7 @@ extension BILine {
     @NSManaged public var blockMinutes: NSNumber?
     @NSManaged public var blockOfDaysOff: NSNumber?
     @NSManaged public var carryOutPay: NSNumber?
-    @NSManaged public var cfvVacDates: NSObject?
+    @NSManaged public var cfvVacDates: NSArray?
     @NSManaged public var coHoli: NSNumber?
     @NSManaged public var commutabilityBack: NSNumber?
     @NSManaged public var commutabilityFront: NSNumber?
@@ -496,3 +496,11 @@ var kCategoryTitleLineSortKey: String = "title"
 var kCategoryTypesLineSortKey: String = "types"
 var kLineSortsSortsKey: String = "sorts"
 
+var BISortNoColorVariablesKey = "NO_COLOR_FLAG"
+var BISortGreenColorVariablesKey = "GREEN_COLOR_FLAG"
+var BISortYellowVariablesKey = "YELLOW_COLOR_FLAG"
+var BISortOrangeVariablesKey = "ORANGE_COLOR_FLAG"
+var BISortRedVariablesKey = "RED_COLOR_FLAG"
+var BISortBlueVariablesKey = "BLUE_COLOR_FLAG"
+var BISortBrownVariablesKey = "BROWN_COLOR_FLAG"
+var BISortPinkVariablesKey = "PINK_COLOR_FLAG"
