@@ -62,7 +62,7 @@ final class dataDownloadingButton: UIButton {
     }
 }
 extension UIColor {
-    static let purpleColor = UIColor(red:76.0,green:23.0,blue:203.0,alpha:0.1)
+    static let purpleColor = UIColor(red:76.0 / 255.0, green:23.0 / 255.0, blue:203.0 / 255.0, alpha: 1.0)
     
     
     convenience init(red: Int, green: Int, blue: Int) {

@@ -38,6 +38,18 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
         // Do any additional setup after loading the view.
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.allowsSelection = true
+        NotificationCenter.default.addObserver(self, selector: #selector(dismissSortMenuTable), name: NSNotification.Name(rawValue: "DismissSortMenuTable"), object: nil)
+    }
+    
+    @objc func dismissSortMenuTable() {
+        DispatchQueue.main.async {
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+    
     func setupViewDidLoad() {
         bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         let moc = bidPeriod?.managedObjectContext
@@ -522,4 +534,9 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
             return false
         }
     }
+}
+
+protocol CBMenuTableViewControllerDelegate {
+    func menuTableViewController(menuController: CBMenuTableVC, didSelectRowAtIndexPath indexPath: IndexPath)
+    func menuTableViewControllerCitySelection(menuController: CBMenuTableVC,selectedCities: NSMutableSet )
 }

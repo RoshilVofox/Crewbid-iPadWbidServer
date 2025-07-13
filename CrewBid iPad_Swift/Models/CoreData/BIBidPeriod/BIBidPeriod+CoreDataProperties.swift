@@ -90,7 +90,7 @@ extension BIBidPeriod {
     @NSManaged public var isWbidMaxOn: NSNumber?
     @NSManaged public var lastBidDate: Date?
     @NSManaged public var lastTrashedArray: NSObject?
-    @NSManaged public var lastTrashedDetails: NSObject?
+    @NSManaged public var lastTrashedDetails: NSArray?
     @NSManaged public var latestNewsDisplayed: NSNumber?
     @NSManaged public var loadedPresetIdentifier: String?
     @NSManaged public var month: NSNumber?
@@ -694,4 +694,242 @@ extension BIBidPeriod : Identifiable {
         return lineSortKey
     }
     
+    // Create a line sort key for days off sorting and set values for lines accordingly.
+    
+    func lineSortKeyForDaysOff( lineSort: BILineSort) -> String? {
+        var lineSortKey: String = String()
+        // Create line sort key, depending on type of line sort and city.
+        let sortKey: String = "daysOffSort"
+        // If there is already a line sort map for this sort key, then use the
+        // line key that corresponds to that sort key. Otherwise, create a new line
+        // sort map for the sort key and get the line key for that map. Before
+        // returning the line key, set the line key value for all lines.
+        // Check if a line sort map already exists for this sort key, and if not, create one
+
+        let sortKeyPredicate = NSPredicate(format: "sortKey == %@", sortKey)
+        let filteredLineSortMaps: [Any] = lineSortKeyMaps!.filter { sortKeyPredicate.evaluate(with: $0) }
+        // There should be only 1 (or 0) line sort key maps for the sort key.
+        if 0 == filteredLineSortMaps.count {
+            // Create a new line sort key map for the sort key
+
+            // There is no line sort key map for the sort key, so create one and
+            // set line values.
+            
+            let lineSortKeyMap = BILineSortKeyMap(context: managedObjectContext!)
+            lineSortKeyMap.lineSort = lineSort
+            lineSort.lineSortKeyMap = lineSortKeyMap
+            lineSortKeyMap.bidPeriod = self
+            lineSortKeyMap.sortKey = sortKey
+            // Determine the line key based on dynamic value names
+
+            let lineEntity = NSEntityDescription.entity(forEntityName: BILineEntityName, in: managedObjectContext!)
+            var lineAttributeNames =  [String]()
+            for attributeName in (lineEntity?.attributesByName.keys)!  {
+                // attributeName has the type String
+                // ...
+                lineAttributeNames.append(attributeName)
+            }
+            
+            let dynamicValuePredicate = NSPredicate(format: "SELF BEGINSWITH %@", "dynamicSortValue")
+            let dynamicValueNames: [Any]? = lineAttributeNames.filter { dynamicValuePredicate.evaluate(with: $0) }
+            // Find the first dynamic value name that is not in the line sort key
+            // maps names.
+            
+            let usedLineValues: Set<AnyHashable>? = (lineSortKeyMaps?.value(forKey: "lineKey") as? Set<AnyHashable>)
+            var foundDynamicVariable: Bool = false
+            
+            (dynamicValueNames! as NSArray).enumerateObjects({(_ obj: Any, _ idx: Int, _ stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                if !(usedLineValues?.contains(obj as! AnyHashable))! {
+                    lineSortKey = obj as! String
+                    foundDynamicVariable = true
+                }
+            })
+            // Check to see if all the dynamic variable slots are used up, if so, use the least-recently-used
+            // one, which will always be the first one
+            if !foundDynamicVariable {
+                lineSortKey = newSortKey()
+                if sortKey.length > 0  {
+                    managedObjectContext?.delete(lineSortKeyMap)
+                    managedObjectContext?.delete(lineSort)
+                    return nil
+                }
+            }
+            // Set the line key for the map
+
+            lineSortKeyMap.lineKey = lineSortKey
+        } else {
+            let lineSortKeyMap: BILineSortKeyMap? = (filteredLineSortMaps.first as! BILineSortKeyMap)
+            lineSortKey = (lineSortKeyMap?.lineKey)!
+        }
+        // Set values for lines based on their days off
+
+        if lineSort.variables != nil && lineSort.variables!["DAYS_OFF_MONTH_BITS"] != nil{
+            let daysOffBits: UInt64 = lineSort.variables!["DAYS_OFF_MONTH_BITS"] as! UInt64
+            let array = Array(lines!)
+            for (index, value) in array.enumerated() {
+                print(index)
+                let line:BILine = value as! BILine
+                let flippedMonthBits: UInt64 = UInt64(Int(truncating: line.monthBits!))
+                let daysOffForLineBits: UInt64 = flippedMonthBits & daysOffBits
+                let numDaysOffForLine: Int = CBUtils.popcount_few_ones(daysOffForLineBits)
+                line.setValue(numDaysOffForLine, forKey: lineSortKey)
+            }
+        }
+  
+        return lineSortKey
+    }
+    
+    // Create a line sort key for sorting lines based on days of work and set values for lines accordingly.
+
+    func lineSortKeyForDaysWork( lineSort: BILineSort) -> String? {
+        var lineSortKey: String = String()
+        // Create line sort key, depending on type of line sort and city.
+        let sortKey: String = "daysWorkSort"
+        // If there is already a line sort map for this sort key, then use the
+        // line key that corresponds to that sort key. Otherwise, create a new line
+        // sort map for the sort key and get the line key for that map. Before
+        // returning the line key, set the line key value for all lines.
+        let sortKeyPredicate = NSPredicate(format: "sortKey == %@", sortKey)
+        let filteredLineSortMaps: [Any] = lineSortKeyMaps!.filter { sortKeyPredicate.evaluate(with: $0) }
+        // There should be only 1 (or 0) line sort key maps for the sort key.
+        if 0 == filteredLineSortMaps.count {
+            // There is no line sort key map for the sort key, so create one and
+            // set line values.
+           
+            let lineSortKeyMap = BILineSortKeyMap(context: managedObjectContext!)
+            lineSortKeyMap.lineSort = lineSort
+            lineSort.lineSortKeyMap = lineSortKeyMap
+            lineSortKeyMap.bidPeriod = self
+            lineSortKeyMap.sortKey = sortKey
+            let lineEntity = NSEntityDescription.entity(forEntityName: BILineEntityName, in: managedObjectContext!)
+            var lineAttributeNames =  [String]()
+            for attributeName in (lineEntity?.attributesByName.keys)!  {
+                // attributeName has the type String
+                // ...
+                lineAttributeNames.append(attributeName)
+            }
+            
+            let dynamicValuePredicate = NSPredicate(format: "SELF BEGINSWITH %@", "dynamicSortValue")
+            let dynamicValueNames: [Any]? = lineAttributeNames.filter { dynamicValuePredicate.evaluate(with: $0) }
+            // Find the first dynamic value name that is not in the line sort key
+            // maps names.
+            let usedLineValues: Set<AnyHashable>? = (lineSortKeyMaps?.value(forKey: "lineKey") as? Set<AnyHashable>)
+            var foundDynamicVariable: Bool = false
+            
+            (dynamicValueNames! as NSArray).enumerateObjects({(_ obj: Any, _ idx: Int, _ stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                if !(usedLineValues?.contains(obj as! AnyHashable))! {
+                    lineSortKey = obj as! String
+                    foundDynamicVariable = true
+                }
+            })
+            // Check to see if all the dynamic variable slots are used up, if so, use the least-recently-used
+            // one, which will always be the first one
+            if !foundDynamicVariable {
+                lineSortKey = newSortKey()
+                if sortKey.length > 0  {
+                    managedObjectContext?.delete(lineSortKeyMap)
+                    managedObjectContext?.delete(lineSort)
+                    return nil
+                }
+            }
+            // Set the line key for the map
+
+            lineSortKeyMap.lineKey = lineSortKey
+        } else {
+            let lineSortKeyMap: BILineSortKeyMap? = (filteredLineSortMaps.first as! BILineSortKeyMap)
+            lineSortKey = (lineSortKeyMap?.lineKey)!
+        }
+        // Set values for lines based on their days of work
+
+        let daysOffBits: UInt64 = lineSort.variables!["DAYS_OFF_MONTH_BITS"] as! UInt64
+        let array = Array(lines!)
+        for (index, value) in array.enumerated() {
+            print(index)
+            let line:BILine = value as! BILine
+            let flippedMonthBits: UInt64 = UInt64(Int(truncating: line.monthBits!))
+            let daysOffForLineBits: UInt64 = flippedMonthBits & daysOffBits
+            let numDaysOffForLine: Int = CBUtils.popcount_few_ones(daysOffForLineBits)
+            line.setValue(numDaysOffForLine, forKey: lineSortKey)
+        }
+        return lineSortKey
+    }
+    
+    // Create a line sort key for sorting lines based on trip start days and set values for lines accordingly.
+
+    func lineSortKeyForTripStartDays( lineSort: BILineSort) -> String? {
+        var lineSortKey: String = String()
+        // Create line sort key, depending on type of line sort and city.
+        let sortKey: String = "daysTripStartSort"
+        // If there is already a line sort map for this sort key, then use the
+        // line key that corresponds to that sort key. Otherwise, create a new line
+        // sort map for the sort key and get the line key for that map. Before
+        // returning the line key, set the line key value for all lines.
+        let sortKeyPredicate = NSPredicate(format: "sortKey == %@", sortKey)
+        let filteredLineSortMaps: [Any] = lineSortKeyMaps!.filter { sortKeyPredicate.evaluate(with: $0) }
+        // There should be only 1 (or 0) line sort key maps for the sort key.
+        if 0 == filteredLineSortMaps.count {
+            // There is no line sort key map for the sort key, so create one and
+            // set line values.
+            let lineSortKeyMap = BILineSortKeyMap(context: managedObjectContext!)
+            lineSortKeyMap.lineSort = lineSort
+            lineSort.lineSortKeyMap = lineSortKeyMap
+            lineSortKeyMap.bidPeriod = self
+            lineSortKeyMap.sortKey = sortKey
+            let lineEntity = NSEntityDescription.entity(forEntityName: BILineEntityName, in: managedObjectContext!)
+            var lineAttributeNames =  [String]()
+            for attributeName in (lineEntity?.attributesByName.keys)!  {
+                // attributeName has the type String
+                // ...
+                lineAttributeNames.append(attributeName)
+            }
+            
+            let dynamicValuePredicate = NSPredicate(format: "SELF BEGINSWITH %@", "dynamicSortValue")
+            let dynamicValueNames: [Any]? = lineAttributeNames.filter { dynamicValuePredicate.evaluate(with: $0) }
+            // Find the first dynamic value name that is not in the line sort key
+            // maps names.
+            let usedLineValues: Set<AnyHashable>? = (lineSortKeyMaps?.value(forKey: "lineKey") as? Set<AnyHashable>)
+            var foundDynamicVariable: Bool = false
+            
+            (dynamicValueNames! as NSArray).enumerateObjects({(_ obj: Any, _ idx: Int, _ stop: UnsafeMutablePointer<ObjCBool>) -> Void in
+                if !(usedLineValues?.contains(obj as! AnyHashable))! {
+                    lineSortKey = obj as! String
+                    foundDynamicVariable = true
+                }
+            })
+            // Check to see if all the dynamic variable slots are used up, if so, use the least-recently-used
+            // one, which will always be the first one
+            if !foundDynamicVariable {
+                lineSortKey = newSortKey()
+                if sortKey.length > 0  {
+                    managedObjectContext?.delete(lineSortKeyMap)
+                    managedObjectContext?.delete(lineSort)
+                    return nil
+                }
+            }
+            // Set the line key for the map
+
+            lineSortKeyMap.lineKey = lineSortKey
+        } else {
+            let lineSortKeyMap: BILineSortKeyMap? = (filteredLineSortMaps.first as! BILineSortKeyMap)
+            lineSortKey = (lineSortKeyMap?.lineKey)!
+        }
+        // Set values for lines based on their trip start days
+
+        let daysOffBits: UInt64 = lineSort.variables!["DAYS_OFF_MONTH_BITS"] as! UInt64
+        let array = Array(lines!)
+        for (index, value) in array.enumerated() {
+            print(index)
+            let line:BILine = value as! BILine
+            let flippedMonthBits: UInt64 = UInt64(Int(truncating: line.tripStartMonthBits!))
+            let daysOffForLineBits: UInt64 = flippedMonthBits & daysOffBits
+            let numDaysOffForLine: Int = CBUtils.popcount_few_ones(daysOffForLineBits)
+            line.setValue(numDaysOffForLine, forKey: lineSortKey)
+        }
+        return lineSortKey
+    }
+    
+    func isNeedToShowMyCal() -> Bool {
+        return myCalEndDate != nil && myCalStartDate != nil
+    }
+ 
 }

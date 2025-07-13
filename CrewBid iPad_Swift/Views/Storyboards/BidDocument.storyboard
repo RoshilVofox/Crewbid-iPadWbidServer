@@ -1358,6 +1358,9 @@
                                                                     <state key="normal" title="Hard Lines">
                                                                         <color key="titleColor" systemColor="labelColor"/>
                                                                     </state>
+                                                                    <connections>
+                                                                        <action selector="buttonAction:" destination="h7b-Zw-mlp" eventType="touchUpInside" id="oEx-ke-ApC"/>
+                                                                    </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FNs-7D-6aY" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                                                     <rect key="frame" x="81" y="0.0" width="76" height="36"/>
@@ -1367,6 +1370,9 @@
                                                                     <state key="normal" title="mixRES">
                                                                         <color key="titleColor" systemColor="labelColor"/>
                                                                     </state>
+                                                                    <connections>
+                                                                        <action selector="buttonAction:" destination="h7b-Zw-mlp" eventType="touchUpInside" id="MAX-mg-Rzb"/>
+                                                                    </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rXm-IT-lok" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                                                     <rect key="frame" x="162" y="0.0" width="76" height="36"/>
@@ -1376,6 +1382,9 @@
                                                                     <state key="normal" title="ConUS">
                                                                         <color key="titleColor" systemColor="labelColor"/>
                                                                     </state>
+                                                                    <connections>
+                                                                        <action selector="buttonAction:" destination="h7b-Zw-mlp" eventType="touchUpInside" id="45T-E3-arM"/>
+                                                                    </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IPa-nX-Beg" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                                                     <rect key="frame" x="243" y="0.0" width="76" height="36"/>
@@ -1385,6 +1394,9 @@
                                                                     <state key="normal" title=" NonConUS ">
                                                                         <color key="titleColor" systemColor="labelColor"/>
                                                                     </state>
+                                                                    <connections>
+                                                                        <action selector="buttonAction:" destination="h7b-Zw-mlp" eventType="touchUpInside" id="9QV-lf-QXq"/>
+                                                                    </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SBk-3B-odY" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                                                     <rect key="frame" x="324" y="0.0" width="76" height="36"/>
@@ -1394,6 +1406,9 @@
                                                                     <state key="normal" title="Reserve">
                                                                         <color key="titleColor" systemColor="labelColor"/>
                                                                     </state>
+                                                                    <connections>
+                                                                        <action selector="buttonAction:" destination="h7b-Zw-mlp" eventType="touchUpInside" id="5JC-dY-2gg"/>
+                                                                    </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MnE-mK-XTR" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                                                     <rect key="frame" x="405" y="0.0" width="76" height="36"/>
@@ -1403,6 +1418,9 @@
                                                                     <state key="normal" title="Blank">
                                                                         <color key="titleColor" systemColor="labelColor"/>
                                                                     </state>
+                                                                    <connections>
+                                                                        <action selector="buttonAction:" destination="h7b-Zw-mlp" eventType="touchUpInside" id="nO0-3o-SYw"/>
+                                                                    </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6xP-KI-mIA" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                                                     <rect key="frame" x="486" y="0.0" width="76" height="36"/>
@@ -1412,6 +1430,9 @@
                                                                     <state key="normal" title="ETOPS">
                                                                         <color key="titleColor" systemColor="labelColor"/>
                                                                     </state>
+                                                                    <connections>
+                                                                        <action selector="buttonAction:" destination="h7b-Zw-mlp" eventType="touchUpInside" id="5aU-8p-EPo"/>
+                                                                    </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tHN-Pf-BeO" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                                                     <rect key="frame" x="566" y="0.0" width="76" height="36"/>
@@ -1421,6 +1442,9 @@
                                                                     <state key="normal" title=" ETOPS RES">
                                                                         <color key="titleColor" systemColor="labelColor"/>
                                                                     </state>
+                                                                    <connections>
+                                                                        <action selector="buttonAction:" destination="h7b-Zw-mlp" eventType="touchUpInside" id="JFT-be-Mph"/>
+                                                                    </connections>
                                                                 </button>
                                                             </subviews>
                                                         </stackView>
@@ -4395,6 +4419,9 @@
                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
+                                <connections>
+                                    <action selector="btnCloseAction:" destination="Xod-Hl-sOk" eventType="touchUpInside" id="T1j-7y-h5Y"/>
+                                </connections>
                             </button>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="gGH-iX-Fkm">
                                 <rect key="frame" x="30" y="42" width="260" height="418"/>
@@ -4461,6 +4488,9 @@
                                 <state key="normal" title="Add">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
+                                <connections>
+                                    <action selector="btnAddAction:" destination="Xod-Hl-sOk" eventType="touchUpInside" id="0Xa-sk-9mf"/>
+                                </connections>
                             </button>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="D6q-Lw-Erb">
                                 <rect key="frame" x="30" y="42" width="260" height="418"/>
@@ -4485,6 +4515,9 @@
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Imu-9c-m1N">
                                                 <rect key="frame" x="230" y="16" width="20" height="20"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <connections>
+                                                    <action selector="didUpdateCheckBox:" destination="Xod-Hl-sOk" eventType="touchUpInside" id="cEY-2b-Ln7"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <constraints>
@@ -4519,6 +4552,9 @@
                                             <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3DH-te-W9w">
                                                 <rect key="frame" x="230" y="16" width="20" height="20"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <connections>
+                                                    <action selector="didUpdateCheckBox:" destination="Xod-Hl-sOk" eventType="touchUpInside" id="HB2-4g-2JV"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <constraints>
@@ -4553,6 +4589,9 @@
                                             <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6pc-2B-x0p">
                                                 <rect key="frame" x="230" y="16" width="20" height="20"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <connections>
+                                                    <action selector="didUpdateCheckBox:" destination="Xod-Hl-sOk" eventType="touchUpInside" id="XbD-5M-fDg"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <constraints>
@@ -4587,6 +4626,9 @@
                                             <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NH5-Ok-l4c">
                                                 <rect key="frame" x="230" y="16" width="20" height="20"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <connections>
+                                                    <action selector="didUpdateCheckBox:" destination="Xod-Hl-sOk" eventType="touchUpInside" id="fl1-DT-Emo"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <constraints>
@@ -4621,6 +4663,9 @@
                                             <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="v7w-Q1-u12">
                                                 <rect key="frame" x="230" y="16" width="20" height="20"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <connections>
+                                                    <action selector="didUpdateCheckBox:" destination="Xod-Hl-sOk" eventType="touchUpInside" id="NbO-Qr-ezg"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <constraints>
@@ -4655,6 +4700,9 @@
                                             <button opaque="NO" tag="5" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oW3-3M-eFg">
                                                 <rect key="frame" x="230" y="16" width="20" height="20"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <connections>
+                                                    <action selector="didUpdateCheckBox:" destination="Xod-Hl-sOk" eventType="touchUpInside" id="u09-yg-ZIL"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <constraints>
@@ -4689,6 +4737,9 @@
                                             <button opaque="NO" tag="6" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9YA-X5-qh8">
                                                 <rect key="frame" x="230" y="16" width="20" height="20"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <connections>
+                                                    <action selector="didUpdateCheckBox:" destination="Xod-Hl-sOk" eventType="touchUpInside" id="YQh-Rj-Odn"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <constraints>
@@ -4723,6 +4774,9 @@
                                             <button opaque="NO" tag="7" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sgO-qB-lLV">
                                                 <rect key="frame" x="230" y="16" width="20" height="20"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                <connections>
+                                                    <action selector="didUpdateCheckBox:" destination="Xod-Hl-sOk" eventType="touchUpInside" id="49O-be-O1V"/>
+                                                </connections>
                                             </button>
                                         </subviews>
                                         <constraints>
@@ -5161,6 +5215,9 @@
                                                         <segment title="Low to High"/>
                                                         <segment title="High to Low"/>
                                                     </segments>
+                                                    <connections>
+                                                        <action selector="LHsegmentAction:" destination="lUM-52-Gco" eventType="valueChanged" id="mH1-Oj-Uss"/>
+                                                    </connections>
                                                 </segmentedControl>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="City" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="8Kz-Z4-l3J">
                                                     <rect key="frame" x="288" y="13" width="61" height="30"/>
@@ -5244,6 +5301,9 @@
                                                         <segment title="Low to High"/>
                                                         <segment title="High to Low"/>
                                                     </segments>
+                                                    <connections>
+                                                        <action selector="LHsegmentAction:" destination="IPe-Kz-DIb" eventType="valueChanged" id="gYT-PB-IDj"/>
+                                                    </connections>
                                                 </segmentedControl>
                                                 <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="City" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="pgb-5G-dtB">
                                                     <rect key="frame" x="288" y="13" width="61" height="30"/>
@@ -5638,6 +5698,9 @@
                                                             <state key="selected">
                                                                 <color key="titleColor" red="0.16862745100000001" green="0.18823529410000001" blue="0.2156862745" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="calculateDaysOffSort:" destination="kIk-yx-12w" eventType="touchUpInside" id="eDy-qq-BuZ"/>
+                                                            </connections>
                                                         </button>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="August Days Work" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c1h-KR-vrY">
                                                             <rect key="frame" x="10" y="134" width="200" height="22"/>
@@ -5672,6 +5735,11 @@
                                                 <constraint firstAttribute="bottom" secondItem="347-g9-DC6" secondAttribute="bottom" id="sCd-IS-sxb"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="calculateButton" destination="o4b-cY-QiZ" id="LkK-Y0-ciV"/>
+                                            <outlet property="calendarCollectionView" destination="4Fs-4r-If4" id="CrT-vR-oWe"/>
+                                            <outlet property="monthLabel" destination="c1h-KR-vrY" id="EpL-fQ-voQ"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CommutabilitySortCell" rowHeight="56" id="cm3-Ga-IrQ" customClass="CBCommutabilitySortCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="722" width="580" height="56"/>
@@ -5800,6 +5868,9 @@
                                                 <constraint firstAttribute="bottom" secondItem="0a1-7Y-Ph3" secondAttribute="bottom" constant="-8" id="dqO-nt-h9g"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="objFlagTableView" destination="0a1-7Y-Ph3" id="kGa-cy-63g"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>

@@ -22,6 +22,7 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
     
     var bidPeriod: BIBidPeriod?
     var calendarData: BICalendarData =  BICalendarData()
+    var ignoreDataModelChanges: Bool!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,15 +37,19 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver("refreshLines")
         NotificationCenter.default.removeObserver("DeleteCellNotification")
         NotificationCenter.default.removeObserver("SortBidListAction")
+        NotificationCenter.default.post(name: NSNotification.Name("SortViewWillDisappear"), object: self)
     }
     
     func setupUI(){
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
         btnSortTheBidlist.backgroundColor = .systemRed
         btnSortTheScratchpad.backgroundColor = .systemGreen
+        tableView.isEditing = true
+        calendarData = calendarData.initWithBidPeriod(bidPeriod: bidPeriod!)!
     }
     
     @objc func setupLayoutView() {
@@ -171,7 +176,7 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
 
 extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
-        return (self.sortsFetchController.sections!.count) ?? 0
+        return (self.sortsFetchController.sections?.count) ?? 0
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -238,6 +243,7 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
         }
         else if  cellIdentifier == kDaysOffLineSortCellIdentifier {
              let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! CBDayMonthSortCell
+            self.configure(cell: cell, for: sortsFetchController.object(at: indexPath))
              return cell
          }
         else if  cellIdentifier == kCommutabilityLineSortCellIdentifier {
@@ -270,8 +276,8 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
                 else if sort.category?.intValue == BILineSortCategory.BIDaysTripStartSortCategory.rawValue {
                     return 330.0
                 }
-                else if sort.category?.intValue == BILineSortCategory.BIDaysOffLineSortCategory.rawValue {
-                    return CGFloat((sort.variables?.count)! * 50)
+                else if sort.category?.intValue == BILineSortCategory.BIFlagLineSortCategory.rawValue {
+                    return CGFloat(((sort.variables?.count)! * 50) + 20)
                 }
                 else if sort.category?.intValue == BILineSortCategory.BIDeadheadsLineSortCategory.rawValue {
                     return 70.0
@@ -287,6 +293,54 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
         else {
             return 70
         }
+    }
+    
+    //MARK: - Sort table reordering
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        // If from row and to row are the same (not really a move), do nothing.
+        if sourceIndexPath == destinationIndexPath { return }
+        //         Since the table view already reflects the order of the objects, do not
+        //         update the table view for these model changes.
+                self.ignoreDataModelChanges = true
+        let fromRow = sourceIndexPath.row
+        let toRow = destinationIndexPath.row
+        // Set the order of the moved line sort (at from row) to the to row.
+        var lineSort = sortsFetchController.object(at: sourceIndexPath)
+        lineSort.order = NSNumber(integerLiteral: toRow + 1)
+        // From row greater than to row (move up in list). Change the order of line
+        // sorts between (inclusive) of the from and to rows.
+        if fromRow > toRow {
+            // Set the order of the line sorts at the to row, down to the from row.
+            for row in toRow..<fromRow {
+                let indexPath = IndexPath(row: row, section: 0)
+                lineSort = sortsFetchController.object(at: indexPath)
+                //Added the default value to fix crash
+                lineSort.order = NSNumber(integerLiteral: ((lineSort.order?.intValue ?? 1) + 1))
+            }
+        }
+        // From row less than to row (move down in list).
+        else {
+            for row in (fromRow + 1) ... toRow {
+                let indexPath = IndexPath(row: row, section: 0)
+                lineSort = sortsFetchController.object(at: indexPath)
+                //Added the default value to fix crash
+                lineSort.order = NSNumber(integerLiteral: (lineSort.order!.intValue  - 1))
+            }
+        }
+        try? bidPeriod?.managedObjectContext?.save()
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+    }
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return UITableViewCell.EditingStyle.none
+    }
+    
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return false
     }
     
     func configure(cell: UITableViewCell, for lineSort: BILineSort) {
@@ -309,6 +363,7 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
             dayMonthCell.calendarData = self.calendarData
             dayMonthCell.lineSort = lineSort
             dayMonthCell.type = .Off
+            dayMonthCell.calendarCollectionView.reloadData()
         }
         else if lineSort.category?.intValue == BILineSortCategory.BIDaysWorkLineSortCategory.rawValue {
             let dayMonthCell = cell as! CBDayMonthSortCell
@@ -316,6 +371,7 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
             dayMonthCell.calendarData = self.calendarData
             dayMonthCell.lineSort = lineSort
             dayMonthCell.type = .Work
+            dayMonthCell.calendarCollectionView.reloadData()
         }
         else if lineSort.category?.intValue == BILineSortCategory.BIDaysTripStartSortCategory.rawValue {
             let dayMonthCell = cell as! CBDayMonthSortCell
@@ -323,6 +379,7 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
             dayMonthCell.calendarData = self.calendarData
             dayMonthCell.lineSort = lineSort
             dayMonthCell.type = .TripStart
+            dayMonthCell.calendarCollectionView.reloadData()
         }
         else if lineSort.category?.intValue == BILineSortCategory.BICommutingLineSortCategory.rawValue {
             let sortCell = cell as! CBCommutingSortCell
@@ -339,6 +396,9 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
             flagCell.bidPeriod = self.bidPeriod
             flagCell.lineSort = lineSort
             flagCell.configureFlagSortCell()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                flagCell.objFlagTableView.reloadData()
+            }
         }
         else if lineSort.category?.intValue == BILineSortCategory.BISwaptimizerLineSortCategory.rawValue {
             let myCell = cell as! CBLineSortCell
