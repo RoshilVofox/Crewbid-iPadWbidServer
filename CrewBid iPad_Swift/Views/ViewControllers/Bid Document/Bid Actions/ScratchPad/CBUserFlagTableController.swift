@@ -125,6 +125,12 @@ class CBUserFlagTableController: UIViewController,UITableViewDelegate,UITableVie
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath){
+        CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
+        CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
+        CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
+        let flag = userFlags[indexPath.row]
+        let flagTypeValue = CBUserFlagType(rawValue: flag as! Int)
+        delegate?.changeLineUserFlagTypeTo(flagType: flagTypeValue!, selectedLine: line ?? nil)
         self.dismissPopover(animated: true)
     }
     

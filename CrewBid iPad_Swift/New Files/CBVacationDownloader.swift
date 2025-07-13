@@ -9,6 +9,13 @@ import Foundation
 import CoreData
 import UIKit
 
+enum BIVacationOverlapTripOption: Int {
+    case showAll = 0
+    case dropFront
+    case dropBack
+    case dropAll
+}
+
 class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     
     let kSwaptimizerUrlTest = URL(string: "https://swaptimizer2.com/secure/cgi-bin/crewbid.f-week.cgi")!
@@ -2225,7 +2232,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                         }
                     }
                     if let cfvDates = vLine?["CFVDates"] {
-                        line.cfvVacDates = cfvDates as? NSObject
+                        line.cfvVacDates = cfvDates as? NSArray
                         self.bidPeriod?.containsVacay = true
                         self.bidPeriod?.seniorityVacayAvailable = true
                         self.bidPeriod?.containsCFV = true
@@ -3188,7 +3195,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         var tripDates: [String] = []
         tripDates.reserveCapacity(4)
         for dayInfo in trip.info!.orderedDays() {
-            for lengInfo in dayInfo.orderedLegs() {
+            for lengInfo in dayInfo.orderedLegs {
                 dateComps.minute = lengInfo.departMinutes?.intValue
                 let legStartDate = calendar.date(from: dateComps)!
                 tripDates.append(df.string(from: legStartDate))

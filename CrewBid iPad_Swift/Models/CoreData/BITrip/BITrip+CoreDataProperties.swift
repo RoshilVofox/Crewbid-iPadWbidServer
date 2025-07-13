@@ -149,7 +149,15 @@ extension BITrip : Identifiable {
         return redEyeCount.intValue > 0
     }
 
-
+    func isAM() -> Bool {
+        let StatusValue = 1
+        return StatusValue == Int(truncating: info!.amPM!)
+    }
+    
+    func isPM() -> Bool {
+        let StatusValue = 2
+        return StatusValue == Int(truncating: info!.amPM!)
+    }
     
     var isReserve: Bool {
         if line?.bidPeriod?.isFABid() == true {

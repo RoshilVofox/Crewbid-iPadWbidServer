@@ -146,14 +146,28 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        
+    }
+    
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
+    }
     
     @IBAction func resetAction(_ sender: Any) {
         resetStdAction()
     }
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        NotificationCenter.default.post(name: NSNotification.Name("refreshAllData"), object: nil)
+
+    //Adding line to bidlist
+    @objc func bidCellLine(_ notification: Notification) {
+        //For passing FA line to bidlist we need to show a view for position
+        if let buttonView = notification.userInfo![CBLineTableCellButtonViewKey] as? UIView, let lines = notification.userInfo!["Lines"] as? [BILine], let lineNum = notification.userInfo!["LineNum"] as? Int {
+            
+        }
     }
+    
     
     class func setLineValueView(_ lineValueView: CBLineValueView, with line: BILine, forType valueType: CBLineValueTypes, bidPeriod: BIBidPeriod) {
         switch valueType {
@@ -556,6 +570,28 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
     }
     
     func resetStdAction(){
+        UserDefaults.standard.removeObject(forKey: kCBDefaultLineValuesKey)
+        let defaultLineValues = [CBLineValueTypes.Pay.rawValue, CBLineValueTypes.BlockTime.rawValue, CBLineValueTypes.AircraftChanges.rawValue, CBLineValueTypes.PayPerBlock.rawValue, CBLineValueTypes.PayPerDay.rawValue]
+        let standardDefaults = [kCBDefaultLineValuesKey:defaultLineValues]
+        UserDefaults.standard.register(defaults: standardDefaults)
+        
+        let defaultRound2LineValues = [CBLineValueTypes.Pay.rawValue, CBLineValueTypes.BlockDaysOff.rawValue, CBLineValueTypes.Weekends.rawValue, CBLineValueTypes.WorkDays.rawValue, CBLineValueTypes.PayPerDay.rawValue]
+        let standardRound2Defaults = [ kCBRound2DefaultLineValuesKey : defaultRound2LineValues ]
+        UserDefaults.standard.register(defaults: standardRound2Defaults)
+        
+        // Set up the swaptimizer default line values and add them to the register defaults
+        UserDefaults.standard.removeObject(forKey: kCBSwaptimizerLineValuesKey)
+        let swaptimizerLineValues = [CBLineValueTypes.VTotalPay.rawValue, CBLineValueTypes.VVacayPay.rawValue, CBLineValueTypes.VBlockTime.rawValue, CBLineValueTypes.VDaysOff.rawValue, CBLineValueTypes.VPayPerDay.rawValue]
+        let swaptimizerDefaults = [kCBSwaptimizerLineValuesKey : swaptimizerLineValues]
+        UserDefaults.standard.register(defaults: swaptimizerDefaults)
+        
+        // Set up the Fa Vacation default line values and add them to the register defaults
+        UserDefaults.standard.removeObject(forKey: kCBFaVacationLineValuesKey)
+        let faVacationLineValues = [CBLineValueTypes.VTotalPay.rawValue, CBLineValueTypes.VVacayPay.rawValue, CBLineValueTypes.VBlockTime.rawValue, CBLineValueTypes.VDaysOff.rawValue, CBLineValueTypes.VPayPerDay.rawValue]
+        let faVacationDefaults = [kCBFaVacationLineValuesKey : faVacationLineValues]
+        UserDefaults.standard.register(defaults: faVacationDefaults)
+        
+        self.tableView.reloadData()
         
     }
     

@@ -186,9 +186,13 @@ class CBDocumentsCollectionViewController: BaseViewController {
             fetchRequest.entity = entity
                 // Fetch bid periods and reverse to show newest first
             
-            self.bidPeriodList = try! context.fetch(fetchRequest) as! [BIBidPeriod]
-            self.bidPeriodList = self.bidPeriodList.reversed()
-            self.collectionView.reloadData()
+            do {
+                let fetched = try context.fetch(fetchRequest) as? [BIBidPeriod] ?? []
+                self.bidPeriodList = Array(fetched.reversed()) // ✅ Proper array
+                self.collectionView.reloadData()
+            } catch {
+                print("Error fetching bid periods: \(error)")
+            }
             
             if (self.bidPeriodList.count == 0) {
                 self.editButton.setTitle("Edit", for: .normal)

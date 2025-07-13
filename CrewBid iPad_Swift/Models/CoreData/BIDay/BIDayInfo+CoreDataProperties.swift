@@ -85,21 +85,23 @@ extension BIDayInfo : Identifiable {
 //        return orderedLegs
 //    }
     
-    @objc func orderedLegs() -> [BILegInfo] {
-        // Sort the legs based on departure minutes and return them as an ordered array
-
-        let orderedLegs: [BILegInfo]? = (Array(self.legs!) as NSArray).sortedArray(options: NSSortOptions(rawValue: 0), usingComparator: {(_ leg1: Any, _ leg2: Any) -> ComparisonResult in
-            let value1 : NSNumber = (leg1 as AnyObject).value(forKey: "departMinutes") as! NSNumber
-            let value2 : NSNumber = (leg2 as AnyObject).value(forKey: "departMinutes")  as! NSNumber
-            let result: ComparisonResult? = value1.compare(value2)
-            return result!
-        }) as? [BILegInfo]
-        return orderedLegs!
+    var orderedLegs: [BILegInfo] {
+        guard let legSet = legs as? Set<BILegInfo> else { return [] }
+        
+        return legSet.sorted {
+            let minutes1 = $0.departMinutes as? Int ?? 0
+            let minutes2 = $1.departMinutes as? Int ?? 0
+            return minutes1 < minutes2
+        }
     }
     
     var dayPay: CGFloat {
-        return orderedLegs().reduce(0) { total, legInfo in
-            total + CGFloat((legInfo).pay?.floatValue ?? 0)
+        var total: CGFloat = 0.0
+        for legInfo in orderedLegs {
+            if let pay = legInfo.pay {
+                total += CGFloat(truncating: pay)
+            }
         }
+        return total
     }
 }

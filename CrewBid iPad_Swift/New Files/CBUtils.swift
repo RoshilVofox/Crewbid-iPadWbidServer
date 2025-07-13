@@ -621,6 +621,87 @@ class CBUtils{
         return result["missingDate"] as? Date
     }
     
+    class func isDateMissingInPreviousDay(_ trip:BITrip) -> Bool{
+        let result = self.findMissingDateAndIndex(forRedEyeTrip: trip)
+        return (result["isMissingDateIsLastDay"] as? Bool)!
+    }
+    
+    class func redEyeIconButton(fontSize: CGFloat) -> UIButton {
+        let redEyeIconButton = UIButton(type: .custom)
+        redEyeIconButton.isUserInteractionEnabled = false
+
+        if #available(iOS 13.0, *) {
+            let config = UIImage.SymbolConfiguration(pointSize: fontSize, weight: .regular, scale: .default)
+            if let icon = UIImage(systemName: "eye.fill")?.applyingSymbolConfiguration(config) {
+                redEyeIconButton.setImage(icon, for: .normal)
+                redEyeIconButton.tintColor = .white
+            }
+        } else {
+            redEyeIconButton.setImage(UIImage(named: "redeye"), for: .normal)
+        }
+
+        return redEyeIconButton
+    }
+    
+    class func isClawBack(line: BILine, day: BIDay, bidPeriod: BIBidPeriod) -> Bool {
+        guard let clawBack = line.clawBack?.floatValue, clawBack > 0 else {
+            return false
+        }
+
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale(identifier: "en_US")
+        calendar.timeZone = TimeZone(identifier: "US/Central")!
+
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: day.date!)
+        guard let currentDateMonth = dateComponents.month,
+              let bidMonth = bidPeriod.month?.intValue,
+              currentDateMonth != bidMonth else {
+            return false
+        }
+
+        guard let vacations = bidPeriod.vacations as? Set<BIVacation> else {
+            return false
+        }
+
+        for vacay in vacations {
+            let cal = Calendar.current
+
+            guard let dayDate = day.date,
+                  let vacStart = vacay.startDate,
+                  let vacEnd = vacay.endDate else { continue }
+
+            let dayDateOnly = cal.startOfDay(for: dayDate)
+            let startDateOnly = cal.startOfDay(for: vacStart)
+            let endDateOnly = cal.startOfDay(for: vacEnd)
+
+            let isInRange = (dayDateOnly >= startDateOnly && dayDateOnly <= endDateOnly)
+
+            if isInRange {
+                return true
+            }
+        }
+
+        return false
+    }
+    
+    static func weekDay(from date: Date) -> Int {
+        let calendar = Calendar.current
+        let weekday = calendar.component(.weekday, from: date)
+        // Sunday = 1, Monday = 2, ..., Saturday = 7
+        return weekday
+    }
+    
+    class func popcount_few_ones(_ x: UInt64) -> Int {
+          var x = x
+          var count: Int
+          count = 0
+          while (x != 0) {
+              x &= x - 1
+              count += 1
+          }
+          return count
+      }
+    
     class func timeZone(forAirportCode base: String) -> TimeZone {
         // If Herb Time is the setting, return Central timezone
         if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.herbTime.rawValue {
@@ -661,7 +742,7 @@ class CBUtils{
 
             if let orderedDays = trip.info?.orderedDays() {
                 for dayInfo in orderedDays {
-                    for legInfo in dayInfo.orderedLegs() {
+                    for legInfo in dayInfo.orderedLegs {
                         dateComps.minute = legInfo.departMinutes?.intValue ?? 0
                         if let legStartDate = calendarWithTimeZone.date(from: dateComps) {
                             tripDates.append(df.string(from: legStartDate))
@@ -721,6 +802,63 @@ class CBUtils{
             "missingIndex": missingDayIndex,
             "isMissingDateIsLastDay": isMissingDateIsLastDay
         ]
+    }
+    
+    class func compareDatesToDecideRedEye(Date1: Date, Date2: Date) -> Bool {
+        // Create a calendar with a fixed time zone (UTC)
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        
+        // Extract year, month, and day components
+        let currentComponents = calendar.dateComponents([.year, .month, .day], from: Date1)
+        let providedComponents = calendar.dateComponents([.year, .month, .day], from: Date2)
+        
+        // Ensure components are not nil
+        guard let currentYear = currentComponents.year,
+              let currentMonth = currentComponents.month,
+              let currentDay = currentComponents.day,
+              let providedYear = providedComponents.year,
+              let providedMonth = providedComponents.month,
+              let providedDay = providedComponents.day else {
+            return false
+        }
+        
+        // Check for same year
+        if currentYear == providedYear {
+            if currentMonth == providedMonth {
+                // Same month, check day difference
+                return (providedDay - currentDay) == 2
+            } else if (providedMonth - currentMonth) == 1 {
+                // Adjacent months, calculate day difference
+                let daysInCurrentMonth = calendar.range(of: .day, in: .month, for: Date1)!.count
+                return (daysInCurrentMonth - currentDay + providedDay) == 2
+            }
+        } else if (providedYear - currentYear) == 1 && currentMonth == 12 && providedMonth == 1 {
+            // Transition from December to January
+            let daysInCurrentMonth = calendar.range(of: .day, in: .month, for: Date1)!.count
+            return (daysInCurrentMonth - currentDay + providedDay) == 2
+        }
+        
+        // Return false for all other cases
+        return false
+    }
+    
+    static func changeMinutesToShowHours(_ time: NSNumber) -> NSNumber {
+        let totalMinutes = time.intValue
+
+        // Calculate hours and minutes
+        let hours = totalMinutes / 60
+        let minutes = totalMinutes % 60
+
+        // Create formatted string like "0130" for 1 hour 30 minutes
+        let formattedResult = String(format: "%02d%02d", hours, minutes)
+
+        // Convert to NSNumber
+        if let outputNumber = Int(formattedResult) {
+            return NSNumber(value: outputNumber)
+        }
+
+        return 0
     }
     
     class func downloadFlightData(/*completionHandler: @escaping (Bool) -> Void*/) {

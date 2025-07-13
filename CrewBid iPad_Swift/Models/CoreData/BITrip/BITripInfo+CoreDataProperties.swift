@@ -123,7 +123,7 @@ extension BITripInfo : Identifiable {
     var tafbMinutes: NSNumber? {
         guard
             let lastDay = self.orderedDays().last,
-            let lastLeg = lastDay.orderedLegs().last,
+            let lastLeg = lastDay.orderedLegs.last,
             let firstLeg = firstDay?.firstLeg
         else {
             return nil
