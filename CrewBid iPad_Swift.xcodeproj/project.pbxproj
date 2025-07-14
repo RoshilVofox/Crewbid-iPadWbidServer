@@ -334,6 +334,12 @@
 		F4A472212DDDEDA900065720 /* CBExceedingTripCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A472202DDDEDA900065720 /* CBExceedingTripCalculation.swift */; };
 		F4B545AB2DCC648F00672102 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B545AA2DCC648F00672102 /* CoreDataManager.swift */; };
 		F4BAEFE62E055F1000109A1B /* ODataBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4BAEFE52E055F1000109A1B /* ODataBuilder.swift */; };
+		F4C383792E2527AE00AD8034 /* TripButton-rounded-right-redEye_red_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F4C383772E2527AE00AD8034 /* TripButton-rounded-right-redEye_red_iOS7.png */; };
+		F4C3837A2E2527AE00AD8034 /* TripButton-rounded-right-redEye_red_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F4C383782E2527AE00AD8034 /* TripButton-rounded-right-redEye_red_iOS7@2x.png */; };
+		F4C3837B2E2527AE00AD8034 /* TripButton-rounded-both-redEye_red_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F4C383742E2527AE00AD8034 /* TripButton-rounded-both-redEye_red_iOS7@2x.png */; };
+		F4C3837C2E2527AE00AD8034 /* TripButton-rounded-both-redEye_red_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F4C383732E2527AE00AD8034 /* TripButton-rounded-both-redEye_red_iOS7.png */; };
+		F4C3837D2E2527AE00AD8034 /* TripButton-rounded-left-redEye_red_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F4C383752E2527AE00AD8034 /* TripButton-rounded-left-redEye_red_iOS7.png */; };
+		F4C3837E2E2527AE00AD8034 /* TripButton-rounded-left-redEye_red_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F4C383762E2527AE00AD8034 /* TripButton-rounded-left-redEye_red_iOS7@2x.png */; };
 		F4C5D6642DC9E25500D86BD2 /* FBEncryptorAES.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6632DC9E25500D86BD2 /* FBEncryptorAES.m */; };
 		F4C5D6652DC9E25500D86BD2 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6622DC9E25500D86BD2 /* NSData+Base64.m */; };
 		F4C5D66A2DC9EBC200D86BD2 /* NSData+AES.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6692DC9EBC200D86BD2 /* NSData+AES.m */; };
@@ -676,6 +682,12 @@
 		F4A622572E13AA2000A09315 /* LineValuesVacation.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = LineValuesVacation.plist; sourceTree = "<group>"; };
 		F4B545AA2DCC648F00672102 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		F4BAEFE52E055F1000109A1B /* ODataBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ODataBuilder.swift; sourceTree = "<group>"; };
+		F4C383732E2527AE00AD8034 /* TripButton-rounded-both-redEye_red_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-redEye_red_iOS7.png"; sourceTree = "<group>"; };
+		F4C383742E2527AE00AD8034 /* TripButton-rounded-both-redEye_red_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-redEye_red_iOS7@2x.png"; sourceTree = "<group>"; };
+		F4C383752E2527AE00AD8034 /* TripButton-rounded-left-redEye_red_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-redEye_red_iOS7.png"; sourceTree = "<group>"; };
+		F4C383762E2527AE00AD8034 /* TripButton-rounded-left-redEye_red_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-redEye_red_iOS7@2x.png"; sourceTree = "<group>"; };
+		F4C383772E2527AE00AD8034 /* TripButton-rounded-right-redEye_red_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-redEye_red_iOS7.png"; sourceTree = "<group>"; };
+		F4C383782E2527AE00AD8034 /* TripButton-rounded-right-redEye_red_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-right-redEye_red_iOS7@2x.png"; sourceTree = "<group>"; };
 		F4C5D6602DC9E25500D86BD2 /* NSData+Base64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
 		F4C5D6612DC9E25500D86BD2 /* FBEncryptorAES.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FBEncryptorAES.h; sourceTree = "<group>"; };
 		F4C5D6622DC9E25500D86BD2 /* NSData+Base64.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
@@ -912,6 +924,12 @@
 				F41EBD7E2DC4DB20001413DE /* GrayRect.png */,
 				F41EBD7F2DC4DB20001413DE /* GreenRect.png */,
 				F41EBD802DC4DB20001413DE /* NavBar-doneButton.png */,
+				F4C383732E2527AE00AD8034 /* TripButton-rounded-both-redEye_red_iOS7.png */,
+				F4C383742E2527AE00AD8034 /* TripButton-rounded-both-redEye_red_iOS7@2x.png */,
+				F4C383752E2527AE00AD8034 /* TripButton-rounded-left-redEye_red_iOS7.png */,
+				F4C383762E2527AE00AD8034 /* TripButton-rounded-left-redEye_red_iOS7@2x.png */,
+				F4C383772E2527AE00AD8034 /* TripButton-rounded-right-redEye_red_iOS7.png */,
+				F4C383782E2527AE00AD8034 /* TripButton-rounded-right-redEye_red_iOS7@2x.png */,
 				F41EBD812DC4DB20001413DE /* OrangeRect.png */,
 				F41EBD822DC4DB20001413DE /* PurpleRect.png */,
 				F41EBD832DC4DB20001413DE /* RedRect.png */,
@@ -1820,6 +1838,12 @@
 				F41EBEA22DC4DB20001413DE /* Notebook.png in Resources */,
 				F41EBEA32DC4DB20001413DE /* Shopping.png in Resources */,
 				F41EBEA42DC4DB20001413DE /* Update.png in Resources */,
+				F4C383792E2527AE00AD8034 /* TripButton-rounded-right-redEye_red_iOS7.png in Resources */,
+				F4C3837A2E2527AE00AD8034 /* TripButton-rounded-right-redEye_red_iOS7@2x.png in Resources */,
+				F4C3837B2E2527AE00AD8034 /* TripButton-rounded-both-redEye_red_iOS7@2x.png in Resources */,
+				F4C3837C2E2527AE00AD8034 /* TripButton-rounded-both-redEye_red_iOS7.png in Resources */,
+				F4C3837D2E2527AE00AD8034 /* TripButton-rounded-left-redEye_red_iOS7.png in Resources */,
+				F4C3837E2E2527AE00AD8034 /* TripButton-rounded-left-redEye_red_iOS7@2x.png in Resources */,
 				F41EBEA52DC4DB20001413DE /* user.png in Resources */,
 				F41EBEA62DC4DB20001413DE /* Vacation1.png in Resources */,
 				F41EBEA72DC4DB20001413DE /* BlueRect.png in Resources */,
