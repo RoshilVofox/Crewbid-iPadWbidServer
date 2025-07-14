@@ -1497,6 +1497,9 @@
                                                                     <state key="normal" title="AM Lines">
                                                                         <color key="titleColor" systemColor="labelColor"/>
                                                                     </state>
+                                                                    <connections>
+                                                                        <action selector="buttonsAction:" destination="dpd-Rt-L9R" eventType="touchUpInside" id="sLv-cW-Vgw"/>
+                                                                    </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="lUu-xs-W43" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                                                     <rect key="frame" x="162" y="0.0" width="156.5" height="36"/>
@@ -1507,6 +1510,9 @@
                                                                     <state key="normal" title="PM Lines">
                                                                         <color key="titleColor" systemColor="labelColor"/>
                                                                     </state>
+                                                                    <connections>
+                                                                        <action selector="buttonsAction:" destination="dpd-Rt-L9R" eventType="touchUpInside" id="IUD-vX-dCA"/>
+                                                                    </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="OjX-r0-6im" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                                                     <rect key="frame" x="323.5" y="0.0" width="157" height="36"/>
@@ -1517,6 +1523,9 @@
                                                                     <state key="normal" title="Mixed AM/PM Lines">
                                                                         <color key="titleColor" systemColor="labelColor"/>
                                                                     </state>
+                                                                    <connections>
+                                                                        <action selector="buttonsAction:" destination="dpd-Rt-L9R" eventType="touchUpInside" id="7RB-mw-bLp"/>
+                                                                    </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="CrY-1k-plF" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                                                     <rect key="frame" x="485.5" y="0.0" width="156.5" height="36"/>
@@ -1527,6 +1536,9 @@
                                                                     <state key="normal" title="Red Eyes">
                                                                         <color key="titleColor" systemColor="labelColor"/>
                                                                     </state>
+                                                                    <connections>
+                                                                        <action selector="buttonsAction:" destination="dpd-Rt-L9R" eventType="touchUpInside" id="6qt-37-xLV"/>
+                                                                    </connections>
                                                                 </button>
                                                             </subviews>
                                                         </stackView>
@@ -1958,6 +1970,9 @@
                                                             <state key="normal" title="4Day">
                                                                 <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="showRuleTypeOptions:" destination="9G4-wc-tLX" eventType="touchUpInside" id="yfW-TH-GxM"/>
+                                                            </connections>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fem-tD-NKd" userLabel="Comparison Button">
                                                             <rect key="frame" x="545" y="13" width="50" height="30"/>
@@ -1969,6 +1984,9 @@
                                                             <state key="normal" title="Equal">
                                                                 <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="showComparisonOptions:" destination="9G4-wc-tLX" eventType="touchUpInside" id="Zqp-fB-c8Y"/>
+                                                            </connections>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VdG-3C-3Je" userLabel="Value Button">
                                                             <rect key="frame" x="597" y="13" width="47" height="30"/>
@@ -1980,6 +1998,9 @@
                                                             <state key="normal" title="99">
                                                                 <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="showValueOptions:" destination="9G4-wc-tLX" eventType="touchUpInside" id="2Vl-9d-ed9"/>
+                                                            </connections>
                                                         </button>
                                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lle-hl-6Us" userLabel="Title Label">
                                                             <rect key="frame" x="41" y="8" width="447" height="40"/>

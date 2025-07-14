@@ -228,7 +228,7 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
         // Fetch the trips fetch controller. Add the highlightCount to trips
         let tripsFetch: NSFetchRequest<BITrip> = BITrip.fetchRequest()
         tripsFetch.predicate = self.predicateForTripHighlight()
-        if (tripsFetch == nil) {
+        if (tripsFetch.predicate == nil) {
             return
         }
         tripsFetch.sortDescriptors = [NSSortDescriptor(key: "info.number", ascending: true)]
@@ -246,6 +246,49 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
             if let fetchedObjects = tripsFetchController.fetchedObjects {
                 for trip in fetchedObjects {
                     trip.highlightCount = (Int(truncating: trip.highlightCount!) + 1 as NSNumber)
+                }
+            }
+        }
+        catch {
+            print("error executing trips fetch: \(error.localizedDescription)")
+        }
+    }
+    
+    func deHighlightTrips() {
+        // Fetch the trips fetch controller. Add the highlightCount to trips
+        let tripsFetch: NSFetchRequest<BITrip> = BITrip.fetchRequest()
+        if (self.category?.intValue == BIFilterRuleCategory.BIOvernightCitiesBulkRuleCategory.rawValue) {
+            tripsFetch.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: CBUtils.checkOvernightPredicate())
+        }
+        else {
+            tripsFetch.predicate = self.predicateForTripHighlight()
+        }
+        if tripsFetch.predicate == nil {
+            return
+        }
+        else {
+            guard let basePredicate = tripsFetch.predicate else {
+                    return
+                }
+            let highlightPredicate = NSPredicate(format: "highlightCount > 0")
+            tripsFetch.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [basePredicate, highlightPredicate])
+        }
+        tripsFetch.sortDescriptors = [NSSortDescriptor(key: "info.number", ascending: true)]
+        
+        let tripsFetchController = NSFetchedResultsController(
+            fetchRequest: tripsFetch,
+            managedObjectContext: self.managedObjectContext!,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
+        tripsFetchController.delegate = self
+        
+        do {
+            try tripsFetchController.performFetch()
+            if let fetchedObjects = tripsFetchController.fetchedObjects {
+                for trip in fetchedObjects {
+                    trip.highlightCount = (Int(truncating: trip.highlightCount!) - 1 as NSNumber)
+                    trip.bidListHighlighted = false
                 }
             }
         }
@@ -419,6 +462,27 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
         return format!.withSubstitutionVariables(self.variables as! [String: Any])
     }
     
+    func saveSelectedCities(_ selectedCities: [Any]) {
+        if BICitiesFilterRuleType.BICitiesFilterRuleTypeEastCoast.rawValue == type?.intValue {
+            UserDefaults.standard.set(selectedCities, forKey: kCBSelectedEastCoastCities)
+        }
+        else if BICitiesFilterRuleType.BICitiesFilterRuleTypeWestCoast.rawValue == type?.intValue {
+            UserDefaults.standard.set(selectedCities, forKey: kCBSelectedWestCoastCities)
+        }
+        else if BICitiesFilterRuleType.BICitiesFilterRuleTypeNonConus.rawValue == type?.intValue {
+            UserDefaults.standard.set(selectedCities, forKey: kCBSelectedNonConusCities)
+        }
+        else if BICitiesFilterRuleType.BICitiesFilterRuleTypeIntl.rawValue == type?.intValue {
+            UserDefaults.standard.set(selectedCities, forKey: kCBSelectedInternationalCities)
+        }
+        else if BICitiesFilterRuleType.BICitiesFilterRuleTypeAll.rawValue == type?.intValue {
+            UserDefaults.standard.set(selectedCities, forKey: kCBSelectedAllCities)
+        }
+        else if BICitiesFilterRuleType.BICitiesFilterRuleTypeHawaii.rawValue == type?.intValue {
+            UserDefaults.standard.set(selectedCities, forKey: kCBSelectedHawaiiCities)
+        }
+    }
+    
     func selectedRegionalCities() -> NSArray {
         var cities: NSArray? = []
         let type = self.type?.intValue
@@ -485,7 +549,7 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
                 if BITripLengthFilterRuleType.BITripLengthCompoundType.rawValue == type {
                     format = BIFilterRule.formatForCategory(category: category!, type: type!)
                 }else{
-                    let formatString = String(format: "%@ %@ $%@", self.keyPath!, self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
+                    let formatString = String(format: "%@ %@ $%@", keyPath!, self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
                     format = NSPredicate(format: formatString)
                 }
             }
