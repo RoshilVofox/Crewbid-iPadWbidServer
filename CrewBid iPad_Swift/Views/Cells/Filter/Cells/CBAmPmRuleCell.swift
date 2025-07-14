@@ -39,7 +39,8 @@ class CBAmPmRuleCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        
+        self.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -47,5 +48,32 @@ class CBAmPmRuleCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-
+    @IBAction func buttonsAction(_ sender: CBBorderToggleButton) {
+        self.bidPeriod?.loadedPresetIdentifier = nil
+        CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
+        CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
+        sender.isSelected = !sender.isSelected
+        let SET = NSMutableSet()
+        if amLinesButton.isSelected {
+            SET.add(BILineAMPM.AMLine.rawValue)
+        }
+        if pmLinesButton.isSelected {
+            SET.add(BILineAMPM.PMLine.rawValue)
+        }
+        if mixedAmPmLinesButton.isSelected {
+            SET.add(BILineAMPM.MixedAMPMLine.rawValue)
+        }
+        if redEyeLinesButton.isSelected {
+            SET.add(BILineAMPM.RedEyeAMPMLine.rawValue)
+        }
+        // Always include this to keep the blank lines from getting filtered out
+        SET.add(BILineAMPM.BlankAMPMLine.rawValue)
+        let dict = NSDictionary(object: SET, forKey: "SET" as NSCopying)
+        filterRule?.variables = dict
+        try? CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!.save()
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.1){
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+        }
+    }
+    
 }
