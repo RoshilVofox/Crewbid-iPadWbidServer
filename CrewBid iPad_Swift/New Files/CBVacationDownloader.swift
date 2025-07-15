@@ -43,6 +43,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     var year: NSNumber?
     var month: NSNumber?
     var position: Int?
+    static let shared = CBVacationDownloader()
     var employeeNumber: String?
     var base: String?
     
@@ -112,17 +113,17 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
 //    MARK: vacation File type = "CREWBID" and download
     func downloadSwaptimizerVacationFilesWithHud() {
         // Show activity indicator
-        if let topVC = UIApplication.topViewController() {
-            topVC.view?.showActivityIndicator(message: "Checking SWAPtimizer file.")
-        }
-        
-        // Define what should happen on completion
-        let completion: () -> Void = {
-            // Hide activity indicator
-            if let topVC = UIApplication.topViewController() {
-                topVC.view?.hideActivityIndicator()
-            }
-        }
+//        if let topVC = UIApplication.topViewController() {
+//            topVC.view?.showActivityIndicator(message: "Checking SWAPtimizer file.")
+//        }
+//        
+//        // Define what should happen on completion
+//        let completion: () -> Void = {
+//            // Hide activity indicator
+//            if let topVC = UIApplication.topViewController() {
+//                topVC.view?.hideActivityIndicator()
+//            }
+//        }
         self.bidPeriod?.userVacationWbidOrCrewBid = "CREWBID"
         if (self.bidPeriod?.cbFileIntent != nil) {
             let dicVactionFile = self.readVacationFile(fileName: (self.bidPeriod?.userVacationWbidOrCrewBid)!)
@@ -149,7 +150,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         else {
             self.downloadCrewbidVacationFiles(crewbidType: "CREWBID")
         }
-        completion()
+//        completion()
     }
     
     //    MARK: vacation File type = "CREWBIDF" and download
@@ -198,17 +199,17 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     //    MARK: vacation File type = "WBID" and download
         func downloadWbidVacationFilesWithHud() {
             // Show activity indicator
-            if let topVC = UIApplication.topViewController() {
-                topVC.view?.showActivityIndicator(message: "Checking WBidMax file.")
-            }
-            
-            // Define what should happen on completion
-            let completion: () -> Void = {
-                // Hide activity indicator
-                if let topVC = UIApplication.topViewController() {
-                    topVC.view?.hideActivityIndicator()
-                }
-            }
+//            if let topVC = UIApplication.topViewController() {
+//                topVC.view?.showActivityIndicator(message: "Checking WBidMax file.")
+//            }
+//            
+//            // Define what should happen on completion
+//            let completion: () -> Void = {
+//                // Hide activity indicator
+//                if let topVC = UIApplication.topViewController() {
+//                    topVC.view?.hideActivityIndicator()
+//                }
+//            }
             self.bidPeriod?.userVacationWbidOrCrewBid = "WBID"
             if (self.bidPeriod?.wbFileIntent != nil) {
                 let dicVactionFile = self.readVacationFile(fileName: (self.bidPeriod?.userVacationWbidOrCrewBid)!)
@@ -235,7 +236,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             else {
                 self.downloadWbidVacation()
             }
-            completion()
+//            completion()
         }
     
     //    MARK: vacation File type = "WBIDF" and download
@@ -289,17 +290,17 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     //    MARK: vacation File type = "FAVACATION" and download
         func downloadFaVactionVacationFilesWithHud() {
             // Show activity indicator
-            if let topVC = UIApplication.topViewController() {
-                topVC.view?.showActivityIndicator(message: "Checking Vacation file.")
-            }
-            
-            // Define what should happen on completion
-            let completion: () -> Void = {
-                // Hide activity indicator
-                if let topVC = UIApplication.topViewController() {
-                    topVC.view?.hideActivityIndicator()
-                }
-            }
+//            if let topVC = UIApplication.topViewController() {
+//                topVC.view?.showActivityIndicator(message: "Checking Vacation file.")
+//            }
+//            
+//            // Define what should happen on completion
+//            let completion: () -> Void = {
+//                // Hide activity indicator
+//                if let topVC = UIApplication.topViewController() {
+//                    topVC.view?.hideActivityIndicator()
+//                }
+//            }
             self.bidPeriod?.userVacationWbidOrCrewBid = "FAVacation"
             if (self.bidPeriod?.faFileIntent != nil) {
                 let dicVactionFile = self.readVacationFile(fileName: (self.bidPeriod?.userVacationWbidOrCrewBid)!)
@@ -326,7 +327,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             else {
                 self.downloadFAVacation()
             }
-            completion()
+//            completion()
         }
     
     //    MARK: vacation File type = "FAVACATIONF" and download
@@ -568,8 +569,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     func downloadFAVacation() {
         let delayInSeconds = 0.1
         DispatchQueue.main.asyncAfter(deadline: .now() + delayInSeconds) {
-            var vacationType = self.bidPeriod?.userVacationWbidOrCrewBid
-            vacationType = "FAVacation"
+            var vacationType = self.bidPeriod?.userVacationWbidOrCrewBid ?? "FAVacation"
             var vacationDetailDictionary: [String: Any] = [:]
             
             vacationDetailDictionary["EmpNum"] = self.bidPeriod?.crewIdentifier ?? 0//31035
@@ -3278,4 +3278,15 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         return CBUtils.shortMonthName(month: Updatedcomponents.month!, uc: false)
     }
 
+    func executeAutoDownload() {
+        if bidPeriod?.containsVacay?.boolValue == true {
+            if bidPeriod?.isFABid() == true {
+                self.downloadFaVactionVacationFilesWithHud()
+            }
+            else {
+                self.downloadWbidVacationFilesWithHud()
+                self.downloadCrewbidVacationFiles(crewbidType: "CREWBID")
+            }
+        }
+    }
 }

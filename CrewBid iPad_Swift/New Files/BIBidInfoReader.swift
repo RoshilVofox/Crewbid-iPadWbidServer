@@ -118,6 +118,8 @@ class BIBidInfoReader{
                 let success = self.readBidData()
                 if success{
                     NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+                    CBVacationDownloader.shared.executeAutoDownload()
+                    NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                         NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
                         completion(true)
@@ -155,6 +157,8 @@ class BIBidInfoReader{
                                 }
                                 let success = self.readBidData()
                                 if success { NotificationCenter.default.post(name:Notification.Name("ParsingBid"), object: nil)
+                                    CBVacationDownloader.shared.executeAutoDownload()
+                                    NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                         NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
                                         completion(true)
@@ -184,6 +188,8 @@ class BIBidInfoReader{
             let success = self.readBidData()
             if success{
                 NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+                CBVacationDownloader.shared.executeAutoDownload()
+                NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
                     completion(true)
@@ -5583,7 +5589,7 @@ class BIBidInfoReader{
                     }
                     let dateStr = record.substring(with: tripDateRange)
                     let dateFormatter = DateFormatter()
-                    dateFormatter.dateFormat = "hhddMMMyy"
+                    dateFormatter.dateFormat = "HHddMMMyy"
                     dateFormatter.timeZone = TimeZone(identifier: "US/Central")!
                     let tripDate = dateFormatter.date(from: "12\(dateStr)")
                     if (tripDate != nil){
