@@ -208,9 +208,9 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         let itemSize = CGSize(width: calendarWidth / 7, height: flowLayout.itemSize.height)
 //        let inset = 15.0
 //        let insets = UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset)
-        let rightRoundedInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 20)
-        let leftRoundedInsets  = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 0)
-        let bothRoundedInsets  = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+l        let rightRoundedInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 18)
+        let leftRoundedInsets  = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 0)
+        let bothRoundedInsets  = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 18)
         let verticalPadding: CGFloat = 12.0
         let buttonHeight = itemSize.height - verticalPadding
         let yOffset = (itemSize.height - buttonHeight) / 2.0
@@ -351,7 +351,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                     rightBorder.cornerRadius = 18.0
                     rightBorder.borderColor = CBColor.tripHighlightColor.cgColor
                     rightBorder.borderWidth = 2.0
-                    rightBorder.frame = CGRect(x: -15, y: -2, width: (otherButton?.frame.width)! + 15, height: (otherButton?.frame.height)! + 1)
+                    rightBorder.frame = CGRect(x: -15, y: -2, width: (otherButton?.frame.width)! + 15, height: (otherButton?.frame.height)! + 4)
                     otherButton?.layer.addSublayer(rightBorder)
                 }
             }
@@ -895,7 +895,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
             let vacations = self.line?.fvvacations
             let arrVacationIndexes = NSMutableArray()
             let removeCFV = userdefaults.bool(forKey: "RemoveCfv")
-            if (self.line?.cfvVacDates!.count)! > 0{
+            if (self.line?.cfvVacDates?.count) ?? 0 > 0{
                 if !removeCFV {
                     shouldRemoveCFV = false
                     for i in 0..<(self.line?.cfvVacDates!.count)!{
@@ -1094,7 +1094,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     
     
     @objc func tripButtonAction(_ tripButton: CBTripButton){
-        
+        self.tripButtonActionBlock!(tripButton)
     }
     
     func calculateLengthBetween(startDate: Date, endDate: Date) -> NSNumber {
