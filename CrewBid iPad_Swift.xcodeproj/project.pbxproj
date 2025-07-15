@@ -12,9 +12,6 @@
 		353FC68F2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */; };
 		353FC6912DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */; };
 		35428C292DEEE9F2009E7AC5 /* CBUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35428C282DEEE9F2009E7AC5 /* CBUserDefaults.swift */; };
-		35F254462E2621FA00F1FAB7 /* TripButtonRoundedLeftYellow.png in Resources */ = {isa = PBXBuildFile; fileRef = 35F254452E2621FA00F1FAB7 /* TripButtonRoundedLeftYellow.png */; };
-		35F254482E26305200F1FAB7 /* TripButtonRoundedRightYellow.png in Resources */ = {isa = PBXBuildFile; fileRef = 35F254472E26305200F1FAB7 /* TripButtonRoundedRightYellow.png */; };
-		35F2544A2E26328100F1FAB7 /* TripButton-rounded-both-yellow.png in Resources */ = {isa = PBXBuildFile; fileRef = 35F254492E26328100F1FAB7 /* TripButton-rounded-both-yellow.png */; };
 		35F6C8B12DD843840072BAD9 /* JobShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F6C8B02DD843840072BAD9 /* JobShareViewController.swift */; };
 		35F6C8B32DD856B40072BAD9 /* CBAvoidaceBidViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F6C8B22DD856B40072BAD9 /* CBAvoidaceBidViewController.swift */; };
 		8B0044192DC72AA900CAEF82 /* CBPresetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */; };
@@ -359,9 +356,6 @@
 		353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
 		353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBConfirmSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
 		35428C282DEEE9F2009E7AC5 /* CBUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUserDefaults.swift; sourceTree = "<group>"; };
-		35F254452E2621FA00F1FAB7 /* TripButtonRoundedLeftYellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TripButtonRoundedLeftYellow.png; sourceTree = "<group>"; };
-		35F254472E26305200F1FAB7 /* TripButtonRoundedRightYellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TripButtonRoundedRightYellow.png; sourceTree = "<group>"; };
-		35F254492E26328100F1FAB7 /* TripButton-rounded-both-yellow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-yellow.png"; sourceTree = "<group>"; };
 		35F6C8B02DD843840072BAD9 /* JobShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobShareViewController.swift; sourceTree = "<group>"; };
 		35F6C8B22DD856B40072BAD9 /* CBAvoidaceBidViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBAvoidaceBidViewController.swift; sourceTree = "<group>"; };
 		8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPresetCell.swift; sourceTree = "<group>"; };
@@ -903,7 +897,6 @@
 		F41EBD7C2DC4DB20001413DE /* helpMenu1 */ = {
 			isa = PBXGroup;
 			children = (
-				35F254452E2621FA00F1FAB7 /* TripButtonRoundedLeftYellow.png */,
 				8BFCEEA12DC4F6DB0068C00B /* oneMonth.png */,
 				8BFCEE9F2DC4F6400068C00B /* Chat.png */,
 				8BFCEE9D2DC4F62F0068C00B /* Box.png */,
@@ -926,8 +919,6 @@
 		F41EBDC72DC4DB20001413DE /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				35F254492E26328100F1FAB7 /* TripButton-rounded-both-yellow.png */,
-				35F254472E26305200F1FAB7 /* TripButtonRoundedRightYellow.png */,
 				F41EBD7C2DC4DB20001413DE /* helpMenu1 */,
 				F41EBD7D2DC4DB20001413DE /* BlueRect.png */,
 				F41EBD7E2DC4DB20001413DE /* GrayRect.png */,
@@ -1827,7 +1818,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				35F2544A2E26328100F1FAB7 /* TripButton-rounded-both-yellow.png in Resources */,
 				F41EBE902DC4DB20001413DE /* ThirdPartyURL.plist in Resources */,
 				F41EBE912DC4DB20001413DE /* Assets.xcassets in Resources */,
 				F41EBE922DC4DB20001413DE /* SWAPtimizer Tutorial.xcassets in Resources */,
@@ -1873,7 +1863,6 @@
 				F41EBEB32DC4DB20001413DE /* TripButton-rounded-both-green_iOS7.png in Resources */,
 				F41EBEB42DC4DB20001413DE /* TripButton-rounded-both-green_iOS7@2x.png in Resources */,
 				F41EBEB52DC4DB20001413DE /* TripButton-rounded-both-green@2x.png in Resources */,
-				35F254462E2621FA00F1FAB7 /* TripButtonRoundedLeftYellow.png in Resources */,
 				F41EBEB62DC4DB20001413DE /* TripButton-rounded-both-orange.png in Resources */,
 				F41EBEB72DC4DB20001413DE /* TripButton-rounded-both-orange_iOS7.png in Resources */,
 				F41EBEB82DC4DB20001413DE /* TripButton-rounded-both-orange_iOS7@2x.png in Resources */,
@@ -1919,7 +1908,6 @@
 				F41EBEDF2DC4DB20001413DE /* TripButton-rounded-right-green_iOS7.png in Resources */,
 				F41EBEE02DC4DB20001413DE /* TripButton-rounded-right-green_iOS7@2x.png in Resources */,
 				F41EBEE12DC4DB20001413DE /* TripButton-rounded-right-green@2x.png in Resources */,
-				35F254482E26305200F1FAB7 /* TripButtonRoundedRightYellow.png in Resources */,
 				8BAEE8032DCC68D4002EF328 /* Nofiication.txt in Resources */,
 				F41EBEE22DC4DB20001413DE /* TripButton-rounded-right-orange.png in Resources */,
 				F41EBEE32DC4DB20001413DE /* TripButton-rounded-right-orange_iOS7.png in Resources */,
