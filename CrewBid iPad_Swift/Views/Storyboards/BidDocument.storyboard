@@ -543,11 +543,11 @@
                                         <state key="normal" image="BidAllLinesButton"/>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C1c-or-yOL">
-                                        <rect key="frame" x="10" y="5" width="40" height="40"/>
+                                        <rect key="frame" x="8" y="7" width="35" height="35"/>
                                         <color key="backgroundColor" name="RedViewColor"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="40" id="YWv-Uv-rd4"/>
-                                            <constraint firstAttribute="height" constant="40" id="xVU-T7-5yQ"/>
+                                            <constraint firstAttribute="width" constant="35" id="YWv-Uv-rd4"/>
+                                            <constraint firstAttribute="height" constant="35" id="xVU-T7-5yQ"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -556,15 +556,15 @@
                                 </subviews>
                                 <color key="backgroundColor" name="TopViewColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="C1c-or-yOL" secondAttribute="bottom" constant="5" id="49G-GX-ynH"/>
+                                    <constraint firstAttribute="bottom" secondItem="C1c-or-yOL" secondAttribute="bottom" constant="8" id="49G-GX-ynH"/>
                                     <constraint firstAttribute="trailing" secondItem="eOX-4z-Twv" secondAttribute="trailing" constant="30" id="5Bf-DG-e8e"/>
-                                    <constraint firstItem="S5Z-98-GeU" firstAttribute="leading" secondItem="C1c-or-yOL" secondAttribute="trailing" constant="10" id="PqJ-ym-aeJ"/>
+                                    <constraint firstItem="S5Z-98-GeU" firstAttribute="leading" secondItem="C1c-or-yOL" secondAttribute="trailing" constant="17" id="PqJ-ym-aeJ"/>
                                     <constraint firstItem="eOX-4z-Twv" firstAttribute="leading" secondItem="JgG-Wo-bIK" secondAttribute="trailing" constant="25" id="Qr8-z9-VmJ"/>
                                     <constraint firstAttribute="bottom" secondItem="eOX-4z-Twv" secondAttribute="bottom" constant="5" id="WVH-dq-edE"/>
                                     <constraint firstItem="V1j-Ft-sc5" firstAttribute="centerX" secondItem="9Uk-WI-Dh0" secondAttribute="centerX" id="Wko-nS-xEC"/>
                                     <constraint firstAttribute="height" constant="50" id="dKs-RZ-vkW"/>
                                     <constraint firstAttribute="bottom" secondItem="JgG-Wo-bIK" secondAttribute="bottom" constant="5" id="h2b-KD-0Vx"/>
-                                    <constraint firstItem="C1c-or-yOL" firstAttribute="leading" secondItem="9Uk-WI-Dh0" secondAttribute="leading" constant="10" id="iGm-YF-MQP"/>
+                                    <constraint firstItem="C1c-or-yOL" firstAttribute="leading" secondItem="9Uk-WI-Dh0" secondAttribute="leading" constant="8" id="iGm-YF-MQP"/>
                                     <constraint firstItem="G7L-kt-3zF" firstAttribute="leading" secondItem="S5Z-98-GeU" secondAttribute="trailing" constant="10" id="ihc-8p-5d5"/>
                                     <constraint firstItem="V1j-Ft-sc5" firstAttribute="centerY" secondItem="9Uk-WI-Dh0" secondAttribute="centerY" id="jeR-6b-rqq"/>
                                     <constraint firstAttribute="bottom" secondItem="G7L-kt-3zF" secondAttribute="bottom" constant="5" id="k6R-wZ-60U"/>
@@ -763,14 +763,14 @@
                                                                     </collectionViewFlowLayout>
                                                                     <cells>
                                                                         <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="DayCell" id="jXw-8I-ME2" customClass="CBBidListSmallCollectionViewCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                            <rect key="frame" x="0.0" y="0.0" width="59" height="47"/>
+                                                                            <rect key="frame" x="0.0" y="0.0" width="59" height="45"/>
                                                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                             <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="dse-Cl-fye">
-                                                                                <rect key="frame" x="0.0" y="0.0" width="59" height="47"/>
+                                                                                <rect key="frame" x="0.0" y="0.0" width="59" height="45"/>
                                                                                 <autoresizingMask key="autoresizingMask"/>
                                                                                 <subviews>
                                                                                     <label opaque="NO" userInteractionEnabled="NO" tag="100" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="44" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kg5-Wt-0xK">
-                                                                                        <rect key="frame" x="5" y="6" width="49" height="35"/>
+                                                                                        <rect key="frame" x="5" y="4" width="49" height="31"/>
                                                                                         <color key="backgroundColor" name="contentBgColor"/>
                                                                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                                                                         <color key="textColor" name="preset_label"/>
@@ -780,11 +780,11 @@
                                                                                 <constraints>
                                                                                     <constraint firstItem="Kg5-Wt-0xK" firstAttribute="leading" secondItem="dse-Cl-fye" secondAttribute="leading" constant="5" id="a9Y-gh-hMk"/>
                                                                                     <constraint firstAttribute="trailing" secondItem="Kg5-Wt-0xK" secondAttribute="trailing" constant="5" id="pAo-AO-iNA"/>
-                                                                                    <constraint firstItem="Kg5-Wt-0xK" firstAttribute="top" secondItem="dse-Cl-fye" secondAttribute="top" constant="6" id="saI-cG-iQW"/>
-                                                                                    <constraint firstAttribute="bottom" secondItem="Kg5-Wt-0xK" secondAttribute="bottom" constant="6" id="siP-Rh-gKO"/>
+                                                                                    <constraint firstItem="Kg5-Wt-0xK" firstAttribute="top" secondItem="dse-Cl-fye" secondAttribute="top" constant="4" id="saI-cG-iQW"/>
+                                                                                    <constraint firstAttribute="bottom" secondItem="Kg5-Wt-0xK" secondAttribute="bottom" constant="10" id="siP-Rh-gKO"/>
                                                                                 </constraints>
                                                                             </collectionViewCellContentView>
-                                                                            <size key="customSize" width="59" height="47"/>
+                                                                            <size key="customSize" width="59" height="45"/>
                                                                             <connections>
                                                                                 <outlet property="dayLabel" destination="Kg5-Wt-0xK" id="hEu-IL-4p5"/>
                                                                             </connections>

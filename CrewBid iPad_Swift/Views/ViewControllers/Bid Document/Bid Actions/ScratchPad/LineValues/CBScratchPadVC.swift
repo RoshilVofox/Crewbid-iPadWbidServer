@@ -225,17 +225,34 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
     
     //Trash all lines from scratchpad
     @objc func trashAll(){
-        if self.linesArray!.count > 0{
-            var tempArray:[String] = []
-            for case let line as BILine in self.linesArray!{
-                line.isTrashed = NSNumber(booleanLiteral: true)
-                tempArray.append(line.number!.stringValue)
+        guard let context = self.bidPeriod?.managedObjectContext else { return }
+
+        // Fetch all BILine objects for this bid period (all FA positions)
+        let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+        
+        do {
+            let allLines = try context.fetch(fetchRequest)
+
+            guard !allLines.isEmpty else { return }
+
+            var trashedLineNumbers: [String] = []
+
+            for line in allLines {
+                line.isTrashed = true
+                if let number = line.number?.stringValue {
+                    trashedLineNumbers.append(number)
+                }
             }
-            let temp: NSMutableArray = self.bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
-            temp.add(tempArray)
+
+            let temp = (self.bidPeriod?.lastTrashedDetails as? NSMutableArray) ?? NSMutableArray()
+            temp.add(trashedLineNumbers)
             self.bidPeriod?.lastTrashedDetails = temp
             self.arrayLinesDetails = temp
+
             self.updateLines()
+        } catch {
+            print("Failed to fetch all lines: \(error)")
         }
     }
     
@@ -302,15 +319,16 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
         if self.bidPeriod!.isFABid(){
             let lineToBid = notification.userInfo![CBLineTableCellBidLineKey] as! BILine
             let index = self.linesArray!.index(of: lineToBid)
-            let indexPath = IndexPath(row: index, section: 0)
-            let line = self.linesArray!.object(at: indexPath.row) as! BILine
-            let faPosition = self.linePosDict![line.number!.stringValue] as! NSArray
+//            let indexPath = IndexPath(row: index, section: 0)
+            let line = self.linesArray!.object(at: index) as! BILine
+            let faPositions = self.linePosDict![line.number!.stringValue] as! NSArray
             let lineIndex = self.linesFetchController.indexPath(forObject: line)
             let tempArray:NSMutableArray = NSMutableArray()
-            for i in 0..<faPosition.count{
-                let line = self.linesFetchController.object(at: IndexPath(row: lineIndex!.row + i, section: 0))
-                line.isTrashed = true
-                tempArray.add(String(format: "%@%@", line.number!, line.faPositionString))
+            for j in 0..<faPositions.count {
+                let nextIndexPath = IndexPath(row: lineIndex!.row + j, section: 0)
+                let faLine = self.linesFetchController.object(at: nextIndexPath)
+                faLine.isTrashed = true
+                tempArray.add("\(faLine.number!)\(faLine.faPositionString)")
             }
             let objDelArray:NSMutableArray = self.bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
             let joinedComponents = tempArray.componentsJoined(by: ",")
@@ -318,7 +336,6 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
             let uniqueArray = NSOrderedSet(array: objDelArray as! [Any]).array
             self.bidPeriod?.lastTrashedDetails = NSMutableArray(array: uniqueArray)
             tempArray.removeAllObjects()
-            try? bidPeriod?.managedObjectContext?.save()
             NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
         }else{
             if let lineNumArray = notification.object as? NSArray {
@@ -328,6 +345,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
                 NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
             }
         }
+        try? bidPeriod?.managedObjectContext?.save()
     }
     
     func updateSorts() -> [NSSortDescriptor] {
