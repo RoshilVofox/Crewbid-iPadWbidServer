@@ -112,7 +112,7 @@ class CBWorkBlockRuleCell: UITableViewCell, RefreshDelegate {
         refreshVC.popOverType = PopoverViewType.valuesButton
         refreshVC.selectedValue = (sender as! UIButton).currentTitle ?? ""
         refreshVC.arrowDirection = .any
-        refreshVC.menuItems = menuItems
+        refreshVC.arrCellParameters = menuItems
         refreshVC.filterRule = self.filterRule
         refreshVC.modalPresentationStyle = .popover
         refreshVC.Delegate = self
