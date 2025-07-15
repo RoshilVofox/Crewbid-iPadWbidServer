@@ -206,9 +206,8 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         // Get size of calendar items (cells) and create button frame from size.
         let flowLayout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
         let itemSize = CGSize(width: calendarWidth / 7, height: flowLayout.itemSize.height)
-//        let inset = 15.0
-//        let insets = UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset)
-l        let rightRoundedInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 18)
+        
+        let rightRoundedInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 18)
         let leftRoundedInsets  = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 0)
         let bothRoundedInsets  = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 18)
         let verticalPadding: CGFloat = 12.0
@@ -805,8 +804,9 @@ l        let rightRoundedInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right
                 // If vacation pill will go across two rows in calendar, create both buttons.
                 if column+tripLength > 7 {
                     buttonLength = 7 - column
-                    vacayButtonFrame.size.width = CGFloat(buttonLength) * itemSize.width
+//                    vacayButtonFrame.size.width = CGFloat(buttonLength) * itemSize.width
                     buttonImage = UIImage(named: "TripButton-rounded-left-yellow_iOS7")?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
+                    vacayButtonFrame.size.height = buttonHeight
                     vacayButtonFrame.size.width = min(CGFloat(tripLength), 7) * itemSize.width
                     let button2 = UIImageView(frame: vacayButtonFrame)
                     button2.image = buttonImage
@@ -829,6 +829,7 @@ l        let rightRoundedInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right
                             if tripLength > 7{
                                 vacayButtonFrame.size.width += 15
                             }
+                            vacayButtonFrame.size.height = buttonHeight
                             buttonImage = UIImage(named:"TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: rightRoundedInsets, resizingMode: .stretch)
                             let otherButton2 = UIImageView(frame: vacayButtonFrame)
                             otherButton2.image = buttonImage
@@ -855,6 +856,7 @@ l        let rightRoundedInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right
                         buttonImage = UIImage(named: "TripButton-rounded-both-yellow_iOS7")?.resizableImage(withCapInsets: bothRoundedInsets, resizingMode: .stretch)
                     }
                     vacayButtonFrame.size.width = CGFloat(tripLength) * itemSize.width
+                    vacayButtonFrame.size.height = buttonHeight
                     let button2 = UIImageView(frame: vacayButtonFrame)
                     button2.image = buttonImage
                     vacationButtons?.replaceObject(at: index, with: button2)
