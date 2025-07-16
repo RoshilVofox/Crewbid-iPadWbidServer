@@ -218,10 +218,31 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(recoverAllTrashed), name: NSNotification.Name("recoverAllTrashed"), object: nil)
     }
     
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+//        NotificationCenter.default.addObserver(self, selector: #selector(moveFACellLine), name: NSNotification.Name(CBLineTableCellFABidLineNotification), object: nil)
+//        
+//        NotificationCenter.default.addObserver(self, selector: #selector(moveCellLine), name: NSNotification.Name(CBLineTableCellBidLineNotification), object: nil)
+    }
+    
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(self)
     }
+    
+    @objc func moveFACellLine(_ notification: Notification){
+        
+    }
+    
+    @objc func moveCellLine(_ notification: Notification){
+        let lineToBid = notification.userInfo![CBLineTableCellBidLineKey]
+        let userInfo = [CBLinesTableBidLinesArrayKey: [lineToBid]]
+        let bidLinesNotification = Notification(name: Notification.Name(CBLinesTableBidLinesNotification), object: self, userInfo: userInfo)
+        NotificationCenter.default.post(bidLinesNotification)
+    }
+    
     
     //Trash all lines from scratchpad
     @objc func trashAll(){

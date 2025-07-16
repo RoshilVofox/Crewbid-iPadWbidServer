@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class CBBidListVC: BaseViewController {
     
@@ -15,13 +16,26 @@ class CBBidListVC: BaseViewController {
     @IBOutlet weak var btnActions: UIButton!
     @IBOutlet weak var btnASort: UIButton!
     @IBOutlet weak var tableViewNormalView: UITableView!
+    var linesFetchController:NSFetchedResultsController<BILine>!
+    var bidPeriod:BIBidPeriod?
+    
     var isAwardSort = false
     var isSubmitSort = false
     override func viewDidLoad() {
         super.viewDidLoad()
+        //Notifications
+        let lineFetch = NSFetchRequest<BILine>(entityName: BILineEntityName)
+        lineFetch.predicate = NSPredicate(format: "bidOrder > 0")
+        lineFetch.sortDescriptors = [NSSortDescriptor(key: "bidOrder", ascending: true)]
         
         setupUI()
     }
+    
+    
+    
+    
+    
+    
     
     func setupUI(){
         self.btnNormalView.backgroundColor = .orange

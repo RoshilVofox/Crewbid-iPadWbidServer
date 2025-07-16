@@ -24,6 +24,7 @@ let kCBSelectedInternationalCities = "CBSelectedInternationalCities"
 let kCBManageVacationEnabledKey = "ManageVacationEnabled"
 let kCBVacationOverlapTripDisplayOption = "VacationOverlapTripDisplayOption"
 
+let kCBNoAutoswitchToBids = "NoAutoswitchToBids"
 
 let kCBTripButtonRoundedLeftYellowImageNameKey = "TripButtonRoundedLeftYellow"
 let kCBTripButtonRoundedRightYellowImageNameKey = "TripButtonRoundedRightYellow"

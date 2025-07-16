@@ -11,7 +11,7 @@ import CoreData
 var kCBLineValueViewWidth : CGFloat = 55.0
 var kCBLineValueViewHeight : CGFloat = 28.0
 
-var CBLineTableCellFABidLineNotification = "CBLineTableCellFABidLineNotification"
+var CBLinesTableBidLinesFaAllNotification = "CBLinesTableBidLinesFaAllNotification"
 var CBLineTableCellBidLineNotification = "CBLineTableCellBidLineNotification"
 var CBLineTableCellBidLineKey = "CBLineTableCellBidLineKey"
 var CBLineTableCellPositionKey = "CBLineTableCellPositionKey"
@@ -126,12 +126,9 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     @IBOutlet weak var lineNumberLabel: UILabel!
     @IBOutlet weak var redEyeImage: UIImageView!
     
-    var app: AppDelegate?
     var calendarData: BICalendarData?
     var line: BILine?
-    var index: Int?
     var tableView: UITableView?
-    var availableFaLines : [BILine] = []
     var bidPeriod: BIBidPeriod?
     var tripButtons: NSMutableArray?
     var vacationButtons: NSMutableArray?
@@ -152,9 +149,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     var posNAView: UIView = UIView()
     var posMView: UIView = UIView()
     var tripButtonActionBlock: CBLineCellTripButtonActionBlock?
-    var daysArray:[String] = []
-    var numDays = 0
-    var numDays1 = 0
     private var kLineNumberViewTag: Int = 10
     private var kLineNumberVertOrigin: Int = 73
     private var kCircleSize: Int = 20 //25
@@ -1468,20 +1462,28 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     }
     
     @IBAction func moveLinesToBidListAction(_ sender: Any) {
-        moveBidListButton.isUserInteractionEnabled = false
-        perform(#selector(moveBidLineDelay), with: nil, afterDelay: 1.0)
+//        moveBidListButton.isUserInteractionEnabled = false
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0){
+//            self.moveBidListButton.isUserInteractionEnabled = true
+//        }
 //        if let sView = sender as? UIView {
 //            sView.isUserInteractionEnabled = false
-//            perform(#selector(resetButton(_:)), with: sView, afterDelay: 0.5)
+//            
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+//                sView.isUserInteractionEnabled = true
+//            }
+//            if self.bidPeriod!.isFABid(){
+//                let notification = Notification(name: NSNotification.Name(CBLineTableCellFABidLineNotification), object: nil, userInfo: [CBLineTableCellBidLineKey: self.line as Any, CBLineTableCellButtonViewKey: sView])
+//                NotificationCenter.default.post(notification)
+//            }else{
+//                let notification = Notification(name: Notification.Name(CBLineTableCellBidLineNotification), object: nil, userInfo: [CBLineTableCellBidLineKey: self.line as Any])
+//                NotificationCenter.default.post(notification)
+//            }
+//            NotificationCenter.default.post(name: NSNotification.Name("RefreshBidListLineCountFilter"), object: self)
+//            NotificationCenter.default.post(name: NSNotification.Name("RefreshBidListLineCountSort"), object: self)
+//            NotificationCenter.default.post(name: NSNotification.Name("RefreshBidListLineCountPreset"), object: self)
 //        }
         
     }
-    
-    @objc func moveBidLineDelay() {
-        moveBidListButton.isUserInteractionEnabled = true
-    }
-//    
-//    @objc func resetButton(_ sender: UIView) {
-//        sender.isUserInteractionEnabled = true
-//    }
+
 }

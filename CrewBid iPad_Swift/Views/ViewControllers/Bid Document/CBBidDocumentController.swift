@@ -33,7 +33,9 @@ class CBBidDocumentController: BaseViewController {
     @IBOutlet weak var bidCont: UIView!
     var bidPeriod: BIBidPeriod?
     var bidVC: CBBidListVC!
-    
+    var bidLinesController:CBBidListVC!
+    var rightNavController:UINavigationController!
+    var bidsTableNavController:UINavigationController!
     
  
     var dataSource = GlobalBidInfo.shared
@@ -52,6 +54,7 @@ class CBBidDocumentController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(bidLines), name: NSNotification.Name(CBLinesTableBidLinesNotification), object: nil)
         
     }
     override func viewDidDisappear(_ animated: Bool) {
@@ -59,6 +62,21 @@ class CBBidDocumentController: BaseViewController {
         NotificationCenter.default.removeObserver("SortBidListAction")
         NotificationCenter.default.removeObserver("SyncSwitchStateAction")
         NotificationCenter.default.removeObserver("ShowCommutabilityFilterView")
+    }
+    
+    @objc func bidLines(_ notification: Notification){
+        let linesToBid = notification.userInfo![CBLinesTableBidLinesArrayKey]
+        if notification.name.rawValue == CBLinesTableBidLinesFaAllNotification {
+            //needs code for FA bids
+        }else{
+            if (self.bidLinesController.view.window == nil) && (!UserDefaults.standard.bool(forKey: kCBNoAutoswitchToBids)) {
+                
+            }
+        }
+    }
+    
+    func showBidLines(completion: (() -> Void)? = nil) {
+        
     }
     
     func setupUI(){
