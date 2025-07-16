@@ -3179,6 +3179,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
 //        let filtered = lineValuesToDisplay?.filter { !valuesToRemove.contains($0) }
 //        lineValuesToDisplay = filtered
         self.bidPeriod?.faVacationStatus = BIFaVacationStatus.enabled.rawValue as NSNumber
+        print("saved fa vacation")
     }
     
     func getDayDatesFromTrip(trip: BITrip) -> [Date] {

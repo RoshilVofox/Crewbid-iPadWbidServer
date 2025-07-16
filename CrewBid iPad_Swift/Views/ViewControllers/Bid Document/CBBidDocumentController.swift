@@ -42,11 +42,12 @@ class CBBidDocumentController: BaseViewController {
         super.viewDidLoad()
         self.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         setupUI()
-
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutViewForSwitch), name: NSNotification.Name("SyncSwitchStateAction"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(showCommutablilityFilterView), name: Notification.Name("ShowCommutabilityFilterView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(ShowCommutablilitySortView), name: Notification.Name("ShowCommutabilitySortView"), object: nil)
+        
+        firstTimeBidOpen()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -86,6 +87,24 @@ class CBBidDocumentController: BaseViewController {
         localLabel.clipsToBounds = true
         if AppData.shared.isSyncOn == false {
             btnSync.isHidden = true
+        }
+    }
+    
+    func firstTimeBidOpen() {
+        if bidPeriod?.containsVacay?.boolValue == true {
+            self.view.showActivityIndicator(message: "Processing Vacation Files")
+            if bidPeriod?.isFABid() == true{
+                DispatchQueue.main.asyncAfter(deadline: .now() + 7) {
+                    NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: nil)
+                    self.view.hideActivityIndicator()
+                }
+            }
+            else {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 15) {
+                    NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: nil)
+                    self.view.hideActivityIndicator()
+                }
+            }
         }
     }
     

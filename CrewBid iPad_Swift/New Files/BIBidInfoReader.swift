@@ -118,9 +118,9 @@ class BIBidInfoReader{
                 let success = self.readBidData()
                 if success{
                     NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
-                    CBVacationDownloader.shared.executeAutoDownload()
-                    NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
+//                    CBVacationDownloader.shared.executeAutoDownload()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+//                        NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
                         NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
                         completion(true)
                     }
@@ -158,8 +158,8 @@ class BIBidInfoReader{
                                 let success = self.readBidData()
                                 if success { NotificationCenter.default.post(name:Notification.Name("ParsingBid"), object: nil)
                                     CBVacationDownloader.shared.executeAutoDownload()
-                                    NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                        NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
                                         NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
                                         completion(true)
                                     }
@@ -188,8 +188,8 @@ class BIBidInfoReader{
             let success = self.readBidData()
             if success{
                 NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
-                CBVacationDownloader.shared.executeAutoDownload()
-                NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
+//                CBVacationDownloader.shared.executeAutoDownload()
+//                NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
                     completion(true)
