@@ -690,9 +690,11 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                             print("Vacation FileName: \(fileName)")
                             let jsonData = json["JsonData"] as! [String: Any]
                             if self.vactionDownloadType == .downloadWbidVacation {
+                                print("able to download wbid vacation from api")
                                 self.callToSetAutoDownloadOrValidateForWBID(jsonData: jsonData)
                             }
                             else if self.vactionDownloadType == .downloadFAVacation {
+                                print("able to dowmload fa vacation data from api")
                                 self.callToSetAutoDownloadOrValidateForFA(jsonData: jsonData)
                             }
                             
@@ -793,7 +795,8 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                             print("No swaptimizer account")
                         }
                         else {
-                            print("Mutable Response String: \(responseString)")
+//                            print("Mutable Response String: \(responseString)")
+                            print("able to download crewbid vacation from api")
                             self.callToSetAutoDownloadOrValidateForSwaptimizer(jsonData: json)
                         }
                     }
@@ -1034,6 +1037,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 }
             }
         }
+        print("finished validating wbid vacation")
     }
     
     func writeVacationFile(jsonData: [String: Any], fileName: String) {
@@ -1347,6 +1351,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 }
             }
         }
+        print("done validating FA vacation")
     }
     
     //    MARK: validateSWAPtimizerJSON
@@ -1529,6 +1534,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 
             }
         }
+        print("done validating SWAPtimizerJSON")
     }
     
     //    MARK: Auto validateSWAPtimizerJSON
@@ -2343,7 +2349,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                                     for day in trip.orderedDays {
                                         day.displayType = BIDayDisplayType.fullPay.rawValue as NSNumber
                                         day.redEyeDayDisplayDayType = BIDayDisplayType.fullPay.rawValue as NSNumber
-                                        trip.vacationOverlapType = BITripVacationOverlapType.none.rawValue as NSNumber
+                                        trip.vacationOverlapType = BITripVacationOverlapType.full.rawValue as NSNumber
                                     }
                                 }
                             }
@@ -2482,7 +2488,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
 //                21541
             }
         }
-        
+        print("done processing vacation json file")
     }
     
     //    MARK: getDisplayType
@@ -3179,7 +3185,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
 //        let filtered = lineValuesToDisplay?.filter { !valuesToRemove.contains($0) }
 //        lineValuesToDisplay = filtered
         self.bidPeriod?.faVacationStatus = BIFaVacationStatus.enabled.rawValue as NSNumber
-        print("saved fa vacation")
+        print("done processing fa vaction json file")
     }
     
     func getDayDatesFromTrip(trip: BITrip) -> [Date] {
@@ -3286,7 +3292,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             }
             else {
                 self.downloadWbidVacationFilesWithHud()
-                self.downloadCrewbidVacationFiles(crewbidType: "CREWBID")
+//                self.downloadCrewbidVacationFiles(crewbidType: "CREWBID")
             }
         }
     }
