@@ -11,7 +11,7 @@ import CoreData
 var kCBLineValueViewWidth : CGFloat = 55.0
 var kCBLineValueViewHeight : CGFloat = 28.0
 
-var CBLineTableCellFABidLineNotification = "CBLineTableCellFABidLineNotification"
+var CBLinesTableBidLinesFaAllNotification = "CBLinesTableBidLinesFaAllNotification"
 var CBLineTableCellBidLineNotification = "CBLineTableCellBidLineNotification"
 var CBLineTableCellBidLineKey = "CBLineTableCellBidLineKey"
 var CBLineTableCellPositionKey = "CBLineTableCellPositionKey"
@@ -1462,27 +1462,27 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     }
     
     @IBAction func moveLinesToBidListAction(_ sender: Any) {
-        moveBidListButton.isUserInteractionEnabled = false
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0){
-            self.moveBidListButton.isUserInteractionEnabled = true
-        }
-        if let sView = sender as? UIView {
-            sView.isUserInteractionEnabled = false
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
-                sView.isUserInteractionEnabled = true
-            }
-            if self.bidPeriod!.isFABid(){
-                let notification = Notification(name: NSNotification.Name(CBLineTableCellFABidLineNotification), object: nil, userInfo: [CBLineTableCellBidLineKey: self.line as Any, CBLineTableCellButtonViewKey: sView])
-                NotificationCenter.default.post(notification)
-            }else{
-                let notification = Notification(name: Notification.Name(CBLineTableCellBidLineNotification), object: nil, userInfo: [CBLineTableCellBidLineKey: self.line as Any])
-                NotificationCenter.default.post(notification)
-            }
-            NotificationCenter.default.post(name: NSNotification.Name("RefreshBidListLineCountFilter"), object: self)
-            NotificationCenter.default.post(name: NSNotification.Name("RefreshBidListLineCountSort"), object: self)
-            NotificationCenter.default.post(name: NSNotification.Name("RefreshBidListLineCountPreset"), object: self)
-        }
+//        moveBidListButton.isUserInteractionEnabled = false
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0){
+//            self.moveBidListButton.isUserInteractionEnabled = true
+//        }
+//        if let sView = sender as? UIView {
+//            sView.isUserInteractionEnabled = false
+//            
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+//                sView.isUserInteractionEnabled = true
+//            }
+//            if self.bidPeriod!.isFABid(){
+//                let notification = Notification(name: NSNotification.Name(CBLineTableCellFABidLineNotification), object: nil, userInfo: [CBLineTableCellBidLineKey: self.line as Any, CBLineTableCellButtonViewKey: sView])
+//                NotificationCenter.default.post(notification)
+//            }else{
+//                let notification = Notification(name: Notification.Name(CBLineTableCellBidLineNotification), object: nil, userInfo: [CBLineTableCellBidLineKey: self.line as Any])
+//                NotificationCenter.default.post(notification)
+//            }
+//            NotificationCenter.default.post(name: NSNotification.Name("RefreshBidListLineCountFilter"), object: self)
+//            NotificationCenter.default.post(name: NSNotification.Name("RefreshBidListLineCountSort"), object: self)
+//            NotificationCenter.default.post(name: NSNotification.Name("RefreshBidListLineCountPreset"), object: self)
+//        }
         
     }
 

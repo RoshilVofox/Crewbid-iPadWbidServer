@@ -132,9 +132,12 @@ class BIBidInfoReader{
                 let urlRequest = URLRequest(url: url!)
                 
                 let dataTask = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
+                    
+                    
                     if let error = error{
                         print("Error in retrieving data: \(error.localizedDescription)")
                         completion(false)
+                        return
                         //handle error
                     }
                     if let data = data{
@@ -4576,7 +4579,7 @@ class BIBidInfoReader{
             if line.number!.intValue > 305{
                 print("")
             }
-            print(line.number!.intValue)
+//            print(line.number!.intValue)
             if trip.isReserve{
                 tripMinimumBasedOnTAFBHour = 0
             }else{

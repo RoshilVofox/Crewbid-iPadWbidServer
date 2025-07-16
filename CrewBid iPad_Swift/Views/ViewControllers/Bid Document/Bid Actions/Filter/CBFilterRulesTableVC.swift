@@ -46,11 +46,13 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     override func viewWillAppear(_ animated: Bool) {
         reloadRuleCell()
         NotificationCenter.default.addObserver(self, selector: #selector(updateLines), name: NSNotification.Name("refreshLines"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshBidListCount), name: NSNotification.Name("RefreshBidListLineCountFilter"), object: nil)
         
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         NotificationCenter.default.removeObserver("refreshLines")
+        NotificationCenter.default.removeObserver("RefreshBidListLineCountFilter")
     }
     
     func setupUI(){
@@ -255,6 +257,10 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
             cellIdentifier = kComparisonFilterRuleCell
         }
         return cellIdentifier
+    }
+    
+    @objc func refreshBidListCount(){
+        self.btnBidListCount.setTitle(String(format: "%@",self.bidPeriod?.bidListLineCount ?? "0"), for: .normal)
     }
     
 //    MARK: refresh line notification
