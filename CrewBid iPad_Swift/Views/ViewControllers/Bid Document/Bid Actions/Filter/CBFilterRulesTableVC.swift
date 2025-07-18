@@ -41,6 +41,7 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
         filterRules = (bidPeriod!.lineFilters!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "type", ascending: true), NSSortDescriptor(key: "category", ascending: true)]) as [Any]
 //        fetchFromFilterAndUpdateCategory()
         setupUI()
+        reloadRuleCell()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -271,7 +272,7 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
 extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        print("Table reloaded in number of sections")
+//        print("Table reloaded in number of sections")
         return (self.filterRulesController?.sections!.count)!
     }
     

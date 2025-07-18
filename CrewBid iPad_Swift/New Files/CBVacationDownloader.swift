@@ -2352,7 +2352,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                                 
                                 if let tripDate = trip.startDate,
                                    let normalizedDate = dff.date(from: dff.string(from: tripDate)),
-                                   calendarData.date(date: normalizedDate, beginDate: fvStartdate, endDate: fvStartdate) == true {
+                                   calendarData.date(date: normalizedDate, beginDate: fvStartdate, endDate: fvEnddate) == true {
                                     for day in trip.orderedDays {
                                         day.displayType = BIDayDisplayType.fullPay.rawValue as NSNumber
                                         day.redEyeDayDisplayDayType = BIDayDisplayType.fullPay.rawValue as NSNumber
