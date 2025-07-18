@@ -109,20 +109,11 @@ class CBBidDocumentController: BaseViewController {
     }
     
     func firstTimeBidOpen() {
-        if bidPeriod?.containsVacay?.boolValue == true {
+        print("iiiiii")
             self.view.showActivityIndicator(message: "Processing Vacation Files")
-            if bidPeriod?.isFABid() == true{
-                DispatchQueue.main.asyncAfter(deadline: .now() + 7) {
-                    NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: nil)
-                    self.view.hideActivityIndicator()
-                }
-            }
-            else {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 15) {
-                    NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: nil)
-                    self.view.hideActivityIndicator()
-                }
-            }
+        CBVacationDownloader.shared.executeAutoDownload() { success in
+            NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: nil)
+            self.view.hideActivityIndicator()
         }
     }
     

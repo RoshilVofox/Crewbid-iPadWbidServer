@@ -404,6 +404,7 @@ class CBCredentialsPageVC: BaseViewController {
     
 //    MARK: login action
     func loginActions(){
+        print("called login")
         let context = self.dataSource.managedObjectContext
                 let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
                 do {
