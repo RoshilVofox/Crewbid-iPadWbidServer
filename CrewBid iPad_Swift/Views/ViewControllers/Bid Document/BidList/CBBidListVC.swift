@@ -8,7 +8,9 @@
 import UIKit
 import CoreData
 
-class CBBidListVC: BaseViewController {
+class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate  {
+
+    
     
     @IBOutlet weak var btnNormalView: UIButton!
     @IBOutlet weak var btnCalendarView: UIButton!
@@ -16,35 +18,259 @@ class CBBidListVC: BaseViewController {
     @IBOutlet weak var btnActions: UIButton!
     @IBOutlet weak var btnASort: UIButton!
     @IBOutlet weak var tableViewNormalView: UITableView!
+    @IBOutlet weak var lblBidLineCount: UILabel!
+    @IBOutlet weak var scrollToButton: UIButton!
     var linesFetchController:NSFetchedResultsController<BILine>!
-    var bidPeriod:BIBidPeriod?
+    var managedObjectContext:NSManagedObjectContext?
+    var bidPeriod = BIBidPeriod()
+    var selectedCellIndexPath = NSMutableArray()
     
+    //A-Sort
     var isAwardSort = false
     var isSubmitSort = false
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        //Notifications
-        let lineFetch = NSFetchRequest<BILine>(entityName: BILineEntityName)
-        lineFetch.predicate = NSPredicate(format: "bidOrder > 0")
-        lineFetch.sortDescriptors = [NSSortDescriptor(key: "bidOrder", ascending: true)]
+    }
+    
+    func refreshLines(){
+        self.loadBidLine()
+        self.tableViewNormalView.reloadData()
+    }
+    
+    func loadBidLine(){
+        if self.selectedCellIndexPath.count != 0 {
+            self.selectedCellIndexPath.removeAllObjects()
+        }
         
-        setupUI()
+        let linesFetch = NSFetchRequest<BILine>(entityName: "BILine")
+        var userPosition = ""
+        if bidPeriod.positionType?.intValue == 0 {
+            userPosition = "CP"
+        }
+        if bidPeriod.positionType?.intValue == 1 {
+            userPosition = "FO"
+        }
+        if bidPeriod.positionType?.intValue == 2{
+            userPosition = "FA"
+        }
+        
+        if self.isSubmitSort {
+            let linesString = self.bidPeriod.submittedBid!
+            if linesString.length == 0 {
+//                self.getSubmitted()
+                return
+            }
+            self.bidPeriod.isAwardSortOn = false
+            self.bidPeriod.isSortBySubmitOn = true
+            self.isAwardSort = false
+            self.isSubmitSort = true
+            
+            var lines = linesString.components(separatedBy: ",")
+            var linesArray: [[String: Any]] = []
+            var submittedLineNumArray: [String] = []
+            var submittedSequenceNumArray: [Int] = []
+            
+            for i in 0..<lines.count {
+                var dict: [String:Any] = [:]
+                let lineId = lines[i]
+                let faPosition = lineId.substring(from: lineId.length - 1)
+                let lineNumInt = Int(lines[i]) ?? 0
+                let lineNumStr = "\(lineNumInt)"
+                
+                dict["LineNum"] = lineNumInt
+                dict["SeqNum"] = i + 1
+                dict["type"] = faPosition
+                
+                submittedLineNumArray.append(lineNumStr)
+                submittedSequenceNumArray.append(i)
+                
+                linesArray.append(dict)
+            }
+            
+            linesFetch.predicate = NSPredicate(format: "bidOrder > 0")
+            linesFetch.sortDescriptors = [NSSortDescriptor(key: "bidOrder", ascending: true)]
+            
+            self.linesFetchController = NSFetchedResultsController(fetchRequest: linesFetch, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: nil, cacheName: nil)
+            self.linesFetchController.delegate = self
+            try? self.linesFetchController.performFetch()
+            
+            let array = self.linesFetchController.fetchedObjects! as NSArray
+            
+            if self.bidPeriod.faReserveLineExists!.boolValue || self.bidPeriod.faMrtLineExists!.boolValue {
+                for i in 0..<self.linesFetchController.fetchedObjects!.count{
+                    let line = self.linesFetchController.fetchedObjects![i]
+                    let lineNumber = line.number!.stringValue
+                    if lineNumber == "1000"{
+                        if line.faBidLineReserve!.boolValue{
+                            self.bidPeriod.reservedLineIndexForASort = NSNumber(value: i)
+                            self.managedObjectContext?.delete(line)
+                            self.bidPeriod.reserveEnabledForASort = NSNumber(value: 1)
+                        }
+                        if line.faBidLineMrt!.boolValue{
+                            self.bidPeriod.mRTLineIndexForASort = NSNumber(value: i)
+                            self.managedObjectContext?.delete(line)
+                            self.bidPeriod.mRTEnabledForASort = NSNumber(value: 1)
+                        }
+                    }
+                }
+            }
+            linesFetch.predicate = NSPredicate(format: "bidOrder > 0")
+            linesFetch.sortDescriptors = [NSSortDescriptor(key: "bidOrder", ascending: true)]
+            self.linesFetchController = NSFetchedResultsController(fetchRequest: linesFetch, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: nil, cacheName: nil)
+            self.linesFetchController.delegate = self
+            try? self.linesFetchController.performFetch()
+            
+            if linesArray.count >= self.linesFetchController.fetchedObjects!.count {
+                let bidListArray = NSMutableArray()
+                for i in 0..<self.linesFetchController.fetchedObjects!.count {
+                    let line = self.linesFetchController.fetchedObjects![i]
+                    var lineNumber = line.number!.stringValue
+                    if userPosition == "FA"{
+                        let faPosition = line.faPositionString
+                        lineNumber = String(format: "%@%@", lineNumber,faPosition)
+                    }
+                    bidListArray.add(lineNumber)
+                }
+                var subLinesArray = lines
+                subLinesArray.removeAll { bidListArray.contains($0) }
+                lines.removeAll { subLinesArray.contains($0) }
+                bidListArray.removeObjects(in: lines)
+                lines.append(contentsOf: bidListArray as! [String])
+                linesArray.removeAll()
+                submittedLineNumArray.removeAll()
+                submittedSequenceNumArray.removeAll()
+                
+                for i in 0..<lines.count {
+                    var dict: [String:Any] = [:]
+                    let lineId = lines[i]
+                    let faPositon = lineId.substring(from: lineId.length - 1)
+                    let lineNumInt = Int(lines[i]) ?? 0
+                    let lineNumStr = "\(lineNumInt)"
+                    
+                    dict["LineNum"] = lineNumInt
+                    dict["SeqNum"] = i + 1
+                    dict["type"] = faPositon
+                    
+                    submittedLineNumArray.append(lineNumStr)
+                    submittedSequenceNumArray.append(i)
+                    
+                    linesArray.append(dict)
+                }
+                
+                for i in 0..<linesArray.count {
+                    var submittedLineNumber = (linesArray[i]["LineNum"] as? NSNumber)?.stringValue
+                    if userPosition == "FA"{
+                        let submittedLineType = (linesArray[i]["type"] as? String) ?? ""
+                        submittedLineNumber = String(format: "%@%@", submittedLineNumber!,submittedLineType)
+                    }
+                    let awardType = (linesArray[i]["type"] as? String) ?? ""
+                    for j in 0..<self.linesFetchController.fetchedObjects!.count {
+                        let line = self.linesFetchController.fetchedObjects![j] 
+                        var lineNumber = line.number!.stringValue
+                        if userPosition == "FA"{
+                            let faPosition = line.faPositionString
+                            lineNumber = String(format: "%@%@", lineNumber,faPosition)
+                        }
+                        if submittedLineNumber == lineNumber{
+                            if userPosition == "FA" {
+                                let faPosition = line.faPositionString
+                                if awardType == faPosition{
+                                    if line.previousBidOrder == 0 {
+                                        line.previousBidOrder = line.bidOrder
+                                    }
+                                    line.bidOrder = linesArray[i]["SeqNum"] as? NSNumber
+                                }
+                            }else{
+                                if line.previousBidOrder == 0 {
+                                    line.previousBidOrder = line.bidOrder
+                                }
+                                line.bidOrder = linesArray[i]["SeqNum"] as? NSNumber
+                            }
+                        }
+                    }
+                }
+            }else {
+                var bidListArray = NSMutableArray()
+                for i in 0..<self.linesFetchController.fetchedObjects!.count {
+                    let line = self.linesFetchController.fetchedObjects![i]
+                    var lineNumber = line.number!.stringValue
+                    if userPosition == "FA"{
+                        let faPosition = line.faPositionString
+                        lineNumber = String(format: "%@%@", lineNumber,faPosition)
+                    }
+                    bidListArray.add(lineNumber)
+                }
+                bidListArray.removeObjects(in: lines)
+                lines.append(contentsOf: bidListArray as! [String])
+                linesArray.removeAll()
+                submittedLineNumArray.removeAll()
+                submittedSequenceNumArray.removeAll()
+                
+                for i in 0..<lines.count{
+                    var dict: [String:Any] = [:]
+                    let lineId = lines[i]
+                    let faPositon = lineId.substring(from: lineId.length - 1)
+                    let lineNumInt = Int(lines[i]) ?? 0
+                    let lineNumStr = "\(lineNumInt)"
+                    
+                    dict["LineNum"] = lineNumInt
+                    dict["SeqNum"] = i + 1
+                    dict["type"] = faPositon
+                    
+                    submittedLineNumArray.append(lineNumStr)
+                    submittedSequenceNumArray.append(i)
+                    
+                    linesArray.append(dict)
+                }
+                
+                for i in 0..<linesArray.count{
+                    let submittedLineNumber = (linesArray[i]["LineNum"] as? NSNumber)?.stringValue
+                    let awardType = (linesArray[i]["type"] as? String) ?? ""
+                    for j in 0..<self.linesFetchController.fetchedObjects!.count{
+                        let line = self.linesFetchController.fetchedObjects![j]
+                        let lineNumber = line.number!.stringValue
+                        if submittedLineNumber == lineNumber {
+                            if userPosition == "FA" {
+                                let faPosition = line.faPositionString
+                                if awardType == faPosition {
+                                    if line.previousBidOrder == 0 {
+                                        line.previousBidOrder = line.bidOrder
+                                    }
+                                    line.bidOrder = linesArray[i]["SeqNum"] as? NSNumber
+                                }
+                            }else{
+                                if line.previousBidOrder == 0 {
+                                    line.previousBidOrder = line.bidOrder
+                                }
+                                line.bidOrder = linesArray[i]["SeqNum"] as? NSNumber
+                            }
+                        }
+                    }
+                }
+            }
+            let sortDescriptor = NSSortDescriptor(key: "submitSortOrder", ascending: true)
+        }
+        else if self.isAwardSort{
+            
+        }
     }
     
     
     
     
     
+    func setupVariables(){
+
+    }
     
-    
-    func setupUI(){
-        self.btnNormalView.backgroundColor = .orange
-        btnNormalView.layer.borderWidth = 1
-        btnNormalView.layer.borderColor = UIColor.lightGray.cgColor
-        btnCalendarView.layer.borderWidth = 1
-        btnCalendarView.layer.borderColor = UIColor.lightGray.cgColor
-        btnExpandedView.layer.borderWidth = 1
-        btnExpandedView.layer.borderColor = UIColor.lightGray.cgColor
+    @objc func updateBidList(_ notification: Notification? = nil) {
+        
     }
     
     @IBAction func btnFiltersAction(_ sender: Any) {
@@ -135,5 +361,18 @@ class CBBidListVC: BaseViewController {
             self.btnCalendarView.backgroundColor = bgColor
             self.btnNormalView.backgroundColor = .orange
         }
+    }
+
+}
+
+extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CBBidListCalenderViewCell",for: indexPath)as! CBBidListCalenderViewCell
+        return cell
     }
 }

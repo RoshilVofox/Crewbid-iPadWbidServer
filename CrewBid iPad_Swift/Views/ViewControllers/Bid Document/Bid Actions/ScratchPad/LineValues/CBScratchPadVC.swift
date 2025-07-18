@@ -37,6 +37,10 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
     var linesArray:NSMutableArray?
     var linePosDict:NSDictionary?
     var arrayLinesDetails:NSArray = NSArray()
+    var positionFlag1 = 0
+    var positionFlag2 = 0
+    var tempPositionLine : [BILine] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         scratchPadTableView.delegate = self
@@ -221,9 +225,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        NotificationCenter.default.addObserver(self, selector: #selector(moveFACellLine), name: NSNotification.Name(CBLineTableCellFABidLineNotification), object: nil)
-//        
-//        NotificationCenter.default.addObserver(self, selector: #selector(moveCellLine), name: NSNotification.Name(CBLineTableCellBidLineNotification), object: nil)
+
     }
     
     
@@ -232,17 +234,74 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
         NotificationCenter.default.removeObserver(self)
     }
     
-    @objc func moveFACellLine(_ notification: Notification){
+    //Adding line to bidlist
+    @objc func bidCellLine(_ notification: Notification){
         
     }
     
-    @objc func moveCellLine(_ notification: Notification){
-        let lineToBid = notification.userInfo![CBLineTableCellBidLineKey]
-        let userInfo = [CBLinesTableBidLinesArrayKey: [lineToBid]]
-        let bidLinesNotification = Notification(name: Notification.Name(CBLinesTableBidLinesNotification), object: self, userInfo: userInfo)
-        NotificationCenter.default.post(bidLinesNotification)
+    func getSortDiscriptorsPosition() -> [NSSortDescriptor] {
+        
+        // Create an expression for sorting by line number
+        let number = NSExpression(forKeyPath: "number")
+        let numberExpDescription = NSExpressionDescription()
+        numberExpDescription.name = "number"
+        numberExpDescription.expression = number
+        numberExpDescription.expressionResultType = .integer16AttributeType
+        
+        // Initialize an array to store sort descriptors
+
+        var lineSortDiscriptors = [NSSortDescriptor]()
+        
+
+        
+        // Initialize default position order
+        var standardPosOrder = [0, 1, 2, 3]
+        let userPosOrder = NSMutableArray() /* TODO: .reserveCapacity(maxPositionsPerLine) */
+        
+        // Iterate through user-defined line sorts
+
+        for case let lineSort in self.bidPeriod!.getOrderedSortsForPosition(){
+            // Ignore line sorts that do not have a key path since these will not
+            // be valid sorts.
+            
+            if nil == lineSort.keyPath || 0 == (lineSort.keyPath?.length ?? 0) {
+                continue
+            } else {
+                if lineSort.category == 3 {
+                    // Insert the line number sort first
+                    let sort = NSSortDescriptor(key: numberExpDescription.name, ascending: true)
+                    lineSortDiscriptors.append(sort)
+                    userPosOrder.add(lineSort.type!)
+                }
+                // Create a sort descriptor based on the user's selection
+
+                let sort = NSSortDescriptor(key: lineSort.keyPath, ascending: (lineSort.ascending != 0))
+                lineSortDiscriptors.append(sort)
+            }
+        }
+        // Adjust the position order based on user-defined sorts
+
+        for pos in userPosOrder {
+            while let elementIndex = standardPosOrder.firstIndex(of: pos as! Int) { standardPosOrder.remove(at: elementIndex) }
+        }
+        userPosOrder.add(standardPosOrder)
+        // If no user-defined sorts, use default sorting by line number
+
+        if self.bidPeriod!.getOrderedSortsForPosition().count == 0 {
+            lineSortDiscriptors.append(NSSortDescriptor(key: "bidOrder", ascending: true))
+        } else {
+            let sort = NSSortDescriptor(key: numberExpDescription.name, ascending: true)
+            lineSortDiscriptors.append(sort)
+            // Ensure that the lines are sorted by position if FA since the position logic depends on it
+            if bidPeriod!.isFABid() {
+                let positionSort = NSSortDescriptor(key: "faPosition", ascending: true)
+                lineSortDiscriptors.append(positionSort)
+            }
+        }
+        
+       
+        return lineSortDiscriptors
     }
-    
     
     //Trash all lines from scratchpad
     @objc func trashAll(){

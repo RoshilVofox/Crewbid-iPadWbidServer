@@ -215,12 +215,24 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         let daysInCalendar: Int = self.calendarData!.calendarDays.count
         let trips = self.line!.trips as! Set<AnyHashable>
         for case let trip as BITrip in trips {
-            let tripOption = BIVacationOverlapTripOption(rawValue: userdefaults.integer(forKey: kCBVacationOverlapTripDisplayOption))
-            if self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue && (tripOption != nil){
-                if BIVacationOverlapTripOption.dropAll.rawValue == tripOption!.rawValue && trip.vacationOverlapType!.intValue > 0 {
+//            let tripOption = BIVacationOverlapTripOption(rawValue: userdefaults.integer(forKey: kCBVacationOverlapTripDisplayOption))
+//            if self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue && (tripOption != nil){
+//                if BIVacationOverlapTripOption.dropAll.rawValue == tripOption!.rawValue && trip.vacationOverlapType!.intValue > 0 {
+//                    continue
+//                }
+//                else if tripOption?.rawValue == trip.vacationOverlapType?.intValue {
+//                    continue
+//                }
+//            }
+            if let tripOption = BIVacationOverlapTripOption(rawValue: userdefaults.integer(forKey: kCBVacationOverlapTripDisplayOption)),
+               (self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue ||
+                self.bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue),
+               let overlapType = trip.vacationOverlapType?.intValue, overlapType > 0 {
+                
+                // Only apply filtering logic if this trip overlaps with vacation
+                if tripOption == .dropAll {
                     continue
-                }
-                else if tripOption?.rawValue == trip.vacationOverlapType?.intValue {
+                } else if tripOption.rawValue == overlapType {
                     continue
                 }
             }

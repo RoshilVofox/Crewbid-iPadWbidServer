@@ -932,4 +932,40 @@ extension BIBidPeriod : Identifiable {
         return myCalEndDate != nil && myCalStartDate != nil
     }
  
+    func getFrozenBidListLines() -> [BILine] {
+        let lines = (self.lines!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "isFrozen", ascending: false)]) as! [BILine]
+        // Create predicates to filter lines by bidOrder and isFrozen status
+
+        var array : [NSPredicate] = []
+        array.append(NSPredicate(format: "bidOrder > 0"))
+        array.append(NSPredicate(format: "isFrozen == \(NSNumber(value: true))"))
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
+        // Filter the lines using the predicate and return the result
+
+        let predicateValue = (lines as NSArray).filtered(using: predicate) as! [BILine]
+        return predicateValue
+    }
+    func getOrderedBidListSorts() -> [BILineSort]{
+        let predicate = NSPredicate(format: "isBidListSort == \(NSNumber(value: true))")
+        guard let linesSort = ((self.lineSorts!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "order", ascending: true)]) as NSArray).filtered(using: predicate) as? [BILineSort] else { return [] }
+        return linesSort
+    }
+    
+    func getOrderedSortsForPosition() -> [BILineSort]{
+        var positionFlag2 = 0
+        var sortedBILine = [BILineSort]()
+        for case let sort as BILineSort in (self.lineSorts?.allObjects ?? []) {
+            if sort.category?.intValue == 3{
+                positionFlag2 = 1
+            }
+        }
+        if positionFlag2 == 1{
+            let predicate = NSPredicate(format: "isBidListSort != \(NSNumber(value: true))")
+            guard let linesSort = ((self.lineSorts!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "order", ascending: true)]) as NSArray).filtered(using: predicate) as? [BILineSort] else { return [] }
+            positionFlag2 = 0
+            sortedBILine = linesSort
+            
+        }
+        return sortedBILine
+    }
 }

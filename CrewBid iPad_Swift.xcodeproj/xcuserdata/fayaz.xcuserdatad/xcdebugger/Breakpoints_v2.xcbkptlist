@@ -1822,8 +1822,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "518"
-            endingLineNumber = "518"
+            startingLineNumber = "577"
+            endingLineNumber = "577"
             landmarkName = "btnMoveToLineAction(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -1838,8 +1838,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "640"
-            endingLineNumber = "640"
+            startingLineNumber = "699"
+            endingLineNumber = "699"
             landmarkName = "configureCell(_:row:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2446,8 +2446,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "730"
-            endingLineNumber = "730"
+            startingLineNumber = "789"
+            endingLineNumber = "789"
             landmarkName = "configureCell(_:row:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2478,8 +2478,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "379"
-            endingLineNumber = "379"
+            startingLineNumber = "438"
+            endingLineNumber = "438"
             landmarkName = "updateSorts()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2494,8 +2494,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "104"
-            endingLineNumber = "104"
+            startingLineNumber = "108"
+            endingLineNumber = "108"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2510,8 +2510,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "118"
-            endingLineNumber = "118"
+            startingLineNumber = "122"
+            endingLineNumber = "122"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2526,8 +2526,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "123"
-            endingLineNumber = "123"
+            startingLineNumber = "127"
+            endingLineNumber = "127"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2542,8 +2542,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "127"
-            endingLineNumber = "127"
+            startingLineNumber = "131"
+            endingLineNumber = "131"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2574,8 +2574,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "91"
-            endingLineNumber = "91"
+            startingLineNumber = "95"
+            endingLineNumber = "95"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2590,8 +2590,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "74"
-            endingLineNumber = "74"
+            startingLineNumber = "78"
+            endingLineNumber = "78"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2606,8 +2606,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "92"
-            endingLineNumber = "92"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2638,8 +2638,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "136"
-            endingLineNumber = "136"
+            startingLineNumber = "140"
+            endingLineNumber = "140"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2766,8 +2766,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "172"
-            endingLineNumber = "172"
+            startingLineNumber = "176"
+            endingLineNumber = "176"
             landmarkName = "updateLines()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2782,8 +2782,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "183"
-            endingLineNumber = "183"
+            startingLineNumber = "187"
+            endingLineNumber = "187"
             landmarkName = "updateLines()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2798,8 +2798,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "209"
-            endingLineNumber = "209"
+            startingLineNumber = "213"
+            endingLineNumber = "213"
             landmarkName = "updateTitle()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2814,8 +2814,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "134"
-            endingLineNumber = "134"
+            startingLineNumber = "138"
+            endingLineNumber = "138"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2830,8 +2830,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "204"
-            endingLineNumber = "204"
+            startingLineNumber = "208"
+            endingLineNumber = "208"
             landmarkName = "updateTitle()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2846,8 +2846,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "132"
-            endingLineNumber = "132"
+            startingLineNumber = "136"
+            endingLineNumber = "136"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2862,8 +2862,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "149"
-            endingLineNumber = "149"
+            startingLineNumber = "153"
+            endingLineNumber = "153"
             landmarkName = "updateLines()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2990,8 +2990,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "707"
-            endingLineNumber = "707"
+            startingLineNumber = "766"
+            endingLineNumber = "766"
             landmarkName = "configureCell(_:row:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -3006,8 +3006,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "621"
-            endingLineNumber = "621"
+            startingLineNumber = "680"
+            endingLineNumber = "680"
             landmarkName = "tableView(_:numberOfRowsInSection:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -3022,8 +3022,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "598"
-            endingLineNumber = "598"
+            startingLineNumber = "657"
+            endingLineNumber = "657"
             landmarkName = "tableView(_:numberOfRowsInSection:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -3038,8 +3038,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "599"
-            endingLineNumber = "599"
+            startingLineNumber = "658"
+            endingLineNumber = "658"
             landmarkName = "tableView(_:numberOfRowsInSection:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -3054,8 +3054,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "620"
-            endingLineNumber = "620"
+            startingLineNumber = "679"
+            endingLineNumber = "679"
             landmarkName = "tableView(_:numberOfRowsInSection:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -3070,8 +3070,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "697"
-            endingLineNumber = "697"
+            startingLineNumber = "756"
+            endingLineNumber = "756"
             landmarkName = "configureCell(_:row:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -3086,8 +3086,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "667"
-            endingLineNumber = "667"
+            startingLineNumber = "726"
+            endingLineNumber = "726"
             landmarkName = "configureCell(_:row:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -3102,8 +3102,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "670"
-            endingLineNumber = "670"
+            startingLineNumber = "729"
+            endingLineNumber = "729"
             landmarkName = "configureCell(_:row:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -3118,8 +3118,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "709"
-            endingLineNumber = "709"
+            startingLineNumber = "768"
+            endingLineNumber = "768"
             landmarkName = "configureCell(_:row:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -3134,8 +3134,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "701"
-            endingLineNumber = "701"
+            startingLineNumber = "760"
+            endingLineNumber = "760"
             landmarkName = "configureCell(_:row:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -4308,8 +4308,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "854"
-            endingLineNumber = "854"
+            startingLineNumber = "913"
+            endingLineNumber = "913"
             landmarkName = "changeLineUserFlagTypeTo(flagType:selectedLine:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -4340,8 +4340,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "340"
-            endingLineNumber = "340"
+            startingLineNumber = "399"
+            endingLineNumber = "399"
             landmarkName = "removedTrashLines(notification:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -4356,8 +4356,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/ScratchPadTableCellTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1448"
-            endingLineNumber = "1448"
+            startingLineNumber = "1460"
+            endingLineNumber = "1460"
             landmarkName = "removeLineAction(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -4372,8 +4372,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/ScratchPadTableCellTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1458"
-            endingLineNumber = "1458"
+            startingLineNumber = "1470"
+            endingLineNumber = "1470"
             landmarkName = "removeLineAction(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -4388,8 +4388,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "282"
-            endingLineNumber = "282"
+            startingLineNumber = "341"
+            endingLineNumber = "341"
             landmarkName = "undoTrashLast()"
             landmarkType = "7">
          </BreakpointContent>
@@ -4420,8 +4420,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/ScratchPadTableCellTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "582"
-            endingLineNumber = "582"
+            startingLineNumber = "594"
+            endingLineNumber = "594"
             landmarkName = "refreshTripButtons(highlightFlag:calendarWidth:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -4436,8 +4436,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/ScratchPadTableCellTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "704"
-            endingLineNumber = "704"
+            startingLineNumber = "716"
+            endingLineNumber = "716"
             landmarkName = "refreshTripButtons(highlightFlag:calendarWidth:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -4452,8 +4452,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/ScratchPadTableCellTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "693"
-            endingLineNumber = "693"
+            startingLineNumber = "705"
+            endingLineNumber = "705"
             landmarkName = "refreshTripButtons(highlightFlag:calendarWidth:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -4501,8 +4501,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/ScratchPadTableCellTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "747"
-            endingLineNumber = "747"
+            startingLineNumber = "759"
+            endingLineNumber = "759"
             landmarkName = "refreshTripButtons(highlightFlag:calendarWidth:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -4517,8 +4517,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/ScratchPadTableCellTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "753"
-            endingLineNumber = "753"
+            startingLineNumber = "765"
+            endingLineNumber = "765"
             landmarkName = "refreshTripButtons(highlightFlag:calendarWidth:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -4533,8 +4533,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "341"
-            endingLineNumber = "341"
+            startingLineNumber = "400"
+            endingLineNumber = "400"
             landmarkName = "removedTrashLines(notification:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -4550,8 +4550,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/ScratchPadTableCellTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "495"
-            endingLineNumber = "495"
+            startingLineNumber = "507"
+            endingLineNumber = "507"
             landmarkName = "refreshTripButtons(highlightFlag:calendarWidth:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -4566,8 +4566,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/ScratchPadTableCellTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "748"
-            endingLineNumber = "748"
+            startingLineNumber = "760"
+            endingLineNumber = "760"
             landmarkName = "refreshTripButtons(highlightFlag:calendarWidth:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -4582,8 +4582,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/ScratchPadTableCellTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "496"
-            endingLineNumber = "496"
+            startingLineNumber = "508"
+            endingLineNumber = "508"
             landmarkName = "refreshTripButtons(highlightFlag:calendarWidth:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -4656,7 +4656,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "36AF8152-1C1F-4E94-AF6A-7611A177DE0E"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
@@ -4672,7 +4672,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "487B758F-68DE-43D7-8188-E7B955413BDF"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
@@ -4688,7 +4688,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "98D90277-917F-40E8-917C-B2A00B9D7160"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
@@ -4704,7 +4704,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "93AE9559-3BA8-49AE-BA24-BC9962FBBE66"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
@@ -4720,7 +4720,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "42EC8EE7-3D54-49C4-853C-714CD998B913"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
@@ -4800,7 +4800,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "AF8B76BB-6D30-4B7D-ACCC-7F65FA517201"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
@@ -4854,9 +4854,41 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/ScratchPadTableCellTableViewCell.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "227"
-            endingLineNumber = "227"
+            startingLineNumber = "239"
+            endingLineNumber = "239"
             landmarkName = "refreshTripButtons(highlightFlag:calendarWidth:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "34448909-FD1E-4BC0-BDB0-FC9AF28BC3B1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/ScratchPadTableCellTableViewCell.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "797"
+            endingLineNumber = "797"
+            landmarkName = "refreshTripButtons(highlightFlag:calendarWidth:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0FB87E50-B882-4DEF-A466-C899A610EE89"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/BidList/CBBidListVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "260"
+            endingLineNumber = "260"
+            landmarkName = "loadBidLine()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

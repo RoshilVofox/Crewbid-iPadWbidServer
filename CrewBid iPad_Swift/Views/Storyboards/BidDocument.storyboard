@@ -4001,6 +4001,8 @@
                         <outlet property="btnCalendarView" destination="b6H-4T-zfx" id="aEj-mF-fMY"/>
                         <outlet property="btnExpandedView" destination="n4t-VT-cDq" id="VJt-A3-B3x"/>
                         <outlet property="btnNormalView" destination="4WW-Xu-4zT" id="3cj-7L-JwL"/>
+                        <outlet property="lblBidLineCount" destination="yNv-AQ-plU" id="ccq-D7-bM6"/>
+                        <outlet property="scrollToButton" destination="d0s-v4-Hre" id="K5s-9k-mwY"/>
                         <outlet property="tableViewNormalView" destination="WwT-fG-txG" id="Rm3-8H-qVj"/>
                     </connections>
                 </viewController>
