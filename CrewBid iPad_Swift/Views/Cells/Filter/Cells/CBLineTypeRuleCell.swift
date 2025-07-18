@@ -220,7 +220,7 @@ class CBLineTypeRuleCell: UITableViewCell {
                     SET.add(BILineType.HardConUS.rawValue)
                 }
                 if nonConusButton.isSelected {
-                    SET.add(BILineType.HardConUS.rawValue)
+                    SET.add(BILineType.HardConUS.rawValue)  // change in crewbid Ipad
                 }
                 
                 if etopsButton == sender {
@@ -382,7 +382,6 @@ class CBLineTypeRuleCell: UITableViewCell {
                         SET.removeAllObjects()
                         SET.add(BILineType.ReserveLine.rawValue)
                         SET.add(BILineType.NonEtopsReserve.rawValue)
-                        //Added by Kripa
                         SET.add(BILineType.NonReserveEtops.rawValue)
                     }
                 }

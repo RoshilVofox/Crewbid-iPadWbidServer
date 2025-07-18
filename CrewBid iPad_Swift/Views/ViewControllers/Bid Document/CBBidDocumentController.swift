@@ -112,8 +112,7 @@ class CBBidDocumentController: BaseViewController {
         print("iiiiii")
             self.view.showActivityIndicator(message: "Processing Vacation Files")
         CBVacationDownloader.shared.executeAutoDownload() { success in
-            NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: nil)
-            self.view.hideActivityIndicator()
+                self.view.hideActivityIndicator()
         }
     }
     
