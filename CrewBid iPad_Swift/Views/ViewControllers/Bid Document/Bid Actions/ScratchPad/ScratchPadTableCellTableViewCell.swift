@@ -180,8 +180,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         collectionView.collectionViewLayout = layout
     }
-    
-    
+
     func refreshTripButtons(highlightFlag:Bool, calendarWidth:CGFloat) {
         var shouldRemoveCFV = true
         if tripButtons == nil {
@@ -215,15 +214,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         let daysInCalendar: Int = self.calendarData!.calendarDays.count
         let trips = self.line!.trips as! Set<AnyHashable>
         for case let trip as BITrip in trips {
-//            let tripOption = BIVacationOverlapTripOption(rawValue: userdefaults.integer(forKey: kCBVacationOverlapTripDisplayOption))
-//            if self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue && (tripOption != nil){
-//                if BIVacationOverlapTripOption.dropAll.rawValue == tripOption!.rawValue && trip.vacationOverlapType!.intValue > 0 {
-//                    continue
-//                }
-//                else if tripOption?.rawValue == trip.vacationOverlapType?.intValue {
-//                    continue
-//                }
-//            }
+
             if let tripOption = BIVacationOverlapTripOption(rawValue: userdefaults.integer(forKey: kCBVacationOverlapTripDisplayOption)),
                (self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue ||
                 self.bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue),
@@ -1200,7 +1191,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.isScrollEnabled = false
-        
         let verticalSpace: CGFloat = 6.0
         for i in 0..<5 {
 //            adding the line values as subview

@@ -24,7 +24,8 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate  {
     var managedObjectContext:NSManagedObjectContext?
     var bidPeriod = BIBidPeriod()
     var selectedCellIndexPath = NSMutableArray()
-    
+    var awardEmpNumArray:NSMutableArray?
+    var awardLineNum:String?
     //A-Sort
     var isAwardSort = false
     var isSubmitSort = false
@@ -254,10 +255,127 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate  {
                     }
                 }
             }
-            let sortDescriptor = NSSortDescriptor(key: "submitSortOrder", ascending: true)
         }
         else if self.isAwardSort{
+            let array = Array(self.bidPeriod.awardDetails ?? [])
+            let awardSequencNumArray = NSMutableArray()
+            self.awardEmpNumArray = NSMutableArray()
+            let bidUserId = self.bidPeriod.crewIdentifier?.stringValue
             
+            for case let obj as AwardDetails in array {
+                let awardLineNumber = String(obj.lineNum)
+                let awardEmpNum = obj.empNum
+                let seqNum = obj.seqNumber
+                awardSequencNumArray.add(seqNum)
+                if awardEmpNum == bidUserId {
+                    self.awardLineNum = awardLineNumber
+                    if self.bidPeriod.isFABid() {
+                        awardLineNum = String(format: "%@%@", awardLineNumber, obj.type!)
+                    }
+                }else{
+                    
+                }
+            }
+            let array2 = try? managedObjectContext?.fetch(linesFetch)
+            
+            if self.bidPeriod.faReserveLineExists!.boolValue || self.bidPeriod.faMrtLineExists!.boolValue {
+                for i in 0..<self.linesFetchController.fetchedObjects!.count {
+                    let line = self.linesFetchController.fetchedObjects![i]
+                    let lineNumber = line.number?.stringValue
+                    if lineNumber == "1000" {
+                        if line.faBidLineReserve!.boolValue{
+                            self.bidPeriod.reservedLineIndexForASort = NSNumber(value: i)
+                            self.managedObjectContext?.delete(line)
+                            self.bidPeriod.reserveEnabledForASort = NSNumber(value: 1)
+                        }
+                        if line.faBidLineMrt!.boolValue{
+                            self.bidPeriod.mRTLineIndexForASort = NSNumber(value: i)
+                            self.managedObjectContext?.delete(line)
+                            self.bidPeriod.mRTEnabledForASort = NSNumber(value: 1)
+                        }
+                    }
+                }
+            }
+            linesFetch.predicate = NSPredicate(format: "bidOrder > 0")
+            linesFetch.sortDescriptors = [NSSortDescriptor(key: "bidOrder", ascending: true)]
+            self.linesFetchController = NSFetchedResultsController(fetchRequest: linesFetch, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: nil, cacheName: nil)
+            self.linesFetchController.delegate = self
+            do{
+                try linesFetchController.performFetch()
+            }catch{
+                print("Error: \(error.localizedDescription)")
+            }
+            let array3 = self.linesFetchController.fetchedObjects
+            var extraLinesFetch = NSFetchedResultsController<NSFetchRequestResult>()
+            let bidListLineNumArray = NSMutableArray()
+            let awardLineNumArray = NSMutableArray()
+            
+            for i in 0..<array.count {
+                let awardDetails = array[i] as! AwardDetails
+                var awardLineNumber = String(awardDetails.lineNum)
+                if userPosition == "FA" && self.bidPeriod.isFirstRoundBid() {
+                    let awardLineType = awardDetails.type
+                    awardLineNumber = String(format: "%@%@", awardLineNumber, awardLineType!)
+                }
+                awardLineNumArray.add(awardLineNumber)
+            }
+            
+            let nonDuplicateAwards = NSMutableArray()
+            let checkArray = NSMutableArray()
+            for case let award as AwardDetails in array{
+                if userPosition == "FA" && self.bidPeriod.isFirstRoundBid() {
+                    let lineNum = String(format: "%@%@", award.lineNum, award.type!)
+                    if checkArray.contains(lineNum) {
+                        continue
+                    }
+                    checkArray.add(lineNum)
+                    nonDuplicateAwards.add(award)
+                }else{
+                    let lineNum = String(award.lineNum)
+                    if checkArray.contains(lineNum){
+                        continue
+                    }
+                    checkArray.add(lineNum)
+                    nonDuplicateAwards.add(award)
+                }
+            }
+            
+            let orderedSet = NSOrderedSet(array: awardLineNumArray as! [Any])
+            let awardLineNumArrayNonDuplicate = orderedSet.array
+            
+            for j in 0..<self.linesFetchController.fetchedObjects!.count {
+                let line = self.linesFetchController.fetchedObjects![j]
+                var lineNumber = line.number?.stringValue
+                if userPosition == "FA" && self.bidPeriod.isFirstRoundBid() {
+                    let awardLineType = line.faPositionString
+                    lineNumber = String(format: "%@%@", lineNumber!, awardLineType)
+                }
+                bidListLineNumArray.add(lineNumber!)
+            }
+            let extraLinesFetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: BILineEntityName)
+            bidListLineNumArray.removeObjects(in: awardLineNumArrayNonDuplicate)
+            let bidListLineNumArrayInt = bidListLineNumArray.compactMap { ($0 as? NSNumber)?.intValue }
+            if userPosition == "FA" && self.bidPeriod.isFirstRoundBid(){
+                let pred1 = NSPredicate(format: "bidOrder > 0")
+                let pred2 = NSPredicate(format: "faNumber IN %@", bidListLineNumArrayInt)
+                let subPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [pred1, pred2])
+                extraLinesFetchRequest.predicate = subPredicate
+            }else{
+                extraLinesFetchRequest.predicate = NSPredicate(format: "(bidOrder > 0) AND (number IN %@)", bidListLineNumArrayInt)
+            }
+            extraLinesFetchRequest.sortDescriptors = [NSSortDescriptor(key: "bidOrder", ascending: true)]
+            extraLinesFetch = NSFetchedResultsController(fetchRequest: extraLinesFetchRequest, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: nil, cacheName: nil)
+            extraLinesFetch.delegate = self
+            do {
+                try extraLinesFetch.performFetch()
+            }catch{
+                print("Error: \(error.localizedDescription)")
+            }
+            let array4 = extraLinesFetch.fetchedObjects
+            var greatestSeqNum = 0
+            for i in 0..<nonDuplicateAwards.count{
+                
+            }
         }
     }
     
