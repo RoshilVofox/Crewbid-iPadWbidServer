@@ -2945,7 +2945,7 @@
                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                             <state key="normal" image="cc"/>
                                                             <connections>
-                                                                <action selector="deleteCellRow:" destination="kn9-QR-Npc" eventType="touchUpInside" id="ytO-pf-h1X"/>
+                                                                <action selector="deleteCellRow:" destination="kn9-QR-Npc" eventType="touchUpInside" id="z89-cV-w2M"/>
                                                             </connections>
                                                         </button>
                                                     </subviews>
@@ -2963,6 +2963,9 @@
                                                 <constraint firstAttribute="trailing" secondItem="N8d-3N-UQt" secondAttribute="trailing" id="mpV-Xj-DNX"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="backView" destination="N8d-3N-UQt" id="vyg-yD-ziJ"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
