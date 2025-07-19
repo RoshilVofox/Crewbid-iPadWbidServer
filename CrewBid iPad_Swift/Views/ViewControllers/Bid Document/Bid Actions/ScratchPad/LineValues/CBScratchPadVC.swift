@@ -145,10 +145,80 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
         
     }
     
-    
+    func updatingFetch() {
+        let moc = self.bidPeriod?.managedObjectContext
+        //Filters Fetched Results Controller
+        let filterFetchRequest = NSFetchRequest<BIFilterRule>(entityName: BIFilterRuleEntityName)
+        filterFetchRequest.sortDescriptors = [NSSortDescriptor(key: "category", ascending: true),NSSortDescriptor(key: "type", ascending: true)]
+        filterFetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+        filtersFetchController = NSFetchedResultsController(fetchRequest: filterFetchRequest, managedObjectContext:moc!, sectionNameKeyPath: nil, cacheName: nil)
+        filtersFetchController?.delegate = self
+        try? filtersFetchController?.performFetch()
+        
+        //Sorts Fetched Results Controller
+        let sortFetchRequest = NSFetchRequest<BILineSort>(entityName: BILineSortEntityName)
+        sortFetchRequest.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+        sortFetchRequest.predicate = NSPredicate(format: "isBidListSort != %@", NSNumber(value: true))
+        sortsFetchController = NSFetchedResultsController(fetchRequest: sortFetchRequest, managedObjectContext: moc!,sectionNameKeyPath: nil, cacheName: nil)
+        sortsFetchController?.delegate = self
+        try? sortsFetchController?.performFetch()
+        
+        //Lines Fetched Results Controller
+        notTrashedPredicate = NSPredicate(format: "isTrashed == NO")
+        notBidPredicate = NSPredicate(format: "bidOrder == 0")
+        var subpredicates = [NSPredicate]()
+        let fetched = filtersFetchController?.fetchedObjects
+        subpredicates.append(contentsOf: fetched!.compactMap { $0.predicate })
+        if let notBid = notBidPredicate {
+            subpredicates.insert(notBid, at: 0)
+        }
+        if let notTrashed = notTrashedPredicate {
+            subpredicates.insert(notTrashed, at: 0)
+        }
+        if bidPeriod!.isOverNightBulkApplied == "YES" {
+            subpredicates.append(contentsOf: CBUtils.checkOvernightPredicate())
+        }
+        
+        let lineFetch = NSFetchRequest<BILine>(entityName: BILineEntityName)
+        
+        let managedVacationEnabled = UserDefaults.standard.bool(forKey: kCBManageVacationEnabledKey)
+        if !(self.bidPeriod!.vacationType?.count ?? 0 > 1) && managedVacationEnabled == false {
+            let swaptimizerFileURL = Bundle.main.path(forResource: "FilterRulesSwaptimizer", ofType: "plist")
+            let swapRulesDict = NSDictionary(contentsOfFile: swaptimizerFileURL!)
+            let rules = swapRulesDict!["rules"] as? [[String: Any]]
+            let types = rules?.first?["types"] as? [[String: Any]]
+            var arryKeys = [String]()
+            if let types = types {
+                for dict in types {
+                    if let key = dict["keyPath"] as? String {
+                        arryKeys.append(key)
+                    }
+                }
+            }
+            let vacationFilters = NSMutableArray()
+                for i in 0..<subpredicates.count {
+                    let pred = subpredicates[i] as NSPredicate
+                    for j in 0..<rules!.count {
+                        if (pred.description).contains(arryKeys[j]){
+                            vacationFilters.add(subpredicates[i])
+                        }
+                    }
+                }
+            subpredicates.removeAll { vacationFilters.contains($0) }
+        }
+        let bidPredicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+        let combinedPredicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates + [bidPredicate])
+        lineFetch.predicate = combinedPredicate
+        let lineSorts = updateSorts()
+        lineFetch.sortDescriptors = lineSorts
+        linesFetchController = NSFetchedResultsController( fetchRequest: lineFetch, managedObjectContext: moc!,sectionNameKeyPath: nil, cacheName: nil)
+        linesFetchController?.delegate = self
+        try? linesFetchController?.performFetch()
+    }
 
     @objc func updateLines(){
 //        NotificationCenter.default.post(name: NSNotification.Name(kCBSyncModeChangedNotification), object: self)
+        updatingFetch()
         let fetch = self.linesFetchController.fetchRequest
         var lineSorts = self.updateSorts()
         if self.bidPeriod!.isFABid(){

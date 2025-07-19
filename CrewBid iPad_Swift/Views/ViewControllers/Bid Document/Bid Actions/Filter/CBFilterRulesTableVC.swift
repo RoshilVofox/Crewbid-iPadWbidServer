@@ -42,12 +42,14 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
 //        fetchFromFilterAndUpdateCategory()
         setupUI()
         reloadRuleCell()
+        NotificationCenter.default.addObserver(self, selector: #selector(updateLines), name: NSNotification.Name("refreshLines"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshBidListCount), name: NSNotification.Name("RefreshBidListLineCountFilter"), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         reloadRuleCell()
-        NotificationCenter.default.addObserver(self, selector: #selector(updateLines), name: NSNotification.Name("refreshLines"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(refreshBidListCount), name: NSNotification.Name("RefreshBidListLineCountFilter"), object: nil)
+        objFilterTableView.allowsSelection = false
+        
         
     }
     
@@ -466,8 +468,8 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
             let ruleCell = cell as? CBUserFlagRuleCell
             ruleCell?.flagColor = cellFlagBorderColor
             ruleCell?.bacViewColor = UIColor.appColor(.contentBgColor)!
-            ruleCell?.filterRule = rule!
             ruleCell?.bidPeriod = bidPeriod!
+            ruleCell?.filterRule = rule!
             useComparisonCell = false
         }
         else if BIFilterRuleCategory.BIDaysOfMonthFilterRuleCategory.rawValue == rule?.category?.intValue {
