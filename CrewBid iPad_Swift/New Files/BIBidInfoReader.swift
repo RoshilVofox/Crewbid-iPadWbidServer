@@ -210,7 +210,6 @@ class BIBidInfoReader{
             self.checkPaperBidUserVacation()
         }
         self.initializeReadingVariables()
-        NotificationCenter.default.post(name: NSNotification.Name(ReloadCollectionView), object: nil)
         var success:Bool = false
         
         if self.isFABid(){
