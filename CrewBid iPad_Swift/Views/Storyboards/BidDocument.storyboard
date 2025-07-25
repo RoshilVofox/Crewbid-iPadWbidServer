@@ -2244,6 +2244,9 @@
                                                             <state key="normal" title="99">
                                                                 <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="showValueOptions:" destination="QRV-O5-qHr" eventType="touchUpInside" id="kIK-Rj-Rd6"/>
+                                                            </connections>
                                                         </button>
                                                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="City" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="FSa-nf-CW1" userLabel="City Text Field">
                                                             <rect key="frame" x="493" y="11" width="50" height="34"/>
@@ -2266,6 +2269,9 @@
                                                             <state key="normal" title="Equal">
                                                                 <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="showComparisonOptions:" destination="QRV-O5-qHr" eventType="touchUpInside" id="n50-lP-ad8"/>
+                                                            </connections>
                                                         </button>
                                                     </subviews>
                                                     <color key="backgroundColor" name="contentBgColor"/>
