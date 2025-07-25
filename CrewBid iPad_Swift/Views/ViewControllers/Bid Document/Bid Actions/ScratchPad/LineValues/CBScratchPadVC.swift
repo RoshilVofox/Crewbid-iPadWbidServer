@@ -8,7 +8,7 @@
 import UIKit
 import CoreData
 
-class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
+class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UIPopoverControllerDelegate {
 
     @IBOutlet weak var lblTrashLineCount: UILabel!
     @IBOutlet weak var btnTrash: UIButton!
@@ -36,10 +36,13 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
     var updateScratchpadTitle: Bool = true
     var linesArray:NSMutableArray?
     var linePosDict:NSDictionary?
+    var lineBILineDict: [String: [BILine]] = [:]
     var arrayLinesDetails:NSArray = NSArray()
     var positionFlag1 = 0
     var positionFlag2 = 0
     var tempPositionLine : [BILine] = []
+    var menuItems = NSMutableArray()
+    var menuController:CBMenuController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -295,7 +298,8 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        NotificationCenter.default.addObserver(self, selector: #selector(bidCellLine), name: NSNotification.Name(CBLineTableCellFABidLineNotification), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(bidCellLine), name: NSNotification.Name(CBLineTableCellBidLineNotification), object: nil)
     }
     
     
@@ -305,8 +309,96 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate {
     }
     
     //Adding line to bidlist
-    @objc func bidCellLine(_ notification: Notification){
-        
+    @objc func bidCellLine(_ notification: Notification) {
+        guard let lineToBid = notification.userInfo?[CBLineTableCellBidLineKey] as? BILine else { return }
+        let lineNum = lineToBid.number!.stringValue
+        let lines = self.lineBILineDict[lineNum]
+        var tempLines: [BILine] = []
+        if let allLines = CBGlobalMethods.shared.selectedBidPeriod?.lines {
+            for case let line as BILine in allLines {
+                tempLines.append(line)
+            }
+        }
+
+        // Sort all lines by number
+        tempLines = (tempLines as NSArray).sortedArray(using: [NSSortDescriptor(key: "number", ascending: true)]) as! [BILine]
+
+        // Build predicates
+        let predicates: [NSPredicate] = [
+            NSPredicate(format: "bidOrder == %@", NSNumber(value: 0)),
+            NSPredicate(format: "isTrashed == %@", NSNumber(value: false)),
+            NSPredicate(format: "number == %@", lineToBid.number ?? 0)
+        ]
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+
+        // Filter lines based on predicates
+        tempLines = (tempLines as NSArray).filtered(using: predicate) as! [BILine]
+
+        // Check for lineSort with category 3
+        if let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod {
+            for case let sort as BILineSort in bidPeriod.lineSorts?.allObjects ?? [] {
+                if sort.category?.intValue == 3 {
+                    positionFlag1 = 1
+                }
+            }
+        }
+
+        if positionFlag1 == 1 {
+            let lineSorts = getSortDiscriptorsPosition()
+            tempLines = (tempLines as NSArray).sortedArray(using: lineSorts) as! [BILine]
+            tempLines = (tempLines as NSArray).sortedArray(using: [NSSortDescriptor(key: "number", ascending: true)]) as! [BILine]
+            positionFlag1 = 0
+        } else {
+            tempLines = (tempLines as NSArray).sortedArray(using: [NSSortDescriptor(key: "number", ascending: true), NSSortDescriptor(key: "faPosition", ascending: true)]) as! [BILine]
+        }
+        if lines!.count != tempLines.count{
+            if tempLines.first?.number == (lines)?.first?.number{
+                tempLines = lines!
+            }
+        }
+        if tempLines.isEmpty {
+            return
+        }
+        // If only one FA position, insert directly
+        if tempLines.count == 1 {
+            let bidListVC = CBBidListVC()
+            bidListVC.setupVariables()
+            bidListVC.insertLines(tempLines, faBidAllPositions: false)
+            NotificationCenter.default.post(name: NSNotification.Name("flipToBidList"), object: nil)
+        } else {
+            // More than one position – show popup menu
+            var arr: [String] = tempLines.map { "Move Position \($0.faPositionString) to Bid List" }
+            arr.sort()
+            arr.append("Move All Positions to Bid List")
+
+            let vc = UIStoryboard(name: "BidDocument", bundle: nil).instantiateViewController(withIdentifier: "FaMoveBidListMenu") as! FaMoveBidListMenu
+            vc.array = arr
+            vc.lines = tempLines
+            vc.modalPresentationStyle = .popover
+            if let buttonView = notification.userInfo?[CBLineTableCellButtonViewKey] as? UIView {
+                let frame = CGRect(x: btnTrash.frame.origin.x - 30, y: btnTrash.frame.origin.y + 18, width: 0, height: 0)
+                vc.showPopover(sourceView: buttonView, sourceRect: frame)
+            }
+        }
+    }
+    
+    func bidFALine(withLines lines: NSMutableArray, bidAllPositions bidAll: Bool) {
+        if bidAll {
+            let bidLinesNotification = Notification(
+                name: Notification.Name(CBLinesTableBidLinesFaAllNotification),
+                object: self,
+                userInfo: [CBLinesTableBidLinesArrayKey: lines]
+            )
+            NotificationCenter.default.post(bidLinesNotification)
+            
+        } else {
+            let bidLinesNotification = Notification(
+                name: Notification.Name(CBLinesTableBidLinesNotification),
+                object: self,
+                userInfo: [CBLinesTableBidLinesArrayKey: lines]
+            )
+            NotificationCenter.default.post(bidLinesNotification)
+        }
     }
     
     func getSortDiscriptorsPosition() -> [NSSortDescriptor] {
@@ -720,33 +812,52 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
         self.linesArray = NSMutableArray()
         self.linePosDict = NSDictionary()
         let linePos = NSMutableDictionary()
+        let lineBILineMap = NSMutableDictionary()
         let linesArray = NSMutableArray(array: self.linesFetchController.fetchedObjects!)
         let linesToRemove = NSMutableIndexSet()
         let posArray = NSMutableArray()
+        let lineObjArray = NSMutableArray()
         for index in 0..<linesArray.count {
             let line = linesArray[index] as! BILine
             if index == 0{
                 posArray.add(line.faPositionString)
+                lineObjArray.add(line)
             }
             if index > 0 {
                 let prevLine = linesArray[index - 1] as! BILine
                 if line.number?.intValue == prevLine.number?.intValue {
                     posArray.add(line.faPositionString)
                     linesToRemove.add(index)
+                    lineObjArray.add(line)
                 }else{
                     linePos.setValue(posArray.mutableCopy(), forKey: prevLine.number!.stringValue)
+                    lineBILineMap.setValue(lineObjArray.mutableCopy(), forKey: prevLine.number!.stringValue)
                     posArray.removeAllObjects()
+                    lineObjArray.removeAllObjects()
                     posArray.add(line.faPositionString)
+                    lineObjArray.add(line)
                 }
             }
             
             if index == linesArray.count - 1 {
                 linePos.setValue(posArray.mutableCopy(), forKey: line.number!.stringValue)
+                lineBILineMap.setValue(lineObjArray.mutableCopy(), forKey: line.number!.stringValue)
                 posArray.removeAllObjects()
-    
+                lineObjArray.removeAllObjects()
             }
         }
         linesArray.removeObjects(at: linesToRemove as IndexSet)
+        var swiftDict = [String: [BILine]]()
+
+        for (key, value) in lineBILineMap {
+            if let keyStr = key as? String,
+               let valueArray = value as? NSArray {
+                let bilines = valueArray.compactMap { $0 as? BILine }
+                swiftDict[keyStr] = bilines
+            }
+        }
+
+        self.lineBILineDict = swiftDict
         self.linePosDict = linePos
         self.linesArray = linesArray
         return linesArray.count
@@ -989,3 +1100,4 @@ extension CBScratchPadVC: CBUserFlagTableControllerDelegate {
     
     
 }
+
