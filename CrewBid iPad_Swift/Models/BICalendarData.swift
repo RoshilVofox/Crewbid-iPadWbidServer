@@ -33,10 +33,29 @@ class BICalendarData {
     var weeksInMonth = 0
     var calendarDays : NSArray = NSArray()
     
-    // Initialize BICalendarData with a given BIBidPeriod
-
-    func initWithManagedObjectContext(bidperiod:BIBidPeriod) -> BICalendarData? {
-        return initWithBidPeriod(bidPeriod: bidperiod)
+    static func createWithManagedObjectContext(_ context: NSManagedObjectContext) -> BICalendarData? {
+        // Fetch request for BIBidPeriod
+        let fetchRequest = NSFetchRequest<BIBidPeriod>(entityName: "BidPeriod")
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            
+            if results.isEmpty {
+                print("No bid period found")
+                return nil
+            } else if results.count > 1 {
+                print("Too many (\(results.count)) bid period objects found")
+                return nil
+            }
+            let bidPeriod = results[0]
+            
+            // Call your initializer-style function here
+            return BICalendarData().initWithBidPeriod(bidPeriod: bidPeriod)
+            
+        } catch {
+            print("Bid period fetch failed: \(error.localizedDescription)")
+            return nil
+        }
     }
     
     func getNextMonth() -> Int {

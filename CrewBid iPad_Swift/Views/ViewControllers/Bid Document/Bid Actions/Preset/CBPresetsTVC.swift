@@ -126,6 +126,233 @@ extension CBPresetsTVC: CBPresetCellDelegate{
 //            UserDefaults.standard.set(true, forKey: kCBIsPresetModified)
             self.updatePresets()
     }
+    
+    class func selectedPresetName(bidPeriod: BIBidPeriod) -> String? {
+        guard let presets = self.openPresetsFromFile(bidPeriod: bidPeriod) as? [Any] else {
+            return nil
+        }
+
+        let selectedPresets = presets.filter {
+            if let dict = $0 as? [String: Any],
+               let presetIdentifier = dict["presetIdentifier"] as? String {
+                return presetIdentifier == bidPeriod.loadedPresetIdentifier
+            } else if let preset = $0 as? CBPreset {
+                return preset.presetIdentifier == bidPeriod.loadedPresetIdentifier
+            }
+            return false
+        }
+
+        if let selected = selectedPresets.first {
+            if let dict = selected as? [String: Any] {
+                return dict["name"] as? String
+            } else if let preset = selected as? CBPreset {
+                return preset.name
+            }
+        }
+
+        return nil
+    }
+    
+    class func openPresetsFromFile(bidPeriod: BIBidPeriod) -> NSMutableArray {
+        let filePath = self.presetsDocumentFilePath(bidPeriod: bidPeriod)
+        var presets = NSMutableArray()
+
+        if let result = FileManager.default.contents(atPath: filePath) {
+            do {
+                if let unarchived = try NSKeyedUnarchiver.unarchivedObject(ofClasses: [NSMutableArray.self, CBPresetFilterRule.self], from: result) as? NSMutableArray {
+                        presets = unarchived
+                        print(presets, result as NSData)
+                    }
+            } catch {
+                print("Unarchive error: \(error.localizedDescription)")
+
+                let systemVersion = UIDevice.current.systemVersion
+                if systemVersion.compare("16.0.0", options: .numeric) != .orderedAscending {
+                    DispatchQueue.main.async {
+                        let defaults = UserDefaults.standard
+                        if defaults.string(forKey: "iOS16PresetSavedToServer") != "YES" {
+//                            if result != nil {
+                                self.saveiOS16PresetsToServer(with: result)
+//                            }
+                        }
+                        self.getCrashedPresetFromServer(bidPeriod: bidPeriod)
+                    }
+                }
+            }
+        }
+
+        return presets
+    }
+    
+    static func getCrashedPresetFromServer(bidPeriod: BIBidPeriod) {
+
+        var dicInfo: [String: Any] = [:]
+        let employeeNumber = CBGlobalMethods.shared.employeeNumber ?? ""
+        dicInfo["EmployeeNumber"] = employeeNumber
+        dicInfo["PresetFileName"] = "\(employeeNumber).json"
+
+        guard let url = URL(string: "http://www.wbidmax.com:8000/WBidDataDwonloadAuthService.svc/GetCrashedCBPresetFromServer") else { return }
+
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: dicInfo, options: [])
+            let jsonString = String(data: jsonData, encoding: .utf8) ?? ""
+            urlRequest.httpBody = jsonString.data(using: .utf8)
+        } catch {
+            print("Failed to encode JSON: \(error.localizedDescription)")
+            return
+        }
+
+        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Network error: \(error?.localizedDescription ?? "unknown")")
+                return
+            }
+
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                print("Bad HTTP response")
+                return
+            }
+
+            do {
+                guard let res = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves) as? [String: Any] else { return }
+                print("Server response:", res)
+
+                if let presetContent = res["PresetContent"] as? [Any] {
+                    let count = presetContent.count
+                    var bytes = [UInt8]()
+                    
+                    for item in presetContent {
+                        if let str = item as? String, let intVal = Int(str) {
+                            bytes.append(UInt8(intVal))
+                        }
+                    }
+
+                    let byteData = Data(bytes)
+                    
+                    if let jsonArray = try JSONSerialization.jsonObject(with: byteData, options: .mutableLeaves) as? [Any], !jsonArray.isEmpty {
+                        let plistData = try NSKeyedArchiver.archivedData(withRootObject: jsonArray, requiringSecureCoding: false)
+                        
+                        let presetPath = CBPresetsTVC.presetsDocumentFilePath(bidPeriod: bidPeriod)
+                        try plistData.write(to: URL(fileURLWithPath: presetPath), options: .atomic)
+
+                        let presetFilename = String(Int(employeeNumber) ?? 0)
+                        let namedPath = CBPresetsTVC.presetsDocumentFilePath(withFileName: presetFilename)
+                        try plistData.write(to: URL(fileURLWithPath: namedPath), options: .atomic)
+
+                        DispatchQueue.main.async {
+                            UserDefaults.standard.set(false, forKey: kCBIsPresetModified)
+                            NotificationCenter.default.post(name: Notification.Name("presetSynched"), object: self)
+//                            NotificationCenter.default.post(name: Notification.Name(kCBPresetSyncReload), object: self)
+                        }
+                    }
+                } else {
+//                    self.sendMailForUnConvertedFile()
+                }
+            } catch {
+                print("Parsing error: \(error.localizedDescription)")
+            }
+        }.resume()
+    }
+    
+    class func presetsDocumentFilePath(withFileName presetFileName: String) -> String {
+        let presetsDirectoryURL = self.presetsDocumentDirectory()
+        let presetsDocumentURL = presetsDirectoryURL!.appendingPathComponent(presetFileName)
+        return presetsDocumentURL.path
+    }
+    
+    
+    class func presetsDocumentFilePath(bidPeriod: BIBidPeriod) -> String {
+        let isConversion = UserDefaults.standard.bool(forKey: "isConversion")
+        let presetsDirectoryURL = self.presetsDocumentDirectory()
+
+        if isConversion {
+            let presetsFilename = CBPresetsTVC.presetsFilename(with: bidPeriod)
+            let presetsDocument = presetsDirectoryURL!.appendingPathComponent(presetsFilename).path
+            return presetsDocument
+        } else {
+            let empNum = CBGlobalMethods.shared.employeeNumber
+            let presetsFilename = empNum!
+            let presetsDocument = presetsDirectoryURL!.appendingPathComponent(presetsFilename).path
+            return presetsDocument
+        }
+    }
+    
+    static func saveiOS16PresetsToServer(with data: Data) {
+        var dicInfo: [String: Any] = [:]
+
+        let employeeNumber = CBGlobalMethods.shared.employeeNumber ?? ""
+        dicInfo["EmployeeNumber"] = employeeNumber
+        dicInfo["PresetFileName"] = "\(employeeNumber).plist"
+
+        let bytes = [UInt8](data)
+        let resArr = bytes.map { NSNumber(value: $0) }
+        dicInfo["PresetContent"] = resArr
+
+        guard let url = URL(string: "http://www.wbidmax.com:8000/WBidDataDwonloadAuthService.svc/SaveCrashedPresetToServer") else { return }
+
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: dicInfo, options: [])
+            let jsonString = String(data: jsonData, encoding: .utf8) ?? ""
+            urlRequest.httpBody = jsonString.data(using: .utf8)
+        } catch {
+            print("Error creating JSON: \(error.localizedDescription)")
+            return
+        }
+
+        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Error: \(error?.localizedDescription ?? "Unknown")")
+                return
+            }
+
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                do {
+                    if let res = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves) as? [String: Any] {
+                        UserDefaults.standard.setValue("YES", forKey: "iOS16PresetSavedToServer")
+                        print(res)
+                    }
+                } catch {
+                    print("Failed to parse response JSON: \(error.localizedDescription)")
+                }
+            }
+        }.resume()
+    }
+    
+    class func presetsFilename(with bidPeriod: BIBidPeriod) -> String {
+        if bidPeriod.isFABid() {
+            return "CrewBidFAPresets.plist"
+        } else if bidPeriod.isSecondRoundBid() {
+            return "CrewBidRound2Presets.plist"
+        } else {
+            return "CrewBidPilotPresets.plist"
+        }
+    }
+    
+    class func presetsDocumentDirectory() -> URL? {
+        // Presets directory URL
+        let documentsDirectory = BIBidInfo.shared.documentsDirectory()
+        
+        
+        let presetsURL = documentsDirectory.appendingPathComponent("Presets")
+        let fileManager = FileManager.default
+
+        do {
+            try fileManager.createDirectory(at: presetsURL, withIntermediateDirectories: true, attributes: nil)
+            return presetsURL
+        } catch {
+            // You can handle or log the error here if needed
+            // e.g., BIBidInfoError.setError(...)
+            return nil
+        }
+    }
 }
 
 //MARK: Table view part
