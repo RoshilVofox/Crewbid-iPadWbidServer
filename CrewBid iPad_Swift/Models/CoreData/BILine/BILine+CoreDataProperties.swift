@@ -317,6 +317,20 @@ extension BILine : Identifiable {
         return orderedDays
     }
     
+    var orderedWorkBlocks: [Any] {
+        let orderedDays = self.workBlocks!.allObjects.sorted {
+            guard
+                let date1 = ($0 as AnyObject).value(forKeyPath: "startDateTime") as? Date,
+                let date2 = ($1 as AnyObject).value(forKeyPath: "startDateTime") as? Date
+            else {
+                return false
+            }
+            return date1 < date2
+        }
+        return orderedDays
+    }
+
+    
     var redEyeCount: NSNumber {
         let allLegs = legs?.allObjects as? [BILeg] ?? []
         let redEyeLegs = allLegs.filter { $0.info?.isRedEyeFlight == true }

@@ -1004,6 +1004,9 @@
                                                                     <inset key="imageEdgeInsets" minX="3" minY="3" maxX="3" maxY="3"/>
                                                                     <state key="normal" image="unCheckBox"/>
                                                                     <state key="selected" image="checkBox"/>
+                                                                    <connections>
+                                                                        <action selector="allDaysBtnTapped:" destination="qHF-zu-1DX" eventType="touchUpInside" id="l1y-gA-I9v"/>
+                                                                    </connections>
                                                                 </button>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="All Days" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mtL-p7-5zw">
                                                                     <rect key="frame" x="43" y="8" width="65" height="20"/>
@@ -1038,6 +1041,9 @@
                                                                     <inset key="imageEdgeInsets" minX="3" minY="3" maxX="3" maxY="3"/>
                                                                     <state key="normal" image="unCheckBox"/>
                                                                     <state key="selected" image="checkBox"/>
+                                                                    <connections>
+                                                                        <action selector="tripWorkBlkBtnTapped:" destination="qHF-zu-1DX" eventType="touchUpInside" id="lJo-Vy-FA3"/>
+                                                                    </connections>
                                                                 </button>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Trip / Work Block" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pjd-0A-gJm">
                                                                     <rect key="frame" x="43" y="6" width="140" height="20"/>
@@ -1058,6 +1064,9 @@
                                                                     <inset key="imageEdgeInsets" minX="3" minY="3" maxX="3" maxY="3"/>
                                                                     <state key="normal" image="unCheckBox"/>
                                                                     <state key="selected" image="checkBox"/>
+                                                                    <connections>
+                                                                        <action selector="tripFirstBtnTapped:" destination="qHF-zu-1DX" eventType="touchUpInside" id="oss-iV-1Uo"/>
+                                                                    </connections>
                                                                 </button>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="First" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7C5-gN-1Bf">
                                                                     <rect key="frame" x="70" y="36.5" width="140" height="20"/>
@@ -1078,6 +1087,9 @@
                                                                     <inset key="imageEdgeInsets" minX="3" minY="3" maxX="3" maxY="3"/>
                                                                     <state key="normal" image="unCheckBox"/>
                                                                     <state key="selected" image="checkBox"/>
+                                                                    <connections>
+                                                                        <action selector="tripLastBtnTapped:" destination="qHF-zu-1DX" eventType="touchUpInside" id="exa-vd-doh"/>
+                                                                    </connections>
                                                                 </button>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Last" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8ZM-CU-pWt">
                                                                     <rect key="frame" x="70" y="63.5" width="140" height="20"/>
@@ -1098,6 +1110,9 @@
                                                                     <inset key="imageEdgeInsets" minX="3" minY="3" maxX="3" maxY="3"/>
                                                                     <state key="normal" image="unCheckBox"/>
                                                                     <state key="selected" image="checkBox"/>
+                                                                    <connections>
+                                                                        <action selector="noMidBtnTapped:" destination="qHF-zu-1DX" eventType="touchUpInside" id="vpK-Ji-rnB"/>
+                                                                    </connections>
                                                                 </button>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Mid" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fQs-ca-wEj">
                                                                     <rect key="frame" x="70" y="90.5" width="140" height="20"/>
@@ -1143,6 +1158,9 @@
                                                                     <inset key="imageEdgeInsets" minX="3" minY="3" maxX="3" maxY="3"/>
                                                                     <state key="normal" image="unCheckBox"/>
                                                                     <state key="selected" image="checkBox"/>
+                                                                    <connections>
+                                                                        <action selector="dateBtnTapped:" destination="qHF-zu-1DX" eventType="touchUpInside" id="1Nz-N0-3QZ"/>
+                                                                    </connections>
                                                                 </button>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Dates" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eah-oD-kcO">
                                                                     <rect key="frame" x="43" y="8" width="60" height="20"/>
@@ -1211,6 +1229,9 @@
                                                             <state key="normal" title="Choose Date">
                                                                 <color key="titleColor" name="preset_label"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="buttonAction:" destination="qHF-zu-1DX" eventType="touchUpInside" id="7xp-dn-ZGU"/>
+                                                            </connections>
                                                         </button>
                                                         <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="HHMM" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="dRh-fw-txn">
                                                             <rect key="frame" x="540" y="57" width="97" height="30"/>
@@ -1243,6 +1264,9 @@
                                                             <state key="normal" title="Calculate">
                                                                 <color key="titleColor" name="preset_label"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="calculate:" destination="qHF-zu-1DX" eventType="touchUpInside" id="i9W-0T-Efa"/>
+                                                            </connections>
                                                         </button>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Report NET" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Rv-yA-a3v">
                                                             <rect key="frame" x="440" y="62" width="90" height="20"/>
@@ -4392,6 +4416,9 @@
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                         </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="btnClearAction:" destination="gKe-KE-fCA" eventType="touchUpInside" id="EyY-KO-IOk"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Ha-0x-Gsd">
                                         <rect key="frame" x="0.0" y="70.5" width="80" height="30"/>
@@ -4404,6 +4431,9 @@
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                         </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="btnSelectAllAction:" destination="gKe-KE-fCA" eventType="touchUpInside" id="d2c-0M-iiY"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aMV-K8-5MY">
                                         <rect key="frame" x="0.0" y="140.5" width="80" height="30.5"/>
@@ -4416,6 +4446,9 @@
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                         </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="btnCloseAction:" destination="gKe-KE-fCA" eventType="touchUpInside" id="Ryv-Ia-u2q"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <constraints>
@@ -6892,37 +6925,37 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="quaternarySystemFillColor">
-            <color red="0.4549019608" green="0.4549019608" blue="0.50196078430000002" alpha="0.080000000000000002" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.45490196078431372" green="0.45490196078431372" blue="0.50196078431372548" alpha="0.080000000000000002" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="secondarySystemBackgroundColor">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBlueColor">
-            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray2Color">
-            <color red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGreenColor">
-            <color red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemOrangeColor">
-            <color red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemYellowColor">
             <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tertiaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29803921570000003" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29803921568627451" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tintColor">
-            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
