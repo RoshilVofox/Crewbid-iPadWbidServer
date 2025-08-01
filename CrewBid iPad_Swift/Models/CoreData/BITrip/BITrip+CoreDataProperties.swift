@@ -466,4 +466,45 @@ extension BITrip : Identifiable {
         }
         return textForTrip
     }
+    
+    static func staticTimeForFAReserveType(trip: BITrip, line: BILine, key: String, timeZone: String) -> String? {
+        if line.bidPeriod?.isFirstRoundBid() == true || !line.bidPeriod!.isFABid() == true || !trip.isReserve {
+            return nil
+        }
+        let type = trip.line?.faReserveLineType?.intValue
+        var timeStr: String?
+        if type == BIFaReserveLineType.SnrAMres.rawValue {
+            timeStr = key == "depart" ? "0300" : "1100"
+        }
+        else if type == BIFaReserveLineType.SnrPMres.rawValue {
+            timeStr = key == "depart" ? "1000" : "1800"
+        }
+        else if type == BIFaReserveLineType.JnrAMres.rawValue {
+            timeStr = key == "depart" ? "0300" : "1500"
+        }
+        else if type == BIFaReserveLineType.JnrPMres.rawValue {
+            timeStr = key == "depart" ? "1000" : "2200"
+        }
+        else if type == BIFaReserveLineType.JnrLateRes.rawValue {
+            timeStr = key == "depart" ? "1500" : "0259"
+        }
+        
+        if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.localTime.rawValue {
+            return timeStr
+        }
+        let now = Date()
+        var calendar = Calendar(identifier: .gregorian)
+        var todayComps = calendar.dateComponents([.year, .month, .day], from: now)
+        todayComps.hour = Int(timeStr!.prefix(2))
+        todayComps.minute = Int(timeStr!.suffix(from: timeStr!.index(timeStr!.startIndex, offsetBy: 2)))
+        
+        calendar.timeZone = TimeZone(identifier: timeZone)!
+        let sourceDate: Date = calendar.date(from: todayComps)!
+        let formatter: DateFormatter = DateFormatter()
+        formatter.dateFormat = "HHmm"
+        formatter.timeZone = TimeZone(identifier: "US/Central")
+        
+        let herbTimeString = formatter.string(from: sourceDate)
+        return herbTimeString
+    }
 }

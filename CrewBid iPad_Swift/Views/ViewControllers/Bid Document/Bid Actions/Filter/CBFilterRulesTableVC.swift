@@ -26,7 +26,7 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     var disabledCellIndexPaths = NSMutableArray()
     var context: NSManagedObjectContext?
     var filterRulesController: NSFetchedResultsController<BIFilterRule>?
-    var calendarData: BICalendarData?
+    var calendarData = BICalendarData()
     var cellFlagBorderColor: UIColor = .systemGray
     var filterRules = [Any]()
 
@@ -59,6 +59,7 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     }
     
     func setupUI(){
+        calendarData = calendarData.initWithBidPeriod(bidPeriod: bidPeriod!)!
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
     }
     
@@ -332,6 +333,7 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
 
     
     func configureCell(cell: UITableViewCell?, for rule: BIFilterRule?) {
+        print(rule?.category?.intValue as Any)
         var useComparisonCell = false
         if BIFilterRuleCategory.BITypeFilterRuleCategory.rawValue == rule?.category?.intValue {
             //fetch etops filter
@@ -490,9 +492,9 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
         else if BIFilterRuleCategory.BIReportReleaseFilterCategory.rawValue == rule?.category?.intValue {
             useComparisonCell = false
             let ruleCell = cell as? CBReportReleaseRuleCellTableViewCell
-            ruleCell?.bidPeriod = bidPeriod
+            ruleCell?.bidPeriod = bidPeriod!
             ruleCell?.filterRule = rule;
-            ruleCell?.calendarData = calendarData
+            ruleCell?.calendarData = self.calendarData
             ruleCell?.handleExistingCases()
         }
         else if BIFilterRuleCategory.BIDaysOffFilterRuleCategory.rawValue == rule?.category?.intValue {

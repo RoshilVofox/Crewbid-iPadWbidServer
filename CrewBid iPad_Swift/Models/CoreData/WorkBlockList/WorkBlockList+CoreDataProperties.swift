@@ -51,4 +51,16 @@ extension WorkBlockList {
 
 extension WorkBlockList : Identifiable {
 
+    var orderedDays: [Any] {
+        return days!.allObjects.sorted { day1, day2 in
+            guard
+                let date1 = (day1 as AnyObject).value(forKeyPath: "date") as? Date,
+                let date2 = (day2 as AnyObject).value(forKeyPath: "date") as? Date
+            else {
+                return false
+            }
+            return date1 < date2
+        }
+    }
+
 }
