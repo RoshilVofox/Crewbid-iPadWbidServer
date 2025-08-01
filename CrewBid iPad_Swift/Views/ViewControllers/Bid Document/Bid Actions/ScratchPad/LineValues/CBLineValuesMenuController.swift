@@ -7,6 +7,8 @@
 
 import UIKit
 
+var CBLineValuesToDisplayDidChangeNotification = "CBLineValuesToDisplayDidChangeNotification"
+
 class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITableViewDataSource,KUIPopOverUsable {
 
     @IBOutlet weak var titleLabel: UILabel!

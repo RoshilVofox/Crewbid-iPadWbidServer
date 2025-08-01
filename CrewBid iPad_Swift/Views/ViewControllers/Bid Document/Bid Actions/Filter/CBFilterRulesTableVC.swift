@@ -49,7 +49,7 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     override func viewWillAppear(_ animated: Bool) {
         reloadRuleCell()
         objFilterTableView.allowsSelection = false
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(flipToBidList), name: NSNotification.Name("flipToBidList"), object: nil)
         
     }
     
@@ -61,6 +61,28 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     func setupUI(){
         calendarData = calendarData.initWithBidPeriod(bidPeriod: bidPeriod!)!
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
+    }
+    
+    @objc func flipToBidList(){
+   //     DispatchQueue.main.async {
+            var isNeedtoPush : Bool = true
+            if let viewControllers = self.navigationController?.viewControllers  {
+                for controller in viewControllers {
+                    if controller is CBBidListVC {
+                        isNeedtoPush = false
+                    }
+                }
+            }
+                let presentingViewController = self.presentingViewController
+                self.dismiss(animated: false, completion: {
+                    presentingViewController?.dismiss(animated: false, completion: {})
+                })
+            if isNeedtoPush {
+                let vc = UIStoryboard.init(name: "BidDocument", bundle: Bundle.main).instantiateViewController(withIdentifier: "CBBidListVC") as! CBBidListVC
+                self.navigationController?.pushViewController(vc, animated: false)
+                UIView.transition(from: self.view, to: vc.view, duration: 0.85, options: [.transitionFlipFromLeft])
+            }
+       // }
     }
     
 //    func fetchFromFilterAndUpdateCategory() {

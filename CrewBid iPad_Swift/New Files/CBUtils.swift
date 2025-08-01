@@ -1243,7 +1243,9 @@ class CBUtils{
         return [">=", "<="]
     }
  
-    
+    class func generateUniqueIdentifier() -> String {
+        return UUID().uuidString
+    }
     
 //    static func findMissingDateAndIndex(forRedEyeTrip trip: BITrip) -> [String: Any] {
 //        var missingDayIndex = -1

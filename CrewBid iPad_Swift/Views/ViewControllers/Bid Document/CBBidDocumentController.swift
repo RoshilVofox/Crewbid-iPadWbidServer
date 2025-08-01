@@ -36,13 +36,25 @@ class CBBidDocumentController: BaseViewController {
     var bidLinesController:CBBidListVC!
     var rightNavController:UINavigationController!
     var bidsTableNavController:UINavigationController!
-    
- 
     var dataSource = GlobalBidInfo.shared
-    
+    var linesManager:BILinesManager!
+    var calendarData:BICalendarData!
+    var managedObjectContext: NSManagedObjectContext {
+        return CoreDataManager.shared.persistentContainer.viewContext
+    }
+    var positionFlag1 = 0
+    var tempPositionLine : [BILine] = []
     override func viewDidLoad() {
         super.viewDidLoad()
+        updateLocalHerbSwitchUI()
         self.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
+        self.linesManager = BILinesManager.init(managedObjectContext: self.managedObjectContext)
+        self.calendarData = BICalendarData.createWithManagedObjectContext(self.managedObjectContext)
+        
+        self.bidLinesController = self.storyboard?.instantiateViewController(withIdentifier: "CBBidListVC") as? CBBidListVC
+        self.bidLinesController.managedObjectContext = self.managedObjectContext
+        self.bidLinesController.bidPeriod = self.bidPeriod!
+        
         setupUI()
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutViewForSwitch), name: NSNotification.Name("SyncSwitchStateAction"), object: nil)
@@ -54,7 +66,8 @@ class CBBidDocumentController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(bidLines), name: NSNotification.Name(CBLinesTableBidLinesNotification), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(bidLines), name: Notification.Name(CBLinesTableBidLinesNotification), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(bidLines), name: Notification.Name(CBLinesTableBidLinesFaAllNotification), object: nil)
         
     }
     override func viewDidDisappear(_ animated: Bool) {
@@ -64,14 +77,100 @@ class CBBidDocumentController: BaseViewController {
         NotificationCenter.default.removeObserver("ShowCommutabilityFilterView")
     }
     
-    @objc func bidLines(_ notification: Notification){
-        let linesToBid = notification.userInfo![CBLinesTableBidLinesArrayKey]
-        if notification.name.rawValue == CBLinesTableBidLinesFaAllNotification {
-            //needs code for FA bids
-        }else{
-            if (self.bidLinesController.view.window == nil) && (!UserDefaults.standard.bool(forKey: kCBNoAutoswitchToBids)) {
-                
+    func getSortDiscriptorsPosition() -> [NSSortDescriptor] {
+        
+        // Create an expression for sorting by line number
+        let number = NSExpression(forKeyPath: "number")
+        let numberExpDescription = NSExpressionDescription()
+        numberExpDescription.name = "number"
+        numberExpDescription.expression = number
+        numberExpDescription.expressionResultType = .integer16AttributeType
+        
+        // Initialize an array to store sort descriptors
+
+        var lineSortDiscriptors = [NSSortDescriptor]()
+        
+
+        
+        // Initialize default position order
+        var standardPosOrder = [0, 1, 2, 3]
+        let userPosOrder = NSMutableArray() /* TODO: .reserveCapacity(maxPositionsPerLine) */
+        
+        // Iterate through user-defined line sorts
+
+        for case let lineSort in self.bidPeriod!.getOrderedSortsForPosition(){
+            // Ignore line sorts that do not have a key path since these will not
+            // be valid sorts.
+            
+            if nil == lineSort.keyPath || 0 == (lineSort.keyPath?.length ?? 0) {
+                continue
+            } else {
+                if lineSort.category == 3 {
+                    // Insert the line number sort first
+                    let sort = NSSortDescriptor(key: numberExpDescription.name, ascending: true)
+                    lineSortDiscriptors.append(sort)
+                    userPosOrder.add(lineSort.type!)
+                }
+                // Create a sort descriptor based on the user's selection
+
+                let sort = NSSortDescriptor(key: lineSort.keyPath, ascending: (lineSort.ascending != 0))
+                lineSortDiscriptors.append(sort)
             }
+        }
+        // Adjust the position order based on user-defined sorts
+
+        for pos in userPosOrder {
+            while let elementIndex = standardPosOrder.firstIndex(of: pos as! Int) { standardPosOrder.remove(at: elementIndex) }
+        }
+        userPosOrder.add(standardPosOrder)
+        // If no user-defined sorts, use default sorting by line number
+
+        if self.bidPeriod!.getOrderedSortsForPosition().count == 0 {
+            lineSortDiscriptors.append(NSSortDescriptor(key: "bidOrder", ascending: true))
+        } else {
+            let sort = NSSortDescriptor(key: numberExpDescription.name, ascending: true)
+            lineSortDiscriptors.append(sort)
+            // Ensure that the lines are sorted by position if FA since the position logic depends on it
+            if bidPeriod!.isFABid() {
+                let positionSort = NSSortDescriptor(key: "faPosition", ascending: true)
+                lineSortDiscriptors.append(positionSort)
+            }
+        }
+        
+       
+        return lineSortDiscriptors
+    }
+    
+    
+    @objc func bidLines(_ notification: Notification) {
+//        guard let linesToBid = notification.userInfo?[CBLinesTableBidLinesArrayKey] as? [BILine] else { return }
+//
+//        let isFAAllNotification = notification.name.rawValue == CBLinesTableBidLinesFaAllNotification
+//
+//        if bidLinesController.view.window == nil {
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+//                self.bidLinesController.insertLines(linesToBid, faBidAllPositions: isFAAllNotification)
+//            }
+//        } else {
+//            bidLinesController.insertLines(linesToBid, faBidAllPositions: isFAAllNotification)
+//        }
+    }
+    
+    func updateLocalHerbSwitchUI() {
+        let setting = UserDefaults.standard.integer(forKey: kCBTimeZoneSetting)
+        
+        if setting == CBTimeZoneSetting.herbTime.rawValue {
+            herbLabel.backgroundColor = .purple
+            herbLabel.textColor = .white
+            
+            localLabel.backgroundColor = .white
+            localLabel.textColor = .black
+        } else {
+            localLabel.backgroundColor = .purple
+            localLabel.textColor = .white
+            
+            herbLabel.backgroundColor = .white
+            herbLabel.textColor = .black
         }
     }
     

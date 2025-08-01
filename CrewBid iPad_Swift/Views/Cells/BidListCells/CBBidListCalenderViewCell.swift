@@ -32,3 +32,16 @@ class CBBidListCalenderViewCell: UITableViewCell {
     }
 
 }
+
+extension CBBidListCalenderViewCell: UICollectionViewDelegate, UICollectionViewDataSource{
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell12", for: indexPath) as! InnerCollectionViewCell
+        return cell
+    }
+    
+    
+}
