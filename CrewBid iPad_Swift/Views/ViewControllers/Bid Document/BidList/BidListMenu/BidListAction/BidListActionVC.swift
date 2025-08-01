@@ -10,6 +10,9 @@ import UIKit
 class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate {
     
     private let bidListActionArray = ["Scrolling Options","Deselect All Lines","Move Selected Lines","Undo","Redo","Return Selected Lines To Scratchpad","Return Unfrozen Lines To Scratchpad", "Start Over"]
+    var bidPeriod = BIBidPeriod()
+    var ArrLinesDetails: [BILine] = []
+    var selectedLinesCount:NSMutableArray = NSMutableArray()
     
     var contentSize: CGSize{
         return CGSize(width: 300, height: 355)
@@ -27,6 +30,93 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CBBidListActionTableCell") as! CBBidListActionTableCell
         cell.lblTitle.text = bidListActionArray[indexPath.row]
+        cell.lblTitle.font = UIFont.systemFont(ofSize: 15)
+        if indexPath.row == 0 {
+            if ArrLinesDetails.count > 0 {
+                cell.isUserInteractionEnabled = true
+                cell.lblTitle.alpha = 1
+            }else{
+                cell.isUserInteractionEnabled = false
+                cell.lblTitle.alpha = 0.5
+            }
+        }else if indexPath.row == 1 {
+            if selectedLinesCount.count > 0 {
+                cell.isUserInteractionEnabled = true
+                cell.lblTitle.alpha = 1.0
+            }
+            else {
+                cell.isUserInteractionEnabled = false
+                cell.lblTitle.alpha = 0.5
+            }
+        }else if indexPath.row == 2 {
+            cell.lblTitle.text = "Move Selected Line\(selectedLinesCount.count > 1 || !(selectedLinesCount.count > 0) ? "s" : "")"
+            if selectedLinesCount.count > 0 {
+                cell.isUserInteractionEnabled = true
+                cell.lblTitle.alpha = 1.0
+            } else {
+                cell.isUserInteractionEnabled = false
+                cell.lblTitle.alpha = 0.5
+            }
+        }else if indexPath.row == 3 {
+            if (bidPeriod.managedObjectContext!.undoManager?.canUndo)! && !(bidPeriod.managedObjectContext!.undoManager?.undoActionName == "") {
+                cell.lblTitle.text = bidPeriod.managedObjectContext!.undoManager?.undoMenuItemTitle
+                cell.isUserInteractionEnabled = true
+                cell.lblTitle.alpha = 1.0
+            } else {
+                cell.isUserInteractionEnabled = false
+                cell.lblTitle.alpha = 0.5
+            }
+        } else if indexPath.row == 4 {
+            cell.isUserInteractionEnabled = false
+            cell.lblTitle.alpha = 0.5
+            if bidPeriod.managedObjectContext!.undoManager != nil {
+                if (bidPeriod.managedObjectContext!.undoManager?.canRedo)! {
+                    cell.lblTitle.text = bidPeriod.managedObjectContext!.undoManager?.redoMenuItemTitle
+                    cell.isUserInteractionEnabled = true
+                    cell.lblTitle.alpha = 1.0
+                }
+            }
+        } else if indexPath.row == 5 {
+            cell.lblTitle.text = "Return Selected Line\(selectedLinesCount.count > 1 || !(selectedLinesCount.count > 0) ? "s" : "") to Scratchpad"
+            if selectedLinesCount.count > 0 {
+                cell.isUserInteractionEnabled = true
+                cell.lblTitle.alpha = 1.0
+                cell.lblTitle.textColor = UIColor.white
+                cell.backgroundColor = UIColor.red
+            }
+            else {
+                cell.isUserInteractionEnabled = false
+                cell.lblTitle.alpha = 0.5
+            }
+        } else if indexPath.row == 6 {
+            if ArrLinesDetails.count > 0 {
+                cell.isUserInteractionEnabled = true
+                cell.lblTitle.alpha = 1.0
+                cell.lblTitle.textColor = UIColor.white
+                cell.backgroundColor = UIColor.red
+            }
+            else {
+                cell.isUserInteractionEnabled = false
+                cell.lblTitle.alpha = 0.5
+                cell.backgroundColor = UIColor.systemBackground
+            }
+        } else if indexPath.row == 7 {
+            if ArrLinesDetails.count > 0 {
+                cell.isUserInteractionEnabled = true
+                cell.lblTitle.alpha = 1.0
+                cell.lblTitle.textColor = UIColor.white
+                cell.backgroundColor = UIColor( red: CGFloat(178/255.0), green: CGFloat(34/255.0), blue: CGFloat(34/255.0), alpha: CGFloat(1.0))
+            }
+            else {
+                cell.isUserInteractionEnabled = false
+                cell.lblTitle.alpha = 0.5
+                if #available(iOS 13.0, *) {
+                    cell.backgroundColor = UIColor.systemBackground
+                } else {
+                    cell.backgroundColor = UIColor.white // Fallback on earlier versions
+                }
+            }
+        }
         return cell
     }
     

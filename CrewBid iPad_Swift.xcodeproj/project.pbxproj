@@ -332,6 +332,10 @@
 		F49849C92DC76E0100FE9426 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = F49849C82DC76E0100FE9426 /* FirebaseAnalytics */; };
 		F49849CB2DC76E0100FE9426 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = F49849CA2DC76E0100FE9426 /* FirebaseCrashlytics */; };
 		F49849CD2DC76EF900FE9426 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49849CC2DC76EF900FE9426 /* Reachability.swift */; };
+		F4984C5A2E2E2F7A004E020E /* CBMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4984C592E2E2F7A004E020E /* CBMenuController.swift */; };
+		F4984C5C2E2E6B2A004E020E /* CBPreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4984C5B2E2E6B2A004E020E /* CBPreset.swift */; };
+		F4984C5E2E2E6BDA004E020E /* CBPresetLineSort.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4984C5D2E2E6BDA004E020E /* CBPresetLineSort.swift */; };
+		F4984C602E2E6C12004E020E /* CBPresetFilterRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4984C5F2E2E6C12004E020E /* CBPresetFilterRule.swift */; };
 		F4A472212DDDEDA900065720 /* CBExceedingTripCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A472202DDDEDA900065720 /* CBExceedingTripCalculation.swift */; };
 		F4B545AB2DCC648F00672102 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B545AA2DCC648F00672102 /* CoreDataManager.swift */; };
 		F4BAEFE62E055F1000109A1B /* ODataBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4BAEFE52E055F1000109A1B /* ODataBuilder.swift */; };
@@ -347,6 +351,7 @@
 		F4C6F9362DCB72940092C00C /* CBUserAccountDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C6F9352DCB72940092C00C /* CBUserAccountDetail.swift */; };
 		F4C6F93A2DCB78770092C00C /* SimplePing.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C6F9392DCB78770092C00C /* SimplePing.m */; };
 		F4CF5A8E2D892B9800A351DB /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = F4CF5A8D2D892B9800A351DB /* ZipArchive */; };
+		F4DB59522E30B5080079930A /* BILinesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DB59512E30B5080079930A /* BILinesManager.swift */; };
 		F4DBD8362DDC5FF700423856 /* BIBidInfoReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DBD8352DDC5FF700423856 /* BIBidInfoReader.swift */; };
 		F4DF6DCD2DD5EA2700761057 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DF6DCC2DD5EA2700761057 /* KeychainHelper.swift */; };
 /* End PBXBuildFile section */
@@ -679,6 +684,10 @@
 		F481E9722DD0946000DED8FE /* BICrewPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BICrewPosition.swift; sourceTree = "<group>"; };
 		F481E9742DD0B26D00DED8FE /* BIBidInfoError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIBidInfoError.swift; sourceTree = "<group>"; };
 		F49849CC2DC76EF900FE9426 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		F4984C592E2E2F7A004E020E /* CBMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMenuController.swift; sourceTree = "<group>"; };
+		F4984C5B2E2E6B2A004E020E /* CBPreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPreset.swift; sourceTree = "<group>"; };
+		F4984C5D2E2E6BDA004E020E /* CBPresetLineSort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPresetLineSort.swift; sourceTree = "<group>"; };
+		F4984C5F2E2E6C12004E020E /* CBPresetFilterRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPresetFilterRule.swift; sourceTree = "<group>"; };
 		F4A472202DDDEDA900065720 /* CBExceedingTripCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBExceedingTripCalculation.swift; sourceTree = "<group>"; };
 		F4A622572E13AA2000A09315 /* LineValuesVacation.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = LineValuesVacation.plist; sourceTree = "<group>"; };
 		F4B545AA2DCC648F00672102 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
@@ -700,6 +709,7 @@
 		F4C6F9392DCB78770092C00C /* SimplePing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SimplePing.m; sourceTree = "<group>"; };
 		F4C6F93B2DCB85580092C00C /* CrewBid iPad_SwiftRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CrewBid iPad_SwiftRelease.entitlements"; sourceTree = "<group>"; };
 		F4CF5A282D891A3800A351DB /* CrewBid iPad_Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CrewBid iPad_Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4DB59512E30B5080079930A /* BILinesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BILinesManager.swift; sourceTree = "<group>"; };
 		F4DBD8352DDC5FF700423856 /* BIBidInfoReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIBidInfoReader.swift; sourceTree = "<group>"; };
 		F4DF6DCC2DD5EA2700761057 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1598,6 +1608,11 @@
 				350B8B3E2DDEDBFF005D5E76 /* CBVacationDownloader.swift */,
 				35428C282DEEE9F2009E7AC5 /* CBUserDefaults.swift */,
 				F4BAEFE52E055F1000109A1B /* ODataBuilder.swift */,
+				F4984C592E2E2F7A004E020E /* CBMenuController.swift */,
+				F4984C5B2E2E6B2A004E020E /* CBPreset.swift */,
+				F4984C5D2E2E6BDA004E020E /* CBPresetLineSort.swift */,
+				F4984C5F2E2E6C12004E020E /* CBPresetFilterRule.swift */,
+				F4DB59512E30B5080079930A /* BILinesManager.swift */,
 			);
 			path = "New Files";
 			sourceTree = "<group>";
@@ -2041,6 +2056,7 @@
 				F41EBF512DC4DB20001413DE /* CBShowAwardsViewController.swift in Sources */,
 				F41EBF522DC4DB20001413DE /* CBTripAwardTextViewController.swift in Sources */,
 				F41EBF532DC4DB20001413DE /* CBTripAwardViewController.swift in Sources */,
+				F4984C5C2E2E6B2A004E020E /* CBPreset.swift in Sources */,
 				F41EBF542DC4DB20001413DE /* CBBidActionsViewController.swift in Sources */,
 				F41EBF552DC4DB20001413DE /* CBSpreadsheetImportController.swift in Sources */,
 				F41EBF562DC4DB20001413DE /* EmbeddedAwardEmpValidationVC.swift in Sources */,
@@ -2078,6 +2094,7 @@
 				F41EBF732DC4DB20001413DE /* CBLineValueView.swift in Sources */,
 				F41EBF742DC4DB20001413DE /* CBTripTextViewController.swift in Sources */,
 				F41EBF752DC4DB20001413DE /* CBUserFlagTableController.swift in Sources */,
+				F4984C602E2E6C12004E020E /* CBPresetFilterRule.swift in Sources */,
 				F41475842DC8E1980064CD25 /* AlertService.swift in Sources */,
 				F41EBF762DC4DB20001413DE /* RefreshMenuController.swift in Sources */,
 				F41EBF772DC4DB20001413DE /* RefreshMenuTableViewCell.swift in Sources */,
@@ -2117,7 +2134,9 @@
 				F41EBF942DC4DB20001413DE /* CBBiddataDownloadVC.swift in Sources */,
 				F41EBF952DC4DB20001413DE /* CBBidDataTypeViewController.swift in Sources */,
 				F41EBF962DC4DB20001413DE /* CBCredentialsPageVC.swift in Sources */,
+				F4DB59522E30B5080079930A /* BILinesManager.swift in Sources */,
 				F41EBF972DC4DB20001413DE /* CBDefaultEmployeeVC.swift in Sources */,
+				F4984C5E2E2E6BDA004E020E /* CBPresetLineSort.swift in Sources */,
 				F41EBF982DC4DB20001413DE /* CBDownloadAgainAlertVC.swift in Sources */,
 				F41EBF992DC4DB20001413DE /* CBDownloadAlldomicileViewController.swift in Sources */,
 				F41EBFC32DC4E19A001413DE /* DocumentsCollectionViewModel.swift in Sources */,
@@ -2155,6 +2174,7 @@
 				F4400BD82DD9DB1C0066C7E0 /* CBDefaultEmployeeViewModel.swift in Sources */,
 				F41EBFB22DC4DB20001413DE /* serviceAgreementViewController.swift in Sources */,
 				F41EBFB32DC4DB20001413DE /* swaptimizerHelpMenuViewController.swift in Sources */,
+				F4984C5A2E2E2F7A004E020E /* CBMenuController.swift in Sources */,
 				353FC68F2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift in Sources */,
 				F41EBFB42DC4DB20001413DE /* userAccountViewController.swift in Sources */,
 				F41EBFB52DC4DB20001413DE /* CBDocumentsCollectionViewController.swift in Sources */,

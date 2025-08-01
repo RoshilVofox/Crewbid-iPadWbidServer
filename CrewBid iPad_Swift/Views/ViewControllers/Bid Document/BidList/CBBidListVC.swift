@@ -1321,7 +1321,18 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
         } else if indexPath.row == linesArray.count - 1 {
             scrollToButton.setImage(UIImage(named: "up-arrow"), for: .normal)
         }
+        
+        let line = self.linesArray[indexPath.row]
+        if !UserDefaults.standard.bool(forKey: "isSelectedCalanderView") {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "CBBidlineViewTableViewCell",for: indexPath)as! CBBidlineViewTableViewCell
+            
+            
+            return cell
+        }
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "CBBidListCalenderViewCell",for: indexPath)as! CBBidListCalenderViewCell
+        
+        
         return cell
     }
 }
