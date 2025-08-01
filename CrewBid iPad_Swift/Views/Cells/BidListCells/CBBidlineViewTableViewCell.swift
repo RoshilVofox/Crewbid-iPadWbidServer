@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollectionViewDelegate, UICollectionViewDataSource,CBUserFlagTableControllerDelegate {
+class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate/*,UICollectionViewDelegate, UICollectionViewDataSource,CBUserFlagTableControllerDelegate*/ {
 
 
     @IBOutlet weak var mainView: UIView!
@@ -67,17 +67,17 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
         // Configure the view for the selected state
     }
 
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return bidListCellCalendarDaysArr.count
-    }
+//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//        return bidListCellCalendarDaysArr.count
+//    }
+//    
+//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//        <#code#>
+//    }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        <#code#>
-    }
-    
-    func changeLineUserFlagTypeTo(flagType: CBUserFlagType, selectedLine: BILine?) {
-        <#code#>
-    }
+//    func changeLineUserFlagTypeTo(flagType: CBUserFlagType, selectedLine: BILine?) {
+//        <#code#>
+//    }
     
     
 }
