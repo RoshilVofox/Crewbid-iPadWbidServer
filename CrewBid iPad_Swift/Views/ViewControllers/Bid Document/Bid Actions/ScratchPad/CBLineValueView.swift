@@ -42,9 +42,6 @@ class CBLineValueView: UIView {
         
         self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-(0)-[titleLabel]-(0)-|", options: [], metrics: nil, views: views as [String : Any]))
         self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-(0)-[valueLabel]-(0)-|", options: [], metrics: nil, views: views as [String : Any]))
-//        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-(0)-[titleLabel]", options: [], metrics: nil, views: views as [String : Any]))
-//        self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-(0)-[valueLabel]", options: [], metrics: nil, views: views as [String : Any]))
-        
         return self
     }
     

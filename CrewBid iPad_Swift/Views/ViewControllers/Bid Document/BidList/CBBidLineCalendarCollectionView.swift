@@ -1,35 +1,28 @@
 //
-//  CBLineCalendarCollectionView.swift
+//  CBBidLineCalendarCollectionView.swift
 //  CrewBid iPad_Swift
 //
-//  Created by Fayaz on 17/04/25.
+//  Created by Fayaz on 01/08/25.
 //
 
-import Foundation
 import UIKit
 
-class CBLineCalendarCollectionView: UICollectionView {
+class CBBidLineCalendarCollectionView: UICollectionView{
+    
     var tripButtons: NSMutableArray?
     var vacationButtons: NSMutableArray?
     var fvVacationButtons: NSMutableArray?
     var cfvVacationButtons: NSMutableArray?
     
-    
     override func layoutSubviews() {
-         super.layoutSubviews()
+        super.layoutSubviews()
         layoutTripButtons()
         layoutVacationButtons()
-        layoutfvVacationButtons()
-        layoutCfvVacationButtons()
     }
-    
     
     func layoutTripButtons() {
         let flowlayout = collectionViewLayout as? UICollectionViewFlowLayout
-        var count = Int()
-       if ((tripButtons?.count) != nil) {
-           count = (tripButtons?.count)!
-       }
+        let count: Int = (tripButtons?.count)!
         for i in 0..<count {
             let tripButton = tripButtons?[i] as? UIButton
             if tripButton != nil {
@@ -41,7 +34,6 @@ class CBLineCalendarCollectionView: UICollectionView {
             }
         }
     }
-    
     
     func layoutVacationButtons() {
         let flowLayout = collectionViewLayout as? UICollectionViewFlowLayout
@@ -60,7 +52,6 @@ class CBLineCalendarCollectionView: UICollectionView {
         }
     }
     
-    
     func layoutfvVacationButtons() {
         let flowLayout = collectionViewLayout as? UICollectionViewFlowLayout
         if fvVacationButtons != nil {
@@ -78,7 +69,6 @@ class CBLineCalendarCollectionView: UICollectionView {
         }
     }
     
-    
     func layoutCfvVacationButtons() {
         let flowLayout = collectionViewLayout as? UICollectionViewFlowLayout
         if cfvVacationButtons != nil {
@@ -95,4 +85,5 @@ class CBLineCalendarCollectionView: UICollectionView {
             }
         }
     }
+    
 }

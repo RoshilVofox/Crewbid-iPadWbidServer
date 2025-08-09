@@ -968,4 +968,10 @@ extension BIBidPeriod : Identifiable {
         }
         return sortedBILine
     }
+    
+    func orderedLines() -> [BILine] {
+        let lines = (self.lines!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "number", ascending: true)]) as! [BILine]
+        return lines
+    }
+    
 }

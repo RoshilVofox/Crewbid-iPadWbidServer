@@ -345,6 +345,11 @@ extension BILine : Identifiable {
         return "\(CInt(truncating: turnsCount!) > 9 ? "*" : turnsCount!.stringValue)\(Int(CInt(truncating: twoDayTripsCount!)))\(Int(CInt(truncating: threeDayTripsCount!)))\(Int(CInt(truncating: fourDayTripsCount!)))"
     }
     
+    func removeFromBidLines() {
+        bidOrder = 0
+        markerTitle = nil
+    }
+    
     
     var faPositionString: String {
            var faPos = "NA"

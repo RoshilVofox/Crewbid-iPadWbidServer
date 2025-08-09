@@ -21,6 +21,8 @@ var CBLineTableCellIndexPathKey = "CBLineTableCellIndexPathKey"
 var CBLinesTableBidLinesNotification = "CBLinesTableBidLinesNotification"
 var CBLinesTableBidLinesArrayKey = "CBLinesTableBidLinesArrayKey"
 
+typealias CBLineCellTripButtonActionBlock = (_ tripButton: CBTripButton) -> Void
+
 class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout, CBUserFlagTableControllerDelegate {
     func changeLineUserFlagTypeTo(flagType: CBUserFlagType, selectedLine: BILine?) {
         if CBGlobalMethods.shared.selectedBidPeriod!.isFABid() {
@@ -1436,7 +1438,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         cell.dayLabel.text = calendarDay.text
         let currentMonth = calendarDay.isCurrentMonth
         if currentMonth {
-            cell.dayLabel.alpha = 0.7
+            cell.dayLabel.alpha = 1.0
         }else{
             cell.dayLabel.alpha = 0.5
         }

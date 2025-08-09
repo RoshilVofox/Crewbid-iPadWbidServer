@@ -24,11 +24,11 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
 
     
     var contentSize: CGSize {
-        return CGSize(width: 310.0, height: UIScreen.main.bounds.height - 120)
+        return CGSize(width: 310.0, height: self.view.frame.height - 250)
     }
 
     var arrowDirection: UIPopoverArrowDirection {
-        return .left
+        return .any
     }
     
 
@@ -39,6 +39,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         self.tableView.separatorStyle = .singleLine
         self.tableView.allowsMultipleSelection = true
+        self.tableView.layer.cornerRadius = 5
         lineValues = lineValues1()
     }
     
@@ -162,13 +163,6 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         resetStdAction()
     }
 
-    //Adding line to bidlist
-    @objc func bidCellLine(_ notification: Notification) {
-        //For passing FA line to bidlist we need to show a view for position
-        if let buttonView = notification.userInfo![CBLineTableCellButtonViewKey] as? UIView, let lines = notification.userInfo!["Lines"] as? [BILine], let lineNum = notification.userInfo!["LineNum"] as? Int {
-            
-        }
-    }
     
     
     class func setLineValueView(_ lineValueView: CBLineValueView, with line: BILine, forType valueType: CBLineValueTypes, bidPeriod: BIBidPeriod) {

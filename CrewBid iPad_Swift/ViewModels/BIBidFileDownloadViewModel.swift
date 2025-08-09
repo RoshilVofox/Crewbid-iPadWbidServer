@@ -58,7 +58,9 @@ class BIBidFileDownloadViewModel {
                 }
             }
             if GlobalBidInfo.shared.round == 1 && GlobalBidInfo.shared.position == .FlightAttendant{
-            CBUtils.getFALISTWB4JSONFromServer()
+                CBUtils.getFALISTWB4JSONFromServer{
+                    proceedWithDownload()
+                }
             }else if round == 2 && GlobalBidInfo.shared.position != .FlightAttendant {
                 CBUtils.getMissingTripJSON(year: year, month: month, round: round, base: base, position: position) { success in
                     if success {

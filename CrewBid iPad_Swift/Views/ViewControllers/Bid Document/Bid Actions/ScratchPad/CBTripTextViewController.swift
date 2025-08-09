@@ -7,6 +7,8 @@
 
 import UIKit
 
+var CBLineTableCellTripButtonDehighlightNotification = "CBLineTableCellTripButtonDehighlightNotification"
+
 class CBTripTextViewController: UIViewController, KUIPopOverUsable {
     var contentSize: CGSize {
         let textSize: CGRect = tripText1.boundingRect(with: CGSize(width: 1024, height: 1024),

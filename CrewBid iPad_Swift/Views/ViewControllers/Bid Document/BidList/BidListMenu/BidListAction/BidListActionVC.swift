@@ -13,13 +13,15 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
     var bidPeriod = BIBidPeriod()
     var ArrLinesDetails: [BILine] = []
     var selectedLinesCount:NSMutableArray = NSMutableArray()
-    
+    weak var delegate:StartOverDelegate?
+    @IBOutlet weak var tableView: UITableView!
     var contentSize: CGSize{
         return CGSize(width: 300, height: 355)
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.tableView.layer.cornerRadius = 5
+        bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
         // Do any additional setup after loading the view.
     }
     
@@ -176,6 +178,60 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
                 UIApplication.topViewController()?.present(alertController, animated: true)
                 alertWindow.makeKeyAndVisible()
             }
+        }else if indexPath.row == 2{
+            
+        }else if indexPath.row == 3{
+            
+        }else if indexPath.row == 4{
+            
+        }else if indexPath.row == 5{
+            
+        }else if indexPath.row == 6{
+            
+        }else if indexPath.row == 7{
+            // Handle Start Over
+            if self.bidPeriod.isBidListSortOn == true {
+                let alertController = UIAlertController(title: "Crewbid", message: "Please disable bid list sort to perform this operation", preferredStyle: .alert)
+                let OkAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) {
+                    UIAlertAction in
+                    self.dismissPopover(animated: true)
+                }
+                alertController.addAction(OkAction)
+                self.dismiss(animated: true) {
+                    UIApplication.topViewController()?.present(alertController, animated: true, completion: nil)
+                    
+                }
+            }else{
+                let alertController = UIAlertController(title: "Confirm Start Over", message: "This removes all lines from the Bid List, even frozen ones, removes all sorts, and resets the filters to the default state. This action CANNOT be undone", preferredStyle: .alert)
+                let OkAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) {
+                    UIAlertAction in
+                    self.startOverAlert()
+                }
+                let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) {
+                    UIAlertAction in
+                }
+                alertController.addAction(OkAction)
+                alertController.addAction(cancelAction)
+                self.dismiss(animated: true) {
+                    UIApplication.topViewController()?.present(alertController, animated: true, completion: nil)
+                    
+                }
+            }
         }
+    }
+    
+    func startOverAlert() {
+        let alertController1 = UIAlertController(title: "Are you sure?", message: "Remember, This action cannot be undone", preferredStyle: .alert)
+        let OkAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) {
+            UIAlertAction in
+            self.dismissPopover(animated: true)
+            self.delegate?.startOver()
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) {
+            UIAlertAction in
+        }
+        alertController1.addAction(OkAction)
+        alertController1.addAction(cancelAction)
+        UIApplication.topViewController()?.present(alertController1, animated: true, completion: nil)
     }
 }

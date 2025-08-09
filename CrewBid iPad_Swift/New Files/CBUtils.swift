@@ -890,39 +890,39 @@ class CBUtils{
         }.resume()
             
         }
-    class func getFALISTWB4JSONFromServer(){
-            guard let url = URL(string: EndPoint.shared.faListWB4Json) else {
-                print("Invalid URL")
+    class func getFALISTWB4JSONFromServer(completion: (() -> Void)? = nil) {
+        guard let url = URL(string: EndPoint.shared.faListWB4Json) else {
+            print("Invalid URL")
+            completion?()
+            return
+        }
+
+        let request = URLRequest(url: url)
+        let session = URLSession(configuration: .default)
+
+        let task = session.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("Error in getting FA list from server: \(error.localizedDescription)")
+                completion?()
                 return
             }
-            let request = URLRequest(url: url)
-     
-            let config = URLSessionConfiguration.default
 
-     
-            let session = URLSession(configuration: config)
-            let task = session.dataTask(with: request) { data, response, error in
-                
-                if let error = error{
-                print("Error in getting FA list from server: \(error.localizedDescription)")
-                }
-                
-                if let data = data {
-                    do {
-                        if let responseDict = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
-//                            print("JSON Response: \(responseDict)")
-                            
-                            self.writeJSONDictToFile(jsonDict: responseDict)
-                        }
-                    } catch {
-                        print("JSON Parsing Error: \(error.localizedDescription)")
+            if let data = data {
+                do {
+                    if let responseDict = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                        self.writeJSONDictToFile(jsonDict: responseDict)
                     }
+                } catch {
+                    print("JSON Parsing Error: \(error.localizedDescription)")
                 }
-     
             }
-     
-            task.resume()
+
+            // Notify caller when done
+            completion?()
         }
+
+        task.resume()
+    }
         
     static func writeJSONDictToFile(jsonDict: [String: Any]) {
             do {
