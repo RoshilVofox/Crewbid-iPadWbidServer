@@ -43,6 +43,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        refreshBidPeriods()
     }
     
     override func viewWillDisappear(_ animated: Bool) {

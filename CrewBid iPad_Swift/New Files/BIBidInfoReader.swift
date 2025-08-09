@@ -1231,7 +1231,7 @@ class BIBidInfoReader{
         return pCount
     }
     
-    private func calculateWorkBlockDetailsWithVacation(){
+    func calculateWorkBlockDetailsWithVacation(){
         if self.bidPeriod!.isVacationRemoved!.boolValue{
             self.calculateWorkBlockDetails()
             return
@@ -1681,13 +1681,13 @@ class BIBidInfoReader{
                 endDate = calendar.date(from: dateComps)!
             }
         }
-        let tripNumber = trip["TripNumber"] as! Int
-        let tripNUmberString = String(tripNumber)
+        let tripNumber = trip["TripNumber"]
+        let tripNUmberString = tripNumber as! String
         if tripNUmberString.length > 1{
             let secondChar = tripNUmberString[tripNUmberString.index(tripNUmberString.startIndex, offsetBy: 1)]
             if secondChar >= "W"{
                 var dateCompsReserve = calendar.dateComponents([.day,.month,.year], from: endDate)
-                let returnTime = trip["ReturnTime"] as! Int
+                let returnTime = trip["returnTime"] as! Int
                 let time = String(format: "%04d", returnTime % 2400)
                 let strHr = (time as NSString).substring(with: NSRange(location: 0, length: 2))
                 let strMin = (time as NSString).substring(with: NSRange(location: 2, length: time.length - strHr.length))
@@ -1708,7 +1708,7 @@ class BIBidInfoReader{
     private func getOnlyEndDateOfTripIncludeVacation(from trip: [String: Any], biTrip: BITrip) -> Date? {
         var endDate:Date!
         let tripOrderedDays = trip["BIDay"] as! [Any]
-        let tripStartDate = trip["startDate"] as! Date
+        let tripStartDate = trip["StartDate"] as! Date
         var calendar = Calendar(identifier: .gregorian)
         calendar.locale = Locale.current
         calendar.timeZone = TimeZone(identifier: "GMT")!
@@ -1727,7 +1727,7 @@ class BIBidInfoReader{
         return endDate
     }
     
-    private func calculateWorkBlockDetails(){
+    func calculateWorkBlockDetails(){
         var tripStartDate:Date!
         var tripStartDateTakeOff:Date!
         var tripEndDate:Date!
@@ -2489,7 +2489,7 @@ class BIBidInfoReader{
     
 
     
-    private func addDefaultFilterRules(context: NSManagedObjectContext) -> Bool{
+    func addDefaultFilterRules(context: NSManagedObjectContext) -> Bool{
         var success = true
         // Filter rule to allow hard lines only (no reserve or blank lines).
         // For now, allow all line types.

@@ -12,6 +12,7 @@
 		353FC68F2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */; };
 		353FC6912DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */; };
 		35428C292DEEE9F2009E7AC5 /* CBUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35428C282DEEE9F2009E7AC5 /* CBUserDefaults.swift */; };
+		357E313F2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357E313E2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift */; };
 		35A965A22E276E2D0001B62B /* LineValuesVacation.plist in Resources */ = {isa = PBXBuildFile; fileRef = F4A622572E13AA2000A09315 /* LineValuesVacation.plist */; };
 		35F6C8B12DD843840072BAD9 /* JobShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F6C8B02DD843840072BAD9 /* JobShareViewController.swift */; };
 		35F6C8B32DD856B40072BAD9 /* CBAvoidaceBidViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F6C8B22DD856B40072BAD9 /* CBAvoidaceBidViewController.swift */; };
@@ -362,6 +363,7 @@
 		353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
 		353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBConfirmSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
 		35428C282DEEE9F2009E7AC5 /* CBUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUserDefaults.swift; sourceTree = "<group>"; };
+		357E313E2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMonthToMonthAlertVC.swift; sourceTree = "<group>"; };
 		35F6C8B02DD843840072BAD9 /* JobShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobShareViewController.swift; sourceTree = "<group>"; };
 		35F6C8B22DD856B40072BAD9 /* CBAvoidaceBidViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBAvoidaceBidViewController.swift; sourceTree = "<group>"; };
 		8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPresetCell.swift; sourceTree = "<group>"; };
@@ -1291,6 +1293,7 @@
 				F41EBE4F2DC4DB20001413DE /* CBBidDocumentController.swift */,
 				F41EBE502DC4DB20001413DE /* CBReportReleaseCollectionViewController.swift */,
 				F41EBE512DC4DB20001413DE /* CBReportReleaseCVC.swift */,
+				357E313E2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift */,
 			);
 			path = "Bid Document";
 			sourceTree = "<group>";
@@ -2018,6 +2021,7 @@
 				F41EBF2D2DC4DB20001413DE /* CommuteTime+CoreDataClass.swift in Sources */,
 				F41EBF2E2DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift in Sources */,
 				F41EBF2F2DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld in Sources */,
+				357E313F2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift in Sources */,
 				F41EBF362DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift in Sources */,
 				35F6C8B32DD856B40072BAD9 /* CBAvoidaceBidViewController.swift in Sources */,
 				F4400BD62DD9BA370066C7E0 /* APIService.swift in Sources */,

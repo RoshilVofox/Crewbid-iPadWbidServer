@@ -3,7 +3,7 @@
 //  CrewBid iPad_Swift
 //
 //  Created by Fayaz on 24/03/25.
-//
+//736,1036,868
 
 import UIKit
 import CoreData
@@ -80,8 +80,8 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
     
     @IBAction func deleteCellRow(_ sender: Any) {
         for case let line as BILine in self.bidPeriod!.lines! {
-            line.rlsGreaterThanEntered = false
-            line.rptLessThanentered = false
+            line.rlsGreaterThanEntered = NSNumber(value: false)
+            line.rptLessThanentered = NSNumber(value: false)
         }
         try? context?.save()
         txtReport.text = ""
@@ -90,15 +90,15 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
             self.filterRule?.deHighlightTrips()
         }
         context?.delete(self.filterRule!)
-        if (self.allDaysCheckButton.isSelected) {
-            self.multiplReportReleaseAllDays()
-        }
-        else if (dateButton.isSelected) {
-            self.multiplReportReleaseDates()
-        }
-        else {
-            self.multiplReportRelease()
-        }
+//        if (self.allDaysCheckButton.isSelected) {
+//            self.multiplReportReleaseAllDays()
+//        }
+//        else if (dateButton.isSelected) {
+//            self.multiplReportReleaseDates()
+//        }
+//        else {
+//            self.multiplReportRelease()
+//        }
         try? context?.save()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
             NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
@@ -287,197 +287,6 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
         try? context!.save()
     }
     
-    func calculateReportTimeValues() {
-        var report: String = ""
-        for case let line as BILine in self.bidPeriod!.lines! {
-            autoreleasepool {
-                for case let trip as BITrip in line.orderedTrips{
-                    var isfilterSatidfied = false
-                    for day in trip.orderedDays {
-                        if day.displayType?.intValue == BIDayDisplayType.fullPay.rawValue || day.displayType?.intValue == BIDayDisplayType.partialPay.rawValue || day.displayType?.intValue == BIDayDisplayType.noPay.rawValue {
-                        }
-                        else {
-                            report = self.reportTimeForDay(day: day, trip: trip, line: line)
-                            let isLesser = self.compareReportTimeEntered(report: report, reportEntered: txtReport.text ?? "")
-                            if isLesser {
-                                line.rptLessThanentered = true
-                                isfilterSatidfied = true
-                                break
-                            }
-                        }
-                    }
-                    if isfilterSatidfied {
-                        break
-                    }
-                }
-                try? context?.save()
-            }
-        }
-    }
-    
-    func calculateReleaseTimeValues() {
-        var release = ""
-        for case let line as BILine in self.bidPeriod!.lines! {
-            autoreleasepool {
-                for case let trip as BITrip in line.orderedTrips{
-                    var isfilterSatidfied = false
-                    for day in trip.orderedDays {
-                        if day.displayType?.intValue == BIDayDisplayType.fullPay.rawValue || day.displayType?.intValue == BIDayDisplayType.partialPay.rawValue || day.displayType?.intValue == BIDayDisplayType.noPay.rawValue {
-                        }
-                        else {
-                            release = self.releaseTimeForDay(day: day, trip: trip, line: line)
-                            let isGreater = self.compareReleaseTimeEntered(release: release, releaseEntered: txtRelease.text ?? "")
-                            if isGreater {
-                                line.rlsGreaterThanEntered = true
-                                isfilterSatidfied = true
-                                break
-                            }
-                        }
-                    }
-                    if isfilterSatidfied {
-                        break
-                    }
-                }
-                try? context?.save()
-            }
-        }
-    }
-    
-    func calculateBothReportAndReleaseTimeValues() {
-        var report = ""
-        var release = ""
-        for case let line as BILine in self.bidPeriod!.lines! {
-            autoreleasepool {
-                for case let trip as BITrip in line.orderedTrips{
-//                    calculate report and release
-                    for day in trip.orderedDays {
-                        if day.displayType?.intValue == BIDayDisplayType.fullPay.rawValue || day.displayType?.intValue == BIDayDisplayType.partialPay.rawValue || day.displayType?.intValue == BIDayDisplayType.noPay.rawValue {
-                        }
-                        else {
-//                           compare date array using for loop
-                            report = self.reportTimeForDay(day: day, trip: trip, line: line)
-                            let isLesser = self.compareReportTimeEntered(report: report, reportEntered: txtReport.text ?? "")
-                            if isLesser {
-                                line.rptLessThanentered = true
-                            }
-                            
-                            release = self.releaseTimeForDay(day: day, trip: trip, line: line)
-                            let isGrater = self.compareReleaseTimeEntered(release: release, releaseEntered: txtRelease.text ?? "")
-                            if isGrater {
-                                line.rlsGreaterThanEntered = true
-                            }
-                        }
-                    }
-                }
-                try? context?.save()
-            }
-        }
-    }
-    
-    func calculateReportTimeValuesForTheDates(arrDates: NSArray) {
-        var report = ""
-        for case let line as BILine in self.bidPeriod!.lines! {
-            autoreleasepool {
-                for case let trip as BITrip in line.orderedTrips{
-                    for day in trip.orderedDays {
-                        if day.displayType?.intValue == BIDayDisplayType.fullPay.rawValue || day.displayType?.intValue == BIDayDisplayType.partialPay.rawValue || day.displayType?.intValue == BIDayDisplayType.noPay.rawValue {
-                        }
-                        else {
-                            for i in arrDates {
-                                var dateString = i as! String
-                                dateString += " 12:53:58 +0000"
-                                let dateFormatter = DateFormatter()
-                                dateFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss Z"
-                                let dateFromString: Date? = dateFormatter.date(from: dateString )
-                                let isSame = self.compareDates(firstDate: day.date!, secondDate: dateFromString!, trip: trip)
-                                if isSame {
-                                    report = self.reportTimeForDay(day: day, trip: trip, line: line)
-                                    let isLesser = self.compareReportTimeEntered(report: report, reportEntered: txtReport.text ?? "")
-                                    if isLesser {
-                                        line.rptLessThanentered = true
-                                        break
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                try? context?.save()
-            }
-        }
-    }
-    
-    func calculateReleaseTimeValuesForTheDates(arrDates: NSArray) {
-        var release = ""
-        for case let line as BILine in self.bidPeriod!.lines! {
-            autoreleasepool {
-                for case let trip as BITrip in line.orderedTrips{
-                    for day in trip.orderedDays {
-                        if day.displayType?.intValue == BIDayDisplayType.fullPay.rawValue || day.displayType?.intValue == BIDayDisplayType.partialPay.rawValue || day.displayType?.intValue == BIDayDisplayType.noPay.rawValue {
-                        }
-                        else {
-                            for i in arrDates {
-                                var dateString = i as! String
-                                dateString += " 12:53:58 +0000"
-                                let dateFormatter = DateFormatter()
-                                dateFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss Z"
-                                let dateFromString: Date? = dateFormatter.date(from: dateString )
-                                let isSame = self.compareDates(firstDate: day.date!, secondDate: dateFromString!, trip: trip)
-                                if isSame {
-                                    release = self.releaseTimeForDay(day: day, trip: trip, line: line)
-                                    let isGreater = self.compareReleaseTimeEntered(release: release, releaseEntered: txtRelease.text ?? "")
-                                    if isGreater {
-                                        line.rlsGreaterThanEntered = true
-                                        break
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                try? context?.save()
-            }
-        }
-    }
-    
-    func calculateBothReportandReleaseTimeValuesForTheDates(arrDates: NSArray) {
-        var report = ""
-        var release = ""
-        for case let line as BILine in self.bidPeriod!.lines! {
-            autoreleasepool {
-                for case let trip as BITrip in line.orderedTrips{
-                    for day in trip.orderedDays {
-                        if day.displayType?.intValue == BIDayDisplayType.fullPay.rawValue || day.displayType?.intValue == BIDayDisplayType.partialPay.rawValue || day.displayType?.intValue == BIDayDisplayType.noPay.rawValue {
-                        }
-                        else {
-                            for i in arrDates {
-                                var dateString = i as! String
-                                dateString += " 12:53:58 +0000"
-                                let dateFormatter = DateFormatter()
-                                dateFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss Z"
-                                let dateFromString: Date? = dateFormatter.date(from: dateString )
-                                let isSame = self.compareDates(firstDate: day.date!, secondDate: dateFromString!, trip: trip)
-                                if isSame {
-                                    report = self.reportTimeForDay(day: day, trip: trip, line: line)
-                                    let isLesser = self.compareReportTimeEntered(report: report, reportEntered: txtReport.text ?? "")
-                                    if isLesser {
-                                        line.rptLessThanentered = true
-                                    }
-                                    
-                                    release = self.releaseTimeForDay(day: day, trip: trip, line: line)
-                                    let isGreater = self.compareReleaseTimeEntered(release: release, releaseEntered: txtRelease.text ?? "")
-                                    if isGreater {
-                                        line.rlsGreaterThanEntered = true
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                try? context?.save()
-            }
-        }
-    }
     
     func reportTimeForDay(day: BIDay, trip: BITrip, line: BILine) -> String {
         var report = String(format: "%04d", day.info!.reportTime!.intValue)
@@ -664,8 +473,8 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
         let arrDates = variables![BIFilterRuleSelectedDaysVariablesKey] as? NSArray
         if (arrDates!.count > 0) {
             for case let line as BILine in self.bidPeriod!.lines! {
-                line.rlsGreaterThanEntered = false
-                line.rptLessThanentered = false
+                line.rlsGreaterThanEntered = NSNumber(value: false)
+                line.rptLessThanentered = NSNumber(value: false)
             }
         }
         NotificationCenter.default.removeObserver(self, name: Notification.Name("ReloadReportCollectionView"), object: nil)
@@ -692,8 +501,8 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
     
     func multiplReportReleaseDates() {
         for case let line as BILine in self.bidPeriod!.lines! {
-            line.rlsGreaterThanEntered = false
-            line.rptLessThanentered = false
+            line.rlsGreaterThanEntered = NSNumber(value: false)
+            line.rptLessThanentered = NSNumber(value: false)
         }
         let variables = NSMutableDictionary(dictionary: filterRule!.variables!)
         variables.setValue(self.txtReport.text, forKey: "reportValue")
@@ -733,7 +542,7 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
             for i in self.reportReleaseArray! {
                 for case let line as BILine in self.bidPeriod!.lines! {
                     autoreleasepool {
-                        if line.rptLessThanentered == false && line.rlsGreaterThanEntered == false {
+                        if line.rptLessThanentered!.boolValue == false && line.rlsGreaterThanEntered!.boolValue == false {
                             for case let trip as BITrip in line.orderedTrips{
                                 for day in trip.orderedDays {
                                     if (day.displayType!.intValue == BIDayDisplayType.fullPay.rawValue || day.displayType!.intValue == BIDayDisplayType.partialPay.rawValue || day.displayType!.intValue == BIDayDisplayType.noPay.rawValue) {
@@ -754,17 +563,17 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                                             if !((i as! NSDictionary).value(forKey: "reportValue") as! String == "") {
                                                 let isLesser = self.compareReportTimeEntered(report: report, reportEntered: (i as! NSDictionary).value(forKey: "reportValue") as! String)
                                                 if isLesser {
-                                                    line.rptLessThanentered = true
+                                                    line.rptLessThanentered = NSNumber(value: true)
                                                 }
                                             }
                                             if !((i as! NSDictionary).value(forKey: "releaseValue") as! String == "") {
                                                 if report > release {
-                                                    line.rlsGreaterThanEntered = true
+                                                    line.rlsGreaterThanEntered = NSNumber(value: true)
                                                 }
                                                 else {
                                                     let isGreater = self.compareReportTimeEntered(report: release, reportEntered: (i as! NSDictionary).value(forKey: "releaseValue") as! String)
                                                     if isGreater {
-                                                        line.rlsGreaterThanEntered = true
+                                                        line.rlsGreaterThanEntered = NSNumber(value: true)
                                                     }
                                                 }
                                             }
@@ -793,8 +602,8 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
         reportReleaseInformation.tripOrWorkBlockOptionButton()
         
         for case let line as BILine in self.bidPeriod!.lines! {
-            line.rlsGreaterThanEntered = false
-            line.rptLessThanentered = false
+            line.rlsGreaterThanEntered = NSNumber(value: false)
+            line.rptLessThanentered = NSNumber(value: false)
         }
 //        fetch all data for Report Release
         let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
@@ -845,8 +654,8 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                 reportValue = ""
             }
             else {
-                reportValue = ((self.reportReleaseArray![0]) as? NSMutableArray)!.value(forKey: "reportValue") as! String
-                releaseValue = ((self.reportReleaseArray![0]) as? NSMutableArray)!.value(forKey: "releaseValue") as! String
+                reportValue = ((self.reportReleaseArray![0]) as AnyObject).value(forKey: "reportValue") as! String
+                releaseValue = ((self.reportReleaseArray![0]) as AnyObject).value(forKey: "releaseValue") as! String
             }
             for case let line as BILine in self.bidPeriod!.lines! {
                 autoreleasepool {
@@ -865,7 +674,7 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                         variables.setValue(0, forKey: "isLast")
                     }
                     
-                    if line.rptLessThanentered == false && line.rlsGreaterThanEntered == false {
+                    if line.rptLessThanentered?.boolValue == false && line.rlsGreaterThanEntered?.boolValue == false {
                         if (self.noMidButton.isSelected) {
                             variables.setValue(1, forKey: "isNoMid")
                             for case let workBlock as WorkBlockList in line.orderedWorkBlocks {
@@ -897,7 +706,7 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                                             if !(reportValue == "") {
                                                 let isLesser = self.compareReportTimeEntered(report: report, reportEntered: reportValue)
                                                 if isLesser {
-                                                    line.rptLessThanentered = true
+                                                    line.rptLessThanentered = NSNumber(value: true)
                                                 }
                                             }
                                         }
@@ -905,7 +714,7 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                                             if !(releaseValue == "") {
                                                 let isGreater = self.compareReleaseTimeEntered(release: release, releaseEntered: releaseValue)
                                                 if isGreater {
-                                                    line.rlsGreaterThanEntered = true
+                                                    line.rlsGreaterThanEntered = NSNumber(value: true)
                                                 }
                                             }
                                         }
@@ -945,7 +754,7 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                                             if !(reportValue == "") {
                                                 let isLesser = self.compareReportTimeEntered(report: report, reportEntered: reportValue)
                                                 if isLesser {
-                                                    line.rptLessThanentered = true
+                                                    line.rptLessThanentered = NSNumber(value: true)
                                                 }
                                             }
                                         }
@@ -953,7 +762,7 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                                             if !(releaseValue == "") {
                                                 let isGreater = self.compareReleaseTimeEntered(release: release, releaseEntered: releaseValue)
                                                 if isGreater {
-                                                    line.rlsGreaterThanEntered = true
+                                                    line.rlsGreaterThanEntered = NSNumber(value: true)
                                                 }
                                             }
                                         }
@@ -985,8 +794,8 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
         reportReleaseInformation.allDaysOptionButton()
         
         for case let line as BILine in self.bidPeriod!.lines! {
-            line.rlsGreaterThanEntered = false
-            line.rptLessThanentered = false
+            line.rlsGreaterThanEntered = NSNumber(value: false)
+            line.rptLessThanentered = NSNumber(value: false)
         }
 //        fetch all data for Report Release
         let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
@@ -1054,13 +863,13 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                                             if !((i as AnyObject).value(forKey: "reportValue") as! String == "") {
                                                 let isLesser = self.compareReportTimeEntered(report: report, reportEntered: ((i as AnyObject).value(forKey: "reportValue") as? String)!)
                                                 if isLesser {
-                                                    line.rptLessThanentered = true
+                                                    line.rptLessThanentered = NSNumber(value: true)
                                                 }
                                             }
                                             if !((i as AnyObject).value(forKey: "releaseValue") as! String == "") {
                                                 let isGreater = self.compareReleaseTimeEntered(release: release, releaseEntered: ((i as AnyObject).value(forKey: "releaseValue") as? String)!)
                                                 if isGreater {
-                                                    line.rlsGreaterThanEntered = true
+                                                    line.rlsGreaterThanEntered = NSNumber(value: true)
                                                 }
                                             }
                                         }

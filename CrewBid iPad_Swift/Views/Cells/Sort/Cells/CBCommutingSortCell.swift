@@ -14,6 +14,7 @@ class CBCommutingSortCell: UITableViewCell {
     var lineSort: BILineSort!
     var bidPeriod: BIBidPeriod!
     var context = CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext
+    var outsideFlag: String?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -41,5 +42,8 @@ class CBCommutingSortCell: UITableViewCell {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
             NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
         }
+    }
+    func calculateSortAfterVacationLoading() {
+        
     }
 }

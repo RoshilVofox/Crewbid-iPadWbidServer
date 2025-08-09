@@ -113,7 +113,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
 //    MARK: vacation File type = "CREWBID" and download
     func downloadSwaptimizerVacationFilesWithHud(completion: @escaping (Bool) -> Void) {
         self.bidPeriod?.userVacationWbidOrCrewBid = "CREWBID"
-        
+        try? self.bidPeriod?.managedObjectContext?.save()
         if let cbFileIntent = self.bidPeriod?.cbFileIntent {
             if let dicVactionFile = self.readVacationFile(fileName: "CREWBID"),
                let configInfo = dicVactionFile["ConfigInfo"] as? [String: Any],
@@ -156,7 +156,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     //    MARK: vacation File type = "CREWBIDF" and download
     func downloadSwaptimizerEOMVacationFilesWithHud(completion: @escaping (Bool) -> Void) {
         self.bidPeriod?.userVacationWbidOrCrewBid = "CREWBIDF"
-        
+        try? self.bidPeriod?.managedObjectContext?.save()
         if let fileIntent = self.bidPeriod?.cbFileIntentF, !fileIntent.isEmpty {
             guard let dicVacationFile = self.readVacationFile(fileName: fileIntent) else {
                 // File read failed, trigger download
@@ -201,7 +201,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     //    MARK: vacation File type = "WBID" and download
     func downloadWbidVacationFilesWithHud(completion: @escaping (Bool) -> Void) {
         self.bidPeriod?.userVacationWbidOrCrewBid = "WBID"
-        
+        try? self.bidPeriod?.managedObjectContext?.save()
         if let wbFileIntent = self.bidPeriod?.wbFileIntent {
             if let dicVactionFile = self.readVacationFile(fileName: "WBID") {
                 if let configInfo = dicVactionFile["ConfigInfo"] as? [String: Any],
@@ -250,7 +250,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     //    MARK: vacation File type = "WBIDF" and download
     func downloadWbidEOMVacationFilesWithHud(completion: @escaping (Bool) -> Void) {
         self.bidPeriod?.userVacationWbidOrCrewBid = "WBIDF"
-
+        try? self.bidPeriod?.managedObjectContext?.save()
         if let _ = self.bidPeriod?.wbFileIntentF {
             guard let dicVactionFile = self.readVacationFile(fileName: "WBIDF"),
                   let configInfo = dicVactionFile["ConfigInfo"] as? [String: Any],
@@ -298,8 +298,9 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     }
 
     //    MARK: vacation File type = "FAVACATION" and download
-    func downloadFaVactionVacationFilesWithHud(completion: @escaping (Bool) -> Void) {
+    func downloadFaVacationFilesWithHud(completion: @escaping (Bool) -> Void) {
         self.bidPeriod?.userVacationWbidOrCrewBid = "FAVacation"
+        try? self.bidPeriod?.managedObjectContext?.save()
 
         if let fileIntent = self.bidPeriod?.faFileIntent, !fileIntent.isEmpty {
             guard let dicVacationFile = self.readVacationFile(fileName: fileIntent) else {
@@ -353,6 +354,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     //    MARK: vacation File type = "FAVACATIONF" and download
     func downloadFaVacationEOMFilesWithHud(completion: @escaping (Bool) -> Void) {
         self.bidPeriod?.userVacationWbidOrCrewBid = "FAVacationF"
+        try? self.bidPeriod?.managedObjectContext?.save()
         UserDefaults.standard.set(false, forKey: kCBHideVacationKey)
         
         guard let fileNameKey = self.bidPeriod?.userVacationWbidOrCrewBid,
@@ -408,6 +410,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     //    MARK: vacation File type = "FAVACATION_EOMOnly" and download
     func downloadFaVacationWithOnlyEOMFilesWithHud(completion: @escaping (Bool) -> Void) {
         self.bidPeriod?.userVacationWbidOrCrewBid = "FAVacationEomOnly"
+        try? self.bidPeriod?.managedObjectContext?.save()
         UserDefaults.standard.set(false, forKey: kCBHideVacationKey)
         
         guard let fileNameKey = self.bidPeriod?.userVacationWbidOrCrewBid,
@@ -462,7 +465,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
 
     
     func setFaFileIntentFWithSelectedIndex(selectedIndex: String) -> String? {
-        guard let lastFaFileIntentF = self.bidPeriod?.faFileIntentF, !lastFaFileIntentF.isEmpty else {
+        guard let lastFaFileIntentF = self.bidPeriod!.faFileIntentF, !lastFaFileIntentF.isEmpty else {
             return nil
         }
 
@@ -551,8 +554,17 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 } else {
                     self.vactionDownloadType = .downloadWbidVacation
                     // Secret mode without TestOtherWeeks — Not calling completion currently (needs implementation)
-                    completion(true)
-                    return
+                    self.downloadWBidOrFAData(downloadWbidDetails: vacationDetailDictionary) { canDownload in
+                        if (canDownload) {
+                            completion(true)
+                            return
+                        }
+                        else {
+                            completion(false)
+                            return
+                        }
+                    }
+                    
                 }
             } else {
                 self.vactionDownloadType = .downloadWbidVacation
@@ -1025,7 +1037,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     if moc?.hasChanges == true {
                         do {
                             try moc?.save()
-                            print("context saved")
+                            print("context saved during validate wbid")
                         } catch {
                             print("context not saved: \(error)")
                         }
@@ -1060,6 +1072,14 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     } else {
                         self.bidPeriod?.wbFileIntentF = header["FileIdent"] as? String
                     }
+                    if moc?.hasChanges == true {
+                        do {
+                            try moc?.save()
+                            print(" saved from validate wbid")
+                        } catch {
+                            print("secret context save error: \(error)")
+                        }
+                    }
 
                     self.writeVacationFile(jsonData: jsonData, fileName: header["FileIdent"] as! String)
                     self.bidPeriod?.swaptimizerStatus = CBSwaptimizerStatus.checked.rawValue as NSNumber
@@ -1069,14 +1089,14 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                         completion(true)
                     }
 
-                    if moc?.hasChanges == true {
-                        do {
-                            try moc?.save()
-                            print("secret context saved")
-                        } catch {
-                            print("secret context save error: \(error)")
-                        }
-                    }
+//                    if moc?.hasChanges == false {
+//                        do {
+//                            try moc?.save()
+//                            print("secret context saved")
+//                        } catch {
+//                            print("secret context save error: \(error)")
+//                        }
+//                    }
                 } else {
                     completion(false)
                 }
@@ -1191,6 +1211,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 if let context = self.bidPeriod?.managedObjectContext {
                     do {
                         try context.save()
+                        print("saved from vacation pay diffrence")
                     } catch {
                         print("Failed to save context: \(error)")
                     }
@@ -1227,7 +1248,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
   
             let resultArray = vacayLines.filter { ($0[lineName] as? Int ?? 0) == lineNumber }
             if resultArray.isEmpty {
-                print("No match found for line \(lineNumber), JSON lines: \(vacayLines)")
+//                print("No match found for line \(lineNumber), JSON lines: \(vacayLines)")
             }
             else {
                 let vLineNumber = (vLine?[lineName] as? Int) ?? (vLine?[lineName] as? NSNumber)?.intValue ?? 0
@@ -2474,10 +2495,11 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             if secretEnabled == "YES" {
                 self.bidPeriod?.secretSwitchOn = "YES"
             }
-            self.bidPeriod?.vacationType = vacationType
+            self.bidPeriod!.vacationType = vacationType
+            self.bidPeriod!.vacationType = self.bidPeriod?.userVacationWbidOrCrewBid
             if moc!.hasChanges {
                 do {
-                    try moc?.save()
+                    try moc!.save()
                     print("line core data saved from processJsonFile function in CBVacationDownloader")
                 } catch {
                     print("line core data not saved from processJsonFile function in CBVacationDownloader: \(error)")
@@ -2675,7 +2697,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
 //    MARK: processFAVacationWithJsonFile
     func processFAVacationWithJsonFile(file: [String: Any]) {
         let thanksGivingDay = CBUtils.thanksgivingDay(for: self.bidPeriod?.year?.intValue ?? 0)
-        var vacationType = self.bidPeriod?.userVacationWbidOrCrewBid ?? "FAVacation"
+        var vacationType = self.bidPeriod!.userVacationWbidOrCrewBid ?? "FAVacation"
         var frontVO = ""
         var frontVO1 = ""
         var frontVO2 = ""
@@ -3340,7 +3362,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         }
 
         if bidPeriod?.isFABid() == true {
-            self.downloadFaVactionVacationFilesWithHud { didComplete in
+            self.downloadFaVacationFilesWithHud { didComplete in
                 completion(didComplete)
             }
         } else {

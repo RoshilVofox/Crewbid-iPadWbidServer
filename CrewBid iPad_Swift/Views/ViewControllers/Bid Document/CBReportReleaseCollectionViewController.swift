@@ -17,7 +17,7 @@ class CBReportReleaseCollectionViewController: UIViewController, KUIPopOverUsabl
     var arrDatesSelected: NSMutableArray = NSMutableArray()
     var arrSelectedItemsCompare: NSMutableArray = NSMutableArray()
     var isPreviousMonth: Bool = true
-    var rptRlsType: BIReportReleaseType?
+    var rptRlsType: BIReportReleaseType = .specific
     var context = CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -86,20 +86,20 @@ class CBReportReleaseCollectionViewController: UIViewController, KUIPopOverUsabl
             if !(set1 == set2) {
                 ischangedDays = true
                 for case let line as BILine in self.bidPeriod!.lines! {
-                    line.rlsGreaterThanEntered = false
-                    line.rptLessThanentered = false
+                    line.rlsGreaterThanEntered = NSNumber(value: false)
+                    line.rptLessThanentered = NSNumber(value: false)
                 }
                 try? context?.save()
                 arrSelectedItemsCompare.removeAllObjects()
             }
             else {
-                let userInfo: [String: Any] = ["rptrlsType": self.rptRlsType!, "ischangedDays": ischangedDays]
-                NotificationCenter.default.post(name: NSNotification.Name("ReloadReportCollectionView"), object: nil, userInfo: userInfo)
-                print("ia, here")
-                
+               ischangedDays = false
             }
             
         }
+        let userInfo: [String: Any] = ["rptrlsType": self.rptRlsType, "ischangedDays": ischangedDays]
+        NotificationCenter.default.post(name: NSNotification.Name("ReloadReportCollectionView"), object: nil, userInfo: userInfo)
+        print("ia, here")
         self.dismissPopover(animated: true)
     }
     
