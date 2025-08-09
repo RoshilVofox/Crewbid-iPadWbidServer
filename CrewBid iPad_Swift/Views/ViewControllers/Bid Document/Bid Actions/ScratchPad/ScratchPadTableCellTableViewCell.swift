@@ -131,6 +131,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     
     var calendarData: BICalendarData?
     var line: BILine?
+    var index: Int?
     var tableView: UITableView?
     var bidPeriod: BIBidPeriod?
     var availableFaLines : [BILine] = []
@@ -1212,6 +1213,17 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         longPressGesture.minimumPressDuration = 0.3
         lineValuesView.addGestureRecognizer(longPressGesture)
         longPressGesture.delaysTouchesBegan = true
+        
+        let warningButton = UIButton(type: .custom)
+        addSubview(warningButton)
+        self.warningButton = warningButton
+        warningButton.setImage(UIImage(named: "warning"), for: .normal)
+        let warningFrame = CGRect(x: 5, y: 160.0, width: 30.0, height: 30.0)
+        warningButton.frame = warningFrame
+        warningButton.bounds = CGRect(x: 0.0, y: 0.0, width: 25.0, height: 25.0)
+//        warningButton.addTarget(self, action: #selector(self.showWarningPopover), for: .touchUpInside)
+        warningButton.alpha = 0.0
+        
 //            adding the flags values as subview
         let iconView: UIControl? = CBUserFlagTableController.userFlagControlForColor(color: UIColor.white, diameter: 30.0)
         iconView?.frame = CGRect(x: 23.0, y: 50, width: 30.0, height: 30.0)
@@ -1468,17 +1480,20 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     }
     
     @IBAction func moveLinesToBidListAction(_ sender: Any) {
-        if self.bidPeriod!.isFABid(){
-            if let sView = sender as? UIView {
-                let userInfo: [AnyHashable: Any] = [CBLineTableCellBidLineKey:self.line!,CBLineTableCellButtonViewKey: sView]
-                let notification = Notification(name:Notification.Name(CBLineTableCellFABidLineNotification), object:self.moveBidListButton.globalFrame, userInfo: userInfo)
-                NotificationCenter.default.post(notification)
-            }
-        }else{
-            let userInfo:[AnyHashable: Any] = [CBLineTableCellBidLineKey: self.line!]
-            let notification = Notification(name: Notification.Name(CBLineTableCellBidLineNotification), object: nil, userInfo: userInfo)
-            NotificationCenter.default.post(notification)
-        }
+        let sView = sender as! UIView
+        let notification = Notification(name: Notification.Name(rawValue: CBLineTableCellBidLineNotification), object: self.moveBidListButton.globalFrame!, userInfo: ["LineNum": line!.number!.intValue, "Lines": availableFaLines, CBLineTableCellButtonViewKey: sView])
+        NotificationCenter.default.post(notification)
+//        if self.bidPeriod!.isFABid(){
+//            if let sView = sender as? UIView {
+//                let userInfo: [AnyHashable: Any] = [CBLineTableCellBidLineKey:self.line!,CBLineTableCellButtonViewKey: sView]
+//                let notification = Notification(name:Notification.Name(CBLineTableCellFABidLineNotification), object:self.moveBidListButton.globalFrame, userInfo: userInfo)
+//                NotificationCenter.default.post(notification)
+//            }
+//        }else{
+//            let userInfo:[AnyHashable: Any] = [CBLineTableCellBidLineKey: self.line!]
+//            let notification = Notification(name: Notification.Name(CBLineTableCellBidLineNotification), object: nil, userInfo: userInfo)
+//            NotificationCenter.default.post(notification)
+//        }
 //                NotificationCenter.default.post(name: Notification.Name("RefreshBidListLineCountFilter"), object: self)
 //                NotificationCenter.default.post(name: Notification.Name("RefreshBidListLineCountSort"), object: self)
 //                NotificationCenter.default.post(name: Notification.Name("RefreshBidListLineCountPreset"), object: self)

@@ -542,6 +542,9 @@
                                         <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                         <state key="normal" image="BidAllLinesButton"/>
+                                        <connections>
+                                            <action selector="btnMoveAllToBidListAction:" destination="31h-qK-hrW" eventType="touchUpInside" id="T8a-gU-NV3"/>
+                                        </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C1c-or-yOL">
                                         <rect key="frame" x="8" y="7" width="35" height="35"/>
@@ -6145,6 +6148,7 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Dda-2D-Ovx"/>
                         <color key="backgroundColor" red="0.83137254901960778" green="0.80000000000000004" blue="0.77254901960784317" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="tintColor" systemColor="tintColor"/>
                         <constraints>
                             <constraint firstItem="mTE-8M-2F1" firstAttribute="leading" secondItem="Dda-2D-Ovx" secondAttribute="leading" constant="10" id="5qO-2W-MwJ"/>
                             <constraint firstItem="VAz-YO-lYB" firstAttribute="top" secondItem="mTE-8M-2F1" secondAttribute="top" id="Dxi-E6-Xl5"/>
@@ -6948,7 +6952,7 @@
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="2ik-GC-VMu"/>
-                        <color key="backgroundColor" red="0.83137254900000002" green="0.80000000000000004" blue="0.7725490196" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" systemColor="systemGray2Color"/>
                         <constraints>
                             <constraint firstItem="LMP-i6-tlR" firstAttribute="top" secondItem="2ik-GC-VMu" secondAttribute="top" constant="3" id="CWd-AL-GmL"/>
                             <constraint firstItem="LMP-i6-tlR" firstAttribute="leading" secondItem="2ik-GC-VMu" secondAttribute="leading" constant="10" id="U2U-ce-IpZ"/>
@@ -7043,6 +7047,9 @@
         </systemColor>
         <systemColor name="systemBlueColor">
             <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemGray2Color">
+            <color red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGreenColor">
             <color red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
