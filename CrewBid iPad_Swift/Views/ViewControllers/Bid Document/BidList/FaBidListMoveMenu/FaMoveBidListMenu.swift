@@ -30,6 +30,7 @@ class FaMoveBidListMenu: UIViewController,UITableViewDelegate,UITableViewDataSou
         super.viewDidLoad()
         tableView.dataSource = self
         tableView.delegate = self
+        viewBackground.clipsToBounds = true
         viewBackground.layer.cornerRadius = 5
         moveObj.setupVariables()
     }

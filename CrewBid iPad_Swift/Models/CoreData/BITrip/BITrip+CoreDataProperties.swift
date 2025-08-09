@@ -325,7 +325,6 @@ extension BITrip : Identifiable {
             
             //Release calcultions
             dateComps?.minute = Int(truncating: (dayOrderedLegs.last?.arriveMinutes)!) + Int(truncating: (trip.info?.debriefMinutes!)!)
-            //Added by Kripa on 20/06/2024 to fix the issue with the release time for FA 2nd round reserve lines
             if isFA && trip.isReserve{
                 dateComps?.minute = Int(truncating: (dayOrderedLegs.last?.arriveMinutes)!)
             }
@@ -507,4 +506,31 @@ extension BITrip : Identifiable {
         let herbTimeString = formatter.string(from: sourceDate)
         return herbTimeString
     }
+    
+    
+    static func resetTripHighlightCount(in context: NSManagedObjectContext) {
+        let fetchRequest = NSFetchRequest<BITrip>(entityName: "Trip")
+        fetchRequest.predicate = NSPredicate(format: "highlightCount > 0")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "info.number", ascending: true)]
+
+        let fetchController = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: context,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
+
+        do {
+            try fetchController.performFetch()
+            if let trips = fetchController.fetchedObjects {
+                for trip in trips {
+                    trip.highlightCount = 0
+                    trip.bidListHighlighted = false
+                }
+            }
+        } catch {
+            print("Error executing trips fetch: \(error)")
+        }
+    }
+    
 }

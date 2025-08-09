@@ -354,6 +354,9 @@
 		F4DB59522E30B5080079930A /* BILinesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DB59512E30B5080079930A /* BILinesManager.swift */; };
 		F4DBD8362DDC5FF700423856 /* BIBidInfoReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DBD8352DDC5FF700423856 /* BIBidInfoReader.swift */; };
 		F4DF6DCD2DD5EA2700761057 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DF6DCC2DD5EA2700761057 /* KeychainHelper.swift */; };
+		F4E5DA042E3C908D00C96BDF /* CBCalendarDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E5DA032E3C908D00C96BDF /* CBCalendarDayCell.swift */; };
+		F4E5DA062E3C9F9700C96BDF /* CBLineCalendarCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E5DA052E3C9F9700C96BDF /* CBLineCalendarCollectionViewController.swift */; };
+		F4E5DA0C2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E5DA0B2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -712,6 +715,9 @@
 		F4DB59512E30B5080079930A /* BILinesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BILinesManager.swift; sourceTree = "<group>"; };
 		F4DBD8352DDC5FF700423856 /* BIBidInfoReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIBidInfoReader.swift; sourceTree = "<group>"; };
 		F4DF6DCC2DD5EA2700761057 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
+		F4E5DA032E3C908D00C96BDF /* CBCalendarDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCalendarDayCell.swift; sourceTree = "<group>"; };
+		F4E5DA052E3C9F9700C96BDF /* CBLineCalendarCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLineCalendarCollectionViewController.swift; sourceTree = "<group>"; };
+		F4E5DA0B2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidLineCalendarCollectionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1218,6 +1224,7 @@
 				F41EBE3B2DC4DB20001413DE /* CBBidlineViewTableViewCell.swift */,
 				F41EBE3C2DC4DB20001413DE /* CBBidListCalenderViewCell.swift */,
 				F41EBE3D2DC4DB20001413DE /* InnerCollectionViewCell.swift */,
+				F4E5DA032E3C908D00C96BDF /* CBCalendarDayCell.swift */,
 			);
 			path = BidListCells;
 			sourceTree = "<group>";
@@ -1279,6 +1286,8 @@
 				F41EBE492DC4DB20001413DE /* ExpandedCalendarView */,
 				F41EBE4C2DC4DB20001413DE /* FaBidListMoveMenu */,
 				F41EBE4D2DC4DB20001413DE /* CBBidListVC.swift */,
+				F4E5DA052E3C9F9700C96BDF /* CBLineCalendarCollectionViewController.swift */,
+				F4E5DA0B2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift */,
 			);
 			path = BidList;
 			sourceTree = "<group>";
@@ -2049,6 +2058,7 @@
 				8B0044192DC72AA900CAEF82 /* CBPresetCell.swift in Sources */,
 				F4371C5C2DF1559700391303 /* AppState.swift in Sources */,
 				F41EBF4D2DC4DB20001413DE /* CBAwardEmpValidationVC.swift in Sources */,
+				F4E5DA062E3C9F9700C96BDF /* CBLineCalendarCollectionViewController.swift in Sources */,
 				F41EBF4E2DC4DB20001413DE /* CBAwardLineCalendarViewController.swift in Sources */,
 				35162E032DCDBEA600BD8E2E /* UIView+extensions.swift in Sources */,
 				F41EBF4F2DC4DB20001413DE /* CBAwardsRetrievalViewController.swift in Sources */,
@@ -2092,6 +2102,7 @@
 				F41EBF712DC4DB20001413DE /* CBLineValuesMenuController.swift in Sources */,
 				F41EBF722DC4DB20001413DE /* CBScratchPadVC.swift in Sources */,
 				F41EBF732DC4DB20001413DE /* CBLineValueView.swift in Sources */,
+				F4E5DA042E3C908D00C96BDF /* CBCalendarDayCell.swift in Sources */,
 				F41EBF742DC4DB20001413DE /* CBTripTextViewController.swift in Sources */,
 				F41EBF752DC4DB20001413DE /* CBUserFlagTableController.swift in Sources */,
 				F4984C602E2E6C12004E020E /* CBPresetFilterRule.swift in Sources */,
@@ -2160,6 +2171,7 @@
 				F41EBFA72DC4DB20001413DE /* LoginEmbeddedController.swift in Sources */,
 				F41EBFA82DC4DB20001413DE /* CBHelpVideosController.swift in Sources */,
 				F41EBFA92DC4DB20001413DE /* contactUsViewController.swift in Sources */,
+				F4E5DA0C2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift in Sources */,
 				F4DF6DCD2DD5EA2700761057 /* KeychainHelper.swift in Sources */,
 				F41475812DC8D8290064CD25 /* KeychainItemWrapper.m in Sources */,
 				F41EBFAA2DC4DB20001413DE /* defenitionsViewController.swift in Sources */,

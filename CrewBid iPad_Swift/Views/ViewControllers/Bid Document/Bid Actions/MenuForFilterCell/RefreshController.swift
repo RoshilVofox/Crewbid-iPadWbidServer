@@ -54,7 +54,8 @@ class RefreshController: UIViewController, UITableViewDataSource, UITableViewDel
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.viewBackground.clipsToBounds = true
+        self.viewBackground.layer.cornerRadius = 5
         bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
         arrMonth = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
         arrYear = ["2018","2017","2016","2015"]
