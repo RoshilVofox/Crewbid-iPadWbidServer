@@ -1174,7 +1174,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             // 2: Change the dropForFiltersSorts value to the current user setting and reprocess the lines
             // 3: Rehighlight the trips based on the new dropForFiltersSorts setting
             // Reset trip highlight count
-            BITrip.resetTripHighlightCount(moc: self.context!)
+            BITrip.resetTripHighlightCount(in: self.context!)
             // Init the bidInfoReader for line reprocessing (if needed)
             self.round = self.bidPeriod!.round!
             self.year = self.bidPeriod!.year!
