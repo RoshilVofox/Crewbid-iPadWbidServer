@@ -171,7 +171,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     
     
     @objc func lineValuesToDisplayChanged(notification: Notification) {
-        if bidPeriod.isBidListSortOn!.boolValue {
+        if bidPeriod.isBidListSortOn?.boolValue == true {
             let lineSorts = getSortDescriptorsForBidList()
             self.linesArray = (linesArray as NSArray).sortedArray(using: lineSorts ) as! [BILine]
         }

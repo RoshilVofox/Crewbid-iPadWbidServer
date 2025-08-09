@@ -452,7 +452,7 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
                     let abbreviations = self.menuItems.value(forKey: "abbreviation") as? [Any]
                     var subpredicates: [NSPredicate] = []
                     
-                    if (self.bidPeriod!.isBidListSortOn!.boolValue){
+                    if (self.bidPeriod!.isBidListSortOn?.boolValue == true){
                         subpredicates.append(NSPredicate(format: "isBidListSort == \(NSNumber(value: true))"))
                     }else{
                         subpredicates.append(NSPredicate(format: "isBidListSort != \(NSNumber(value: true))"))
