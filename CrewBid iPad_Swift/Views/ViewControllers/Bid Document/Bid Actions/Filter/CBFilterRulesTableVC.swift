@@ -35,6 +35,8 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     var cellidentifiers: [String] = []
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.clipsToBounds = true
+        self.view.layer.cornerRadius = 5
         calendarData = calendarData.initWithBidPeriod(bidPeriod: bidPeriod!)!
         bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
         context = CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext

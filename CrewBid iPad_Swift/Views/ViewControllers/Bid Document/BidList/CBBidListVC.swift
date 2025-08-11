@@ -88,6 +88,8 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        self.view.clipsToBounds = true
+        self.view.layer.cornerRadius = 5
         lblBidLineCount.isUserInteractionEnabled = true
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(labelTapped))
         lblBidLineCount.addGestureRecognizer(tapGestureRecognizer)
@@ -136,23 +138,6 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         } catch {
             print("Failed to fetch insertion point: \(error)")
         }
-//        
-//        let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
-//        fetchRequest.predicate = NSPredicate(format: "bidOrder > 0")
-//        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "bidOrder", ascending: true)]
-//
-//        if self.bidPeriod.isBidListSortOn?.boolValue == true {
-//            fetchRequest.sortDescriptors = getSortDescriptorsForBidList()
-//        }
-//
-//        let controller = NSFetchedResultsController( fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: nil, cacheName: nil)
-//        controller.delegate = self
-//        do {
-//            try controller.performFetch()
-//            self.linesFetchController = controller
-//        } catch {
-//            print("Error executing lines fetch: \(error)")
-//        }
         updateBidList()
     }
     

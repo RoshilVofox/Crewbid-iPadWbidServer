@@ -47,6 +47,8 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.clipsToBounds = true
+        self.view.layer.cornerRadius = 5
         scratchPadTableView.delegate = self
         scratchPadTableView.dataSource = self
         bidPeriod = CBGlobalMethods.shared.selectedBidPeriod

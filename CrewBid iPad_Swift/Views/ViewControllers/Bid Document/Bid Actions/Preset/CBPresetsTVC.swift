@@ -41,6 +41,8 @@ class CBPresetsTVC: UIViewController {
         super.viewDidLoad()
         self.tableView.setEditing(true, animated: true)
         setupUI()
+        self.view.clipsToBounds = true
+        self.view.layer.cornerRadius = 5
         NotificationCenter.default.addObserver(self, selector: #selector(updateBidListCount), name: NSNotification.Name("updateBidListCount"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updatePresets), name: NSNotification.Name("refreshLines"), object: nil)
         CBGlobalMethods.shared.isSortAvailable = false
