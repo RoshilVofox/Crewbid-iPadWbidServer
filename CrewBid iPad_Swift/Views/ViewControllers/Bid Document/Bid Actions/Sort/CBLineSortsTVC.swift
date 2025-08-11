@@ -27,12 +27,11 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        NotificationCenter.default.addObserver(self, selector: #selector(updateBidListCount), name: NSNotification.Name("updateBidListCount"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        updateLines()
-        NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
-        
         NotificationCenter.default.addObserver(self, selector: #selector(updateLines), name: NSNotification.Name("refreshLines"), object: nil)
     }
     
@@ -44,12 +43,27 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
         NotificationCenter.default.post(name: NSNotification.Name("SortViewWillDisappear"), object: self)
     }
     
+    @objc func updateBidListCount(){
+        var linesArray : [BILine] = []
+        for case let line as BILine in CBGlobalMethods.shared.selectedBidPeriod!.lines! {
+            linesArray.append(line)
+        }
+        var array : [NSPredicate] = []
+        array.append(NSPredicate(format: "bidOrder > %@", NSNumber(integerLiteral: 0)))
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
+        linesArray = (linesArray as NSArray).filtered(using: predicate) as! [BILine]
+        DispatchQueue.main.async {
+            self.btnBidListCount.setTitle("\(linesArray.count)", for: .normal)
+        }
+    }
+    
     func setupUI(){
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
         btnSortTheBidlist.backgroundColor = .systemRed
         btnSortTheScratchpad.backgroundColor = .systemGreen
         tableView.isEditing = true
         calendarData = calendarData.initWithBidPeriod(bidPeriod: bidPeriod!)!
+        updateBidListCount()
     }
     
     @objc func setupLayoutView() {
@@ -143,6 +157,10 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
             btnBids.isHidden = false
             btnBidListCount.isHidden = false
         }
+    }
+    
+    
+    @IBAction func btnBidListCountAction(_ sender: Any) {
     }
     
     @objc func updateLines() {

@@ -66,13 +66,11 @@ class CBBorderToggleButton: UIButton {
         titleLabel?.shadowColor = .clear
         backgroundColor = UIColor.black
         if isSelected {
-           // titleLabel?.textColor = .black
             if #available(iOS 13.0, *) {
                 titleLabel?.textColor = .label
             } else {
-                titleLabel?.textColor = UIColor(named: "preset_label")// Fallback on earlier versions
+                titleLabel?.textColor = UIColor(named: "preset_label")
             }
-            //Added by Kripa to make the font bold on 14 nov
             if let currentFont = titleLabel?.font {
                 titleLabel?.font = UIFont.boldSystemFont(ofSize: currentFont.pointSize)
             }
@@ -80,7 +78,7 @@ class CBBorderToggleButton: UIButton {
             if #available(iOS 13.0, *) {
                 titleLabel?.textColor = .label
             } else {
-                titleLabel?.textColor = CBColor.buttonLightTextColor// Fallback on earlier versions
+                titleLabel?.textColor = CBColor.buttonLightTextColor
             }
             if let currentFont = titleLabel?.font {
                 titleLabel?.font = UIFont.systemFont(ofSize: currentFont.pointSize)

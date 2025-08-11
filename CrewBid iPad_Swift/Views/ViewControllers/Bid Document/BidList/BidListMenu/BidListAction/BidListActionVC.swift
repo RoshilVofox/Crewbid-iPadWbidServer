@@ -9,7 +9,7 @@ import UIKit
 
 class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate {
     
-    private let bidListActionArray = ["Scrolling Options","Deselect All Lines","Move Selected Lines","Undo","Redo","Return Selected Lines To Scratchpad","Return Unfrozen Lines To Scratchpad", "Start Over"]
+    private let bidListActionArray = ["Scrolling Options","Deselect All Lines","Move Selected Lines","Undo","Redo","Return Selected Lines to Scratchpad","Return Unfrozen Lines to Scratchpad", "Start Over"]
     var bidPeriod = BIBidPeriod()
     var ArrLinesDetails: [BILine] = []
     var selectedLinesCount:NSMutableArray = NSMutableArray()
@@ -32,7 +32,8 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CBBidListActionTableCell") as! CBBidListActionTableCell
         cell.lblTitle.text = bidListActionArray[indexPath.row]
-        cell.lblTitle.font = UIFont.systemFont(ofSize: 15)
+        cell.lblTitle.font = UIFont.systemFont(ofSize: 17)
+        cell.lblTitle.adjustsFontSizeToFitWidth = true
         if indexPath.row == 0 {
             if ArrLinesDetails.count > 0 {
                 cell.isUserInteractionEnabled = true

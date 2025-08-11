@@ -1463,7 +1463,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
 
     @IBAction func removeLineAction(_ sender: Any) {
         if self.bidPeriod!.isFABid() {
-            NotificationCenter.default.post(name: NSNotification.Name("removedLines"), object: nil, userInfo: [CBLineTableCellBidLineKey:self.line!])
+            NotificationCenter.default.post(name: NSNotification.Name("removedLines"), object: self.contentView.tag)
         }else{
             line?.isTrashed = true
             do{

@@ -12,7 +12,7 @@ var kReserveMrtViewTag: Int = 76
 var kReserveMrtLabelTag: Int = 333
 var kSnowflakeTag: Int = 1040
 
-class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBidListCalenderViewCellDelegate,StartOverDelegate  {
+class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBidListCalenderViewCellDelegate,StartOverDelegate, CBBidLineMenuControllerDelegate  {
 
     
     
@@ -88,13 +88,32 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        lblBidLineCount.isUserInteractionEnabled = true
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(labelTapped))
+        lblBidLineCount.addGestureRecognizer(tapGestureRecognizer)
         
-        if self.managedObjectContext == nil {
-            self.managedObjectContext = CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        tableViewNormalView.setEditing(true, animated: false)
+        if UserDefaults.standard.bool(forKey: "HasSavedScrollPosition") && CBGlobalMethods.shared.isMoveAllAction == false {
+            let lastRow = UserDefaults.standard.integer(forKey: "LastScrollRow")
+            let lastSection = UserDefaults.standard.integer(forKey: "LastScrollSection")
+            let lastIndexPath = IndexPath(row: lastRow, section: lastSection)
+            
+            DispatchQueue.main.async {
+                if self.tableViewNormalView.numberOfRows(inSection: lastSection) > lastRow {
+                    self.tableViewNormalView.scrollToRow(at: lastIndexPath, at: .middle, animated: false)
+                }
+            }
         }
-//        NotificationCenter.default.addObserver(self, selector: #selector(sortBidAction), name: NSNotification.Name("SortBidListAction"), object: nil)
-//        NotificationCenter.default.addObserver(self, selector: #selector(refreshLines), name: NSNotification.Name("RefreshBidListCalander"), object: nil)
-        
+    }
+    
+    @objc func labelTapped() {
+        let isEffSenSelected = UserDefaults.standard.bool(forKey: "IsEffSenSelected")
+        UserDefaults.standard.set(!isEffSenSelected, forKey: "IsEffSenSelected")
+        updateTitle()
     }
     
     func setupVariables(){
@@ -117,23 +136,23 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         } catch {
             print("Failed to fetch insertion point: \(error)")
         }
-        
-        let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "bidOrder > 0")
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "bidOrder", ascending: true)]
-
-        if self.bidPeriod.isBidListSortOn?.boolValue == true {
-            fetchRequest.sortDescriptors = getSortDescriptorsForBidList()
-        }
-
-        let controller = NSFetchedResultsController( fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: nil, cacheName: nil)
-        controller.delegate = self
-        do {
-            try controller.performFetch()
-            self.linesFetchController = controller
-        } catch {
-            print("Error executing lines fetch: \(error)")
-        }
+//        
+//        let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
+//        fetchRequest.predicate = NSPredicate(format: "bidOrder > 0")
+//        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "bidOrder", ascending: true)]
+//
+//        if self.bidPeriod.isBidListSortOn?.boolValue == true {
+//            fetchRequest.sortDescriptors = getSortDescriptorsForBidList()
+//        }
+//
+//        let controller = NSFetchedResultsController( fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: nil, cacheName: nil)
+//        controller.delegate = self
+//        do {
+//            try controller.performFetch()
+//            self.linesFetchController = controller
+//        } catch {
+//            print("Error executing lines fetch: \(error)")
+//        }
         updateBidList()
     }
     
@@ -160,6 +179,9 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         lblBidLineCount.isUserInteractionEnabled = true
         self.tableViewNormalView.delegate = self
         self.tableViewNormalView.dataSource = self
+        let doubleTap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.handleDoubleTapToScrollTop(_:)))
+        doubleTap.numberOfTapsRequired = 1
+        lblBidLineCount.addGestureRecognizer(doubleTap)
 //        Notification Center
         NotificationCenter.default.addObserver(self, selector: #selector(updateBidList(_:)), name: NSNotification.Name("refreshLines"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.lineValuesToDisplayChanged(notification:)), name: Notification.Name(CBLineValuesToDisplayDidChangeNotification), object: nil)
@@ -168,19 +190,32 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         NotificationCenter.default.addObserver(self, selector: #selector(self.ScrollToInsertion), name: NSNotification.Name(rawValue: "ScrollToInsertionLineNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.moveInsertionIndex(_:)), name: NSNotification.Name(rawValue: "CBInsertLinesAboveNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.moveInsertionIndex(_:)), name: NSNotification.Name(rawValue: "CBInsertLinesBelowNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.addMarker(_:)), name: NSNotification.Name(rawValue: "CBAddMarkerNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.editMarker(_:)), name: NSNotification.Name(rawValue: "CBEditMarkerNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.deleteMarker(_:)), name: NSNotification.Name(rawValue: "CBRemoveMarkerNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.freezeTopLines(_:)), name: NSNotification.Name(rawValue: "CBFreezeLinesNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.unfreezeTopLines(_:)), name: NSNotification.Name(rawValue: "CBUnFreezeLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.deselectAllLines), name: NSNotification.Name(rawValue: "CBDeselectAllLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.moveSelectedLinesToInsertionIndex), name: NSNotification.Name(rawValue: "CBMoveSelectedNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.undo), name: NSNotification.Name(rawValue: "CBUndoNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.redo), name: NSNotification.Name(rawValue: "CBRedoNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.deleteSelectedLines), name: NSNotification.Name(rawValue: "CBReturnSelectedLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.deleteAllLines), name: NSNotification.Name(rawValue: "CBReturnUnfrozenLinesNotification"), object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.cellDidSelect(notification:)), name: Notification.Name("CBBidLineTableCellDidSelectNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.cellDidDeselect(notification:)), name: Notification.Name("CBBidLineTableCellDidDeselectNotification"), object: nil)
         self.isSubmitSort = (self.bidPeriod.isSortBySubmitOn ?? 0).boolValue
         self.isAwardSort = (self.bidPeriod.isAwardSortOn ?? 0).boolValue
         if isAwardSort{
 //            loadAwardDetails()
         }
     }
+    
+    @objc func handleDoubleTapToScrollTop(_ sender : UITapGestureRecognizer) {
+        if self.tableViewNormalView.numberOfRows(inSection: 0) > 0 {
+            self.tableViewNormalView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+        }
+    }
+    
     func removeBidListObservers(){
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "refreshLines"), object: nil)
     }
@@ -315,7 +350,6 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
                 if ((line.faBidLineReserve?.boolValue)! || (line.faBidLineMrt?.boolValue)!) {
                     if (line.faBidLineReserve?.boolValue)! {
                         bidPeriod.faReserveLineExists = false
-                        //Added by Kripa to fix a crash issue on 8th June
                         line.removeFromBidLines()
                     }
                     else {
@@ -481,9 +515,6 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         self.tableViewNormalView.reloadData()
     }
     
-    @objc func refreshLines(){
-        self.updateBidList()
-    }
     
     // Scrolls the table view to the insertion index.
     @objc func ScrollToInsertion () {
@@ -491,6 +522,135 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         if insertionBarIndexPath.row < tableViewNormalView.numberOfRows(inSection: 0) {
             tableViewNormalView.scrollToRow(at: insertionBarIndexPath, at: .middle, animated: true)
         }
+    }
+    
+    @objc func freezeTopLines(_ notification: Notification) {
+        let valueFromNotification = notification.object
+        let dictValues:NSMutableDictionary = valueFromNotification as! NSMutableDictionary
+        let row: Int = dictValues.value(forKey: "indexpath") as! Int
+        
+        // Freeze the top lines up to the specified row
+        
+        for j in 0...row {
+            let ip = IndexPath(row: j, section: 0)
+            let line = linesArray[ip.row]
+            line.isFrozen = true
+            line.frozenOrder = j + 1 as NSNumber
+        }
+        
+        // Unfreeze rows below if they were previously frozen
+        for j in (row + 1)..<linesArray.count {
+            let ip = IndexPath(row: j, section: 0)
+            let line = linesArray[ip.row]
+            
+            if line.isFrozen == true {
+                line.isFrozen = false
+                line.frozenOrder = 0
+            } else {
+                break // Stop once we reach a non-frozen line
+            }
+        }
+        
+        // Step 3: Renumber remaining frozen lines to keep frozenOrder compact
+        var currentOrder = 0
+        for line in linesArray where line.isFrozen == true {
+            line.frozenOrder = NSNumber(value: currentOrder + 1)
+            currentOrder += 1
+        }
+        
+        // If the selection index was within the block of lines that was frozen, move it out.
+        if insertionIndex < row + 1 {
+            moveInsertionIndex(to: row, above: false)
+            if insertionIndex == linesArray.count {
+                insertionIndex -= 1
+                moveInsertionIndex(to: insertionIndex, above: false)
+            }
+        }
+        bidPeriod.managedObjectContext!.undoManager?.setActionName("Freeze Top Lines")
+        if selectedCellIndexPaths.count > 0 {
+            selectedCellIndexPaths.removeAllObjects()
+        }
+        tableViewNormalView.reloadData()
+    }
+    
+    @objc func unfreezeTopLines(_ notification: Notification) {
+        let obj = notification.object as! NSDictionary
+        let Count = obj["indexpath"] as! Int + 1
+        
+        // Unfreeze the top lines up to the specified count
+
+        for j in 0..<Count {
+            let ip = IndexPath(row: j, section: 0)
+            let line = linesArray[ip.row]
+            if (line.isFrozen != 0) {
+                line.isFrozen = false
+                line.frozenOrder = NSNumber(value: 0)
+            } else {
+                continue
+            }
+        }
+        bidPeriod.managedObjectContext!.undoManager?.setActionName("Unfreeze Top Lines")
+        if selectedCellIndexPaths.count > 0 {
+            selectedCellIndexPaths.removeAllObjects()
+        }
+        tableViewNormalView.reloadData()
+    }
+    
+    func moveInsertionIndex(to index: Int, above: Bool) {
+        // Moves the insertion index to the specified position above or below a line.
+        // If there is no change, do nothing.
+        if insertionIndex == index && insertAbove == above {
+            return
+        }
+        // Disable undo registration temporarily
+
+        bidPeriod.managedObjectContext?.undoManager?.disableUndoRegistration()
+        
+        // Store the previous insertion index
+
+        previousInsertionIndex = insertionIndex
+        // Update the insertion index and insertAbove flag
+
+        insertionIndex = index
+        insertAbove = above
+        let linesCount: Int = tableViewNormalView.numberOfRows(inSection: 0)
+        // Check if the insertion indices are valid, and reload the table view if necessary
+
+        if linesCount > 0 {
+            if previousInsertionIndex > linesCount - 1 && previousInsertionIndex != 0 {
+                previousInsertionIndex = linesCount - 1
+                tableViewNormalView.reloadData()
+                return
+            }
+            if insertionIndex > linesCount - 1 && insertionIndex != 0 {
+                insertionIndex = linesCount - 1
+                tableViewNormalView.reloadData()
+                return
+            }
+        }
+        // Create an array of indexPaths to reload
+
+        var reloadIndexPaths: [Any]? = nil
+        if previousInsertionIndex == insertionIndex {
+            reloadIndexPaths = [IndexPath(row: insertionIndex, section: 0)]
+        } else {
+            reloadIndexPaths = [IndexPath(row: previousInsertionIndex, section: 0), IndexPath(row: insertionIndex, section: 0)]
+        }
+        // Deselect cells at the old and new insertion indices
+
+        for case let ip as IndexPath in reloadIndexPaths! {
+            let cell: UITableViewCell? = tableViewNormalView.cellForRow(at: ip)
+            cell?.setSelected(false, animated: false)
+        }
+        // Reload the table view with the updated insertion indices
+
+        if let aPaths = reloadIndexPaths as? [IndexPath] {
+            tableViewNormalView.reloadRows(at: aPaths, with: .automatic)
+        }
+        // Save changes and clear the undo manager
+
+        bidPeriod.managedObjectContext!.processPendingChanges()
+        bidPeriod.managedObjectContext!.undoManager?.removeAllActions()
     }
     
     @objc func moveInsertionIndex(_ notification: Notification) {
@@ -558,7 +718,234 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
                 self.tableViewNormalView.reloadRows(at: aPaths, with: .automatic)
             }
         }
+    }
+    
+    func addReserveMRTline(indexpath: Int, isReserve: Bool) {
+        removeASortUI()
+        let indexPath: Int = indexpath
+        // Disable undo registration temporarily
+
+        bidPeriod.managedObjectContext?.undoManager?.disableUndoRegistration()
+        let lineEntity = NSEntityDescription.entity(forEntityName: BILineEntityName, in: bidPeriod.managedObjectContext!)
+        var bidOrder: Int = (indexPath) + 1
+        var row: Int = indexPath
+        let countOfBidLines: Int = linesArray.count
+        let bidOrderOffset: Int = 1
+        if 0 == countOfBidLines {
+            bidOrder = 1
+            row = countOfBidLines
+        }
+        if isReserve{
+            var reserveLine: BILine?
+            if let anEntity = lineEntity {
+                reserveLine = BILine(entity: anEntity, insertInto: bidPeriod.managedObjectContext)
+            }
+            reserveLine?.faBidLineReserve = true
+            reserveLine?.number = 10001
+            reserveLine?.faNumber = "10001NA"
+            reserveLine?.bidPeriod = bidPeriod
+            // Set bid order for reserve line.
+            reserveLine?.bidOrder = bidOrder as NSNumber
+          
+            bidPeriod.faReserveLineExists = true
+        }else{
+            var mrtLine: BILine? = nil
+            if let anEntity = lineEntity {
+                mrtLine = BILine(entity: anEntity, insertInto: bidPeriod.managedObjectContext!)
+            }
+            mrtLine?.faBidLineMrt = true
+            mrtLine?.number = 10000
+            mrtLine?.faNumber = "10000NA"
+            mrtLine?.bidPeriod = bidPeriod
+            // Set bid order for reserve line.
+            mrtLine?.bidOrder = bidOrder as NSNumber
+            // Set bid order for lines below inserted lines
+          
+            bidPeriod.faMrtLineExists = true
+           
+        }
+        // Set bid order for lines below inserted lines.
+        while row < countOfBidLines {
+            let ln = linesArray[row]
+            ln.bidOrder = row + bidOrderOffset + 1 as NSNumber
+            row += 1
+        }
+        if insertionIndex >= (indexPath) {
+            insertionIndex += 1
+        }
+        // Save changes and clear selected lines
+
+        bidPeriod.managedObjectContext?.processPendingChanges()
+        bidPeriod.managedObjectContext?.undoManager?.removeAllActions()
+        if selectedCellIndexPaths.count >  0 {
+            selectedCellIndexPaths.removeAllObjects()
+            tableViewNormalView.reloadData()
+        }
+        // Post notifications for updates
+
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
+        NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: nil)
+    }
+    
+    func removeReserveMRTline(indexpath: IndexPath, isReserve: Bool) {
+        // Delete a line at the given index path
+
+        deleteLine(at: indexpath)
         
+        // Clear selected lines and reload the table view
+
+        if selectedCellIndexPaths.count > 0 {
+            selectedCellIndexPaths.removeAllObjects()
+            tableViewNormalView.reloadData()
+        }
+    }
+    
+    @objc func cellDidSelect(notification: Notification) {
+        let dict = notification.object as! NSDictionary
+        let object = dict["object"]
+        print("selectedCellIndexPaths \(selectedCellIndexPaths)")
+        let indexPath = dict["indexPath"] as? IndexPath
+        if (object as! UITableViewCell).classForCoder.description() == "CrewBid_iPad_Swift.CBBidlineViewTableViewCell" {
+            let cell = object as? CBBidlineViewTableViewCell
+            if let aCell = cell {
+                tableViewNormalView.selectRow(at: tableViewNormalView.indexPath(for: aCell), animated: false, scrollPosition: .none)
+            }
+            let arr = selectedCellIndexPaths
+            if !arr.contains(indexPath!) {
+                selectedCellIndexPaths.add(indexPath!)
+            }
+        }
+        else if (object as! UITableViewCell).classForCoder.description() == "CrewBid_iPad_Swift.CBBidListCalenderViewCell" {
+            let cell = object as? CBBidListCalenderViewCell
+            if let aCell = cell {
+                tableViewNormalView.selectRow(at: tableViewNormalView.indexPath(for: aCell), animated: false, scrollPosition: .none)
+            }
+            let arr = selectedCellIndexPaths
+            if !arr.contains(indexPath!) {
+                selectedCellIndexPaths.add(indexPath!)
+            }
+        }
+        print("selectedCellIndexPaths \(selectedCellIndexPaths)")
+
+    }
+    
+    // Handle cell deselection
+
+    @objc func cellDidDeselect(notification: Notification) {
+        let dict = notification.object as! NSDictionary
+        let object = dict["object"]
+        let indexPath = dict["indexPath"] as? IndexPath
+        print("selectedCellIndexPaths \(selectedCellIndexPaths)")
+        if (object as! UITableViewCell).classForCoder.description() == "CrewBid_iPad_Swift.CBBidlineViewTableViewCell" {
+            let cell = notification.object as? CBBidlineViewTableViewCell
+            if let aCell = cell {
+                tableViewNormalView.deselectRow(at: tableViewNormalView.indexPath(for: aCell)!, animated: false)
+            }
+            let arr = selectedCellIndexPaths
+            
+            if arr.contains(indexPath!) {
+                let index = arr.index(of: indexPath!)
+                selectedCellIndexPaths.removeObject(at: index)
+            }
+        }
+        else if (object as! UITableViewCell).classForCoder.description() == "CrewBid_iPad_Swift.CBBidListCalenderViewCell" {
+            let cell = notification.object as? CBBidListCalenderViewCell
+            if let aCell = cell {
+                tableViewNormalView.deselectRow(at: tableViewNormalView.indexPath(for: aCell)!, animated: false)
+            }
+            let arr = selectedCellIndexPaths
+            let index = arr.index(of: indexPath!)
+            if arr.contains(indexPath!) {
+                selectedCellIndexPaths.removeObject(at: index)
+            }
+        }
+        print("selectedCellIndexPaths \(selectedCellIndexPaths)")
+
+    }
+    
+    private func removeASortUI() {
+        // removing A-Sort properties
+        if isAwardSort || isSubmitSort {
+            setPreviousBidOrder()
+        }
+        self.bidPeriod.isAwardSortOn = No
+        self.bidPeriod.isSortBySubmitOn = No
+        self.isAwardSort = false
+        self.isSubmitSort = false
+    }
+    
+    // Restore previous bid order
+
+    private func setPreviousBidOrder() {
+        CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
+        CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
+        CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
+        // setting the pervious bid order while turning off A-Sort
+        for line in linesArray {
+            line.bidOrder = line.previousBidOrder
+         //   line.previousBidOrder = NSNumber(integerLiteral: 0)
+        }
+    }
+    
+    @objc func addMarker(_ notification: Notification) {
+        // Handles the addition of a marker when triggered by a notification.
+
+        let valueFromNotification = notification.object
+        let dictValues:NSMutableDictionary = valueFromNotification as! NSMutableDictionary
+        let indexPath: IndexPath = dictValues.value(forKey: "indexpath") as! IndexPath
+        bidPeriod.managedObjectContext!.undoManager?.disableUndoRegistration()
+        // Retrieve the line associated with the indexPath and set its marker title to an empty string
+
+        var line: BILine? = nil
+        line = linesArray[indexPath.row]
+        line?.markerTitle = ""
+        // Reload the table view to allow editing of the marker text field
+
+        self.tableViewNormalView.reloadRows(at: [indexPath], with: .none)
+        // Delay to ensure that the marker text field becomes first responder after reloading
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            let lineCell = self.tableViewNormalView.cellForRow(at: indexPath) as? CBBidlineViewTableViewCell
+            lineCell?.beginEditingMarker()
+        }
+    }
+    
+    @objc func editMarker(_ notification: Notification) {
+        // Handles the editing of a marker when triggered by a notification.
+
+        let valueFromNotification = notification.object
+        let dictValues:NSMutableDictionary = valueFromNotification as! NSMutableDictionary
+        let indexPath: IndexPath = dictValues.value(forKey: "indexpath") as! IndexPath
+        // Disable undo registration temporarily
+
+        bidPeriod.managedObjectContext!.undoManager?.disableUndoRegistration()
+        // Get the cell for the specified indexPath and make the marker text field first responder
+
+        let lineCell = tableViewNormalView.cellForRow(at: indexPath) as? CBBidlineViewTableViewCell
+        lineCell?.markerTextField.becomeFirstResponder()
+    }
+    
+    @objc func deleteMarker(_ notification: Notification) {
+        // Handles the deletion of a marker when triggered by a notification.
+
+        let valueFromNotification = notification.object
+        let dictValues:NSMutableDictionary = valueFromNotification as! NSMutableDictionary
+        let indexPath: IndexPath = dictValues.value(forKey: "indexpath") as! IndexPath
+        bidPeriod.managedObjectContext!.undoManager?.disableUndoRegistration()
+        // Retrieve the line associated with the indexPath and remove its marker title
+
+        var line: BILine? = nil
+        line = linesArray[indexPath.row]
+        line?.markerTitle = nil
+        // Get the cell type for the row and update the cell accordingly
+
+        let lineCell = tableViewNormalView.cellForRow(at: indexPath) as? CBBidlineViewTableViewCell
+        lineCell?.cellType = cellTypeForRow(at: indexPath)
+        // Save changes and clear the undo manager
+
+        bidPeriod.managedObjectContext!.processPendingChanges()
+        bidPeriod.managedObjectContext!.undoManager?.removeAllActions()
+        self.tableViewNormalView.reloadRows(at: [indexPath], with: .none)
     }
     
     @objc func returnLine(_ notification: Notification?) {
@@ -1189,15 +1576,6 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
             lblBidLineCount.addGestureRecognizer(lblTap)
         }
     }
-    @objc func labelTapped(){
-        let isEffSenSelected = UserDefaults.standard.bool(forKey: "IsEffSenSelected")
-        if isEffSenSelected{
-            UserDefaults.standard.set(false, forKey: "IsEffSenSelected")
-        }else{
-            UserDefaults.standard.set(true, forKey: "IsEffSenSelected")
-        }
-        self.updateTitle()
-    }
     
     @objc func updateBidList(_ notification: Notification? = nil) {
         var isTableviewReload = true
@@ -1321,7 +1699,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
         CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
         CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
-//        removeASortUI()
+        removeASortUI()
     
         if 0 == lines.count {
             return
@@ -1350,7 +1728,6 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
             firstInsertedLine?.markerTitle = insertionRowLine?.markerTitle
             insertionRowLine?.markerTitle = nil
         }
-        // Added by Raja - 26 Apr 2024
         // If not inserting directly below a marker, add marker if inserting
         // multiple lines.
         else if (lines.count > 1 && !faBidAllPositions) {
@@ -1923,8 +2300,10 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     }
 
     func didTappedOnCalandarView(indexPath: IndexPath) {
-        print("")
+        tableView(self.tableViewNormalView, didSelectRowAt: indexPath)
     }
+    
+    
     func showTripTextPopover(for tripButton: CBTripButton) {
         
         if (self.presentedViewController is CBTripTextViewController){
@@ -1950,7 +2329,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     //MARK: -Bidlist actions
     // Code for starting over action
     func startOver(){
-//        removeASortUI()
+        removeASortUI()
         self.linesArray = []
         let context = self.bidPeriod.managedObjectContext!
         // Delete all Commutability objects
@@ -2104,20 +2483,12 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
                 cell.layer.borderWidth = 0.0
             }
         }
-        
-//        if line.containsPartialTrip?.boolValue == true{
-//            cell.warningButton.alpha = 1
-//        }else{
-//            cell.warningButton.alpha = 0
-//        }
-        
-        
         cell.cellType = cellTypeForRow(at: indexPath)
         cell.bidPeriod = self.bidPeriod
         cell.line = line
-        cell.lineValuesView.tag = indexPath.row
+        cell.scrollLineValue.tag = indexPath.row
         let singlePressGesture = UITapGestureRecognizer(target: self, action: #selector(self.SingleTap))
-        cell.lineValuesView.addGestureRecognizer(singlePressGesture)
+        cell.scrollLineValue.addGestureRecognizer(singlePressGesture)
         singlePressGesture.delaysTouchesBegan = true
         cell.refreshCalendar()
         let arr = selectedCellIndexPaths
@@ -2143,7 +2514,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         if bidPeriod.isFirstRoundBid() && bidPeriod.isFABid() {
             if (line.faBidLineMrt?.boolValue)! {
                 setupLineValues = false
-                cell.lineValuesView.isHidden = true
+                cell.scrollLineValue.isHidden = true
                 cell.positionCircleView.isHidden = true
                 cell.calendarCollectionView.isHidden = true
                 cell.mLblLineNumber.isHidden = true
@@ -2155,7 +2526,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
                 reserveMrtLabel?.text = "MRT Line"
             }
             else if (line.faBidLineReserve?.boolValue)! {
-                cell.lineValuesView.isHidden = true
+                cell.scrollLineValue.isHidden = true
                 cell.positionCircleView.isHidden = true
                 cell.calendarCollectionView.isHidden = true
                 cell.mLblLineNumber.isHidden = true
@@ -2167,7 +2538,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
                 cell.backgroundView?.backgroundColor = CBColor.faPosBColor
                 setupLineValues = false
             } else {
-                cell.lineValuesView.isHidden = false
+                cell.scrollLineValue.isHidden = false
                 cell.positionCircleView.isHidden = false
                 cell.calendarCollectionView.isHidden = false
                 cell.mLblLineNumber.isHidden = false
@@ -2176,7 +2547,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
                 reserveMrtView?.alpha = 0.0
             }
         } else {
-            cell.lineValuesView.isHidden = false
+            cell.scrollLineValue.isHidden = false
             cell.positionCircleView.isHidden = false
             cell.calendarCollectionView.isHidden = false
             cell.mLblLineNumber.isHidden = false
@@ -2286,6 +2657,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
             attributedString.addAttribute(NSAttributedString.Key.font, value: UIFont.systemFont(ofSize: 10.0), range: tickRange)
             cell.mLblLineNumber.attributedText = attributedString
         }
+        cell.handlingFreezingCondition()
         if setupLineValues {
             // Line values.
             let lineValuesKey: String = CBLineValuesMenuController.lineValuesKey(for: bidPeriod)
@@ -2328,7 +2700,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
                 lineValueView?.alpha = 0.0
             }
         }
-        cell.lineValuesView.alpha = 1.0
+        cell.scrollLineValue.alpha = 1.0
     }
     
     func cellTypeForRow(at indexPath: IndexPath) -> CBBidLineTableCellType {
@@ -2357,16 +2729,15 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     }
     
     
-    @objc func SingleTap (sender:UITapGestureRecognizer) {
+    @objc func SingleTap(sender:UITapGestureRecognizer) {
         // Create a storyboard and instantiate the 'CBBidLineMenuController' view controller
 
         let storyboard : UIStoryboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let refreshViewController = storyboard.instantiateViewController(withIdentifier: "CBBidLineMenuController") as! CBBidLineMenuController
-//        refreshViewController.delegate = self
+        refreshViewController.delegate = self
         refreshViewController.bidPeriod = bidPeriod
         refreshViewController.modalPresentationStyle = .popover
         // Get the tapped cell's index path and tag
-
         let indexPath = IndexPath(row: (sender.view?.tag)!, section: 0)
         let index :Int = Int((sender.view?.tag)!)
         refreshViewController.selectedIndexpath = index
@@ -2381,12 +2752,9 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         refreshViewController.line = line
         refreshViewController.fromBidlist = true
         // Initialize 'newSize' with the content size of 'refreshViewController'
-
         var newSize: CGSize = refreshViewController.contentSizeOf
-        
         // SCENARIO 1
         // Determine the size of the popover based on scenarios
-
         if (line.isFrozen != 0) {
             if refreshViewController.isCellHasMarker {
                 newSize.height = 44.0 * 4 + 6.0
@@ -2420,7 +2788,6 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
             }
         }
         // Get the cell based on whether the calendar view is selected
-
         let cell: UITableViewCell!
         if UserDefaults.standard.bool(forKey: "isSelectedCalanderView")  {
             cell = tableViewNormalView.cellForRow(at: indexPath) as! CBBidListCalenderViewCell
@@ -2428,16 +2795,9 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
             cell = tableViewNormalView.cellForRow(at: indexPath) as! CBBidlineViewTableViewCell
         }
         // Show the popover with an upward arrow direction
-
         refreshViewController.showPopover(sourceView:cell)
         refreshViewController.arrowDirection = UIPopoverArrowDirection.up
     }
-    
-    
-    
-
-    
-    
 }
 
 extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
@@ -2652,7 +3012,7 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
             reserveMrtView?.alpha = 0.0
         }
         
-//        cell.handlingFreezingCondition()
+        cell.handlingFreezingCondition()
         
         // Set Etops line
         cell.etopsTypeLabel.isHidden = true
@@ -2743,7 +3103,6 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
                     CBLineValuesMenuController.setLineValueView(lineValueView!, with: line, forType: CBLineValueTypes(rawValue: valueType)!, bidPeriod: bidPeriod)
                 }
                 lineValueView?.alpha = 1.0
-                // Below condition uopdated bt Raja on 17 jan 2024
                 // To handle the vDiff line value show / hide for Swaptimizer enable condition
                 if CBLineValueTypes(rawValue: valueType) == .VacationPayDifference {
                     if line.vCBVacPay as? Double ?? 0.0 > 0.0 || line.orderedTrips.count == 0 {
@@ -2768,6 +3127,69 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
                 lineValueView?.alpha = 0.0
             }
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let storyboard : UIStoryboard = UIStoryboard(name: "BidDocument", bundle: nil)
+        let refreshViewController = storyboard.instantiateViewController(withIdentifier: "CBBidLineMenuController") as! CBBidLineMenuController
+        refreshViewController.delegate = self
+        refreshViewController.bidPeriod = bidPeriod
+        refreshViewController.modalPresentationStyle = .popover
+        let index :Int = indexPath.row
+        refreshViewController.selectedIndexpath = index
+        refreshViewController.selectedIndexpathValue = indexPath
+        let line = self.linesArray[indexPath.row]
+        refreshViewController.isCellHasMarker = (line.markerTitle != nil) ? true : false
+        refreshViewController.isCellIsFrozen = (line.isFrozen?.boolValue)!
+        let isFaFirstRoundBid: Bool = bidPeriod.isFABid() && bidPeriod.isFirstRoundBid()
+        refreshViewController.isFaFirstRoundBid = isFaFirstRoundBid
+        refreshViewController.isFaMrtLineExists = (bidPeriod.faMrtLineExists?.boolValue)!
+        refreshViewController.isFaReserveLineExists = (bidPeriod.faReserveLineExists?.boolValue)!
+        refreshViewController.line = line
+        refreshViewController.fromBidlist = true
+        var newSize: CGSize = refreshViewController.contentSizeOf
+        
+        // SCENARIO 1
+        if (line.isFrozen != 0) {
+            if refreshViewController.isCellHasMarker {
+                newSize.height = 44.0 * 4 + 6.0
+            } else {
+                newSize.height = 44.0 * 3 + 6.0
+            }
+        }
+        // SCENARIO 2
+        else {
+            if refreshViewController.isCellHasMarker {
+                if isFaFirstRoundBid && !(bidPeriod.faMrtLineExists != 0) || !(bidPeriod.faReserveLineExists != 0) {
+                    if !(bidPeriod.faMrtLineExists != 0) && !(bidPeriod.faReserveLineExists != 0) {
+                        newSize.height = 44.0 * 9 + 4.0 * 6.0
+                    } else {
+                        newSize.height = 44.0 * 8 + 4.0 * 6.0
+                    }
+                } else {
+                    newSize.height = 44.0 * 7 + 3.0 * 6.0
+                }
+            }
+            else {
+                if isFaFirstRoundBid && !(bidPeriod.faMrtLineExists != 0) || !(bidPeriod.faReserveLineExists != 0) {
+                    if !(bidPeriod.faMrtLineExists != 0) && !(bidPeriod.faReserveLineExists != 0) {
+                        newSize.height = 44.0 * 8 + 4.0 * 6.0
+                    } else {
+                        newSize.height = 44.0 * 7 + 4.0 * 6.0
+                    }
+                } else {
+                    newSize.height = 44.0 * 6 + 3.0 * 6.0
+                }
+            }
+        }
+        let cell: UITableViewCell!
+        if UserDefaults.standard.bool(forKey: "isSelectedCalanderView")  {
+            cell = tableViewNormalView.cellForRow(at: indexPath) as! CBBidListCalenderViewCell
+        }else {
+            cell = tableViewNormalView.cellForRow(at: indexPath) as! CBBidlineViewTableViewCell
+        }
+        refreshViewController.showPopover(sourceView:cell)
+        refreshViewController.arrowDirection = UIPopoverArrowDirection.up
     }
     
     
@@ -2797,4 +3219,145 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
         }
         return heightForRow
     }
+    
+    // Handle row reordering logic
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        // Do nothing until the move actually finishes
+        if sourceIndexPath == destinationIndexPath{
+            return
+        }
+        if isAwardSort || isSubmitSort {
+            removeASortUI()
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+            return
+        }
+        self.bidPeriod.isBidListSortOn = NSNumber(value: false)
+        self.bidPeriod.deleteAllBidListSorts()
+        let originRow: Int = sourceIndexPath.row
+        let destRow: Int = destinationIndexPath.row
+        let startLine = linesArray[sourceIndexPath.row]
+        var markerTitle = [String]()
+        if (startLine.isFrozen != 0) {
+            tableViewNormalView.reloadData()
+            return
+        }
+        // Freeze the line if you moved it within the frozen lines block.
+        let endLine = linesArray[destinationIndexPath.row]
+        if (endLine.isFrozen != 0) {
+            startLine.isFrozen = true
+        }
+        // Uncomment if you want to prevent moves of single rows into the frozen rows section
+        let firstRow: Int = originRow > destRow ? destRow : originRow
+        let lastRow: Int = originRow > destRow ? originRow : destRow
+        let ind = IndexPath(row: originRow, section: 0)
+        var affectedRows = NSMutableArray()
+        affectedRows = (linesArray as NSArray).mutableCopy() as! NSMutableArray
+        (affectedRows as NSArray?)?.sortedArray(using: [NSSortDescriptor(key: "bidOrder", ascending: true)])
+        
+        if let rows = affectedRows as? [BILine] {
+            for index in 0..<rows.count {
+                let item = rows[index]
+                print("Index: \(index), Item: \(item)")
+                if item.markerTitle != nil &&  item.markerTitle != ""{
+                    markerTitle.append(item.markerTitle!)
+                }
+                else{
+                    markerTitle.append("")
+                }
+            }
+        }
+        let insertionIndex: Int = destRow
+        let removedIndex: Int = originRow
+        let row: Int = ind.row
+        let line = affectedRows[row] as? BILine
+        // Attempt to preserve marker by moving it to line below (if one
+        // exists below line and that line does not have a marker).
+        var oldMarkerTitle: String? = nil
+        if (line?.markerTitle != nil && line?.markerTitle != "") {
+            oldMarkerTitle = line?.markerTitle
+        }
+        line?.markerTitle = nil
+        // If inserting above a line that has a marker, transfer marker to
+        // moved line.
+        var insertionPointLine: BILine? = affectedRows.object(at: insertionIndex) as? BILine
+        if insertionPointLine?.markerTitle != nil &&  insertionPointLine?.markerTitle != ""{
+            line?.markerTitle = insertionPointLine?.markerTitle
+            insertionPointLine?.markerTitle = nil
+        }
+        affectedRows.removeObject(at: removedIndex)
+        let insertedIndexes = NSIndexSet(indexesIn: NSRange(location: insertionIndex, length: insertionIndex))
+        if let aLine = line {
+            affectedRows.insert(aLine, at: insertionIndex)
+        }
+
+        for i in firstRow...lastRow {
+            let line: BILine? = affectedRows.object(at: i) as? BILine
+            line?.bidOrder = i + 1 as NSNumber
+        }
+        // Add the old marker to the new line at the moved line's previous row
+        let newLine: BILine? = affectedRows.object(at: row) as? BILine
+        if newLine?.markerTitle == nil {
+            newLine?.markerTitle = oldMarkerTitle
+        }
+        if let rows = affectedRows as? [BILine] {
+            for index in 0..<rows.count {
+                let item = rows[index]
+                item.markerTitle = nil
+                print("Index: \(index), Item: \(item)")
+                if markerTitle[index] != ""{
+                    item.markerTitle = markerTitle[index]
+                }
+            }
+        }
+        previousInsertionIndex = self.insertionIndex
+        if originRow > insertionIndex && destRow < insertionIndex {
+            self.insertionIndex += 1
+        }
+        if originRow < insertionIndex && destRow > insertionIndex {
+            self.insertionIndex -= 1
+        }
+        selectedCellIndexPaths.removeAllObjects()
+        bidPeriod.managedObjectContext!.undoManager?.setActionName("Move Line")
+        NotificationCenter.default.post(name: NSNotification.Name("SortBidListAction"), object: self)
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+ 
+    }
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        //No reordering in Freeze line
+        if linesArray.count <=  indexPath.row {
+            return false
+        }
+        let startLine = linesArray[indexPath.row]
+        if (startLine.isFrozen != 0) {
+            return false
+        }
+        return true
+    }
+    
+    //Removing the delete button
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return UITableViewCell.EditingStyle.none
+    }
+    
+    //Removing the space of delete button
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return false
+    }
+    
+    //For handling the reorder UI for calendar view
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        for view in cell.subviews {
+            print(view.classForCoder.description())
+            if view.self.description.contains("UITableViewCellReorderControl") {
+                view.removeFromSuperview()
+                let width: CGFloat = 30.0
+                if UserDefaults.standard.bool(forKey: "isSelectedCalanderView")  {
+                    view.frame = CGRect(x: cell.frame.maxX - 25, y: 50, width: width, height: 150)
+                }
+                cell.addSubview(view)
+                view.backgroundColor = .clear
+            }
+        }
+    }
+    
 }

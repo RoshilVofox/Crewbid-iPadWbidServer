@@ -54,6 +54,7 @@ class CBExpandedBidLinesTableController: BaseViewController {
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        expandedTableView.setEditing(true, animated: false)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -251,7 +252,7 @@ class CBExpandedBidLinesTableController: BaseViewController {
                 cell.mLblLineNo.text = cell.mLblLineNo.text! + ("M")
             }
             cell.positionCircleView.alpha = 1.0
-//            cell.handlingFreezingCondition(line: line)
+            cell.handlingFreezingCondition(line: line)
             cell.positionCircleView.alpha = 1.0
             if isAwardSort {
                 if let awardedLineNum = self.awardedLineNum {
@@ -487,7 +488,6 @@ class CBExpandedBidLinesTableController: BaseViewController {
                     CBLineValuesMenuController.setLineValueView(lineValueView!, with: line, forType: CBLineValueTypes(rawValue: valueType)!, bidPeriod: bidPeriod)
                 }
                 lineValueView?.alpha = 1.0
-                // Below condition uopdated bt Raja on 17 jan 2024
                 // To handle the vDiff line value show / hide for Swaptimizer enable condition
                 if CBLineValueTypes(rawValue: valueType) == .VacationPayDifference {
                     if line.vCBVacPay as? Double ?? 0.0 > 0.0 || line.orderedTrips.count == 0 {
@@ -518,12 +518,38 @@ class CBExpandedBidLinesTableController: BaseViewController {
         return cellType
     }
     
+    // Removes any A-Sort UI elements
+    private func removeASortUI() {
+        // removing A-Sort properties
+                if isAwardSort || isSubmitSort {
+                    setPreviousBidOrder()
+                }
+        self.bidPeriod.isAwardSortOn = No
+        self.bidPeriod.isSortBySubmitOn = No
+        self.isAwardSort = false
+        self.isSubmitSort = false
+    }
+    
+    private func setPreviousBidOrder() {
+        CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
+        CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
+        CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
+        // setting the pervious bid order while turning off A-Sort
+        for line in linesArray {
+            line.bidOrder = line.previousBidOrder
+        }
+    }
+    
 }
 
 extension CBExpandedBidLinesTableController: UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         count = 0
         return self.linesArray.count
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -540,6 +566,14 @@ extension CBExpandedBidLinesTableController: UITableViewDelegate,UITableViewData
         }
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+            return nil
+    }
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+            return 0.001
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         var heightForRow: CGFloat = 87
         let line = linesArray[indexPath.row]
@@ -553,6 +587,109 @@ extension CBExpandedBidLinesTableController: UITableViewDelegate,UITableViewData
         }
         return heightForRow
     }
+    
+    //Reorder
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        //self.linesArray.swapAt(sourceIndexPath.row, destinationIndexPath.row)
+        // Do nothing until the move actually finishes
+        if sourceIndexPath == destinationIndexPath{
+            return
+        }
+        removeASortUI()
+        let originRow: Int = sourceIndexPath.row
+        let destRow: Int = destinationIndexPath.row
+        let startLine = linesArray[sourceIndexPath.row]
+        if (startLine.isFrozen != 0) {
+            expandedTableView.reloadData()
+            return
+        }
+        // Freeze the line if you moved it within the frozen lines block.
+        let endLine = linesArray[destinationIndexPath.row]
+        if (endLine.isFrozen != 0) {
+            startLine.isFrozen = true
+        }
+        // Uncomment if you want to prevent moves of single rows into the frozen rows section
+        let firstRow: Int = originRow > destRow ? destRow : originRow
+        let lastRow: Int = originRow > destRow ? originRow : destRow
+        let ind = IndexPath(row: originRow, section: 0)
+        var affectedRows = NSMutableArray()
+        affectedRows = (linesArray as NSArray).mutableCopy() as! NSMutableArray
+        
+        (affectedRows as NSArray?)?.sortedArray(using: [NSSortDescriptor(key: "bidOrder", ascending: true)])
+        let insertionIndex: Int = destRow
+        let removedIndex: Int = originRow
+        let row: Int = ind.row
+        let line = affectedRows[row] as? BILine
+        // Attempt to preserve marker by moving it to line below (if one
+        // exists below line and that line does not have a marker).
+        var oldMarkerTitle: String? = nil
+        if (line?.markerTitle != nil) {
+            oldMarkerTitle = line?.markerTitle
+        }
+        line?.markerTitle = nil
+        // If inserting above a line that has a marker, transfer marker to
+        // moved line.
+        let insertionPointLine: BILine? = affectedRows.object(at: insertionIndex) as? BILine
+        if insertionPointLine?.markerTitle != nil {
+            line?.markerTitle = insertionPointLine?.markerTitle
+            insertionPointLine?.markerTitle = nil
+        }
+        // affectedRows.remove(at: removedIndex)
+        affectedRows.removeObject(at: removedIndex)
+        let insertedIndexes = NSIndexSet(indexesIn: NSRange(location: insertionIndex, length: insertionIndex))
+        if let aLine = line {
+            
+            affectedRows.insert(aLine, at: insertionIndex)
+        }
+        // Add the old marker to the new line at the moved line's previous row
+        let newLine: BILine? = affectedRows.object(at: row) as? BILine
+        if newLine?.markerTitle == nil {
+            newLine?.markerTitle = oldMarkerTitle
+        }
+        for i in firstRow...lastRow {
+            let line: BILine? = affectedRows.object(at: i) as? BILine
+            line?.bidOrder = i + 1 as NSNumber
+        }
+        previousInsertionIndex = self.insertionIndex
+        //        previousInsertionIndex = 8
+        if originRow > insertionIndex && destRow < insertionIndex {
+            self.insertionIndex += 1
+        }
+        if originRow < insertionIndex && destRow > insertionIndex {
+            self.insertionIndex -= 1
+        }
+        insertedIndexes.enumerate({(_ idx: Int, _ stop:UnsafeMutablePointer<ObjCBool>) -> Void in
+            let idxPth = IndexPath(row: idx, section: 0)
+            expandedTableView.selectRow(at: idxPth, animated: false, scrollPosition: .none)
+            if !self.selectedCellIndexPaths.contains(idxPth) {
+                self.selectedCellIndexPaths.add(idxPth)
+            }
+            
+        })
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+    }
+    
+    
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        //No reordering in Freeze line
+        let startLine = linesArray[indexPath.row]
+        if (startLine.isFrozen != 0) {
+            //            tableViewNormalView.reloadData()
+            return false
+        }
+        return true
+    }
+    
+    //Removing the delete button
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return UITableViewCell.EditingStyle.none
+    }
+    
+    //Removing the space of delete button
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return false
+    }
+    
 }
 
 class ExpandedCalendarCollectionViewCell: UICollectionViewCell {

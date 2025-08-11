@@ -974,4 +974,31 @@ extension BIBidPeriod : Identifiable {
         return lines
     }
     
+    // This function deletes all bid list sorts
+    func deleteAllBidListSorts(){
+        // Retrieve and sort bid list sorts
+        let sortArray = ((getOrderedBidListSorts()) as NSArray).sortedArray(using: [NSSortDescriptor(key: "order", ascending: true)]) as NSArray
+        // Iterate through the sorted bid list sorts
+        var isNeededTripHighlightReset = false
+        for sort in sortArray.filtered(using: NSPredicate(format: "isBidListSort == \(NSNumber(value: true))")) {
+            // Check if the sort is of type BILineSort
+            isNeededTripHighlightReset = true
+            guard let sort = sort as? BILineSort else {
+                continue
+            }
+            // Delete associated line sort key map, if it exists
+            if (sort.lineSortKeyMap != nil) {
+                self.managedObjectContext?.delete(sort.lineSortKeyMap!)
+            }
+            // Delete the bid list sort
+
+            self.managedObjectContext?.delete(sort)
+        }
+        // Reset trip highlight count if a bid period is selected
+        if CBGlobalMethods.shared.selectedBidPeriod != nil && isNeededTripHighlightReset{
+            BITrip.resetTripHighlightCount(in: CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!)
+        }
+       
+    }
+    
 }

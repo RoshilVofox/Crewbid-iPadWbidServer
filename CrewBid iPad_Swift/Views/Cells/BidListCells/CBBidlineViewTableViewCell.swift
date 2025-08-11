@@ -97,7 +97,6 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
         self.calendarCollectionView.layer.cornerRadius = 3
         self.calendarCollectionView.layer.borderWidth = 0.5
         self.calendarCollectionView.layer.borderColor = UIColor.lightGray.cgColor
-
         positionCircleView.layer.cornerRadius = positionCircleView.frame.size.height / 2
         
         var newFrame = CGRect ()
@@ -149,12 +148,153 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
         markerTextField.text = text
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
+    func beginEditingMarker() {
+        markerTextField.becomeFirstResponder()
+    }
+    
+    func selectButton(_ selected: Bool) {
         if selected {
             selectionToggleButton.setImage(#imageLiteral(resourceName: "RadioButton-On"), for: .normal)
         }
         else {
             selectionToggleButton.setImage(#imageLiteral(resourceName: "radioButton-Off"), for: .normal)
+        }
+    }
+    
+    func handlingFreezingCondition()  {
+        imgAccessoryView.isHidden = false
+        if (line.isFrozen != 0) {
+            let snowflakeImage = UIImage(named: "Blue_Snowflake")
+            imgAccessoryView?.image = snowflakeImage
+            mLblLineNumber.textColor = UIColor(red: 0.0, green: 0.75, blue: 1.0, alpha: 1.0)
+            
+            if line.isETOPS?.boolValue == true{
+                let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
+                let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 1, 1)
+                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                } else {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                }
+                mLblLineNumber.attributedText = attributedString
+                
+            }
+            if line.isETOPSRES?.boolValue == true{
+                let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
+                let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 2, 2)
+                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                } else {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                }
+                mLblLineNumber.attributedText = attributedString
+            }
+            else if bidPeriod.isFABid() && bidPeriod.isSecondRoundBid() {
+                if line.faReserveLineType == (BIFaReserveLineType.SnrAMres.rawValue) as NSNumber || line.faReserveLineType == (BIFaReserveLineType.SnrPMres.rawValue) as NSNumber || line.faReserveLineType == (BIFaReserveLineType.JnrAMres.rawValue) as NSNumber || line.faReserveLineType == (BIFaReserveLineType.JnrPMres.rawValue) as NSNumber || line.faReserveLineType == (BIFaReserveLineType.JnrLateRes.rawValue) as NSNumber{
+                    let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
+                    let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 2, 2)
+                    if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                        attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                    } else {
+                        attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                    }
+                    mLblLineNumber.attributedText = attributedString
+                }
+            }
+           else if line.type == BILineType.ReserveLine.rawValue.asNSNumber || line.type == BILineType.NonEtopsReserve.rawValue.asNSNumber{
+                let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
+                let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 1, 1)
+                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                } else {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                }
+               mLblLineNumber.attributedText = attributedString
+            }
+           else if !bidPeriod.isFABid() && bidPeriod.isSecondRoundBid() && (line.type == BILineType.MixedLine.rawValue.asNSNumber || line.type == BILineType.NonEtopsMixed.rawValue.asNSNumber){
+                let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
+                let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 2, 2)
+                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                } else {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                }
+               mLblLineNumber.attributedText = attributedString
+            }
+            
+            
+            let button = viewWithTag(kSelectionButtonTag) as? UIButton
+            button?.isHidden = true
+            selectionToggleButton.isHidden = true
+            self.isEditing = false
+        } else {
+            let snowflakeImage = UIImage(named: "Blue_SnowflakeEmpty")
+            imgAccessoryView?.image = snowflakeImage
+            imgAccessoryView.isHidden = true
+            let button = viewWithTag(kSelectionButtonTag) as? UIButton
+            button?.isHidden = false
+            if bidPeriod.isFABid() && line.faPosition?.intValue != BIFaPosition.FaPositionNA.rawValue {
+                mLblLineNumber.textColor = UIColor.white
+            }else {
+                mLblLineNumber.textColor = UIColor.label
+            }
+            if line.isETOPS?.boolValue == true{
+                let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
+                let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 1, 1)
+                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                } else {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                }
+                mLblLineNumber.attributedText = attributedString
+            }
+            if line.isETOPSRES?.boolValue == true{
+                let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
+                let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 2, 2)
+                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                } else {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                }
+                mLblLineNumber.attributedText = attributedString
+            }
+            else if bidPeriod.isFABid() && bidPeriod.isSecondRoundBid() {
+                if line.faReserveLineType == (BIFaReserveLineType.SnrAMres.rawValue) as NSNumber || line.faReserveLineType == (BIFaReserveLineType.SnrPMres.rawValue) as NSNumber || line.faReserveLineType == (BIFaReserveLineType.JnrAMres.rawValue) as NSNumber || line.faReserveLineType == (BIFaReserveLineType.JnrPMres.rawValue) as NSNumber || line.faReserveLineType == (BIFaReserveLineType.JnrLateRes.rawValue) as NSNumber{
+                    let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
+                    let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 2, 2)
+                    if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                        attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                    } else {
+                        attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                    }
+                    mLblLineNumber.attributedText = attributedString
+                }
+            }
+            else if line.type == BILineType.ReserveLine.rawValue.asNSNumber || line.type == BILineType.NonEtopsReserve.rawValue.asNSNumber{
+                let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
+                let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 1, 1)
+                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                } else {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                }
+                mLblLineNumber.attributedText = attributedString
+            }
+            else if !bidPeriod.isFABid() && bidPeriod.isSecondRoundBid() && (line.type == BILineType.MixedLine.rawValue.asNSNumber || line.type == BILineType.NonEtopsMixed.rawValue.asNSNumber){
+                let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
+                let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 2, 2)
+                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                } else {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                }
+                mLblLineNumber.attributedText = attributedString
+            }
+            
+            
+            
+            selectionToggleButton.isHidden = false
+            self.isEditing = true
         }
     }
 
@@ -230,7 +370,7 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
         mainView.frame = newFrame
     }
     
-    
+    // Function to handle selection button action
     @objc func selectionButtonAction(_ sender: UIButton) {
         self.bidPeriod.currentDateTime = Date()
         self.bidPeriod.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
@@ -360,8 +500,9 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
         let lineValuesController = storyboard.instantiateViewController(withIdentifier: "CBLineValuesMenuController") as! CBLineValuesMenuController
         lineValuesController.bidPeriod = bidPeriod;
         lineValuesController.modalPresentationStyle = .popover
-        let touchPoint = gesture.location(in: self.lineValuesView)
-        let frame = CGRect(origin: touchPoint, size: CGSize(width: 1, height: 1))
+        let touchPoint = gesture.location(in: self.contentView)
+//        let frame = CGRect(origin: touchPoint, size: CGSize(width: 1, height: 1))
+        let frame = CGRect(x: self.contentView.frame.origin.x, y: touchPoint.y - 80, width: self.contentView.frame.width, height: self.contentView.frame.height)
         lineValuesController.showPopover(sourceView: scrollLineValue, sourceRect: frame)
     }
     
@@ -523,15 +664,6 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
         
         calendarCollectionView.reloadData()
         
-    }
-    
-    func selectButton(_ selected: Bool) {
-        if selected {
-            selectionToggleButton.setImage(#imageLiteral(resourceName: "RadioButton-On"), for: .normal)
-        }
-        else {
-            selectionToggleButton.setImage(#imageLiteral(resourceName: "radioButton-Off"), for: .normal)
-        }
     }
     
 }

@@ -39,14 +39,30 @@ class CBPresetsTVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        tableView.allowsSelectionDuringEditing = true
         self.tableView.setEditing(true, animated: true)
         setupUI()
-//
+        NotificationCenter.default.addObserver(self, selector: #selector(updateBidListCount), name: NSNotification.Name("updateBidListCount"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updatePresets), name: NSNotification.Name("refreshLines"), object: nil)
+        CBGlobalMethods.shared.isSortAvailable = false
     }
+    
     func setupUI(){
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
+        updateBidListCount()
+    }
+    
+    @objc func updateBidListCount(){
+        var linesArray : [BILine] = []
+        for case let line as BILine in CBGlobalMethods.shared.selectedBidPeriod!.lines! {
+            linesArray.append(line)
+        }
+        var array : [NSPredicate] = []
+        array.append(NSPredicate(format: "bidOrder > %@", NSNumber(integerLiteral: 0)))
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
+        linesArray = (linesArray as NSArray).filtered(using: predicate) as! [BILine]
+        DispatchQueue.main.async {
+            self.btnBidListCount.setTitle("\(linesArray.count)", for: .normal)
+        }
     }
     
     @IBAction func btnFilterAction(_ sender: Any) {
@@ -69,7 +85,12 @@ class CBPresetsTVC: UIViewController {
         UIView.transition(from: self.view, to: vc.view, duration: 0.65, options: [.transitionFlipFromLeft])
     }
     
-    func updatePresets() {
+    
+    @IBAction func btnBidListCountAction(_ sender: Any) {
+    }
+    
+    
+    @objc func updatePresets() {
         tableView.reloadData()
     }
 }

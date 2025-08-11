@@ -50,6 +50,10 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         scratchPadTableView.delegate = self
         scratchPadTableView.dataSource = self
         bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
+        self.bidPeriod?.isBidListSortOn = false
+        self.bidPeriod?.deleteAllBidListSorts()
+        updateLines()
+        fetchTrashedLinesCount()
         ScratchPadCalendarData = ScratchPadCalendarData.initWithBidPeriod(bidPeriod: self.bidPeriod!)!
         calendarDay = ScratchPadCalendarData.calendarDays as! [BICalendarDay]
         lblScratchpadLineCount.isUserInteractionEnabled = true
@@ -67,219 +71,16 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         refreshTapGesture.delaysTouchesBegan = true
         notificationObserver()
         self.arrayLinesDetails = self.bidPeriod?.lastTrashedDetails ?? NSMutableArray()
-        
+//        calculateAMPMFromSync()
         //For setting undo in bidlist
+        self.arrayLinesDetails = self.bidPeriod?.lastTrashedDetails ?? NSMutableArray()
         if self.bidPeriod!.managedObjectContext!.undoManager == nil {
             self.bidPeriod!.managedObjectContext!.undoManager = UndoManager()
         }
         
-        
-        let moc = self.bidPeriod?.managedObjectContext
-        //Filters Fetched Results Controller
-        let filterFetchRequest = NSFetchRequest<BIFilterRule>(entityName: BIFilterRuleEntityName)
-        filterFetchRequest.sortDescriptors = [NSSortDescriptor(key: "category", ascending: true),NSSortDescriptor(key: "type", ascending: true)]
-        filterFetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
-        filtersFetchController = NSFetchedResultsController(fetchRequest: filterFetchRequest, managedObjectContext:moc!, sectionNameKeyPath: nil, cacheName: nil)
-        filtersFetchController?.delegate = self
-        try? filtersFetchController?.performFetch()
-        
-        //Sorts Fetched Results Controller
-        let sortFetchRequest = NSFetchRequest<BILineSort>(entityName: BILineSortEntityName)
-        sortFetchRequest.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
-        sortFetchRequest.predicate = NSPredicate(format: "isBidListSort != %@", NSNumber(value: true))
-        sortsFetchController = NSFetchedResultsController(fetchRequest: sortFetchRequest, managedObjectContext: moc!,sectionNameKeyPath: nil, cacheName: nil)
-        sortsFetchController?.delegate = self
-        try? sortsFetchController?.performFetch()
-        
-        //Lines Fetched Results Controller
-        notTrashedPredicate = NSPredicate(format: "isTrashed == NO")
-        notBidPredicate = NSPredicate(format: "bidOrder == 0")
-        var subpredicates = [NSPredicate]()
-        let fetched = filtersFetchController?.fetchedObjects
-        subpredicates.append(contentsOf: fetched!.compactMap { $0.predicate })
-        if let notBid = notBidPredicate {
-            subpredicates.insert(notBid, at: 0)
-        }
-        if let notTrashed = notTrashedPredicate {
-            subpredicates.insert(notTrashed, at: 0)
-        }
-        if bidPeriod!.isOverNightBulkApplied == "YES" {
-            subpredicates.append(contentsOf: CBUtils.checkOvernightPredicate())
-        }
-        
-        let lineFetch = NSFetchRequest<BILine>(entityName: BILineEntityName)
-        
-        let managedVacationEnabled = UserDefaults.standard.bool(forKey: kCBManageVacationEnabledKey)
-        if !(self.bidPeriod!.vacationType?.count ?? 0 > 1) && managedVacationEnabled == false {
-            let swaptimizerFileURL = Bundle.main.path(forResource: "FilterRulesSwaptimizer", ofType: "plist")
-            let swapRulesDict = NSDictionary(contentsOfFile: swaptimizerFileURL!)
-            let rules = swapRulesDict!["rules"] as? [[String: Any]]
-            let types = rules?.first?["types"] as? [[String: Any]]
-            var arryKeys = [String]()
-            if let types = types {
-                for dict in types {
-                    if let key = dict["keyPath"] as? String {
-                        arryKeys.append(key)
-                    }
-                }
-            }
-            let vacationFilters = NSMutableArray()
-                for i in 0..<subpredicates.count {
-                    let pred = subpredicates[i] as NSPredicate
-                    for j in 0..<rules!.count {
-                        if (pred.description).contains(arryKeys[j]){
-                            vacationFilters.add(subpredicates[i])
-                        }
-                    }
-                }
-            subpredicates.removeAll { vacationFilters.contains($0) }
-        }
-        let bidPredicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
-        let combinedPredicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates + [bidPredicate])
-        lineFetch.predicate = combinedPredicate
-        let lineSorts = updateSorts()
-        lineFetch.sortDescriptors = lineSorts
-        linesFetchController = NSFetchedResultsController( fetchRequest: lineFetch, managedObjectContext: moc!,sectionNameKeyPath: nil, cacheName: nil)
-        linesFetchController?.delegate = self
-        try? linesFetchController?.performFetch()
-        self.updateTitle()
-        self.fetchTrashedLinesCount()
-        self.updateLines()
-        self.scratchPadTableView.reloadData()
-        
     }
-    
-    func updatingFetch() {
-        let moc = self.bidPeriod?.managedObjectContext
-        //Filters Fetched Results Controller
-        let filterFetchRequest = NSFetchRequest<BIFilterRule>(entityName: BIFilterRuleEntityName)
-        filterFetchRequest.sortDescriptors = [NSSortDescriptor(key: "category", ascending: true),NSSortDescriptor(key: "type", ascending: true)]
-        filterFetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
-        filtersFetchController = NSFetchedResultsController(fetchRequest: filterFetchRequest, managedObjectContext:moc!, sectionNameKeyPath: nil, cacheName: nil)
-        filtersFetchController?.delegate = self
-        try? filtersFetchController?.performFetch()
         
-        //Sorts Fetched Results Controller
-        let sortFetchRequest = NSFetchRequest<BILineSort>(entityName: BILineSortEntityName)
-        sortFetchRequest.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
-        sortFetchRequest.predicate = NSPredicate(format: "isBidListSort != %@", NSNumber(value: true))
-        sortsFetchController = NSFetchedResultsController(fetchRequest: sortFetchRequest, managedObjectContext: moc!,sectionNameKeyPath: nil, cacheName: nil)
-        sortsFetchController?.delegate = self
-        try? sortsFetchController?.performFetch()
-        
-        //Lines Fetched Results Controller
-        notTrashedPredicate = NSPredicate(format: "isTrashed == NO")
-        notBidPredicate = NSPredicate(format: "bidOrder == 0")
-        var subpredicates = [NSPredicate]()
-        let fetched = filtersFetchController?.fetchedObjects
-        subpredicates.append(contentsOf: fetched!.compactMap { $0.predicate })
-        if let notBid = notBidPredicate {
-            subpredicates.insert(notBid, at: 0)
-        }
-        if let notTrashed = notTrashedPredicate {
-            subpredicates.insert(notTrashed, at: 0)
-        }
-        if bidPeriod!.isOverNightBulkApplied == "YES" {
-            subpredicates.append(contentsOf: CBUtils.checkOvernightPredicate())
-        }
-        
-        let lineFetch = NSFetchRequest<BILine>(entityName: BILineEntityName)
-        
-        let managedVacationEnabled = UserDefaults.standard.bool(forKey: kCBManageVacationEnabledKey)
-        if !(self.bidPeriod!.vacationType?.count ?? 0 > 1) && managedVacationEnabled == false {
-            let swaptimizerFileURL = Bundle.main.path(forResource: "FilterRulesSwaptimizer", ofType: "plist")
-            let swapRulesDict = NSDictionary(contentsOfFile: swaptimizerFileURL!)
-            let rules = swapRulesDict!["rules"] as? [[String: Any]]
-            let types = rules?.first?["types"] as? [[String: Any]]
-            var arryKeys = [String]()
-            if let types = types {
-                for dict in types {
-                    if let key = dict["keyPath"] as? String {
-                        arryKeys.append(key)
-                    }
-                }
-            }
-            let vacationFilters = NSMutableArray()
-                for i in 0..<subpredicates.count {
-                    let pred = subpredicates[i] as NSPredicate
-                    for j in 0..<rules!.count {
-                        if (pred.description).contains(arryKeys[j]){
-                            vacationFilters.add(subpredicates[i])
-                        }
-                    }
-                }
-            subpredicates.removeAll { vacationFilters.contains($0) }
-        }
-        let bidPredicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
-        let combinedPredicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates + [bidPredicate])
-        lineFetch.predicate = combinedPredicate
-        let lineSorts = updateSorts()
-        lineFetch.sortDescriptors = lineSorts
-        linesFetchController = NSFetchedResultsController( fetchRequest: lineFetch, managedObjectContext: moc!,sectionNameKeyPath: nil, cacheName: nil)
-        linesFetchController?.delegate = self
-        try? linesFetchController?.performFetch()
-    }
-
-//    @objc func updateLines(){
-////        NotificationCenter.default.post(name: NSNotification.Name(kCBSyncModeChangedNotification), object: self)
-//        updatingFetch()
-//        let fetch = self.linesFetchController.fetchRequest
-//        var lineSorts = self.updateSorts()
-//        if self.bidPeriod!.isFABid(){
-//            let positionSort = NSSortDescriptor(key: "faPosition", ascending: true)
-//            lineSorts.append(positionSort)
-//        }
-//        fetch.sortDescriptors = lineSorts
-//        var subpredicates = (filtersFetchController?.fetchedObjects)?.compactMap { $0.predicate } ?? []
-//        subpredicates.insert(self.notBidPredicate, at: 0)
-//        subpredicates.insert(self.notTrashedPredicate, at: 0)
-//        let manageVacationEnabled = UserDefaults.standard.bool(forKey: kCBManageVacationEnabledKey)
-//        if !(self.bidPeriod?.vacationType?.count ?? 0 > 1) && manageVacationEnabled == false{
-//            let swaptimizerFileURL = Bundle.main.path(forResource: "FilterRulesSwaptimizer", ofType: "plist")
-//            let faVacFileURL = Bundle.main.path(forResource: "FilterRulesFaVacation", ofType: "plist")
-//            let swapRulesDict = NSDictionary(contentsOfFile: swaptimizerFileURL!)
-//            let faVacDict = NSDictionary(contentsOfFile: faVacFileURL!)
-//            var rules = swapRulesDict!["rules"] as? [[String: Any]]
-//            var types = rules?.first?["types"] as? [[String: Any]]
-//            var arryKeys = types!.compactMap { $0["keyPath"] as? String}
-//            rules = faVacDict!["rules"] as? [[String: Any]]
-//            types = rules?.first?["types"] as? [[String: Any]]
-//            let arryKeys2 = types!.compactMap { $0["keyPath"] as? String}
-//            arryKeys.append(contentsOf: arryKeys2)
-//            
-//            let vacationFilters = NSMutableArray()
-//            
-//            for i in 0..<subpredicates.count{
-//                let pred = subpredicates[i]
-//                for j in 0..<arryKeys.count{
-//                    if (pred.description).contains(arryKeys[j]){
-//                        vacationFilters.add(subpredicates[i])
-//                    }
-//                }
-//            }
-//            subpredicates.removeAll { vacationFilters.contains($0) }
-//        }
-//        if self.bidPeriod?.isOverNightBulkApplied == "YES"{
-//            subpredicates.append(contentsOf: CBUtils.checkOvernightPredicate())
-//        }
-////        fetch.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
-//        let bidPredicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
-//        let combinedPredicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates + [bidPredicate])
-//        fetch.predicate = combinedPredicate
-//        do{
-//            try linesFetchController.performFetch()
-//        }catch{
-//            print("Fetch Error: \(error.localizedDescription)")
-//        }
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
-//            self.fetchTrashedLinesCount()
-//            self.updateTitle()
-//            self.scratchPadTableView.reloadData()
-//        })
-//    }
-    
-    
-    func updateLines(){
+    @objc func updateLines(){
         self.lines.removeAll()
         self.sectionLines.removeAll()
         for case let line as BILine in CBGlobalMethods.shared.selectedBidPeriod!.lines! {
@@ -332,25 +133,12 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
             self.fetchTrashedLinesCount()
             self.scratchPadTableView.reloadData()
         }
-        
-        
-        
     }
-    
-    
-    
-    func updateTitle(){
-        if updateScratchpadTitle{
-            let linesCount = self.linesFetchController.fetchedObjects?.count
-            DispatchQueue.main.async {
-                self.lblScratchpadLineCount.text = "Scratchpad- \(linesCount ?? 0) Lines"
-            }
-        }
-    }
+
     
     
     func notificationObserver(){
-        NotificationCenter.default.addObserver(self, selector: #selector(refreshLines), name: NSNotification.Name("refreshLines"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateLines), name: NSNotification.Name("refreshLines"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(removedTrashLines), name: NSNotification.Name("removedLines"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(undoTrashLast), name: NSNotification.Name("undoTrashLast"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(trashAll), name: NSNotification.Name("trashAll"), object: nil)
@@ -360,14 +148,18 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(bidCellLine), name: NSNotification.Name(CBLineTableCellFABidLineNotification), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.deHighlightTrip), name: NSNotification.Name(rawValue: CBLineTableCellTripButtonDehighlightNotification), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(bidCellLine), name: NSNotification.Name(CBLineTableCellBidLineNotification), object: nil)
     }
     
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        NotificationCenter.default.removeObserver(self)
+        //Remove Observe Scratchpad line trashing notification
+        NotificationCenter.default.removeObserver("refreshLines")
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("CBLineTableCellTripButtonDehighlightNotification"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(CBLineTableCellTripButtonDehighlightNotification), object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(CBLineTableCellBidLineNotification), object: nil)
     }
     
     //Adding line to bidlist
@@ -388,7 +180,6 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
             let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
             //Lines in scratchpad
             tempLines = (tempLines as NSArray).filtered(using: predicate) as! [BILine]
-            //Added by Kripa to fix the client reported position sort issue on 9/11/2023
             for case let sort as BILineSort in (bidPeriod?.lineSorts?.allObjects ?? []) {
                 if sort.category?.intValue == 3{
                     positionFlag1 = 1
@@ -436,98 +227,18 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
     }
     
     
-    //Adding line to bidlist
-//    @objc func bidCellLine(_ notification: Notification) {
-//        guard let lineToBid = notification.userInfo?[CBLineTableCellBidLineKey] as? BILine else { return }
-//        let lineNum = lineToBid.number!.stringValue
-//        let lines = self.lineBILineDict[lineNum]
-//        var tempLines: [BILine] = []
-//        if let allLines = CBGlobalMethods.shared.selectedBidPeriod?.lines {
-//            for case let line as BILine in allLines {
-//                tempLines.append(line)
-//            }
-//        }
-//
-//        // Sort all lines by number
-//        tempLines = (tempLines as NSArray).sortedArray(using: [NSSortDescriptor(key: "number", ascending: true)]) as! [BILine]
-//
-//        // Build predicates
-//        let predicates: [NSPredicate] = [
-//            NSPredicate(format: "bidOrder == %@", NSNumber(value: 0)),
-//            NSPredicate(format: "isTrashed == %@", NSNumber(value: false)),
-//            NSPredicate(format: "number == %@", lineToBid.number ?? 0)
-//        ]
-//        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
-//
-//        // Filter lines based on predicates
-//        tempLines = (tempLines as NSArray).filtered(using: predicate) as! [BILine]
-//
-//        // Check for lineSort with category 3
-//        if let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod {
-//            for case let sort as BILineSort in bidPeriod.lineSorts?.allObjects ?? [] {
-//                if sort.category?.intValue == 3 {
-//                    positionFlag1 = 1
-//                }
-//            }
-//        }
-//
-//        if positionFlag1 == 1 {
-//            let lineSorts = getSortDiscriptorsPosition()
-//            tempLines = (tempLines as NSArray).sortedArray(using: lineSorts) as! [BILine]
-//            tempLines = (tempLines as NSArray).sortedArray(using: [NSSortDescriptor(key: "number", ascending: true)]) as! [BILine]
-//            positionFlag1 = 0
-//        } else {
-//            tempLines = (tempLines as NSArray).sortedArray(using: [NSSortDescriptor(key: "number", ascending: true), NSSortDescriptor(key: "faPosition", ascending: true)]) as! [BILine]
-//        }
-//        if lines!.count != tempLines.count{
-//            if tempLines.first?.number == (lines)?.first?.number{
-//                tempLines = lines!
-//            }
-//        }
-//        if tempLines.isEmpty {
-//            return
-//        }
-//        // If only one FA position, insert directly
-//        if tempLines.count == 1 {
-//            let bidListVC = CBBidListVC()
-//            bidListVC.setupVariables()
-//            bidListVC.insertLines(tempLines, faBidAllPositions: false)
-//            NotificationCenter.default.post(name: NSNotification.Name("flipToBidList"), object: nil)
-//        } else {
-//            // More than one position – show popup menu
-//            var arr: [String] = tempLines.map { "Move Position \($0.faPositionString) to Bid List" }
-//            arr.sort()
-//            arr.append("Move All Positions to Bid List")
-//
-//            let vc = UIStoryboard(name: "BidDocument", bundle: nil).instantiateViewController(withIdentifier: "FaMoveBidListMenu") as! FaMoveBidListMenu
-//            vc.array = arr
-//            vc.lines = tempLines
-//            vc.modalPresentationStyle = .popover
-//            if let buttonView = notification.userInfo?[CBLineTableCellButtonViewKey] as? UIView {
-//                let frame = CGRect(x: btnTrash.frame.origin.x - 30, y: btnTrash.frame.origin.y + 18, width: 0, height: 0)
-//                vc.showPopover(sourceView: buttonView, sourceRect: frame)
-//            }
-//        }
-//    }
-    
-    func bidFALine(withLines lines: NSMutableArray, bidAllPositions bidAll: Bool) {
-        if bidAll {
-            let bidLinesNotification = Notification(
-                name: Notification.Name(CBLinesTableBidLinesFaAllNotification),
-                object: self,
-                userInfo: [CBLinesTableBidLinesArrayKey: lines]
-            )
-            NotificationCenter.default.post(bidLinesNotification)
-            
+    @objc func deHighlightTrip(_ notification: Notification) {
+        let isFromScratchpadDetails = notification.object
+        let dictValues:NSMutableDictionary = isFromScratchpadDetails as! NSMutableDictionary
+        let isFromScratchpad: Bool = dictValues.value(forKey: "isFromScratchpad") as! Bool
+        if (isFromScratchpad) {
+            if let tripButton = tripCBButton {
+                tripButton.setHighlighted(false)
+            }
         } else {
-            let bidLinesNotification = Notification(
-                name: Notification.Name(CBLinesTableBidLinesNotification),
-                object: self,
-                userInfo: [CBLinesTableBidLinesArrayKey: lines]
-            )
-            NotificationCenter.default.post(bidLinesNotification)
+            
         }
-    }
+        }
     
     func getSortDiscriptorsPosition() -> [NSSortDescriptor] {
         
@@ -546,7 +257,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         
         // Initialize default position order
         var standardPosOrder = [0, 1, 2, 3]
-        let userPosOrder = NSMutableArray() /* TODO: .reserveCapacity(maxPositionsPerLine) */
+        let userPosOrder = NSMutableArray()
         
         // Iterate through user-defined line sorts
 
@@ -595,73 +306,48 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
     
     //Trash all lines from scratchpad
     @objc func trashAll(){
-        guard let context = self.bidPeriod?.managedObjectContext else { return }
-
-        // Fetch all BILine objects for this bid period (all FA positions)
-        let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
-        
-        do {
-            let allLines = try context.fetch(fetchRequest)
-
-            guard !allLines.isEmpty else { return }
-
-            var trashedLineNumbers: [String] = []
-
-            for line in allLines {
-                line.isTrashed = true
-                if let number = line.number?.stringValue {
-                    trashedLineNumbers.append(number)
-                }
+        if self.lines.count > 0 {
+            var tempArray : [String] = []
+            for line in self.lines {
+                line.isTrashed = NSNumber(booleanLiteral: true)
+                tempArray.append(line.number!.stringValue)
             }
-
-            let temp = (self.bidPeriod?.lastTrashedDetails as? NSMutableArray) ?? NSMutableArray()
-            temp.add(trashedLineNumbers)
+            let temp : NSMutableArray = self.bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
+            temp.add(tempArray)
             self.bidPeriod?.lastTrashedDetails = temp
             self.arrayLinesDetails = temp
-
             self.updateLines()
-        } catch {
-            print("Failed to fetch all lines: \(error)")
         }
     }
     
     //Undo trash line
     @objc func undoTrashLast(){
-        guard let lastObject = self.bidPeriod?.lastTrashedDetails?.lastObject else { return }
-
-            var isItemRemoved = false
-            var lineNumbersToUntrash: Set<String> = []
-
-            if let array = lastObject as? [String] {
-                // Pilot bid format: ["2"]
-                lineNumbersToUntrash = Set(array)
-            } else if let string = lastObject as? String {
-                // FA bid format: "2A,2B,2C"
-                let positions = string.components(separatedBy: ",")
-                lineNumbersToUntrash = Set(positions.map { String($0.prefix { $0.isNumber }) })
-            }
-
-            for case let line as BILine in CBGlobalMethods.shared.selectedBidPeriod!.lines ?? [] {
-                if let lineNum = line.number?.stringValue, lineNumbersToUntrash.contains(lineNum) {
-                    line.isTrashed = NSNumber(value: false)
-                    isItemRemoved = true
+        if let LastObject = self.bidPeriod?.lastTrashedDetails?.lastObject as? NSArray {
+            if let myArray = LastObject as? [String] {
+                var isItemRemoved = false
+                for item in myArray {
+                    for case let line as BILine in CBGlobalMethods.shared.selectedBidPeriod!.lines! {
+                        if line.number?.stringValue == item {
+                            line.isTrashed = NSNumber(booleanLiteral: false)
+                            isItemRemoved = true
+                        }
+                    }
+                }
+                
+                if isItemRemoved {
+                    let temp : NSMutableArray = self.bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
+                    temp.removeLastObject()
+                    self.bidPeriod?.lastTrashedDetails = temp
+                    self.arrayLinesDetails = temp
                 }
             }
-
-            if isItemRemoved {
-                let temp: NSMutableArray = (self.bidPeriod?.lastTrashedDetails as? NSMutableArray) ?? NSMutableArray()
-                temp.removeLastObject()
-                self.bidPeriod?.lastTrashedDetails = temp
-                self.arrayLinesDetails = temp
-            }
-
-            do {
-                try self.bidPeriod?.managedObjectContext?.save()
-                updateLines()
-            } catch {
-                print("Undo trash save error: \(error)")
-            }
+        }
+        do{
+            try self.bidPeriod?.managedObjectContext?.save()
+            updateLines()
+        }catch {
+            print(error)
+        }
     }
     
     //Recover all trashed line and move back to scratchpad
@@ -678,35 +364,26 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         updateLines()
     }
     
-    @objc func refreshLines(){
-        self.updateLines()
-        self.updateTitle()
-        self.scratchPadTableView.reloadData()
-    }
     
     //Remove trashed lines from scratchpad
     @objc func removedTrashLines(notification: NSNotification){
         if self.bidPeriod!.isFABid(){
-            let lineToBid = notification.userInfo![CBLineTableCellBidLineKey] as! BILine
-            let index = self.linesArray!.index(of: lineToBid)
-//            let indexPath = IndexPath(row: index, section: 0)
-            let line = self.linesArray!.object(at: index) as! BILine
-            let faPositions = self.linePosDict![line.number!.stringValue] as! NSArray
-            let lineIndex = self.linesFetchController.indexPath(forObject: line)
-            let tempArray:NSMutableArray = NSMutableArray()
-            for j in 0..<faPositions.count {
-                let nextIndexPath = IndexPath(row: lineIndex!.row + j, section: 0)
-                let faLine = self.linesFetchController.object(at: nextIndexPath)
-                faLine.isTrashed = true
-                tempArray.add("\(faLine.number!)\(faLine.faPositionString)")
+            if let index = notification.object as? Int {
+                for line in self.sectionLines[index]{
+                    if line.isTrashed == NSNumber(true) {
+                        return
+                    }
+                    line.isTrashed = NSNumber(true)
+                }
+                let temp : NSMutableArray = self.bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
+                
+                temp.add([self.sectionLines[index][0].number!.stringValue])
+                self.bidPeriod?.lastTrashedDetails = temp.mutableCopy() as? NSArray
+                try? self.bidPeriod?.managedObjectContext?.save()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
+                    NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+                }
             }
-            let objDelArray:NSMutableArray = self.bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
-            let joinedComponents = tempArray.componentsJoined(by: ",")
-            objDelArray.add(joinedComponents)
-            let uniqueArray = NSOrderedSet(array: objDelArray as! [Any]).array
-            self.bidPeriod?.lastTrashedDetails = NSMutableArray(array: uniqueArray)
-            tempArray.removeAllObjects()
-            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
         }else{
             if let lineNumArray = notification.object as? NSArray {
                 let temp : NSMutableArray = self.bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
@@ -715,7 +392,6 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
                 NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
             }
         }
-        try? bidPeriod?.managedObjectContext?.save()
     }
     
     func updateSorts() -> [NSSortDescriptor] {
@@ -838,9 +514,9 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         let storyboard : UIStoryboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let refreshViewController = storyboard.instantiateViewController(withIdentifier: "RefreshMenuController") as! RefreshMenuController
         refreshViewController.bidPeriod = bidPeriod!
-        refreshViewController.lines = self.linesArray as! [BILine]
+        refreshViewController.lines = lines
         refreshViewController.popOverType = PopoverViewType.Refresh
-        refreshViewController.arrayLinesDetails = self.linesFetchController.fetchedObjects! as NSArray
+        refreshViewController.arrayLinesDetails = arrayLinesDetails
         refreshViewController.modalPresentationStyle = .popover
         let frame = CGRect(x: btnTrash.frame.origin.x - 40, y: btnTrash.frame.origin.y + 20 , width: 0, height: 0)
         refreshViewController.showPopover(sourceView: self.btnTrash, sourceRect: frame)
@@ -1102,7 +778,6 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
             attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: tickRange)
             cell.lineNumberLabel.attributedText = attributedString
         }
-        //Below code - added by Kripa for R and mR
         else if !bidPeriod!.isFABid() && bidPeriod!.isSecondRoundBid() && (line.type == BILineType.MixedLine.rawValue.asNSNumber || line.type == BILineType.NonEtopsMixed.rawValue.asNSNumber) {
             cell.lineNumberLabel.text = cell.lineNumberLabel.text! + ("mR")
             let strTitle:NSString = cell.lineNumberLabel.text! as NSString
@@ -1150,7 +825,6 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
             attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: tickRange)
             cell.lineNumberLabel.attributedText = attributedString
         }
-        //Edited by Kripa on 11 Dec
         if line.isRedEyeLine == true {
 //            if cell.viewWithTag(1001) == nil {
 //                let redImageView: UIImageView
@@ -1212,7 +886,6 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
                 print("lineValueView is nil - \(tag) - \(row) - \(CBLineValueTypes(rawValue: valueType)!)")
             }
             lineValueView?.alpha = 1.0
-            // Below condition uopdated bt Raja on 17 jan 2024
             // To handle the vDiff line value show / hide for Swaptimizer enable condition
             if CBLineValueTypes(rawValue: valueType) == .VacationPayDifference {
                 if line.vCBVacPay as? Double ?? 0.0 > 0.0 || line.orderedTrips.count == 0 {
