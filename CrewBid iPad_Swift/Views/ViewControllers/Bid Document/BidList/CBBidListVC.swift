@@ -1628,10 +1628,10 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
                 let etopsReserveCount = ((self.linesArray) as NSArray).value(forKey: "isETOPSRES")
                 let etopsCountNumber = NSCountedSet(array: etopsCount as! [Any])
                 let etopsReserveCountNumber = NSCountedSet(array: etopsReserveCount as! [Any])
-                var title = "\(totalLines.count) Lines - Bid List - \(bidListTotal)"
+                var title = "\(totalLines.count) Lines - Bid List - \(bidListTotal) Lines"
                 if (etopsCountNumber.count(for: 1) != 0) || (etopsReserveCountNumber.count(for: 1) != 0) {
                     let eCount = etopsCountNumber.count(for: 1) + etopsReserveCountNumber.count(for: 1)
-                    title = "\(totalLines.count) Lines - Bid List - \(bidListTotal) - \(eCount) ETOPS"
+                    title = "\(totalLines.count) Lines - Bid List - \(bidListTotal) Lines - \(eCount) ETOPS"
                 }
                 if let seniority: Int = self.bidPeriod.seniorityNumber as? Int{
                     let seniorityNumberString : String = String(seniority)
