@@ -20,16 +20,10 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
     
     var lines : [BILine] = []
     var sectionLines:[[BILine]] = []
-    var linePosDictionary : [Int : Int] = [:]
-    var linesFetchController:NSFetchedResultsController<BILine>!
-    var filtersFetchController: NSFetchedResultsController<BIFilterRule>!
-    var sortsFetchController:NSFetchedResultsController<BILineSort>!
     var bidPeriod : BIBidPeriod?
     var ScratchPadCalendarData = BICalendarData()
     var calendarDay : [BICalendarDay] = []
-    var trashedPredicate: NSPredicate?
     var tripTextPopover: UIPopoverPresentationController?
-    var notTrashedPredicate: NSPredicate!
     var notBidPredicate: NSPredicate!
     var tripCBButton: CBTripButton!
     private var maxPositionsPerLine: Int = 4
@@ -443,9 +437,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
                     userPosOrder.add(lineSort?.type as Any)
                 }
                 let sort = NSSortDescriptor(key: lineSort?.keyPath, ascending: (lineSort?.ascending?.boolValue)!)
-              //  if lineSort?.isBidListSort == false{
                     lineSorts.append(sort)
-              //  }
             }
         }
         for pos in userPosOrder {
@@ -623,58 +615,6 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        self.linesArray = NSMutableArray()
-//        self.linePosDict = NSDictionary()
-//        let linePos = NSMutableDictionary()
-//        let lineBILineMap = NSMutableDictionary()
-//        let linesArray = NSMutableArray(array: self.linesFetchController.fetchedObjects!)
-//        let linesToRemove = NSMutableIndexSet()
-//        let posArray = NSMutableArray()
-//        let lineObjArray = NSMutableArray()
-//        for index in 0..<linesArray.count {
-//            let line = linesArray[index] as! BILine
-//            if index == 0{
-//                posArray.add(line.faPositionString)
-//                lineObjArray.add(line)
-//            }
-//            if index > 0 {
-//                let prevLine = linesArray[index - 1] as! BILine
-//                if line.number?.intValue == prevLine.number?.intValue {
-//                    posArray.add(line.faPositionString)
-//                    linesToRemove.add(index)
-//                    lineObjArray.add(line)
-//                }else{
-//                    linePos.setValue(posArray.mutableCopy(), forKey: prevLine.number!.stringValue)
-//                    lineBILineMap.setValue(lineObjArray.mutableCopy(), forKey: prevLine.number!.stringValue)
-//                    posArray.removeAllObjects()
-//                    lineObjArray.removeAllObjects()
-//                    posArray.add(line.faPositionString)
-//                    lineObjArray.add(line)
-//                }
-//            }
-//            
-//            if index == linesArray.count - 1 {
-//                linePos.setValue(posArray.mutableCopy(), forKey: line.number!.stringValue)
-//                lineBILineMap.setValue(lineObjArray.mutableCopy(), forKey: line.number!.stringValue)
-//                posArray.removeAllObjects()
-//                lineObjArray.removeAllObjects()
-//            }
-//        }
-//        linesArray.removeObjects(at: linesToRemove as IndexSet)
-//        var swiftDict = [String: [BILine]]()
-//
-//        for (key, value) in lineBILineMap {
-//            if let keyStr = key as? String,
-//               let valueArray = value as? NSArray {
-//                let bilines = valueArray.compactMap { $0 as? BILine }
-//                swiftDict[keyStr] = bilines
-//            }
-//        }
-//
-//        self.lineBILineDict = swiftDict
-//        self.linePosDict = linePos
-//        self.linesArray = linesArray
-//        return linesArray.count
         return 1
     }
     
@@ -734,17 +674,10 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
                 cell.refreshTripButtons(highlightFlag: true, calendarWidth: self.view.frame.size.width - 160)
             } else {
                 if setupCircles {
-//                    if CBUtils.isVersion6AndBelow() {
-//                        cell.posAGrayView.alpha = 0.3
-//                        cell.posBGrayView.alpha = 0.3
-//                        cell.posCGrayView.alpha = 0.3
-//                        cell.posDGrayView.alpha = 0.3
-//                    } else {
                         cell.posAGrayView.alpha = 0.15
                         cell.posBGrayView.alpha = 0.15
                         cell.posCGrayView.alpha = 0.15
                         cell.posDGrayView.alpha = 0.15
-//                    }
                     
                     let linesFa = self.sectionLines[row]
                     //A,B,C,D position checking
@@ -828,30 +761,12 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
             cell.lineNumberLabel.attributedText = attributedString
         }
         if line.isRedEyeLine == true {
-//            if cell.viewWithTag(1001) == nil {
-//                let redImageView: UIImageView
-//                if #available(iOS 13.0, *) {
-//                    redImageView = UIImageView(image: UIImage(systemName: "eye.fill"))
-//                } else {
-//                    redImageView = UIImageView(image: UIImage(named: "RedEye"))
-//                }
-//                redImageView.contentMode = .scaleAspectFit
-//                redImageView.tintColor = .red
-//                let imageViewY = (cell.userFlagIconView.frame.origin.y) - (cell.userFlagIconView.frame.height) + 7.0
-//                redImageView.frame = CGRect(x: 26.0, y: imageViewY, width: 25.0, height: 25.0)
-//                redImageView.tag = 1001
-//                cell.addSubview(redImageView)
-//            }
             cell.redEyeImage.isHidden = false
         } else {
-//            if let existingImageView = cell.viewWithTag(1001) as? UIImageView {
-//                existingImageView.removeFromSuperview()
-//            }
             cell.redEyeImage.isHidden = true
         }
-        //Set Etopsres line
         
-
+        //Set Etopsres line
         cell.warningButton.alpha = 0.0
         
         
@@ -907,199 +822,6 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
             lineValueView?.alpha = 0.0
         }
     }
-//    func configureCell(_ cell:ScratchPadTableCellTableViewCell,line: BILine, row : Int) {
-//
-//        cell.lineNumberLabel.text = line.number?.stringValue
-//        cell.orderLabel.text = "\(row + 1)"
-//        cell.selectionStyle = .none
-//        if line.isRedEyeLine == true{
-//            cell.redEyeImage.isHidden = false
-//        }else{
-//            cell.redEyeImage.isHidden = true
-//        }
-//        
-//        cell.calendarData = ScratchPadCalendarData
-//        cell.calendarDaysArr = calendarDay
-//        cell.bidPeriod = bidPeriod!
-//        cell.line = line
-//        cell.index = row
-//        cell.contentView.tag = row
-//        cell.tableView = scratchPadTableView
-//        cell.tripButtonActionBlock = {(_ tripButton: CBTripButton) -> Void in
-//            DispatchQueue.main.async {
-//                self.showTripTextPopover(for: tripButton)
-//            }}
-//
-//        
-//        let setupCircles = true
-//        if (bidPeriod?.isFABid())!{
-//            
-//            if row > 0 {
-//                let prevLine = self.linesArray![row - 1] as! BILine
-//                let line = self.linesArray![row] as! BILine
-//                if line.number?.intValue == prevLine.number?.intValue{
-//                    cell.isHidden = true
-//                }
-//            }else{
-//                cell.isHidden = false
-//            }
-//            
-//            cell.removeAllTripButtons()
-//            cell.posAGrayView.alpha = 0
-//            cell.posBGrayView.alpha = 0
-//            cell.posCGrayView.alpha = 0
-//            cell.posDGrayView.alpha = 0
-//            cell.posAView.alpha = 0
-//            cell.posBView.alpha = 0
-//            cell.posCView.alpha = 0
-//            cell.posDView.alpha = 0
-//            cell.posMView.alpha = 0
-//            cell.posNAView.alpha = 0
-//
-//            if line.faPositionString == "NA"{
-//                cell.posNAView.alpha = 1
-//                cell.refreshTripButtons(highlightFlag: true, calendarWidth: self.view.frame.size.width - 160)
-//            }else if line.faPositionString == "M"{
-//                cell.posMView.alpha = 1
-//                cell.refreshTripButtons(highlightFlag: true, calendarWidth: self.view.frame.size.width - 160)
-//            }else{
-//                
-//                if row > 0 {
-//                    let prevLine = self.linesArray![row - 1] as! BILine
-//                    let line = self.linesArray![row] as! BILine
-//                    if line.number?.intValue == prevLine.number?.intValue{
-////                        setupCircles = false
-//                    }
-//                }
-//                
-//                if setupCircles{
-//                    cell.posAGrayView.alpha = 0.15
-//                    cell.posBGrayView.alpha = 0.15
-//                    cell.posCGrayView.alpha = 0.15
-//                    cell.posDGrayView.alpha = 0.15
-//                    
-//                    let faPositions = self.linePosDict![line.number!.stringValue] as! [Any]
-//                        for j in 0..<faPositions.count{
-//                            let posString = faPositions[j] as! String
-//                            if posString == "A" {
-//                                cell.setCircle(j, withPos: posString, color: CBColor.faPosAColor, isGray: false)
-//                            }else if posString == "B" {
-//                                cell.setCircle(j, withPos: posString, color: CBColor.faPosBColor, isGray: false)
-//                            }else if posString == "C" {
-//                                cell.setCircle(j, withPos: posString, color: CBColor.faPosCColor, isGray: false)
-//                            }else {
-//                                cell.setCircle(j, withPos: posString, color: CBColor.faPosDColor, isGray: false)
-//                            }
-//                        }
-//                    cell.refreshTripButtons(highlightFlag: true, calendarWidth: self.view.frame.size.width - 160)
-//                }
-//            }
-//        }else{
-//            let orderLabel:UILabel = cell.viewWithTag(20) as! UILabel
-//            orderLabel.alpha = 1
-//            cell.refreshTripButtons(highlightFlag: true, calendarWidth: self.view.frame.size.width - 160)
-//        }
-//        
-//        //Set Etops line
-//        if line.isETOPSRES?.boolValue == true{
-//            cell.lineNumberLabel.text = cell.lineNumberLabel.text! + "Re"
-//            let strTitle = cell.lineNumberLabel.text! as NSString
-//            let tickRange = strTitle.range(of: "Re")
-//            let attrString = NSMutableAttributedString(string: cell.lineNumberLabel.text!)
-//            attrString.addAttribute(NSAttributedString.Key.font, value: UIFont.systemFont(ofSize: 14.0), range: tickRange)
-//            attrString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: tickRange)
-//            cell.lineNumberLabel.attributedText = attrString
-//        }else if !bidPeriod!.isFABid() && bidPeriod!.isSecondRoundBid() && (line.type == BILineType.MixedLine.rawValue.asNSNumber || line.type == BILineType.NonEtopsMixed.rawValue.asNSNumber){
-//            cell.lineNumberLabel.text = cell.lineNumberLabel.text! + "mR"
-//            let strTitle = cell.lineNumberLabel.text! as NSString
-//            let tickRange = strTitle.range(of: "mR")
-//            let attrString = NSMutableAttributedString(string: cell.lineNumberLabel.text!)
-//            attrString.addAttribute(NSAttributedString.Key.font, value: UIFont.systemFont(ofSize: 14.0), range: tickRange)
-//            attrString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: tickRange)
-//            cell.lineNumberLabel.attributedText = attrString
-//        }else if bidPeriod!.isFABid() && bidPeriod!.isSecondRoundBid(){
-//            let reserveTypeSuffixMap:[NSNumber:String] = [BIFaReserveLineType.SnrAMres.rawValue.asNSNumber: "sa", BIFaReserveLineType.SnrPMres.rawValue.asNSNumber: "sp", BIFaReserveLineType.JnrAMres.rawValue.asNSNumber: "ja", BIFaReserveLineType.JnrPMres.rawValue.asNSNumber: "jp", BIFaReserveLineType.JnrLateRes.rawValue.asNSNumber: "jl"]
-//            
-//            if let faReserveLineType = line.faReserveLineType, let suffix = reserveTypeSuffixMap[faReserveLineType] {
-//                cell.lineNumberLabel.text = cell.lineNumberLabel.text! + suffix
-//                let strTitle = cell.lineNumberLabel.text! as NSString
-//                let tickRange = strTitle.range(of: suffix)
-//                let attrString = NSMutableAttributedString(string: cell.lineNumberLabel.text!)
-//                attrString.addAttribute(NSAttributedString.Key.font, value: UIFont.systemFont(ofSize: 14.0), range: tickRange)
-//                attrString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: tickRange)
-//                cell.lineNumberLabel.attributedText = attrString
-//            }
-//        }else if line.type == BILineType.ReserveLine.rawValue.asNSNumber || line.type == BILineType.NonEtopsReserve.rawValue.asNSNumber {
-//            cell.lineNumberLabel.text = cell.lineNumberLabel.text! + "R"
-//            let strTitle = cell.lineNumberLabel.text! as NSString
-//            let tickRange = strTitle.range(of: "R")
-//            let attrString = NSMutableAttributedString(string: cell.lineNumberLabel.text!)
-//            attrString.addAttribute(NSAttributedString.Key.font, value: UIFont.systemFont(ofSize: 14.0), range: tickRange)
-//            attrString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range: tickRange)
-//            cell.lineNumberLabel.attributedText = attrString
-//        }
-//        if line.isETOPS?.boolValue == true{
-//            cell.lineNumberLabel.text = cell.lineNumberLabel.text! + "e"
-//            let strTitle = cell.lineNumberLabel.text! as NSString
-//            let tickRange = strTitle.range(of: "e")
-//            let attrString = NSMutableAttributedString(string: cell.lineNumberLabel.text!)
-//            attrString.addAttribute(NSAttributedString.Key.font, value: UIFont.systemFont(ofSize: 14.0), range: tickRange)
-//            attrString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red, range:tickRange)
-//            cell.lineNumberLabel.attributedText = attrString
-//        }
-//        //Setting the flag
-//        cell.userFlagIconView.backgroundColor = CBUserFlagTableController.colorForUserFlagType(flagType: CBUserFlagType(rawValue: Int(truncating: (line.userFlagType)!))!)
-//        if CBUserFlagType.none == CBUserFlagType(rawValue: line.userFlagType as! Int) {
-//            cell.userFlagIconView.alpha = 1
-//        }else{
-//            cell.userFlagIconView.alpha = 1
-//        }
-//        // Line values.
-//        let lineValuesKey = CBLineValuesMenuController.lineValuesKey(for: self.bidPeriod!)
-//        let lineValuesToDisplay = NSMutableArray()
-//        if UserDefaults.standard.object(forKey: lineValuesKey) != nil {
-//            let arr = UserDefaults.standard.value(forKey: lineValuesKey) as! [Any]
-//            lineValuesToDisplay.addObjects(from: arr)
-//        }
-//        for i in 0..<lineValuesToDisplay.count {
-//            let tag = 10000 + i * 10
-//            let valueType: NSInteger
-//            let lineValueView = cell.viewWithTag(tag) as? CBLineValueView
-//            if let val = lineValuesToDisplay[i] as? NSNumber {
-//                valueType = NSInteger(truncating: val)
-//            }else if let val = lineValuesToDisplay[i] as? String {
-//                valueType = NSInteger(val)!
-//            }else{
-//                let val = lineValuesToDisplay[i] as! Int
-//                valueType = NSInteger(val)
-//            }
-//            if lineValueView != nil {
-//                CBLineValuesMenuController.setLineValueView(lineValueView!, with: line, forType: CBLineValueTypes(rawValue: valueType)!, bidPeriod: self.bidPeriod!)
-//            }else{
-//                print("Line value is nil - \(tag) - \(row) - \(CBLineValueTypes(rawValue: valueType)!)")
-//            }
-//            lineValueView?.alpha = 1
-//            if CBLineValueTypes(rawValue: valueType) == .VacationPayDifference {
-//                if self.bidPeriod?.cbFileIntent != nil {
-//                    if line.vCBVacPay!.doubleValue > 0 || line.orderedTrips.count == 0 {
-//                        lineValueView?.alpha = 1
-//                    }else{
-//                        lineValueView?.alpha = 0
-//                    }
-//                }else{
-//                    lineValueView?.alpha = 0
-//                }
-//            }else{
-//                lineValueView?.alpha = 1
-//            }
-//        }
-//        // Set any unused lineValueViews to transparent
-//        for i in lineValuesToDisplay.count..<5 {
-//            let tag = 10000 + i * 10
-//            let lineValueView = cell.viewWithTag(tag) as? CBLineValueView
-//            lineValueView?.alpha = 0
-//        }
-//    }
 }
 
 extension CBScratchPadVC: UITextFieldDelegate {

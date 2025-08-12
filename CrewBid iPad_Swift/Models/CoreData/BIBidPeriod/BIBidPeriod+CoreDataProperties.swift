@@ -145,7 +145,7 @@ extension BIBidPeriod {
     @NSManaged public var vacations: NSSet?
     @NSManaged public var lineFilters: NSSet?
     @NSManaged public var bidByEmpID: String?
-    
+    @NSManaged public var insertionPoints: NSSet?
 }
 
 // MARK: Generated accessors for awardDetails

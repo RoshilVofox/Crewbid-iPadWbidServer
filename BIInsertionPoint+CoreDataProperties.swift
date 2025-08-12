@@ -19,7 +19,7 @@ extension BIInsertionPoint {
     @NSManaged public var above: NSNumber?
     @NSManaged public var index: NSNumber?
     @NSManaged public var line: BILine?
-
+    @NSManaged public var bidPeriod: BIBidPeriod?
 }
 
 extension BIInsertionPoint : Identifiable {

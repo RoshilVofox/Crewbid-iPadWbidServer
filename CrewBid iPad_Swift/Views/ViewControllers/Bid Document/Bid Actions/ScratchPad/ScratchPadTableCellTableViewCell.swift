@@ -1483,21 +1483,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         let sView = sender as! UIView
         let notification = Notification(name: Notification.Name(rawValue: CBLineTableCellBidLineNotification), object: self.moveBidListButton.globalFrame!, userInfo: ["LineNum": line!.number!.intValue, "Lines": availableFaLines, CBLineTableCellButtonViewKey: sView])
         NotificationCenter.default.post(notification)
-//        if self.bidPeriod!.isFABid(){
-//            if let sView = sender as? UIView {
-//                let userInfo: [AnyHashable: Any] = [CBLineTableCellBidLineKey:self.line!,CBLineTableCellButtonViewKey: sView]
-//                let notification = Notification(name:Notification.Name(CBLineTableCellFABidLineNotification), object:self.moveBidListButton.globalFrame, userInfo: userInfo)
-//                NotificationCenter.default.post(notification)
-//            }
-//        }else{
-//            let userInfo:[AnyHashable: Any] = [CBLineTableCellBidLineKey: self.line!]
-//            let notification = Notification(name: Notification.Name(CBLineTableCellBidLineNotification), object: nil, userInfo: userInfo)
-//            NotificationCenter.default.post(notification)
-//        }
-//                NotificationCenter.default.post(name: Notification.Name("RefreshBidListLineCountFilter"), object: self)
-//                NotificationCenter.default.post(name: Notification.Name("RefreshBidListLineCountSort"), object: self)
-//                NotificationCenter.default.post(name: Notification.Name("RefreshBidListLineCountPreset"), object: self)
-        
     }
 
 }

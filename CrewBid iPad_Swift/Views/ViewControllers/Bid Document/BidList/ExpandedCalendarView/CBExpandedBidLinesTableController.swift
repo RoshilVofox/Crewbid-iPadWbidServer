@@ -128,21 +128,15 @@ class CBExpandedBidLinesTableController: BaseViewController {
 
     func setupVariables(){
         bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
-        let insertionPointFetch = NSFetchRequest<BIInsertionPoint>(entityName: "InsertionPoint")
-        insertionPointFetch.fetchLimit = 1
-        do {
-            let results = try self.bidPeriod.managedObjectContext!.fetch(insertionPointFetch)
-            if let existingPoint = results.first {
-                insertionPoint = existingPoint
-            } else {
-                let entity = NSEntityDescription.entity(forEntityName: "InsertionPoint", in: self.bidPeriod.managedObjectContext!)!
-                let newPoint = BIInsertionPoint(entity: entity, insertInto: self.bidPeriod.managedObjectContext!)
-                newPoint.index = 0
-                newPoint.above = false
-                insertionPoint = newPoint
-            }
-        } catch {
-            print("Failed to fetch insertion point: \(error)")
+        if bidPeriod.insertionPoints?.allObjects.count ?? 0 > 0 {
+            insertionPoint = bidPeriod.insertionPoints!.allObjects[0] as? BIInsertionPoint
+        } else {
+            let entity = NSEntityDescription.entity(forEntityName: "InsertionPoint", in: bidPeriod.managedObjectContext!)
+            insertionPoint = BIInsertionPoint(entity: entity!, insertInto: bidPeriod.managedObjectContext!)
+            insertionPoint?.bidPeriod = self.bidPeriod
+            insertionPoint?.index = 0
+            insertionPoint?.above = false
+            try? bidPeriod.managedObjectContext?.save()
         }
         updateBidList()
     }
@@ -674,7 +668,6 @@ extension CBExpandedBidLinesTableController: UITableViewDelegate,UITableViewData
         //No reordering in Freeze line
         let startLine = linesArray[indexPath.row]
         if (startLine.isFrozen != 0) {
-            //            tableViewNormalView.reloadData()
             return false
         }
         return true

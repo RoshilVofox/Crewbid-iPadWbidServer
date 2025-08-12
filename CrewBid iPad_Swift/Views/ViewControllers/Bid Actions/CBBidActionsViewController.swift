@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CBBidActionsViewController: UIViewController, KUIPopOverUsable {
+class CBBidActionsViewController: BaseViewController, KUIPopOverUsable {
     
     var contentSize: CGSize {
         return CGSize(width: 410, height: 480)
@@ -15,6 +15,7 @@ class CBBidActionsViewController: UIViewController, KUIPopOverUsable {
     
     @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var tableView: UITableView!
+    
     
     lazy var employeeNum: UITextField = {
         let tf = UITextField()
