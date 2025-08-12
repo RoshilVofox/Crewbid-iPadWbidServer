@@ -37,7 +37,8 @@ class CBBidActionsViewController: BaseViewController, KUIPopOverUsable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.tableView.clipsToBounds = true
+        self.tableView.layer.cornerRadius = 5
         arr = arrForPilotWithAwdTxt
        setupUI()
     }
