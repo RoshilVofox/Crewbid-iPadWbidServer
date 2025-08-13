@@ -357,16 +357,13 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         try? self.bidPeriod?.managedObjectContext?.save()
         UserDefaults.standard.set(false, forKey: kCBHideVacationKey)
         
-        guard let fileNameKey = self.bidPeriod?.userVacationWbidOrCrewBid,
-              let dicVactionFile = self.readVacationFile(fileName: fileNameKey),
-              let file = dicVactionFile["File"] as? [String: Any],
-              let topLevel = file["SWAPtimizer_CrewBid_Data"] as? [String: Any],
-              let header = topLevel["Header"] as? [String: Any],
-              let fileName = header["FileIdent"] as? String
-        else {
-            completion(false)
-            return
-        }
+        let fileNameKey = self.bidPeriod?.faFileIntentF
+        let dicVactionFile = self.readVacationFile(fileName: fileNameKey)
+        let file = dicVactionFile?["File"] as? [String: Any]
+        let topLevel = file?["SWAPtimizer_CrewBid_Data"] as? [String: Any]
+        let header = topLevel?["Header"] as? [String: Any]
+        let fileName = header?["FileIdent"] as? String
+    
 
         if fileName == self.bidPeriod?.faFileIntentF {
             if EOMSelectedIndex != "" {
@@ -375,7 +372,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 _ = self.readVacationFile(fileName: self.bidPeriod?.faFileIntentF ?? "")
             }
             
-            guard let configInfo = dicVactionFile["ConfigInfo"] as? [String: Any],
+            guard let configInfo = dicVactionFile?["ConfigInfo"] as? [String: Any],
                   let yearMonth = configInfo["YearMonth"] as? String else {
                 completion(false)
                 return
@@ -395,7 +392,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     completion(success)
                 }
             } else {
-                self.validateFAVacation(jsonData: dicVactionFile) { isValid in
+                self.validateFAVacation(jsonData: dicVactionFile!) { isValid in
                     completion(isValid)
                 }
             }
@@ -410,19 +407,21 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     //    MARK: vacation File type = "FAVACATION_EOMOnly" and download
     func downloadFaVacationWithOnlyEOMFilesWithHud(completion: @escaping (Bool) -> Void) {
         self.bidPeriod?.userVacationWbidOrCrewBid = "FAVacationEomOnly"
-        try? self.bidPeriod?.managedObjectContext?.save()
+        do {
+            try? self.bidPeriod?.managedObjectContext?.save()
+        }
+        catch {
+            print("error saving \(error.localizedDescription)")
+        }
         UserDefaults.standard.set(false, forKey: kCBHideVacationKey)
         
-        guard let fileNameKey = self.bidPeriod?.userVacationWbidOrCrewBid,
-              let dicVactionFile = self.readVacationFile(fileName: fileNameKey),
-              let file = dicVactionFile["File"] as? [String: Any],
-              let topLevel = file["SWAPtimizer_CrewBid_Data"] as? [String: Any],
-              let header = topLevel["Header"] as? [String: Any],
-              let fileIdent = header["FileIdent"] as? String
-        else {
-            completion(false)
-            return
-        }
+        let fileNameKey = self.bidPeriod?.faFileIntentEomOnly
+        let dicVactionFile = self.readVacationFile(fileName: fileNameKey)
+        let file = dicVactionFile?["File"] as? [String: Any]
+        let topLevel = file?["SWAPtimizer_CrewBid_Data"] as? [String: Any]
+        let header = topLevel?["Header"] as? [String: Any]
+        let fileIdent = header?["FileIdent"] as? String ?? ""
+        
         
         if fileIdent == self.bidPeriod?.faFileIntentF {
             if EOMSelectedIndex != "" {
@@ -431,13 +430,10 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 _ = self.readVacationFile(fileName: intentEomOnly)
             }
             
-            guard let configInfo = dicVactionFile["ConfigInfo"] as? [String: Any],
-                  let yearMonth = configInfo["YearMonth"] as? String else {
-                completion(false)
-                return
-            }
+            let configInfo = dicVactionFile?["ConfigInfo"] as? [String: Any]
+            let yearMonth = configInfo?["YearMonth"] as? String
             
-            let vacayMonth = Int(yearMonth.dropFirst(4).prefix(2)) ?? 0
+            let vacayMonth = Int((yearMonth?.dropFirst(4).prefix(2))!) ?? 0
             if vacayMonth != self.bidPeriod?.month?.intValue {
                 let moc = self.bidPeriod?.managedObjectContext
                 self.bidPeriod?.faFileIntentF = ""
@@ -452,7 +448,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     completion(success)
                 }
             } else {
-                self.validateFAVacation(jsonData: dicVactionFile) { isValid in
+                self.validateFAVacation(jsonData: dicVactionFile!) { isValid in
                     completion(isValid)
                 }
             }
@@ -526,9 +522,9 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid ?? "WBID"
             
             if vacationType == "WBID" {
-                vacationDetailDictionary["isEOM"] = NSNumber(value: false)
+                vacationDetailDictionary["IsEOM"] = NSNumber(value: false)
             } else {
-                vacationDetailDictionary["isEOM"] = NSNumber(value: true)
+                vacationDetailDictionary["IsEOM"] = NSNumber(value: true)
                 vacationDetailDictionary["FAEOMStartDate"] = self.bidPeriod?.faEomSelectedDate
             }
             
@@ -612,9 +608,9 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             vacationDetailDictionary["Round"] = round
 
             if vacationType == "FAVacation" {
-                vacationDetailDictionary["isEOM"] = NSNumber(value: false)
+                vacationDetailDictionary["IsEOM"] = NSNumber(value: false)
             } else {
-                vacationDetailDictionary["isEOM"] = NSNumber(value: true)
+                vacationDetailDictionary["IsEOM"] = NSNumber(value: true)
                 vacationDetailDictionary["FAEOMStartDate"] = self.bidPeriod?.faEomSelectedDate
             }
 
@@ -684,6 +680,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             completion(false)
             return
         }
+
         
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeoutVD)
         request.httpMethod = "POST"
@@ -1826,7 +1823,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         
     }
     
-    func readVacationFile(fileName: String) -> [String: Any]? {
+    func readVacationFile(fileName: String?) -> [String: Any]? {
         let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid
         var vacationData: NSObject = NSObject()
         if vacationType == "WBID" {
@@ -1845,7 +1842,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             vacationData = (self.bidPeriod?.faVacationFiles)!
         }
         else if vacationType == "FAVacationF" {
-            let eomIndexF = fileName.suffix(1)
+            let eomIndexF = fileName?.suffix(1)
             if eomIndexF == "1" {
                 vacationData = (self.bidPeriod?.faVacationFilesFA1)!
             } else if eomIndexF == "2" {
@@ -1855,7 +1852,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             }
         }
         else if vacationType == "FAVacationEomOnly" {
-            let eomIndexF = fileName.suffix(1)
+            let eomIndexF = fileName?.suffix(1)
             if eomIndexF == "1" {
                 vacationData = (self.bidPeriod?.faVacationFilesEomOnlyFA1)!
             } else if eomIndexF == "2" {

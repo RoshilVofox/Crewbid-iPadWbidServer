@@ -68,7 +68,15 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         self.linesManager = BILinesManager.init(managedObjectContext: self.managedObjectContext)
         self.calendarData = calendarData.initWithBidPeriod(bidPeriod: self.bidPeriod!)!
         isVacationsRemoved = false
-        
+        btnSwaptimizer.tag = 21
+        if self.bidPeriod!.isFABid() {
+            btnWbidMax.setTitle("VAC", for: .normal)
+            btnSwaptimizer.isHidden = true
+        }
+        else {
+            btnWbidMax.setTitle("WBidMax", for: .normal)
+            btnSwaptimizer.isHidden = false
+        }
         self.bidLinesController = self.storyboard?.instantiateViewController(withIdentifier: "CBBidListVC") as? CBBidListVC
         self.bidLinesController.managedObjectContext = self.managedObjectContext
         self.bidLinesController.bidPeriod = self.bidPeriod!
@@ -89,7 +97,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         
     }
     override func viewDidDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+        super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver("SortBidListAction")
         NotificationCenter.default.removeObserver("SyncSwitchStateAction")
         NotificationCenter.default.removeObserver("ShowCommutabilityFilterView")
@@ -597,14 +605,14 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             btnEOM.isSelected = false
             self.bidPeriod?.isEomOn = NSNumber(value: false)
             btnEOM.backgroundColor = .white
-            btnEOM.setTitleColor(.white, for: .normal)
+            btnEOM.setTitleColor(.black, for: .normal)
         }
         if self.bidPeriod?.isFABid() == false {
             if ((self.bidPeriod?.isSwaptimizerOn?.boolValue == true) && (self.bidPeriod!.vacationType != nil) && (self.bidPeriod?.vacationType == "WBIDF")) {
                 btnEOM.isSelected = false
                 self.bidPeriod?.isEomOn = NSNumber(value: false)
                 btnEOM.backgroundColor = .white
-                btnEOM.setTitleColor(.white, for: .normal)
+                btnEOM.setTitleColor(.black, for: .normal)
             }
         }
     }
@@ -1477,7 +1485,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             return
         }
         self.view.showActivityIndicator(color: UIColor.blue, message: "Contacting SWAPtimizer...")
-        DispatchQueue.global(qos: .default).async {
+        DispatchQueue.main.async {
             vDL.downloadSwaptimizerEOMVacationFilesWithHud() { finished in
                 if finished {
                     self.view.hideActivityIndicator()
@@ -1656,15 +1664,15 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     func executeEOmWBid(vDL: CBVacationDownloader) {
-        if app.isUserInformationAvailable() == false {
-            self.disableVacationButton()
-            AlertService.showAlertForTopVC(title: "CrewBid", message: "An internet connection is required to download the vacation file. Please connect to the internet and try again.")
-            btnSwaptimizer.isEnabled = true
-            btnWbidMax.isEnabled = true
-            return
-        }
+//        if app.isUserInformationAvailable() == false {
+//            self.disableVacationButton()
+//            AlertService.showAlertForTopVC(title: "CrewBid", message: "An internet connection is required to download the vacation file. Please connect to the internet and try again.")
+//            btnSwaptimizer.isEnabled = true
+//            btnWbidMax.isEnabled = true
+//            return
+//        }
         self.view.showActivityIndicator(message: "Contacting SWAPtimizer...")
-        DispatchQueue.global(qos: .default).async {
+        DispatchQueue.main.async {
             vDL.downloadWbidEOMVacationFilesWithHud() { finished in
                 if finished {
                     self.btnSwaptimizer.isEnabled = true
@@ -1693,14 +1701,16 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     self.btnSwaptimizer.isEnabled = true
                     self.btnWbidMax.isEnabled = true
                 }
-//                self.sortsTableController.tableView.reloadData()
-//                self.filtersTableController.objFilterTableView.reloadData()
-                NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
-                self.bidPeriod!.userVacationWbidOrCrewBid = ""
-                self.disableVacationButton()
-                self.view.hideActivityIndicator()
-                self.btnSwaptimizer.isEnabled = true
-                self.btnWbidMax.isEnabled = true
+                else {
+                    //                self.sortsTableController.tableView.reloadData()
+                    //                self.filtersTableController.objFilterTableView.reloadData()
+                    NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+                    self.bidPeriod!.userVacationWbidOrCrewBid = ""
+                    self.disableVacationButton()
+                    self.view.hideActivityIndicator()
+                    self.btnSwaptimizer.isEnabled = true
+                    self.btnWbidMax.isEnabled = true
+                }
             }
         }
     }
@@ -1818,7 +1828,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             return
         }
         self.view.showActivityIndicator(message: "Contacting ...")
-        DispatchQueue.global(qos: .default).async {
+        DispatchQueue.main.async {
             if self.eomSelectedIndex.isEmpty {
                 vDL.EOMSelectedIndex = self.eomSelectedIndex
             }
@@ -1851,27 +1861,31 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     self.btnWbidMax.isUserInteractionEnabled = true
                     self.btnWbidMax.alpha = 1
                 }
+                else {
+                    NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+                    self.disableVacationButton()
+                    self.view.hideActivityIndicator()
+                    self.btnWbidMax.isEnabled = true
+                }
             }
             DispatchQueue.main.async {
 //                self.sortsTableController.tableView.reloadData()
 //                self.filtersTableController.objFilterTableView.reloadData()
-                NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
-                self.disableVacationButton()
-                self.view.hideActivityIndicator()
-                self.btnWbidMax.isEnabled = true
+               
             }
         }
     }
     func executeEOMOnlyFA(vDL: CBVacationDownloader) {
-        if (app.isUserInformationAvailable() == false) {
-            self.disableVacationButton()
-            self.bidPeriod!.userVacationWbidOrCrewBid = ""
-            AlertService.showAlertForTopVC(title: "CrewBid", message: "User information not available,you have to create user account to access WBidMax vacation. Please create user account by clicking on new bid period (+) from home screen.")
-            self.btnWbidMax.isEnabled = true
-            return
-        }
-        self.view.showActivityIndicator(message: "Contacting ...")
-        DispatchQueue.global(qos: .default).async {
+//        if (app.isUserInformationAvailable() == false) {
+//            self.disableVacationButton()
+//            self.bidPeriod!.userVacationWbidOrCrewBid = ""
+//            AlertService.showAlertForTopVC(title: "CrewBid", message: "User information not available,you have to create user account to access WBidMax vacation. Please create user account by clicking on new bid period (+) from home screen.")
+//            self.btnWbidMax.isEnabled = true
+//            return
+//        }
+        
+        DispatchQueue.main.async {
+            self.view.showActivityIndicator(message: "Contacting ...")
             if self.eomSelectedIndex.isEmpty {
                 vDL.EOMSelectedIndex = self.eomSelectedIndex
             }
@@ -1880,10 +1894,12 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             }
             vDL.downloadFaVacationWithOnlyEOMFilesWithHud() { finished in
                 if finished {
+                    self.btnWbidMax.isEnabled = true
                     if (self.bidPeriod!.containsVacay?.boolValue == true) {
+                        NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
                         self.selectWBidVacationButton()
                         self.setVacationBackgroundColor()
-                        self.enableOrDisableEOMButton()
+                        self.reprocessWorkBlock()
                         NotificationCenter.default.post(name: NSNotification.Name("ReloadSortTable"), object: self)
                         NotificationCenter.default.post(name: NSNotification.Name("ReloadFilterTable"), object: self)
                         NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
@@ -1906,14 +1922,17 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     self.btnWbidMax.isUserInteractionEnabled = true
                     self.btnWbidMax.alpha = 1
                 }
+                else {
+                    NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+                    self.bidPeriod!.userVacationWbidOrCrewBid = ""
+                    self.disableVacationButton()
+                    self.view.hideActivityIndicator()
+                    self.btnWbidMax.isEnabled = true
+                }
             }
 //            self.sortsTableController.tableView.reloadData()
 //            self.filtersTableController.objFilterTableView.reloadData()
-            NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
-            self.bidPeriod!.userVacationWbidOrCrewBid = ""
-            self.disableVacationButton()
-            self.view.hideActivityIndicator()
-            self.btnWbidMax.isEnabled = true
+            
         }
     }
     
@@ -1991,6 +2010,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 //                self.scratchpadTableController.scratchPadTableView.reloadData()
                 NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
             }
+            
             self.reprocessAfterChangedIncludeDroppedTrips() { finished in
                 if (finished) {
                     if (UserDefaults.standard.bool(forKey: KCBIsSyncEnabled)) {
@@ -2179,7 +2199,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         btnEOM.backgroundColor = UIColor(red: 35.0/255.0, green: 177.0/255.0, blue: 76.0/255.0, alpha: 1.0)
         btnEOM.setTitleColor(.white, for: .selected)
         let vDL = CBVacationDownloader()
-        vDL.bidPeriod! = self.bidPeriod!
+        vDL.bidPeriod = self.bidPeriod
         vDL.calendarData = self.calendarData
         let vacationType = self.bidPeriod!.userVacationWbidOrCrewBid
         if (vacationType == "FAVacationEomOnly" || self.bidPeriod!.seniorityVacayAvailable?.boolValue == false) {
@@ -2389,32 +2409,37 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     func alertTitleActionPilot(_ title: String) {
         let dayForPilot = eomDayForPilot()
         let eomMonthString = eomMonth()
-
-        if title == "\(eomMonthString) \(String(describing: dayForPilot["Day1"]))" {
-            bidPeriod!.faEomSelectedDate = 1
-            eomSelectedIndex = "1"
-            if bidPeriod!.isMaxSubScriptionOfEnteredUser?.boolValue == true {
-//                checkSecretUser()
-            } else {
-                checkForSWAPtimizerFile()
+        if let day1 = dayForPilot["Day1"] {
+            if title == "\(eomMonthString) \(day1)" {
+                bidPeriod!.faEomSelectedDate = 1
+                eomSelectedIndex = "1"
+                if bidPeriod!.isMaxSubScriptionOfEnteredUser?.boolValue == true {
+                    //                checkSecretUser()
+                } else {
+                    checkForSWAPtimizerFile()
+                }
             }
-
-        } else if title == "\(eomMonthString) \(String(describing: dayForPilot["Day2"]))" {
-            bidPeriod!.faEomSelectedDate = 2
-            eomSelectedIndex = "2"
-            if bidPeriod!.isMaxSubScriptionOfEnteredUser?.boolValue == true {
-//                checkSecretUser()
-            } else {
-                checkForSWAPtimizerFile()
+        }
+        if let day2 = dayForPilot["Day2"] {
+            if title == "\(eomMonthString) \(day2)" {
+                bidPeriod!.faEomSelectedDate = 2
+                eomSelectedIndex = "2"
+                if bidPeriod!.isMaxSubScriptionOfEnteredUser?.boolValue == true {
+                    //                checkSecretUser()
+                } else {
+                    checkForSWAPtimizerFile()
+                }
             }
-
-        } else if title == "\(eomMonthString) \(String(describing: dayForPilot["Day3"]))" {
-            bidPeriod!.faEomSelectedDate = 3
-            eomSelectedIndex = "3"
-            if bidPeriod!.isMaxSubScriptionOfEnteredUser?.boolValue == true {
-//                checkSecretUser()
-            } else {
-                checkForSWAPtimizerFile()
+        }
+        if let day3 = dayForPilot["Day3"] {
+            if title == "\(eomMonthString) \(day3)" {
+                bidPeriod!.faEomSelectedDate = 3
+                eomSelectedIndex = "3"
+                if bidPeriod!.isMaxSubScriptionOfEnteredUser?.boolValue == true {
+                    //                checkSecretUser()
+                } else {
+                    checkForSWAPtimizerFile()
+                }
             }
         }
     }
@@ -2519,6 +2544,277 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     }
                 }
             )])
+        }
+    }
+    
+    @IBAction func btnEomActionFromStoryBoard(_ sender: UIButton) {
+        self.btnEOMAction(btnTemp: self.btnEOM)
+    }
+    
+    @IBAction func btnWbidMaxAction(_ sender: UIButton) {
+        //        MARK: btn action for FA
+        if self.btnWbidMax.currentTitle == "VAC" {
+            if (btnWbidMax.isSelected) {
+                AlertService.showAlertForTopVC(title: "Warning!", message: "You want to turn off vacation providers.  This will disable any vacation sorts or filters you currently have set.  Your bid list will NOT be affected.  When you again select any vacation provider to whom you have a subscription, your vacation sorts and filters will again be enabled.", actions: [(
+                    title: "OK",
+                    style: .default,
+                    handler: { _ in
+                        self.faVacationButtonAction(btnTemp: self.btnWbidMax)
+                    }
+                ),(
+                    title: "Cancel",
+                    style: .cancel,
+                    handler: { _ in
+                        if (self.btnEOM.isSelected) {
+                            self.bidPeriod?.userVacationWbidOrCrewBid = "FAVacationF"
+                            self.checkForSWAPtimizerFile()
+                        }
+                        else {
+                            self.bidPeriod?.userVacationWbidOrCrewBid = "FAVacation"
+                            self.checkForSWAPtimizerFile()
+                        }
+                    }
+                )
+                ])
+            }
+            else {
+                if btnEOM.isSelected {
+                    self.bidPeriod!.userVacationWbidOrCrewBid = "FAVacationF"
+                    self.checkForSWAPtimizerFile()
+                }
+                else {
+                    self.bidPeriod!.userVacationWbidOrCrewBid = "FAVacation"
+                    self.checkForSWAPtimizerFile()
+                }
+            }
+        }
+//        MARK: btn action for WBID
+        else {
+            if (self.btnWbidMax.isSelected) {
+                if (self.bidPeriod!.containsCFV?.boolValue == true) {
+                    UserDefaults.standard.set(true, forKey: "RemoveCfv")
+                }
+            }
+            else {
+                if (self.bidPeriod!.containsCFV?.boolValue == true) {
+                    UserDefaults.standard.set(false, forKey: "RemoveCfv")
+                }
+            }
+            switch (app.objNetworkType) {
+            case .free:
+                AlertService.showAlertForTopVC(title: "Sorry!", message: "You cannot get needed access via SouthwestWifi or 2Wire. Try again later when you are safely on the ground and have another internet access. \(self.eomMonth())")
+                return
+            default:
+                break
+            }
+            if app.isFlightNetwork {
+                AlertService.showAlertForTopVC(title: "Sorry!", message: "You cannot get needed access via SouthwestWifi or 2Wire. Try again later when you are safely on the ground and have another internet access. \(self.eomMonth())")
+                return
+            }
+            if (self.bidPeriod!.seniorityVacayAvailable?.boolValue != true && !btnWbidMax.isSelected) {
+                AlertService.showAlertForTopVC(title: "Vacation", message: "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button")
+            }
+            else {
+                self.bidPeriod!.currentDateTime = Date()
+                self.bidPeriod!.isStateFileModifiedToSync = NSNumber(value: true)
+                if (btnWbidMax.isSelected && !btnSwaptimizer.isSelected) {
+                    AlertService.showAlertForTopVC(
+                        title: "Warning!",
+                        message: "You want to turn off both vacation providers (WBidMax - Swaptimizer). This will disable any vacation sorts or filters you currently have set. Your bid list will NOT be affected. When you again select any vacation provider to whom you have a subscription, your vacation sorts and filters will again be enabled.",
+                        actions: [
+                            (
+                                title: "OK",
+                                style: UIAlertAction.Style.default,
+                                handler: { (_: UIAlertAction) in
+                                    let btn = UIButton()
+                                    btn.tag = 20
+                                    if self.bidPeriod?.containsFvVacay?.boolValue == true {
+                                        DispatchQueue.main.async {
+                                            self.view.showActivityIndicator(message: "Processing")
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                                                self.view.hideActivityIndicator()
+                                            }
+                                        }
+                                    }
+                                    self.perform(#selector(self.wbidVacationButtonActionDelay(_:)), with: btn, afterDelay: 0.01)
+                                }
+                            ),
+                            (
+                                title: "cancel",
+                                style: UIAlertAction.Style.cancel,
+                                handler: { (_: UIAlertAction) in }
+                            )
+                        ]
+                    )
+
+                }
+                else {
+                    if (self.bidPeriod!.onlyContainEOM == "NO") {
+                        if (self.btnEOM.isSelected) {
+                            self.bidPeriod!.userVacationWbidOrCrewBid = "WBIDF"
+                            self.checkForSWAPtimizerFile()
+                        }
+                        else {
+                            self.wbidVacationButtonAction(sender)
+                        }
+                    }
+                    else {
+                        if (self.btnEOM.isSelected) {
+                            self.bidPeriod!.userVacationWbidOrCrewBid = "WBIDF"
+                            self.checkForSWAPtimizerFile()
+                        }
+                        else {
+                            self.bidPeriod!.userVacationWbidOrCrewBid = "WBID"
+                            self.checkForSWAPtimizerFile()
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func faVacationButtonAction(btnTemp: UIButton) {
+        let vDl = CBVacationDownloader()
+        vDl.bidPeriod = self.bidPeriod
+        vDl.calendarData = self.calendarData
+        if btnWbidMax.isSelected {
+            btnWbidMax.isSelected = false
+            self.bidPeriod!.isFAVacationOn = NSNumber(value: false)
+            btnWbidMax.setTitleColor(UIColor.black, for: .normal)
+            btnWbidMax.backgroundColor = UIColor.white
+            self.bidPeriod!.currentDateTime = Date()
+            self.bidPeriod!.isStateFileModifiedToSync = NSNumber(value: true)
+        }
+        self.bidPeriod!.userVacationWbidOrCrewBid = ""
+        self.bidPeriod!.vacationType = ""
+        do {
+            try self.context?.save()
+            print("after removing vacation from fa")
+        }
+        catch {
+            print("error while saving \(error.localizedDescription)")
+        }
+        self.removeCurrentVacation()
+        self.bidPeriod!.isSwaptimizerOn = NSNumber(value: false)
+        self.btnSwaptimizer.backgroundColor = UIColor.white
+        btnSwaptimizer.setTitleColor(UIColor.black, for: .normal)
+        self.bidPeriod!.currentDateTime = Date()
+        self.bidPeriod!.isStateFileModifiedToSync = NSNumber(value: true)
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+        self.enableOrDisableEOMButton()
+    }
+    
+    @objc func wbidVacationButtonActionDelay(_ btn: UIButton) {
+        self.wbidVacationButtonAction(btn)
+    }
+    
+    func wbidVacationButtonAction(_ btn: UIButton) {
+        if btn.tag == 21 {
+            btnSwaptimizer.isSelected = !btnSwaptimizer.isSelected
+            if btnSwaptimizer.isSelected {
+                self.selectSwaptimizerVacationButton()
+                if btnEOM.isSelected {
+                    self.bidPeriod!.userVacationWbidOrCrewBid = "CREWBIDF"
+                }
+                else {
+                    self.bidPeriod!.userVacationWbidOrCrewBid = "CREWBID"
+                }
+                self.checkForSWAPtimizerFile()
+            }
+            else {
+                self.removeCurrentVacation()
+                self.bidPeriod!.isSwaptimizerOn = NSNumber(value: false)
+                btnSwaptimizer.backgroundColor = .white
+                btnSwaptimizer.setTitleColor(.black, for: .normal)
+                self.bidPeriod!.currentDateTime = Date()
+                self.bidPeriod!.isStateFileModifiedToSync = NSNumber(value: true)
+                NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+            }
+        }
+        else {
+            btnWbidMax.isSelected = !btnWbidMax.isSelected
+            if btnWbidMax.isSelected {
+                if btnEOM.isSelected {
+                    self.bidPeriod!.userVacationWbidOrCrewBid = "WBIDF"
+                }
+                else {
+                    self.bidPeriod!.userVacationWbidOrCrewBid = "WBID"
+                }
+                self.checkForSWAPtimizerFile()
+            }
+            else {
+                self.removeCurrentVacation()
+                self.bidPeriod!.userVacationWbidOrCrewBid = ""
+                self.bidPeriod!.vacationType = ""
+                self.bidPeriod!.isWbidMaxOn = NSNumber(value: false)
+                btnWbidMax.backgroundColor = .white
+                btnWbidMax.setTitleColor(.black, for: .normal)
+                self.bidPeriod!.currentDateTime = Date()
+                self.bidPeriod!.isStateFileModifiedToSync = NSNumber(value: true)
+                NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+                do {
+                    try self.context?.save()
+                    print(" saved successfully from wbidVacationButtonAction")
+                }
+                catch {
+                    print("error saving from wbidVacationButtonAction \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    @IBAction func btnCrewBidVacationButtonAction(_ sender: UIButton) {
+        if (!btnWbidMax.isSelected && btnSwaptimizer.isSelected) {
+            AlertService.showAlertForTopVC(
+                title: "Warning!",
+                message: "You want to turn off both vacation providers (WBidMax - Swaptimizer). This will disable any vacation sorts or filters you currently have set. Your bid list will NOT be affected. When you again select any vacation provider to whom you have a subscription, your vacation sorts and filters will again be enabled.",
+                actions: [
+                    (
+                        title: "OK",
+                        style: UIAlertAction.Style.default,
+                        handler: { (_: UIAlertAction) in
+                            let btn = UIButton()
+                            btn.tag = 21
+                            if self.bidPeriod?.containsFvVacay?.boolValue == true {
+                                DispatchQueue.main.async {
+                                    self.view.showActivityIndicator(message: "Processing")
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                                        self.view.hideActivityIndicator()
+                                    }
+                                }
+                            }
+                            self.perform(#selector(self.wbidVacationButtonActionDelay(_:)), with: btn, afterDelay: 0.01)
+                        }
+                    ),
+                    (
+                        title: "cancel",
+                        style: UIAlertAction.Style.cancel,
+                        handler: { (_: UIAlertAction) in }
+                    )
+                ]
+            )
+
+        }
+        else {
+            if (self.bidPeriod!.onlyContainEOM == "NO") {
+                if (self.btnEOM.isSelected) {
+                    self.bidPeriod!.userVacationWbidOrCrewBid = "CREWBIDF"
+                    self.checkForSWAPtimizerFile()
+                }
+                else {
+                    self.wbidVacationButtonAction(sender)
+                }
+            }
+            else {
+                if (self.btnEOM.isSelected) {
+                    self.bidPeriod!.userVacationWbidOrCrewBid = "CREWBIDF"
+                    self.checkForSWAPtimizerFile()
+                }
+                else {
+                    self.bidPeriod!.userVacationWbidOrCrewBid = "CREWBID"
+                    self.checkForSWAPtimizerFile()
+                }
+            }
         }
     }
 }
