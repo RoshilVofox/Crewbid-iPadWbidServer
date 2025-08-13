@@ -107,7 +107,7 @@ class CBCredentialsPageVC: BaseViewController {
                             DispatchQueue.main.async {
                                     NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
                                 }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                                 BIBidInfoReader.shared.checkForSeniorityVacationAndReadBidInfo(){success in
                                     if success{
                                         self.loginActions()
@@ -137,7 +137,7 @@ class CBCredentialsPageVC: BaseViewController {
                         DispatchQueue.main.async {
                                 NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
                             }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                             guard !self.hasStartedBidProcessing else {
                                     return
                                 }

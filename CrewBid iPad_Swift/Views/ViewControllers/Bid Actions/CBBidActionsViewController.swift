@@ -7,14 +7,16 @@
 
 import UIKit
 
-class CBBidActionsViewController: UIViewController, KUIPopOverUsable {
+class CBBidActionsViewController: BaseViewController, KUIPopOverUsable {
     
     var contentSize: CGSize {
         return CGSize(width: 410, height: 480)
     }
     
-    @IBOutlet weak var btnBack: UIButton!
+    @IBOutlet weak var btnBidAction: UIButton!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var lblActionTitle: UILabel!
+    
     
     lazy var employeeNum: UITextField = {
         let tf = UITextField()
@@ -28,181 +30,484 @@ class CBBidActionsViewController: UIViewController, KUIPopOverUsable {
         return tf
     }()
     
-    var arr:[String] = []
-    var prev: [String] = []
+    var falistDict: [String: Any] = [:]
+    var bidPeriod: BIBidPeriod?
+    var isBuddingBiddingEnabled = false
+    let arrForFAWithAwdTxt = ["Submit Bid","Show Bid Receipt","Show Awards","Show Bid File","Line Importer","Vacation","Retrieve Awards","Restore Last Bid","ReDownload Flt Data"]
+    let arrForFAWithOutAwdTxt = ["Submit Bid","Show Bid Receipt","Retrieve Awards","Show Bid File","Line Importer","Vacation","Restore Last Bid","ReDownload Flt Data"]
     let arrForPilotWithAwdTxt = ["Submit Bid","Show Bid Receipt","Show Awards","Show Bid File","Line Importer","Vacation", "Show CAP","Retrieve Awards","Restore Last Bid","ReDownload Flt Data"]
-    let pilotFileArray = ["Cover Letter","Seniority List","Lines Text","Trips Text"]
-    let vacationFAArray = ["Keep Pulled Trips In Filters/Sorts", "Re Download WBID Maz Vac File", "Re Download Swaptimizer Maz Vac File"]
+    let arrForPilotWithOutAwdTxt = ["Submit Bid","Show Bid Receipt","Retrieve Awards","Show Bid File","Line Importer","Vacation","Show CAP","Restore Last Bid","ReDownload Flt Data"]
+    
+    let fileArrayFA = ["Cover Letter","Seniority List","Lines Text","Trips Text","FA Memo"]
+    let fileArrayPilot = ["Cover Letter","Seniority List","Lines Text","Trips Text"]
+    
+    let vacPilotArray = ["Keep Pulled Trips In Filters/Sorts","Hide Vaction In Scratchpad","Check For","Re-Download WBidMax Vac File","Re-Download Swaptimizer Vac File"]
+    let vacationFAArray = ["Keep Pulled Trips In Filters/Sorts","Hide Vaction In Scratchpad"]
+    
+    var bidActionTypeSelected : BidActionType = .BidActions
+    var optionalEmployees = NSMutableArray ()
+    var buddyTextField1: UITextField!
+    var buddyTextField2: UITextField!
+    var buddyTextField3: UITextField!
+    var buddyNameLabel1: UILabel!
+    var buddyNameLabel2: UILabel!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        arr = arrForPilotWithAwdTxt
+        self.tableView.clipsToBounds = true
+        self.tableView.layer.cornerRadius = 5
        setupUI()
     }
     
     func setupUI(){
-        btnBack.isHidden = true
-        btnBack.setTitle("", for: .normal)
+        self.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
+        btnBidAction.isHidden = true
+        btnBidAction.setTitle("", for: .normal)
+        NotificationCenter.default.addObserver(self, selector: #selector(saveStateToUserDefaults), name: Notification.Name("BidSubmissionCmpleted"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(contentSizeChange), name: Notification.Name("contentSizeChange"), object: nil)
     }
     
-    @IBAction func btnBackAction(_ sender: Any) {
-        arr = prev
-        tableView.reloadData()
-        btnBack.isHidden = true
+    @objc func contentSizeChange(notification: NSNotification) {
+        if let size = notification.object as? CGSize {
+            self.preferredContentSize = size
+        }
+    }
+
+    @objc func saveStateToUserDefaults() {
+        var stateValues = [AnyHashable : Any](minimumCapacity: 1)
+        if self.bidPeriod?.lastBidDate != nil {
+            stateValues[kCBBidDocumentLastBidDateKey] = bidPeriod!.lastBidDate
+        }else{
+            return
+        }
+    }
+    
+    @IBAction func btnBidActionTapped(_ sender: Any) {
+        navigationController?.popViewController(animated: true)
     }
 }
 
 extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return arr.count
+        switch bidActionTypeSelected {
+            case .BidActions:
+                    // Hide the ShowCap option if it's a FA bid
+                if !((bidPeriod?.isFABid())!) { //Pilot
+//                    let textFile = self.bidPeriod?.awardString
+//                    if textFile != nil { //With text
+//                        return arrForPilotWithAwdTxt.count
+//                    } else { //Without text
+                        return arrForPilotWithOutAwdTxt.count
+//                    }
+                } else { //FA
+//                    let textFile = self.bidPeriod?.awardString
+//                    if textFile != nil { //With text
+//                        return arrForFAWithAwdTxt.count
+//                    } else { //Without text
+                        return arrForFAWithOutAwdTxt.count
+//                    }
+                }
+            case .ShowFile:
+                    // Hide the FA Memo option if it's a pilot bid
+                if !((bidPeriod?.isFABid())!) {
+                    return fileArrayPilot.count
+                } else {
+                    return fileArrayFA.count
+                }
+            case .Vacation:
+                if !((bidPeriod?.isFABid())!) {
+                    return vacPilotArray.count
+                } else {
+                    return vacationFAArray.count
+                }
+                
+            case .ShowReceipt:
+                return self.bidPeriod?.bidReceipts?.allObjects.count ?? 0
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if arr[0] == "Submit Bid" {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "CBBidActionTableCell", for: indexPath) as! CBBidActionTableCell
-            
-            if arr[indexPath.row] == "Show Bid File" || arr[indexPath.row] == "Vacation" {
-                cell.label.text = arrForPilotWithAwdTxt[indexPath.row]
-                cell.imgv.image = UIImage(named: "newarrow")
-                cell.imgv.isHidden = false
-            } else {
-                cell.label.text = arr[indexPath.row]
-                cell.imgv.isHidden = true
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CBBidActionTableCell") as! CBBidActionTableCell
+        switch bidActionTypeSelected {
+        case .BidActions:
+//            let textFile = self.bidPeriod?.awardString
+            if !((bidPeriod?.isFABid())!) { //Pilot
+//                if textFile != nil { //With text
+//                    cell.lblTitle.text = arrForPilotWithAwdTxt[indexPath.row]
+//                    cell.imgNext.image = UIImage(named: arrForPilotWithAwdTxt[indexPath.item])
+//                } else { //Without text
+                    cell.lblTitle.text = arrForPilotWithOutAwdTxt[indexPath.row]
+                    cell.imgNext.image = UIImage(named: arrForPilotWithOutAwdTxt[indexPath.item])
+//                }
+            } else { //FA
+//                if textFile != nil { //With text
+//                    cell.lblTitle.text = arrForFAWithAwdTxt[indexPath.row]
+//                    cell.imgNext.image = UIImage(named: arrForFAWithAwdTxt[indexPath.item])
+//                } else { //Without text
+                    cell.lblTitle.text = arrForFAWithOutAwdTxt[indexPath.row]
+                    cell.imgNext.image = UIImage(named: arrForFAWithOutAwdTxt[indexPath.item])
+//                }
             }
-            return cell
+            if cell.lblTitle.text == "Show Bid Receipt"{
+                if bidPeriod?.bidReceipts?.allObjects.count == 0 {
+                    cell.lblTitle.textColor  = .lightGray
+                }
+            }
+        case .ShowFile:
+            lblActionTitle.text = "Show File"
+            btnBidAction.isHidden = false
+            if !((bidPeriod?.isFABid())!) {
+                cell.lblTitle.text = fileArrayPilot[indexPath.row]
+                cell.imgNext.isHidden = true
+            } else {
+                cell.lblTitle.text = fileArrayFA[indexPath.row]
+                cell.imgNext.isHidden = true
+            }
+
+        case .ShowReceipt:
+            lblActionTitle.text = "Show Bid Receipt"
+            let timeStampFormatter = DateFormatter()
+            timeStampFormatter.dateStyle = .long
+            timeStampFormatter.timeStyle = .short
+            timeStampFormatter.doesRelativeDateFormatting = true
+            cell.lblTitle.text = "1"
+            if indexPath.row < self.bidPeriod!.sortedBidReceipts().count {
+                let receipt = self.bidPeriod!.sortedBidReceipts()[indexPath.row]
+                if let timeStampDate = receipt.timeStamp {
+                    let timeStamp = timeStampFormatter.string(from: timeStampDate as Date)
+                    let title = "\(receipt.submittedFor!) \(timeStamp)"
+                    if title != ""{
+                        cell.lblTitle.text = title
+                    }
+                    
+                }
+            }
+            btnBidAction.isHidden = false
+            cell.imgNext.isHidden = true
             
-        } else if arr[0] == "Keep Pulled Trips In Filters/Sorts" {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "SwitchTableViewCell", for: indexPath) as! SwitchTableViewCell
-            cell.switch.isHidden = arr[indexPath.row] == "Keep Pulled Trips In Filters/Sorts" ? false : true
-            cell.label.text = arr[indexPath.row]
-            
-            // configure CBFlightCell here
-            return cell
-            
-        } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "CBBidActionTableCell", for: indexPath) as! CBBidActionTableCell
-            cell.label.text = arr[indexPath.row]
-            cell.imgv.isHidden = true
-            return cell
+        case .Vacation:
+            lblActionTitle.text = "Vacation"
+            btnBidAction.isHidden = false
+            if !((bidPeriod?.isFABid())!) {
+                switch indexPath.row {
+                case 0:
+                    let switchTableViewCell = tableView.dequeueReusableCell(withIdentifier: "SwitchTableViewCell") as! SwitchTableViewCell
+                    switchTableViewCell.lblTitle.text = vacPilotArray[indexPath.row]
+                    if (bidPeriod?.swaptimizerStatus?.intValue == Int(CBSwaptimizerStatus.enabled.rawValue) || bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue) {
+                        switchTableViewCell.isUserInteractionEnabled = true
+                        switchTableViewCell.lblTitle.textColor = UIColor.appColor(.bid_actions)
+                    }else{
+                        switchTableViewCell.isUserInteractionEnabled = false
+                        switchTableViewCell.lblTitle.textColor = .lightGray
+                    }
+                    return switchTableViewCell
+                case 2:
+                    let segmentedTableViewCell = tableView.dequeueReusableCell(withIdentifier: "SegmentedTableViewCell") as! SegmentedTableViewCell
+                    segmentedTableViewCell.lblTitle.text = vacPilotArray[indexPath.row]
+                    return segmentedTableViewCell
+                default:
+                    break;
+                }
+                cell.lblTitle.text = vacPilotArray[indexPath.row]
+                cell.imgNext.isHidden = true
+            } else {
+                switch indexPath.row {
+                case 0:
+                    let switchTableViewCell = tableView.dequeueReusableCell(withIdentifier: "SwitchTableViewCell") as! SwitchTableViewCell
+                    switchTableViewCell.lblTitle.text = vacationFAArray[indexPath.row]
+                    return switchTableViewCell
+                default:
+                    break;
+                }
+                cell.lblTitle.text = vacationFAArray[indexPath.row]
+                cell.imgNext.isHidden = true
+            }
         }
+        if cell.lblTitle.text == "Line Importer"{
+            if bidPeriod?.isBidListSortOn?.boolValue ?? false{
+                cell.lblTitle.textColor  = .lightGray
+                cell.isUserInteractionEnabled = false
+            }
+        }
+        return cell
     }
     
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // MARK: - Vacation Selection
-        let item = arr[indexPath.row]
-        if item == "Vacation" {
-            prev = arr
-            arr = vacationFAArray
-            tableView.reloadData()
-            btnBack.isHidden = false
-        }
-        // MARK: - Show Bid File Selection
-        if item == "Show Bid File" {
-            prev = arr
-            arr = pilotFileArray
-            tableView.reloadData()
-            btnBack.isHidden = false
-        }
-        // MARK: - cover Letter Selection
-        if item == "Cover Letter" {
-            if let presentingVC = self.presentingViewController {
-                self.dismiss(animated: true) {
-                    let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-                    let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
-                    vc.modalPresentationStyle = .fullScreen
-                    vc.type = "cover letter"
-                    presentingVC.present(vc, animated: true)
+        if bidActionTypeSelected == BidActionType.BidActions {
+            if !((self.bidPeriod?.isFABid())!) {
+                switch indexPath.row {
+                    case 0: //Submit Bid
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            NotificationCenter.default.post(name: NSNotification.Name("checkLinesAvailableInBidList"), object: self)
+                        }
+                        self.dismissFn()
+                        break
+                    case 1:
+                        if self.bidPeriod!.sortedBidReceipts().count > 0{
+                            let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+                            let vc = storyboard.instantiateViewController(withIdentifier: "CBBidActionsViewController") as! CBBidActionsViewController
+                            vc.bidActionTypeSelected = BidActionType.ShowReceipt
+                            self.navigationController?.pushViewController(vc, animated: true)
+                        }
+                        break
+                    case 2://Retrieve/Show Awards
+//                        let textFile = self.bidPeriod?.awardString
+//                        if textFile != nil {
+//                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenAwardData), object: self)
+//                            dismissFn()
+//                        } else {
+                                //retrieveAward()
+                            dismissFn()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                                NotificationCenter.default.post(name: NSNotification.Name(KCBOpenretrieveAwardDownloadPage), object: self)
+                            }
+//                        }
+                        break
+                    case 3://Show Bid File
+                        print("Show Bid File")
+                        let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+                        let vc = storyboard.instantiateViewController(withIdentifier: "CBBidActionsViewController") as! CBBidActionsViewController
+                        vc.bidActionTypeSelected = BidActionType.ShowFile
+                        self.navigationController?.pushViewController(vc, animated: true)
+                        break
+                    case 4://Line Importer
+                        dismissFn()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenLineImporter), object: self)
+                        }
+                        break
+                    case 5://Vacation
+                        let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+                        let vc = storyboard.instantiateViewController(withIdentifier: "CBBidActionsViewController") as! CBBidActionsViewController
+                        vc.bidActionTypeSelected = BidActionType.Vacation
+                        self.navigationController?.pushViewController(vc, animated: true)
+                        break
+                    case 6://Show CAP
+                        dismissFn()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenShowCAP), object: self)
+                        }
+                        break
+                    case 7://Retrieve/Show Awards
+                        let cell = tableView.cellForRow(at: indexPath) as! CBBidActionTableCell
+                        if cell.lblTitle.text == "Retrieve Awards" {
+                                dismissFn()
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                                    NotificationCenter.default.post(name: NSNotification.Name(KCBOpenretrieveAwardDownloadPage), object: self)
+                                }
+                        }else if cell.lblTitle.text == "Restore Last Bid" {
+                            self.dismiss(animated: false, completion: nil)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                let notification = Notification(name: Notification.Name("RestoreLastBidNotification"), object: nil, userInfo: ["employeeID": CBUserAccountDetail.shared.EmpNum])
+                                NotificationCenter.default.post(notification)
+                            }
+                        }
+                        break
+                    case 8:
+                    let cell = tableView.cellForRow(at: indexPath) as! CBBidActionTableCell
+                    if cell.lblTitle.text == "Restore Last Bid" {
+                        self.dismiss(animated: false, completion: nil)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            let notification = Notification(name: Notification.Name("RestoreLastBidNotification"), object: nil, userInfo: ["employeeID": CBUserAccountDetail.shared.EmpNum])
+                            NotificationCenter.default.post(notification)
+                        }
+                    }
+                    else if cell.lblTitle.text == "ReDownload Flt Data" {
+                        self.dismiss(animated: false, completion: nil)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            NotificationCenter.default.post(name: NSNotification.Name("redownloadFltData"), object: self)
+                        }
+                    }
+                        break
+                case 9:
+                    self.dismiss(animated: false, completion: nil)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        NotificationCenter.default.post(name: NSNotification.Name("redownloadFltData"), object: self)
+                    }
+                    break
+                        
+                    default:
+                        break
+                    }
+            } else {
+                switch indexPath.row {
+                    case 0: //Submit Bid
+                        
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        NotificationCenter.default.post(name: NSNotification.Name("checkLinesAvailableInBidList"), object: self)
+                    }
+                    dismissFn()
+                        break
+                    case 2://Retrieve/Show Awards
+//                        let textFile = self.bidPeriod?.awardString
+//                        if textFile != nil {
+//                            
+//                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenAwardData), object: self)
+//                            dismissFn()
+//                        } else {
+                                //retrieveAward()
+                            dismissFn()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                                NotificationCenter.default.post(name: NSNotification.Name(KCBOpenretrieveAwardDownloadPage), object: self)
+                            }
+//                        }
+                        break
+                    case 3://Show Bid File
+                        print("Show Bid File")
+                        let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+                        let vc = storyboard.instantiateViewController(withIdentifier: "CBBidActionsViewController") as! CBBidActionsViewController
+                        vc.bidActionTypeSelected = BidActionType.ShowFile
+                        self.navigationController?.pushViewController(vc, animated: true)
+                        break
+                    case 4://Line Importer
+                        dismissFn()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenLineImporter), object: self)
+                        }
+                        break
+                    case 5://Vacation
+                        let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+                        let vc = storyboard.instantiateViewController(withIdentifier: "CBBidActionsViewController") as! CBBidActionsViewController
+                        vc.bidActionTypeSelected = BidActionType.Vacation
+                        self.navigationController?.pushViewController(vc, animated: true)
+                        break
+                    case 1://Show Bid Receipt
+                        if self.bidPeriod!.sortedBidReceipts().count > 0{
+                            let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+                            let vc = storyboard.instantiateViewController(withIdentifier: "CBBidActionsViewController") as! CBBidActionsViewController
+                            vc.bidActionTypeSelected = BidActionType.ShowReceipt
+                            self.navigationController?.pushViewController(vc, animated: true)
+                        }
+                        break
+                    case 6://Retrieve Awards
+                        let cell = tableView.cellForRow(at: indexPath) as! CBBidActionTableCell
+                        if cell.lblTitle.text == "Retrieve Awards" {
+                            dismissFn()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                                NotificationCenter.default.post(name: NSNotification.Name(KCBOpenretrieveAwardDownloadPage), object: self)
+                            }
+                        }else if cell.lblTitle.text == "Restore Last Bid" {
+                            self.dismiss(animated: false, completion: nil)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                let notification = Notification(name: Notification.Name("RestoreLastBidNotification"), object: nil, userInfo: ["employeeID": CBUserAccountDetail.shared.EmpNum])
+                                           NotificationCenter.default.post(notification)
+                            }
+                        }
+                        break
+                    case 7 :
+                    let cell = tableView.cellForRow(at: indexPath) as! CBBidActionTableCell
+                    if cell.lblTitle.text == "Restore Last Bid" {
+                        self.dismiss(animated: false, completion: nil)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            let notification = Notification(name: Notification.Name("RestoreLastBidNotification"), object: nil, userInfo: ["employeeID": CBUserAccountDetail.shared.EmpNum])
+                            NotificationCenter.default.post(notification)
+                        }
+                    }
+                    else if cell.lblTitle.text == "ReDownload Flt Data" {
+                        self.dismiss(animated: false, completion: nil)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            NotificationCenter.default.post(name: NSNotification.Name("redownloadFltData"), object: self)
+                        }
+
+                    }
+                        break
+                case 8 :
+                    self.dismiss(animated: false, completion: nil)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        NotificationCenter.default.post(name: NSNotification.Name("redownloadFltData"), object: self)
+                    }
+                    break
+                    default:
+                        break
+                        
                 }
             }
         }
-        // MARK: - Seniority List Selection
-        if item == "Seniority List" {
-            if let presentingVC = self.presentingViewController {
-                self.dismiss(animated: true) {
-                    let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-                    let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
-                    vc.modalPresentationStyle = .fullScreen
-                    vc.type = "Seniority List"
-                    presentingVC.present(vc, animated: true)
+        if bidActionTypeSelected == BidActionType.ShowFile {
+            switch indexPath.row {
+            case 0: //Coverletter
+                //dismissFn()
+                let details = ["isFromFirstTimeOpenBid":false]
+                self.dismiss(animated: false) {
+                    NotificationCenter.default.post(name: NSNotification.Name(KCBOpenCoverletter), object: self,userInfo: details)
                 }
+                break
+            case 1: //Seniority
+                //dismissFn()
+                self.dismiss(animated: false) {
+                    NotificationCenter.default.post(name: NSNotification.Name(KCBOpenSeniority), object: self)
+                }
+                break
+            case 2: //LineText
+                //dismissFn()
+                self.dismiss(animated: false) {
+                    NotificationCenter.default.post(name: NSNotification.Name(KCBOpenLineText), object: self)
+                }
+                break
+            case 3: //TripText
+                //dismissFn()
+                self.dismiss(animated: false) {
+                    NotificationCenter.default.post(name: NSNotification.Name(KCBOpenTripText), object: self)
+                }
+                break
+            case 4: //FAMemo
+                //dismissFn()
+                self.dismiss(animated: false) {
+                    NotificationCenter.default.post(name: NSNotification.Name(KCBOpenFAMemo), object: self)
+                }
+                break
+            default:
+                break
             }
         }
-        // MARK: - Bid recipt Selection
-        if item == "Show Bid Receipt" {
-            if let presentingVC = self.presentingViewController {
-                self.dismiss(animated: true) {
-                    let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-                    let vc = storyboard.instantiateViewController(withIdentifier: "CBBidReciptViewController") as! CBBidReciptViewController
-                    vc.modalPresentationStyle = .fullScreen
-                    presentingVC.present(vc, animated: true)
-                }
+        if bidActionTypeSelected == BidActionType.ShowReceipt {
+            self.dismiss(animated: true, completion: nil)
+            let recipt = self.bidPeriod!.sortedBidReceipts()[indexPath.row]
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                NotificationCenter.default.post(name: NSNotification.Name("showBidReceiptWithObject"), object: recipt)
             }
         }
-        // MARK: - LIne Importer Selection
-        if item == "Line Importer" {
-            if let presentingVC = self.presentingViewController {
-                self.dismiss(animated: true) {
-                    let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-                    let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedLineImporterVC") as! EmbeddedLineImporterVC
-                    vc.preferredContentSize = CGSize(width: 680, height: 700)
-                    presentingVC.present(vc, animated: true)
+        if bidActionTypeSelected == BidActionType.Vacation{
+            if !((bidPeriod?.isFABid())!) {
+                switch indexPath.row {
+                case 0,1:
+                    break
+                case 2:
+                    dismissFn()
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                            if (self.bidPeriod?.vacationArrayFromServer ?? NSArray()).count > 0 {
+//                                NotificationCenter.default.post(name: NSNotification.Name("downloadWbidMax"), object: self)
+//                            } else {
+//                                // Dismiss any previously presented view controllers
+//                                self.dismiss(animated: true, completion: {
+//                                    CBGlobalMethods.shared.ShowAlertWithOnlyOKAction(TitleString: "WbidMax Error", MessageString: "You do not have Vacation this month", OKAction: nil)
+//                                })
+//                            }
+//                        }
+                
+                    break
+                case 3:
+                    dismissFn()
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                        if (self.bidPeriod?.vacationArrayFromServer ?? NSArray()).count > 0 {
+//                            NotificationCenter.default.post(name: NSNotification.Name("downloadSwaptimizer"), object: self)
+//                        }else {
+//                            // Dismiss any previously presented view controllers
+//                            self.dismiss(animated: true, completion: {
+//                                CBGlobalMethods.shared.ShowAlertWithOnlyOKAction(TitleString: "Swaptimizer Error", MessageString: "You do not have Vacation this month", OKAction: nil)
+//                            })
+//                        }
+//                    }
+                    break
+                default:
+                    break
                 }
-            }
-        }
-        
-        // MARK: - Show CAP Selection
-        if item == "Show CAP" {
-            if let presentingVC = self.presentingViewController {
-                self.dismiss(animated: true) {
-                    let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-                    let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedShowCAPVC") as! EmbeddedShowCAPVC
-                    vc.preferredContentSize = CGSize(width: 500, height: 500)
-                    presentingVC.present(vc, animated: true)
-                }
-            }
-        }
-        
-        // MARK: - Show Awards Selection
-        if item == "Show Awards" {
-//            CBVacationDownloader().downloadWbidVacation()
-            if let presentingVC = self.presentingViewController {
-                self.dismiss(animated: true) {
-                    let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-                    let vc = storyboard.instantiateViewController(withIdentifier: "CBShowAwardsViewController") as! CBShowAwardsViewController
-                    vc.modalPresentationStyle = .fullScreen
-                    presentingVC.present(vc, animated: true)
-                }
-            }
-        }
-        
-        // MARK: - Retrieve Awards Selection
-        if item == "Retrieve Awards" {
-            if let presentingVC = self.presentingViewController {
-                self.dismiss(animated: true) {
-                    let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
-                    let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
-                    vc.preferredContentSize = CGSize(width: 600, height: 500)
-                    vc.type = "Retrieve Awards"
-                    let navController = UINavigationController(rootViewController: vc)
-                    navController.setNavigationBarHidden(true, animated: false)
-                    presentingVC.present(navController, animated: true)
-                }
-            }
-        }
-        
-        // MARK: - Submit Bid Selection
-        if item == "Submit Bid" {
-            if let presentingVC = self.presentingViewController {
-                self.dismiss(animated: true) {
-                    let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
-                    let vc = storyboard.instantiateViewController(withIdentifier: "CBDefaultEmployeeVC") as! CBDefaultEmployeeVC
-                    vc.preferredContentSize = CGSize(width: 600, height: 500)
-                    vc.type = "Submit employee number"
-                    let navController = UINavigationController(rootViewController: vc)
-                    navController.setNavigationBarHidden(true, animated: false)
-                    presentingVC.present(navController, animated: true)
+            }else{
+                if indexPath.row == 1{
+                    
                 }
             }
         }
@@ -210,7 +515,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                                           
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50 // set your fixed height
+        return 45
     }
     
     

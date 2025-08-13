@@ -177,17 +177,9 @@ class CBBidLineMenuController: BaseViewController, UITableViewDelegate, UITableV
         let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: kRefreshMenuCell)!
         self.tableView.separatorStyle = UITableViewCell.SeparatorStyle.singleLine
         self.tableView.separatorInset = UIEdgeInsets.zero
-        cell.textLabel?.font = UIFont.systemFont(ofSize: 17.0)
-        if #available(iOS 13.0, *) {
-            cell.backgroundColor = UIColor.systemBackground
-        } else {
-            cell.backgroundColor = UIColor.white// Fallback on earlier versions
-        }
-        if #available(iOS 13.0, *) {
-            cell.textLabel?.textColor = UIColor.label
-        } else {
-            cell.textLabel?.textColor = UIColor.black// Fallback on earlier versions
-        }
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 17.0, weight: .semibold)
+        cell.backgroundColor = UIColor.systemBackground
+        cell.textLabel?.textColor = UIColor.label
         cell.textLabel?.shadowColor = UIColor.clear
         cell.selectionStyle = .gray
 
@@ -452,43 +444,40 @@ class CBBidLineMenuController: BaseViewController, UITableViewDelegate, UITableV
             } else if 3 == indexPath.section {
                 if 0 == indexPath.row {
                     if !isFaReserveLineExists {
-                        if (bidPeriod.containsVacay!.boolValue || bidPeriod.containsFvVacay!.boolValue) && (bidPeriod.seniorityVacayAvailable?.boolValue == true){
+                        if ((bidPeriod.containsVacay?.boolValue ?? false) ||
+                            (bidPeriod.containsFvVacay?.boolValue ?? false)) &&
+                           (bidPeriod.seniorityVacayAvailable?.boolValue == true) {
                             let alert = UIAlertController(title: "Warning !", message: "You have vacation this month - you cannot bid reserve.", preferredStyle: .alert)
                                     alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
                                         alert.dismiss(animated: true, completion: nil)
                                         self.dismissPopover(animated: true)
                                     }))
                                     present(alert, animated: true, completion: nil)
-                                }
+                        }
                         else{
                             let appendDictionary = NSMutableDictionary()
                             appendDictionary["indexpath"] = selectedIndexpath
                             delegate?.addReserveMRTline(indexpath: selectedIndexpath, isReserve: true)
                             self.dismissPopover(animated: true)
                         }
-                     //   NotificationCenter.default.post(name: Notification.Name("CBAddReserveNotification"), object: appendDictionary)
                     } else {
                         appendDictionary["indexpath"] = selectedIndexpath
                         delegate?.addReserveMRTline(indexpath: selectedIndexpath, isReserve: false)
-                      //  NotificationCenter.default.post(name: Notification.Name("CBAddMrtNotification"), object: appendDictionary)
                         self.dismissPopover(animated: true)
                     }
                 } else {
                     appendDictionary["indexpath"] = selectedIndexpath
                     delegate?.addReserveMRTline(indexpath: selectedIndexpath, isReserve: false)
-                   // NotificationCenter.default.post(name: Notification.Name("CBAddMrtNotification"), object: appendDictionary)
                     self.dismissPopover(animated: true)
                 }
             } else {
                 if (line?.faBidLineReserve?.boolValue)! {
                     appendDictionary["indexpath"] = selectedIndexpathValue
                     delegate?.removeReserveMRTline(indexpath: selectedIndexpathValue, isReserve: true)
-                 //   NotificationCenter.default.post(name: Notification.Name("CBRemoveReserveNotification"), object: appendDictionary)
                     self.dismissPopover(animated: true)
                 } else if (line?.faBidLineMrt?.boolValue)! {
                     appendDictionary["indexpath"] = selectedIndexpathValue
                     delegate?.removeReserveMRTline(indexpath: selectedIndexpathValue, isReserve: false)
-                 //   NotificationCenter.default.post(name: Notification.Name("CBRemoveMrtNotification"), object: appendDictionary)
                     self.dismissPopover(animated: true)
                 } else {
                     appendDictionary["indexpath"] = selectedIndexpathValue
@@ -546,12 +535,10 @@ class CBBidLineMenuController: BaseViewController, UITableViewDelegate, UITableV
                     if (line?.faBidLineReserve?.boolValue)! {
                         appendDictionary["indexpath"] = selectedIndexpathValue
                         delegate?.removeReserveMRTline(indexpath: selectedIndexpathValue, isReserve: true)
-//                        NotificationCenter.default.post(name: Notification.Name("CBRemoveReserveNotification"), object: appendDictionary)
                         self.dismissPopover(animated: true)
                     } else if (line?.faBidLineMrt?.boolValue)! {
                         appendDictionary["indexpath"] = selectedIndexpathValue
                         delegate?.removeReserveMRTline(indexpath: selectedIndexpathValue, isReserve: false)
-//                        NotificationCenter.default.post(name: Notification.Name("CBRemoveMrtNotification"), object: appendDictionary)
                         self.dismissPopover(animated: true)
                     } else {
                         appendDictionary["indexpath"] = selectedIndexpathValue

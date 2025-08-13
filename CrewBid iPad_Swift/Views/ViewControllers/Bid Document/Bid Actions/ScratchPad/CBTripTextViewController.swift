@@ -35,6 +35,20 @@ class CBTripTextViewController: UIViewController, KUIPopOverUsable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        objScrollView.clipsToBounds = true
+        objScrollView.layer.cornerRadius = 5
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor.systemGray2
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
+        let backButtonAppearance = UIBarButtonItemAppearance()
+        backButtonAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.systemBlue]
+        appearance.backButtonAppearance = backButtonAppearance
+        let backImage = UIImage(systemName: "chevron.backward")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal)
+        appearance.setBackIndicatorImage(backImage, transitionMaskImage: backImage)
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
         tripTextView.text = tripText1
         // Add the Herb Time - Local Time toggle button
         btnTimeToggleView.layer.borderWidth = 1

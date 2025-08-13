@@ -7,7 +7,7 @@
 
 import UIKit
 
-class EmbeddedBidActionsVC: UIViewController, KUIPopOverUsable {
+class EmbeddedBidActionsVC: BaseViewController, KUIPopOverUsable {
     
     var contentSize: CGSize = CGSize(width: 400, height: 600)
     

@@ -1,16 +1,16 @@
 //
-//  CBBidActionTableCell.swift
+//  SegmentedTableViewCell.swift
 //  CrewBid iPad_Swift
 //
-//  Created by Developer on 21/04/25.
+//  Created by Fayaz on 13/08/25.
 //
 
 import UIKit
 
-class CBBidActionTableCell: UITableViewCell {
+class SegmentedTableViewCell: UITableViewCell {
 
     @IBOutlet weak var lblTitle: UILabel!
-    @IBOutlet weak var imgNext: UIImageView!
+    @IBOutlet weak var segmentedControlVAC: UISegmentedControl!
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

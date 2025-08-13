@@ -128,6 +128,7 @@ let KCBEmpNumWithPrefix = "KCBEmpNumWithPrefix"
 let kCBCrewBaseDefaultKey = "Crew Base"
 let kCBCrewPositionTypeDefaultKey = "Crew Position"
 let kCBCrewRoundTypeDefaultKey = "Crew Round"
+let kCBBidDocumentLastBidDateKey = "Last Bid Date"
 let kCBDefaultEmployeeNumberKey = "Default Employee Number"
 let kCBHideVacationKey = "CBHideVacation"
 let kCBHelpVideoURL = "HelpVideoURL"
@@ -160,6 +161,20 @@ let kCBFaVacationLineValuesKey = "FA Vacation Line Values"
 let kCBRound2DefaultLineValuesKey = "Round 2 Default Line Values"
 let kCBDefaultLineValuesKey = "Default Line Values"
 let kCBSwaptimizerLineValuesKey = "Swaptimizer Line Values"
+
+let KCBOpenCoverletter = "KCBOpenCoverletter"
+let KCBOpenSeniority = "KCBOpenSeniority"
+let KCBOpenLatestNews = "KCBOpenLatestNews"
+let KCBOpenAwardData = "KCBOpenAwardData"
+let KCBOpenretrieveAwardDownloadPage = "KCBOpenretrieveAwardDownloadPage"
+let KCBOpenLineImporter = "KCBOpenLineImporter"
+let KCBOpenShowCAP = "KCBOpenShowCAP"
+let KCBOpenAwardEmpValidationVC = "KCBOpenAwardEmpValidationVC"
+let KCBOpenAwardEmpValidationVCForAddToCal = "KCBOpenAwardEmpValidationVCForAddToCal"
+let KCBOpenLineText = "KCBOpenLineText"
+let KCBOpenTripText = "KCBOpenTripText"
+let KCBOpenFAMemo = "KCBOpenFAMemo"
+
 
 public enum HTTPStatusCode: Int {
     case `continue` = 100,

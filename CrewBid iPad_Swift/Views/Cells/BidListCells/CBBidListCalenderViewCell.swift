@@ -480,6 +480,34 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
     }
     
+    
+    // Function to handle freezing condition
+
+    func handlingFreezingCondition()  {
+        imgAccessoryView.isHidden = false
+        if (line!.isFrozen != 0) {
+            let snowflakeImage = UIImage(named: "Blue_Snowflake")
+            imgAccessoryView?.image = snowflakeImage
+            lineLabel.textColor = UIColor(red: 0.0, green: 0.75, blue: 1.0, alpha: 1.0)
+            selectionToggleButton.isHidden = true
+            self.isEditing = false
+        }
+        else
+         {
+            let snowflakeImage = UIImage(named: "Blue_SnowflakeEmpty")
+            imgAccessoryView?.image = snowflakeImage
+            imgAccessoryView.isHidden = true
+             lineLabel.textColor = UIColor.black
+            if bidPeriod.isFABid() && self.line!.faPosition?.intValue != BIFaPosition.FaPositionNA.rawValue {
+                lineLabel.textColor = UIColor.white
+            }else {
+                lineLabel.textColor = UIColor.label
+            }
+            selectionToggleButton.isHidden = false
+            self.isEditing = false
+        }
+    }
+    
     func refreshCalendar(){
         //let daysInCalendar: Int = calendarData!.calendarDays.count
          let daysInCalendar: Int = (calendarDaysCount?.count)!

@@ -35,7 +35,9 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     var cellidentifiers: [String] = []
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.view.clipsToBounds = true
+        self.view.layer.cornerRadius = 5
+        calendarData = calendarData.initWithBidPeriod(bidPeriod: bidPeriod!)!
         bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
         context = CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext
         filterRules = (bidPeriod!.lineFilters!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "type", ascending: true), NSSortDescriptor(key: "category", ascending: true)]) as [Any]
@@ -50,7 +52,8 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
         reloadRuleCell()
         objFilterTableView.allowsSelection = false
         NotificationCenter.default.addObserver(self, selector: #selector(flipToBidList), name: NSNotification.Name("flipToBidList"), object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateBidListCount), name: NSNotification.Name("updateBidListCount"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateFilters), name: NSNotification.Name("refreshLines"), object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -59,12 +62,30 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     }
     
     func setupUI(){
-        calendarData = calendarData.initWithBidPeriod(bidPeriod: bidPeriod!)!
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
+        updateBidListCount()
+    }
+    
+    @objc func updateFilters(){
+        filterRules = (CBGlobalMethods.shared.selectedBidPeriod!.lineFilters!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "type", ascending: true), NSSortDescriptor(key: "category", ascending: true)]) as [Any]
+        self.objFilterTableView.reloadData()
+    }
+    
+    @objc func updateBidListCount(){
+        var linesArray : [BILine] = []
+        for case let line as BILine in CBGlobalMethods.shared.selectedBidPeriod!.lines! {
+            linesArray.append(line)
+        }
+        var array : [NSPredicate] = []
+        array.append(NSPredicate(format: "bidOrder > %@", NSNumber(integerLiteral: 0)))
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
+        linesArray = (linesArray as NSArray).filtered(using: predicate) as! [BILine]
+        DispatchQueue.main.async {
+            self.btnBidListCount.setTitle("\(linesArray.count)", for: .normal)
+        }
     }
     
     @objc func flipToBidList(){
-   //     DispatchQueue.main.async {
             var isNeedtoPush : Bool = true
             if let viewControllers = self.navigationController?.viewControllers  {
                 for controller in viewControllers {
@@ -82,7 +103,6 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
                 self.navigationController?.pushViewController(vc, animated: false)
                 UIView.transition(from: self.view, to: vc.view, duration: 0.85, options: [.transitionFlipFromLeft])
             }
-       // }
     }
     
 //    func fetchFromFilterAndUpdateCategory() {
@@ -133,7 +153,9 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
             print("Failed to perform filter rule fetch: \(error.localizedDescription)")
         }
         let fetchedObjects = try! moc!.fetch(fetchRequest)
-        objFilterTableView.reloadData()
+        DispatchQueue.main.async {
+            self.objFilterTableView.reloadData()
+        }
     }
     
     @IBAction func btnSortAction(_ sender: Any) {

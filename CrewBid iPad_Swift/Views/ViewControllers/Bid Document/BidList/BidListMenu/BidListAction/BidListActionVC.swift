@@ -9,7 +9,7 @@ import UIKit
 
 class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate {
     
-    private let bidListActionArray = ["Scrolling Options","Deselect All Lines","Move Selected Lines","Undo","Redo","Return Selected Lines To Scratchpad","Return Unfrozen Lines To Scratchpad", "Start Over"]
+    private let bidListActionArray = ["Scrolling Options","Deselect All Lines","Move Selected Lines","Undo","Redo","Return Selected Lines to Scratchpad","Return Unfrozen Lines to Scratchpad", "Start Over"]
     var bidPeriod = BIBidPeriod()
     var ArrLinesDetails: [BILine] = []
     var selectedLinesCount:NSMutableArray = NSMutableArray()
@@ -32,7 +32,8 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CBBidListActionTableCell") as! CBBidListActionTableCell
         cell.lblTitle.text = bidListActionArray[indexPath.row]
-        cell.lblTitle.font = UIFont.systemFont(ofSize: 15)
+        cell.lblTitle.font = UIFont.systemFont(ofSize: 17)
+        cell.lblTitle.adjustsFontSizeToFitWidth = true
         if indexPath.row == 0 {
             if ArrLinesDetails.count > 0 {
                 cell.isUserInteractionEnabled = true
@@ -148,7 +149,7 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
                 let appendDictionary = NSMutableDictionary()
                 appendDictionary["lineNumber"] = txtScrollToLineNumber
                 self.dismiss(animated: true) {
-                    //                    NotificationCenter
+                    NotificationCenter.default.post(name: Notification.Name("ScrollToLineNotification"), object: appendDictionary)
                 }
             }
             
@@ -160,14 +161,14 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
             let toInsertionBar = UIAlertAction(title: "Scroll to Insertion Bar", style: UIAlertAction.Style.default) {
                 UIAlertAction in
                 self.dismiss(animated: true) {
-                    //                    NotificationCenter
+                    NotificationCenter.default.post(name: Notification.Name("ScrollToInsertionLineNotification"), object: nil)
                 }
             }
             
             let toBottom = UIAlertAction(title: "Scroll to Bottom", style: UIAlertAction.Style.default) {
                 UIAlertAction in
                 self.dismiss(animated: true) {
-                    //                    NotificationCenter
+                    NotificationCenter.default.post(name: Notification.Name("ScrollToBottomLineNotification"), object: nil)
                 }
             }
             alertController.addAction(toLine)
@@ -178,16 +179,44 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
                 UIApplication.topViewController()?.present(alertController, animated: true)
                 alertWindow.makeKeyAndVisible()
             }
+        }else if indexPath.row == 1{
+            // Handle Deselect All Lines
+            NotificationCenter.default.post(name: Notification.Name("CBDeselectAllLinesNotification"), object: nil)
+            self.dismissPopover(animated: true)
+        
         }else if indexPath.row == 2{
-            
+            // Handle Move Selected Lines
+            NotificationCenter.default.post(name: Notification.Name("CBMoveSelectedNotification"), object: nil)
+            self.dismissPopover(animated: true)
         }else if indexPath.row == 3{
-            
+            // Handle Undo
+            NotificationCenter.default.post(name: Notification.Name("CBUndoNotification"), object: nil)
+            self.dismissPopover(animated: true)
         }else if indexPath.row == 4{
-            
+            // Handle Redo
+            NotificationCenter.default.post(name: Notification.Name("CBRedoNotification"), object: nil)
+            self.dismissPopover(animated: true)
         }else if indexPath.row == 5{
-            
+            // Handle Return Selected Lines To Scratchpad
+            NotificationCenter.default.post(name: Notification.Name("CBReturnSelectedLinesNotification"), object: nil)
+            self.dismissPopover(animated: true)
         }else if indexPath.row == 6{
-            
+            // Handle Return Unfrozen Lines To Scratchpad
+            let alertController = UIAlertController(title: "Tap OK to remove all unfrozen lines.", message: nil, preferredStyle: .alert)
+            let OkAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) {
+                UIAlertAction in
+                NotificationCenter.default.post(name: Notification.Name("CBReturnUnfrozenLinesNotification"), object: nil)
+                self.dismissPopover(animated: true)
+            }
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel) {
+                UIAlertAction in
+                self.dismissPopover(animated: true)
+            }
+            alertController.addAction(OkAction)
+            alertController.addAction(cancelAction)
+            self.dismiss(animated: true) {
+                UIApplication.topViewController()?.present(alertController, animated: true, completion: nil)
+            }
         }else if indexPath.row == 7{
             // Handle Start Over
             if self.bidPeriod.isBidListSortOn == true {

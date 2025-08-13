@@ -24,6 +24,9 @@ class RefreshMenuController: BaseViewController,UITableViewDelegate,UITableViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.dataSource = self
+        tableView.delegate = self
+        viewBackground.clipsToBounds = true
         viewBackground.layer.cornerRadius = 5
     }
     

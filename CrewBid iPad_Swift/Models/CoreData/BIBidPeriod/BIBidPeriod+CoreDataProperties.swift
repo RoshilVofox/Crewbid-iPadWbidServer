@@ -10,6 +10,15 @@ import Foundation
 import CoreData
 
 
+var BIBidPeriodEntityName = "BidPeriod"
+var BICoverLetterTextFileName = "Cover Letter"
+var BISeniorityListTextFileName = "Seniority List"
+var BILinesTextFileName = "Lines Text"
+var BITripsTextFileName = "Trips Text"
+var BIAwardsTextFileName = "Bid Awards"
+var BIFaMemoTextFileName = "FA Memo"
+
+
 extension BIBidPeriod {
     
     @nonobjc public class func fetchRequest() -> NSFetchRequest<BIBidPeriod> {
@@ -145,7 +154,7 @@ extension BIBidPeriod {
     @NSManaged public var vacations: NSSet?
     @NSManaged public var lineFilters: NSSet?
     @NSManaged public var bidByEmpID: String?
-    
+    @NSManaged public var insertionPoints: NSSet?
 }
 
 // MARK: Generated accessors for awardDetails
@@ -972,6 +981,39 @@ extension BIBidPeriod : Identifiable {
     func orderedLines() -> [BILine] {
         let lines = (self.lines!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "number", ascending: true)]) as! [BILine]
         return lines
+    }
+    
+    // This function deletes all bid list sorts
+    func deleteAllBidListSorts(){
+        // Retrieve and sort bid list sorts
+        let sortArray = ((getOrderedBidListSorts()) as NSArray).sortedArray(using: [NSSortDescriptor(key: "order", ascending: true)]) as NSArray
+        // Iterate through the sorted bid list sorts
+        var isNeededTripHighlightReset = false
+        for sort in sortArray.filtered(using: NSPredicate(format: "isBidListSort == \(NSNumber(value: true))")) {
+            // Check if the sort is of type BILineSort
+            isNeededTripHighlightReset = true
+            guard let sort = sort as? BILineSort else {
+                continue
+            }
+            // Delete associated line sort key map, if it exists
+            if (sort.lineSortKeyMap != nil) {
+                self.managedObjectContext?.delete(sort.lineSortKeyMap!)
+            }
+            // Delete the bid list sort
+
+            self.managedObjectContext?.delete(sort)
+        }
+        // Reset trip highlight count if a bid period is selected
+        if CBGlobalMethods.shared.selectedBidPeriod != nil && isNeededTripHighlightReset{
+            BITrip.resetTripHighlightCount(in: CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!)
+        }
+       
+    }
+    
+    func sortedBidReceipts() -> [BIBidReceipt] {
+        let timeStampSort = NSSortDescriptor(key: "timeStamp", ascending: false)
+        let sortedBidReceipts = (bidReceipts!.allObjects as NSArray).sortedArray(using: [timeStampSort])
+        return sortedBidReceipts as! [BIBidReceipt]
     }
     
 }

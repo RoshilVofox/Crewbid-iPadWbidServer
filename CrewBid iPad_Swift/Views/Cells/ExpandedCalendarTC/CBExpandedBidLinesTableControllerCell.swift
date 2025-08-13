@@ -267,6 +267,156 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
     }
     
+    // This function handles various conditions related to freezing a line.
+
+    func handlingFreezingCondition(line: BILine? = nil)  {
+        imgAccessoryView.isHidden = false
+        if (line?.isFrozen != 0) {
+            let snowflakeImage = UIImage(named: "Blue_Snowflake")
+            imgAccessoryView?.image = snowflakeImage
+            mLblLineNo.textColor = UIColor(red: 0.0, green: 0.75, blue: 1.0, alpha: 1.0)
+            if line!.isETOPS?.boolValue == true{
+                let attributedString = NSMutableAttributedString(string: mLblLineNo.text!)
+                let lastCharacterRange = NSMakeRange( mLblLineNo.text!.count - 1, 1)
+                if line?.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                } else {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                }
+                mLblLineNo.attributedText = attributedString
+            }
+            // Check if 'isETOPSRES' is true and modify the text color accordingly.
+
+            if line!.isETOPSRES?.boolValue == true{
+                let attributedString = NSMutableAttributedString(string: mLblLineNo.text!)
+                let lastCharacterRange = NSMakeRange( mLblLineNo.text!.count - 2, 2)
+                if line?.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                } else {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                }
+                mLblLineNo.attributedText = attributedString
+            }
+            else if bidPeriod!.isFABid() && bidPeriod!.isSecondRoundBid() {
+                if line!.faReserveLineType == (BIFaReserveLineType.SnrAMres.rawValue) as NSNumber || line!.faReserveLineType == (BIFaReserveLineType.SnrPMres.rawValue) as NSNumber || line!.faReserveLineType == (BIFaReserveLineType.JnrAMres.rawValue) as NSNumber || line!.faReserveLineType == (BIFaReserveLineType.JnrPMres.rawValue) as NSNumber || line!.faReserveLineType == (BIFaReserveLineType.JnrLateRes.rawValue) as NSNumber{
+                    let attributedString = NSMutableAttributedString(string: mLblLineNo.text!)
+                    let lastCharacterRange = NSMakeRange( mLblLineNo.text!.count - 2, 2)
+                    if line?.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                        attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                    } else {
+                        attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                    }
+                    mLblLineNo.attributedText = attributedString
+                }
+            }
+            
+           else if line!.type == BILineType.ReserveLine.rawValue.asNSNumber || line!.type == BILineType.NonEtopsReserve.rawValue.asNSNumber{
+                let attributedString = NSMutableAttributedString(string: mLblLineNo.text!)
+                let lastCharacterRange = NSMakeRange( mLblLineNo.text!.count - 1, 1)
+                if line?.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                } else {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                }
+                mLblLineNo.attributedText = attributedString
+            }
+            if !bidPeriod!.isFABid() && bidPeriod!.isSecondRoundBid() && (line!.type == BILineType.MixedLine.rawValue.asNSNumber || line!.type == BILineType.NonEtopsMixed.rawValue.asNSNumber) {
+                let attributedString = NSMutableAttributedString(string: mLblLineNo.text!)
+                let lastCharacterRange = NSMakeRange( mLblLineNo.text!.count - 2, 2)
+                if line?.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                } else {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                }
+                mLblLineNo.attributedText = attributedString
+            }
+            // Hide a button with a specific tag.
+
+            let button = viewWithTag(kSelectionButtonTag) as? UIButton
+            button?.isHidden = true
+            self.isEditing = false
+        } else {
+            // Set a different image and configure the label and button based on conditions.
+
+            let snowflakeImage = UIImage(named: "Blue_SnowflakeEmpty")
+            imgAccessoryView?.image = snowflakeImage
+            imgAccessoryView.isHidden = true
+            let button = viewWithTag(kSelectionButtonTag) as? UIButton
+            // Check conditions and modify the label text color.
+
+            if bidPeriod!.isFABid() && line!.faPosition?.intValue != BIFaPosition.FaPositionNA.rawValue {
+                mLblLineNo.textColor = UIColor.white
+                
+            }
+            else {
+                positionCircleView.backgroundColor = .systemBackground
+                mLblLineNo.textColor = UIColor.label
+            }
+            // Check if 'isETOPS' is true and modify the text color accordingly.
+
+                if line!.isETOPS?.boolValue == true{
+                    let attributedString = NSMutableAttributedString(string: mLblLineNo.text!)
+                    let lastCharacterRange = NSMakeRange( mLblLineNo.text!.count - 1, 1)
+                    if line?.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                        attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                    } else {
+                        attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                    }
+                    mLblLineNo.attributedText = attributedString
+                }
+            // Check if 'isETOPSRES' is true and modify the text color accordingly.
+
+                if line!.isETOPSRES?.boolValue == true{
+                    let attributedString = NSMutableAttributedString(string: mLblLineNo.text!)
+                    let lastCharacterRange = NSMakeRange( mLblLineNo.text!.count - 2, 2)
+                    if line?.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                        attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                    } else {
+                        attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                    }
+                    mLblLineNo.attributedText = attributedString
+                }
+            
+            else if bidPeriod!.isFABid() && bidPeriod!.isSecondRoundBid() {
+                if line!.faReserveLineType == (BIFaReserveLineType.SnrAMres.rawValue) as NSNumber || line!.faReserveLineType == (BIFaReserveLineType.SnrPMres.rawValue) as NSNumber || line!.faReserveLineType == (BIFaReserveLineType.JnrAMres.rawValue) as NSNumber || line!.faReserveLineType == (BIFaReserveLineType.JnrPMres.rawValue) as NSNumber || line!.faReserveLineType == (BIFaReserveLineType.JnrLateRes.rawValue) as NSNumber{
+                    let attributedString = NSMutableAttributedString(string: mLblLineNo.text!)
+                    let lastCharacterRange = NSMakeRange( mLblLineNo.text!.count - 2, 2)
+                    if line?.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                        attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                    } else {
+                        attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                    }
+                    mLblLineNo.attributedText = attributedString
+                }
+            }
+            
+            // Show the button.
+            else if line!.type == BILineType.ReserveLine.rawValue.asNSNumber || line!.type == BILineType.NonEtopsReserve.rawValue.asNSNumber{
+                let attributedString = NSMutableAttributedString(string: mLblLineNo.text!)
+                let lastCharacterRange = NSMakeRange( mLblLineNo.text!.count - 1, 1)
+                if line?.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                } else {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                }
+                mLblLineNo.attributedText = attributedString
+            }
+            if !bidPeriod!.isFABid() && bidPeriod!.isSecondRoundBid() && (line!.type == BILineType.MixedLine.rawValue.asNSNumber || line!.type == BILineType.NonEtopsMixed.rawValue.asNSNumber) {
+                let attributedString = NSMutableAttributedString(string: mLblLineNo.text!)
+                let lastCharacterRange = NSMakeRange( mLblLineNo.text!.count - 2, 2)
+                if line?.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
+                } else {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
+                }
+                mLblLineNo.attributedText = attributedString
+            }
+
+            button?.isHidden = false
+            self.isEditing = true
+        }
+    }
+    
     
     func refreshTripButtons(highlightFlag:Bool) {
         if nil == tripButtons {
@@ -784,8 +934,6 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
                     tripLength = vacay.length as! Int
                 }
                 
-                // The below if condition commented by Raja on 06 Jan 2024
-                // Since we are not showing the dates / calendar in new line
                 if index < 0 {
                     // Vacation starts before the visible calendar days, so show the rounded right image
                     buttonImage = UIImage(named: "TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)

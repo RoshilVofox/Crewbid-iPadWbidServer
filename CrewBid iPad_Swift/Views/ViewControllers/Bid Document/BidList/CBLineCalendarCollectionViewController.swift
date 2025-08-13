@@ -143,14 +143,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
         let itemSize: CGSize? = flowLayout?.itemSize
         let inset: CGFloat = 15.0
         let WidthSize = ((self.collectionView.frame.width)) / 7
-//        let rightRoundedInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 18)
-//        let leftRoundedInsets  = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 0)
-//        let bothRoundedInsets  = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 18)
         let insets: UIEdgeInsets = UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset)
-//        let verticalPadding: CGFloat = 12.0
-//        let buttonHeight = itemSize.height - verticalPadding
-//        let yOffset = (itemSize.height - buttonHeight) / 2.0
-//        var buttonFrame = CGRect( x: 0.0, y: yOffset, width: itemSize.width, height: buttonHeight )
         var buttonFrame = CGRect(x: 0.0, y: 0.0, width: WidthSize , height: itemSize?.height ?? 0.0)
         var buttonImage: UIImage? = nil
         var button = CBTripButton()
@@ -182,7 +175,6 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
             // If trip will go across two rows in calendar, create both buttons.
             if column + tripLength > 7 {
                 buttonLength = 7 - column
-//                buttonFrame.size.width = CGFloat(buttonLength) * (itemSize.width)
                 buttonFrame.size.width = CGFloat(buttonLength) * (WidthSize)
                 if trip.isRedEyeTrip {
                     buttonImage = UIImage(named: "TripButton-rounded-left-redEye_red_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
@@ -217,7 +209,6 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                         }
                     }
                 }
-//                buttonFrame.size.width =  CGFloat(buttonLength) * (itemSize.width)
                 buttonFrame.size.width =  CGFloat(buttonLength) * (WidthSize)
                 button = CBTripButton(frame: buttonFrame)
                 button.tag = kCBButtonTag
@@ -233,7 +224,6 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                 collectionView.addSubview(button)
                 let nextButtonLength: Int = tripLength - buttonLength
                 let nextButtonIndex: Int = index + buttonLength
-//                buttonFrame.size.width = CGFloat(nextButtonLength) * (itemSize.width)
                 buttonFrame.size.width =  CGFloat(nextButtonLength) * (WidthSize)
                 if trip.isRedEyeTrip{
                     buttonImage = UIImage(named: "TripButton-rounded-right-redEye_red_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
@@ -329,8 +319,6 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                         }
                     }
                 }
-                
-//                buttonFrame.size.width = CGFloat(tripLength) * (itemSize.width)
                 buttonFrame.size.width =  CGFloat(tripLength) * (WidthSize)
                 button = CBTripButton(frame: buttonFrame)
                 button.tag = kCBButtonTag
@@ -378,14 +366,14 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
             for d in 0..<daysCount{
                 showingRedEyeIconForThisDay = false
                 var labelFrame = button.bounds
-                labelFrame.size.width = /*itemSize.width*/ WidthSize
+                labelFrame.size.width = WidthSize
                 var dayIndex = d
                 
                 
                 if !self.bidPeriod.isFABid() && (trip.info?.dutyPeriodsCount != trip.info?.calendarDaysCount) {
                     if !showingRedEyeIconForThisTrip {
                         if trip.isRedEyeTrip && (dayIndex >= missingDateIndex) && missingDateIndex != -1 {
-                            labelFrame.origin.x = CGFloat(d) * /*itemSize.width*/WidthSize + 3
+                            labelFrame.origin.x = CGFloat(d) * WidthSize + 3
                             redEyeIconButton.frame = labelFrame
                             labelButton?.addSubview(redEyeIconButton)
                             redEyePayLabel = UILabel(frame: labelFrame)
@@ -401,12 +389,12 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                         }
                     }
                 }
-                labelFrame.origin.x = CGFloat(dayIndex) * /*itemSize.width*/WidthSize
+                labelFrame.origin.x = CGFloat(dayIndex) * WidthSize
                 // Show labels in other button if day is greater than length of
                 // first button. Adjust origin of label to other button.
                 if otherButton != nil && dayIndex >= buttonLength {
                     labelButton = otherButton!
-                    labelFrame.origin.x = CGFloat(d - buttonLength) * /*itemSize.width*/WidthSize + 3
+                    labelFrame.origin.x = CGFloat(d - buttonLength) * WidthSize + 3
                     if !self.bidPeriod.isFABid() && trip.info?.dutyPeriodsCount != trip.info?.calendarDaysCount {
                         if !showingRedEyeIconForThisTrip {
                             if trip.isRedEyeTrip && (dayIndex - buttonLength) >= missingDateIndex && missingDateIndex != -1 {
@@ -423,7 +411,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                             }
                         }
                     }
-                    labelFrame.origin.x = CGFloat(dayIndex - buttonLength) * /*itemSize.width*/ WidthSize
+                    labelFrame.origin.x = CGFloat(dayIndex - buttonLength) * WidthSize
                 }
                 let label = UILabel(frame: labelFrame)
                 label.textAlignment = .center
@@ -647,7 +635,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                         
                         if day.displayType?.intValue == BIDayDisplayType.normal.rawValue{
                             var xValue:CGFloat = 0.0
-                            xValue = label.frame.origin.x + /*itemSize.width*/WidthSize - 13
+                            xValue = label.frame.origin.x + WidthSize - 13
                             let weekDayInt = CBUtils.weekDay(from: trip.startDate!)
                             let isSaturday = (weekDayInt + d == 7)
                             if isSaturday{
@@ -733,7 +721,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
         vacationButtons?.removeAllObjects()
         vacationButtons?.addObjects(from: calendarData!.calendarDays as! [Any])
         if self.bidPeriod.containsVacay!.boolValue{
-            var vacayButtonFrame = CGRect(x: 0, y: 0, width: /*itemSize.width*/WidthSize, height: itemSize!.height)
+            var vacayButtonFrame = CGRect(x: 0, y: 0, width: WidthSize, height: itemSize!.height)
             var buttonImage:UIImage? = nil
             let vacations = self.bidPeriod.vacations
             for case let vacay as BIVacation in vacations! {
@@ -753,10 +741,8 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                 // If vacation pill will go across two rows in calendar, create both buttons.
                 if column+tripLength > 7 {
                     buttonLength = 7 - column
-//                    vacayButtonFrame.size.width = CGFloat(buttonLength) * itemSize.width
                     buttonImage = UIImage(named: "TripButton-rounded-left-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
-//                    vacayButtonFrame.size.height = buttonHeight
-                    vacayButtonFrame.size.width = min(CGFloat(tripLength), 7) * /*itemSize.width*/WidthSize
+                    vacayButtonFrame.size.width = min(CGFloat(tripLength), 7) * WidthSize
                     let button2 = UIImageView(frame: vacayButtonFrame)
                     button2.image = buttonImage
                     vacationButtons?.replaceObject(at: index, with: button2)
@@ -774,11 +760,10 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                         buttonLength = tripLength > 7 ? 7 : tripLength
                         
                         if index < daysInCalendar {
-                            vacayButtonFrame.size.width = min(CGFloat(buttonLength), 7) * /*itemSize.width*/WidthSize
+                            vacayButtonFrame.size.width = min(CGFloat(buttonLength), 7) * WidthSize
                             if tripLength > 7{
                                 vacayButtonFrame.size.width += 15
                             }
-//                            vacayButtonFrame.size.height = buttonHeight
                             buttonImage = UIImage(named:"TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
                             let otherButton2 = UIImageView(frame: vacayButtonFrame)
                             otherButton2.image = buttonImage
@@ -804,8 +789,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                     }else{
                         buttonImage = UIImage(named: "TripButton-rounded-both-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
                     }
-                    vacayButtonFrame.size.width = CGFloat(tripLength) * /*itemSize.width*/WidthSize
-//                    vacayButtonFrame.size.height = buttonHeight
+                    vacayButtonFrame.size.width = CGFloat(tripLength) * WidthSize
                     let button2 = UIImageView(frame: vacayButtonFrame)
                     button2.image = buttonImage
                     vacationButtons?.replaceObject(at: index, with: button2)
@@ -851,7 +835,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                 }
         }
         if self.bidPeriod.containsVacay!.boolValue {
-            var vacayButtonFrame = CGRect(x: 0, y: 0, width: /*itemSize.width*/WidthSize, height: /*itemSize.height*/WidthSize)
+            var vacayButtonFrame = CGRect(x: 0, y: 0, width: WidthSize, height: WidthSize)
             var buttonImage:UIImage? = nil
             let vacations = self.line?.fvvacations
             let arrVacationIndexes = NSMutableArray()
@@ -877,11 +861,9 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                         let index = (self.calendarData?.indexForDate(date: cfvDATE))!
                         let indexPath1 = IndexPath(row: index + 1, section: 0)
                         let buttonLayoutAttributes1 = self.collectionView.layoutAttributesForItem(at: indexPath1)!
-//                        var vacayButtonFrame = buttonLayoutAttributes1.frame
-//                        vacayButtonFrame.size.width = itemSize.width
                         let height: CGFloat = 28.0
                         let cfvFrame = CGRect(x: (buttonLayoutAttributes1.frame.minX), y: (buttonLayoutAttributes1.frame.minY), width: (buttonLayoutAttributes1.frame.width)-5, height: height)
-                        cfv.frame = /*vacayButtonFrame*/cfvFrame
+                        cfv.frame = cfvFrame
                         cfv.layer.cornerRadius = cfv.frame.height/2
                         cfv.layer.masksToBounds = true
                         cfvVacationButtons?.replaceObject(at: index + 1, with: cfv)
@@ -910,9 +892,9 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                 // If vacation pill will go across two rows in calendar, create both buttons.
                 if column + tripLength > 7 {
                     buttonLength = 7 - column
-                    vacayButtonFrame.size.width = /*itemSize.width*/WidthSize * CGFloat(buttonLength)
+                    vacayButtonFrame.size.width = WidthSize * CGFloat(buttonLength)
                     buttonImage = UIImage(named:"TripButton-rounded-left-FVBlue_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
-                    vacayButtonFrame.size.width = min(CGFloat(tripLength), 7) * /*itemSize.width*/WidthSize
+                    vacayButtonFrame.size.width = min(CGFloat(tripLength), 7) * WidthSize
                     let button2 = UIImageView(frame: vacayButtonFrame)
                     button2.image = buttonImage
                     fvVacationButtons?.replaceObject(at: index, with: button2)
@@ -927,7 +909,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                     while tripLength > 0 {
                         buttonLength = tripLength > 7 ? 7 : tripLength
                         if index < daysInCalendar{
-                            vacayButtonFrame.size.width = min(CGFloat(buttonLength), 7) * /*itemSize.width*/WidthSize
+                            vacayButtonFrame.size.width = min(CGFloat(buttonLength), 7) * WidthSize
                             if tripLength > 7 {
                                 vacayButtonFrame.size.width += 15
                             }
@@ -956,7 +938,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                     }else{
                         buttonImage = UIImage(named: "TripButton-rounded-both-FVBlue_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
                     }
-                    vacayButtonFrame.size.width = CGFloat(tripLength) * /*itemSize.width*/WidthSize
+                    vacayButtonFrame.size.width = CGFloat(tripLength) * WidthSize
                     let button2 = UIImageView(frame: vacayButtonFrame)
                     button2.image = buttonImage
                     fvVacationButtons?.replaceObject(at: index, with: button2)
@@ -969,79 +951,6 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                 }
             }
         }
-//        if (self.bidPeriod.myCalEnabled?.boolValue == true) && self.bidPeriod.isNeedToShowMyCal() && (self.line?.bidOrder == 0) {
-//            var vacayButtonFrame = CGRect(x: 0, y: 0, width: itemSize.width, height: itemSize.height)
-//            var buttonImage:UIImage? = nil
-//            var index = self.calendarData!.indexForDateGMT(date: (self.bidPeriod.myCalStartDate)!)
-//            let length = self.calculateLengthBetween(startDate: (self.bidPeriod.myCalStartDate)!, endDate: (self.bidPeriod.myCalEndDate)!)
-//            var tripLength = 0
-//            if index < 0 {
-//                tripLength = length.intValue + index
-//            }else if index > (daysInCalendar - 1){
-//                tripLength = 0
-//            }else{
-//                tripLength = length.intValue
-//            }
-//            let column = index % 7
-//            var buttonLength = 0
-//         
-//            
-//            // If vacation pill will go across two rows in calendar, create both buttons.
-//            if column + tripLength > 7 {
-//                buttonLength = 7 - column
-//                vacayButtonFrame.size.width = CGFloat(buttonLength) * itemSize.width
-//                buttonImage = UIImage(named: "TripButton-rounded-left-red2_iOS7")?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
-//                vacayButtonFrame.size.width = min(CGFloat(tripLength), 7) * itemSize.width
-//                let button2 = UIImageView(frame: vacayButtonFrame)
-//                button2.image = buttonImage
-//                fvVacationButtons?.replaceObject(at: index, with: button2)
-//                button2.alpha = 0.5
-//                self.calendarCollectionView.addSubview(button2)
-//                
-//                if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
-//                    button2.isUserInteractionEnabled = true
-//                    button2.isOpaque = false
-//                }
-//                tripLength -= buttonLength
-//                index += buttonLength
-//                while tripLength > 0 {
-//                    buttonLength = tripLength > 7 ? 7 :tripLength
-//                    if index < daysInCalendar {
-//                        vacayButtonFrame.size.width = min(CGFloat(buttonLength), 7) * itemSize.width
-//                        
-//                        if tripLength > 7{
-//                            vacayButtonFrame.size.width += 15
-//                        }
-//                        buttonImage = UIImage(named: "TripButton-rounded-right-red2_iOS7")?.resizableImage(withCapInsets: rightRoundedInsets, resizingMode: .stretch)
-//                        let otherButton2 = UIImageView(frame: vacayButtonFrame)
-//                        otherButton2.image = buttonImage
-//                        fvVacationButtons?.replaceObject(at: index, with: otherButton2)
-//                        otherButton2.alpha = 0.5
-//                        self.calendarCollectionView.addSubview(otherButton2)
-//                        if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
-//                            otherButton2.isUserInteractionEnabled = true
-//                            otherButton2.isOpaque = false
-//                        }
-//                    }
-//                    tripLength -= buttonLength
-//                    index += buttonLength
-//                }
-//            }
-//            else{// Vacation in one row only of the calendar.
-//                buttonImage = UIImage(named: "TripButton-rounded-both-red2_iOS7")?.resizableImage(withCapInsets: bothRoundedInsets, resizingMode: .stretch)
-//                vacayButtonFrame.size.width = CGFloat(tripLength) * itemSize.width
-//                let button2 = UIImageView(frame: vacayButtonFrame)
-//                button2.image = buttonImage
-//                fvVacationButtons?.replaceObject(at: index, with: button2)
-//                button2.alpha = 0.5
-//                self.calendarCollectionView.addSubview(button2)
-//                
-//                if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
-//                    button2.isUserInteractionEnabled = true
-//                    button2.isOpaque = false
-//                }
-//            }
-//        }
         self.collectionView.reloadData()
         self.collectionView.tripButtons = tripButtons
         self.collectionView.vacationButtons = vacationButtons

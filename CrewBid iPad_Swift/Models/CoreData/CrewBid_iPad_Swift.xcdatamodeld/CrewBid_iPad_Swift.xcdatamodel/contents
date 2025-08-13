@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788" systemVersion="24E263" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24G84" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AwardDetails" representedClassName="AwardDetails" syncable="YES" codeGenerationType="class">
         <attribute name="empNum" optional="YES" attributeType="String"/>
         <attribute name="lineNum" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -130,6 +130,7 @@
         <relationship name="commuteTime" optional="YES" toMany="YES" deletionRule="No Action" destinationEntity="CommuteTime" inverseName="commutable" inverseEntity="CommuteTime"/>
         <relationship name="deadheadAtEndCities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DeadheadAtEndCity" inverseName="bidPeriod" inverseEntity="DeadheadAtEndCity"/>
         <relationship name="deadheadAtStartCities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DeadheadAtStartCity" inverseName="bidPeriod" inverseEntity="DeadheadAtStartCity"/>
+        <relationship name="insertionPoints" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="InsertionPoint" inverseName="bidPeriod" inverseEntity="InsertionPoint"/>
         <relationship name="lineFilters" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="FilterRule" inverseName="bidPeriod" inverseEntity="FilterRule"/>
         <relationship name="lines" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Line" inverseName="bidPeriod" inverseEntity="Line"/>
         <relationship name="lineSortKeyMaps" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LineSortKeyMap" inverseName="bidPeriod" inverseEntity="LineSortKeyMap"/>
@@ -248,9 +249,10 @@
         <attribute name="orig" optional="YES" attributeType="String"/>
         <attribute name="routeNum" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
     </entity>
-    <entity name="InsertionPoint" representedClassName="BIInsertionPoint" syncable="YES" codeGenerationType="class">
+    <entity name="InsertionPoint" representedClassName="BIInsertionPoint" syncable="YES">
         <attribute name="above" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="index" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <relationship name="bidPeriod" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="insertionPoints" inverseEntity="BidPeriod"/>
         <relationship name="line" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Line" inverseName="insertionPoint" inverseEntity="Line"/>
     </entity>
     <entity name="Leg" representedClassName="BILeg" syncable="YES">
