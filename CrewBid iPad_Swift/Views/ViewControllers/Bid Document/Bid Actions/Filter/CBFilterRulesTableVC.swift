@@ -153,7 +153,9 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
             print("Failed to perform filter rule fetch: \(error.localizedDescription)")
         }
         let fetchedObjects = try! moc!.fetch(fetchRequest)
-        objFilterTableView.reloadData()
+        DispatchQueue.main.async {
+            self.objFilterTableView.reloadData()
+        }
     }
     
     @IBAction func btnSortAction(_ sender: Any) {

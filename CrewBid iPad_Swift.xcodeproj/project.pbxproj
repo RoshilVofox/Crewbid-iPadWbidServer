@@ -360,6 +360,7 @@
 		F4E5DA042E3C908D00C96BDF /* CBCalendarDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E5DA032E3C908D00C96BDF /* CBCalendarDayCell.swift */; };
 		F4E5DA062E3C9F9700C96BDF /* CBLineCalendarCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E5DA052E3C9F9700C96BDF /* CBLineCalendarCollectionViewController.swift */; };
 		F4E5DA0C2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E5DA0B2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift */; };
+		F4EBBCAB2E4C6E1E00C87336 /* SegmentedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4EBBCAA2E4C6E1D00C87336 /* SegmentedTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -724,6 +725,7 @@
 		F4E5DA032E3C908D00C96BDF /* CBCalendarDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCalendarDayCell.swift; sourceTree = "<group>"; };
 		F4E5DA052E3C9F9700C96BDF /* CBLineCalendarCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLineCalendarCollectionViewController.swift; sourceTree = "<group>"; };
 		F4E5DA0B2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidLineCalendarCollectionView.swift; sourceTree = "<group>"; };
+		F4EBBCAA2E4C6E1D00C87336 /* SegmentedTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1063,6 +1065,7 @@
 				F41EBDD92DC4DB20001413DE /* CBFlightDataChangeVCTableCell.swift */,
 				F41EBDDA2DC4DB20001413DE /* ShowCAPTableViewCell.swift */,
 				F41EBDDB2DC4DB20001413DE /* SwitchTableViewCell.swift */,
+				F4EBBCAA2E4C6E1D00C87336 /* SegmentedTableViewCell.swift */,
 			);
 			path = tableViewCells;
 			sourceTree = "<group>";
@@ -2141,6 +2144,7 @@
 				F41EBF872DC4DB20001413DE /* InnerCollectionViewCell.swift in Sources */,
 				F4BAEFE62E055F1000109A1B /* ODataBuilder.swift in Sources */,
 				F41EBF882DC4DB20001413DE /* CBBidListSortOptions.swift in Sources */,
+				F4EBBCAB2E4C6E1E00C87336 /* SegmentedTableViewCell.swift in Sources */,
 				F41EBF892DC4DB20001413DE /* BidListActionVC.swift in Sources */,
 				F481E9732DD0946000DED8FE /* BICrewPosition.swift in Sources */,
 				F41EBF8A2DC4DB20001413DE /* CBBidListActionTableCell.swift in Sources */,

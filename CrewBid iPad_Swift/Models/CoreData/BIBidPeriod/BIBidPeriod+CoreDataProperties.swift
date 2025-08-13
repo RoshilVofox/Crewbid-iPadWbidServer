@@ -10,6 +10,15 @@ import Foundation
 import CoreData
 
 
+var BIBidPeriodEntityName = "BidPeriod"
+var BICoverLetterTextFileName = "Cover Letter"
+var BISeniorityListTextFileName = "Seniority List"
+var BILinesTextFileName = "Lines Text"
+var BITripsTextFileName = "Trips Text"
+var BIAwardsTextFileName = "Bid Awards"
+var BIFaMemoTextFileName = "FA Memo"
+
+
 extension BIBidPeriod {
     
     @nonobjc public class func fetchRequest() -> NSFetchRequest<BIBidPeriod> {
@@ -999,6 +1008,12 @@ extension BIBidPeriod : Identifiable {
             BITrip.resetTripHighlightCount(in: CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!)
         }
        
+    }
+    
+    func sortedBidReceipts() -> [BIBidReceipt] {
+        let timeStampSort = NSSortDescriptor(key: "timeStamp", ascending: false)
+        let sortedBidReceipts = (bidReceipts!.allObjects as NSArray).sortedArray(using: [timeStampSort])
+        return sortedBidReceipts as! [BIBidReceipt]
     }
     
 }

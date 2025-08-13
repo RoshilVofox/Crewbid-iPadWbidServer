@@ -80,7 +80,57 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         NotificationCenter.default.addObserver(self, selector: #selector(ShowCommutablilitySortView), name: Notification.Name("ShowCommutabilitySortView"), object: nil)
         
         firstTimeBidOpen()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(openCoverLetter(notification:)), name: NSNotification.Name(KCBOpenCoverletter), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(openSeniority), name: NSNotification.Name(KCBOpenSeniority), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(openLineText), name: NSNotification.Name(KCBOpenLineText), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(openTripText), name: NSNotification.Name(KCBOpenTripText), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(openFAMemo), name: NSNotification.Name(KCBOpenFAMemo), object: nil)
     }
+    
+    @objc func openCoverLetter(notification: Notification) {
+        let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
+        vc.bidPeriod = bidPeriod
+        vc.dataTypeSelected = TextFileType.coverLetter
+        if let userInfo = notification.userInfo as? NSDictionary {
+            vc.isFromFirstTimeOpenBid = userInfo["isFromFirstTimeOpenBid"] as! Bool
+        }
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    //openSeniority view controller push action
+@objc func openSeniority() {
+    let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+    let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
+    vc.bidPeriod = bidPeriod
+    vc.dataTypeSelected = TextFileType.seniorityList
+    self.navigationController?.pushViewController(vc, animated: true)
+}
+    //LineText view controller push action
+@objc func openLineText() {
+    let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+    let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
+    vc.bidPeriod = bidPeriod
+    vc.dataTypeSelected = TextFileType.lineText
+    self.navigationController?.pushViewController(vc, animated: true)
+}
+    //TripText view controller push action
+@objc func openTripText() {
+    let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+    let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
+    vc.bidPeriod = bidPeriod
+    vc.dataTypeSelected = TextFileType.tripText
+    self.navigationController?.pushViewController(vc, animated: true)
+}
+    //LineText view controller push action
+@objc func openFAMemo(){
+    let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+    let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
+    vc.bidPeriod = bidPeriod
+    vc.dataTypeSelected = TextFileType.faMemo
+    self.navigationController?.pushViewController(vc, animated: true)
+}
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: animated)

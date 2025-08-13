@@ -6446,7 +6446,7 @@ class BIBidInfoReader{
             print("Error reading text file: \(error.localizedDescription)")
         }
         if !text.isEmpty{
-            self.bidPeriod?.addTextFile(withText: text, name: "Cover Letter")
+            self.bidPeriod?.addTextFile(withText: text, name: BICoverLetterTextFileName)
         }else{
             if AppState.shared.isMockData{
                 return true
@@ -6461,9 +6461,10 @@ class BIBidInfoReader{
             text = try! String(contentsOf: textFileURL, encoding: .windowsCP1252)
         }
         if !text.isEmpty{
-            self.bidPeriod?.addTextFile(withText: text, name: "Seniority List")
+            self.bidPeriod?.addTextFile(withText: text, name: BISeniorityListTextFileName)
         }else{
             //handle error
+            print("Unable to read Seniority")
             return false
         }
         
@@ -6471,7 +6472,7 @@ class BIBidInfoReader{
         textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.linesTextFilename())
         text = try! String(contentsOf: textFileURL, encoding: .utf8)
         if !text.isEmpty{
-            self.bidPeriod?.addTextFile(withText: text, name: "Lines Text")
+            self.bidPeriod?.addTextFile(withText: text, name: BILinesTextFileName)
         }else{
             //handle error
             return false
@@ -6481,7 +6482,7 @@ class BIBidInfoReader{
         textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.tripsTextFilename())
         text = try! String(contentsOf: textFileURL, encoding: .utf8)
         if !text.isEmpty{
-            self.bidPeriod?.addTextFile(withText: text, name: "Trips Text")
+            self.bidPeriod?.addTextFile(withText: text, name: BITripsTextFileName)
         }else{
             //handle error
             return false
@@ -6492,7 +6493,7 @@ class BIBidInfoReader{
             textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.faMemoTextFilename())
             text = try! String(contentsOf: textFileURL, encoding: .ascii)
             if !text.isEmpty{
-                self.bidPeriod?.addTextFile(withText: text, name: "FA Memo")
+                self.bidPeriod?.addTextFile(withText: text, name: BIFaMemoTextFileName)
             }
         }
         
