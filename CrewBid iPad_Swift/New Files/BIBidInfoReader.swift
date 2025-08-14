@@ -2920,7 +2920,6 @@ class BIBidInfoReader{
             var line:BILine? = nil
             var digits:String = ""
             var pLines:[Int:BILine] = [:]
-            self.bidPeriod?.bidByEmpID = self.dataSource.employeeNumber
             
             linesData.enumerateLines { (info, stop) in
                 if info.length > 80{
@@ -3479,7 +3478,6 @@ class BIBidInfoReader{
             lineRange.location = Int(lineStart)
             lineRange.length = Int(contentsEnd - lineStart)
             var lineFile:NSString = linesData.substring(with: lineRange) as NSString
-       
             
             var counter = 0
             var line:BILine?
@@ -3519,7 +3517,6 @@ class BIBidInfoReader{
                     let bidPeriod = try moc.existingObject(with: self.bidPeriod!.objectID) as? BIBidPeriod
                     
                     line?.bidPeriod = bidPeriod
-                    bidPeriod?.bidByEmpID = self.dataSource.employeeNumber
                     
                     //Number
                    

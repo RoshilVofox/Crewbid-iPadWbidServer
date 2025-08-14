@@ -29,6 +29,7 @@
 		8BFCEEA02DC4F6400068C00B /* Chat.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEE9F2DC4F6400068C00B /* Chat.png */; };
 		8BFCEEA22DC4F6DB0068C00B /* oneMonth.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEEA12DC4F6DB0068C00B /* oneMonth.png */; };
 		F407B2A12DD9AE5B003E4042 /* EndPoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = F407B2A02DD9AE5B003E4042 /* EndPoints.swift */; };
+		F410AA6A2E4DE7D200101EAB /* AwardsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F410AA692E4DE7D200101EAB /* AwardsViewModel.swift */; };
 		F41475812DC8D8290064CD25 /* KeychainItemWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = F41475802DC8D8290064CD25 /* KeychainItemWrapper.m */; };
 		F41475842DC8E1980064CD25 /* AlertService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41475832DC8E1980064CD25 /* AlertService.swift */; };
 		F41EBE902DC4DB20001413DE /* ThirdPartyURL.plist in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD5A2DC4DB20001413DE /* ThirdPartyURL.plist */; };
@@ -385,6 +386,7 @@
 		8BFCEE9F2DC4F6400068C00B /* Chat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Chat.png; sourceTree = "<group>"; };
 		8BFCEEA12DC4F6DB0068C00B /* oneMonth.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = oneMonth.png; sourceTree = "<group>"; };
 		F407B2A02DD9AE5B003E4042 /* EndPoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndPoints.swift; sourceTree = "<group>"; };
+		F410AA692E4DE7D200101EAB /* AwardsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwardsViewModel.swift; sourceTree = "<group>"; };
 		F414757D2DC8D6520064CD25 /* CrewBid iPad_Swift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CrewBid iPad_Swift.entitlements"; sourceTree = "<group>"; };
 		F414757F2DC8D8290064CD25 /* KeychainItemWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeychainItemWrapper.h; sourceTree = "<group>"; };
 		F41475802DC8D8290064CD25 /* KeychainItemWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeychainItemWrapper.m; sourceTree = "<group>"; };
@@ -1493,6 +1495,7 @@
 				F4400BD72DD9DB1C0066C7E0 /* CBDefaultEmployeeViewModel.swift */,
 				F4400BD92DD9E5D60066C7E0 /* CBLoginViewModel.swift */,
 				F4371C572DF1531100391303 /* BIBidFileDownloadViewModel.swift */,
+				F410AA692E4DE7D200101EAB /* AwardsViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -2129,6 +2132,7 @@
 				F41EBF7A2DC4DB20001413DE /* CBCommutingSortCell.swift in Sources */,
 				F41EBF7B2DC4DB20001413DE /* CBDayMonthSortCell.swift in Sources */,
 				F41EBF7C2DC4DB20001413DE /* CBFlagSortCell.swift in Sources */,
+				F410AA6A2E4DE7D200101EAB /* AwardsViewModel.swift in Sources */,
 				F41EBF7D2DC4DB20001413DE /* CBLineSortCell.swift in Sources */,
 				F41EBF7E2DC4DB20001413DE /* CBCommuteInfoViewController.swift in Sources */,
 				35428C292DEEE9F2009E7AC5 /* CBUserDefaults.swift in Sources */,

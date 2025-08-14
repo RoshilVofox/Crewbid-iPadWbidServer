@@ -9,7 +9,7 @@ import Foundation
 
 extension UIView {
     
-    func showActivityIndicator(color: UIColor? = CBColor.cbPurpleColor ,message: String? = "loading..." ) {
+    func showActivityIndicator(color: UIColor? = CBColor.cbPurpleColor ,message: String? = "Loading..." ) {
         MBProgressHUD.showAdded(to: self, animated: true, title: message, backgroundColor: color)
     }
     

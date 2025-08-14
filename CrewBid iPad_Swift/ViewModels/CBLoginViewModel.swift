@@ -13,7 +13,7 @@ class CBLoginViewModel{
     var onLoginFailure:((NetworkError) ->Void)?
 
     
-    func checkLogin(userID: String, password: String, empNum: String) {
+    func checkLogin(userID: String, password: String) {
 
         self.saveSelectionToUserDefaults()
         APIService.shared.getPreLogonCredential(from: EndPoint.shared.thirdpartyURL) {[weak self] result in

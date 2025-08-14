@@ -150,11 +150,11 @@ extension BIBidPeriod {
     @NSManaged public var lineSortKeyMaps: NSSet?
     @NSManaged public var lineSorts: NSSet?
     @NSManaged public var textFiles: NSSet?
-    @NSManaged public var vacationArrayFromServer: VacationArrayFromServer?
+    @NSManaged public var vacationArrayFromServer: NSSet?
     @NSManaged public var vacations: NSSet?
     @NSManaged public var lineFilters: NSSet?
-    @NSManaged public var bidByEmpID: String?
     @NSManaged public var insertionPoints: NSSet?
+    @NSManaged public var awardString: String?
 }
 
 // MARK: Generated accessors for awardDetails
@@ -1015,5 +1015,9 @@ extension BIBidPeriod : Identifiable {
         let sortedBidReceipts = (bidReceipts!.allObjects as NSArray).sortedArray(using: [timeStampSort])
         return sortedBidReceipts as! [BIBidReceipt]
     }
-    
+    func awardsTextFile() -> BITextFile? {
+        let awardsTextPredicate = NSPredicate(format: "name == %@", BIAwardsTextFileName)
+        let textFiles = self.textFiles!.filtered(using: awardsTextPredicate) as? Set<BITextFile>
+        return textFiles?.first
+    }
 }

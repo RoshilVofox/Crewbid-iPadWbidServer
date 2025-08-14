@@ -1061,6 +1061,7 @@
                     </view>
                     <size key="freeformSize" width="600" height="550"/>
                     <connections>
+                        <outlet property="backBtn" destination="Oew-xb-wbe" id="mtU-bC-r21"/>
                         <outlet property="lblTitle" destination="Cq8-ER-JCF" id="BDx-it-tBd"/>
                         <outlet property="showPasswordBtn" destination="OJY-Kj-9QL" id="dvy-h5-xNC"/>
                         <outlet property="txtPassword" destination="18h-4z-Niv" id="Pu5-U0-BfS"/>

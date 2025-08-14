@@ -147,6 +147,22 @@ class BIBidInfo:NSObject{
         return isFABid
     }
     
+    func bidAwardTextFilename() -> String {
+        /* M for first round, W for second round */
+        let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
+        var bidRoundChar = "M"
+        if isSecondRoundBid(){
+            bidRoundChar = "W"
+        }
+        let positionArray = ["CP","FO","FA"]
+        let positionName = positionArray[(bidPeriod?.positionType!.intValue)!]
+        var baseName = UserDefaults.standard.string(forKey: "baseKey")  ?? ""
+        if let bd = CBGlobalMethods.shared.selectedBidPeriod {
+            baseName = bd.base ?? ""
+        }
+        let bidAwardDataFileName: String = "\(baseName)\(positionName)\(bidRoundChar).TXT"
+        return bidAwardDataFileName
+    }
     
     func textFilenameBase() -> String {
         let base = dataSource.base
