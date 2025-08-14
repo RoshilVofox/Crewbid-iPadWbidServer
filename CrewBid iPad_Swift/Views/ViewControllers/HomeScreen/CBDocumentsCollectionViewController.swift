@@ -58,8 +58,10 @@ class CBDocumentsCollectionViewController: BaseViewController {
             vc.modalPresentationStyle = .formSheet
             vc.isModalInPresentation = true
             present(vc, animated: true)
+            self.bidDownloadButton.tag = 1
         }
         else {
+            self.bidDownloadButton.tag = 2
             deleteCellRow()
         }
     }
@@ -115,7 +117,14 @@ class CBDocumentsCollectionViewController: BaseViewController {
                         self.selectedRows.removeAll()
                         //                self.refreshBidPeriods()
                     }
-                    self.refreshBidPeriods()
+                    
+                    if self.bidDownloadButton.tag == 2 {
+                        let plusImage = UIImage(named: "plus")
+                        self.bidDownloadButton.setBackgroundImage(nil, for: .normal)
+                        self.bidDownloadButton.setBackgroundImage(plusImage, for: .normal)
+                        self.editButton.setTitle("Edit", for: .normal)
+                        self.refreshBidPeriods()
+                    }
                     self.view.hideActivityIndicator()
                 }
             })

@@ -15,7 +15,7 @@ class CBMonthToMonthAlertVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        preferredContentSize = CGSize(width: 400, height: 400)
         // Do any additional setup after loading the view.
     }
     
@@ -27,5 +27,8 @@ class CBMonthToMonthAlertVC: UIViewController {
         self.tapOkBlock = tappedOK
     }
 
-
+    @IBAction func btnOkAction(_ sender: UIButton) {
+        self.dismiss(animated: true)
+    }
+    
 }
