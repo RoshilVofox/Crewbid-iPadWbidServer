@@ -288,18 +288,18 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
     }
     
     
-    func reportTimeForDay(day: BIDay, trip: BITrip, line: BILine) -> String {
+    func reportTimeForDay(day: BIDay, trip: BITrip?, line: BILine) -> String {
         var report = String(format: "%04d", day.info!.reportTime!.intValue)
-        if (self.bidPeriod?.isFABid() == true && self.bidPeriod!.isSecondRoundBid() && trip.isReserve) {
-            report = BITrip.staticTimeForFAReserveType(trip: trip, line: line, key: "depart", timeZone: self.timeZoneStr!)!
+        if (self.bidPeriod?.isFABid() == true && self.bidPeriod!.isSecondRoundBid() && (trip?.isReserve ?? false)) {
+            report = BITrip.staticTimeForFAReserveType(trip: trip!, line: line, key: "depart", timeZone: self.timeZoneStr!)!
         }
         return report
     }
     
-    func releaseTimeForDay(day: BIDay, trip: BITrip, line: BILine) -> String {
+    func releaseTimeForDay(day: BIDay, trip: BITrip?, line: BILine) -> String {
         var release = String(format: "%04d", day.info!.releaseTime!.intValue)
-        if (self.bidPeriod?.isFABid() == true && self.bidPeriod!.isSecondRoundBid() && trip.isReserve) {
-            release = BITrip.staticTimeForFAReserveType(trip: trip, line: line, key: "arrive", timeZone: self.timeZoneStr!)!
+        if (self.bidPeriod?.isFABid() == true && self.bidPeriod!.isSecondRoundBid() && (trip?.isReserve ?? false)) {
+            release = BITrip.staticTimeForFAReserveType(trip: trip!, line: line, key: "arrive", timeZone: self.timeZoneStr!)!
         }
         return release
     }
@@ -544,38 +544,40 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                     autoreleasepool {
                         if line.rptLessThanentered!.boolValue == false && line.rlsGreaterThanEntered!.boolValue == false {
                             for case let trip as BITrip in line.orderedTrips{
-                                for day in trip.orderedDays {
+                                daysLoop: for day in trip.orderedDays {
                                     if (day.displayType!.intValue == BIDayDisplayType.fullPay.rawValue || day.displayType!.intValue == BIDayDisplayType.partialPay.rawValue || day.displayType!.intValue == BIDayDisplayType.noPay.rawValue) {
                                     }
                                     else {
                                         let dateString = "\((i as! NSDictionary).value(forKey: "date") ?? "") 12:53:58 +0000"
                                         let dateFormatter = DateFormatter()
                                         dateFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss Z"
-                                        guard let dateFromString = dateFormatter.date(from: dateString) else { return }
+                                        let dateFromString = dateFormatter.date(from: dateString)
 
-                                        let isSame = self.compareDates(firstDate: day.date!, secondDate: dateFromString, trip: trip)
+                                        let isSame = self.compareDates(firstDate: day.date!, secondDate: dateFromString!, trip: trip)
 
                                         // check for report release available
                                         report = self.reportTimeForDay(day: day, trip: trip, line: line)
                                         release = self.releaseTimeForDay(day: day, trip: trip, line: line)
-
                                         if isSame {
-                                            if !((i as! NSDictionary).value(forKey: "reportValue") as! String == "") {
-                                                let isLesser = self.compareReportTimeEntered(report: report, reportEntered: (i as! NSDictionary).value(forKey: "reportValue") as! String)
-                                                if isLesser {
+                                            let releaseValue : String? = self.filterRule!.variables!.value(forKey: "releaseValue") as? String
+                                            let reportValue : String? = self.filterRule!.variables!.value(forKey: "reportValue") as? String
+                                            
+                                            if (reportValue != nil && reportValue != "") {
+                                                report = String(format: "%04d", day.info!.reportTime!.intValue)
+                                                if self.compareReportTimeEnteredBasith(report, reportEntered: reportValue!) {
                                                     line.rptLessThanentered = NSNumber(value: true)
                                                 }
                                             }
-                                            if !((i as! NSDictionary).value(forKey: "releaseValue") as! String == "") {
-                                                if report > release {
+                                            
+                                            if (releaseValue != nil && releaseValue != ""){
+                                                release = String(format: "%04d", day.info!.releaseTime!.intValue)
+                                                if self.compareReleaseTimeEnteredBasith(release, releaseEntered: releaseValue!) {
                                                     line.rlsGreaterThanEntered = NSNumber(value: true)
                                                 }
-                                                else {
-                                                    let isGreater = self.compareReportTimeEntered(report: release, reportEntered: (i as! NSDictionary).value(forKey: "releaseValue") as! String)
-                                                    if isGreater {
-                                                        line.rlsGreaterThanEntered = NSNumber(value: true)
-                                                    }
-                                                }
+                                            }
+                                            
+                                            if (line.rptLessThanentered == NSNumber(value: true)) && (line.rlsGreaterThanEntered == NSNumber(value: true)) {
+                                                break daysLoop
                                             }
                                         }
                                     }
@@ -587,7 +589,11 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                 }
                 
             }
-            self.hideActivityIndicator()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
+                NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+                self.hideActivityIndicator()
+                self.calendarCollectionView.reloadData()
+            }
         }
 
     }
@@ -699,8 +705,8 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                                         let isSameForReport = self.compareDates(firstDate: day.date!, secondDate: dateFromStringReport, trip: nil)
                                         let isSameForRelaese = self.compareDates(firstDate: day.date!, secondDate: dateFromStringRelease, trip: nil)
                                         
-                                        report = self.reportTimeForDay(day: day, trip: day.trip!, line: line)
-                                        release = self.releaseTimeForDay(day: day, trip: day.trip!, line: line)
+                                        report = self.reportTimeForDay(day: day, trip: day.trip, line: line)
+                                        release = self.releaseTimeForDay(day: day, trip: day.trip, line: line)
                                         
                                         if isSameForReport {
                                             if !(reportValue == "") {
@@ -1030,5 +1036,21 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                 AlertService.showAlertForTopVC(title: "Warning", message: "Enter the time in HHMM format")
             }
         }
+    }
+    
+    func compareReportTimeEnteredBasith(_ release: String, reportEntered: String) -> Bool {
+        var isGreater = false
+        if Int(release)! < Int(reportEntered)!{
+            isGreater = true
+        }
+        return isGreater
+    }
+    
+    func compareReleaseTimeEnteredBasith(_ release: String, releaseEntered: String) -> Bool {
+        var isGreater = false
+        if Int(release)! > Int(releaseEntered)!{
+            isGreater = true
+        }
+        return isGreater
     }
 }

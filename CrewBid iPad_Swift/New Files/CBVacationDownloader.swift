@@ -507,7 +507,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             }
 
             // Override with hardcoded CP (matches original code logic)
-            vacationDetailDictionary["Position"] = "CP"
+            vacationDetailDictionary["Position"] = CBUtils.shortName(for: BICrewPositionType(rawValue: (self.bidPeriod?.positionType?.intValue)!)!)
             
             vacationDetailDictionary["Year"] = self.bidPeriod?.year ?? 2025
             vacationDetailDictionary["Month"] = self.bidPeriod?.month ?? 7
@@ -831,7 +831,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             do {
                 if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
                    let pilotInfo = json["PilotInfo"] as? [String: Any],
-                   pilotInfo["HasAccount"] as? String == "1" {
+                   pilotInfo["HasAccount"] as? Int == 1 {
                     
                     print("Able to download crewbid vacation from API")
                     self.callToSetAutoDownloadOrValidateForSwaptimizer(jsonData: json) { success in
@@ -1454,7 +1454,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         let configInfo = jsonData["ConfigInfo"] as! [String: Any]
         let statusCode = status["Code"] as! String
         let statusMsg = status["Msg"] as! String
-        let hasAccount = (pilotInfo["HasAccount"] as? String == "1")
+        let hasAccount = (pilotInfo["HasAccount"] as? Int == 1)
         let dataAvailable = (pilotInfo["DataAvailable"] as? NSNumber)?.boolValue ?? false
         let hasVacation = (pilotInfo["HasVacation"] as? NSNumber)?.boolValue ?? false
         var pilotIdentifier = Int(pilotInfo["Pilot"] as? String ?? "") ?? 0
@@ -1785,9 +1785,14 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         }
         dicVacationDetails["Position"] = position
         dicVacationDetails["SwapJsonFileName"] = header["FileIdent"]
+        var url2 = URL(string: "")
         if app.connectedToInternet() {
-            let url = URL(string: "\(app.Domain)SaveSwaptimizerFileToServer")
-            self.urlRequest = URLRequest(url: url!)
+            if let baseURL = URL(string: app.Domain!) {
+                let url = baseURL.appendingPathComponent("SaveSwaptimizerFileToServer")
+                print(url) // http://www.wbidmax.com:8000/WBidDataDwonloadAuthService.svc/SaveSwaptimizerFileToServer
+                url2 = url
+            }
+            self.urlRequest = URLRequest(url: url2!)
             let jsonDataToSend = try! JSONSerialization.data(withJSONObject: dicVacationDetails, options: [])
             let jsonString = String(data: jsonDataToSend, encoding: .utf8)
             self.urlRequest?.httpBody = jsonString?.data(using: .utf8)

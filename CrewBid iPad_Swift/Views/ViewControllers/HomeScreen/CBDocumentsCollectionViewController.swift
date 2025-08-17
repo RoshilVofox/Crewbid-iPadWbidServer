@@ -123,6 +123,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
                         self.bidDownloadButton.setBackgroundImage(nil, for: .normal)
                         self.bidDownloadButton.setBackgroundImage(plusImage, for: .normal)
                         self.editButton.setTitle("Edit", for: .normal)
+                        self.isPlusImage = true
                         self.refreshBidPeriods()
                     }
                     self.view.hideActivityIndicator()

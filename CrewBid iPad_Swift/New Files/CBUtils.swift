@@ -1104,7 +1104,7 @@ class CBUtils{
     static func shortName(for type: BICrewPositionType) -> String {
         switch type {
         case .Captain:
-            return "CA"
+            return "CP"
         case .FirstOfficer:
             return "FO"
         case .FlightAttendant:
