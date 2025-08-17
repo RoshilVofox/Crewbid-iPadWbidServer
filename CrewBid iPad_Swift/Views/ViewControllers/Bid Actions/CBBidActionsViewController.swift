@@ -41,8 +41,8 @@ class CBBidActionsViewController: BaseViewController, KUIPopOverUsable {
     let fileArrayFA = ["Cover Letter","Seniority List","Lines Text","Trips Text","FA Memo"]
     let fileArrayPilot = ["Cover Letter","Seniority List","Lines Text","Trips Text"]
     
-    let vacPilotArray = ["Keep Pulled Trips In Filters/Sorts","Hide Vaction In Scratchpad","Check For","Re-Download WBidMax Vac File","Re-Download Swaptimizer Vac File"]
-    let vacationFAArray = ["Keep Pulled Trips In Filters/Sorts","Hide Vaction In Scratchpad"]
+    let vacPilotArray = ["Keep Pulled Trips In Filters/Sorts","Check For","Re-Download WBidMax Vac File","Re-Download Swaptimizer Vac File"]
+    let vacationFAArray = ["Keep Pulled Trips In Filters/Sorts"]
     
     var bidActionTypeSelected : BidActionType = .BidActions
     var optionalEmployees = NSMutableArray ()
@@ -95,19 +95,19 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
             case .BidActions:
                     // Hide the ShowCap option if it's a FA bid
                 if !((bidPeriod?.isFABid())!) { //Pilot
-//                    let textFile = self.bidPeriod?.awardString
-//                    if textFile != nil { //With text
-//                        return arrForPilotWithAwdTxt.count
-//                    } else { //Without text
+                    let textFile = self.bidPeriod?.awardsTextFile()
+                    if textFile != nil { //With text
+                        return arrForPilotWithAwdTxt.count
+                    } else { //Without text
                         return arrForPilotWithOutAwdTxt.count
-//                    }
+                    }
                 } else { //FA
-//                    let textFile = self.bidPeriod?.awardString
-//                    if textFile != nil { //With text
-//                        return arrForFAWithAwdTxt.count
-//                    } else { //Without text
+                    let textFile = self.bidPeriod?.awardsTextFile()
+                    if textFile != nil { //With text
+                        return arrForFAWithAwdTxt.count
+                    } else { //Without text
                         return arrForFAWithOutAwdTxt.count
-//                    }
+                    }
                 }
             case .ShowFile:
                     // Hide the FA Memo option if it's a pilot bid
@@ -132,23 +132,23 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
         let cell = tableView.dequeueReusableCell(withIdentifier: "CBBidActionTableCell") as! CBBidActionTableCell
         switch bidActionTypeSelected {
         case .BidActions:
-//            let textFile = self.bidPeriod?.awardString
+            let textFile = self.bidPeriod?.awardsTextFile()
             if !((bidPeriod?.isFABid())!) { //Pilot
-//                if textFile != nil { //With text
-//                    cell.lblTitle.text = arrForPilotWithAwdTxt[indexPath.row]
-//                    cell.imgNext.image = UIImage(named: arrForPilotWithAwdTxt[indexPath.item])
-//                } else { //Without text
+                if textFile != nil { //With text
+                    cell.lblTitle.text = arrForPilotWithAwdTxt[indexPath.row]
+                    cell.imgNext.image = UIImage(named: arrForPilotWithAwdTxt[indexPath.item])
+                } else { //Without text
                     cell.lblTitle.text = arrForPilotWithOutAwdTxt[indexPath.row]
                     cell.imgNext.image = UIImage(named: arrForPilotWithOutAwdTxt[indexPath.item])
-//                }
+                }
             } else { //FA
-//                if textFile != nil { //With text
-//                    cell.lblTitle.text = arrForFAWithAwdTxt[indexPath.row]
-//                    cell.imgNext.image = UIImage(named: arrForFAWithAwdTxt[indexPath.item])
-//                } else { //Without text
+                if textFile != nil { //With text
+                    cell.lblTitle.text = arrForFAWithAwdTxt[indexPath.row]
+                    cell.imgNext.image = UIImage(named: arrForFAWithAwdTxt[indexPath.item])
+                } else { //Without text
                     cell.lblTitle.text = arrForFAWithOutAwdTxt[indexPath.row]
                     cell.imgNext.image = UIImage(named: arrForFAWithOutAwdTxt[indexPath.item])
-//                }
+                }
             }
             if cell.lblTitle.text == "Show Bid Receipt"{
                 if bidPeriod?.bidReceipts?.allObjects.count == 0 {
@@ -203,7 +203,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                         switchTableViewCell.lblTitle.textColor = .lightGray
                     }
                     return switchTableViewCell
-                case 2:
+                case 1:
                     let segmentedTableViewCell = tableView.dequeueReusableCell(withIdentifier: "SegmentedTableViewCell") as! SegmentedTableViewCell
                     segmentedTableViewCell.lblTitle.text = vacPilotArray[indexPath.row]
                     return segmentedTableViewCell
@@ -254,17 +254,17 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                         }
                         break
                     case 2://Retrieve/Show Awards
-//                        let textFile = self.bidPeriod?.awardString
-//                        if textFile != nil {
-//                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenAwardData), object: self)
-//                            dismissFn()
-//                        } else {
+                    let textFile = self.bidPeriod?.awardsTextFile()?.text
+                        if textFile != nil {
+                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenAwardData), object: self)
+                            dismissFn()
+                        } else {
                                 //retrieveAward()
                             dismissFn()
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                                NotificationCenter.default.post(name: NSNotification.Name(KCBOpenretrieveAwardDownloadPage), object: self)
+                                NotificationCenter.default.post(name: NSNotification.Name(KCBOpenretrieveAwardDownloadPage), object: self)
                             }
-//                        }
+                        }
                         break
                     case 3://Show Bid File
                         print("Show Bid File")
@@ -276,7 +276,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                     case 4://Line Importer
                         dismissFn()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenLineImporter), object: self)
+                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenLineImporter), object: self)
                         }
                         break
                     case 5://Vacation
@@ -288,7 +288,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                     case 6://Show CAP
                         dismissFn()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenShowCAP), object: self)
+                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenShowCAP), object: self)
                         }
                         break
                     case 7://Retrieve/Show Awards
@@ -296,7 +296,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                         if cell.lblTitle.text == "Retrieve Awards" {
                                 dismissFn()
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                                    NotificationCenter.default.post(name: NSNotification.Name(KCBOpenretrieveAwardDownloadPage), object: self)
+                                    NotificationCenter.default.post(name: NSNotification.Name(KCBOpenretrieveAwardDownloadPage), object: self)
                                 }
                         }else if cell.lblTitle.text == "Restore Last Bid" {
                             self.dismiss(animated: false, completion: nil)
@@ -342,18 +342,18 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                     dismissFn()
                         break
                     case 2://Retrieve/Show Awards
-//                        let textFile = self.bidPeriod?.awardString
-//                        if textFile != nil {
-//                            
-//                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenAwardData), object: self)
-//                            dismissFn()
-//                        } else {
+                        let textFile = self.bidPeriod?.textFile(withName: BIAwardsTextFileName)
+                        if textFile != nil {
+                            
+                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenAwardData), object: self)
+                            dismissFn()
+                        } else {
                                 //retrieveAward()
                             dismissFn()
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                                NotificationCenter.default.post(name: NSNotification.Name(KCBOpenretrieveAwardDownloadPage), object: self)
+                                NotificationCenter.default.post(name: NSNotification.Name(KCBOpenretrieveAwardDownloadPage), object: self)
                             }
-//                        }
+                        }
                         break
                     case 3://Show Bid File
                         print("Show Bid File")
@@ -365,7 +365,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                     case 4://Line Importer
                         dismissFn()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenLineImporter), object: self)
+                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenLineImporter), object: self)
                         }
                         break
                     case 5://Vacation
@@ -387,7 +387,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                         if cell.lblTitle.text == "Retrieve Awards" {
                             dismissFn()
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                                NotificationCenter.default.post(name: NSNotification.Name(KCBOpenretrieveAwardDownloadPage), object: self)
+                                NotificationCenter.default.post(name: NSNotification.Name(KCBOpenretrieveAwardDownloadPage), object: self)
                             }
                         }else if cell.lblTitle.text == "Restore Last Bid" {
                             self.dismiss(animated: false, completion: nil)
@@ -477,30 +477,30 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                     break
                 case 2:
                     dismissFn()
-//                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                            if (self.bidPeriod?.vacationArrayFromServer ?? NSArray()).count > 0 {
-//                                NotificationCenter.default.post(name: NSNotification.Name("downloadWbidMax"), object: self)
-//                            } else {
-//                                // Dismiss any previously presented view controllers
-//                                self.dismiss(animated: true, completion: {
-//                                    CBGlobalMethods.shared.ShowAlertWithOnlyOKAction(TitleString: "WbidMax Error", MessageString: "You do not have Vacation this month", OKAction: nil)
-//                                })
-//                            }
-//                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            if (self.bidPeriod?.vacationArrayFromServer?.count ?? 0) > 0 {
+                                NotificationCenter.default.post(name: NSNotification.Name("downloadWbidMax"), object: self)
+                            } else {
+                                // Dismiss any previously presented view controllers
+                                self.dismiss(animated: true, completion: {
+                                    AlertService.showAlertForTopVC(title: "WbidMax Error", message: "You do not have Vacation this month")
+                                })
+                            }
+                        }
                 
                     break
                 case 3:
                     dismissFn()
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//                        if (self.bidPeriod?.vacationArrayFromServer ?? NSArray()).count > 0 {
-//                            NotificationCenter.default.post(name: NSNotification.Name("downloadSwaptimizer"), object: self)
-//                        }else {
-//                            // Dismiss any previously presented view controllers
-//                            self.dismiss(animated: true, completion: {
-//                                CBGlobalMethods.shared.ShowAlertWithOnlyOKAction(TitleString: "Swaptimizer Error", MessageString: "You do not have Vacation this month", OKAction: nil)
-//                            })
-//                        }
-//                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        if (self.bidPeriod?.vacationArrayFromServer?.count ?? 0) > 0 {
+                            NotificationCenter.default.post(name: NSNotification.Name("downloadSwaptimizer"), object: self)
+                        }else {
+                            // Dismiss any previously presented view controllers
+                            self.dismiss(animated: true, completion: {
+                                AlertService.showAlertForTopVC(title: "Swaptimizer Error", message: "You do not have Vacation this month")
+                            })
+                        }
+                    }
                     break
                 default:
                     break

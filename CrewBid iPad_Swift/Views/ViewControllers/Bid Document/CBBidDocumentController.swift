@@ -89,11 +89,14 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         
         firstTimeBidOpen()
         
+        NotificationCenter.default.addObserver(self, selector: #selector(openlatestNews), name: NSNotification.Name(KCBOpenLatestNews), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openCoverLetter(notification:)), name: NSNotification.Name(KCBOpenCoverletter), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openSeniority), name: NSNotification.Name(KCBOpenSeniority), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openLineText), name: NSNotification.Name(KCBOpenLineText), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openTripText), name: NSNotification.Name(KCBOpenTripText), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openFAMemo), name: NSNotification.Name(KCBOpenFAMemo), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(openAwardData), name: NSNotification.Name(KCBOpenAwardData), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(openretrieveAwardDownloadPage), name: NSNotification.Name(KCBOpenretrieveAwardDownloadPage), object: nil)
     }
     
     @objc func openCoverLetter(notification: Notification) {
@@ -106,38 +109,62 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         }
         self.navigationController?.pushViewController(vc, animated: true)
     }
-    //openSeniority view controller push action
-@objc func openSeniority() {
-    let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
-    let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
-    vc.bidPeriod = bidPeriod
-    vc.dataTypeSelected = TextFileType.seniorityList
-    self.navigationController?.pushViewController(vc, animated: true)
-}
-    //LineText view controller push action
-@objc func openLineText() {
-    let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
-    let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
-    vc.bidPeriod = bidPeriod
-    vc.dataTypeSelected = TextFileType.lineText
-    self.navigationController?.pushViewController(vc, animated: true)
-}
-    //TripText view controller push action
-@objc func openTripText() {
-    let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
-    let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
-    vc.bidPeriod = bidPeriod
-    vc.dataTypeSelected = TextFileType.tripText
-    self.navigationController?.pushViewController(vc, animated: true)
-}
-    //LineText view controller push action
-@objc func openFAMemo(){
-    let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
-    let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
-    vc.bidPeriod = bidPeriod
-    vc.dataTypeSelected = TextFileType.faMemo
-    self.navigationController?.pushViewController(vc, animated: true)
-}
+        //openSeniority view controller push action
+    @objc func openSeniority() {
+        let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
+        vc.bidPeriod = bidPeriod
+        vc.dataTypeSelected = TextFileType.seniorityList
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+        //LineText view controller push action
+    @objc func openLineText() {
+        let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
+        vc.bidPeriod = bidPeriod
+        vc.dataTypeSelected = TextFileType.lineText
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+        //TripText view controller push action
+    @objc func openTripText() {
+        let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
+        vc.bidPeriod = bidPeriod
+        vc.dataTypeSelected = TextFileType.tripText
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+        //LineText view controller push action
+    @objc func openFAMemo(){
+        let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
+        vc.bidPeriod = bidPeriod
+        vc.dataTypeSelected = TextFileType.faMemo
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+        //openAwardData view controller push action
+    @objc func openAwardData() {
+        let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
+        vc.bidPeriod = self.bidPeriod
+        vc.dataTypeSelected = TextFileType.awardText
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    @objc func openretrieveAwardDownloadPage() {
+        let storyboard : UIStoryboard = UIStoryboard(name: "BidInfo", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
+        vc.type = "Retrieve Awards"
+        vc.preferredContentSize = CGSize(width: 600, height: 500)
+        vc.isModalInPresentation = true
+        self.present(vc, animated: true, completion: nil)
+    }
+    
+    // Function to open the Latest News view
+
+    @objc func openlatestNews() {
+        let storyboard : UIStoryboard = UIStoryboard(name: "HelpMenu", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "latestNewsViewController") as! latestNewsViewController
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

@@ -14,6 +14,7 @@ class CBCredentialsPageVC: BaseViewController {
     @IBOutlet weak var txtPassword: customUITextField!
     @IBOutlet weak var showPasswordBtn: UIButton!
     @IBOutlet weak var lblTitle: UILabel!
+    @IBOutlet weak var backBtn: UIButton!
     let reachability = try? Reachability()
     var isHistoricBid : Bool = false
     var isNewBid:Bool = false
@@ -33,9 +34,19 @@ class CBCredentialsPageVC: BaseViewController {
     let dataSource = GlobalBidInfo.shared
     var bidPeriodList:[BIBidPeriod] = []
     private var hasStartedBidProcessing = false
+    var awardsViewModel:AwardsViewModel?
+    var formattedEmpNum: String?
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        if let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod {
+            awardsViewModel = AwardsViewModel(bidPeriod: bidPeriod)
+        }
+        if type == "Retrieve Awards" {
+            backBtn.setImage(UIImage(named: "cc"), for: .normal)
+        }else{
+            backBtn.setImage(UIImage(named: "arrowleftbutton"), for: .normal)
+        }
         if CBUtils.isRunningOnSimulator(){
             self.txtUserID.text = DevUserID
             self.txtPassword.text = DevUserPassword
@@ -81,79 +92,10 @@ class CBCredentialsPageVC: BaseViewController {
         //------viewmodel--------
         loginViewModel.onLoginSuccess = { sessionKey in
             print("Session Key: \(sessionKey)")
-            self.view.hideActivityIndicator()
-            NotificationCenter.default.post(name: Notification.Name("ShowProgressView"), object: nil)
-            let bidFileName = BIBidInfo.shared.bidDataFilename()
-            let linesTextFileName = BIBidInfo.shared.linesTextFilename()
-            print("Filename: \(bidFileName)")
-            if AppState.shared.isHistoricBid{
-                //MARK:  Historic Bid Data
-                print("Bid: Historic")
-                if self.isSecondRoundBid() && !self.isFABid(){
-                    self.bidDownloadViewModel.fetchHistoricBidLines(filename: linesTextFileName){result in
-                        DispatchQueue.main.async {
-                            switch result{
-                            case .success(let fileURL): print("File saved at: \(fileURL)")
-                            case .failure(let error): print("Historic bid download failed: \(error.localizedDescription)")
-                            }
-                        }
-                    }
-                }
-                self.bidDownloadViewModel.fetchHistoricBidLines(filename: bidFileName){ result in
-                    DispatchQueue.main.async {
-                        switch result{
-                        case .success(let fileURL):
-                            print("File unzipped at: \(fileURL)")
-                            DispatchQueue.main.async {
-                                    NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
-                                }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                BIBidInfoReader.shared.checkForSeniorityVacationAndReadBidInfo(){success in
-                                    if success{
-                                        self.loginActions()
-                                    }
-                                    
-                                }
-                            }
-                        case .failure(let error):
-                            print("Historic bid download failed: \(error.localizedDescription)")
-                        }
-                    }
-                }
-            }
-            else if AppState.shared.isMockData{
-                //MARK:  Mock Bid Data
-                print("Bid: Mock data")
-                
-                
-                
-            }
-            else{//MARK:  New Bid Data
-                print("Bid: New bid")
-                self.bidDownloadViewModel.fetchNewBidData(sessionKey: sessionKey, fileName: bidFileName){result in
-                    switch result{
-                    case .success(let fileURL):
-                        print("File unzipped at: \(fileURL)")
-                        DispatchQueue.main.async {
-                                NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
-                            }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                            guard !self.hasStartedBidProcessing else {
-                                    return
-                                }
-                            self.hasStartedBidProcessing = true
-                            BIBidInfoReader.shared.checkForSeniorityVacationAndReadBidInfo(){success in
-                                if success{
-                                    self.loginActions()
-                                }
-                                
-                            }
-                        }
-                    case .failure(let error):
-                        print("Error downloading new bid: \(error.localizedDescription)")
-                        NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
-                    }
-                }
+            if self.type == "Retrieve Awards"{
+                self.handleAwardRetrieval(sessionKey: sessionKey)
+            }else{
+                self.handleBidDownload(sessionKey: sessionKey)
             }
         }
         loginViewModel.onLoginFailure = { error in
@@ -191,6 +133,113 @@ class CBCredentialsPageVC: BaseViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(dismissVC), name: NSNotification.Name(rawValue: "dismissLoginView"), object: nil)
     }
 
+    func handleBidDownload(sessionKey: String){
+        self.view.hideActivityIndicator()
+        NotificationCenter.default.post(name: Notification.Name("ShowProgressView"), object: nil)
+        let bidFileName = BIBidInfo.shared.bidDataFilename()
+        let linesTextFileName = BIBidInfo.shared.linesTextFilename()
+        print("Filename: \(bidFileName)")
+        if AppState.shared.isHistoricBid{
+            //MARK:  Historic Bid Data
+            print("Bid: Historic")
+            if self.isSecondRoundBid() && !self.isFABid(){
+                self.bidDownloadViewModel.fetchHistoricBidLines(filename: linesTextFileName){result in
+                    DispatchQueue.main.async {
+                        switch result{
+                        case .success(let fileURL): print("File saved at: \(fileURL)")
+                        case .failure(let error): print("Historic bid download failed: \(error.localizedDescription)")
+                        }
+                    }
+                }
+            }
+            self.bidDownloadViewModel.fetchHistoricBidLines(filename: bidFileName){ result in
+                DispatchQueue.main.async {
+                    switch result{
+                    case .success(let fileURL):
+                        print("File unzipped at: \(fileURL)")
+                        DispatchQueue.main.async {
+                                NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
+                            }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            BIBidInfoReader.shared.checkForSeniorityVacationAndReadBidInfo(){success in
+                                if success{
+                                    self.loginActions()
+                                }
+                                
+                            }
+                        }
+                    case .failure(let error):
+                        print("Historic bid download failed: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+        else if AppState.shared.isMockData{
+            //MARK:  Mock Bid Data
+            print("Bid: Mock data")
+            
+            
+            
+        }
+        else{//MARK:  New Bid Data
+            print("Bid: New bid")
+            self.bidDownloadViewModel.fetchNewBidData(sessionKey: sessionKey, fileName: bidFileName){result in
+                switch result{
+                case .success(let fileURL):
+                    print("File unzipped at: \(fileURL)")
+                    DispatchQueue.main.async {
+                            NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
+                        }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        guard !self.hasStartedBidProcessing else {
+                                return
+                            }
+                        self.hasStartedBidProcessing = true
+                        BIBidInfoReader.shared.checkForSeniorityVacationAndReadBidInfo(){success in
+                            if success{
+                                self.loginActions()
+                            }
+                            
+                        }
+                    }
+                case .failure(let error):
+                    print("Error downloading new bid: \(error.localizedDescription)")
+                    NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+                }
+            }
+        }
+    }
+    func handleAwardRetrieval(sessionKey: String){
+        print("Award retrieval")
+        let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
+        let empNum = bidPeriod?.crewIdentifier?.stringValue
+        CBGlobalMethods.shared.secretKey = sessionKey
+        awardsViewModel?.retrieveAwardFile(){ result in
+            DispatchQueue.main.async(execute: {() -> Void in
+                self.dismiss(animated: false) {
+                    if self.awardsViewModel?.bidPeriod.awardString != nil {
+                        var eno = ""
+                        if (CBGlobalMethods.shared.awardLertSecretEmpNum?.length ?? 0 > 0) {
+                            eno = CBGlobalMethods.shared.awardLertSecretEmpNum!;
+                        } else {
+                            eno = empNum!
+                        }
+                        self.awardsViewModel?.getAwardAlertFromServerCompleted(empNum: eno) { finished in
+                            print("success")
+                            CBGlobalMethods.shared.awardLertSecretEmpNum = nil;
+                            
+                        }
+                        NotificationCenter.default.post(name: Notification.Name("AwrdFileRetrieved"), object: nil)
+                    }
+                }
+            })
+            
+            
+        }
+    }
+    
+    
+    
     
     private func checkEarlyBidding(){
         let currentDate = Date()
@@ -249,12 +298,13 @@ class CBCredentialsPageVC: BaseViewController {
     
     @IBAction func btnGoAction(_ sender: UIButton) {
         UserDefaults.standard.set(txtUserID.text, forKey: KCBEmpNumWithPrefix)
-        self.loginValidation()
         if type == "Retrieve Awards" {
             self.retriveAwardsAction()
         }
         else if type == "Submit Bid" {
             self.submitBidAction()
+        }else{
+            self.loginValidation()
         }
     }
     func loginValidation(){
@@ -292,11 +342,11 @@ class CBCredentialsPageVC: BaseViewController {
         if bidAlreadyExists(){
             showAlertForExistingBid{
                 self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
-                self.loginViewModel.checkLogin(userID: formattedUserID,password: password,empNum: empID)
+                self.loginViewModel.checkLogin(userID: formattedUserID,password: password)
             }
         }else{
             self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
-            loginViewModel.checkLogin(userID: formattedUserID,password: password,empNum: empID)
+            loginViewModel.checkLogin(userID: formattedUserID,password: password)
             
         }
         //----------------
@@ -427,14 +477,35 @@ class CBCredentialsPageVC: BaseViewController {
     
 //    MARK: Retrieve Awards Action
     func retriveAwardsAction() {
-        if let presentingVC = self.presentingViewController {
-            self.dismiss(animated: true) {
-                let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-                let vc = storyboard.instantiateViewController(withIdentifier: "CBShowAwardsViewController") as! CBShowAwardsViewController
-                vc.modalPresentationStyle = .fullScreen
-                presentingVC.present(vc, animated: true)
-            }
+        guard let rawUserID = txtUserID.text, !rawUserID.isEmpty,
+              let password = txtPassword.text, !password.isEmpty else {
+            shakeTextField(textField: txtUserID)
+            return
         }
+        if rawUserID.count < 2 || rawUserID.count > 8 {
+            shakeTextField(textField: txtUserID)
+            return
+        } else if password.count < 4 {
+            shakeTextField(textField: txtPassword)
+            return
+        }
+        var formattedUserID = rawUserID
+        if !rawUserID.lowercased().hasPrefix("x") && !rawUserID.lowercased().hasPrefix("e") {
+            formattedUserID = (rawUserID == DevUserID) ? "x\(rawUserID)" : "e\(rawUserID)"
+        }
+        txtUserID.text = formattedUserID
+        self.view.showActivityIndicator()
+        loginViewModel.checkLogin(userID: formattedUserID,password: password)
+        
+        
+//        if let presentingVC = self.presentingViewController {
+//            self.dismiss(animated: true) {
+//                let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+//                let vc = storyboard.instantiateViewController(withIdentifier: "CBShowAwardsViewController") as! CBShowAwardsViewController
+//                vc.modalPresentationStyle = .fullScreen
+//                presentingVC.present(vc, animated: true)
+//            }
+//        }
     }
     
 //    MARK: Submit Award Action

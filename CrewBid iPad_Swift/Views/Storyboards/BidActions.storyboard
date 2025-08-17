@@ -553,9 +553,8 @@
                                             <action selector="btnDismissAction:" destination="J15-0J-rc2" eventType="touchUpInside" id="3Ty-4I-uFv"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Awards" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cp8-lB-Lm3">
-                                        <rect key="frame" x="60" y="15" width="1256" height="45"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Awards" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cp8-lB-Lm3">
+                                        <rect key="frame" x="647.5" y="15.5" width="81.5" height="29"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="24"/>
                                         <color key="textColor" name="BlackLabelColor"/>
                                         <nil key="highlightedColor"/>
@@ -578,6 +577,8 @@
                                 </subviews>
                                 <color key="backgroundColor" name="TopViewColor"/>
                                 <constraints>
+                                    <constraint firstItem="Cp8-lB-Lm3" firstAttribute="centerY" secondItem="9dQ-BO-E6B" secondAttribute="centerY" id="CRV-Rk-775"/>
+                                    <constraint firstItem="Cp8-lB-Lm3" firstAttribute="centerX" secondItem="9dQ-BO-E6B" secondAttribute="centerX" id="FNJ-zT-S0K"/>
                                     <constraint firstItem="bob-ie-fZi" firstAttribute="leading" secondItem="9dQ-BO-E6B" secondAttribute="leading" constant="10" id="Ra4-I0-Z8j"/>
                                     <constraint firstItem="h2t-nb-O06" firstAttribute="centerY" secondItem="9dQ-BO-E6B" secondAttribute="centerY" id="WOW-ib-n4C"/>
                                     <constraint firstAttribute="height" constant="60" id="ZdL-x1-gGD"/>

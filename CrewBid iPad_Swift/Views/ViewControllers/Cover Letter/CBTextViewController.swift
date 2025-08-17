@@ -111,7 +111,7 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
             case .awardText:
                 lblTitle.text = "Bid Awards"
                 titleText = "Bid Awards"
-                textView.text = self.bidPeriod?.textFile(withName: BIAwardsTextFileName)?.text
+                textView.text = self.bidPeriod?.awardsTextFile()?.text
                 break
             case .faMemo:
                 lblTitle.text = "FA Memo"
