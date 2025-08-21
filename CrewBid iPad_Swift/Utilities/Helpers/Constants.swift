@@ -174,6 +174,8 @@ let KCBOpenAwardEmpValidationVCForAddToCal = "KCBOpenAwardEmpValidationVCForAddT
 let KCBOpenLineText = "KCBOpenLineText"
 let KCBOpenTripText = "KCBOpenTripText"
 let KCBOpenFAMemo = "KCBOpenFAMemo"
+let kCBDefaultCommutingTimesKey = "Default Commuting Times"
+let kCBDefaultsCommutingNoMidKey = "DefaultsNoMidKey"
 
 
 public enum HTTPStatusCode: Int {

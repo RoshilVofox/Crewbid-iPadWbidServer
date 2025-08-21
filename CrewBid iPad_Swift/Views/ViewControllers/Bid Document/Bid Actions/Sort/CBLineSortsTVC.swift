@@ -29,6 +29,7 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
         setupUI()
         self.view.clipsToBounds = true
         self.view.layer.cornerRadius = 5
+        updateLines()
         NotificationCenter.default.addObserver(self, selector: #selector(updateBidListCount), name: NSNotification.Name("updateBidListCount"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
     }
@@ -113,7 +114,7 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
         let title = String(format: "Add Sort")
         sortMenuController.navigationItem.title = title
         sortMenuController.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
-        let count = self.sortsFetchController.fetchedObjects!.count + 1
+        let count = (self.sortsFetchController.fetchedObjects?.count ?? 0) + 1
         sortMenuController.nextSortOrder = NSNumber(integerLiteral: count)
         sortMenuController.navigationController?.navigationBar.backgroundColor = .lightGray
         sortMenuController.menuItems = BILineSort.lineSortCategories(for: CBGlobalMethods.shared.selectedBidPeriod!) as NSArray

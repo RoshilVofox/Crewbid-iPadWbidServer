@@ -318,6 +318,9 @@ extension BILine : Identifiable {
     }
     
     var orderedWorkBlocks: [Any] {
+        if self.workBlocks == nil {
+            return []
+        }
         let orderedDays = self.workBlocks!.allObjects.sorted {
             guard
                 let date1 = ($0 as AnyObject).value(forKeyPath: "startDateTime") as? Date,
@@ -418,6 +421,14 @@ extension BILine : Identifiable {
         default:
             return nil
         }
+    }
+    
+    @objc func orderedTripObjects() -> [BITrip] {
+        if self.trips == nil {
+            return []
+        }
+        let tripsObjs = (self.trips!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "startDate", ascending: true)]) as! [BITrip]
+        return tripsObjs
     }
 }
 
@@ -523,3 +534,13 @@ var BISortRedVariablesKey = "RED_COLOR_FLAG"
 var BISortBlueVariablesKey = "BLUE_COLOR_FLAG"
 var BISortBrownVariablesKey = "BROWN_COLOR_FLAG"
 var BISortPinkVariablesKey = "PINK_COLOR_FLAG"
+
+var BISortMonThursDepartTimeVariablesKey: String = "MON_THURS_DEPART"
+var BISortMonThursReturnTimeVariablesKey: String = "MON_THURS_RETURN"
+var BISortFriDepartTimeVariablesKey: String = "FRI_DEPART"
+var BISortFriReturnTimeVariablesKey: String = "FRI_RETURN"
+var BISortSatDepartTimeVariablesKey: String = "SAT_DEPART"
+var BISortSatReturnTimeVariablesKey: String = "SAT_RETURN"
+var BISortSunDepartTimeVariablesKey: String = "SUN_DEPART"
+var BISortSunReturnTimeVariablesKey: String = "SUN_RETURN"
+var BISortNoMidCheckStateVariablesKey = "NoMidCheckState"

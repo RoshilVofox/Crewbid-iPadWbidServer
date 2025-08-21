@@ -103,6 +103,16 @@ public final class CBGlobalMethods: NSObject {
         }
     }
     
+    func hideCustomActivityIndicator(completion: (() -> Void)? = nil) {
+        DispatchQueue.main.async {
+            if let topVC = UIApplication.topViewController() as? UIAlertController {
+                topVC.dismiss(animated: true, completion: {
+                    completion?() // Call the completion block if provided
+                })
+            }
+        }
+    }
+    
     // Save the expiration date to iCloud Key-Value Store
 
 //    func saveExpiryToiCloud(date: Date) {
@@ -437,6 +447,35 @@ public final class CBGlobalMethods: NSObject {
     
     // MARK: - Activity indicator
     //To show activity indicator with custom background color
+    func showCustomActivityIndicator(message: String, bgcolor: UIColor, height: CGFloat) {
+        DispatchQueue.main.async {
+            let loadingAlertController: UIAlertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+            loadingAlertController.view.tintColor = UIColor.blue
+            loadingAlertController.setMessage(font: UIFont(name: "UIFontWeightLight", size: 15), color: UIColor.white)
+            let activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
+            if #available(iOS 13.0, *) {
+                activityIndicator.style = UIActivityIndicatorView.Style.large
+            }
+            activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+            // change the background color
+            let subview = (loadingAlertController.view.subviews.first?.subviews.first?.subviews.first!)! as UIView
+            subview.layer.cornerRadius = 1
+            subview.backgroundColor = bgcolor.withAlphaComponent(0.7)
+            activityIndicator.color = .white
+            loadingAlertController.view.addSubview(activityIndicator)
+            
+            let xConstraint: NSLayoutConstraint = NSLayoutConstraint(item: activityIndicator, attribute: .centerX, relatedBy: .equal, toItem: loadingAlertController.view, attribute: .centerX, multiplier: 1, constant: 0)
+            let yConstraint: NSLayoutConstraint = NSLayoutConstraint(item: activityIndicator, attribute: .centerY, relatedBy: .equal, toItem: loadingAlertController.view, attribute: .centerY, multiplier: 1.4, constant: 0)
+            
+            NSLayoutConstraint.activate([ xConstraint, yConstraint])
+            activityIndicator.isUserInteractionEnabled = false
+            activityIndicator.startAnimating()
+            
+            let height: NSLayoutConstraint = NSLayoutConstraint(item: loadingAlertController.view ?? UIView(), attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: height)
+            loadingAlertController.view.addConstraint(height)
+            UIApplication.topViewController()?.present(loadingAlertController, animated: true, completion: nil)
+        }
+    }
 //    func showActivityIndicator(bgColor: UIColor){
 //        DispatchQueue.main.async {
 //            self.activityIndicatorView = UIActivityIndicatorView(frame: CGRect(x:UIScreen.main.bounds.size.width,y: UIScreen.main.bounds.size.height,width: 80,height: 80))

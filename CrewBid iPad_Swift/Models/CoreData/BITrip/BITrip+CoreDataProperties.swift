@@ -279,16 +279,16 @@ extension BITrip : Identifiable {
                 let deadHead = legInfo.isDeadhead as! Bool
                 let departCity = legInfo.departCity!
                 let arriveCity = legInfo.arriveCity!
-                let equipValue = legInfo.equipment!
+//                let equipValue = legInfo.equipment!
                 var equipment = ""
                 if isReserve {
                     equipment = "   "
-                } else if equipValue == "6" {
+                } else if legInfo.equipment == "6" {
                     equipment = "8MX"
-                } else if equipValue.isEmpty {
+                } else if legInfo.equipment == "" {
                     equipment = "000"
                 } else {
-                    equipment = "\(equipValue)00"
+                    equipment = String(format: "%@00", legInfo.equipment!)
                 }
                 let result = (legFlight as NSString).utf8String
                 

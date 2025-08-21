@@ -14,6 +14,7 @@
 		35428C292DEEE9F2009E7AC5 /* CBUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35428C282DEEE9F2009E7AC5 /* CBUserDefaults.swift */; };
 		357E313F2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357E313E2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift */; };
 		35A965A22E276E2D0001B62B /* LineValuesVacation.plist in Resources */ = {isa = PBXBuildFile; fileRef = F4A622572E13AA2000A09315 /* LineValuesVacation.plist */; };
+		35EFE82A2E53034900AFDF8F /* CBCommutingCellHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35EFE8292E53034900AFDF8F /* CBCommutingCellHelper.swift */; };
 		35F6C8B12DD843840072BAD9 /* JobShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F6C8B02DD843840072BAD9 /* JobShareViewController.swift */; };
 		35F6C8B32DD856B40072BAD9 /* CBAvoidaceBidViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F6C8B22DD856B40072BAD9 /* CBAvoidaceBidViewController.swift */; };
 		8B0044192DC72AA900CAEF82 /* CBPresetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */; };
@@ -371,6 +372,7 @@
 		353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBConfirmSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
 		35428C282DEEE9F2009E7AC5 /* CBUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUserDefaults.swift; sourceTree = "<group>"; };
 		357E313E2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMonthToMonthAlertVC.swift; sourceTree = "<group>"; };
+		35EFE8292E53034900AFDF8F /* CBCommutingCellHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCommutingCellHelper.swift; sourceTree = "<group>"; };
 		35F6C8B02DD843840072BAD9 /* JobShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobShareViewController.swift; sourceTree = "<group>"; };
 		35F6C8B22DD856B40072BAD9 /* CBAvoidaceBidViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBAvoidaceBidViewController.swift; sourceTree = "<group>"; };
 		8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPresetCell.swift; sourceTree = "<group>"; };
@@ -1635,6 +1637,7 @@
 				F4984C5D2E2E6BDA004E020E /* CBPresetLineSort.swift */,
 				F4984C5F2E2E6C12004E020E /* CBPresetFilterRule.swift */,
 				F4DB59512E30B5080079930A /* BILinesManager.swift */,
+				35EFE8292E53034900AFDF8F /* CBCommutingCellHelper.swift */,
 			);
 			path = "New Files";
 			sourceTree = "<group>";
@@ -2197,6 +2200,7 @@
 				F41EBFAA2DC4DB20001413DE /* defenitionsViewController.swift in Sources */,
 				F41EBFAB2DC4DB20001413DE /* faqViewController.swift in Sources */,
 				F41EBFAC2DC4DB20001413DE /* helpMenuItemsViewController.swift in Sources */,
+				35EFE82A2E53034900AFDF8F /* CBCommutingCellHelper.swift in Sources */,
 				F41EBFAD2DC4DB20001413DE /* helpMenuViewController.swift in Sources */,
 				F41EBFAE2DC4DB20001413DE /* latestNewsViewController.swift in Sources */,
 				35F6C8B12DD843840072BAD9 /* JobShareViewController.swift in Sources */,

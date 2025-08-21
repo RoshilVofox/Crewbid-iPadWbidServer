@@ -2814,6 +2814,13 @@ class BIBidInfoReader{
                             appendString = digits.appending(addString)
                             tripInfo?.departTime = Int(appendString) as? NSNumber
                             
+                            range = Range(debriefHoursRange, in: info)!
+                            digits = String(info[range])
+                            range = Range(debriefMinutesRange, in: info)!
+                            addString = String(info[range])
+                            appendString = digits.appending(addString)
+                            tripInfo?.returnTime = Int(appendString) as? NSNumber
+                            
                             //Latest Arrival
                             var tripReturnTime = tripInfo?.returnTime?.intValue
                             if tripReturnTime! < 400{

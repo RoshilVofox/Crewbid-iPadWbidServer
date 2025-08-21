@@ -304,6 +304,7 @@ extension BILineSort : Identifiable, NSFetchedResultsControllerDelegate {
         }
         
     }
+    
 }
 
 var temX: String = String()
