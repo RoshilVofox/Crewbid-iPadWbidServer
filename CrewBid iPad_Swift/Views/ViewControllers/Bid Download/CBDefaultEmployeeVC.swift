@@ -10,6 +10,7 @@ import UIKit
 class CBDefaultEmployeeVC: BaseViewController {
     
     @IBOutlet weak var textEmpNum: customUITextField!
+    @IBOutlet weak var backBtn: UIButton!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var descriptionTextView: UITextView!
     private let viewModel = CBDefaultEmployeeViewModel()
@@ -18,22 +19,33 @@ class CBDefaultEmployeeVC: BaseViewController {
     var hud = MBProgressHUD()
     var isHistoricBid:Bool = false
     var isNewBid:Bool = false
-    var isEmpVerified:Bool = false
+    var isEmpIDVerified:Bool = false
     let dataSource = GlobalBidInfo.shared
+    var bidPeriod = BIBidPeriod()
+    var isJobShareAlertShowing:Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        textEmpNum.keyboardType = UIKeyboardType.numberPad
+        if type == "Confirm Employee Number"{
+            NotificationCenter.default.addObserver(self, selector: #selector(jobShareAlert), name: NSNotification.Name("showJobShareAlert"), object: nil)
+        }
     }
-    
-    
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+    }
     func setupUI(){
         titleSetup()
         textEmpNum.becomeFirstResponder()
         textEmpNum.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: textEmpNum.frame.height))
         textEmpNum.leftViewMode = .always
         textEmpNum.delegate = self
-        textEmpNum.text = UserDefaults.standard.string(forKey: kCBDefaultEmployeeNumberKey)
+       
             viewModel.onAuthSuccess = { [weak self] result in
                 self?.view.hideActivityIndicator()
                 self?.handleAuthResult(result)
@@ -42,6 +54,17 @@ class CBDefaultEmployeeVC: BaseViewController {
                 self?.view.hideActivityIndicator()
                 self?.showAlert(message: error.localizedDescription)
             }
+        if type == "Submit Employee Number"{
+            backBtn.setImage(UIImage(named: "cc"), for: .normal)
+        }else{
+            backBtn.setImage(UIImage(named: "arrowleftbutton"), for: .normal)
+        }
+        
+        if type == "Confirm Employee Number" {
+            textEmpNum.text = ""
+        }else{
+            textEmpNum.text = UserDefaults.standard.string(forKey: kCBDefaultEmployeeNumberKey)
+        }
     }
     
     func titleSetup(){
@@ -49,7 +72,7 @@ class CBDefaultEmployeeVC: BaseViewController {
             titleLabel.text = "Enter Employee Number"
             descriptionTextView.text = "Enter employee number (no \"e\") to fetch the awarded line."
         }
-        else if type == "Submit employee number" {
+        else if type == "Submit Employee Number" {
             titleLabel.text = "Enter Employee Number"
             descriptionTextView.text = "Enter employee number (no \"e\") for whom the bid will be submitted"
         }
@@ -60,25 +83,33 @@ class CBDefaultEmployeeVC: BaseViewController {
     }
     
     @IBAction func btnBackAction(_ sender: Any) {
-        if type == "Show Awarded Line" || type == "Show Awarded Line" {
+        if type == "Show Awarded Line" || type == "Show Awarded Line" || type == "Submit Employee Number"{
             self.dismiss(animated: true, completion: nil)
-        } else {
+        }
+        else {
             self.navigationController?.popViewController(animated: true)
         }
         
     }
     
     @IBAction func btnNextAction(_ sender: Any) {
-        guard let empID = textEmpNum.text, !empID.isEmpty else {
-                   shakeTextField(textField: textEmpNum)
-                   return
-               }
-        dataSource.employeeNumber = empID
-        UserDefaults.standard.set(textEmpNum.text!, forKey: kCBDefaultEmployeeNumberKey)
-        self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
-        viewModel.checkAuthentication(empID: empID)
+        if !isEmpIDVerified{
+            guard let empID = textEmpNum.text, !empID.isEmpty else {
+                shakeTextField(textField: textEmpNum)
+                return
+            }
+            dataSource.employeeNumber = empID
+            UserDefaults.standard.set(textEmpNum.text!, forKey: kCBDefaultEmployeeNumberKey)
+            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
+            viewModel.checkAuthentication(empID: empID)
+        }else{
+            if confirmEmpNum != self.textEmpNum.text!{
+                self.navigationController?.popViewController(animated: true)
+            }else{
+                self.goToNextPage()
+            }
         }
-    
+    }
     func handleAuthResult(_ result: AuthResult) {
         let msg = result.message ?? ""
         guard let empID = textEmpNum.text else {return}
@@ -93,13 +124,9 @@ class CBDefaultEmployeeVC: BaseViewController {
             if type == "Show Awarded Line" {
                 self.goToAwardedCallendarLine()
             }
-            else if type == "Submit employee number" {
-                self.gotoConfirmEmployeeNumber()
-            }
-            else if type == "Confirm Employee Number" {
-                self.goFromConfirmEmployeeNumber()
-            }
-            else {
+            else if type == "Submit Employee Number" {
+                self.gotoConfirmEmployeeView()
+            }else {
                 self.gotoNextView()
             }
         }
@@ -132,93 +159,75 @@ class CBDefaultEmployeeVC: BaseViewController {
         }
     }
     
-    func gotoConfirmEmployeeNumber(){
+    func gotoConfirmEmployeeView(){
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBDefaultEmployeeVC") as! CBDefaultEmployeeVC
         vc.type = "Confirm Employee Number"
+        vc.isEmpIDVerified = true
+        vc.bidPeriod = self.bidPeriod
         vc.confirmEmpNum = self.textEmpNum.text!
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
-    func goFromConfirmEmployeeNumber(){
-        if confirmEmpNum == textEmpNum.text{
-            if AppData.shared.postion == "FA" && AppData.shared.Round == 1 {
-                let alert = UIAlertController(
-                    title: "Alert",
-                    message: "If you are Buddy Bidding you need to verify that you are buddy bidders on your Buddy list, and they know you are buddy bidding with them.",
-                    preferredStyle: .alert
-                )
-                let buddyBiddingAction = UIAlertAction(title: "I have Verified", style: .default) { _ in
-                    self.buddyBidSelected()
-                }
-                let notBuddyBiddingAction = UIAlertAction(title: "I am not Buddy Bidding", style: .default) { _ in
-                    self.buddyBidNotSelected()
-                }
-                alert.addAction(buddyBiddingAction)
-                alert.addAction(notBuddyBiddingAction)
-                present(alert, animated: true)
+    func goToNextPage(){
+        if self.bidPeriod.positionType?.intValue == BICrewPositionType.FlightAttendant.rawValue && self.bidPeriod.round == 1 {
+                AlertService.showAlertForTopVC(title: "Alert", message: "If you are Buddy Bidding you need to verify that you are buddy bidders on your Buddy list, and they know you are buddy bidding with them.", actions: [(title: "I have Verified", style: .default, handler: {_ in
+                    self.buddyBid(selected: true)
+
+                }),(title: "I am NOT Buddy Bidding", style: .default, handler: {_ in
+                    self.buddyBid(selected: false)
+                })])
             }
-            else if AppData.shared.postion == "FO" && AppData.shared.Round == 1 {
+            else if self.bidPeriod.positionType?.intValue == BICrewPositionType.FirstOfficer.rawValue && self.bidPeriod.round == 1 {
                 let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-                let vc = storyboard.instantiateViewController(withIdentifier: "CBAvoidaceBidViewController") as! CBAvoidaceBidViewController
+                let vc = storyboard.instantiateViewController(withIdentifier: "CBAvoidanceBidViewController") as! CBAvoidanceBidViewController
+                vc.empID = self.textEmpNum.text!
+                vc.bidPeriod = self.bidPeriod
                 vc.preferredContentSize = CGSize(width: 600, height: 500)
                 self.navigationController?.pushViewController(vc, animated: true)
             }
             else {
-                let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-                let vc = storyboard.instantiateViewController(withIdentifier: "CBSubmitCredentialVC") as! CBSubmitCredentialVC
-                vc.preferredContentSize = CGSize(width: 600, height: 500)
-                self.navigationController?.pushViewController(vc, animated: true)
+                loginView()
             }
-        }
-        
-        else {
-            let alert = UIAlertController(
-                title: "Alert",
-                message: "The entered employee number does not match the original entry. Please check and try again.",
-                preferredStyle: .alert
-            )
-            let cancelAction = UIAlertAction(title: "OK", style: .cancel)
-            alert.addAction(cancelAction)
-            present(alert, animated: true)
-        }
     }
     
-    func buddyBidSelected() {
-        let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "CBOptionalEmployeesPageViewController") as! CBOptionalEmployeesPageViewController
+    func loginView(){
+        let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
+        vc.type = "Submit Bid"
+        vc.bidPeriod = self.bidPeriod
+        vc.defaultEmplyeeNumber = self.textEmpNum.text!
         vc.preferredContentSize = CGSize(width: 600, height: 500)
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
-    func buddyBidNotSelected() {
-        jobShareAlert()
-        
+    func buddyBid(selected: Bool){
+        if selected{
+            let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "CBOptionalEmployeesPageViewController") as! CBOptionalEmployeesPageViewController
+            vc.preferredContentSize = CGSize(width: 600, height: 500)
+            vc.empID = self.textEmpNum.text!
+            vc.bidPeriod = self.bidPeriod
+            self.navigationController?.pushViewController(vc, animated: true)
+        }else{
+            jobShareAlert()
+        }
     }
     
-    func jobShareAlert() {
-        let alert = UIAlertController(
-            title: "Job Share",
-            message: "Do you want job share?",
-            preferredStyle: .alert
-        )
-        let okAction = UIAlertAction(title: "Yes", style: .default) { _ in
+    
+    
+    
+    @objc func jobShareAlert() {
+        AlertService.showAlertForTopVC(title: "Job Share", message: "Do you want Job Share?", actions: [(title:"Yes", style: .default, handler: {_ in
             let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "JobShareViewController") as! JobShareViewController
             vc.preferredContentSize = CGSize(width: 600, height: 500)
+            vc.bidPeriod = self.bidPeriod
             self.navigationController?.pushViewController(vc, animated: true)
-        }
-        
-        let cancelAction = UIAlertAction(title: "No", style: .cancel) { _ in
-            let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
-            let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
-            vc.type = "Submit Bid"
-            vc.preferredContentSize = CGSize(width: 600, height: 500)
-            self.navigationController?.pushViewController(vc, animated: true)
-        }
-        alert.addAction(okAction)
-        alert.addAction(cancelAction)
-        present(alert, animated: true)
+        }),
+        (title:"No", style: .cancel , handler: {_ in
+            self.loginView()
+        })])
     }
     
     
@@ -248,12 +257,18 @@ extension CBDefaultEmployeeVC : UITextFieldDelegate{
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        guard let empID = textEmpNum.text, !empID.isEmpty else {
-             showAlert(message: "Please enter a valid employee number.")
-             return false
-         }
-        viewModel.checkAuthentication(empID: empID)
-        return true
+        if type != "Confirm Employee Number"{
+            guard let empID = textEmpNum.text, !empID.isEmpty else {
+                 showAlert(message: "Please enter a valid employee number.")
+                 return false
+             }
+            UserDefaults.standard.set(textEmpNum.text!, forKey: kCBDefaultEmployeeNumberKey)
+            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
+            viewModel.checkAuthentication(empID: empID)
+            return true
+        }else{
+            return false
+        }
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {

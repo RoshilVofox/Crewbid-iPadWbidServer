@@ -8,7 +8,13 @@
 import UIKit
 import CoreData
 
-class CBCredentialsPageVC: BaseViewController {
+protocol submissionGoActiondelegate{
+    func goActionFromSubmitCertifyDelegate()
+}
+
+class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAdaptivePresentationControllerDelegate {
+
+    
     
     @IBOutlet weak var txtUserID: customUITextField!
     @IBOutlet weak var txtPassword: customUITextField!
@@ -28,6 +34,7 @@ class CBCredentialsPageVC: BaseViewController {
     var password:String?
     var loginType:LoginType = .newBid
     var type:String?
+    var bidPeriod: BIBidPeriod?
     let loginViewModel = CBLoginViewModel()
     let bidDownloadViewModel = BIBidFileDownloadViewModel()
     let context = CoreDataManager.shared.managedObjectContext
@@ -35,10 +42,15 @@ class CBCredentialsPageVC: BaseViewController {
     var bidPeriodList:[BIBidPeriod] = []
     private var hasStartedBidProcessing = false
     var awardsViewModel:AwardsViewModel?
+    var submissionViewModel:CBBidSubmissionViewModel?
     var formattedEmpNum: String?
+    var defaultEmplyeeNumber:String?
+    var optionalEmployees = NSMutableArray()
+    var bidListNumbers = NSMutableArray()
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+
         if let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod {
             awardsViewModel = AwardsViewModel(bidPeriod: bidPeriod)
         }
@@ -52,6 +64,9 @@ class CBCredentialsPageVC: BaseViewController {
             self.txtPassword.text = DevUserPassword
         }
         NotificationCenter.default.addObserver(self, selector: #selector(showProgressView), name: Notification.Name("ShowProgressView"), object: nil)
+
+        
+        
     }
     @objc func showProgressView() {
         let progressVC = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBProgressVC") as! CBProgressVC
@@ -94,7 +109,11 @@ class CBCredentialsPageVC: BaseViewController {
             print("Session Key: \(sessionKey)")
             if self.type == "Retrieve Awards"{
                 self.handleAwardRetrieval(sessionKey: sessionKey)
-            }else{
+            }
+            else if self.type == "Submit Bid"{
+                self.handleBidSubmission(sessionKey: sessionKey)
+            }
+            else{
                 self.handleBidDownload(sessionKey: sessionKey)
             }
         }
@@ -209,22 +228,23 @@ class CBCredentialsPageVC: BaseViewController {
             }
         }
     }
+    
     func handleAwardRetrieval(sessionKey: String){
         print("Award retrieval")
         let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         let empNum = bidPeriod?.crewIdentifier?.stringValue
         CBGlobalMethods.shared.secretKey = sessionKey
         awardsViewModel?.retrieveAwardFile(){ result in
-            DispatchQueue.main.async(execute: {() -> Void in
+            DispatchQueue.main.async{
                 self.dismiss(animated: false) {
                     if self.awardsViewModel?.bidPeriod.awardString != nil {
-                        var eno = ""
+                        var emp = ""
                         if (CBGlobalMethods.shared.awardLertSecretEmpNum?.length ?? 0 > 0) {
-                            eno = CBGlobalMethods.shared.awardLertSecretEmpNum!;
+                            emp = CBGlobalMethods.shared.awardLertSecretEmpNum!;
                         } else {
-                            eno = empNum!
+                            emp = empNum!
                         }
-                        self.awardsViewModel?.getAwardAlertFromServerCompleted(empNum: eno) { finished in
+                        self.awardsViewModel?.getAwardAlertFromServer(empNum: emp) { finished in
                             print("success")
                             CBGlobalMethods.shared.awardLertSecretEmpNum = nil;
                             
@@ -232,14 +252,32 @@ class CBCredentialsPageVC: BaseViewController {
                         NotificationCenter.default.post(name: Notification.Name("AwrdFileRetrieved"), object: nil)
                     }
                 }
-            })
+            }
             
             
         }
     }
     
-    
-    
+    func handleBidSubmission(sessionKey: String){
+        self.view.hideActivityIndicator()
+        print("Submit bid")
+        if let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod {
+            submissionViewModel = CBBidSubmissionViewModel(bidPeriod: bidPeriod, empNum: self.txtUserID.text!, password: self.txtPassword.text!, defaultEmpNum: self.defaultEmplyeeNumber!, optionalEmpNum: self.optionalEmployees)
+        }
+        submissionViewModel?.setBidLineNumbers { (success) in
+            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Submitting Bid...")
+            if success{
+                self.submissionViewModel?.startBidSubmission(sessionKey: sessionKey) { dataString in
+                    self.view.hideActivityIndicator()
+                    
+                }
+            }
+        }
+        
+       
+        
+    }
+
     
     private func checkEarlyBidding(){
         let currentDate = Date()
@@ -496,29 +534,73 @@ class CBCredentialsPageVC: BaseViewController {
         txtUserID.text = formattedUserID
         self.view.showActivityIndicator()
         loginViewModel.checkLogin(userID: formattedUserID,password: password)
-        
-        
-//        if let presentingVC = self.presentingViewController {
-//            self.dismiss(animated: true) {
-//                let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-//                let vc = storyboard.instantiateViewController(withIdentifier: "CBShowAwardsViewController") as! CBShowAwardsViewController
-//                vc.modalPresentationStyle = .fullScreen
-//                presentingVC.present(vc, animated: true)
-//            }
-//        }
     }
     
-//    MARK: Submit Award Action
+//    MARK: Submit Bid Action
     func submitBidAction() {
-        if let presentingVC = self.presentingViewController {
-            self.dismiss(animated: true) {
-                let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-                let vc = storyboard.instantiateViewController(withIdentifier: "SubmissionErrorVC") as! SubmissionErrorVC
-                vc.preferredContentSize = CGSize(width: 600, height: 500)
-                presentingVC.present(vc, animated: true)
+        if (txtUserID.text!.count < 2) || (txtUserID.text!.count > 8) {
+            self.shakeTextField(textField: txtUserID)
+            return
+        }else if (txtPassword.text!.count < 4){
+            self.shakeTextField(textField: txtPassword)
+            return
+        }
+        let empNum = self.defaultEmplyeeNumber ?? ""
+        txtUserID.text = txtUserID.text!.lowercased()
+        var txtUserIDString = txtUserID.text!
+        if txtUserIDString.hasPrefix("x") || txtUserIDString.hasPrefix("e"){
+            txtUserIDString.removeFirst()
+        }
+        
+        if empNum != txtUserIDString && CBGlobalMethods.shared.certified == false{
+            // show certify VC
+            print("Show certify VC")
+            let vc = UIStoryboard(name: "BidActions", bundle: nil).instantiateViewController(withIdentifier: "CBSubmissionCertifyVC") as! CBSubmissionCertifyVC
+            vc.submittedEmpNum = empNum
+            vc.bidderEmpNum = txtUserIDString
+            vc.delegate = self
+            vc.modalPresentationStyle = .formSheet
+            vc.preferredContentSize = CGSize(width: 600, height: 500)
+            if let presentationController = vc.presentationController{
+                presentationController.delegate = self
             }
+            self.present(vc, animated: true)
+            
+        }else{
+            // Directly submit the bid
+            print("Direct bid")
+            guard let rawUserID = txtUserID.text, !rawUserID.isEmpty,
+                  let password = txtPassword.text, !password.isEmpty else {
+                shakeTextField(textField: txtUserID)
+                return
+            }
+            if rawUserID.count < 2 || rawUserID.count > 8 {
+                shakeTextField(textField: txtUserID)
+                return
+            } else if password.count < 4 {
+                shakeTextField(textField: txtPassword)
+                return
+            }
+            var formattedUserID = rawUserID
+            if !rawUserID.lowercased().hasPrefix("x") && !rawUserID.lowercased().hasPrefix("e") {
+                formattedUserID = (rawUserID == DevUserID) ? "x\(rawUserID)" : "e\(rawUserID)"
+            }
+            txtUserID.text = formattedUserID
+            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
+            loginViewModel.checkLogin(userID: formattedUserID,password: password)
         }
     }
+    
+
+    
+    
+    func goActionFromSubmitCertifyDelegate() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5){
+            self.submitBidAction()
+        }
+    }
+    
+    
     private func isSecondRoundBid() -> Bool {
         let isSecondRoundBid = dataSource.round == 2
         return isSecondRoundBid

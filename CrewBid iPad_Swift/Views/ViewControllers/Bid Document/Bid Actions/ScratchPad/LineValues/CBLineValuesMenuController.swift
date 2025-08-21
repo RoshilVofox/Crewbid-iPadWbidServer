@@ -432,7 +432,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
             break
             
         case .VVacayCarryOutPay:
-            lineValueView.setValue(value: String(format: "%0.1f", line.vVacayCarryOutPay!.floatValue), forTitle: "CoVaPay", andType: valueType)
+            lineValueView.setValue(value: String(format: "%0.1f", line.vVacayCarryOutPay!.floatValue), forTitle: "vpNe", andType: valueType)
             break
             
         case .VCarryOutVOPay:

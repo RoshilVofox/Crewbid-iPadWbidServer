@@ -15,7 +15,7 @@
 		357E313F2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357E313E2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift */; };
 		35A965A22E276E2D0001B62B /* LineValuesVacation.plist in Resources */ = {isa = PBXBuildFile; fileRef = F4A622572E13AA2000A09315 /* LineValuesVacation.plist */; };
 		35F6C8B12DD843840072BAD9 /* JobShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F6C8B02DD843840072BAD9 /* JobShareViewController.swift */; };
-		35F6C8B32DD856B40072BAD9 /* CBAvoidaceBidViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F6C8B22DD856B40072BAD9 /* CBAvoidaceBidViewController.swift */; };
+		35F6C8B32DD856B40072BAD9 /* CBAvoidanceBidViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F6C8B22DD856B40072BAD9 /* CBAvoidanceBidViewController.swift */; };
 		8B0044192DC72AA900CAEF82 /* CBPresetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */; };
 		8B38C5642DCA24C200845E3F /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 8B38C5632DCA24C200845E3F /* IQKeyboardManagerSwift */; };
 		8B5F03282DC8D99F006A4E85 /* CBBrightnessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B5F03272DC8D99F006A4E85 /* CBBrightnessViewController.swift */; };
@@ -355,6 +355,7 @@
 		F4C6F9362DCB72940092C00C /* CBUserAccountDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C6F9352DCB72940092C00C /* CBUserAccountDetail.swift */; };
 		F4C6F93A2DCB78770092C00C /* SimplePing.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C6F9392DCB78770092C00C /* SimplePing.m */; };
 		F4CF5A8E2D892B9800A351DB /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = F4CF5A8D2D892B9800A351DB /* ZipArchive */; };
+		F4D572F52E5472A000757145 /* CBBidSubmissionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D572F42E5472A000757145 /* CBBidSubmissionViewModel.swift */; };
 		F4DB59522E30B5080079930A /* BILinesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DB59512E30B5080079930A /* BILinesManager.swift */; };
 		F4DBD8362DDC5FF700423856 /* BIBidInfoReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DBD8352DDC5FF700423856 /* BIBidInfoReader.swift */; };
 		F4DF6DCD2DD5EA2700761057 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DF6DCC2DD5EA2700761057 /* KeychainHelper.swift */; };
@@ -372,7 +373,7 @@
 		35428C282DEEE9F2009E7AC5 /* CBUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUserDefaults.swift; sourceTree = "<group>"; };
 		357E313E2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMonthToMonthAlertVC.swift; sourceTree = "<group>"; };
 		35F6C8B02DD843840072BAD9 /* JobShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobShareViewController.swift; sourceTree = "<group>"; };
-		35F6C8B22DD856B40072BAD9 /* CBAvoidaceBidViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBAvoidaceBidViewController.swift; sourceTree = "<group>"; };
+		35F6C8B22DD856B40072BAD9 /* CBAvoidanceBidViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBAvoidanceBidViewController.swift; sourceTree = "<group>"; };
 		8B0044182DC72AA900CAEF82 /* CBPresetCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPresetCell.swift; sourceTree = "<group>"; };
 		8B5F03272DC8D99F006A4E85 /* CBBrightnessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBrightnessViewController.swift; sourceTree = "<group>"; };
 		8B77C52A2DC7973B00E5B3B4 /* AppData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppData.swift; sourceTree = "<group>"; };
@@ -721,6 +722,7 @@
 		F4C6F9392DCB78770092C00C /* SimplePing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SimplePing.m; sourceTree = "<group>"; };
 		F4C6F93B2DCB85580092C00C /* CrewBid iPad_SwiftRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CrewBid iPad_SwiftRelease.entitlements"; sourceTree = "<group>"; };
 		F4CF5A282D891A3800A351DB /* CrewBid iPad_Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CrewBid iPad_Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F4D572F42E5472A000757145 /* CBBidSubmissionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidSubmissionViewModel.swift; sourceTree = "<group>"; };
 		F4DB59512E30B5080079930A /* BILinesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BILinesManager.swift; sourceTree = "<group>"; };
 		F4DBD8352DDC5FF700423856 /* BIBidInfoReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIBidInfoReader.swift; sourceTree = "<group>"; };
 		F4DF6DCC2DD5EA2700761057 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
@@ -1340,7 +1342,7 @@
 				F41EBE602DC4DB20001413DE /* SubmissionErrorVC.swift */,
 				353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */,
 				353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */,
-				35F6C8B22DD856B40072BAD9 /* CBAvoidaceBidViewController.swift */,
+				35F6C8B22DD856B40072BAD9 /* CBAvoidanceBidViewController.swift */,
 			);
 			path = "Bid Submission";
 			sourceTree = "<group>";
@@ -1496,6 +1498,7 @@
 				F4400BD92DD9E5D60066C7E0 /* CBLoginViewModel.swift */,
 				F4371C572DF1531100391303 /* BIBidFileDownloadViewModel.swift */,
 				F410AA692E4DE7D200101EAB /* AwardsViewModel.swift */,
+				F4D572F42E5472A000757145 /* CBBidSubmissionViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -2046,7 +2049,7 @@
 				F41EBF2F2DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodeld in Sources */,
 				357E313F2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift in Sources */,
 				F41EBF362DC4DB20001413DE /* WorkBlockList+CoreDataClass.swift in Sources */,
-				35F6C8B32DD856B40072BAD9 /* CBAvoidaceBidViewController.swift in Sources */,
+				35F6C8B32DD856B40072BAD9 /* CBAvoidanceBidViewController.swift in Sources */,
 				F4400BD62DD9BA370066C7E0 /* APIService.swift in Sources */,
 				F41EBF372DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift in Sources */,
 				F41EBF382DC4DB20001413DE /* AppDelegate.swift in Sources */,
@@ -2094,6 +2097,7 @@
 				F41EBF592DC4DB20001413DE /* EmbeddedLineImporterVC.swift in Sources */,
 				F41EBF5A2DC4DB20001413DE /* EmbeddedShowCAPVC.swift in Sources */,
 				F41EBF5B2DC4DB20001413DE /* CBAmPmRuleCell.swift in Sources */,
+				F4D572F52E5472A000757145 /* CBBidSubmissionViewModel.swift in Sources */,
 				F41EBF5C2DC4DB20001413DE /* CBCityComparisonRuleCell.swift in Sources */,
 				F41EBF5D2DC4DB20001413DE /* CBCommutingRuleCell.swift in Sources */,
 				F41EBF5E2DC4DB20001413DE /* CBComparisonRuleCell.swift in Sources */,
@@ -2265,7 +2269,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 7.34.13;
+				MARKETING_VERSION = 7.34.17;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brainbagsoftware1.CrewBid;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2298,7 +2302,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 7.34.13;
+				MARKETING_VERSION = 7.34.17;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "CrewBid iPad_Swift/Utilities/Helpers/StoreKit/CrewBid iPad_Swift-Bridging-Header.h";

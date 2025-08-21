@@ -10,7 +10,7 @@ import ZipArchive
 
 class BIBidFileDownload: NSObject{
     static let shared = BIBidFileDownload()
-    //MARK: New Bid
+    //MARK: Download New Bid/Awards
     func downloadBidFiles(sessionKey:String, filename:String, completionHandler:@escaping (Result<URL, Error>) -> Void){
         let isRequestType = (filename as NSString).pathExtension.uppercased() == "TXT"
         let requestType = isRequestType ? "TXTPACKET" : "ZIPPACKET"
@@ -66,9 +66,32 @@ class BIBidFileDownload: NSObject{
         }
     }
     
-    private func stringByAddingPercentEscapes(to unescapedString: String) -> String {
+    func stringByAddingPercentEscapes(to unescapedString: String) -> String {
         let allowedCharacterSet = CharacterSet(charactersIn: ";/?:@&=+$,").inverted
         return unescapedString.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet)!
+    }
+    
+    
+    //MARK: Bid Submission
+    
+    func submitBid(httpBody: String, completion: @escaping (Result<String, Error>) -> Void){
+        guard let bodyData = httpBody.data(using: .utf8), let url = URL(string: EndPoint.shared.thirdpartyURL) else {
+            completion(.failure(NetworkError.invalidURL))
+            return}
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = bodyData
+        let downloadTask = URLSession.shared.dataTask(with: request) { data, _, error in
+            if let error = error{
+                completion(.failure(error))
+                return}
+            guard let data = data else{
+                completion(.failure(NetworkError.noData))
+                return}
+            let dataString = String(data: data, encoding: .utf8)
+            completion(.success(dataString!))
+        }
+        downloadTask.resume()
     }
 }
 

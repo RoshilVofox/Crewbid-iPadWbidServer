@@ -49,7 +49,7 @@ class CBConfirmSubmitEmployeeNumberVC:
             }
             else if AppData.shared.postion == "FO" && AppData.shared.Round == 1 {
                 let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-                let vc = storyboard.instantiateViewController(withIdentifier: "CBAvoidaceBidViewController") as! CBAvoidaceBidViewController
+                let vc = storyboard.instantiateViewController(withIdentifier: "CBAvoidanceBidViewController") as! CBAvoidanceBidViewController
                 vc.preferredContentSize = CGSize(width: 600, height: 500)
                 self.navigationController?.pushViewController(vc, animated: true)
             }

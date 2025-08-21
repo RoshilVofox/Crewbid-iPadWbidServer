@@ -11,8 +11,11 @@ class JobShareViewController: UIViewController {
     @IBOutlet weak var txtJobShare1: UITextField!
     @IBOutlet weak var txtJobShare2: UITextField!
     @IBOutlet weak var btnCheckBox: UIButton!
+    @IBOutlet weak var domicileLbl: UILabel!
+    @IBOutlet weak var empNameLbl: UILabel!
     var isChecked: Bool = false
-    
+    var bidPeriod = BIBidPeriod()
+    var FAListDict:[String:Any]? = nil
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -20,17 +23,28 @@ class JobShareViewController: UIViewController {
     }
     
     func setupUI() {
-        txtJobShare1.text = "21221"
+        txtJobShare1.text = self.bidPeriod.crewIdentifier?.stringValue
         txtJobShare1.isEnabled = false
-        
-        txtJobShare1.delegate = self
+        txtJobShare1.isUserInteractionEnabled = false
+        txtJobShare1.textColor = UIColor.darkGray
         txtJobShare2.becomeFirstResponder()
         txtJobShare2.delegate = self
-        
         btnCheckBox.setTitle("", for: .normal)
+        empNameLbl.isHidden = true
+        domicileLbl.isHidden = true
+        FAListDict = CBUtils.readJSONStringFromFile()
+        
+        txtJobShare2.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        
     }
 
     @IBAction func btnOkAction(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
+        vc.type = "Submit Bid"
+        vc.bidPeriod = self.bidPeriod
+        vc.preferredContentSize = CGSize(width: 600, height: 500)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @IBAction func btnClearFeildsAction(_ sender: Any) {
@@ -68,6 +82,23 @@ class JobShareViewController: UIViewController {
 }
 
 extension JobShareViewController: UITextFieldDelegate {
+    
+    @objc func textFieldDidChange(_ textField: UITextField) {
+        let empDict = self.FAListDict?[textField.text!] as? [String: Any]
+        let empName = empDict?["Name"]
+        let empDomicile = empDict?["Domicile"]
+        if empName == nil{
+            domicileLbl.isHidden = true
+            empNameLbl.isHidden = true
+        }else{
+            domicileLbl.isHidden = false
+            domicileLbl.text = empDomicile as? String
+            empNameLbl.isHidden = false
+            empNameLbl.text = empName as? String
+            empNameLbl.textColor = CBColor.buddyTextColor
+        }
+    }
+    
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField == txtJobShare2 || textField == txtJobShare1 {

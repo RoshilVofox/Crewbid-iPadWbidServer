@@ -46,6 +46,7 @@ extension NetworkError: LocalizedError {
 struct AuthResult{
     let isSomehowSubscribed:Bool
     let message:String?
+    let empName:String?
 }
 
 class APIService{
@@ -135,7 +136,10 @@ class APIService{
                         dict["IsYearlySubscribed"] as? Bool
                     ].compactMap { $0 }.contains(true)
                     let message = dict["Message"] as? String
-                    let result = AuthResult(isSomehowSubscribed: isSomehowSubscribed, message: message)
+                    let firstname = dict["FirstName"] as? String
+                    let lastname = dict["LastName"] as? String
+                    let name = String(format: "%@ %@", firstname!, lastname!)
+                    let result = AuthResult(isSomehowSubscribed: isSomehowSubscribed, message: message, empName: name)
                     completion(.success(result))
                 }else{
                     completion(.failure(.decodingError))
@@ -206,4 +210,9 @@ class APIService{
         let allowedCharacterSet = CharacterSet(charactersIn: ";/?:@&=+$,").inverted
         return unescapedString.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet)
     }
+    
+    
+    
+    
+    
 }
