@@ -42,6 +42,7 @@
                                             <constraint firstAttribute="width" constant="55" id="vep-8l-rgH"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                         <state key="normal" title=" EOM">
                                             <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -58,6 +59,7 @@
                                             <constraint firstAttribute="width" constant="85" id="Vv8-c0-yI6"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                         <state key="normal" title="WBidMax">
                                             <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -100,6 +102,7 @@
                                             <constraint firstAttribute="width" constant="115" id="Wwu-aC-aEM"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                         <state key="normal" title="SWAPtimizer">
                                             <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -3071,7 +3074,7 @@
             <objects>
                 <viewController storyboardIdentifier="CommuteInformation" useStoryboardIdentifierAsRestorationIdentifier="YES" id="f4C-eD-MJK" customClass="CBCommuteInfoViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="45B-y9-u7f">
-                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Commute Information" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pws-az-Rje">
@@ -3327,7 +3330,7 @@
             <objects>
                 <viewController storyboardIdentifier="CBPresetsTVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="0Is-tp-i6s" customClass="CBPresetsTVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="q15-Hn-8JI">
-                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
+                        <rect key="frame" x="0.0" y="0.0" width="580" height="610"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tXF-CP-Wqh">
@@ -3531,7 +3534,7 @@
             <objects>
                 <viewController storyboardIdentifier="CBBidListVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="ec0-77-1pQ" customClass="CBBidListVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="lBr-Mb-oBz">
-                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
+                        <rect key="frame" x="0.0" y="0.0" width="537" height="610"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hZK-cg-VgG">
@@ -4404,7 +4407,7 @@
             <objects>
                 <viewController storyboardIdentifier="CBReportReleaseCollectionViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="gKe-KE-fCA" customClass="CBReportReleaseCollectionViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="zkJ-Mz-YY7">
-                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
+                        <rect key="frame" x="0.0" y="0.0" width="400" height="250"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="40" translatesAutoresizingMaskIntoConstraints="NO" id="JD4-0a-MWZ">
@@ -4529,7 +4532,7 @@
             <objects>
                 <viewController storyboardIdentifier="CBFlagSortPopUp" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Xod-Hl-sOk" customClass="CBFlagSortPopUp" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="2yi-rK-FhJ">
-                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="530"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select Flags" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="x3Q-hI-FmB">
@@ -4983,7 +4986,7 @@
             <objects>
                 <viewController storyboardIdentifier="CBBidListSortOptions" useStoryboardIdentifierAsRestorationIdentifier="YES" id="5qd-YZ-YDL" customClass="CBBidListSortOptions" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dUy-3l-WsS">
-                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
+                        <rect key="frame" x="0.0" y="0.0" width="580" height="500"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view alpha="0.29999999999999999" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TKf-Sk-9Vu" userLabel="BgView">
@@ -5185,7 +5188,7 @@
             <objects>
                 <viewController storyboardIdentifier="CBLineSortsTVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Eml-Ur-yj1" customClass="CBLineSortsTVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="0d4-ck-NJf">
-                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
+                        <rect key="frame" x="0.0" y="0.0" width="580" height="1960"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PEV-J5-72f">

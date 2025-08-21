@@ -2471,12 +2471,13 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             self.bidPeriod!.isEomOn = NSNumber(value: true)
             btnEOM.backgroundColor = UIColor(red: 35.0/255.0, green: 177.0/255.0, blue: 76.0/255.0, alpha: 1.0)
             btnEOM.setTitleColor(.white, for: .normal)
+            self.bidPeriod!.isSwaptimizerOn = NSNumber(value: false)
             btnSwaptimizer.backgroundColor = .white
             btnSwaptimizer.setTitleColor(.black, for: .normal)
         }
         if btnEOM.isSelected {
             // Added below code to set swaptimizer status
-            if self.bidPeriod!.isSwaptimizerOn?.boolValue == true {
+            if self.bidPeriod!.isSwaptimizerOn!.boolValue == true {
                 self.bidPeriod!.userVacationWbidOrCrewBid = "CREWBIDF"
                 self.eomVacationDateSelectForPilot(fromBtnAction: true)
                 return
