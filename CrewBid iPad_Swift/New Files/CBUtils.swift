@@ -927,27 +927,36 @@ class CBUtils{
     static func writeJSONDictToFile(jsonDict: [String: Any]) {
             do {
                 let jsonData = try JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
-                
-                // Convert JSON data to string (optional, only needed if you want to see it as a string)
                 let jsonString = String(data: jsonData, encoding: .utf8)
-                
-                // Get path to the Documents directory
-//                let fileManager = FileManager.default
-//                let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
-                let fileName = "falistwb4.json"
-                let fileURL = BIBidInfo.shared.downloadDirectory().appendingPathComponent(fileName)
-                if !FileManager.default.fileExists(atPath: BIBidInfo.shared.downloadDirectory().path) {
-                    try FileManager.default.createDirectory(at: BIBidInfo.shared.downloadDirectory(), withIntermediateDirectories: true)
-                }
-                // Write data to file (atomically = true writes to a temp file first, then replaces)
+                let filename = "falistwb4.json"
+                let filePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).map(\.path)[0]
+                let fileURL = URL(fileURLWithPath: filePath).appendingPathComponent(filename)
                 try jsonString?.data(using: .utf8)?.write(to: fileURL, options: .atomic)
-                
                 print("JSON successfully written buddy bid list to: \(fileURL.path)")
-                
             } catch {
                 print("Failed to write JSON to file: \(error.localizedDescription)")
             }
         }
+    
+    class func readJSONStringFromFile() -> [String:Any]? {
+        let filename = "falistwb4.json"
+        let filePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).map(\.path)[0]
+        let fileAtPath = URL(fileURLWithPath: filePath).appendingPathComponent(filename).path
+        var JSONString:String? = nil
+        if let data = NSData(contentsOfFile: fileAtPath){
+            JSONString = String(data: data as Data, encoding: .utf8)
+        }
+        let objData = JSONString?.data(using: .utf8)
+        var JSONDict:[String:Any]? = nil
+        do{
+            if let objData = objData{
+                JSONDict = try JSONSerialization.jsonObject(with: objData, options: .mutableContainers) as? [String:Any]
+            }
+        }catch{
+            print("Error parsing FAList JSON: \(error.localizedDescription)")
+        }
+        return JSONDict
+    }
     
     class func getGroundTimeBetween(reportTime: Int, releaseTime: Int) -> Int {
         var reportTime = reportTime
@@ -1247,69 +1256,5 @@ class CBUtils{
         return UUID().uuidString
     }
     
-//    static func findMissingDateAndIndex(forRedEyeTrip trip: BITrip) -> [String: Any] {
-//        var missingDayIndex = -1
-//        var missingDate: Date? = nil
-//        var isMissingDateIsLastDay = false
-//        
-//        if (trip != nil && trip.isRedEyeTrip) {
-//            var calendar = Calendar(identifier: .gregorian)
-//            calendar.locale = Locale(identifier: "en_US")
-//            calendar.timeZone = TimeZone(identifier: "US/Central")!
-//            var dateComps = calendar.dateComponents([.year, .month, .day], from: trip.startDate!)
-//            let df = DateFormatter()
-//            df.dateFormat = "dd-MM-yyyy"
-//            df.timeZone = TimeZone(identifier: "US/Central")
-//            
-//            var tripDates: [String] = []
-//            tripDates.reserveCapacity(4)
-//            for dayInfo in trip.info?.orderedDays as! [BIDayInfo] {
-//                for lengInfo in dayInfo.orderedLegs as! [BILegInfo] {
-//                    dateComps.minute = lengInfo.departMinutes?.intValue
-//                    let legStartDate = calendar.date(from: dateComps)!
-//                    tripDates.append(df.string(from: legStartDate))
-//                }
-//            }
-//            let uniqueDatesSet = NSOrderedSet(array: tripDates)
-//            let uniqueDatesArray = uniqueDatesSet.array as? [String] ?? []
-//            
-//            var shouldBreak = false // Flag to break the outer loop
-//            for i in 0..<uniqueDatesArray.count - 1 where shouldBreak == false {
-//                let currentDate = df.date(from: uniqueDatesArray[i])
-//                let nextDate = df.date(from: uniqueDatesArray[i + 1])
-//                let startOfCurrentDate = calendar.startOfDay(for: currentDate!)
-//                let startOfNextDate: Date = calendar.startOfDay(for: nextDate!)
-//                
-//                let daysBetween = calendar.dateComponents([.day], from: startOfCurrentDate, to: startOfNextDate).day ?? 0
-//                if (daysBetween > 1) {
-//                    for j in 1..<daysBetween {
-//                        let missingDate = calendar.date(byAdding: .day, value: j, to: startOfCurrentDate)!
-//                        if (uniqueDatesArray.count != trip.info?.calendarDaysCount?.intValue) {
-//                            missingDayIndex = i + 1
-//                        }
-//                        else {
-//                            missingDayIndex = -1
-//                        }
-//                        missingDayIndex = i + 1
-//                        shouldBreak = true
-//                        break // Exit loop after finding the first missing date
-//                    }
-//                }
-//                else {
-//                    // This is the case where the date is missing at the end of the DutyPeriod isntead of missing in between.
-//                        // So we have added one date manually to the startDate and set the missingIndex as 1;
-//                    if (i == uniqueDatesArray.count - 1 || i == uniqueDatesArray.count - 2) {
-//                        if (daysBetween == 1) {
-//                            missingDate = calendar.date(byAdding: .day, value: 1, to: startOfNextDate)
-//                            let isFa = trip.line?.bidPeriod?.isFABid()
-//                            if (isFa!) {
-//
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 
 }

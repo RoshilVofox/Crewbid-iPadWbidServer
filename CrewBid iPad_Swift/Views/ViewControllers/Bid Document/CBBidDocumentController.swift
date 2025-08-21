@@ -97,6 +97,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         NotificationCenter.default.addObserver(self, selector: #selector(openFAMemo), name: NSNotification.Name(KCBOpenFAMemo), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openAwardData), name: NSNotification.Name(KCBOpenAwardData), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openretrieveAwardDownloadPage), name: NSNotification.Name(KCBOpenretrieveAwardDownloadPage), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.checkLinesAvailableInBidList), name: NSNotification.Name(rawValue: "checkLinesAvailableInBidList"), object: nil)
     }
     
     @objc func openCoverLetter(notification: Notification) {
@@ -153,6 +154,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let storyboard : UIStoryboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
         vc.type = "Retrieve Awards"
+        vc.bidPeriod = self.bidPeriod
         vc.preferredContentSize = CGSize(width: 600, height: 500)
         vc.isModalInPresentation = true
         self.present(vc, animated: true, completion: nil)
@@ -165,6 +167,150 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let vc = storyboard.instantiateViewController(withIdentifier: "latestNewsViewController") as! latestNewsViewController
         self.navigationController?.pushViewController(vc, animated: true)
     }
+    
+    //MARK: -Bid Submission methods
+    @objc func checkLinesAvailableInBidList() {
+        var linesCount: Int = 0
+        linesCount = bidPeriod!.getBidListLines().count
+        if 0 == linesCount {
+            // Display a warning if there are no lines in the Bid List
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                AlertService.showAlertForTopVC(title: "Warning!", message: "There are no lines in the Bid List. Please add lines to bid list for bid submission")
+            })
+
+        }
+        else if !self.bidPeriod!.isFABid() && !self.bidPeriod!.isSecondRoundBid() && isBlankLinesMissing() {
+            print("Blank lines are missing in between")
+        }
+        else if !self.bidPeriod!.isFABid() && !self.bidPeriod!.isSecondRoundBid() && !arrayIsInAsendingOrder() {
+            // Display an alert if blank lines are not in ascending order
+            AlertService.showAlertForTopVC(title: "CrewBid Alert!", message: "Your Blank Lines are not in order of lowest to highest, or you have skipped some Blank Lines. Click Ok to go back and fix this issue. ")
+        } else {
+             // Proceed with entering the employee number for bid submission
+            enterSubmitEmpIdAlert()
+        }
+    }
+    
+    func enterSubmitEmpIdAlert(){
+        let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBDefaultEmployeeVC") as! CBDefaultEmployeeVC
+        vc.preferredContentSize = CGSize(width: 600, height: 500)
+        vc.type = "Submit Employee Number"
+        vc.bidPeriod = self.bidPeriod!
+        vc.isEmpIDVerified = false
+        let navController = UINavigationController(rootViewController: vc)
+        navController.setNavigationBarHidden(true, animated: false)
+        self.present(navController, animated: true)
+    }
+    
+    func isBlankLinesMissing() -> Bool {
+        let alllines = (self.bidPeriod!.lines!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "number", ascending: true)])as! [BILine]
+        
+        var result = [BILine]()
+        
+        for line in alllines{
+            if line.type == BILineType.BlankLine.rawValue.asNSNumber {
+                result.append(line)
+            }
+        }
+        
+        
+        let arrBlankLinesInWholeBid = result.map { $0.number }
+        
+        var blankLines = [Int]()
+        let lines = (self.bidPeriod!.lines!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "bidOrder", ascending: true)])
+        let resultsBidLines = (lines as NSArray).filtered(using: NSPredicate(format: "bidOrder != 0")) as! [BILine]
+        
+        if !bidPeriod!.isFABid() {
+            for line in resultsBidLines {
+                if line.type as! Int == BILineType.BlankLine.rawValue {
+                    blankLines.append(line.number as! Int)
+                }
+            }
+        }
+        
+        
+        var blankLinesValidate = [String]()
+        if let firstValue = blankLines.first, let lastValue = blankLines.last {
+            for a in arrBlankLinesInWholeBid {
+                if let aInt = a as? Int, aInt >= firstValue, aInt <= lastValue {
+                    blankLinesValidate.append("\(aInt)")
+                }
+            }
+        }
+        print("Array - \(blankLinesValidate)")
+        blankLinesValidate.removeAll { blankLines.contains(Int($0) ?? 0) }
+        print("Final - \(blankLinesValidate)")
+        if !blankLinesValidate.isEmpty {
+            //let missedLines = blankLinesValidate.joined(separator: ",")
+            //let message = "You have skipped blank line\(blankLinesValidate.count > 1 || blankLinesValidate.count == 1 ? "s": "")(\(missedLines)). We suggest you fix your bid"
+            let alert = UIAlertController(title: "CrewBid Alert!", message: "Your Blank Lines are not in order of lowest to highest, or you have skipped some Blank Lines. Click Ok to go back and fix this issue. ", preferredStyle: UIAlertController.Style.alert)
+            let okAction = UIAlertAction(title: "Ok", style: .default) { _ in }
+            alert.addAction(okAction)
+            self.present(alert, animated: true, completion: nil)
+            return true
+        }
+        return false
+    }
+    
+    // Function to check if an array is in ascending order
+
+    func arrayIsInAsendingOrder() -> Bool {
+        // Create array of bid line numbers.
+        let lines = (self.bidPeriod!.lines!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "bidOrder", ascending: true)])
+        let results = (lines as NSArray).filtered(using: NSPredicate(format: "bidOrder != 0")) as! [BILine]
+        
+        let results2 = self.bidPeriod!.orderedLines()
+        var firtBidLineNum : NSNumber?
+        var firtLineNum : NSNumber?
+        
+        if !bidPeriod!.isFABid() {
+            for case let line in results2 {
+                if line.type?.intValue == BILineType.BlankLine.rawValue {
+                    if firtLineNum == nil {
+                        firtLineNum = line.number
+                    }
+                }
+            }
+        }
+        
+        let blankLines = NSMutableArray ()
+        if !bidPeriod!.isFABid() {
+            for case let line in results {
+                print("LineType--\(String(describing: line.type)), blank line--\(Int(BILineType.BlankLine.rawValue))")
+                if line.type?.intValue == BILineType.BlankLine.rawValue {
+                    blankLines.add(line.number?.intValue as Any)
+                    if firtBidLineNum == nil {
+                        firtBidLineNum = line.number
+                    }
+                }
+            }
+        }
+        
+        if firtBidLineNum == nil {
+            firtBidLineNum = 0
+        }
+        if firtLineNum == nil {
+            firtLineNum = 0
+        }
+        
+        if (!firtLineNum!.isEqual(to: firtBidLineNum!) && firtBidLineNum != 0){
+            return false
+        }
+        
+        if blankLines.count != 0 {
+            for i in 1..<blankLines.count {
+                let FirstNum = blankLines[i - 1] as! Int
+                let SecNum = blankLines[i] as! Int
+                if FirstNum > SecNum {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+    
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -284,10 +430,20 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     func setupUI(){
         let positionArray = ["CP","FO","FA"]
         let index = dataSource.position.rawValue
-        lblHome.text = "(\(CBUtils.AppVersion())) " +
-                       CBGlobalMethods.shortMonthNameOf(monthInt: dataSource.month) + " " +
-                       "\(positionArray[index]) " +
-        "\(dataSource.year) \(dataSource.base) Rnd \(dataSource.round)"
+        let version = "(\(CBUtils.AppVersion()))"
+        let month = CBGlobalMethods.shortMonthNameOf(monthInt: dataSource.month)
+        let position = positionArray[index]
+        let year = dataSource.year
+        let base = dataSource.base
+        let round = dataSource.round
+        var empID = bidPeriod!.crewIdentifier!.stringValue
+        if empID == "21221"{
+            empID = String(format: "x%@", empID)
+        }else{
+            empID = String(format: "e%@", empID)
+        }
+        lblHome.text = "\(version) \(month) \(position) \(year) \(base) Rnd \(round) - \(empID)"
+
 
         btnLocalHerbView.layer.borderWidth = 1
         btnLocalHerbView.layer.borderColor = UIColor.black.cgColor
@@ -346,10 +502,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     @IBAction func settingsAction(_ sender: Any) {
-        let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedSettingsVC") as! EmbeddedSettingsVC
+        let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBBidActionsViewController") as! CBBidActionsViewController
 //        vc.bidPeriod = self.bidPeriod
-        vc.preferredContentSize = CGSize(width: 300, height: 210)
         vc.modalPresentationStyle = .custom
         let frame = CGRect(x: 15, y: 35, width: 0, height: 0)
         vc.showPopover(sourceView: btnSettings, sourceRect: frame)

@@ -93,7 +93,6 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
                 let leadingConstraint = msgLabel.leadingAnchor.constraint(equalTo: self.textView.leadingAnchor, constant: 20)
                 let trailingConstraint = msgLabel.trailingAnchor.constraint(equalTo: self.textView.trailingAnchor, constant: -20)
                 let topConstraint = msgLabel.topAnchor.constraint(equalTo: self.textView.topAnchor, constant: 100)
-//                let bottomConstraint = msgLabel.bottomAnchor.constraint(equalTo: self.textView.bottomAnchor, constant: 0)
                 let heightConstraint = NSLayoutConstraint(item: self.msgLabel!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 100.0)
                 
                 NSLayoutConstraint.activate([leadingConstraint, trailingConstraint, topConstraint, heightConstraint])
@@ -111,7 +110,7 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
             case .awardText:
                 lblTitle.text = "Bid Awards"
                 titleText = "Bid Awards"
-                textView.text = self.bidPeriod?.awardsTextFile()?.text
+                textView.text = self.bidPeriod?.awardString
                 break
             case .faMemo:
                 lblTitle.text = "FA Memo"

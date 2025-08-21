@@ -526,6 +526,8 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
     
     //Scroll to Line
     @IBAction func btnMoveToLineAction(_ sender: Any) {
+//        AlertService.showAlertForTopVC(title: "Scroll to Line", message: "Enter the line number you wish to scroll to:", actions: [], textFields: [(placeholder: "Enter line no", keyboardType: .numberPad, tag: 333, delegate: self)])
+        
         let alert = UIAlertController(title: "Scroll to Line", message: "Enter the line number you wish to scroll to:", preferredStyle: .alert)
         alert.addTextField { (textField) in
             textField.placeholder = "Enter line no"
@@ -537,41 +539,20 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
             let textField = alert?.textFields![0]
             let lineNumber: String = textField!.text!
             if(!(lineNumber.length > 0)) {
-                AlertService.showAlertForTopVC(title: "Line not found", message: "Line \(lineNumber) is not in the Scratchpad.  It is either filtered out, trashed, or in the Bid List.", actions: nil)
+                AlertService.showAlertForTopVC(title: "Line not found", message: "Line \(lineNumber) is not in the Scratchpad.  It is either filtered out, trashed, or in the Bid List.")
                 return
             }
-            let lineNumPred = NSPredicate(format: "number == %@", lineNumber)
-            let fetchedLines = self.linesArray
-            let lineArray = (fetchedLines as? [Any])?.filter { lineNumPred.evaluate(with: $0) } ?? []
-            if !lineArray.isEmpty {
-                let line = lineArray.first as! BILine
-                let index = self.linesArray?.index(of: line)
-                let lineIndexPath = NSIndexPath(row: index!, section: 0)
-                if lineIndexPath.row < self.scratchPadTableView.numberOfRows(inSection: 0){
-                    self.scratchPadTableView.scrollToRow(at: lineIndexPath as IndexPath, at: .middle, animated: true)
-                }
-            }else{
-                    let num = Int(lineNumber)
-                    var theLine:BILine? = nil
-                    for case let line as BILine in fetchedLines! {
-                        if line.number?.intValue == num{
-                            theLine = line
-                            break
-                        }
-                    }
-                    if theLine != nil {
-                        let index = self.linesArray?.index(of: theLine!)
-                        let lineIndexPath = NSIndexPath(row: index!, section: 0)
-                        if lineIndexPath.row < self.scratchPadTableView.numberOfRows(inSection: 0){
-                            self.scratchPadTableView.scrollToRow(at: lineIndexPath as IndexPath, at: .middle, animated: true)
-                        }
-                    }else{
-                        AlertService.showAlertForTopVC(title: "Line not found", message: "Line \(lineNumber) is not in the Scratchpad. It is either filtered out, trashed, or in the Bid List.", actions: nil)
+            
+            for i in 0..<self.sectionLines.count {
+                for line in self.sectionLines[i] {
+                    let numberOnly = lineNumber.filter { $0.isNumber }
+                    if line.number?.stringValue == numberOnly {
+                        self.scratchPadTableView.scrollToRow(at: IndexPath(row: 0, section: i), at: .middle, animated: true)
+                        return
                     }
                 }
-            
-            
-                
+            }
+            AlertService.showAlertForTopVC(title: "Line not found", message: "Line \(lineNumber) is not in the Scratchpad.  It is either filtered out, trashed, or in the Bid List.")    
         }))
         
         alert.addAction(UIAlertAction(title: "Scroll in BidList", style: .default, handler: {
@@ -588,7 +569,6 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
                 let appendDictionary = NSMutableDictionary()
                 appendDictionary["lineNumber"] = lineNumber
                 self.dismiss(animated: true) {
-                    //need to function
                     NotificationCenter.default.post(name: Notification.Name("ScrollToLineNotification"), object: appendDictionary)
                 }
         }))

@@ -39,7 +39,8 @@ class CBColor: UIColor, @unchecked Sendable {
     static let buttonLightTextColor = UIColor(red: 0.404, green: 0.455, blue: 0.494, alpha: 1.000)
     static let lightGreenColor = UIColor(red: 113.0 / kColorDivisor, green: 203.0 / kColorDivisor, blue: 181.0 / kColorDivisor, alpha: 1.0)
     static let lightTripButtonRedColor = UIColor(red: 201.0 / kColorDivisor, green: 118.0 / kColorDivisor, blue: 97.0 / kColorDivisor, alpha: 1.0)
-    
+    static let buddyTextColor = UIColor(red: 79/kColorDivisor, green: 122/kColorDivisor, blue: 29/kColorDivisor, alpha: 1.0)
+    static let customGreenColor = UIColor(red: 34.0/kColorDivisor, green: 137.0/kColorDivisor, blue: 35.0/kColorDivisor, alpha: 1.0)
 }
 
 

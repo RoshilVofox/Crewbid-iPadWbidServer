@@ -10,7 +10,7 @@ import UIKit
 class CBBidActionsViewController: BaseViewController, KUIPopOverUsable {
     
     var contentSize: CGSize {
-        return CGSize(width: 410, height: 480)
+        return CGSize(width: 400, height: 450)
     }
     
     @IBOutlet weak var btnBidAction: UIButton!
@@ -95,14 +95,14 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
             case .BidActions:
                     // Hide the ShowCap option if it's a FA bid
                 if !((bidPeriod?.isFABid())!) { //Pilot
-                    let textFile = self.bidPeriod?.awardsTextFile()
+                    let textFile = self.bidPeriod?.awardString
                     if textFile != nil { //With text
                         return arrForPilotWithAwdTxt.count
                     } else { //Without text
                         return arrForPilotWithOutAwdTxt.count
                     }
                 } else { //FA
-                    let textFile = self.bidPeriod?.awardsTextFile()
+                    let textFile = self.bidPeriod?.awardString
                     if textFile != nil { //With text
                         return arrForFAWithAwdTxt.count
                     } else { //Without text
@@ -132,7 +132,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
         let cell = tableView.dequeueReusableCell(withIdentifier: "CBBidActionTableCell") as! CBBidActionTableCell
         switch bidActionTypeSelected {
         case .BidActions:
-            let textFile = self.bidPeriod?.awardsTextFile()
+            let textFile = self.bidPeriod?.awardString
             if !((bidPeriod?.isFABid())!) { //Pilot
                 if textFile != nil { //With text
                     cell.lblTitle.text = arrForPilotWithAwdTxt[indexPath.row]
@@ -153,6 +153,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
             if cell.lblTitle.text == "Show Bid Receipt"{
                 if bidPeriod?.bidReceipts?.allObjects.count == 0 {
                     cell.lblTitle.textColor  = .lightGray
+                    cell.isUserInteractionEnabled = false
                 }
             }
         case .ShowFile:
@@ -254,7 +255,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                         }
                         break
                     case 2://Retrieve/Show Awards
-                    let textFile = self.bidPeriod?.awardsTextFile()?.text
+                    let textFile = self.bidPeriod?.awardString
                         if textFile != nil {
                             NotificationCenter.default.post(name: NSNotification.Name(KCBOpenAwardData), object: self)
                             dismissFn()

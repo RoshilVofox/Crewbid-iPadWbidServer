@@ -35,6 +35,7 @@ class AlertService{
         alertVC.alertTitle = title
         alertVC.attributedMessage = attributedMessage
         alertVC.fromView = viewController
+        alertVC.preferredContentSize = CGSize(width: 600, height: 500)
         viewController.present(alertVC, animated: true)
     }
     
@@ -59,10 +60,24 @@ class AlertService{
     static func showAlertForTopVC(
         title: String?,
         message: String?,
-        actions: [(title: String, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Void)?)]? = nil
+        actions: [(title: String, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Void)?)]? = nil,
+        textFields: [(placeholder: String, keyboardType: UIKeyboardType, tag: Int, delegate: UITextFieldDelegate?)]? = nil
     ) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
+        // Add text fields if provided
+        if let tfArray = textFields {
+            for tfData in tfArray {
+                alert.addTextField { textField in
+                    textField.placeholder = tfData.placeholder
+                    textField.keyboardType = tfData.keyboardType
+                    textField.tag = tfData.tag
+                    textField.delegate = tfData.delegate
+                }
+            }
+        }
+        
+        // Add actions
         if let actionArray = actions, !actionArray.isEmpty {
             for actionData in actionArray {
                 let action = UIAlertAction(title: actionData.title, style: actionData.style, handler: actionData.handler)

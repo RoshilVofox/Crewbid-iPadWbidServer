@@ -1702,7 +1702,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
                 }
             }
         // Reset the trip highlight count
-        BITrip.resetTripHighlightCount(in: self.managedObjectContext!)
+        BITrip.resetTripHighlightCount(in: bidPeriod.managedObjectContext!)
         self.insertionIndex = 0
         self.insertAbove = false
         
@@ -1735,7 +1735,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         
         let biReader = BIBidInfoReader()
         biReader.bidPeriod = bidPeriod
-        _ = biReader.addDefaultFilterRules(context: self.managedObjectContext!)
+        _ = biReader.addDefaultFilterRules(context: bidPeriod.managedObjectContext!)
         selectedCellIndexPaths.removeAllObjects()
         
         insertionIndex = 0

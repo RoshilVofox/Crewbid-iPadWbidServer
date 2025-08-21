@@ -391,7 +391,7 @@ extension BIBidPeriod : Identifiable {
                             let calendar = Calendar.current
                             let components = calendar.dateComponents([.month], from: endDate)
                             if let monthFromDate = components.month {
-                                let isNextMonth = (monthFromDate != currentMonth)
+                                 isNextMonth = (monthFromDate != currentMonth)
                                 if isNextMonth {
                                     savedVacationObject = vacationArrayFromServer
                                     break
@@ -488,7 +488,7 @@ extension BIBidPeriod : Identifiable {
         // sort map for the sort key and get the line key for that map. Before
         // returning the line key, set the line key value for all lines.
         let sortKeyPredicate = NSPredicate(format: "sortKey == %@", sortKey!)
-        var filteredLineSortMaps: [Any] = lineSortKeyMaps!.filter { sortKeyPredicate.evaluate(with: $0) }
+        let filteredLineSortMaps: [Any] = lineSortKeyMaps!.filter { sortKeyPredicate.evaluate(with: $0) }
         // There should be only 1 (or 0) line sort key maps for the sort key.
         //ZAssert(filteredLineSortMaps.count < 2, @"There must not be more than one sort key map for a sort key");
         let type = Int(truncating: cityLineSort.type!)
@@ -1015,9 +1015,22 @@ extension BIBidPeriod : Identifiable {
         let sortedBidReceipts = (bidReceipts!.allObjects as NSArray).sortedArray(using: [timeStampSort])
         return sortedBidReceipts as! [BIBidReceipt]
     }
-    func awardsTextFile() -> BITextFile? {
-        let awardsTextPredicate = NSPredicate(format: "name == %@", BIAwardsTextFileName)
-        let textFiles = self.textFiles!.filtered(using: awardsTextPredicate) as? Set<BITextFile>
-        return textFiles?.first
+    
+    func getBidListLines() -> [BILine] {
+        let lines = (self.lines!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "bidOrder", ascending: true)]) as! [BILine]
+        var array : [NSPredicate] = []
+        array.append(NSPredicate(format: "bidOrder > 0"))
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
+        let predicateValue = (lines as NSArray).filtered(using: predicate) as! [BILine]
+        return predicateValue
     }
+    
+    //MARK: Bid Receipts
+    
+    func addBidReceiptWithText(bidReceiptText: String){
+        let receipt = BIBidReceipt(context: self.managedObjectContext!)
+        receipt
+    }
+    
+    
 }
