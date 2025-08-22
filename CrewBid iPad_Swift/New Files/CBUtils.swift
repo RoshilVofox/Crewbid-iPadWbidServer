@@ -1255,6 +1255,42 @@ class CBUtils{
     class func generateUniqueIdentifier() -> String {
         return UUID().uuidString
     }
-    
+}
 
+class JWTDecoder{
+    static func decode(jwtToken jwt: String) -> [String: Any]? {
+            // Split the JWT into parts
+            let segments = jwt.components(separatedBy: ".")
+            guard segments.count >= 2 else {
+                print("Invalid JWT token")
+                return nil
+            }
+            
+            let payloadBase64 = segments[1]
+            
+            // Convert from Base64URL to Base64
+            var base64 = payloadBase64
+                .replacingOccurrences(of: "-", with: "+")
+                .replacingOccurrences(of: "_", with: "/")
+            
+            // Pad with '=' if needed
+            while base64.count % 4 != 0 {
+                base64.append("=")
+            }
+            
+            // Decode Base64 → Data
+            guard let data = Data(base64Encoded: base64) else {
+                print("Failed to decode Base64 string")
+                return nil
+            }
+            
+            // Parse JSON into dictionary
+            do {
+                let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
+                return jsonObject as? [String: Any]
+            } catch {
+                print("Failed to parse JSON: \(error.localizedDescription)")
+                return nil
+            }
+        }
 }

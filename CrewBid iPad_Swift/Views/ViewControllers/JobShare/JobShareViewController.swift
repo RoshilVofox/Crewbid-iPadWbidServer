@@ -43,6 +43,8 @@ class JobShareViewController: UIViewController {
         let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
         vc.type = "Submit Bid"
         vc.bidPeriod = self.bidPeriod
+        vc.jobShare1 = self.txtJobShare1.text ?? ""
+        vc.jobShare2 = self.txtJobShare2.text ?? ""
         vc.preferredContentSize = CGSize(width: 600, height: 500)
         self.navigationController?.pushViewController(vc, animated: true)
     }

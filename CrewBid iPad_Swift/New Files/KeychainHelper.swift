@@ -8,7 +8,7 @@
 import Foundation
 import Security
 
-struct KeychainHelper {
+class KeychainHelper {
     static func save(account: String, service: String, value: String) -> Bool {
             guard let data = value.data(using: .utf8) else { return false }
 
@@ -47,32 +47,53 @@ struct KeychainHelper {
         }
         return nil
     }
-        static func retrieve(account: String, service: String) -> String? {
-            let query: [String: Any] = [
-                kSecClass as String: kSecClassGenericPassword,
-                kSecAttrAccount as String: account,
-                kSecAttrService as String: service,
-                kSecReturnData as String: true,
-                kSecMatchLimit as String: kSecMatchLimitOne
-            ]
-
-            var dataTypeRef: AnyObject?
-            let status = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
-
-            if status == errSecSuccess,
-               let data = dataTypeRef as? Data,
-               let string = String(data: data, encoding: .utf8) {
-                return string
+    
+    static func retrieve(account: String, service: String) -> String? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: account,
+            kSecAttrService as String: service,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        var dataTypeRef: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
+        if status == errSecSuccess,
+            let data = dataTypeRef as? Data,
+            let string = String(data: data, encoding: .utf8) {
+            return string
+        }
+        return nil
+    }
+    
+    static func delete(account: String, service: String) {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: account,
+            kSecAttrService as String: service
+        ]
+        SecItemDelete(query as CFDictionary)
+    }
+    
+    static func retrieveTokenFromKeyChain() -> String? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: "BearerToken",
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        
+        var tokenDataRef: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &tokenDataRef)
+        
+        if status == errSecSuccess {
+            if let tokenData = tokenDataRef as? Data,
+               let token = String(data: tokenData, encoding: .utf8) {
+                return token
             }
-            return nil
+        } else {
+            print("Failed to retrieve token, error code: \(status)")
         }
-
-        static func delete(account: String, service: String) {
-            let query: [String: Any] = [
-                kSecClass as String: kSecClassGenericPassword,
-                kSecAttrAccount as String: account,
-                kSecAttrService as String: service
-            ]
-            SecItemDelete(query as CFDictionary)
-        }
+        return nil
+    }
 }

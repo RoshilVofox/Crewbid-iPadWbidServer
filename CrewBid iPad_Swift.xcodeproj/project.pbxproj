@@ -357,6 +357,8 @@
 		F4C6F93A2DCB78770092C00C /* SimplePing.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C6F9392DCB78770092C00C /* SimplePing.m */; };
 		F4CF5A8E2D892B9800A351DB /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = F4CF5A8D2D892B9800A351DB /* ZipArchive */; };
 		F4D572F52E5472A000757145 /* CBBidSubmissionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D572F42E5472A000757145 /* CBBidSubmissionViewModel.swift */; };
+		F4DA88132E5722D000ECC906 /* BISwaBidDataDownload.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DA88122E5722D000ECC906 /* BISwaBidDataDownload.swift */; };
+		F4DA88152E57231D00ECC906 /* BISwaBidDataDownloadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DA88142E57231D00ECC906 /* BISwaBidDataDownloadViewModel.swift */; };
 		F4DB59522E30B5080079930A /* BILinesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DB59512E30B5080079930A /* BILinesManager.swift */; };
 		F4DBD8362DDC5FF700423856 /* BIBidInfoReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DBD8352DDC5FF700423856 /* BIBidInfoReader.swift */; };
 		F4DF6DCD2DD5EA2700761057 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DF6DCC2DD5EA2700761057 /* KeychainHelper.swift */; };
@@ -725,6 +727,8 @@
 		F4C6F93B2DCB85580092C00C /* CrewBid iPad_SwiftRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CrewBid iPad_SwiftRelease.entitlements"; sourceTree = "<group>"; };
 		F4CF5A282D891A3800A351DB /* CrewBid iPad_Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CrewBid iPad_Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4D572F42E5472A000757145 /* CBBidSubmissionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidSubmissionViewModel.swift; sourceTree = "<group>"; };
+		F4DA88122E5722D000ECC906 /* BISwaBidDataDownload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BISwaBidDataDownload.swift; sourceTree = "<group>"; };
+		F4DA88142E57231D00ECC906 /* BISwaBidDataDownloadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BISwaBidDataDownloadViewModel.swift; sourceTree = "<group>"; };
 		F4DB59512E30B5080079930A /* BILinesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BILinesManager.swift; sourceTree = "<group>"; };
 		F4DBD8352DDC5FF700423856 /* BIBidInfoReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIBidInfoReader.swift; sourceTree = "<group>"; };
 		F4DF6DCC2DD5EA2700761057 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
@@ -1501,6 +1505,7 @@
 				F4371C572DF1531100391303 /* BIBidFileDownloadViewModel.swift */,
 				F410AA692E4DE7D200101EAB /* AwardsViewModel.swift */,
 				F4D572F42E5472A000757145 /* CBBidSubmissionViewModel.swift */,
+				F4DA88142E57231D00ECC906 /* BISwaBidDataDownloadViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -1641,6 +1646,7 @@
 				F4984C5F2E2E6C12004E020E /* CBPresetFilterRule.swift */,
 				F4DB59512E30B5080079930A /* BILinesManager.swift */,
 				35EFE8292E53034900AFDF8F /* CBCommutingCellHelper.swift */,
+				F4DA88122E5722D000ECC906 /* BISwaBidDataDownload.swift */,
 			);
 			path = "New Files";
 			sourceTree = "<group>";
@@ -2020,6 +2026,7 @@
 				F41EBF142DC4DB20001413DE /* BIFilterRule+CoreDataProperties.swift in Sources */,
 				F41EBF152DC4DB20001413DE /* BILineSort+CoreDataClass.swift in Sources */,
 				F41EBF162DC4DB20001413DE /* BILineSort+CoreDataProperties.swift in Sources */,
+				F4DA88152E57231D00ECC906 /* BISwaBidDataDownloadViewModel.swift in Sources */,
 				F41EBF172DC4DB20001413DE /* BIDay+CoreDataClass.swift in Sources */,
 				8B5F03282DC8D99F006A4E85 /* CBBrightnessViewController.swift in Sources */,
 				F41EBF182DC4DB20001413DE /* BIDay+CoreDataProperties.swift in Sources */,
@@ -2117,6 +2124,7 @@
 				F41EBF672DC4DB20001413DE /* CBUserFlagRuleCell.swift in Sources */,
 				F41EBF682DC4DB20001413DE /* CBWeekdayRuleCell.swift in Sources */,
 				F41EBF692DC4DB20001413DE /* CBWorkBlockRuleCell.swift in Sources */,
+				F4DA88132E5722D000ECC906 /* BISwaBidDataDownload.swift in Sources */,
 				F41EBF6A2DC4DB20001413DE /* RefreshController.swift in Sources */,
 				F41EBF6B2DC4DB20001413DE /* CBFilterRulesTableVC.swift in Sources */,
 				F41EBF6C2DC4DB20001413DE /* CBFlagSortPopUp.swift in Sources */,
