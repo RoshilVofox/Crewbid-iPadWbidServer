@@ -531,5 +531,16 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
         let pos = "\(bidPeriod!.positionType!)"
         let key = "\(currentVersionString)\(domicil)\(month)\(round)\(pos)"
         UserDefaults.standard.removeObject(forKey: key)
+        if let _ = _btnBacktoBase ,let _ = _btnConnectTime , let _ = _btnCheckIn{
+            handleCommuteDetails()
+        }
+        self.calculateCommuteLineProperties()
+    }
+    
+    func handleCommuteDetails(){
+        backToBaseFromSync = _btnBacktoBase.titleLabel?.text ?? "00:10"
+        connectTimeFromSync = _btnConnectTime.titleLabel?.text ?? "00:30"
+        checkInFromSync = _btnCheckIn.titleLabel?.text ?? "01:00"
+
     }
 }
