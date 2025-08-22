@@ -7,10 +7,23 @@
 
 import UIKit
 
+protocol CityNameViewControllerDelegate: AnyObject {
+    func setCityName(_ cityName: String?)
+    func disableButtonsForNoConnection()
+}
+
 class CommuteCityViewController: UIViewController, KUIPopOverUsable {
     var contentSize: CGSize = CGSize(width: 320, height: 400)
     @IBOutlet weak var collectionView: UICollectionView!
+    
+    var delegate: CityNameViewControllerDelegate!
     var arrAllCities: NSMutableArray!
+    var commuteTime: CommuteTime?
+    var depTime: Int = 0
+    var arrTime: Int = 0
+    var bidPeriod: BIBidPeriod?
+    var isNonStopOnly : Bool = false
+    var connectTime : Int = 30
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +35,10 @@ class CommuteCityViewController: UIViewController, KUIPopOverUsable {
     @IBAction func btnCloseAction(_ sender: Any) {
         print("i am working")
         self.dismiss(animated: true, completion: nil)
+    }
+    
+    func commutabilityCalculationWithForSync(city: String, isNonStop: Bool) -> (Bool, String) {
+        return (true, "")
     }
     
 }

@@ -62,5 +62,21 @@ extension WorkBlockList : Identifiable {
             return date1 < date2
         }
     }
+    
+    func orderedNoVacDays() -> [Any] {
+        // Retrieve the "days" attribute as an NSArray
+        var arrDays  = (days ?? NSSet()).allObjects as NSArray
+        //Filter all not vacation days (It meas dispay type normal)
+        arrDays = arrDays.filtered(using: NSPredicate(format: "displayType == 0")) as NSArray
+        // Sort the days array using a custom comparator
+        let orderedDays = arrDays.sortedArray(options: [], usingComparator: {(_ day1: Any, _ day2: Any) -> ComparisonResult in
+            // Extract the "date" attribute from each day object
+            let value1 : NSDate = (day1 as AnyObject).value(forKey: "date") as! NSDate
+            let value2 : NSDate = (day2 as AnyObject).value(forKey: "date")  as! NSDate
+            let result: ComparisonResult? = value1.compare(value2 as Date)
+            return result!
+        })
+        return orderedDays
+    }
 
 }

@@ -3098,9 +3098,6 @@
                                     <color key="titleColor" systemColor="tintColor"/>
                                     <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
-                                <connections>
-                                    <action selector="btnCancelAction:" destination="f4C-eD-MJK" eventType="touchUpInside" id="wad-aX-1il"/>
-                                </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I77-We-0ww">
                                 <rect key="frame" x="20" y="70" width="281" height="194"/>
@@ -3152,9 +3149,6 @@
                                             <color key="titleColor" systemColor="labelColor"/>
                                             <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
-                                        <connections>
-                                            <action selector="btnCommuterCityAction:" destination="f4C-eD-MJK" eventType="touchUpInside" id="iIw-cm-Ek9"/>
-                                        </connections>
                                     </button>
                                     <button opaque="NO" tag="101" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VnG-hV-0OV">
                                         <rect key="frame" x="222.5" y="32.5" width="40" height="25"/>
@@ -3168,9 +3162,6 @@
                                             <color key="titleColor" systemColor="labelColor"/>
                                             <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
-                                        <connections>
-                                            <action selector="btnSetConnectTimeAction:" destination="f4C-eD-MJK" eventType="touchUpInside" id="BNZ-CQ-Zyo"/>
-                                        </connections>
                                     </button>
                                     <button opaque="NO" tag="102" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4uk-LK-3wr">
                                         <rect key="frame" x="222.5" y="66" width="40" height="25"/>
@@ -3184,9 +3175,6 @@
                                             <color key="titleColor" systemColor="labelColor"/>
                                             <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
-                                        <connections>
-                                            <action selector="btnReportPadTimeAction:" destination="f4C-eD-MJK" eventType="touchUpInside" id="6Ge-fW-gfS"/>
-                                        </connections>
                                     </button>
                                     <button opaque="NO" tag="103" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eeQ-65-E42">
                                         <rect key="frame" x="222.5" y="98.5" width="40" height="30"/>
@@ -3200,9 +3188,6 @@
                                             <color key="titleColor" systemColor="labelColor"/>
                                             <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
-                                        <connections>
-                                            <action selector="btnPadForBackToBaseAction:" destination="f4C-eD-MJK" eventType="touchUpInside" id="qsU-ta-ptx"/>
-                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eeg-UT-4Ur">
                                         <rect key="frame" x="20" y="152" width="240.5" height="32"/>
@@ -3215,9 +3200,6 @@
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
-                                        <connections>
-                                            <action selector="btnViewCommuteTimeAction:" destination="f4C-eD-MJK" eventType="touchUpInside" id="lAJ-gN-Xpp"/>
-                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2qi-83-kLz" customClass="CheckBox" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                         <rect key="frame" x="130" y="35" width="20" height="20"/>
@@ -3227,9 +3209,6 @@
                                             <constraint firstAttribute="height" constant="20" id="cYr-qX-ewU"/>
                                         </constraints>
                                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <connections>
-                                            <action selector="btnNonStopAction:" destination="f4C-eD-MJK" eventType="touchUpInside" id="6gj-jO-0af"/>
-                                        </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Non-Stop" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BVn-UM-ur4">
                                         <rect key="frame" x="158" y="37.5" width="64" height="15"/>
@@ -3290,9 +3269,6 @@
                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
-                                <connections>
-                                    <action selector="btnDoneSettingCommuteTimeAction:" destination="f4C-eD-MJK" eventType="touchUpInside" id="AyK-bF-E4T"/>
-                                </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="2B5-cM-tNd"/>
@@ -3312,14 +3288,6 @@
                         </constraints>
                     </view>
                     <size key="freeformSize" width="320" height="320"/>
-                    <connections>
-                        <outlet property="btnCommuterCity" destination="TQF-hm-Jdv" id="Wik-GX-hkd"/>
-                        <outlet property="btnNonStop" destination="2qi-83-kLz" id="7q6-oX-c16"/>
-                        <outlet property="btnPadForBackToBase" destination="eeQ-65-E42" id="mrc-Lm-gyb"/>
-                        <outlet property="btnReportPadTime" destination="4uk-LK-3wr" id="Af8-iT-sX9"/>
-                        <outlet property="btnSetConnectTime" destination="VnG-hV-0OV" id="uox-4R-HXi"/>
-                        <outlet property="nonStopView" destination="ikH-qI-miM" id="trv-9d-5E6"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="I3P-Dt-7ol" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -5934,6 +5902,9 @@
                                                                 <segment title="Back"/>
                                                                 <segment title="Overall"/>
                                                             </segments>
+                                                            <connections>
+                                                                <action selector="segmentControlActn:" destination="cm3-Ga-IrQ" eventType="valueChanged" id="tZt-jz-thw"/>
+                                                            </connections>
                                                         </segmentedControl>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n7S-EO-Jnj" userLabel="TitleButton">
                                                             <rect key="frame" x="45" y="13" width="250" height="30"/>
@@ -5946,6 +5917,9 @@
                                                                 <color key="titleColor" systemColor="labelColor"/>
                                                                 <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="commutabilityTitleAction:" destination="cm3-Ga-IrQ" eventType="touchUpInside" id="hRE-4H-Leh"/>
+                                                            </connections>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eXJ-yE-RaX" userLabel="Delete Button">
                                                             <rect key="frame" x="5" y="10.5" width="35" height="35"/>
@@ -5986,7 +5960,10 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="CommutabilitySegmentControl" destination="Xu1-19-b4N" id="Hen-b2-wGt"/>
                                             <outlet property="btnTitle" destination="n7S-EO-Jnj" id="eoN-WV-Oib"/>
+                                            <outlet property="btnTitleCommutability" destination="n7S-EO-Jnj" id="cx3-f1-HNS"/>
+                                            <outlet property="lblTitleCommutability" destination="n7S-EO-Jnj" id="CuM-AR-9mt"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="flagSortCell" rowHeight="265" id="V5b-51-wXo" customClass="CBFlagSortCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
