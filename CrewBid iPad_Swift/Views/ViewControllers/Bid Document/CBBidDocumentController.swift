@@ -37,7 +37,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     var rightNavController:UINavigationController!
     var bidsTableNavController:UINavigationController!
     var dataSource = GlobalBidInfo.shared
-    var linesManager:BILinesManager!
+//    var linesManager:BILinesManager!
     var calendarData:BICalendarData = BICalendarData()
     var managedObjectContext: NSManagedObjectContext {
         return CoreDataManager.shared.persistentContainer.viewContext
@@ -65,7 +65,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         updateLocalHerbSwitchUI()
         self.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
         self.context = CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!
-        self.linesManager = BILinesManager.init(managedObjectContext: self.managedObjectContext)
+//        self.linesManager = BILinesManager.init(managedObjectContext: self.managedObjectContext)
         self.calendarData = calendarData.initWithBidPeriod(bidPeriod: self.bidPeriod!)!
         isVacationsRemoved = false
         btnSwaptimizer.tag = 21

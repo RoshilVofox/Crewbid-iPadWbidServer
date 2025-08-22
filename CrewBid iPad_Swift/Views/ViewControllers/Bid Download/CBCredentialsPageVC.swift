@@ -47,6 +47,10 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     var defaultEmplyeeNumber:String?
     var optionalEmployees = NSMutableArray()
     var bidListNumbers = NSMutableArray()
+    
+    var jobShare1:String?
+    var jobShare2:String?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -262,13 +266,26 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         self.view.hideActivityIndicator()
         print("Submit bid")
         if let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod {
-            submissionViewModel = CBBidSubmissionViewModel(bidPeriod: bidPeriod, empNum: self.txtUserID.text!, password: self.txtPassword.text!, defaultEmpNum: self.defaultEmplyeeNumber!, optionalEmpNum: self.optionalEmployees)
+            submissionViewModel = CBBidSubmissionViewModel(bidPeriod: bidPeriod, userID: self.txtUserID.text!, password: self.txtPassword.text!, defaultEmpNum: self.defaultEmplyeeNumber!, optionalEmpNum: self.optionalEmployees)
         }
         submissionViewModel?.setBidLineNumbers { (success) in
             self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Submitting Bid...")
             if success{
-                self.submissionViewModel?.startBidSubmission(sessionKey: sessionKey) { dataString in
+                self.submissionViewModel?.startBidSubmission(sessionKey: sessionKey) { result in
                     self.view.hideActivityIndicator()
+                    switch result{
+                    case .success(let dataString):
+                        self.bidPeriod?.addBidReceiptWithText(bidReceiptText: dataString)
+                        AlertService.showAlertForTopVC(title: "Bid Successfully Submitted", message: "The bid receipt shown is the bid receipt for the last bid submitted.\n\n Bid receipts are available under the Bid Action (top right) menu and in SwaLife in BidInfo.\n\n Caution: You must see your bid receipt. If you DON'T see your bid receipt, then \"Please try to submit again\".", actions: [(title: "OK", style: .default, handler:{_ in
+                            self.submissionViewModel?.handleAddSubmittedBid(empNumber: self.defaultEmplyeeNumber!){result in
+                                if result == false{
+                                    self.dismissVC()
+                                }
+                            }
+                        })])
+                    case .failure(let error): print(error.localizedDescription)
+                        
+                    }
                     
                 }
             }

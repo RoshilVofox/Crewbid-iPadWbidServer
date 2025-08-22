@@ -1010,11 +1010,7 @@ extension BIBidPeriod : Identifiable {
        
     }
     
-    func sortedBidReceipts() -> [BIBidReceipt] {
-        let timeStampSort = NSSortDescriptor(key: "timeStamp", ascending: false)
-        let sortedBidReceipts = (bidReceipts!.allObjects as NSArray).sortedArray(using: [timeStampSort])
-        return sortedBidReceipts as! [BIBidReceipt]
-    }
+
     
     func getBidListLines() -> [BILine] {
         let lines = (self.lines!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "bidOrder", ascending: true)]) as! [BILine]
@@ -1029,8 +1025,30 @@ extension BIBidPeriod : Identifiable {
     
     func addBidReceiptWithText(bidReceiptText: String){
         let receipt = BIBidReceipt(context: self.managedObjectContext!)
-        receipt
+        receipt.setPropertiesWithReceiptText(receiptText: bidReceiptText)
+        receipt.bidPeriod = self
+        self.addToBidReceipts(receipt)
+        self.lastBidDate = receipt.timeStamp
     }
     
+    func sortedBidReceipts() -> [BIBidReceipt] {
+        let timeStampSort = NSSortDescriptor(key: "timeStamp", ascending: false)
+        let sortedBidReceipts = (bidReceipts!.allObjects as NSArray).sortedArray(using: [timeStampSort])
+        return sortedBidReceipts as! [BIBidReceipt]
+    }
+    
+    func mostRecentBidReceipt() -> BIBidReceipt? {
+        return self.sortedBidReceipts().first
+    }
+    
+    func sortedBidReceiptByCreatedAt() -> [BIBidReceipt]{
+        let createdAtSort = NSSortDescriptor(key: "createdAt", ascending: false)
+        let sortedBidReceiptByCreatedAt = (self.bidReceipts!.allObjects as NSArray).sortedArray(using: [createdAtSort])
+        return sortedBidReceiptByCreatedAt as! [BIBidReceipt]
+    }
+    
+    func mostRecentBidReceiptByCreatedAt() -> BIBidReceipt? {
+        return self.sortedBidReceiptByCreatedAt().first
+    }
     
 }

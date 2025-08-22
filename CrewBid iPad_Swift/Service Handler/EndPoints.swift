@@ -36,7 +36,7 @@ class EndPoint {
     var saveSwaptimizerFileToServer = "\(baseURL)SaveSwaptimizerFileToServer"
     var getUserDetails = "\(baseURL)GetUserDetails/"
     var updateCrewBidPaidUntilDate = "\(baseURL)UpdateCrewBidPaidUntilDate"
-    var logCrewBidSubmitBidDetails = "\(baseURL)LogCrewBidSubmitBidDetails"
+    var logCrewBidSubmitBidDetails = "\(baseURL)LogCrewBidSubmitBidDetails/"
     var updateCrewbidUserPaidUntilDate = "\(baseURL)UpdateCrewbidUserPaidUntilDate"
     var GetCrewBidAuthorization = "\(baseURL)GetCrewBidAuthorization"
     var SaveBidSubmittedData = "\(baseURL)SaveBidSubmittedData"
@@ -48,5 +48,7 @@ class EndPoint {
     var DownloadHistoricalDataRest = "\(baseURL)DownloadHistoricalDataRest"
     var GetAllSeniorityListFormatFromDB = "\(baseURL)GetAllSeniorityListFormatFromDB/"
     var getFirstRoundPaperBidVacationsAndUsers = "\(baseURL)GetFirstRoundPaperBidVacationsAndUsers"
+    var addSubmittedRawDataToServer = "\(baseURL)AddSubmittedRawDataToServer"
+
 }
 
