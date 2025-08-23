@@ -97,6 +97,7 @@ class BIBidFileDownloadViewModel {
         func downloadNext() {
             guard let nextFile = fileIterator.next() else {
                 completion(.success(BIBidInfo.shared.downloadDirectory()))
+                CBUtils.downloadFlightData()
                 return
             }
             bidDownload.downloadBidFiles(sessionKey: sessionKey, filename: nextFile){ result in

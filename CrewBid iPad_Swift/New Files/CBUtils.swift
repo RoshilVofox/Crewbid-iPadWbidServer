@@ -1255,6 +1255,39 @@ class CBUtils{
     class func generateUniqueIdentifier() -> String {
         return UUID().uuidString
     }
+    
+    class func getFlightData() -> NSMutableArray {
+        var array = NSMutableArray()
+        let searchPaths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).map(\.path)
+        let documentPath = searchPaths[0]
+        let filePath = URL(fileURLWithPath: documentPath).appendingPathComponent("FlightDataJson/FlightDataJson.JSON").path
+        if FileManager.default.fileExists(atPath: filePath) {
+            let myDictData = NSData(contentsOfFile: filePath)! as Data?
+            do {
+                array = try JSONSerialization.jsonObject(with: myDictData!, options: .mutableContainers) as! NSMutableArray
+            }
+            catch let error1 {
+                print(error1.localizedDescription)
+            }
+        }
+        return array
+        
+    }
+    
+    class func noOfDaysBetweenDates(startDate: Date?,endDate: Date?) -> Int {
+        let calendarData = BICalendarData()
+        let newStartDate = calendarData.dateForDate(date: startDate)
+        let newEndtDate = calendarData.dateForDate(date: endDate)
+        
+        let calendar = Calendar.current
+        var dateComponent: DateComponents? = nil
+        if let startDate = newStartDate, let endDate = newEndtDate {
+            dateComponent = calendar.dateComponents([.day], from: startDate, to: endDate)
+        }
+        let totalDays = Int(dateComponent?.day ?? 0)
+        return totalDays + 1
+        
+    }
 }
 
 class JWTDecoder{

@@ -46,6 +46,7 @@ class CBPresetsTVC: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(updateBidListCount), name: NSNotification.Name("updateBidListCount"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updatePresets), name: NSNotification.Name("refreshLines"), object: nil)
         CBGlobalMethods.shared.isSortAvailable = false
+        tableView.allowsSelectionDuringEditing = true
     }
     
     func setupUI(){
@@ -70,6 +71,7 @@ class CBPresetsTVC: UIViewController {
     @IBAction func btnFilterAction(_ sender: Any) {
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBFilterRulesTableVC") as! CBFilterRulesTableVC
+        vc.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         self.navigationController?.pushViewController(vc, animated: false)
     }
     
@@ -77,6 +79,7 @@ class CBPresetsTVC: UIViewController {
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBLineSortsTVC") as! CBLineSortsTVC
 //        vc.bidPeriod = self.bidPeriod
+        vc.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         self.navigationController?.pushViewController(vc, animated: false)
     }
     
@@ -484,6 +487,7 @@ extension CBPresetsTVC: UITableViewDelegate, UITableViewDataSource{
 //MARK: didSelect
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == array.count {
+            print("Add new preset")
             self.tableView.setEditing(false, animated: false)
             array.append(preset1)
             updatePresets()

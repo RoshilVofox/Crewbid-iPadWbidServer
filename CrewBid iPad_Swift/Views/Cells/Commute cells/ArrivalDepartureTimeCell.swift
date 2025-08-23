@@ -10,7 +10,7 @@ import UIKit
 class ArrivalDepartureTimeCell: UICollectionViewCell {
     
     @IBOutlet weak var dateLabel: UILabel!
-    @IBOutlet weak var earliestDepartureLabel: UILabel!
-    @IBOutlet weak var latestArrivalLabel: UILabel!
+    @IBOutlet weak var earliestArrivalLabel: UILabel!
+    @IBOutlet weak var latestDeparureLabel: UILabel!
     
 }

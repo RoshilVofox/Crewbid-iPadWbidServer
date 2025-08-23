@@ -385,11 +385,17 @@
                                                 <rect key="frame" x="32" y="127" width="636" height="35"/>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="plain" title="- The Limitations and Opportunity of a Month-to-Month Vacation"/>
+                                                <connections>
+                                                    <action selector="linkBtn1Tapped:" destination="xPW-2Q-tgQ" eventType="touchUpInside" id="BIy-oU-zoX"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3vT-SU-kHF">
                                                 <rect key="frame" x="32" y="202" width="636" height="35"/>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="plain" title="- Who Wants 65 tfp for one week of Vacation"/>
+                                                <connections>
+                                                    <action selector="linkBtn2Tapped:" destination="xPW-2Q-tgQ" eventType="touchUpInside" id="u0b-2c-87F"/>
+                                                </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6uS-eP-IOV">
                                                 <rect key="frame" x="300" y="328" width="100" height="40"/>
@@ -446,6 +452,9 @@
                         </constraints>
                     </view>
                     <size key="freeformSize" width="700" height="600"/>
+                    <connections>
+                        <outlet property="content" destination="pCE-up-lmo" id="Xve-xN-3bD"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="97U-Dp-0CA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -454,7 +463,7 @@
         <!--Month To Month PdfVC-->
         <scene sceneID="iRN-vw-ISO">
             <objects>
-                <viewController id="eb3-jL-rVK" customClass="CBMonthToMonthPdfVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CBMonthToMonthPdfVC" id="eb3-jL-rVK" customClass="CBMonthToMonthPdfVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="mvJ-1O-mbu">
                         <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -488,8 +497,7 @@
                                             <color key="titleColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
                                         <connections>
-                                            <action selector="btnDismissAction:" destination="wgC-Ln-4Ea" eventType="touchUpInside" id="SJe-NR-iYG"/>
-                                            <action selector="btnDismissAction:" destination="eb3-jL-rVK" eventType="touchUpInside" id="cOI-4o-GsY"/>
+                                            <action selector="cancelButtonTapped:" destination="eb3-jL-rVK" eventType="touchUpInside" id="LWL-Rv-4js"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -519,8 +527,8 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="lblTitle" destination="fM4-BQ-utU" id="iUI-6s-FA0"/>
-                        <outlet property="webView" destination="Uj6-zY-ujf" id="pu0-dE-kwR"/>
+                        <outlet property="titleLabel" destination="fM4-BQ-utU" id="dbd-pa-BTo"/>
+                        <outlet property="wkWebView" destination="Uj6-zY-ujf" id="JEq-pT-Eda"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SHc-Ik-NHJ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -3212,7 +3220,6 @@
         <!--Navigation Controller-->
         <scene sceneID="kny-JH-rA4">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="FWc-Sa-rtb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="TA8-9K-qCr" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="GDe-KN-6kM">
@@ -3223,6 +3230,7 @@
                         <segue destination="QSV-Cj-3Xe" kind="relationship" relationship="rootViewController" id="v39-aN-K4R"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="FWc-Sa-rtb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1513" y="2878"/>
         </scene>
@@ -3522,28 +3530,28 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray2Color">
-            <color red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGreenColor">
-            <color red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemOrangeColor">
-            <color red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemYellowColor">
             <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tintColor">
-            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

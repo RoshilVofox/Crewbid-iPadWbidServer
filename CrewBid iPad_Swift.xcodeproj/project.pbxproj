@@ -14,6 +14,8 @@
 		35428C292DEEE9F2009E7AC5 /* CBUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35428C282DEEE9F2009E7AC5 /* CBUserDefaults.swift */; };
 		357E313F2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357E313E2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift */; };
 		357F66402E5829E3000273BE /* CBCommutability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357F663F2E5829E3000273BE /* CBCommutability.swift */; };
+		357F66422E589626000273BE /* CBRouteDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357F66412E589626000273BE /* CBRouteDomain.swift */; };
+		358DC4E32E59BD34005F3D9A /* CBMonthToMonthPdfVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358DC4E22E59BD34005F3D9A /* CBMonthToMonthPdfVC.swift */; };
 		35A965A22E276E2D0001B62B /* LineValuesVacation.plist in Resources */ = {isa = PBXBuildFile; fileRef = F4A622572E13AA2000A09315 /* LineValuesVacation.plist */; };
 		35EFE82A2E53034900AFDF8F /* CBCommutingCellHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35EFE8292E53034900AFDF8F /* CBCommutingCellHelper.swift */; };
 		35F6C8B12DD843840072BAD9 /* JobShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F6C8B02DD843840072BAD9 /* JobShareViewController.swift */; };
@@ -377,6 +379,8 @@
 		35428C282DEEE9F2009E7AC5 /* CBUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUserDefaults.swift; sourceTree = "<group>"; };
 		357E313E2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMonthToMonthAlertVC.swift; sourceTree = "<group>"; };
 		357F663F2E5829E3000273BE /* CBCommutability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCommutability.swift; sourceTree = "<group>"; };
+		357F66412E589626000273BE /* CBRouteDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBRouteDomain.swift; sourceTree = "<group>"; };
+		358DC4E22E59BD34005F3D9A /* CBMonthToMonthPdfVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMonthToMonthPdfVC.swift; sourceTree = "<group>"; };
 		35EFE8292E53034900AFDF8F /* CBCommutingCellHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCommutingCellHelper.swift; sourceTree = "<group>"; };
 		35F6C8B02DD843840072BAD9 /* JobShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobShareViewController.swift; sourceTree = "<group>"; };
 		35F6C8B22DD856B40072BAD9 /* CBAvoidanceBidViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBAvoidanceBidViewController.swift; sourceTree = "<group>"; };
@@ -1650,6 +1654,8 @@
 				35EFE8292E53034900AFDF8F /* CBCommutingCellHelper.swift */,
 				F4DA88122E5722D000ECC906 /* BISwaBidDataDownload.swift */,
 				357F663F2E5829E3000273BE /* CBCommutability.swift */,
+				357F66412E589626000273BE /* CBRouteDomain.swift */,
+				358DC4E22E59BD34005F3D9A /* CBMonthToMonthPdfVC.swift */,
 			);
 			path = "New Files";
 			sourceTree = "<group>";
@@ -2141,7 +2147,9 @@
 				F4E5DA042E3C908D00C96BDF /* CBCalendarDayCell.swift in Sources */,
 				F41EBF742DC4DB20001413DE /* CBTripTextViewController.swift in Sources */,
 				F41EBF752DC4DB20001413DE /* CBUserFlagTableController.swift in Sources */,
+				357F66422E589626000273BE /* CBRouteDomain.swift in Sources */,
 				F4984C602E2E6C12004E020E /* CBPresetFilterRule.swift in Sources */,
+				358DC4E32E59BD34005F3D9A /* CBMonthToMonthPdfVC.swift in Sources */,
 				F41475842DC8E1980064CD25 /* AlertService.swift in Sources */,
 				F41EBF762DC4DB20001413DE /* RefreshMenuController.swift in Sources */,
 				F41EBF772DC4DB20001413DE /* RefreshMenuTableViewCell.swift in Sources */,
