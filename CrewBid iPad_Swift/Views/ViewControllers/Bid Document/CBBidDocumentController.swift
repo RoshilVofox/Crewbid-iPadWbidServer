@@ -114,7 +114,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         }
 //        self.navigationController?.pushViewController(vc, animated: true)
            vc.modalPresentationStyle = .fullScreen
-           vc.modalTransitionStyle = .coverVertical
+           vc.modalTransitionStyle = .crossDissolve
            self.present(vc, animated: true, completion: nil)
     }
         //openSeniority view controller push action
@@ -125,7 +125,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         vc.dataTypeSelected = TextFileType.seniorityList
 //        self.navigationController?.pushViewController(vc, animated: true)
         vc.modalPresentationStyle = .fullScreen
-        vc.modalTransitionStyle = .coverVertical
+        vc.modalTransitionStyle = .crossDissolve
         self.present(vc, animated: true, completion: nil)
     }
         //LineText view controller push action
@@ -136,7 +136,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         vc.dataTypeSelected = TextFileType.lineText
 //        self.navigationController?.pushViewController(vc, animated: true)
         vc.modalPresentationStyle = .fullScreen
-        vc.modalTransitionStyle = .coverVertical
+        vc.modalTransitionStyle = .crossDissolve
         self.present(vc, animated: true, completion: nil)
     }
         //TripText view controller push action
@@ -147,7 +147,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         vc.dataTypeSelected = TextFileType.tripText
 //        self.navigationController?.pushViewController(vc, animated: true)
         vc.modalPresentationStyle = .fullScreen
-        vc.modalTransitionStyle = .coverVertical
+        vc.modalTransitionStyle = .crossDissolve
         self.present(vc, animated: true, completion: nil)
     }
         //LineText view controller push action
@@ -158,7 +158,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         vc.dataTypeSelected = TextFileType.faMemo
 //        self.navigationController?.pushViewController(vc, animated: true)
         vc.modalPresentationStyle = .fullScreen
-        vc.modalTransitionStyle = .coverVertical
+        vc.modalTransitionStyle = .crossDissolve
         self.present(vc, animated: true, completion: nil)
     }
         //openAwardData view controller push action
@@ -861,7 +861,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         vc.isFromFirstTimeOpenBid = true
 //        self.navigationController?.pushViewController(vc, animated: true)
         vc.modalPresentationStyle = .fullScreen
-        vc.modalTransitionStyle = .coverVertical
+        vc.modalTransitionStyle = .crossDissolve
         self.present(vc, animated: true, completion: nil)
     }
     
