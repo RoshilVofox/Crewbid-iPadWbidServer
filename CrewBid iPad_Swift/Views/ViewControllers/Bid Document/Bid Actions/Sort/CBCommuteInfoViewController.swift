@@ -631,7 +631,7 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
       // nonStopCheckView.isHidden = true
    }
     
-    @IBAction func btnCheck(inActn sender: Any) {
+    @IBAction func btnCheckinActn(_ sender: Any) {
         CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
         CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
         CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)

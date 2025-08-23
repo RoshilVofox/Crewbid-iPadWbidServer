@@ -3124,6 +3124,9 @@
                                     <color key="titleColor" systemColor="tintColor"/>
                                     <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
+                                <connections>
+                                    <action selector="btnCancelActn:" destination="f4C-eD-MJK" eventType="touchUpInside" id="aF8-b9-iiv"/>
+                                </connections>
                             </button>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="I77-We-0ww">
                                 <rect key="frame" x="20" y="70" width="281" height="194"/>
@@ -3175,6 +3178,9 @@
                                             <color key="titleColor" systemColor="labelColor"/>
                                             <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
+                                        <connections>
+                                            <action selector="btnCommuteCityActn:" destination="f4C-eD-MJK" eventType="touchUpInside" id="B0a-3t-6XZ"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" tag="101" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VnG-hV-0OV">
                                         <rect key="frame" x="222.5" y="32.5" width="40" height="25"/>
@@ -3188,6 +3194,9 @@
                                             <color key="titleColor" systemColor="labelColor"/>
                                             <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
+                                        <connections>
+                                            <action selector="btnConnectTimeActn:" destination="f4C-eD-MJK" eventType="touchUpInside" id="z2C-5L-XgX"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" tag="102" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4uk-LK-3wr">
                                         <rect key="frame" x="222.5" y="66" width="40" height="25"/>
@@ -3201,6 +3210,9 @@
                                             <color key="titleColor" systemColor="labelColor"/>
                                             <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
+                                        <connections>
+                                            <action selector="btnCheckinActn:" destination="f4C-eD-MJK" eventType="touchUpInside" id="xJ5-pj-aQa"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" tag="103" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eeQ-65-E42">
                                         <rect key="frame" x="222.5" y="98.5" width="40" height="30"/>
@@ -3214,6 +3226,9 @@
                                             <color key="titleColor" systemColor="labelColor"/>
                                             <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
+                                        <connections>
+                                            <action selector="btnBacktoBaseActn:" destination="f4C-eD-MJK" eventType="touchUpInside" id="H3A-CK-vyF"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eeg-UT-4Ur">
                                         <rect key="frame" x="20" y="152" width="240.5" height="32"/>
@@ -3226,6 +3241,9 @@
                                             <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
+                                        <connections>
+                                            <action selector="btnViewCommuteActn:" destination="f4C-eD-MJK" eventType="touchUpInside" id="PZw-lq-FoY"/>
+                                        </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2qi-83-kLz" customClass="CheckBox" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                         <rect key="frame" x="130" y="35" width="20" height="20"/>
@@ -3235,6 +3253,9 @@
                                             <constraint firstAttribute="height" constant="20" id="cYr-qX-ewU"/>
                                         </constraints>
                                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <connections>
+                                            <action selector="nonStopCheckBtnTapped:" destination="f4C-eD-MJK" eventType="touchUpInside" id="ysU-Mf-bxv"/>
+                                        </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Non-Stop" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BVn-UM-ur4">
                                         <rect key="frame" x="158" y="37.5" width="64" height="15"/>
@@ -3295,6 +3316,9 @@
                                     <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
+                                <connections>
+                                    <action selector="btnDoneSettingActn:" destination="f4C-eD-MJK" eventType="touchUpInside" id="Jd8-JB-yW5"/>
+                                </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="2B5-cM-tNd"/>
@@ -3314,6 +3338,18 @@
                         </constraints>
                     </view>
                     <size key="freeformSize" width="320" height="320"/>
+                    <connections>
+                        <outlet property="_btnBacktoBase" destination="eeQ-65-E42" id="Ag0-XI-55D"/>
+                        <outlet property="_btnCancel" destination="wZf-qj-UVk" id="6ga-rR-sJv"/>
+                        <outlet property="_btnCheckIn" destination="4uk-LK-3wr" id="tqo-JJ-y0F"/>
+                        <outlet property="_btnCommuteCity" destination="TQF-hm-Jdv" id="z20-QK-NLX"/>
+                        <outlet property="_btnConnectTime" destination="VnG-hV-0OV" id="0ML-AJ-cKa"/>
+                        <outlet property="_btnDoneSettings" destination="uhO-UF-wux" id="smt-tJ-lT3"/>
+                        <outlet property="_btnViewCommuteTimes" destination="eeg-UT-4Ur" id="j9l-MV-cV0"/>
+                        <outlet property="backView" destination="45B-y9-u7f" id="6qO-JS-4Xo"/>
+                        <outlet property="nonStopCheckButton" destination="2qi-83-kLz" id="zyq-B3-Bkf"/>
+                        <outlet property="nonStopCheckView" destination="ikH-qI-miM" id="d7q-XP-ZZt"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="I3P-Dt-7ol" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -7073,37 +7109,37 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="quaternarySystemFillColor">
-            <color red="0.4549019608" green="0.4549019608" blue="0.50196078430000002" alpha="0.080000000000000002" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.45490196078431372" green="0.45490196078431372" blue="0.50196078431372548" alpha="0.080000000000000002" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="secondarySystemBackgroundColor">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBlueColor">
-            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray2Color">
-            <color red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGreenColor">
-            <color red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemOrangeColor">
-            <color red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemYellowColor">
             <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tertiaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29803921570000003" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29803921568627451" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tintColor">
-            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
