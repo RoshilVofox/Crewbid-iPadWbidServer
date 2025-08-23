@@ -37,7 +37,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
         if !UserDefaults.standard.bool(forKey: "isFirstLaunch"){
             self.showQuickTutorialForFirstTime()
         }
-        NotificationCenter.default.addObserver(self, selector: #selector(refreshBidPeriods), name: Notification.Name(ReloadCollectionView), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshBidPeriods), name: NSNotification.Name(ReloadCollectionView), object: nil)
         refreshBidPeriods()
         
     }
@@ -170,7 +170,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
         print("HelpMenu")
         //        print("HelpMenu")
         let storyBoard = UIStoryboard(name: "HelpMenu", bundle: nil)
-        if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "helpMenuViewController") as? helpMenuViewController{
+        if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "CBHelpMenuController") as? CBHelpMenuController{
             //            helpMenuVC.modalPresentationStyle = .formSheet
             helpMenuVC.preferredContentSize = CGSize(width: 764, height: 630)
             present(helpMenuVC, animated: true)
@@ -195,15 +195,11 @@ class CBDocumentsCollectionViewController: BaseViewController {
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
             let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: context)
             fetchRequest.entity = entity
-                // Fetch bid periods and reverse to show newest first
-            
-            do {
-                let fetched = try context.fetch(fetchRequest) as? [BIBidPeriod] ?? []
-                self.bidPeriodList = Array(fetched.reversed()) // ✅ Proper array
-                self.collectionView.reloadData()
-            } catch {
-                print("Error fetching bid periods: \(error)")
-            }
+            // Fetch bid periods and reverse to show newest first
+        
+            self.bidPeriodList = try! context.fetch(fetchRequest) as! [BIBidPeriod]
+            self.bidPeriodList = self.bidPeriodList.reversed()
+            self.collectionView.reloadData()
             
             if (self.bidPeriodList.count == 0) {
                 self.editButton.setTitle("Edit", for: .normal)
@@ -214,12 +210,13 @@ class CBDocumentsCollectionViewController: BaseViewController {
                 self.bidDownloadButton.isEnabled = true
             }
 
-            self.collectionView.reloadData()
+            
             self.editButton.isHidden = self.bidPeriodList.isEmpty
         }
     }
 
 }
+
 
 
 extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {

@@ -2,7 +2,7 @@
 import UIKit
 import WebKit
 
-class latestNewsViewController: UIViewController {
+class CBNewsController: UIViewController {
 
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var btnBack: UIButton!
@@ -20,7 +20,10 @@ class latestNewsViewController: UIViewController {
     }
     
     @IBAction func btnDoneAction(_ sender: Any) {
-        self.dismiss(animated: false, completion: nil)
+        self.dismiss(animated: true) {
+            NotificationCenter.default.post(name: NSNotification.Name("DidDismissLatestNews"), object: nil)
+        }
+        
     }
     
     @IBAction func btnBackAction(_ sender: Any) {

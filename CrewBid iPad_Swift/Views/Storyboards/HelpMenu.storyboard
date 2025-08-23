@@ -11,10 +11,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Help Menu View Controller-->
+        <!--Help Menu Controller-->
         <scene sceneID="vdu-TB-3aU">
             <objects>
-                <viewController storyboardIdentifier="helpMenuViewController" id="y5H-2x-XQs" customClass="helpMenuViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CBHelpMenuController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="y5H-2x-XQs" customClass="CBHelpMenuController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="151-xw-Ais">
                         <rect key="frame" x="0.0" y="0.0" width="764" height="630"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -36,15 +36,18 @@
                         </constraints>
                     </view>
                     <size key="freeformSize" width="764" height="630"/>
+                    <connections>
+                        <outlet property="containerView" destination="9zb-Li-FC2" id="gqd-je-43S"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Mid-lq-4h7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-244" y="-81"/>
         </scene>
-        <!--Help Menu Items View Controller-->
+        <!--Help Items Controller-->
         <scene sceneID="gY2-ry-8iV">
             <objects>
-                <viewController id="eyb-dD-XIO" customClass="helpMenuItemsViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CBHelpItemsController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="eyb-dD-XIO" customClass="CBHelpItemsController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="KFc-4E-ECO">
                         <rect key="frame" x="0.0" y="0.0" width="764" height="605"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -162,6 +165,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="LrL-jg-9FM"/>
+                    <size key="freeformSize" width="764" height="605"/>
                     <connections>
                         <outlet property="btnSecretBidload1" destination="6c1-qV-cPF" id="g4h-e8-dZo"/>
                         <outlet property="btnSecretBidload2" destination="pEN-bQ-tKu" id="ZXH-sl-tkC"/>
@@ -190,10 +194,10 @@
             </objects>
             <point key="canvasLocation" x="446" y="-81"/>
         </scene>
-        <!--My Subscription View Controller-->
+        <!--Subscription Info Controller-->
         <scene sceneID="209-yX-pmd">
             <objects>
-                <viewController storyboardIdentifier="mySubscriptionViewController" id="62U-87-NZF" customClass="mySubscriptionViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CBSubscriptionInfoController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="62U-87-NZF" customClass="CBSubscriptionInfoController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dvQ-PW-FJv">
                         <rect key="frame" x="0.0" y="0.0" width="764" height="630"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1546,10 +1550,10 @@ If you would like to provide feedback (positive or negative), report a bug, or s
             </objects>
             <point key="canvasLocation" x="1818" y="712"/>
         </scene>
-        <!--Latest News View Controller-->
+        <!--News Controller-->
         <scene sceneID="BRR-1b-C4H">
             <objects>
-                <viewController storyboardIdentifier="latestNewsViewController" id="v3i-eP-SmR" customClass="latestNewsViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CBNewsController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="v3i-eP-SmR" customClass="CBNewsController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Emw-A5-JdO">
                         <rect key="frame" x="0.0" y="0.0" width="764" height="630"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

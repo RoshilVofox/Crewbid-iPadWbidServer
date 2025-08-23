@@ -2,7 +2,7 @@
 
 import UIKit
 
-class mySubscriptionViewController: UIViewController, UICollectionViewDelegateFlowLayout {
+class CBSubscriptionInfoController: UIViewController, UICollectionViewDelegateFlowLayout {
 
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var btnBack: UIButton!
@@ -40,7 +40,7 @@ class mySubscriptionViewController: UIViewController, UICollectionViewDelegateFl
     }
 }
 
-extension mySubscriptionViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+extension CBSubscriptionInfoController: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 1

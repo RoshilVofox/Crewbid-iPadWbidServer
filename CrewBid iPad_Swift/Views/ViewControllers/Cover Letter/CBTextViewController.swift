@@ -102,10 +102,10 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
                 lblTitle.text = "Cover Letter"
                 titleText = "Cover Letter"
                 textView.text = self.bidPeriod?.textFile(withName: BICoverLetterTextFileName)?.text
-//                if self.bidPeriod!.isCoverLetterDisplayed?.boolValue != true {
-//                self.bidPeriod!.isCoverLetterDisplayed = NSNumber(booleanLiteral: true)
-//                try? self.bidPeriod?.managedObjectContext?.save()
-//            }
+                if self.bidPeriod!.coverLetterDisplayed?.boolValue != true {
+                self.bidPeriod!.coverLetterDisplayed = NSNumber(booleanLiteral: true)
+                try? self.bidPeriod?.managedObjectContext?.save()
+            }
                 break
             case .awardText:
                 lblTitle.text = "Bid Awards"
@@ -142,12 +142,30 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
         }
         
         if dataTypeSelected == .seniorityList {
-//            if !(self.bidPeriod?.isCoverLetterDisplayed ?? 0).boolValue {
-//                let details = ["isFromFirstTimeOpenBid":true]
-//                NotificationCenter.default.post(name: NSNotification.Name(KCBOpenCoverletter), object: self,userInfo: details)
-//                dataTypeSelected = .seniorityList
-//                return
-//            }
+            if !(self.bidPeriod?.coverLetterDisplayed ?? 0).boolValue {
+                let details = ["isFromFirstTimeOpenBid":true]
+                NotificationCenter.default.post(name: NSNotification.Name(KCBOpenCoverletter), object: self,userInfo: details)
+                dataTypeSelected = .seniorityList
+                return
+            }
+        }
+        if isFromFirstTimeOpenBid == true {
+            self.dismiss(animated: false, completion: {
+                CBGlobalMethods.shared.isLatestNewsDisplayed = true
+                let storyboard = UIStoryboard(name: "HelpMenu", bundle: nil)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    if let rootVC = UIApplication.shared.windows.first?.rootViewController {
+                        let vc = storyboard.instantiateViewController(withIdentifier: "CBHelpMenuController") as! CBHelpMenuController
+                        vc.preferredContentSize = CGSize(width: 764, height: 630)
+                        vc.isModalInPresentation = true
+                        rootVC.present(vc, animated: false, completion: nil)
+                    }
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    self.bidPeriod?.latestNewsDisplayed = true
+                    NotificationCenter.default.post(name: NSNotification.Name("goToLatestNews"), object: nil)
+                }
+            })
         }
     }
   

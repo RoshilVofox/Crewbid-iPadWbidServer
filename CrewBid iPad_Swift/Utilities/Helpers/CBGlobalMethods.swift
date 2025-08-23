@@ -33,7 +33,7 @@ public final class CBGlobalMethods: NSObject {
     var secretKey: String?
     var isBulkDownload: Bool = false
 //    var activityIndicatorView = UIActivityIndicatorView()
-    var isNewsFirstTimeDisply: Bool = false
+    var isLatestNewsDisplayed: Bool = false
     
     var selectedBidPeriod: BIBidPeriod?
     var openedBidDocumentControllerClass: CBBidActionsVC!

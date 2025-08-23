@@ -23,6 +23,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @IBOutlet weak var localLabel: UILabel!
     @IBOutlet weak var btnLocalHerb: UIButton!
     @IBOutlet weak var btnSync: UIButton!
+    @IBOutlet weak var toastView: CBToast!
+    @IBOutlet weak var toastLabel: UILabel!
     
     @IBOutlet weak var leftShadowView: UIView!
     @IBOutlet weak var rightShadowView: UIView!
@@ -56,10 +58,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     var month: NSNumber = 0
     var poistion: BICrewPositionType?
     var employeeNumber = ""
-    var seniorityShowd = false
+    var seniorityShowed = false
     var eomSelectedIndex = ""
     var commutingSortCell = CBCommutingSortCell()
-    
+    var isOldBidPackage: Bool = false
+    var totalNumberString: String?
     override func viewDidLoad() {
         super.viewDidLoad()
         updateLocalHerbSwitchUI()
@@ -88,7 +91,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         NotificationCenter.default.addObserver(self, selector: #selector(ShowCommutablilitySortView), name: Notification.Name("ShowCommutabilitySortView"), object: nil)
         
         firstTimeBidOpen()
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(didDismissLatestNews), name: NSNotification.Name("DidDismissLatestNews"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openlatestNews), name: NSNotification.Name(KCBOpenLatestNews), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openCoverLetter(notification:)), name: NSNotification.Name(KCBOpenCoverletter), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openSeniority), name: NSNotification.Name(KCBOpenSeniority), object: nil)
@@ -101,6 +104,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     @objc func openCoverLetter(notification: Notification) {
+        self.bidPeriod?.coverLetterDisplayed = true
         let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
         vc.bidPeriod = bidPeriod
@@ -164,7 +168,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 
     @objc func openlatestNews() {
         let storyboard : UIStoryboard = UIStoryboard(name: "HelpMenu", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "latestNewsViewController") as! latestNewsViewController
+        let vc = storyboard.instantiateViewController(withIdentifier: "latestNewsViewController") as! CBNewsController
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -315,16 +319,140 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(bidLines), name: Notification.Name(CBLinesTableBidLinesNotification), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(bidLines), name: Notification.Name(CBLinesTableBidLinesFaAllNotification), object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        seniorityShowed = false
+        
+        do{
+            try self.managedObjectContext.save()
+        }catch{
+            print("Couldnt save moc because: \(error.localizedDescription)")
+        }
         
     }
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver("SortBidListAction")
         NotificationCenter.default.removeObserver("SyncSwitchStateAction")
         NotificationCenter.default.removeObserver("ShowCommutabilityFilterView")
     }
+    
+    func sanityBidCheckingForCoverLetterLineCount(){
+        // Sanity check the # of lines in the bid package with the number of lines in the Cover Letter
+        // But ONLY if we haven't sanity checked this bid package before
+        var sanityCheckedBidPackage = UserDefaults.standard.value(forKey: kCBLastBidPackageSanityChecked) as? NSDictionary
+        sanityCheckedBidPackage = nil
+        
+        // Check to see if we've sanity checked this bid package already
+        if bidPeriod!.isFirstRoundBid() &&
+            (bidPeriod?.month?.intValue != (sanityCheckedBidPackage?[kCBMonthWord] as? NSNumber)?.intValue ||
+             bidPeriod?.year?.intValue  != (sanityCheckedBidPackage?[kCBYearWord] as? NSNumber)?.intValue) {
+            
+            if self.bidPeriod!.isFABid()/* && self.bidPeriod.isSwaAPI */{//MARK: for FA SWA
+               //get line count form the pdf
+                //and check line validation
+//                self.checkLineCountValidation(lineCount: lineCount, sanityCheckedBidPackage: &sanityCheckedBidPackage)
+            }else{
+                
+                let textFile = self.bidPeriod?.textFile(withName: BICoverLetterTextFileName)
+                if textFile == nil && !AppState.shared.isHistoricBid {
+                    // Looks like the text file never got loaded, perhaps there was a crash during processing, tell the user
+                    // they need to redownload
+                    AlertService.showAlertForTopVC(title: "Bid Package Error", message: "The bid package was not fully processed.  To try again: (1) delete the bid package, (2) close and reopen the app (by double-tapping the iPad's Home button and swiping CrewBid up), (3) downloading the bid package anew.")
+                    
+                }else{
+                    // we've got a cover letter, parse through it.
+                    var stringToScan:String? = nil
+                    var coverLetterNumberOfLines:String? = nil
+                    let numCharSet = CharacterSet(charactersIn: "0123456789")
+                    let words = textFile?.text?.components(separatedBy: .whitespacesAndNewlines)
+                    let noWhiteSpaceString = words?.joined(separator: "")
+                    let scanner = Scanner(string: noWhiteSpaceString!)
+                    if self.bidPeriod!.isFABid(){
+                        stringToScan = "TOTALnumberofpositionsavailableforbid:"
+                        _ = scanner.scanUpToString(stringToScan!)
+                        if !scanner.isAtEnd {
+                            // Scan up to the number of lines
+                            _ = scanner.scanUpToCharacters(from: numCharSet)
+                            if !scanner.isAtEnd {
+                                coverLetterNumberOfLines = scanner.scanCharacters(from: numCharSet)
+                            }
+                        }
+                    }else{
+                        stringToScan = String(format: "%@%@", self.bidPeriod!.base!, self.bidPeriod!.positionType?.intValue == BICrewPositionType.Captain.rawValue ? "CA" : "FO")
+                        // Scan up to the [BASE] [POSITION] string
+                        var myRegex = "\(stringToScan!)\\d{4}"
+                        if let range = noWhiteSpaceString!.range(of: myRegex, options: .regularExpression) {
+                            var nsRange = NSRange(range, in: noWhiteSpaceString!)
+                            nsRange.location += 5
+                            nsRange.length -= 6
+                            if let range = Range(nsRange, in: noWhiteSpaceString!) {
+                                coverLetterNumberOfLines = String(noWhiteSpaceString![range])
+                            }
+                        } else {
+                            // fallback to 3-digit pattern
+                            myRegex = "\(stringToScan!)\\d{3}"
+                            if let range = noWhiteSpaceString!.range(of: myRegex, options: .regularExpression) {
+                                var nsRange = NSRange(range, in: noWhiteSpaceString!)
+                                nsRange.location += 5
+                                nsRange.length -= 6
+                                if let range = Range(nsRange, in: noWhiteSpaceString!) {
+                                    coverLetterNumberOfLines = String(noWhiteSpaceString![range])
+                                }
+                            }
+                        }
+                    }
+                    self.checkLineCountValidation(lineCount: coverLetterNumberOfLines!, sanityCheckedBidPackage: &sanityCheckedBidPackage)
+                }
+                
+            }
+        }
+        
+    }
+    
+//    func handleSeniorityAlert(){
+//        if self.bidPeriod!.isSecondRoundBid() && !self.bidPeriod!.isFABid() {
+//            if self.bidPeriod!.isFirstRoundPaperBidder?.boolValue == false || self.bidPeriod!.paperBidVacArray?.count == 0{
+//                //check paper bid vacation
+//            }
+//        }
+//    }
+//    
+//    func showSeniorityAlert(){
+//        if self.bidPeriod?.seniorityNumber?.intValue != 0 {
+//            if self.bidPeriod?.positionType?.intValue == 2 {
+//                
+//            }
+//        }
+//    }
+    
+    func checkLineCountValidation(lineCount: String, sanityCheckedBidPackage: inout NSDictionary?){
+        // Check this number of lines against the bid package number of lines
+        // Alert the user if there is a mismatch
+        if !self.bidPeriod!.isHistoric!.boolValue {
+            if !lineCount.isEmpty {
+                if self.bidPeriod!.lines?.count != Int(lineCount){
+                    // Mismatch, alert the user
+                    AlertService.showAlertForTopVC(title: "Bid Package Error", message: "The number of lines in the processed bid package does not match the number of lines in the Cover Letter.  Double check that this is indeed the case.  If so perform the following steps:\n\n  To try again: (1) delete the bid package, (2) close and reopen the app (by double-tapping the iPad's Home button and swiping CrewBid up), (3) downloading the bid package anew.", actions: [(title: "OK", style: .default, handler:{_ in
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                            self?.handleVacationData()
+                        }
+                        self.seniorityAlert()
+                    })])
+                    if !self.bidPeriod!.bidPackageErrorDisplayed!.boolValue{
+                        // mailbidpackageerror fx
+                    }
+                }
+                sanityCheckedBidPackage = [kCBMonthWord: self.bidPeriod!.month!, kCBYearWord: self.bidPeriod!.year!]
+                UserDefaults.standard.set(sanityCheckedBidPackage, forKey: kCBLastBidPackageSanityChecked)
+            }
+        }
+    }
+    
+    
     
     func getSortDiscriptorsPosition() -> [NSSortDescriptor] {
         
@@ -392,17 +520,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     
     
     @objc func bidLines(_ notification: Notification) {
-//        guard let linesToBid = notification.userInfo?[CBLinesTableBidLinesArrayKey] as? [BILine] else { return }
-//
-//        let isFAAllNotification = notification.name.rawValue == CBLinesTableBidLinesFaAllNotification
-//
-//        if bidLinesController.view.window == nil {
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-//                self.bidLinesController.insertLines(linesToBid, faBidAllPositions: isFAAllNotification)
-//            }
-//        } else {
-//            bidLinesController.insertLines(linesToBid, faBidAllPositions: isFAAllNotification)
-//        }
     }
     
     func updateLocalHerbSwitchUI() {
@@ -467,13 +584,320 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     func firstTimeBidOpen() {
-        print("iiiiii")
-//            self.view.showActivityIndicator(message: "Processing Vacation Files")
-//        CBVacationDownloader.shared.executeAutoDownload() { success in
-//                self.view.hideActivityIndicator()
-//        }
-        self.handleVacationData()
+        // Get the current date and componentas
+        let today = Date()
+        let units: Set<Calendar.Component> = [.hour, .day, .month, .year]
+        let dc = Calendar.current.dateComponents(units, from: today)
+        var month: Int? = dc.month
+        var year: Int? = dc.year
+        
+        // Increment month and year for the next bid period
+
+        month = 12 == month ? 1 : (month ?? 0) + 1
+        year = 12 == month ? (year ?? 0) + 1 : year
+        
+        // Check if the opened bid package is older
+        
+        if month != self.bidPeriod?.month?.intValue{
+            isOldBidPackage = true
+            AlertService.showAlertForTopVC(title: "Old Bid Package", message: "It looks like you've opened a previous month's bid package.  If you meant to, carry on, if not, download the NEW bid package by tapping the + button on the home screen.", actions: [(title: "OK", style: .default, handler: {_ in
+                //check sanity
+                self.sanityBidCheckingForCoverLetterLineCount()
+                self.handleVacationData()
+            })])
+        }else{
+            self.sanityBidCheckingForCoverLetterLineCount()
+            isOldBidPackage = false
+            if ((self.bidPeriod?.latestNewsDisplayed?.boolValue) != nil){
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {[weak self] in
+                    self?.handleVacationData()
+                }
+            }
+        }
+        // Seniority List alert
+        if self.bidPeriod?.seniorityNumber?.intValue != 0 {
+            if self.bidPeriod?.positionType?.intValue == 2{
+                let textFile = self.bidPeriod?.textFile(withName: BISeniorityListTextFileName)
+                
+                if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSecondRoundBid() == true{
+                    let textField1 = String(format: "%@", (textFile?.text)!)
+                    let listItems = textField1.components(separatedBy: "\n") as Array
+                    let lastLine = listItems[listItems.count - 2] as String
+                    let lastLine2 = listItems[listItems.count - 3] as String
+                    let sArray = lastLine.components(separatedBy: "]") as Array
+                    let sString = sArray[0] as String
+                    let stringItems = sString.components(separatedBy: "-") as Array
+                    let totalNumber = stringItems[0] as String
+                    let scanner = Scanner(string: totalNumber)
+                    let isNumeric = scanner.scanInt(nil) && scanner.isAtEnd
+                    
+                    if isNumeric == false{
+                        let sArray2 = lastLine2.components(separatedBy: "]") as Array
+                        let sString2 = sArray2[0] as String
+                        let stringItems2 = sString2.components(separatedBy: "-") as Array
+                        let totaNumber2 = stringItems2[0] as String
+                        self.totalNumberString = self.extractNumber(from: totaNumber2)
+                    }else{
+                        self.totalNumberString = self.extractNumber(from: totalNumber)
+                    }
+                }
+                if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isFirstRoundBid() == true{
+                    let textField1 = String(format: "%@", (textFile?.text)!)
+                    let listItems = textField1.components(separatedBy: "\n") as Array
+                    let lastLine = listItems[listItems.count - 2] as String
+                    let lastLine2 = listItems[listItems.count - 3] as String
+                    let sArray = lastLine.components(separatedBy: ")") as Array
+                    let sString = sArray[0] as String
+                    let newString = sString.trimmingCharacters(in: .whitespaces)
+                    let stringItems = newString.components(separatedBy: " ") as Array
+                    let totalNumber = stringItems[0]
+                    let scanner = Scanner(string: totalNumber)
+                    let isNumeric = scanner.scanInt(nil) && scanner.isAtEnd
+                    
+                    if isNumeric == false{
+                        let sArray2 = lastLine2.components(separatedBy: ")") as Array
+                        let sString2 = sArray2[0] as String
+                        let stringItems2 = sString2.components(separatedBy: " ") as Array
+                        let totaNumber2 = stringItems2[0] as String
+                        self.totalNumberString = self.extractNumber(from: totaNumber2)
+                    }else{
+                        self.totalNumberString = self.extractNumber(from: totalNumber)
+                    }
+                }
+                
+                if self.totalNumberString == ""{
+                    if !(self.bidPeriod?.coverLetterDisplayed?.boolValue ?? false){
+                        if !seniorityShowed && self.bidPeriod?.isHistoric?.boolValue == false{
+                            var alertText = ""
+                            if self.bidPeriod!.paperBidCount!.intValue > 0 {
+                                alertText = "We found you in the Seniority List.  You are number \(self.bidPeriod!.seniorityNumber!)."
+                            }else{
+                                alertText = "We found you in the Seniority List.  You are number \(self.bidPeriod!.seniorityNumber!)."
+                            }
+//                            self.showSeniorityAlert(text: alertText)
+                            AlertService.showAlertForTopVC(title: "Seniority List", message: alertText, actions: [(title: "OK", style: .default, handler:{_ in
+                                self.showCoverLetter()
+                            }),(title: "View Seniority List", style: .default, handler:{_ in
+                                self.showSeniority()
+                            })])
+                        }
+                    }else{
+                        //show toast text
+                        self.showToastWith(text: "We found you in the Seniority List.  You are number \(self.bidPeriod!.seniorityNumber!).", duration: 5.5)
+                    }
+                }else{
+                    if !(self.bidPeriod?.coverLetterDisplayed?.boolValue ?? false){
+                        if !seniorityShowed && self.bidPeriod?.isHistoric?.boolValue == false{
+                            var alertText = ""
+                            if self.bidPeriod!.paperBidCount!.intValue > 0 {
+                                let paperCountAvoidedSeniorityListPosition = NSNumber(
+                                    value: self.bidPeriod!.seniorityNumber!.intValue - self.bidPeriod!.paperBidCount!.intValue)
+                                alertText = String(format: "We found you in the Seniority List. You are number %@ out of %@\n\nThere are %@ paper bids above you, making you %@ on the bid list.", self.bidPeriod!.seniorityNumber!, self.totalNumberString!, self.bidPeriod!.paperBidCount!, paperCountAvoidedSeniorityListPosition)
+                            }else{
+                                alertText = String(format: "\nWe found you in the Seniority List.\nYou are number %@ out of %@", self.bidPeriod!.seniorityNumber!, self.totalNumberString!)
+                            }
+//                            self.showSeniorityAlert(text: alertText)
+                            AlertService.showAlertForTopVC(title: "Seniority List", message: alertText, actions: [(title: "OK", style: .default, handler:{_ in
+                                self.showCoverLetter()
+                            }),(title: "View Seniority List", style: .default, handler:{_ in
+                                self.showSeniority()
+                            })])
+                        }
+                    }else{
+                        self.showToastWith(text: String(format: "We found you in the Seniority List. You are number %@ out of %@", self.bidPeriod!.seniorityNumber!, self.totalNumberString!), duration: 6)
+                    }
+                }
+            }else{
+                var newDes = ""
+                let textFile = bidPeriod!.textFile(withName: BISeniorityListTextFileName)
+                if let range = textFile!.text!.range(of: "RECORD COUNT") {
+                    let startIndex = textFile!.text!.index(range.lowerBound, offsetBy: 16, limitedBy: textFile!.text!.endIndex)
+                if let startIndex = startIndex {
+                    let endIndex = textFile!.text!.index(startIndex, offsetBy: 5, limitedBy: textFile!.text!.endIndex) ?? textFile!.text!.endIndex
+                        newDes = String(textFile!.text![startIndex..<endIndex])
+                        print(newDes)
+                    }
+                }
+                if !(self.bidPeriod?.coverLetterDisplayed?.boolValue ?? false){
+                    if !seniorityShowed && self.bidPeriod?.isHistoric?.boolValue == false{
+                        var alertText = ""
+                        if self.bidPeriod!.paperBidCount!.intValue > 0 {
+                            let paperCountAvoidedSeniorityListPosition = NSNumber(
+                                value: self.bidPeriod!.seniorityNumber!.intValue - self.bidPeriod!.paperBidCount!.intValue)
+                            alertText = String(format: "We found you in the Seniority List. You are number %@ out of %@\n\nThere are %@ paper bids above you, making you %@ on the bid list.", self.bidPeriod!.seniorityNumber!, self.bidPeriod!.paperBidCount!, paperCountAvoidedSeniorityListPosition)
+                        }else{
+                            alertText = String(format: "\nWe found you in the Seniority List.\nYou are number %@ out of %@", self.bidPeriod!.seniorityNumber!, newDes)
+                        }
+//                        self.showSeniorityAlert(text: alertText)
+                        AlertService.showAlertForTopVC(title: "Seniority List", message: alertText, actions: [(title: "OK", style: .default, handler:{_ in
+                            self.showCoverLetter()
+                        }),(title: "View Seniority List", style: .default, handler:{_ in
+                            self.showSeniority()
+                        })])
+                    }
+                }else{
+                    var alertText = ""
+                    if self.bidPeriod!.paperBidCount!.intValue > 0 {
+                        let paperCountAvoidedSeniorityListPosition = NSNumber(
+                            value: self.bidPeriod!.seniorityNumber!.intValue - self.bidPeriod!.paperBidCount!.intValue)
+                        alertText = String(format: "We found you in the Seniority List. You are number %@ out of %@\n\nThere are %@ paper bids above you, making you %@ on the bid list.", self.bidPeriod!.seniorityNumber!, newDes, self.bidPeriod!.paperBidCount!, paperCountAvoidedSeniorityListPosition)
+                    }else{
+                        alertText = String(format: "We found you in the Seniority List. You are number %@ out of %@", self.bidPeriod!.seniorityNumber!, newDes)
+                    }
+                    self.showToastWith(text: alertText, duration: 6)
+                }
+            }
+        }else{
+            if !(self.bidPeriod?.coverLetterDisplayed?.boolValue ?? false){
+                if !seniorityShowed && self.bidPeriod?.isHistoric?.boolValue == false{
+                    if self.bidPeriod?.isFABid() != true && self.bidPeriod?.isSecondRoundBid() == true && self.bidPeriod!.paperBidVacArray!.count > 0{
+                        var message = "We did not find you in the Second round Seniority list, but we did find you in the First round as a \"Paper\" bidder. We also found that you have Vacation"
+                        for case let dic as NSDictionary in self.bidPeriod!.paperBidVacArray!{
+                            let endAbsenceDate = dic["EndAbsenceDate"] as! String
+                            let startAbsenceDate = dic["StartAbsenceDate"] as! String
+                            let start = self.getDateFromJSON(startAbsenceDate)!
+                            let end = self.getDateFromJSON(endAbsenceDate)!
+                            
+                            let df = DateFormatter()
+                            df.dateStyle = .long
+                            df.timeStyle = .none
+                            
+                            var startStrLong = df.string(from: start)
+                            var endStrLong = df.string(from: end)
+                            if endStrLong.length > 6 && startStrLong.length > 6 {
+                                startStrLong = startStrLong.substring(to: startStrLong.length - 5)
+                                endStrLong = endStrLong.substring(to: endStrLong.length - 5)
+                            }
+                            message = String(format: "%@, %@ to %@", message, startStrLong, endStrLong)
+                        }
+//                        self.showSeniorityAlert(text: message)
+                        AlertService.showAlertForTopVC(title: "Seniority List", message: message, actions: [(title: "OK", style: .default, handler:{_ in
+                            self.bidPeriod?.coverLetterDisplayed = true
+                            self.showCoverLetter()
+                        }),(title: "View Seniority List", style: .default, handler:{_ in
+                            self.showSeniority()
+                        })])
+                    }else{
+                        var message = "We did not find you in the Seniority list.  Sometimes the format of the list will cause problems and we will incorrectly read the list.  We will display the Seniority list next.  If you do not see yourself in the list, we suggest you call Planning to find out why you are missing from the seniority list."
+                        if self.bidPeriod?.isFABid() != true && self.bidPeriod?.isSecondRoundBid() == true && self.bidPeriod?.isFirstRoundPaperBidder?.boolValue == true {
+                            message = "We did not find you in the Second round Seniority list, but we did find you in the First round as a \"Paper\" bidder."
+                        }
+//                        self.showSeniorityAlert(text: message)
+                        AlertService.showAlertForTopVC(title: "Seniority List", message: message, actions: [(title: "OK", style: .default, handler:{_ in
+                            self.bidPeriod?.coverLetterDisplayed = true
+                            self.showCoverLetter()
+                        }),(title: "View Seniority List", style: .default, handler:{_ in
+                            self.showSeniority()
+                        })])
+                    }
+                }else{
+                    if self.bidPeriod?.isFABid() != true && self.bidPeriod?.isSecondRoundBid() == true && self.bidPeriod?.isFirstRoundPaperBidder?.boolValue == true {
+                        self.showToastWith(text: "We did not find you in the Second round Seniority list, but we did find you in the First round as a \"Paper\" bidder.", duration: 4)
+                    }else{
+                        self.showToastWith(text: "We did not find you in the Seniority list.", duration: 4)
+                    }
+                }
+            }else{
+                if self.bidPeriod?.isFABid() != true && self.bidPeriod?.isSecondRoundBid() == true && self.bidPeriod?.isFirstRoundPaperBidder?.boolValue == true {
+                    self.showToastWith(text: "We did not find you in the Second round Seniority list, but we did find you in the First round as a \"Paper\" bidder.", duration: 4)
+                }else{
+                    self.showToastWith(text: "We did not find you in the Seniority list.", duration: 4)
+                }
+            }
+        }
+        try! self.bidPeriod?.managedObjectContext?.save()
     }
+    
+    func showToastWith(text: String, duration: TimeInterval){
+        self.toastView.layer.cornerRadius = 20
+        self.toastView.layer.masksToBounds = true
+        self.toastView.alpha = 0
+        self.toastLabel.text = text
+        UIView.animate(withDuration: 0.5, delay: 1, options: .curveEaseOut, animations: {
+            self.toastView.alpha = 0.8
+            }) { _ in
+                UIView.animate(withDuration: 0.5, delay: duration, options: .curveEaseOut, animations: {
+                    self.toastView.alpha = 0
+                }, completion: nil)
+            }
+    }
+    
+    func showCoverLetter(){
+        self.bidPeriod?.coverLetterDisplayed = true
+        if !(self.bidPeriod?.latestNewsDisplayed?.boolValue ?? false) {
+            if self.bidPeriod!.isFABid()/* && self.bidPeriod.isSwaAPI*/{
+                if !isOldBidPackage{
+                    let details = ["isFromFirstTimeOpenBid":true]
+                    NotificationCenter.default.post(name: NSNotification.Name(KCBOpenCoverletter), object: self,userInfo: details)
+                }
+            }else{
+                let details = ["isFromFirstTimeOpenBid":true]
+                NotificationCenter.default.post(name: NSNotification.Name(KCBOpenCoverletter), object: self,userInfo: details)
+            }
+        }
+    }
+    
+    func showSeniority(){
+        self.seniorityShowed = true
+        //add FA asn Swa condition
+        let vc = UIStoryboard(name: "BidActions", bundle: nil).instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
+        vc.bidPeriod = self.bidPeriod
+        vc.dataTypeSelected = TextFileType.seniorityList
+        vc.isFromFirstTimeOpenBid = true
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc private func didDismissLatestNews() {
+        if self.bidPeriod?.latestNewsDisplayed?.boolValue == true{
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {[weak self] in
+                self?.handleVacationData()
+            }
+        }
+        
+    }
+    
+    func extractNumber(from text: String) -> String {
+        let nonDigits = CharacterSet.decimalDigits.inverted
+        let components = text.components(separatedBy: nonDigits)
+        return components.joined()
+    }
+    
+    func getDateFromJSON(_ string: String) -> Date? {
+        // Lazy static regex, equivalent to dispatch_once
+        struct Static {
+            static let regex: NSRegularExpression = {
+                let pattern = #"^\/date\((-?\d+)(?:([+-])(\d{2})(\d{2}))?\)\/$"#
+                return try! NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+            }()
+        }
+        
+        let range = NSRange(location: 0, length: string.utf16.count)
+        guard let match = Static.regex.firstMatch(in: string, options: [], range: range) else {
+            return nil
+        }
+        
+        // Milliseconds part
+        if let millisRange = Range(match.range(at: 1), in: string) {
+            var seconds = (Double(string[millisRange]) ?? 0.0) / 1000.0
+            
+            // Optional timezone sign/hours/minutes
+            if match.range(at: 2).location != NSNotFound,
+               let signRange = Range(match.range(at: 2), in: string),
+               let hourRange = Range(match.range(at: 3), in: string),
+               let minuteRange = Range(match.range(at: 4), in: string) {
+                
+                let sign = String(string[signRange]) // "+" or "-"
+                let hours = Double(sign + string[hourRange]) ?? 0
+                let minutes = Double(sign + string[minuteRange]) ?? 0
+                seconds += (hours * 3600) + (minutes * 60)
+            }
+            
+            return Date(timeIntervalSince1970: seconds)
+        }
+        
+        return nil
+    }
+    
     
     @IBAction func btnHomeAction(_ sender: UIButton) {
         if let navigationController = self.navigationController {
@@ -523,7 +947,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @IBAction func btnHelpAction(_ sender: Any) {
         print("HelpMenu")
         let storyBoard = UIStoryboard(name: "HelpMenu", bundle: nil)
-        if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "helpMenuViewController") as? helpMenuViewController{
+        if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "CBHelpMenuController") as? CBHelpMenuController{
 //            helpMenuVC.modalPresentationStyle = .formSheet
             helpMenuVC.preferredContentSize = CGSize(width: 764, height: 630)
             present(helpMenuVC, animated: true)
@@ -580,7 +1004,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         commuteInformation.bidPeriod = self.bidPeriod
         commuteInformation.commutabilityType = CommutabilityType.filter
         commuteInformation.preferredContentSize = CGSize(width: 320, height: 320)
-        print("Presenting from topVC: \(topVC)")
+//        print("Presenting from topVC: \(topVC!)")
         DispatchQueue.main.async {
             topVC!.present(commuteInformation, animated: true) {
                 print("commuteInformation presented successfully")
@@ -772,7 +1196,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             self.executeEOMForFA()
         }
         else {
-            if self.bidPeriod!.latestNewsDisplayed?.boolValue == false {
+            if self.bidPeriod!.latestNewsDisplayed?.boolValue ?? false {
                 if (self.bidPeriod!.containsVacay?.boolValue == true || secretEnabled as! String == "YES") {
                     self.bidPeriod!.onlyContainEOM = "NO"
                 }
@@ -812,7 +1236,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     func enableOrDisableEOMButton() {
-        let funcName = #function
+//        let funcName = #function
         if (self.bidPeriod?.vacationType == "CREWBIDF" || self.bidPeriod?.vacationType == "WBIDF" || self.bidPeriod?.vacationType == "FAVacationF" || self.bidPeriod?.vacationType == "FAVacationEomOnly") {
             self.bidPeriod?.currentDateTime = Date()
             self.bidPeriod?.isStateFileModifiedToSync = NSNumber(value: true)
@@ -923,8 +1347,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     btnWbidMax.isEnabled = true
                     AlertService.showAlertForTopVC(title: "Network not available!!", message: "You are on the plane using the free company limited internet connection.\nYou cannot download vacation using the limited internet connection.Either pay for a full internet connection or wailt until you get on the ground and have a full internet connection")
                     break
-                default:
-                    break
                 }
             }
         }
@@ -945,8 +1367,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     btnSwaptimizer.isEnabled = true
                     btnWbidMax.isEnabled = true
                     AlertService.showAlertForTopVC(title: "Network not available!!", message: "You are on the plane using the free company limited internet connection.\nYou cannot download vacation using the limited internet connection.Either pay for a full internet connection or wailt until you get on the ground and have a full internet connection")
-                    break
-                default:
                     break
                 }
             }
@@ -970,8 +1390,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     btnWbidMax.isEnabled = true
                     AlertService.showAlertForTopVC(title: "Network not available!!", message: "You are on the plane using the free company limited internet connection.\nYou cannot download vacation using the limited internet connection.Either pay for a full internet connection or wailt until you get on the ground and have a full internet connection")
                     break
-                default:
-                    break
                 }
             }
         }
@@ -994,8 +1412,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     btnWbidMax.isEnabled = true
                     AlertService.showAlertForTopVC(title: "Network not available!!", message: "You are on the plane using the free company limited internet connection.\nYou cannot download vacation using the limited internet connection.Either pay for a full internet connection or wailt until you get on the ground and have a full internet connection")
                     break
-                default:
-                    break
                 }
             }
         }
@@ -1016,8 +1432,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     self.disableVacationButton()
                     btnSwaptimizer.isEnabled = true
                     AlertService.showAlertForTopVC(title: "Network not available!!", message: "You are on the plane using the free company limited internet connection.\nYou cannot download vacation using the limited internet connection.Either pay for a full internet connection or wailt until you get on the ground and have a full internet connection")
-                    break
-                default:
                     break
                 }
             }
@@ -1041,8 +1455,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     self.btnWbidMax.isEnabled = true
                     AlertService.showAlertForTopVC(title: "Network not available!!", message: "You are on the plane using the free company limited internet connection.\nYou cannot download vacation using the limited internet connection.Either pay for a full internet connection or wailt until you get on the ground and have a full internet connection")
                     break
-                default:
-                    break
                 }
             }
         }
@@ -1063,8 +1475,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     self.disableVacationButton()
                     btnSwaptimizer.isEnabled = true
                     AlertService.showAlertForTopVC(title: "Network not available!!", message: "You are on the plane using the free company limited internet connection.\nYou cannot download vacation using the limited internet connection.Either pay for a full internet connection or wailt until you get on the ground and have a full internet connection")
-                    break
-                default:
                     break
                 }
             }
@@ -1143,7 +1553,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
 
     func selectSwaptimizerVacationButton() {
-        let funcName = #function
+//        let funcName = #function
         self.bidPeriod?.currentDateTime = Date()
         self.bidPeriod?.isStateFileModifiedToSync = NSNumber(value: true)
         swaptimizerVacationImage =  "SwaptAlert"
@@ -1177,7 +1587,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     
     func disableVacationButton() {
         self.bidPeriod?.vacationType = self.bidPeriod!.userVacationWbidOrCrewBid
-        let funcName = #function
+//        let funcName = #function
         self.bidPeriod?.currentDateTime = Date()
         self.bidPeriod!.isStateFileModifiedToSync = NSNumber(value: true)
         if (self.bidPeriod?.vacationType == "WBID" || self.bidPeriod?.vacationType == "WBIDF") {
@@ -1248,7 +1658,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     func reprocessWorkBlock() {
         self.view.showActivityIndicator(message: "Processing...")
         let isOn = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
-        var bidReader = BIBidInfoReader()
+        let bidReader = BIBidInfoReader()
         bidReader.bidPeriod = self.bidPeriod
         bidReader.calendarData = self.calendarData
         if isOn {
@@ -1345,7 +1755,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 }
                 DispatchQueue.main.async {
                     self.view.hideActivityIndicator()
-                    if (self.seniorityShowd == false && self.bidPeriod?.isHistoric?.boolValue == false) {
+                    if (self.seniorityShowed == false && self.bidPeriod?.isHistoric?.boolValue == false) {
                         self.perform(#selector(self.seniorityAlert), with: nil, afterDelay: 0.5)
                     }
                 }
@@ -1357,7 +1767,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     self.bidPeriod!.swaptimizerStatus = CBSwaptimizerStatus.statusError.rawValue as NSNumber
                     DispatchQueue.main.async {
                         self.view.hideActivityIndicator()
-                        if (self.seniorityShowd == false && self.bidPeriod?.isHistoric?.boolValue == false) {
+                        if (self.seniorityShowed == false && self.bidPeriod?.isHistoric?.boolValue == false) {
                             self.perform(#selector(self.seniorityAlert), with: nil, afterDelay: 0.5)
                         }
                     }
@@ -1438,10 +1848,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             }
             do {
                 try self.context!.save()
-                print("saved instaed of quick save function")
+                print("saved")
             }
             catch {
-                print("unable to save instead of quick save function \(error.localizedDescription)")
+                print("unable to save: \(error.localizedDescription)")
             }
             DispatchQueue.main.async {
                 self.view.hideActivityIndicator()
@@ -1460,8 +1870,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     if (rule.category?.intValue == 37) {
                         self.bidPeriod?.isReportReleaseFilterApplied = NSNumber(value: true)
                         self.view.hideActivityIndicator()
-                        if (self.seniorityShowd == false && self.bidPeriod?.isHistoric?.boolValue == false) {
+                        if (self.seniorityShowed == false && self.bidPeriod?.isHistoric?.boolValue == false) {
                             self.perform(#selector(self.seniorityAlert), with: nil, afterDelay: 0.5)
+                            
                         }
                     }
                 }
@@ -1531,7 +1942,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                         self.commutingSortCell.lineSort = lineSort
                         self.commutingSortCell.calculateSortAfterVacationLoading()
 //                        MARK: needed to be addded regarding commmuting sort and CBCommutingSortCell
-                        if (self.seniorityShowd == false && self.bidPeriod?.isHistoric?.boolValue == false) {
+                        if (self.seniorityShowed == false && self.bidPeriod?.isHistoric?.boolValue == false) {
                             self.perform(#selector(self.seniorityAlert), with: nil, afterDelay: 0.5)
                         }
                     }
@@ -1580,7 +1991,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     func resetAllVacationDetails() {
-        let funcName = #function
+//        let funcName = #function
         isVacationsRemoved = false
         self.bidPeriod!.isSwaptimizerOn = NSNumber(value: false)
         self.bidPeriod!.isWbidMaxOn = NSNumber(value: false)
@@ -1828,7 +2239,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     func selectWBidVacationButton() {
-        let funcName = #function
+//        let funcName = #function
         self.bidPeriod!.currentDateTime = Date()
         self.bidPeriod!.isStateFileModifiedToSync = NSNumber(value: true)
         if self.bidPeriod!.isFABid() == false {
@@ -2296,7 +2707,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             alertShown = true
         }
 
-        let funcName = #function
+//        let funcName = #function
 
         let day1 = "\(eomJanuaryMonthCase()) \(eomDayForFA()["Day1"] ?? 0)"
         let day2 = "\(eomMonth()) \(eomDayForFA()["Day2"] ?? 0)"
@@ -2423,7 +2834,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     func enableFAVacationF() {
-        let funcName = #function
+//        let funcName = #function
         self.bidPeriod!.currentDateTime = Date()
         self.bidPeriod!.isStateFileModifiedToSync = NSNumber(value: true)
         btnEOM.isSelected = true
@@ -2447,7 +2858,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     func btnEOMAction(btnTemp: UIButton) {
-        let funcName = #function
+//        let funcName = #function
         self.bidPeriod!.currentDateTime = Date()
         self.bidPeriod!.isStateFileModifiedToSync = NSNumber(value: true)
         let vDL = CBVacationDownloader()
@@ -2568,7 +2979,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         } else {
             alertShown = true
         }
-        let funcName = #function
+//        let funcName = #function
 
         let day1 = "\(eomMonth()) \(eomDayForPilot()["Day1"] ?? 0)"
         let day2 = "\(eomMonth()) \(eomDayForPilot()["Day2"] ?? 0)"
