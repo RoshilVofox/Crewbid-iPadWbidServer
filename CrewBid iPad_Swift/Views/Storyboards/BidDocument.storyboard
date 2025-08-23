@@ -282,11 +282,35 @@
                                     <constraint firstItem="Dsv-i9-PZT" firstAttribute="width" secondItem="aCx-CY-HlG" secondAttribute="width" id="hVo-AZ-1hz"/>
                                 </constraints>
                             </stackView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pI4-h2-oY2" customClass="CBToast" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                <rect key="frame" x="465.5" y="689" width="279" height="45"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="We found you in the Seniority List." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Va7-ff-Oem">
+                                        <rect key="frame" x="10" y="10" width="259" height="25"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="25" id="F0U-t1-WrS"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" name="RedViewColor"/>
+                                <constraints>
+                                    <constraint firstItem="Va7-ff-Oem" firstAttribute="top" secondItem="pI4-h2-oY2" secondAttribute="top" constant="10" id="An9-9t-kI5"/>
+                                    <constraint firstItem="Va7-ff-Oem" firstAttribute="leading" secondItem="pI4-h2-oY2" secondAttribute="leading" constant="10" id="S00-UA-AXG"/>
+                                    <constraint firstAttribute="bottom" secondItem="Va7-ff-Oem" secondAttribute="bottom" constant="10" id="ZTx-fk-eB4"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="500" id="cAe-fF-V32"/>
+                                    <constraint firstAttribute="trailing" secondItem="Va7-ff-Oem" secondAttribute="trailing" constant="10" id="zJN-XD-xJV"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" red="0.43137254901960786" green="0.49803921568627452" blue="0.5490196078431373" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="HHH-Tn-XjL" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" constant="20" id="1NO-PT-4Lu"/>
+                            <constraint firstItem="pI4-h2-oY2" firstAttribute="centerX" secondItem="5EZ-qb-Rvc" secondAttribute="centerX" id="3hP-co-dU1"/>
+                            <constraint firstAttribute="bottom" secondItem="pI4-h2-oY2" secondAttribute="bottom" constant="100" id="AUG-7I-3Xr"/>
                             <constraint firstItem="HHH-Tn-XjL" firstAttribute="top" secondItem="VNf-2O-4Pg" secondAttribute="bottom" constant="20" id="BJJ-9d-lvR"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="HHH-Tn-XjL" secondAttribute="bottom" constant="5" id="DtG-V4-zve"/>
                             <constraint firstItem="VNf-2O-4Pg" firstAttribute="top" secondItem="5EZ-qb-Rvc" secondAttribute="top" id="Xbw-JM-pqw"/>
@@ -316,6 +340,8 @@
                         <outlet property="localLabel" destination="kyj-JP-PkN" id="GfZ-Qa-mXC"/>
                         <outlet property="rightContainerView" destination="RO9-JJ-rOX" id="9sQ-FL-vHO"/>
                         <outlet property="rightShadowView" destination="Dsv-i9-PZT" id="oIj-b8-rtC"/>
+                        <outlet property="toastLabel" destination="Va7-ff-Oem" id="W1f-PI-ePz"/>
+                        <outlet property="toastView" destination="pI4-h2-oY2" id="862-Re-2Px"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ief-a0-LHa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

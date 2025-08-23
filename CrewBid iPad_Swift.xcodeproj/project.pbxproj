@@ -306,11 +306,11 @@
 		F41EBFA92DC4DB20001413DE /* contactUsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE732DC4DB20001413DE /* contactUsViewController.swift */; };
 		F41EBFAA2DC4DB20001413DE /* defenitionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE742DC4DB20001413DE /* defenitionsViewController.swift */; };
 		F41EBFAB2DC4DB20001413DE /* faqViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE752DC4DB20001413DE /* faqViewController.swift */; };
-		F41EBFAC2DC4DB20001413DE /* helpMenuItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE762DC4DB20001413DE /* helpMenuItemsViewController.swift */; };
-		F41EBFAD2DC4DB20001413DE /* helpMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE772DC4DB20001413DE /* helpMenuViewController.swift */; };
-		F41EBFAE2DC4DB20001413DE /* latestNewsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE782DC4DB20001413DE /* latestNewsViewController.swift */; };
+		F41EBFAC2DC4DB20001413DE /* CBHelpItemsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE762DC4DB20001413DE /* CBHelpItemsController.swift */; };
+		F41EBFAD2DC4DB20001413DE /* CBHelpMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE772DC4DB20001413DE /* CBHelpMenuController.swift */; };
+		F41EBFAE2DC4DB20001413DE /* CBNewsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE782DC4DB20001413DE /* CBNewsController.swift */; };
 		F41EBFAF2DC4DB20001413DE /* lineValuesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE792DC4DB20001413DE /* lineValuesViewController.swift */; };
-		F41EBFB02DC4DB20001413DE /* mySubscriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE7A2DC4DB20001413DE /* mySubscriptionViewController.swift */; };
+		F41EBFB02DC4DB20001413DE /* CBSubscriptionInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE7A2DC4DB20001413DE /* CBSubscriptionInfoController.swift */; };
 		F41EBFB12DC4DB20001413DE /* quickTutorialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE7B2DC4DB20001413DE /* quickTutorialViewController.swift */; };
 		F41EBFB22DC4DB20001413DE /* serviceAgreementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE7C2DC4DB20001413DE /* serviceAgreementViewController.swift */; };
 		F41EBFB32DC4DB20001413DE /* swaptimizerHelpMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE7D2DC4DB20001413DE /* swaptimizerHelpMenuViewController.swift */; };
@@ -674,11 +674,11 @@
 		F41EBE732DC4DB20001413DE /* contactUsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = contactUsViewController.swift; sourceTree = "<group>"; };
 		F41EBE742DC4DB20001413DE /* defenitionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = defenitionsViewController.swift; sourceTree = "<group>"; };
 		F41EBE752DC4DB20001413DE /* faqViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = faqViewController.swift; sourceTree = "<group>"; };
-		F41EBE762DC4DB20001413DE /* helpMenuItemsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helpMenuItemsViewController.swift; sourceTree = "<group>"; };
-		F41EBE772DC4DB20001413DE /* helpMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helpMenuViewController.swift; sourceTree = "<group>"; };
-		F41EBE782DC4DB20001413DE /* latestNewsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = latestNewsViewController.swift; sourceTree = "<group>"; };
+		F41EBE762DC4DB20001413DE /* CBHelpItemsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBHelpItemsController.swift; sourceTree = "<group>"; };
+		F41EBE772DC4DB20001413DE /* CBHelpMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBHelpMenuController.swift; sourceTree = "<group>"; };
+		F41EBE782DC4DB20001413DE /* CBNewsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBNewsController.swift; sourceTree = "<group>"; };
 		F41EBE792DC4DB20001413DE /* lineValuesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = lineValuesViewController.swift; sourceTree = "<group>"; };
-		F41EBE7A2DC4DB20001413DE /* mySubscriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mySubscriptionViewController.swift; sourceTree = "<group>"; };
+		F41EBE7A2DC4DB20001413DE /* CBSubscriptionInfoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSubscriptionInfoController.swift; sourceTree = "<group>"; };
 		F41EBE7B2DC4DB20001413DE /* quickTutorialViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = quickTutorialViewController.swift; sourceTree = "<group>"; };
 		F41EBE7C2DC4DB20001413DE /* serviceAgreementViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = serviceAgreementViewController.swift; sourceTree = "<group>"; };
 		F41EBE7D2DC4DB20001413DE /* swaptimizerHelpMenuViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swaptimizerHelpMenuViewController.swift; sourceTree = "<group>"; };
@@ -1426,11 +1426,11 @@
 				F41EBE732DC4DB20001413DE /* contactUsViewController.swift */,
 				F41EBE742DC4DB20001413DE /* defenitionsViewController.swift */,
 				F41EBE752DC4DB20001413DE /* faqViewController.swift */,
-				F41EBE762DC4DB20001413DE /* helpMenuItemsViewController.swift */,
-				F41EBE772DC4DB20001413DE /* helpMenuViewController.swift */,
-				F41EBE782DC4DB20001413DE /* latestNewsViewController.swift */,
+				F41EBE762DC4DB20001413DE /* CBHelpItemsController.swift */,
+				F41EBE772DC4DB20001413DE /* CBHelpMenuController.swift */,
+				F41EBE782DC4DB20001413DE /* CBNewsController.swift */,
 				F41EBE792DC4DB20001413DE /* lineValuesViewController.swift */,
-				F41EBE7A2DC4DB20001413DE /* mySubscriptionViewController.swift */,
+				F41EBE7A2DC4DB20001413DE /* CBSubscriptionInfoController.swift */,
 				F41EBE7B2DC4DB20001413DE /* quickTutorialViewController.swift */,
 				F41EBE7C2DC4DB20001413DE /* serviceAgreementViewController.swift */,
 				F41EBE7D2DC4DB20001413DE /* swaptimizerHelpMenuViewController.swift */,
@@ -2223,13 +2223,13 @@
 				F41475812DC8D8290064CD25 /* KeychainItemWrapper.m in Sources */,
 				F41EBFAA2DC4DB20001413DE /* defenitionsViewController.swift in Sources */,
 				F41EBFAB2DC4DB20001413DE /* faqViewController.swift in Sources */,
-				F41EBFAC2DC4DB20001413DE /* helpMenuItemsViewController.swift in Sources */,
+				F41EBFAC2DC4DB20001413DE /* CBHelpItemsController.swift in Sources */,
 				35EFE82A2E53034900AFDF8F /* CBCommutingCellHelper.swift in Sources */,
-				F41EBFAD2DC4DB20001413DE /* helpMenuViewController.swift in Sources */,
-				F41EBFAE2DC4DB20001413DE /* latestNewsViewController.swift in Sources */,
+				F41EBFAD2DC4DB20001413DE /* CBHelpMenuController.swift in Sources */,
+				F41EBFAE2DC4DB20001413DE /* CBNewsController.swift in Sources */,
 				35F6C8B12DD843840072BAD9 /* JobShareViewController.swift in Sources */,
 				F41EBFAF2DC4DB20001413DE /* lineValuesViewController.swift in Sources */,
-				F41EBFB02DC4DB20001413DE /* mySubscriptionViewController.swift in Sources */,
+				F41EBFB02DC4DB20001413DE /* CBSubscriptionInfoController.swift in Sources */,
 				F41EBFB12DC4DB20001413DE /* quickTutorialViewController.swift in Sources */,
 				F4400BD82DD9DB1C0066C7E0 /* CBDefaultEmployeeViewModel.swift in Sources */,
 				F41EBFB22DC4DB20001413DE /* serviceAgreementViewController.swift in Sources */,

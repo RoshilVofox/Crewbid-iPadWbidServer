@@ -2,7 +2,7 @@
 
 import UIKit
 
-class helpMenuItemsViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
     var helpMenuItems: [HelpMenuItem] = []
     struct HelpMenuItem {
@@ -20,7 +20,20 @@ class helpMenuItemsViewController: UIViewController, UICollectionViewDataSource,
         super.viewDidLoad()
         
         setupUI()
-        // Do any additional setup after loading the view.
+        NotificationCenter.default.addObserver(self, selector: #selector(self.openSubScriptionPage), name: Notification.Name(openSubscriptionPageNotification), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.openLatestNews), name: Notification.Name("goToLatestNews"), object: nil)
+    }
+    
+    @objc func openLatestNews(){
+        let storyboard : UIStoryboard = UIStoryboard(name: "HelpMenu", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBNewsController") as! CBNewsController
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc func openSubScriptionPage(){
+        let storyboard : UIStoryboard = UIStoryboard(name: "HelpMenu", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBSubscriptionInfoController") as! CBSubscriptionInfoController
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func setupUI() {
@@ -129,7 +142,7 @@ class helpMenuItemsViewController: UIViewController, UICollectionViewDataSource,
             break
             
         case 6:
-            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "mySubscriptionViewController") as! mySubscriptionViewController
+            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "mySubscriptionViewController") as! CBSubscriptionInfoController
             self.navigationController?.pushViewController(vc, animated: true)
             break
             
@@ -139,7 +152,7 @@ class helpMenuItemsViewController: UIViewController, UICollectionViewDataSource,
             break
             
         case 8:
-            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "latestNewsViewController") as! latestNewsViewController
+            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "CBNewsController") as! CBNewsController
             self.navigationController?.pushViewController(vc, animated: true)
             break
             

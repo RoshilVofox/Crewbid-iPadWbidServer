@@ -16,6 +16,10 @@ enum NetworkError: Error {
     case unzipFailed
     case other(Error)
 }
+
+// By Raja
+// Update this class for common API call and move all these function to corresponding viewModel.
+
 extension NetworkError {
     var localizedDescriptionString: String {
         switch self {
@@ -49,7 +53,7 @@ struct AuthResult{
     let empName:String?
 }
 
-class APIService{
+class APIService {
     
     static let shared = APIService()
     private init() {}
@@ -58,7 +62,8 @@ class APIService{
         let url = EndPoint.shared.getapplicationLoadDatas
         var urlRequest = URLRequest(url: URL(string: url)!)
         var dict:[String:Any] = [:]
-        dict["FromApp"] = 5
+        dict["FromApp"] = 5 // Add this number to Constants file and use everywhere // By Raja
+        
         let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: [])
         let jsonString = String(data: jsonData!, encoding: .utf8)
         urlRequest.httpBody = jsonString?.data(using: .utf8)
@@ -79,7 +84,7 @@ class APIService{
                         if let isNeedToEnableFourDigitForFA = res["PSFileFormatChange"] as? NSNumber {
                             UserDefaults.standard.set(isNeedToEnableFourDigitForFA, forKey: "PSFileFormatChange")
                             UserDefaults.standard.synchronize()
-                            print("Value set in UserDefaults successfully.")
+                            print("Value set in UserDefaults successfully.") // If possible please avoid print all over the project if its not cecessary // By Raja
                         } else {
                             print("Value is nil. Cannot set in UserDefaults.")
                         }
@@ -172,6 +177,7 @@ class APIService{
     
     //MARK: Get Session key
     func getSessionCredential(urlString: String,credentials: String,userID: String,password: String,completion: @escaping (Result<String, NetworkError>) -> Void) {
+        
         guard let url = URL(string: urlString) else {
             completion(.failure(.invalidURL))
             return}
@@ -182,11 +188,13 @@ class APIService{
         guard let postData = postString.data(using: .utf8, allowLossyConversion: true) else {
             completion(.failure(.decodingError))
             return}
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue(String(postData.count), forHTTPHeaderField: "Content-Length")
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.httpBody = postData
+        
         URLSession.shared.dataTask(with: request) { data, _, error in
             if let error = error {
                 completion(.failure(.other(error)))
@@ -206,13 +214,10 @@ class APIService{
                     }
         }.resume()
     }
+
     private func stringByAddingPercentEscapes(to unescapedString: String) -> String? {
         let allowedCharacterSet = CharacterSet(charactersIn: ";/?:@&=+$,").inverted
         return unescapedString.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet)
     }
-    
-    
-    
-    
     
 }

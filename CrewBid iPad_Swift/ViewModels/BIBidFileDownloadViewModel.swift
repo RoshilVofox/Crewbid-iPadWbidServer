@@ -83,17 +83,18 @@ class BIBidFileDownloadViewModel {
         if dataSource.round == 1 && dataSource.position == .FlightAttendant{
             CBUtils.getFALISTWB4JSONFromServer()
         }else if dataSource.round == 2 && dataSource.position != .FlightAttendant {
-                CBUtils.getMissingTripJSON( year: dataSource.year, month: dataSource.month, round: dataSource.round, base: dataSource.base, position: dataSource.position.shortName) { status in
-                    if status {
-                        print("MissingTripInfo is now populated.")
-                    } else {
-                        print("Failed to get missing trip info.")
-                    }
-                    downloadNext()
+            CBUtils.getMissingTripJSON( year: dataSource.year, month: dataSource.month, round: dataSource.round, base: dataSource.base, position: dataSource.position.shortName) { status in
+                if status {
+                    print("MissingTripInfo is now populated.")
+                } else {
+                    print("Failed to get missing trip info.")
                 }
-            } else {
                 downloadNext()
             }
+        } else {
+            downloadNext()
+        }
+        
         func downloadNext() {
             guard let nextFile = fileIterator.next() else {
                 completion(.success(BIBidInfo.shared.downloadDirectory()))
@@ -129,7 +130,7 @@ class BIBidFileDownloadViewModel {
                 }
             }
         }
-        downloadNext()
+        downloadNext() // Remove This // By Raja
     }
 
     private func performPostDownloadTasks(){
