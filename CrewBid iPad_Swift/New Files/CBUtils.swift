@@ -167,71 +167,85 @@ class CBUtils{
     }
     
     
-    static func downloadCrewBidUpdateFile(appDel: AppDelegate/*, completion: @escaping (Bool) -> Void*/) {
+    static func downloadCrewBidUpdateFile(completion: @escaping (Bool) -> Void) {
         // 1. Construct the URL
         guard let url = URL(string: EndPoint.shared.crewBidUpdate) else {
-//            completion(false)
+            completion(false)
             return
         }
 
-            let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-            let fileURL = documentsDir.appendingPathComponent("CrewBidUpdate.txt")
+            let documentsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            let destinationFileUrl = documentsUrl.appendingPathComponent("CrewBidUpdate.txt")
         let urlRequest = URLRequest(url: url)
-        URLSession.shared.dataTask(with: urlRequest) { data, _, error in
-            do {
-                if let data = data{
-//                    if let myString = String(data: data, encoding: .ascii) {
-//                        print(myString)
-//                    }
-                    try data.write(to: fileURL)
-                    
-                    let windowsHebrewEncoding = String.Encoding(rawValue: 0x0505)
-                    let crewBidUpdateText = try String(contentsOf: fileURL, encoding: windowsHebrewEncoding)
-                    
-                    parseCrewBidUpdateFile(text: crewBidUpdateText)
+        URLSession.shared.downloadTask(with: urlRequest) { data, response, error in
+            if let tempURL = data , error == nil{
+                //Success
+                do {
+                    if(FileManager.default.fileExists(atPath:destinationFileUrl.path)) {
+                        try! FileManager.default.removeItem(at: destinationFileUrl)
+                    }
+                    try FileManager.default.copyItem(at: tempURL, to: destinationFileUrl)
+                } catch (let writeError) {
+                    print("Error creating a file \(destinationFileUrl) : \(writeError)")
+                    DispatchQueue.main.sync {
+                        completion(false)
+                    }
                 }
-            } catch {
-                print("Download or parsing failed:", error)
-
+                let encoding = CFStringConvertEncodingToNSStringEncoding(UInt32(CFStringEncodings.windowsHebrew.rawValue))
+                let crewBidUpdateText = try! String(contentsOf: destinationFileUrl, encoding: String.Encoding(rawValue: encoding))
+                let IsParsingCompleted:Bool =  self.parseCrewBidUpdateFile(crewBidUpdateText)
+                if IsParsingCompleted{
+                    completion(true)
+                }else{
+                    completion(false)
+                }
+            }else{
+                print("Error took place while downloading a file. Error description: %@", error!.localizedDescription)
+                completion(false)
             }
         }.resume()
-        
     }
     
-    static func parseCrewBidUpdateFile(text: String) {
-        
-        let scanner = Scanner(string: text)
-        let dataSource = GlobalBidInfo.shared
-        autoreleasepool {
-            let fetchRequest: NSFetchRequest<CrewBidUpdateData> = CrewBidUpdateData.fetchRequest()
-
-            let context = dataSource.managedObjectContext
-            var crewBidDataVersion: CrewBidUpdateData
-
-            do {
-                let fetchedObjects = try context.fetch(fetchRequest)
-                
-                if let existingData = fetchedObjects.first {
-                    crewBidDataVersion = existingData
-                } else {
-                    crewBidDataVersion = CrewBidUpdateData(context: context)
-                }
-
-            } catch {
-                print("Failed to fetch CrewBidUpdateData: \(error)")
-                crewBidDataVersion = CrewBidUpdateData(context: context)
-            }
-            
-//            let success = self.fetchCityList(crewBidDataVersion, file: text)
-//            if !success {
-//                return
+//    static func parseCrewBidUpdateFile(text: String) -> Bool {
+//        
+//        var success:Bool = true
+//        //Parse CrewBid Update file
+//        if text.contains("File or directory not found") || text.contains("internal server error") {
+//            return true
+//        }
+//        
+//        let scanner = Scanner(string: text)
+//        let dataSource = GlobalBidInfo.shared
+//        autoreleasepool {
+//            let fetchRequest: NSFetchRequest<CrewBidUpdateData> = CrewBidUpdateData.fetchRequest()
+//
+//            let context = dataSource.managedObjectContext
+//            var crewBidDataVersion: CrewBidUpdateData
+//
+//            do {
+//                let fetchedObjects = try context.fetch(fetchRequest)
+//                
+//                if let existingData = fetchedObjects.first {
+//                    crewBidDataVersion = existingData
+//                } else {
+//                    crewBidDataVersion = CrewBidUpdateData(context: context)
+//                }
+//
+//            } catch {
+//                print("Failed to fetch CrewBidUpdateData: \(error)")
+//                crewBidDataVersion = CrewBidUpdateData(context: context)
 //            }
-            
-        }
-        
-    }
-    /*
-    static func parrseCrewBidUpdateFile(_ fileContent: String) -> Bool {
+//            
+////            let success = self.fetchCityList(crewBidDataVersion, file: text)
+////            if !success {
+////                return
+////            }
+//            
+//        }
+//        
+//    }
+    
+    static func parseCrewBidUpdateFile(_ fileContent: String) -> Bool {
         //
         var success:Bool = true
         //Parse CrewBid Update file
@@ -567,7 +581,7 @@ class CBUtils{
         let documentsDir: String = paths[0] as? String ?? ""
         return URL(fileURLWithPath: documentsDir).appendingPathComponent("LatestNews.pdf").absoluteString
     }
-    */
+    
     static func getCityWithTimeZone(from cityName: String, timeZone: String) -> [String: String] {
         return [cityName: timeZone]
     }
@@ -861,35 +875,38 @@ class CBUtils{
         return 0
     }
     
-    class func downloadFlightData(/*completionHandler: @escaping (Bool) -> Void*/) {
+    class func downloadFlightData(completion: @escaping (Bool) -> Void) {
         guard let url = URL(string: EndPoint.shared.flightdataJSON) else {
                 print("Invalid URL.")
-//                completionHandler(false)
+                completion(false)
                 return
             }
         let urlRequest = URLRequest(url: url)
-//        let urlData = try! Data(contentsOf: url)
             
-        let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let zipFilePath = documentsDir.appendingPathComponent("FlightDataJson.zip")
-        URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
-            if let data = data {
+        let documentsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let destinationFileUrl = documentsUrl.appendingPathComponent("FlightDataJson.zip")
+        URLSession.shared.downloadTask(with: urlRequest) { (data, response, error) in
+            if let tempUrl = data {
                 do {
-                    
-                    try data.write(to: zipFilePath, options: .atomic)
-                    let defaults = UserDefaults.standard
-                    defaults.set(1, forKey: "IsLatestFlightDataDownloaded")
-                    defaults.set(false, forKey: "IsNeedtoEnableVacationDifference")
-                    unzipFlightDataFile(at: zipFilePath.path)
-    //                completionHandler(true)
-                } catch {
-                    print("Error writing file: \(error)")
-    //                completionHandler(false)
+                    try FileManager.default.copyItem(at: tempUrl, to: destinationFileUrl)
+                } catch (let writeError) {
+                    print("Error creating a file \(destinationFileUrl) : \(writeError)")
+                    completion(false)
                 }
+                let isParsingDone = self.parseFlightDataFile(at: destinationFileUrl)
+                UserDefaults.standard.setValue(true, forKey: "IsLatestFlightDataDownloaded")
+                UserDefaults.standard.setValue(false, forKey: "IsNeedtoEnableVacationDifference")
+                if isParsingDone{
+                    completion(true)
+                }else{
+                    completion(false)
+                }
+            }else{
+                print("Error while downloading a file. Error description: %@", error!.localizedDescription)
+                completion(false)
             }
         }.resume()
-            
-        }
+    }
     class func getFALISTWB4JSONFromServer(completion: (() -> Void)? = nil) {
         guard let url = URL(string: EndPoint.shared.faListWB4Json) else {
             print("Invalid URL")
@@ -1043,7 +1060,8 @@ class CBUtils{
         }
     
     
-    class func unzipFlightDataFile(at filePath: String) {
+    class func parseFlightDataFile(at filePath: URL) -> Bool {
+        var success = false
         let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let flightDataJsonPath = documentPath.appendingPathComponent("FlightDataJson")
         if FileManager.default.fileExists(atPath: flightDataJsonPath.path) {
@@ -1053,44 +1071,47 @@ class CBUtils{
                 print("Error deleting old FlightDataJson folder: \(error)")
             }
         }
-        SSZipArchive.unzipFile(atPath: filePath, toDestination: documentPath.path)
-        if FileManager.default.fileExists(atPath: filePath) {
+        success = SSZipArchive.unzipFile(atPath: filePath.path, toDestination: documentPath.path)
+        if FileManager.default.fileExists(atPath: filePath.path) {
             do {
-                try FileManager.default.removeItem(atPath: filePath)
+                try FileManager.default.removeItem(atPath: filePath.path)
             } catch {
                 print("Error deleting zip file: \(error)")
             }
         }
+        return success
     }
     
-    class func parseFlightData() -> [Any]{
-        var app:AppDelegate?
-        DispatchQueue.main.async {
-            app = UIApplication.shared.delegate as? AppDelegate
-        }
-        
-        var arr:[Any] = []
-        let searchPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-        let documnentPath = searchPaths[0] as String
-        let filePath = documnentPath + "/FlightDataJson/FlightDataJson.JSON"
-        if FileManager.default.fileExists(atPath: filePath) {
-            do{
-                let data = try Data(contentsOf: URL(fileURLWithPath: filePath))
-                arr = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as! [Any]
-            }catch{
-                print("Error reading flight data : \(error.localizedDescription)")
-            }
-        }else{
-            if app!.objNetworkType != .free{
-                CBUtils.downloadFlightData()
-            }else{
-                let alert = AlertService.showAlert(title: "Sorry", message: "You cannot get needed access via SouthwestWifi or 2Wire. Try again later when you are safely on the ground and have another internet access.", actions: nil)
-                let topVC = app!.getTopViewController()
-                topVC?.present(alert, animated: true)
-            }
-        }
-        return arr
-    }
+//    class func parseFlightData() -> [Any]{
+//        var app:AppDelegate?
+//        DispatchQueue.main.async {
+//            app = UIApplication.shared.delegate as? AppDelegate
+//        }
+//        
+//        var arr:[Any] = []
+//        let searchPaths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+//        let documnentPath = searchPaths[0] as String
+//        let filePath = documnentPath + "/FlightDataJson/FlightDataJson.JSON"
+//        if FileManager.default.fileExists(atPath: filePath) {
+//            do{
+//                let data = try Data(contentsOf: URL(fileURLWithPath: filePath))
+//                arr = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as! [Any]
+//            }catch{
+//                print("Error reading flight data : \(error.localizedDescription)")
+//            }
+//        }else{
+//            if app!.objNetworkType != .free{
+//                CBUtils.downloadFlightData(){ result in
+//                    print(result)
+//                }
+//            }else{
+//                let alert = AlertService.showAlert(title: "Sorry", message: "You cannot get needed access via SouthwestWifi or 2Wire. Try again later when you are safely on the ground and have another internet access.", actions: nil)
+//                let topVC = app!.getTopViewController()
+//                topVC?.present(alert, animated: true)
+//            }
+//        }
+//        return arr
+//    }
     
     
     static func shortMonthName(month: Int, uc: Bool) -> String {

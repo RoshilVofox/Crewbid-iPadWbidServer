@@ -92,7 +92,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         
         firstTimeBidOpen()
         NotificationCenter.default.addObserver(self, selector: #selector(didDismissLatestNews), name: NSNotification.Name("DidDismissLatestNews"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(openlatestNews), name: NSNotification.Name(KCBOpenLatestNews), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(openlatestNews), name: NSNotification.Name(KCBOpenLatestNews), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openCoverLetter(notification:)), name: NSNotification.Name(KCBOpenCoverletter), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openSeniority), name: NSNotification.Name(KCBOpenSeniority), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openLineText), name: NSNotification.Name(KCBOpenLineText), object: nil)
@@ -112,7 +112,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         if let userInfo = notification.userInfo as? NSDictionary {
             vc.isFromFirstTimeOpenBid = userInfo["isFromFirstTimeOpenBid"] as! Bool
         }
-        self.navigationController?.pushViewController(vc, animated: true)
+//        self.navigationController?.pushViewController(vc, animated: true)
+           vc.modalPresentationStyle = .fullScreen
+           vc.modalTransitionStyle = .coverVertical
+           self.present(vc, animated: true, completion: nil)
     }
         //openSeniority view controller push action
     @objc func openSeniority() {
@@ -120,7 +123,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
         vc.bidPeriod = bidPeriod
         vc.dataTypeSelected = TextFileType.seniorityList
-        self.navigationController?.pushViewController(vc, animated: true)
+//        self.navigationController?.pushViewController(vc, animated: true)
+        vc.modalPresentationStyle = .fullScreen
+        vc.modalTransitionStyle = .coverVertical
+        self.present(vc, animated: true, completion: nil)
     }
         //LineText view controller push action
     @objc func openLineText() {
@@ -128,7 +134,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
         vc.bidPeriod = bidPeriod
         vc.dataTypeSelected = TextFileType.lineText
-        self.navigationController?.pushViewController(vc, animated: true)
+//        self.navigationController?.pushViewController(vc, animated: true)
+        vc.modalPresentationStyle = .fullScreen
+        vc.modalTransitionStyle = .coverVertical
+        self.present(vc, animated: true, completion: nil)
     }
         //TripText view controller push action
     @objc func openTripText() {
@@ -136,7 +145,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
         vc.bidPeriod = bidPeriod
         vc.dataTypeSelected = TextFileType.tripText
-        self.navigationController?.pushViewController(vc, animated: true)
+//        self.navigationController?.pushViewController(vc, animated: true)
+        vc.modalPresentationStyle = .fullScreen
+        vc.modalTransitionStyle = .coverVertical
+        self.present(vc, animated: true, completion: nil)
     }
         //LineText view controller push action
     @objc func openFAMemo(){
@@ -144,7 +156,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
         vc.bidPeriod = bidPeriod
         vc.dataTypeSelected = TextFileType.faMemo
-        self.navigationController?.pushViewController(vc, animated: true)
+//        self.navigationController?.pushViewController(vc, animated: true)
+        vc.modalPresentationStyle = .fullScreen
+        vc.modalTransitionStyle = .coverVertical
+        self.present(vc, animated: true, completion: nil)
     }
         //openAwardData view controller push action
     @objc func openAwardData() {
@@ -166,11 +181,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     
     // Function to open the Latest News view
 
-    @objc func openlatestNews() {
-        let storyboard : UIStoryboard = UIStoryboard(name: "HelpMenu", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "latestNewsViewController") as! CBNewsController
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
+//    @objc func openlatestNews() {
+//        let storyboard : UIStoryboard = UIStoryboard(name: "HelpMenu", bundle: nil)
+//        let vc = storyboard.instantiateViewController(withIdentifier: "CBNewsController") as! CBNewsController
+//        self.navigationController?.pushViewController(vc, animated: true)
+//    }
     
     //MARK: -Bid Submission methods
     @objc func checkLinesAvailableInBidList() {
@@ -750,7 +765,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         }else{
             if !(self.bidPeriod?.coverLetterDisplayed?.boolValue ?? false){
                 if !seniorityShowed && self.bidPeriod?.isHistoric?.boolValue == false{
-                    if self.bidPeriod?.isFABid() != true && self.bidPeriod?.isSecondRoundBid() == true && self.bidPeriod!.paperBidVacArray!.count > 0{
+                    if self.bidPeriod?.isFABid() != true && self.bidPeriod?.isSecondRoundBid() == true && self.bidPeriod!.paperBidVacArray?.count ?? 0 > 0{
                         var message = "We did not find you in the Second round Seniority list, but we did find you in the First round as a \"Paper\" bidder. We also found that you have Vacation"
                         for case let dic as NSDictionary in self.bidPeriod!.paperBidVacArray!{
                             let endAbsenceDate = dic["EndAbsenceDate"] as! String
@@ -844,7 +859,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         vc.bidPeriod = self.bidPeriod
         vc.dataTypeSelected = TextFileType.seniorityList
         vc.isFromFirstTimeOpenBid = true
-        self.navigationController?.pushViewController(vc, animated: true)
+//        self.navigationController?.pushViewController(vc, animated: true)
+        vc.modalPresentationStyle = .fullScreen
+        vc.modalTransitionStyle = .coverVertical
+        self.present(vc, animated: true, completion: nil)
     }
     
     @objc private func didDismissLatestNews() {
