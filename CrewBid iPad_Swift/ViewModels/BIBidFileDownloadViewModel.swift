@@ -82,7 +82,10 @@ class BIBidFileDownloadViewModel {
         var fileIterator = filesToDownload!.makeIterator()
         let dataSource = GlobalBidInfo.shared
         if dataSource.round == 1 && dataSource.position == .FlightAttendant{
-            CBUtils.getFALISTWB4JSONFromServer()
+            CBUtils.getFALISTWB4JSONFromServer(){
+                print("FA List WB4 JSON fetched and saved")
+                downloadNext()
+            }
         }else if dataSource.round == 2 && dataSource.position != .FlightAttendant {
             CBUtils.getMissingTripJSON( year: dataSource.year, month: dataSource.month, round: dataSource.round, base: dataSource.base, position: dataSource.position.shortName) { status in
                 if status {
@@ -99,7 +102,7 @@ class BIBidFileDownloadViewModel {
         func downloadNext() {
             guard let nextFile = fileIterator.next() else {
                 completion(.success(BIBidInfo.shared.downloadDirectory()))
-                CBUtils.downloadFlightData()
+                self.performPostDownloadTasks()
                 return
             }
             bidDownload.downloadBidFiles(sessionKey: sessionKey, filename: nextFile){ result in
@@ -131,23 +134,30 @@ class BIBidFileDownloadViewModel {
                 }
             }
         }
-        downloadNext() // Remove This // By Raja
+//        downloadNext() // Remove This // By Raja
     }
 
     private func performPostDownloadTasks(){
-//        checkCrewBidUpdateFile()
-//        checkFlightData()
+        checkCrewBidUpdateFile()
     }
     
     private func checkCrewBidUpdateFile(){
-        let app = UIApplication.shared.delegate as! AppDelegate
         DispatchQueue.main.async {
-            CBUtils.downloadCrewBidUpdateFile(appDel: app)
+            CBUtils.downloadCrewBidUpdateFile(){ (result:Bool?) in
+                if result!{
+                    print("Crewbid Update file downloaded successfully")
+                    self.checkFlightData()
+                }
+            }
         }
     }
     
     private func checkFlightData(){
-//        CBUtils.downloadFlightData()
+        CBUtils.downloadFlightData(){ (result:Bool?) in
+            if result!{
+                print("Flight Data downloaded successfully")
+            }
+        }
         //needs code
     }
 }

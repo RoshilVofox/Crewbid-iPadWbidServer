@@ -136,7 +136,13 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
     }
     
     @IBAction func btnDismissAction(_ sender: Any) {
-        navigationController?.popViewController(animated: false)
+        if self.presentingViewController != nil {
+                self.dismiss(animated: true, completion: nil)
+            } else {
+                // Fallback: if it was pushed in a navigation controller
+                self.navigationController?.popViewController(animated: true)
+            }
+        
         if self.bidPeriod?.isHistoric?.boolValue ?? false{
             return
         }
