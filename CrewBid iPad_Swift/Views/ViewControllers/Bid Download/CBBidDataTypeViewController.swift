@@ -34,6 +34,7 @@ class CBBidDataTypeViewController: UIViewController {
     @IBAction func btnHistoricBidPeriod(_ sender: Any) {
         AppState.shared.isHistoricBid = true
         let dialogMessage = UIAlertController(title: "CrewBid", message: "When viewing Historical Bid Data, WBid and SWAPTimizer Vacation will not be available.\n\nNor will you be able to accidentally submit any bid using the Historical Bid Data", preferredStyle: .alert)
+        UserDefaults.standard.set("21221", forKey: kCBDefaultEmployeeNumberKey)
         let ok = UIAlertAction(title: "OK", style: .default) { (action) in
             let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "CBBiddataDownloadVC") as! CBBiddataDownloadVC

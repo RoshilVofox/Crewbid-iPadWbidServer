@@ -230,7 +230,7 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
                         let value: Int = commutability!.baseTime
                         let requiredEndTime = objCommuteTime.latestDeparture!.addingTimeInterval(TimeInterval((-(value * 60))))
                         if endTime <= requiredEndTime && objCommuteTime.latestDeparture! != minDate{
-                            (((line.commutableBacks?.doubleValue ?? 0)  +  1)) as NSNumber
+                            line.commutableBacks = (((line.commutableBacks?.doubleValue ?? 0)  +  1)) as NSNumber
                             isCommuteBackEnd = true
                         }
                     }
@@ -327,11 +327,19 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
     }
     
     func saveCommutabilitySort() {
+//        added sort fetching to include bidPeriod check with commutable
+        let fetchSortRequest: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
+        let predicate1 = NSPredicate(format: "bidPeriod == %@", bidPeriod!)
+        let predicate2 = NSPredicate(format: "category == 9")
+        let combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
+        fetchSortRequest.predicate = combinedPredicate
+        let fetchedSortObjects: [BILineSort] = (try? self.context!.fetch(fetchSortRequest)) ?? []
+        
         let fetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "commutableType == 1")
         let fetchedObjects: [Commutability] = (try? self.context!.fetch(fetchRequest)) ?? []
         let objCommutablity: Commutability?
-        if fetchedObjects.count > 0 {
+        if fetchedObjects.count > 0 && fetchedSortObjects.count > 0 {
             objCommutablity = fetchedObjects[0]
             updateCommutabilityFilter()
             fetchCommutabilitydetails()
@@ -435,7 +443,11 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
     
     func fetchCommutabilitydetails() {
         let fetchRequest: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "commutableType == 0")
+        let predicate1 = NSPredicate(format: "bidPeriod == %@", bidPeriod!)
+        let predicate2 = NSPredicate(format: "category == 9")
+        let combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
+        fetchRequest.predicate = combinedPredicate
+        
         let fetchedObjects: [BILineSort] = (try? self.context!.fetch(fetchRequest)) ?? []
         if fetchedObjects.count > 0 {
             lineSort = fetchedObjects[0]

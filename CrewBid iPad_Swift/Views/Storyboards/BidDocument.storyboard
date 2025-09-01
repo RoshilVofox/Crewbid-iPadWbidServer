@@ -6579,9 +6579,9 @@
                                         </constraints>
                                         <size key="customSize" width="34" height="38"/>
                                         <connections>
-                                            <outlet property="dateLabel" destination="cRx-A7-wQR" id="SnL-YI-Eq0"/>
-                                            <outlet property="earliestDepartureLabel" destination="jib-36-Tbx" id="PgT-q9-slg"/>
-                                            <outlet property="latestArrivalLabel" destination="gVt-oa-tGj" id="WUC-LK-6u0"/>
+                                            <outlet property="dateLabel" destination="cRx-A7-wQR" id="0QZ-ff-W1r"/>
+                                            <outlet property="earliestArrivalLabel" destination="jib-36-Tbx" id="JFp-Hg-MPt"/>
+                                            <outlet property="latestDeparureLabel" destination="gVt-oa-tGj" id="nFO-6G-UIz"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -6612,6 +6612,12 @@
                         </constraints>
                     </view>
                     <size key="freeformSize" width="400" height="450"/>
+                    <connections>
+                        <outlet property="collectionView" destination="cgd-Kq-eLo" id="yzY-fc-8AN"/>
+                        <outlet property="lblBase" destination="05Q-2u-emm" id="2gI-Q5-1xn"/>
+                        <outlet property="lblCommuteCity" destination="5Bt-GN-Mpq" id="ogP-Ll-lft"/>
+                        <outlet property="lblMonthandYear" destination="GpQ-bP-pIv" id="WoE-wL-JCa"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yAl-3f-bTo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
