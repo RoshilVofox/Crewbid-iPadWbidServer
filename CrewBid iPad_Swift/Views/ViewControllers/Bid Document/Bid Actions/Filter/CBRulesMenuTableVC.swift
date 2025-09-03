@@ -338,7 +338,7 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
                 }
                 else {
                     let fetchCommutablityRequset: NSFetchRequest<Commutability> = Commutability.fetchRequest()
-                    fetchCommutablityRequset.predicate = NSPredicate(format: "commutableType == %d", CommutabilityType.sort.rawValue)
+                    fetchCommutablityRequset.predicate = NSPredicate(format: "commutableType == %d", CommutabilityType.filter.rawValue)
                     let fetchedObjects = try! context!.fetch(fetchCommutablityRequset) ?? []
                     
                     if fetchedObjects.count > 0 {
@@ -349,7 +349,7 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
                         }
                         let objCommutabilitySort = fetchedObjects[0]
                         
-                        let objCommutabilityFilter = Commutability(context: self.bidPeriod.managedObjectContext!)
+                        let objCommutabilityFilter = Commutability(context: self.context!)
                         
                         objCommutabilityFilter.type = 1
                         objCommutabilityFilter.secondCellValue = 1
@@ -367,7 +367,10 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
                         }
                     }
                     else {
-                        NotificationCenter.default.post(name: Notification.Name("ShowCommutabilityFilterView"), object: self)
+                        
+                        self.dismiss(animated: true) {
+                            NotificationCenter.default.post(name: Notification.Name("ShowCommutabilityFilterView"), object: self)
+                        }
                         
 //                        self.dismiss(animated: true)
                     }

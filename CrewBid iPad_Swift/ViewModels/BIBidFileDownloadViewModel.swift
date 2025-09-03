@@ -16,7 +16,7 @@ class BIBidFileDownloadViewModel {
         let base = GlobalBidInfo.shared.base
         let position = GlobalBidInfo.shared.position.shortName
         let urlString = EndPoint.shared.DownloadHistoricalBidLineAll
-        CBUtils.downloadFlightData()
+        checkFlightData()
         let proceedWithDownload: () -> Void = {
                 let dict: [String: Any] = ["Year": year,"Month": month,"Round": round,"Domicile": base,"Position": position,"FileName": filename]
                 BIBidFileDownload.shared.downloadHistoricBid(from: dict, urlString: urlString) { result in

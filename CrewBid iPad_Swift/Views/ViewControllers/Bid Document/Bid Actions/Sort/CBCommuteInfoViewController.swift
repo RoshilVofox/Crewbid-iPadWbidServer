@@ -455,11 +455,19 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
     }
     
     func saveCommutabilityFilter() {
+//                added filter fetching to include bidPeriod check with commutable
+        let fetchFilterRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+        let predicate1 = NSPredicate(format: "bidPeriod == %@", bidPeriod!)
+        let predicate2 = NSPredicate(format: "category == 33")
+        let combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
+        fetchFilterRequest.predicate = combinedPredicate
+        let fetchedFilterObjects: [BIFilterRule] = (try? self.context!.fetch(fetchFilterRequest)) ?? []
+        
         let fetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "commutableType == 0")
         let fetchedObjects: [Commutability] = (try? self.context!.fetch(fetchRequest)) ?? []
         var objCommutablity: Commutability?
-        if fetchedObjects.count > 0 {
+        if fetchedObjects.count > 0 && fetchedFilterObjects.count > 0{
             objCommutablity = fetchedObjects[0]
             updateCommutabilitySort()
         }
@@ -473,6 +481,7 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
             objCommutablity?.commutableType = 0
             
             let rule = BIFilterRule(context: self.context!)
+            rule.bidPeriod = bidPeriod
             rule.abbreviation = "CmAuto"
             rule.category = 33
             rule.type = 0

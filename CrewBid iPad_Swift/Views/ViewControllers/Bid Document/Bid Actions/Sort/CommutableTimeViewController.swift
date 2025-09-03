@@ -133,7 +133,7 @@ class CommutableTimeViewController: UIViewController, KUIPopOverUsable, UICollec
             cell.isHidden = false
             cell.dateLabel.backgroundColor = UIColor(red: 205.0 / 255.0, green: 85.0 / 255.0, blue: 4.0 / 255.0, alpha: 1.0)
             let value = arrCommutTimeFetched.object(at: indexPath.row - (weekday - 1)) as! NSDictionary
-            cell.dateLabel.text = value.value(forKey: "departure") as? String
+            cell.dateLabel.text = value.value(forKey: "Day") as? String
             //For showing the the latest departure value blank if the latest departure value is 0000
             cell.latestDeparureLabel.text = value.value(forKey: "departure") as? String
             //For showing the the earliest arrival value blank if the earliest arrival value is 0000

@@ -2518,6 +2518,9 @@
                                                             <state key="normal" title="100%">
                                                                 <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="fourthCellbtnAction:" destination="hwn-nZ-u05" eventType="touchUpInside" id="MfA-8g-ail"/>
+                                                            </connections>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Uh6-EN-dl5" userLabel="Comparison Button">
                                                             <rect key="frame" x="478" y="13.5" width="50" height="29"/>
@@ -2528,6 +2531,9 @@
                                                             <state key="normal" title="Overall">
                                                                 <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="secondCellbtnAction:" destination="hwn-nZ-u05" eventType="touchUpInside" id="IcH-pu-gtd"/>
+                                                            </connections>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AEM-xo-ly0" userLabel="Comparison Button">
                                                             <rect key="frame" x="398" y="13" width="73" height="30"/>
@@ -2537,6 +2543,9 @@
                                                             <state key="normal" title="No Middle">
                                                                 <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="firstCellbtnAction:" destination="hwn-nZ-u05" eventType="touchUpInside" id="8gO-Te-zxv"/>
+                                                            </connections>
                                                         </button>
                                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ymb-mx-Zr1" userLabel="Title Label">
                                                             <rect key="frame" x="44" y="18" width="344" height="20"/>
@@ -2574,6 +2583,9 @@
                                                             <state key="normal" title="&lt;=">
                                                                 <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="thirdCellbtnAction:" destination="hwn-nZ-u05" eventType="touchUpInside" id="wyv-Mf-qwY"/>
+                                                            </connections>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qU2-ft-sAj" userLabel="TitleButton">
                                                             <rect key="frame" x="44" y="5" width="344" height="46"/>
@@ -2584,6 +2596,9 @@
                                                             <state key="normal">
                                                                 <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="titleBtnAction:" destination="hwn-nZ-u05" eventType="touchUpInside" id="L5h-ca-Ega"/>
+                                                            </connections>
                                                         </button>
                                                     </subviews>
                                                     <constraints>
@@ -2615,7 +2630,12 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="titleLabel" destination="ymb-mx-Zr1" id="dde-UD-E3g"/>
+                                            <outlet property="Removecell" destination="VQj-GY-emo" id="pOl-gV-4zZ"/>
+                                            <outlet property="lblTitle" destination="ymb-mx-Zr1" id="Wdm-MQ-S2u"/>
+                                            <outlet property="objFourthCell" destination="F0W-Pa-6KD" id="7xq-yE-F6v"/>
+                                            <outlet property="objSecondCell" destination="Uh6-EN-dl5" id="ApV-Rj-Iv5"/>
+                                            <outlet property="objThirdCell" destination="h2P-1j-F0W" id="UYc-Jv-MuC"/>
+                                            <outlet property="objfirstCell" destination="AEM-xo-ly0" id="vqb-GI-OMs"/>
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="CommutingRuleCell" rowHeight="250" id="GSd-kf-1Bn" customClass="CBCommutingRuleCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
@@ -3100,7 +3120,7 @@
             <objects>
                 <viewController storyboardIdentifier="CommuteInformation" useStoryboardIdentifierAsRestorationIdentifier="YES" id="f4C-eD-MJK" customClass="CBCommuteInfoViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="45B-y9-u7f">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Commute Information" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pws-az-Rje">
@@ -4437,7 +4457,7 @@
             <objects>
                 <viewController storyboardIdentifier="CBReportReleaseCollectionViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="gKe-KE-fCA" customClass="CBReportReleaseCollectionViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="zkJ-Mz-YY7">
-                        <rect key="frame" x="0.0" y="0.0" width="400" height="250"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="40" translatesAutoresizingMaskIntoConstraints="NO" id="JD4-0a-MWZ">
