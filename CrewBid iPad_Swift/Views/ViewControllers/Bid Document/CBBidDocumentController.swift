@@ -822,6 +822,15 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         }
         try! self.bidPeriod?.managedObjectContext?.save()
     }
+    //MARK: need to check this alert fn
+    func showSeniorityAlert(text: String){
+        AlertService.showAlertForTopVC(title: "Seniority List", message: text, actions: [(title: "OK", style: .default, handler:{_ in
+            self.bidPeriod?.coverLetterDisplayed = true
+            self.showCoverLetter()
+        }),(title: "View Seniority List", style: .default, handler:{_ in
+            self.showSeniority()
+        })])
+    }
     
     func showToastWith(text: String, duration: TimeInterval){
         self.toastView.layer.cornerRadius = 20

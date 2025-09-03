@@ -210,21 +210,26 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                 switch result{
                 case .success(let fileURL):
                     print("File unzipped at: \(fileURL)")
-                    DispatchQueue.main.async {
+//                    DispatchQueue.main.async {
                             NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
-                        }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+//                        }
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                         guard !self.hasStartedBidProcessing else {
                                 return
                             }
                         self.hasStartedBidProcessing = true
                         BIBidInfoReader.shared.checkForSeniorityVacationAndReadBidInfo(){success in
                             if success{
-                                self.loginActions()
+                                DispatchQueue.main.async {
+                                    self.loginActions()
+                                }
+//                                self.loginActions()
+                            }else{
+                                NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
                             }
                             
                         }
-                    }
+//                    }
                 case .failure(let error):
                     print("Error downloading new bid: \(error.localizedDescription)")
                     NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)

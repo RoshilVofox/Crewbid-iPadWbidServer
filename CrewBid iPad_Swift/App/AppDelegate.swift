@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     var isFlightNetwork: Bool = false
     var isPingSuccess: Bool = false
     var ObjUserAccount:CBUserAccountDetail?
-
+    var backgroundTransferCompletionHandler: (() -> Void)?
     var pinger:SimplePing?
     var sendTimer: Timer?
     var locationManager = CLLocationManager()
@@ -215,14 +215,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     
     func locationAccess() {
         locationManager.delegate = self
-        locationManager.startUpdatingHeading()
-        let status = CLLocationManager.authorizationStatus()
-        if status == .authorizedWhenInUse {
-            self.simplePingStarter()
-        }else{
-            locationManager.requestWhenInUseAuthorization()
-        }
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestWhenInUseAuthorization()
     }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        switch status {
+           case .authorizedWhenInUse, .authorizedAlways:
+               // Now safe to start location updates
+               manager.startUpdatingHeading()
+               manager.startMonitoringSignificantLocationChanges()
+               self.simplePingStarter()
+           case .denied, .restricted:
+               print("User denied location access.")
+           case .notDetermined:
+               print("Waiting for user to decide...")
+           @unknown default:
+               break
+           }
+    }
+    
     func getTransactions() -> [String]?{
         let store = NSUbiquitousKeyValueStore.default
         var transactionIdentifiers = store.object(forKey: "transaction") as? [String]
@@ -289,7 +301,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     }
     func isUserInformationAvailable() -> Bool{
         var isAvailable = false
-        if ObjUserAccount?.isuserIfoAvaialble() == true{
+        if ObjUserAccount?.isUserInfoAvailable() == true{
             isAvailable = true
         }
         return isAvailable
@@ -334,7 +346,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     
     func simplePingStarter(){
         dicSSIDDetails = fetchSSIDInfo()
-        print("SSID Details: \(String(describing: dicSSIDDetails))")
+        print("SSID Details:%@",dicSSIDDetails!)
         UserDefaults.standard.set(dicSSIDDetails?["SSID"], forKey: "SSID")
         self.runWithHostName("itunes.apple.com")
     }

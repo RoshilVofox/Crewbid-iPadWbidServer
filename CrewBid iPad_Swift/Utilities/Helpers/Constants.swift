@@ -177,7 +177,7 @@ let KCBOpenTripText = "KCBOpenTripText"
 let KCBOpenFAMemo = "KCBOpenFAMemo"
 let kCBDefaultCommutingTimesKey = "Default Commuting Times"
 let kCBDefaultsCommutingNoMidKey = "DefaultsNoMidKey"
-
+let kCBUserInfoEncryptedWbidExpirationDateKey = "UserInfoEncryptedWbidExpirationDateKey"
 
 public enum HTTPStatusCode: Int {
     case `continue` = 100,
