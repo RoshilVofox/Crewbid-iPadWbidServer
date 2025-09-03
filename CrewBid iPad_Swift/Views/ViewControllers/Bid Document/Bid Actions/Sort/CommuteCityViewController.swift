@@ -29,8 +29,11 @@ class CommuteCityViewController: UIViewController, KUIPopOverUsable, UICollectio
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
         
-        arrAllCities = NSMutableArray(array: UserDefaults.standard.array(forKey: kCBAllCitiesList)! as NSArray)
+        let cityArray = UserDefaults.standard.array(forKey: kCBAllCitiesList) as? [String]
+        let sortedCityArray = cityArray!.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
+        arrAllCities = NSMutableArray(array: sortedCityArray)
         arrAllCities?.remove("")
        
     }

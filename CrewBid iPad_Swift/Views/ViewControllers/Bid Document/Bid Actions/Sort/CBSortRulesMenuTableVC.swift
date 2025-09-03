@@ -322,14 +322,13 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
                             dicCommutablility["keyPath"] = "commutabilityOverall"
                             dicCommutablility["isMutable"] = NSNumber(integerLiteral: 1)
                             dicCommutablility["ascending"] = NSNumber(integerLiteral: 0)
+                            dicCommutablility["bidPeriod"] = bidPeriod
                             let dicVariables = [String: Any]()
                             dicCommutablility["variables"] = dicVariables
                             lineSort.setValuesForKeys(dicCommutablility)
                             
-                            let ObjcommutabilityFilter: Commutability!
-                            ObjcommutabilityFilter = fetchedObjects[0]
-                            let ObjcommutabilitySort: Commutability!
-                            ObjcommutabilitySort = Commutability(context: context!)                     
+                            let ObjcommutabilityFilter: Commutability = fetchedObjects[0]
+                            let ObjcommutabilitySort: Commutability = Commutability(context: context!)
                             ObjcommutabilitySort.type = 1
                             ObjcommutabilitySort.secondCellValue = 1
                             ObjcommutabilitySort.thirdCellValue = 3
@@ -341,7 +340,8 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
                             ObjcommutabilitySort.baseTime = ObjcommutabilityFilter.baseTime;
                             
                             do {
-                                try context?.save()
+                                try context!.save()
+                                NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
                             }
                             catch {
                                 print("error saving commutablity \(error.localizedDescription)")
@@ -518,7 +518,9 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
                 }
             }
             try? bidPeriod?.managedObjectContext!.save()
-            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+            }
             self.dismissPopover(animated: true)
         }
 //        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)

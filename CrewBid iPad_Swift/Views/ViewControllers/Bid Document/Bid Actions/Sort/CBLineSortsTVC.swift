@@ -41,7 +41,6 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver("refreshLines")
-        NotificationCenter.default.removeObserver("DeleteCellNotification")
         NotificationCenter.default.removeObserver("SortBidListAction")
         NotificationCenter.default.post(name: NSNotification.Name("SortViewWillDisappear"), object: self)
     }

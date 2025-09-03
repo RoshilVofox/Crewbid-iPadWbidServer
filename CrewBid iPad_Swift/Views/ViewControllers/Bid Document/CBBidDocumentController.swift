@@ -2411,6 +2411,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 btnEOM.isSelected = true
                 self.bidPeriod!.isEomOn = NSNumber(value: true)
                 btnEOM.backgroundColor = UIColor(red: 35.0/255.0, green: 177.0/255.0, blue: 76.0/255.0, alpha: 1.0)
+                btnEOM.setTitleColor(.white, for: .normal)
                 let vacationEndDateDisp = formatter.string(from: exactVacEndDate)
                 let alertMessage = "You have an `EOM` Vacation: \(vacationStartDateDisp) - \(vacationEndDateDisp).\n\nEOM weeks can affect the vacation pay in the current bid period and also the next month.\n\nWe have two documents regarding Month-to-Month vacations that also apply to EOM vacation weeks.\n\nWe suggest you read the following documents to improve your bidding knowledge."
                 let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
@@ -2490,13 +2491,13 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     func executeEOMForFAVacation(vDL: CBVacationDownloader) {
-        if (app.isUserInformationAvailable() == false) {
-            self.disableVacationButton()
-            self.bidPeriod!.userVacationWbidOrCrewBid = ""
-            AlertService.showAlertForTopVC(title: "CrewBid", message: "User information not available,you have to create user account to access WBidMax vacation. Please create user account by clicking on new bid period (+) from home screen.")
-            btnWbidMax.isEnabled = true
-            return
-        }
+//        if (app.isUserInformationAvailable() == false) {
+//            self.disableVacationButton()
+//            self.bidPeriod!.userVacationWbidOrCrewBid = ""
+//            AlertService.showAlertForTopVC(title: "CrewBid", message: "User information not available,you have to create user account to access WBidMax vacation. Please create user account by clicking on new bid period (+) from home screen.")
+//            btnWbidMax.isEnabled = true
+//            return
+//        }
         self.view.showActivityIndicator(message: "Contacting ...")
         DispatchQueue.main.async {
             if self.eomSelectedIndex.isEmpty {
@@ -2876,7 +2877,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             self.executeEOMOnlyFA(vDL: vDL)
         }
         else {
-            self.executeEOMOnlyFA(vDL: vDL)
+            self.executeEOMForFAVacation(vDL: vDL)
         }
     }
 
@@ -2907,8 +2908,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         else {
             btnEOM.isSelected = true
             self.bidPeriod!.isEomOn = NSNumber(value: true)
-            btnEOM.backgroundColor = UIColor(red: 35.0/255.0, green: 177.0/255.0, blue: 76.0/255.0, alpha: 1.0)
-            btnEOM.setTitleColor(.white, for: .normal)
+            DispatchQueue.main.async {
+                self.btnEOM.backgroundColor = UIColor(red: 35.0/255.0, green: 177.0/255.0, blue: 76.0/255.0, alpha: 1.0)
+                self.btnEOM.setTitleColor(.white, for: .normal)
+            }
             self.bidPeriod!.isSwaptimizerOn = NSNumber(value: false)
             btnSwaptimizer.backgroundColor = .white
             btnSwaptimizer.setTitleColor(.black, for: .normal)
@@ -2920,7 +2923,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 self.eomVacationDateSelectForPilot(fromBtnAction: true)
                 return
             }
-            else if btnWbidMax.isSelected {
+            else if btnWbidMax.isSelected && self.bidPeriod?.isFABid() == false {
                 self.bidPeriod!.userVacationWbidOrCrewBid = "WBIDF"
                 self.eomVacationDateSelectForPilot(fromBtnAction: true)
                 return
@@ -2933,6 +2936,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             else if (btnWbidMax.isSelected && self.bidPeriod?.isFABid() == true) {
                 self.bidPeriod!.userVacationWbidOrCrewBid = "FAVacationF"
                 self.eomVacationDateSelect(fromBtnAction: true)
+                try? self.context!.save()
                 return
             }
             else {
