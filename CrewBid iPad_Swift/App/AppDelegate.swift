@@ -346,7 +346,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     
     func simplePingStarter(){
         dicSSIDDetails = fetchSSIDInfo()
-        print("SSID Details:%@",dicSSIDDetails!)
+        print("SSID Details:%@",dicSSIDDetails ?? [:])
         UserDefaults.standard.set(dicSSIDDetails?["SSID"], forKey: "SSID")
         self.runWithHostName("itunes.apple.com")
     }

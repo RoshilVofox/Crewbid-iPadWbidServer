@@ -131,8 +131,10 @@ class BIBidInfo:NSObject{
         let position = dataSource.position.character
         let base = dataSource.base
         let round = isFirstRoundBid() ? "D" : "B"
-        let month = dataSource.month
-        return "\(position)\(round)\(base)\(month)"
+        let monthValue = dataSource.month
+        // Convert to uppercase hex string
+        let monthHex = String(format: "%lX", monthValue)
+        return "\(position)\(round)\(base)\(monthHex)"
     }
 
     private func isFirstRoundBid() -> Bool {
