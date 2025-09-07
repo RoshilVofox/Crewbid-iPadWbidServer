@@ -384,8 +384,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     var coverLetterNumberOfLines:String? = nil
                     let numCharSet = CharacterSet(charactersIn: "0123456789")
                     let words = textFile?.text?.components(separatedBy: .whitespacesAndNewlines)
-                    let noWhiteSpaceString = words?.joined(separator: "")
-                    let scanner = Scanner(string: noWhiteSpaceString!)
+                    let noWhiteSpaceString = words?.joined(separator: "") ?? ""
+                    let scanner = Scanner(string: noWhiteSpaceString)
                     if self.bidPeriod!.isFABid(){
                         stringToScan = "TOTALnumberofpositionsavailableforbid:"
                         _ = scanner.scanUpToString(stringToScan!)
@@ -400,27 +400,27 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                         stringToScan = String(format: "%@%@", self.bidPeriod!.base!, self.bidPeriod!.positionType?.intValue == BICrewPositionType.Captain.rawValue ? "CA" : "FO")
                         // Scan up to the [BASE] [POSITION] string
                         var myRegex = "\(stringToScan!)\\d{4}"
-                        if let range = noWhiteSpaceString!.range(of: myRegex, options: .regularExpression) {
-                            var nsRange = NSRange(range, in: noWhiteSpaceString!)
+                        if let range = noWhiteSpaceString.range(of: myRegex, options: .regularExpression) {
+                            var nsRange = NSRange(range, in: noWhiteSpaceString)
                             nsRange.location += 5
                             nsRange.length -= 6
-                            if let range = Range(nsRange, in: noWhiteSpaceString!) {
-                                coverLetterNumberOfLines = String(noWhiteSpaceString![range])
+                            if let range = Range(nsRange, in: noWhiteSpaceString) {
+                                coverLetterNumberOfLines = String(noWhiteSpaceString[range])
                             }
                         } else {
                             // fallback to 3-digit pattern
                             myRegex = "\(stringToScan!)\\d{3}"
-                            if let range = noWhiteSpaceString!.range(of: myRegex, options: .regularExpression) {
-                                var nsRange = NSRange(range, in: noWhiteSpaceString!)
+                            if let range = noWhiteSpaceString.range(of: myRegex, options: .regularExpression) {
+                                var nsRange = NSRange(range, in: noWhiteSpaceString)
                                 nsRange.location += 5
                                 nsRange.length -= 6
-                                if let range = Range(nsRange, in: noWhiteSpaceString!) {
-                                    coverLetterNumberOfLines = String(noWhiteSpaceString![range])
+                                if let range = Range(nsRange, in: noWhiteSpaceString) {
+                                    coverLetterNumberOfLines = String(noWhiteSpaceString[range])
                                 }
                             }
                         }
                     }
-                    self.checkLineCountValidation(lineCount: coverLetterNumberOfLines!, sanityCheckedBidPackage: &sanityCheckedBidPackage)
+                    self.checkLineCountValidation(lineCount: coverLetterNumberOfLines, sanityCheckedBidPackage: &sanityCheckedBidPackage)
                 }
                 
             }
@@ -444,12 +444,12 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 //        }
 //    }
     
-    func checkLineCountValidation(lineCount: String, sanityCheckedBidPackage: inout NSDictionary?){
+    func checkLineCountValidation(lineCount: String?, sanityCheckedBidPackage: inout NSDictionary?){
         // Check this number of lines against the bid package number of lines
         // Alert the user if there is a mismatch
         if !self.bidPeriod!.isHistoric!.boolValue {
-            if !lineCount.isEmpty {
-                if self.bidPeriod!.lines?.count != Int(lineCount){
+            if (lineCount?.count ?? 0 > 0) {
+                if self.bidPeriod!.lines?.count != Int(lineCount!){
                     // Mismatch, alert the user
                     AlertService.showAlertForTopVC(title: "Bid Package Error", message: "The number of lines in the processed bid package does not match the number of lines in the Cover Letter.  Double check that this is indeed the case.  If so perform the following steps:\n\n  To try again: (1) delete the bid package, (2) close and reopen the app (by double-tapping the iPad's Home button and swiping CrewBid up), (3) downloading the bid package anew.", actions: [(title: "OK", style: .default, handler:{_ in
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
@@ -821,6 +821,15 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             }
         }
         try! self.bidPeriod?.managedObjectContext?.save()
+    }
+    //MARK: need to check this alert fn
+    func showSeniorityAlert(text: String){
+        AlertService.showAlertForTopVC(title: "Seniority List", message: text, actions: [(title: "OK", style: .default, handler:{_ in
+            self.bidPeriod?.coverLetterDisplayed = true
+            self.showCoverLetter()
+        }),(title: "View Seniority List", style: .default, handler:{_ in
+            self.showSeniority()
+        })])
     }
     
     func showToastWith(text: String, duration: TimeInterval){

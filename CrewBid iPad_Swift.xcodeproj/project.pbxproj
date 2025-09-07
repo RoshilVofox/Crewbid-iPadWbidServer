@@ -368,7 +368,11 @@
 		F4E5DA042E3C908D00C96BDF /* CBCalendarDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E5DA032E3C908D00C96BDF /* CBCalendarDayCell.swift */; };
 		F4E5DA062E3C9F9700C96BDF /* CBLineCalendarCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E5DA052E3C9F9700C96BDF /* CBLineCalendarCollectionViewController.swift */; };
 		F4E5DA0C2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E5DA0B2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift */; };
+		F4E659F82E656C5200E78B2A /* CBSendMail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E659F72E656C5200E78B2A /* CBSendMail.swift */; };
+		F4E659FA2E65806900E78B2A /* CBOfflineEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E659F92E65806900E78B2A /* CBOfflineEvents.swift */; };
 		F4EBBCAB2E4C6E1E00C87336 /* SegmentedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4EBBCAA2E4C6E1D00C87336 /* SegmentedTableViewCell.swift */; };
+		F4FE7F4A2E66ADA700795CC7 /* ServiceConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FE7F492E66ADA700795CC7 /* ServiceConnection.swift */; };
+		F4FE7F4E2E66F0F600795CC7 /* IAPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FE7F4D2E66F0F600795CC7 /* IAPHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -741,7 +745,11 @@
 		F4E5DA032E3C908D00C96BDF /* CBCalendarDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCalendarDayCell.swift; sourceTree = "<group>"; };
 		F4E5DA052E3C9F9700C96BDF /* CBLineCalendarCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLineCalendarCollectionViewController.swift; sourceTree = "<group>"; };
 		F4E5DA0B2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidLineCalendarCollectionView.swift; sourceTree = "<group>"; };
+		F4E659F72E656C5200E78B2A /* CBSendMail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSendMail.swift; sourceTree = "<group>"; };
+		F4E659F92E65806900E78B2A /* CBOfflineEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBOfflineEvents.swift; sourceTree = "<group>"; };
 		F4EBBCAA2E4C6E1D00C87336 /* SegmentedTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedTableViewCell.swift; sourceTree = "<group>"; };
+		F4FE7F492E66ADA700795CC7 /* ServiceConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceConnection.swift; sourceTree = "<group>"; };
+		F4FE7F4D2E66F0F600795CC7 /* IAPHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1656,6 +1664,10 @@
 				357F663F2E5829E3000273BE /* CBCommutability.swift */,
 				357F66412E589626000273BE /* CBRouteDomain.swift */,
 				358DC4E22E59BD34005F3D9A /* CBMonthToMonthPdfVC.swift */,
+				F4E659F72E656C5200E78B2A /* CBSendMail.swift */,
+				F4E659F92E65806900E78B2A /* CBOfflineEvents.swift */,
+				F4FE7F492E66ADA700795CC7 /* ServiceConnection.swift */,
+				F4FE7F4D2E66F0F600795CC7 /* IAPHelper.swift */,
 			);
 			path = "New Files";
 			sourceTree = "<group>";
@@ -2036,6 +2048,7 @@
 				F41EBF152DC4DB20001413DE /* BILineSort+CoreDataClass.swift in Sources */,
 				F41EBF162DC4DB20001413DE /* BILineSort+CoreDataProperties.swift in Sources */,
 				F4DA88152E57231D00ECC906 /* BISwaBidDataDownloadViewModel.swift in Sources */,
+				F4FE7F4E2E66F0F600795CC7 /* IAPHelper.swift in Sources */,
 				F41EBF172DC4DB20001413DE /* BIDay+CoreDataClass.swift in Sources */,
 				8B5F03282DC8D99F006A4E85 /* CBBrightnessViewController.swift in Sources */,
 				F41EBF182DC4DB20001413DE /* BIDay+CoreDataProperties.swift in Sources */,
@@ -2092,6 +2105,7 @@
 				F41EBF482DC4DB20001413DE /* CBCommuteDiffVCTableCell.swift in Sources */,
 				F41EBF492DC4DB20001413DE /* CBFlightDataChangeVCTableCell.swift in Sources */,
 				F41EBF4A2DC4DB20001413DE /* ShowCAPTableViewCell.swift in Sources */,
+				F4E659F82E656C5200E78B2A /* CBSendMail.swift in Sources */,
 				F41EBF4B2DC4DB20001413DE /* SwitchTableViewCell.swift in Sources */,
 				F4C6F9362DCB72940092C00C /* CBUserAccountDetail.swift in Sources */,
 				F41EBF4C2DC4DB20001413DE /* AwardActionsTableController.swift in Sources */,
@@ -2119,6 +2133,7 @@
 				F4D572F52E5472A000757145 /* CBBidSubmissionViewModel.swift in Sources */,
 				F41EBF5C2DC4DB20001413DE /* CBCityComparisonRuleCell.swift in Sources */,
 				F41EBF5D2DC4DB20001413DE /* CBCommutingRuleCell.swift in Sources */,
+				F4FE7F4A2E66ADA700795CC7 /* ServiceConnection.swift in Sources */,
 				F41EBF5E2DC4DB20001413DE /* CBComparisonRuleCell.swift in Sources */,
 				F41EBF5F2DC4DB20001413DE /* CBComutabilityRuleCell.swift in Sources */,
 				F41EBF602DC4DB20001413DE /* CBDayMonthRuleCell.swift in Sources */,
@@ -2186,6 +2201,7 @@
 				F41EBF8F2DC4DB20001413DE /* FaMoveBidListMenu.swift in Sources */,
 				F41EBF902DC4DB20001413DE /* CBBidListVC.swift in Sources */,
 				F41EBF912DC4DB20001413DE /* CBBidDocumentController.swift in Sources */,
+				F4E659FA2E65806900E78B2A /* CBOfflineEvents.swift in Sources */,
 				F41EBF922DC4DB20001413DE /* CBReportReleaseCollectionViewController.swift in Sources */,
 				F4B545AB2DCC648F00672102 /* CoreDataManager.swift in Sources */,
 				F41EBF932DC4DB20001413DE /* CBReportReleaseCVC.swift in Sources */,

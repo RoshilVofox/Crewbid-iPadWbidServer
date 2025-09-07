@@ -16,19 +16,45 @@ class AwardsViewModel {
     
     
     
-    func retrieveAwardFile(completion : @escaping (Bool)->Void) {
-        let bidDownload = BIBidFileDownload()
+//    func retrieveAwardFile(completion : @escaping (Bool)->Void) {
+//        let bidDownload = BIBidFileDownload()
+//        let bidInfo = BIBidInfo()
+//        let filename = bidInfo.bidAwardTextFilename()
+//        bidDownload.downloadBidFiles(sessionKey: CBGlobalMethods.shared.secretKey!, filename: filename){ result in
+//            switch result{
+//            case .success(let fileURL):
+//                do{
+//                    let fileContents = try String(contentsOf: fileURL, encoding: .utf8)
+//                    self.bidPeriod.awardString = fileContents
+//                    try self.bidPeriod.managedObjectContext?.save()
+//                    completion(true)
+//                }catch{
+//                    print("Failed to read award file: \(error.localizedDescription)")
+//                    completion(false)
+//                }
+//            case .failure(let error):
+//                print("Download error: \(error.localizedDescription)")
+//                completion(false)
+//            }
+//        }
+//    }
+    func retrieveAwardFile(completion: @escaping (Bool) -> Void) {
         let bidInfo = BIBidInfo()
         let filename = bidInfo.bidAwardTextFilename()
-        bidDownload.downloadBidFiles(sessionKey: CBGlobalMethods.shared.secretKey!, filename: filename){ result in
-            switch result{
+        guard let sessionKey = CBGlobalMethods.shared.secretKey else {
+            completion(false)
+            return
+        }
+
+        downloadBidFile(sessionKey: sessionKey, filename: filename) { result in
+            switch result {
             case .success(let fileURL):
-                do{
+                do {
                     let fileContents = try String(contentsOf: fileURL, encoding: .utf8)
                     self.bidPeriod.awardString = fileContents
                     try self.bidPeriod.managedObjectContext?.save()
                     completion(true)
-                }catch{
+                } catch {
                     print("Failed to read award file: \(error.localizedDescription)")
                     completion(false)
                 }
@@ -36,6 +62,28 @@ class AwardsViewModel {
                 print("Download error: \(error.localizedDescription)")
                 completion(false)
             }
+        }
+    }
+
+    private func downloadBidFile(sessionKey: String, filename: String, completion: @escaping (Result<URL, Error>) -> Void) {
+        let isTxt = (filename as NSString).pathExtension.uppercased() == "TXT"
+        let requestType = isTxt ? "TXTPACKET" : "ZIPPACKET"
+        let key = sessionKey.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? sessionKey
+        let bodyString = "REQUEST=\(requestType)&CREDENTIALS=\(key)&NAME=\(filename)"
+        
+        guard let bodyData = bodyString.data(using: .utf8) else {
+            completion(.failure(Errors.noData))
+            return
+        }
+
+        APIService.shared.fetchDownload(
+            urlString: EndPoint.shared.thirdpartyURL,
+            httpMethod: .POST,
+            body: bodyData,
+            headers: nil,
+            timeout: 300
+        ) { result in
+            completion(result.mapError { $0 as Error })
         }
     }
     

@@ -107,101 +107,165 @@ class BIBidInfoReader{
             }
         }
 
-    func checkForSeniorityVacationAndReadBidInfo(completion: @escaping (Bool) -> Void){
+//    func checkForSeniorityVacationAndReadBidInfo(completion: @escaping (Bool) -> Void){
+//        self.isNetworkNotAvailable = false
+//        self.isSeniorityVacParsingFailed = false
+//        
+//        let app = UIApplication.shared.delegate as! AppDelegate
+//        if app.connectedToInternet(){
+//            if app.objNetworkType == .free{
+//                self.isSeniorityVacParsingFailed = true
+//                let success = self.readBidData()
+//                if success{
+//                    NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+////                    CBVacationDownloader.shared.executeAutoDownload()
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+////                        NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
+//                        NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+//                        completion(true)
+//                    }
+//                }else{
+//                    completion(false)
+//                }
+//            }else{
+//                let url = URL(string: EndPoint.shared.GetAllSeniorityListFormatFromDB)
+//                let urlRequest = URLRequest(url: url!)
+//                
+//                let dataTask = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
+//                    
+//                    
+//                    if let error = error{
+//                        print("Error in retrieving data: \(error.localizedDescription)")
+//                        completion(false)
+//                        return
+//                        //handle error
+//                    }
+//                    if let data = data{
+//                        let httpResponse = response as! HTTPURLResponse
+//                        let range = response?.mimeType?.range(of: "application/json")
+//                        
+//                        if httpResponse.statusCode == 200 && range != nil{
+//                            do{
+//                                let responseArray = try JSONSerialization.jsonObject(with: data) as! [Any]
+//                                UserDefaults.standard.set(responseArray, forKey: KCBDefaultSeniorityListTableDBValues)
+//                                
+//                                for i in 0..<responseArray.count{
+//                                    let dict = responseArray[i] as! [String:Any]
+//                                    let position = self.dataSource.position.shortName
+//                                    
+//                                    if dict["Position"] as! String == position && dict["Round"] as! Int == self.dataSource.round{
+//                                        self.seniorityPositionDetails = dict
+//                                        break
+//                                    }
+//                                }
+//                                let success = self.readBidData()
+//                                if success { NotificationCenter.default.post(name:Notification.Name("ParsingBid"), object: nil)
+//                                    
+//                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+//                                        NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
+//                                        NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+//                                        completion(true)
+//                                    }
+//                                }else{
+//                                    completion(false)
+//                                }
+//                                
+//                            }catch{
+//                                print("JSON parsing error: \(error.localizedDescription)")
+//                                self.isNetworkNotAvailable = true
+//                                completion(false)
+//                            }
+//                        }else{
+//                            self.isNetworkNotAvailable = true
+//                            completion(false)
+//                        }
+//                    }else{
+//                        self.isNetworkNotAvailable = true
+//                        completion(false)
+//                    }
+//                }
+//                dataTask.resume()
+//            }
+//        }else{
+//            self.isNetworkNotAvailable = true
+//            let success = self.readBidData()
+//            if success{
+//                NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+////                CBVacationDownloader.shared.executeAutoDownload()
+////                NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+//                    NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+//                    completion(true)
+//                }
+//            }else{
+//                completion(false)
+//            }
+//        }
+//        
+//    }
+    
+    func checkForSeniorityVacationAndReadBidInfo(completion: @escaping (Bool) -> Void) {
         self.isNetworkNotAvailable = false
         self.isSeniorityVacParsingFailed = false
         
         let app = UIApplication.shared.delegate as! AppDelegate
-        if app.connectedToInternet(){
-            if app.objNetworkType == .free{
-                self.isSeniorityVacParsingFailed = true
-                let success = self.readBidData()
-                if success{
-                    NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
-//                    CBVacationDownloader.shared.executeAutoDownload()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-//                        NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
-                        NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
-                        completion(true)
-                    }
-                }else{
-                    completion(false)
-                }
-            }else{
-                let url = URL(string: EndPoint.shared.GetAllSeniorityListFormatFromDB)
-                let urlRequest = URLRequest(url: url!)
-                
-                let dataTask = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
-                    
-                    
-                    if let error = error{
-                        print("Error in retrieving data: \(error.localizedDescription)")
-                        completion(false)
-                        return
-                        //handle error
-                    }
-                    if let data = data{
-                        let httpResponse = response as! HTTPURLResponse
-                        let range = response?.mimeType?.range(of: "application/json")
-                        
-                        if httpResponse.statusCode == 200 && range != nil{
-                            do{
-                                let responseArray = try JSONSerialization.jsonObject(with: data) as! [Any]
-                                UserDefaults.standard.set(responseArray, forKey: KCBDefaultSeniorityListTableDBValues)
-                                
-                                for i in 0..<responseArray.count{
-                                    let dict = responseArray[i] as! [String:Any]
-                                    let position = self.dataSource.position.shortName
-                                    
-                                    if dict["Position"] as! String == position && dict["Round"] as! Int == self.dataSource.round{
-                                        self.seniorityPositionDetails = dict
-                                        break
-                                    }
-                                }
-                                let success = self.readBidData()
-                                if success { NotificationCenter.default.post(name:Notification.Name("ParsingBid"), object: nil)
-                                    
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                        NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
-                                        NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
-                                        completion(true)
-                                    }
-                                }else{
-                                    completion(false)
-                                }
-                                
-                            }catch{
-                                print("JSON parsing error: \(error.localizedDescription)")
-                                self.isNetworkNotAvailable = true
-                                completion(false)
-                            }
-                        }else{
-                            self.isNetworkNotAvailable = true
-                            completion(false)
-                        }
-                    }else{
-                        self.isNetworkNotAvailable = true
-                        completion(false)
-                    }
-                }
-                dataTask.resume()
-            }
-        }else{
-            self.isNetworkNotAvailable = true
-            let success = self.readBidData()
-            if success{
+        
+        func finishParsingBid(success: Bool) {
+            if success {
                 NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
-//                CBVacationDownloader.shared.executeAutoDownload()
-//                NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
                     NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
                     completion(true)
                 }
-            }else{
+            } else {
                 completion(false)
             }
         }
         
+        guard app.connectedToInternet() else {
+            self.isNetworkNotAvailable = true
+            let success = self.readBidData()
+            finishParsingBid(success: success)
+            return
+        }
+        
+        if app.objNetworkType == .free {
+            self.isSeniorityVacParsingFailed = true
+            let success = self.readBidData()
+            finishParsingBid(success: success)
+        } else {
+            APIService.shared.fetch(
+                urlString: EndPoint.shared.GetAllSeniorityListFormatFromDB,
+                parse: { data in
+                    try JSONSerialization.jsonObject(with: data) as! [Any]
+                },
+                completion: { result in
+                    switch result {
+                    case .success(let responseArray):
+                        UserDefaults.standard.set(responseArray, forKey: KCBDefaultSeniorityListTableDBValues)
+                        
+                        let position = self.dataSource.position.shortName
+                        for item in responseArray {
+                            if let dict = item as? [String: Any],
+                               dict["Position"] as? String == position,
+                               dict["Round"] as? Int == self.dataSource.round {
+                                self.seniorityPositionDetails = dict
+                                break
+                            }
+                        }
+                        
+                        let success = self.readBidData()
+                        finishParsingBid(success: success)
+                        
+                    case .failure(let error):
+                        print("Error fetching seniority list: \(error)")
+                        self.isNetworkNotAvailable = true
+                        completion(false)
+                    }
+                }
+            )
+        }
     }
 
     
@@ -2502,30 +2566,80 @@ class BIBidInfoReader{
         if self.isFABid(){
             if self.isFirstRoundBid(){
                 if self.bidPeriod!.isEtopsLinesContainsInBid == true{
-                    set = [BILineType.HardConUS.rawValue, BILineType.HardNonConUS.rawValue, BILineType.NonEtopsConUS.rawValue, BILineType.NonEtopsNonConUS.rawValue, BILineType.EtopsFAFirstRound.rawValue]
+                    set = [
+                        BILineType.HardConUS.rawValue,
+                        BILineType.HardNonConUS.rawValue,
+                        BILineType.NonEtopsConUS.rawValue,
+                        BILineType.NonEtopsNonConUS.rawValue,
+                        BILineType.EtopsFAFirstRound.rawValue
+                    ]
                 }else{
-                    set = [BILineType.HardConUS.rawValue, BILineType.HardNonConUS.rawValue]
+                    set = [
+                        BILineType.HardConUS.rawValue,
+                        BILineType.HardNonConUS.rawValue
+                    ]
                 }
             }else{
                 //FA 2nd round
                 if self.bidPeriod!.isEtopsLinesContainsInBid == true{
-                    set = [BILineType.HardConUS.rawValue, BILineType.HardNonConUS.rawValue, BILineType.ReserveLine.rawValue, BILineType.NonEtopsReserve.rawValue, BILineType.NonReserveEtops.rawValue, BILineType.NonEtopsConUS.rawValue, BILineType.NonEtopsNonConUS.rawValue]
+                    set = [
+                        BILineType.HardConUS.rawValue,
+                        BILineType.HardNonConUS.rawValue,
+                        BILineType.ReserveLine.rawValue,
+                        BILineType.NonEtopsReserve.rawValue,
+                        BILineType.NonReserveEtops.rawValue,
+                        BILineType.NonEtopsConUS.rawValue,
+                        BILineType.NonEtopsNonConUS.rawValue
+                    ]
                 }else{
-                    set = [BILineType.HardConUS.rawValue, BILineType.HardNonConUS.rawValue, BILineType.ReserveLine.rawValue]
+                    set = [
+                        BILineType.HardConUS.rawValue,
+                        BILineType.HardNonConUS.rawValue,
+                        BILineType.ReserveLine.rawValue
+                    ]
                 }
             }
         }else{ // is Pilot Bid
             if self.isFirstRoundBid(){
                 if self.bidPeriod!.isEtopsLinesContainsInBid == true{
-                    set = [BILineType.HardConUS.rawValue, BILineType.HardNonConUS.rawValue, BILineType.ReserveLine.rawValue, BILineType.NonEtopsConUS.rawValue, BILineType.NonEtopsNonConUS.rawValue, BILineType.NonEtopsReserve.rawValue, BILineType.BlankLine.rawValue, BILineType.MixedLine.rawValue, BILineType.NonReserveEtops.rawValue, BILineType.EtopsReserve.rawValue]
+                    set = [
+                        BILineType.HardConUS.rawValue,
+                        BILineType.HardNonConUS.rawValue,
+                        BILineType.ReserveLine.rawValue,
+                        BILineType.NonEtopsConUS.rawValue,
+                        BILineType.NonEtopsNonConUS.rawValue,
+                        BILineType.NonEtopsReserve.rawValue,
+                        BILineType.BlankLine.rawValue,
+                        BILineType.MixedLine.rawValue,
+                        BILineType.NonReserveEtops.rawValue,
+                        BILineType.EtopsReserve.rawValue
+                    ]
                 }else{
-                    set = [BILineType.HardConUS.rawValue, BILineType.HardNonConUS.rawValue, BILineType.ReserveLine.rawValue, BILineType.BlankLine.rawValue, BILineType.MixedLine.rawValue]
+                    set = [
+                        BILineType.HardConUS.rawValue,
+                        BILineType.HardNonConUS.rawValue,
+                        BILineType.ReserveLine.rawValue,
+                        BILineType.BlankLine.rawValue,
+                        BILineType.MixedLine.rawValue
+                    ]
                 }
             }else{//Pilot 2nd round
-                if self.isFirstRoundBid(){
-                    set = [BILineType.HardLine.rawValue, BILineType.MixedLine.rawValue, BILineType.ReserveLine.rawValue, BILineType.NonEtopsHard.rawValue, BILineType.NonEtopsMixed.rawValue, BILineType.NonEtopsReserve.rawValue, BILineType.NonReserveEtops.rawValue]
+                if self.bidPeriod!.isEtopsLinesContainsInBid == true{
+                    set = [
+                        BILineType.HardLine.rawValue,
+                        BILineType.MixedLine.rawValue,
+                        BILineType.ReserveLine.rawValue,
+                        BILineType.NonEtopsHard.rawValue,
+                        BILineType.NonEtopsMixed.rawValue,
+                        BILineType.NonEtopsReserve.rawValue,
+                        BILineType.NonReserveEtops.rawValue
+                    ]
                 }else{
-                    set = [BILineType.HardLine.rawValue, BILineType.MixedLine.rawValue, BILineType.ReserveLine.rawValue]
+                    set = [
+                        BILineType.HardLine.rawValue,
+                        BILineType.MixedLine.rawValue,
+                        BILineType.ReserveLine.rawValue
+                    ]
                 }
             }
             
@@ -2554,7 +2668,13 @@ class BIBidInfoReader{
         rule.category = BIFilterRuleCategory.BIAmPmFilterRuleCategory.rawValue as NSNumber
         rule.type = BIAmPmFilterRuleType.BIAmPmCompoundType.rawValue as NSNumber
         
-        set = [BILineAMPM.AMLine.rawValue, BILineAMPM.PMLine.rawValue, BILineAMPM.MixedAMPMLine.rawValue, BILineAMPM.BlankAMPMLine.rawValue, BILineAMPM.RedEyeAMPMLine.rawValue]
+        set = [
+            BILineAMPM.AMLine.rawValue,
+            BILineAMPM.PMLine.rawValue,
+            BILineAMPM.MixedAMPMLine.rawValue,
+            BILineAMPM.BlankAMPMLine.rawValue,
+            BILineAMPM.RedEyeAMPMLine.rawValue
+        ]
         rule.variables = ["SET": set]
         
         // Filter rule for Flight Attendant Round 2 bidding Reserve line Types
@@ -2562,7 +2682,14 @@ class BIBidInfoReader{
             rule = BIFilterRule(context: context)
             rule.bidPeriod = bidPeriod
             rule.category = BIFilterRuleCategory.BIFaReserveFilterRuleCategory.rawValue as NSNumber
-            set = [BIFaReserveLineType.SnrAMres.rawValue, BIFaReserveLineType.SnrPMres.rawValue, BIFaReserveLineType.JnrAMres.rawValue, BIFaReserveLineType.JnrPMres.rawValue, BIFaReserveLineType.JnrLateRes.rawValue, BIFaReserveLineType.NoType.rawValue]
+            set = [
+                BIFaReserveLineType.SnrAMres.rawValue,
+                BIFaReserveLineType.SnrPMres.rawValue,
+                BIFaReserveLineType.JnrAMres.rawValue,
+                BIFaReserveLineType.JnrPMres.rawValue,
+                BIFaReserveLineType.JnrLateRes.rawValue,
+                BIFaReserveLineType.NoType.rawValue
+            ]
             
             rule.variables = ["SET": set]
         }
@@ -2573,7 +2700,14 @@ class BIBidInfoReader{
             rule.bidPeriod = bidPeriod
             rule.category = BIFilterRuleCategory.BIPositionFilterRuleCategory.rawValue as NSNumber
             rule.type = BIPositionFilterRuleType.BIPositionCompoundType.rawValue as NSNumber
-            set = [BIFaPosition.FaPositionA.rawValue, BIFaPosition.FaPositionB.rawValue, BIFaPosition.FaPositionC.rawValue, BIFaPosition.FaPositionD.rawValue, BIFaPosition.FaPositionMultiple.rawValue, BIFaPosition.FaPositionNA.rawValue]
+            set = [
+                BIFaPosition.FaPositionA.rawValue,
+                BIFaPosition.FaPositionB.rawValue,
+                BIFaPosition.FaPositionC.rawValue,
+                BIFaPosition.FaPositionD.rawValue,
+                BIFaPosition.FaPositionMultiple.rawValue,
+                BIFaPosition.FaPositionNA.rawValue
+            ]
             rule.variables = ["SET": set]
         }
         // Filter rule to allow weekdays only (Mon-Fri, but no Sat or Sun).

@@ -164,74 +164,98 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         print("Filename: \(bidFileName)")
         if AppState.shared.isHistoricBid{
             //MARK:  Historic Bid Data
-            print("Bid: Historic")
-            if self.isSecondRoundBid() && !self.isFABid(){
-                self.bidDownloadViewModel.fetchHistoricBidLines(filename: linesTextFileName){result in
-                    DispatchQueue.main.async {
-                        switch result{
-                        case .success(let fileURL): print("File saved at: \(fileURL)")
-                        case .failure(let error): print("Historic bid download failed: \(error.localizedDescription)")
-                        }
-                    }
-                }
-            }
-            self.bidDownloadViewModel.fetchHistoricBidLines(filename: bidFileName){ result in
-                DispatchQueue.main.async {
-                    switch result{
-                    case .success(let fileURL):
-                        print("File unzipped at: \(fileURL)")
+            print("Bid: Historic Bid")
+            if self.isSecondRoundBid() && !self.isFABid() {
+                    // First download TXT file
+                self.bidDownloadViewModel.fetchHistoricBidLines(filename: linesTextFileName, useDataRest: false) { result in
                         DispatchQueue.main.async {
-                                NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
-                            }
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                            BIBidInfoReader.shared.checkForSeniorityVacationAndReadBidInfo(){success in
-                                if success{
-                                    self.loginActions()
-                                }
+                            switch result {
+                            case .success(let fileURL):
+                                print("TXT file saved at: \(fileURL)")
                                 
+                                // After TXT, proceed with bid file
+                                self.downloadHistoricBidFile(bidFileName: bidFileName)
+                                
+                            case .failure(let error):
+                                print("Historic TXT download failed: \(error.localizedDescription)")
+                                
+                                // Still proceed with bid file even if TXT fails
+                                self.downloadHistoricBidFile(bidFileName: bidFileName)
                             }
                         }
-                    case .failure(let error):
-                        print("Historic bid download failed: \(error.localizedDescription)")
                     }
+                } else {
+                    // Directly download main bid file
+                    self.downloadHistoricBidFile(bidFileName: bidFileName)
                 }
-            }
-        }
-        else if AppState.shared.isMockData{
-            //MARK:  Mock Bid Data
+            
+        }else if AppState.shared.isMockData{//MARK:  Mock Bid Data
+            
             print("Bid: Mock data")
             
+        }else{//MARK:  New Bid Data
             
-            
-        }
-        else{//MARK:  New Bid Data
             print("Bid: New bid")
-            self.bidDownloadViewModel.fetchNewBidData(sessionKey: sessionKey, fileName: bidFileName){result in
-                switch result{
-                case .success(let fileURL):
-                    print("File unzipped at: \(fileURL)")
-                    DispatchQueue.main.async {
-                            NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
-                        }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        guard !self.hasStartedBidProcessing else {
-                                return
-                            }
-                        self.hasStartedBidProcessing = true
-                        BIBidInfoReader.shared.checkForSeniorityVacationAndReadBidInfo(){success in
-                            if success{
-                                self.loginActions()
-                            }
-                            
-                        }
+            bidDownloadViewModel.fetchNewBidData(sessionKey: sessionKey, fileName: bidFileName) { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let fileURL):
+                        self.handleNewBidDownloadSuccess(fileURL: fileURL)
+                        
+                    case .failure(let error):
+                        self.handleNewBidDownloadFailure(error: error)
                     }
-                case .failure(let error):
-                    print("Error downloading new bid: \(error.localizedDescription)")
-                    NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
                 }
             }
         }
     }
+    
+    private func downloadHistoricBidFile(bidFileName: String) {
+        self.bidDownloadViewModel.fetchHistoricBidLines(filename: bidFileName, useDataRest: true) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let fileURL):
+                    print("File unzipped at: \(fileURL)")
+                    NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        BIBidInfoReader.shared.checkForSeniorityVacationAndReadBidInfo() { success in
+                            if success {
+                                self.loginActions()
+                            }
+                        }
+                    }
+                case .failure(let error):
+                    print("Historic bid download failed: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    
+    private func handleNewBidDownloadSuccess(fileURL: URL) {
+        print("File unzipped at: \(fileURL)")
+        NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
+        
+        guard !self.hasStartedBidProcessing else { return }
+        self.hasStartedBidProcessing = true
+        
+        BIBidInfoReader.shared.checkForSeniorityVacationAndReadBidInfo { success in
+            if success {
+                DispatchQueue.main.async {
+                    self.loginActions()
+                }
+            } else {
+                NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+            }
+        }
+    }
+
+    private func handleNewBidDownloadFailure(error: Error) {
+        print("Error downloading new bid: \(error.localizedDescription)")
+        NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+    }
+    
+    
     
     func handleAwardRetrieval(sessionKey: String){
         print("Award retrieval")

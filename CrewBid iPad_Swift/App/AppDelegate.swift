@@ -47,7 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     var isFlightNetwork: Bool = false
     var isPingSuccess: Bool = false
     var ObjUserAccount:CBUserAccountDetail?
-
+    var backgroundTransferCompletionHandler: (() -> Void)?
     var pinger:SimplePing?
     var sendTimer: Timer?
     var locationManager = CLLocationManager()
@@ -92,7 +92,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         onLaunch = true
         IQKeyboardManager.shared.isEnabled = true
         CBUtils().initialize()
-        APIService.shared.getApplicationLoadData()
+//        APIService.shared.getApplicationLoadData()
+        self.getApplicationLoadData()
 //        FirebaseApp.configure()
 //        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(false)
 //        Crashlytics.crashlytics().checkForUnsentReports { hasUnsentReports in
@@ -189,6 +190,50 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         }
         
     }
+    func getApplicationLoadData() {
+        let url = EndPoint.shared.getapplicationLoadDatas
+        let body: [String: Any] = ["FromApp": fromApp]
+
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: body) else { return }
+
+        APIService.shared.fetch(
+            urlString: url,
+            method: .POST,
+            body: jsonData,
+            headers: ["Content-Type": "application/x-www-form-urlencoded"],
+            parse: { data in
+                guard let dict = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                    throw Errors.decodingError
+                }
+                return dict
+            },
+            completion: { result in
+                switch result {
+                case .success(let res):
+                    if let isNeedToEnableVacationDifference = res["IsNeedtoEnableVacationDifference"] as? Bool {
+                        UserDefaults.standard.set(isNeedToEnableVacationDifference, forKey: "IsNeedtoEnableVacationDifference")
+                    }
+
+                    if let isNeedToEnableFourDigitForFA = res["PSFileFormatChange"] as? NSNumber {
+                        UserDefaults.standard.set(isNeedToEnableFourDigitForFA, forKey: "PSFileFormatChange")
+                        UserDefaults.standard.synchronize()
+                        
+                    }
+
+                    if let flightDataVersion = res["FlightDataVersion"] as? String {
+                        let currentVersion = UserDefaults.standard.string(forKey: "FlightDataVersion")
+                        if currentVersion != flightDataVersion {
+                            UserDefaults.standard.setValue(flightDataVersion, forKey: "FlightDataVersion")
+                            UserDefaults.standard.setValue(0, forKey: "IsLatestFlightDataDownloaded")
+                        }
+                    }
+
+                case .failure:
+                    UserDefaults.standard.set(5, forKey: "PSFileFormatChange")
+                }
+            }
+        )
+    }
 
     
     func iCloudAccessCheck(){
@@ -215,14 +260,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     
     func locationAccess() {
         locationManager.delegate = self
-        locationManager.startUpdatingHeading()
-        let status = CLLocationManager.authorizationStatus()
-        if status == .authorizedWhenInUse {
-            self.simplePingStarter()
-        }else{
-            locationManager.requestWhenInUseAuthorization()
-        }
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestWhenInUseAuthorization()
     }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        switch status {
+           case .authorizedWhenInUse, .authorizedAlways:
+               // Now safe to start location updates
+               manager.startUpdatingHeading()
+               manager.startMonitoringSignificantLocationChanges()
+               self.simplePingStarter()
+           case .denied, .restricted:
+               print("User denied location access.")
+           case .notDetermined:
+               print("Waiting for user to decide...")
+           @unknown default:
+               break
+           }
+    }
+    
     func getTransactions() -> [String]?{
         let store = NSUbiquitousKeyValueStore.default
         var transactionIdentifiers = store.object(forKey: "transaction") as? [String]
@@ -289,7 +346,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     }
     func isUserInformationAvailable() -> Bool{
         var isAvailable = false
-        if ObjUserAccount?.isuserIfoAvaialble() == true{
+        if ObjUserAccount?.isUserInfoAvailable() == true{
             isAvailable = true
         }
         return isAvailable
@@ -334,7 +391,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     
     func simplePingStarter(){
         dicSSIDDetails = fetchSSIDInfo()
-        print("SSID Details: \(String(describing: dicSSIDDetails))")
+        print("SSID Details:%@",dicSSIDDetails ?? [:])
         UserDefaults.standard.set(dicSSIDDetails?["SSID"], forKey: "SSID")
         self.runWithHostName("itunes.apple.com")
     }

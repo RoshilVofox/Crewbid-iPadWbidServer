@@ -8,133 +8,249 @@
 import Foundation
 import ZipArchive
 
+private var didCheckFlightData: Bool = false
+
 class BIBidFileDownloadViewModel {
-    func fetchHistoricBidLines(filename: String, completion: @escaping (Result<URL, Error>) -> Void) {
+    func fetchHistoricBidLines(
+        filename: String,
+        useDataRest: Bool = false,
+        completion: @escaping (Result<URL, Error>) -> Void
+    ) {
         let year = AppState.shared.mockDataYear!
         let month = AppState.shared.mockDataMonth!
         let round = GlobalBidInfo.shared.round
         let base = GlobalBidInfo.shared.base
         let position = GlobalBidInfo.shared.position.shortName
-        let urlString = EndPoint.shared.DownloadHistoricalBidLineAll
-        checkFlightData()
-        let proceedWithDownload: () -> Void = {
-                let dict: [String: Any] = ["Year": year,"Month": month,"Round": round,"Domicile": base,"Position": position,"FileName": filename]
-                BIBidFileDownload.shared.downloadHistoricBid(from: dict, urlString: urlString) { result in
-                    switch result {
-                    case .success(let data):
-                        do {
-                            let jsonData = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-                            let dataBytes = jsonData!["Data"] as? [Any]
-                            let count = dataBytes!.count
-                            let bytes = UnsafeMutablePointer<UInt8>.allocate(capacity: count)
-                            for i in 0..<count {
-                                if let str = dataBytes![i] as? Int {
-                                    bytes[i] = UInt8(str)
-                                }
-                            }
-                            let fileData = Data(bytes: bytes, count: count)
-                            bytes.deallocate()
 
+        //Choose endpoint
+        let urlString = useDataRest
+            ? EndPoint.shared.DownloadHistoricalDataRest
+            : EndPoint.shared.DownloadHistoricalBidLineAll
+
+        if !didCheckFlightData {
+            checkFlightData()
+            didCheckFlightData = true
+        }
+
+        let proceedWithDownload: () -> Void = {
+            let dict: [String: Any] = [
+                "Year": year,
+                "Month": month,
+                "Round": round,
+                "Domicile": base,
+                "Position": position,
+                "FileName": filename
+            ]
+
+            guard let body = try? JSONSerialization.data(withJSONObject: dict) else {
+                completion(.failure(Errors.noData))
+                return
+            }
+
+            APIService.shared.fetch(
+                urlString: urlString,
+                method: .POST,
+                body: body,
+                headers: ["Content-Length": String(body.count)],
+                parse: { data in
+                    guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                        throw Errors.decodingError
+                    }
+                    return json
+                },
+                completion: { (result: Result<[String: Any], Errors>) in
+                    switch result {
+                    case .success(let jsonData):
+                        guard let dataBytes = jsonData["Data"] as? [Int] else {
+                            completion(.failure(Errors.noData))
+                            return
+                        }
+                        
+                        let fileData = Data(dataBytes.map { UInt8($0) })
+                        
+                        do {
                             let directoryURL = BIBidInfo.shared.downloadDirectory()
                             let dataWriteURL = directoryURL.appendingPathComponent(filename)
+                            
                             try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
                             try fileData.write(to: dataWriteURL, options: [])
-
-                            let unzipSuccess = SSZipArchive.unzipFile(atPath: dataWriteURL.path, toDestination: directoryURL.path)
-                            if unzipSuccess {
-                                completion(.success(directoryURL))
+                            
+                            if filename.lowercased().hasSuffix(".737") {
+                                let unzipSuccess = SSZipArchive.unzipFile(
+                                    atPath: dataWriteURL.path,
+                                    toDestination: directoryURL.path
+                                )
+                                if unzipSuccess {
+                                    completion(.success(directoryURL))
+                                } else {
+                                    completion(.failure(Errors.unzipFailed))
+                                }
                             } else {
-                                completion(.failure(NetworkError.unzipFailed))
+                                completion(.success(directoryURL))
                             }
-
                         } catch {
-                            print("Error parsing JSON data: \(error.localizedDescription)")
                             completion(.failure(error))
                         }
-
+                        
                     case .failure(let error):
-                        print("Download error: \(error)")
                         completion(.failure(error))
                     }
                 }
-            }
-            if GlobalBidInfo.shared.round == 1 && GlobalBidInfo.shared.position == .FlightAttendant{
-                CBUtils.getFALISTWB4JSONFromServer{
-                    proceedWithDownload()
-                }
-            }else if round == 2 && GlobalBidInfo.shared.position != .FlightAttendant {
-                CBUtils.getMissingTripJSON(year: year, month: month, round: round, base: base, position: position) { success in
-                    if success {
-                        print("MissingTripInfo loaded.")
-                    } else {
-                        print("MissingTripInfo fetch failed.")
-                    }
-                    proceedWithDownload()
-                }
-            } else {
+            )
+        }
+
+        if round == 1 && GlobalBidInfo.shared.position == .FlightAttendant {
+            CBUtils.getFALISTWB4JSONFromServer {
                 proceedWithDownload()
             }
-    }
-    
-    func fetchNewBidData(sessionKey: String, fileName: String, completion: @escaping (Result<URL, Error>) -> Void) {
-        let bidDownload = BIBidFileDownload()
-        let filesToDownload = BIBidInfo.shared.bidDataFiles()
-        var fileIterator = filesToDownload!.makeIterator()
-        let dataSource = GlobalBidInfo.shared
-        if dataSource.round == 1 && dataSource.position == .FlightAttendant{
-            CBUtils.getFALISTWB4JSONFromServer(){
-                print("FA List WB4 JSON fetched and saved")
-                downloadNext()
-            }
-        }else if dataSource.round == 2 && dataSource.position != .FlightAttendant {
-            CBUtils.getMissingTripJSON( year: dataSource.year, month: dataSource.month, round: dataSource.round, base: dataSource.base, position: dataSource.position.shortName) { status in
-                if status {
-                    print("MissingTripInfo is now populated.")
-                } else {
-                    print("Failed to get missing trip info.")
-                }
-                downloadNext()
+        } else if round == 2 && GlobalBidInfo.shared.position != .FlightAttendant {
+            CBUtils.getMissingTripJSON(year: year, month: month, round: round, base: base, position: position) { _ in
+                proceedWithDownload()
             }
         } else {
-            downloadNext()
+            proceedWithDownload()
         }
-        
+    }
+    
+//    func fetchNewBidData(sessionKey: String, fileName: String, completion: @escaping (Result<URL, Error>) -> Void) {
+//        let bidDownload = BIBidFileDownload()
+//        let filesToDownload = BIBidInfo.shared.bidDataFiles()
+//        var fileIterator = filesToDownload!.makeIterator()
+//        let dataSource = GlobalBidInfo.shared
+//        if dataSource.round == 1 && dataSource.position == .FlightAttendant{
+//            CBUtils.getFALISTWB4JSONFromServer(){
+//                print("FA List WB4 JSON fetched and saved")
+//                downloadNext()
+//            }
+//        }else if dataSource.round == 2 && dataSource.position != .FlightAttendant {
+//            CBUtils.getMissingTripJSON( year: dataSource.year, month: dataSource.month, round: dataSource.round, base: dataSource.base, position: dataSource.position.shortName) { status in
+//                if status {
+//                    print("MissingTripInfo is now populated.")
+//                } else {
+//                    print("Failed to get missing trip info.")
+//                }
+//                downloadNext()
+//            }
+//        } else {
+//            downloadNext()
+//        }
+//        
+//        func downloadNext() {
+//            guard let nextFile = fileIterator.next() else {
+//                completion(.success(BIBidInfo.shared.downloadDirectory()))
+//                self.performPostDownloadTasks()
+//                return
+//            }
+//            bidDownload.downloadBidFiles(sessionKey: sessionKey, filename: nextFile){ result in
+//                switch result{
+//                case .success(let tempURL):
+//                    let destinationDir = BIBidInfo.shared.downloadDirectory()
+//                    let destinationURL = destinationDir.appendingPathComponent(nextFile)
+//                    do{
+//                        // Create destination directory if needed
+//                        try FileManager.default.createDirectory(at: destinationDir, withIntermediateDirectories: true, attributes: nil)
+//                        // Remove existing file if present
+//                        if FileManager.default.fileExists(atPath: destinationURL.path){
+//                            try FileManager.default.removeItem(at: destinationURL)
+//                        }
+//                        // Move downloaded file
+//                        try FileManager.default.moveItem(at: tempURL, to: destinationURL)
+//                        let success = SSZipArchive.unzipFile(atPath: destinationURL.path, toDestination: destinationDir.path)
+//                        if success{
+//                            downloadNext()
+//                        }else{
+//                            completion(.failure(Errors.unzipFailed))
+//                        }
+//                    }catch{
+//                        completion(.failure(error))
+//                    }
+//                case .failure(let error):
+//                    print("Error downloading bid file: \(error)")
+//                    completion(.failure(error))
+//                }
+//            }
+//        }
+//    }
+    
+    func fetchNewBidData(sessionKey: String, fileName: String, completion: @escaping (Result<URL, Error>) -> Void) {
+        let filesToDownload = BIBidInfo.shared.bidDataFiles() ?? []
+        var fileIterator = filesToDownload.makeIterator()
+        let dataSource = GlobalBidInfo.shared
+
         func downloadNext() {
             guard let nextFile = fileIterator.next() else {
+                performPostDownloadTasks()
                 completion(.success(BIBidInfo.shared.downloadDirectory()))
-                self.performPostDownloadTasks()
                 return
             }
-            bidDownload.downloadBidFiles(sessionKey: sessionKey, filename: nextFile){ result in
-                switch result{
+
+            downloadFile(sessionKey: sessionKey, filename: nextFile) { result in
+                switch result {
                 case .success(let tempURL):
                     let destinationDir = BIBidInfo.shared.downloadDirectory()
                     let destinationURL = destinationDir.appendingPathComponent(nextFile)
-                    do{
-                        // Create destination directory if needed
+                    do {
                         try FileManager.default.createDirectory(at: destinationDir, withIntermediateDirectories: true, attributes: nil)
-                        // Remove existing file if present
-                        if FileManager.default.fileExists(atPath: destinationURL.path){
+                        if FileManager.default.fileExists(atPath: destinationURL.path) {
                             try FileManager.default.removeItem(at: destinationURL)
                         }
-                        // Move downloaded file
                         try FileManager.default.moveItem(at: tempURL, to: destinationURL)
-                        let success = SSZipArchive.unzipFile(atPath: destinationURL.path, toDestination: destinationDir.path)
-                        if success{
+
+                        let unzipSuccess = SSZipArchive.unzipFile(atPath: destinationURL.path, toDestination: destinationDir.path)
+                        if unzipSuccess {
                             downloadNext()
-                        }else{
-                            completion(.failure(NetworkError.unzipFailed))
+                        } else {
+                            completion(.failure(Errors.unzipFailed))
                         }
-                    }catch{
+                    } catch {
                         completion(.failure(error))
                     }
+
                 case .failure(let error):
                     print("Error downloading bid file: \(error)")
                     completion(.failure(error))
                 }
             }
         }
-//        downloadNext() // Remove This // By Raja
+
+        func downloadFile(sessionKey: String, filename: String, completion: @escaping (Result<URL, Error>) -> Void) {
+            let isTxt = (filename as NSString).pathExtension.uppercased() == "TXT"
+            let requestType = isTxt ? "TXTPACKET" : "ZIPPACKET"
+            let key = sessionKey.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? sessionKey
+            let bodyString = "REQUEST=\(requestType)&CREDENTIALS=\(key)&NAME=\(filename)"
+            guard let bodyData = bodyString.data(using: .utf8) else {
+                completion(.failure(Errors.noData))
+                return
+            }
+
+            APIService.shared.fetchDownload(
+                urlString: EndPoint.shared.thirdpartyURL,
+                httpMethod: .POST,
+                body: bodyData,
+                headers: nil,
+                timeout: 300
+            ) { completion($0.mapError { $0 as Error }) }
+        }
+
+        if dataSource.round == 1 && dataSource.position == .FlightAttendant {
+            CBUtils.getFALISTWB4JSONFromServer {
+                print("FA List WB4 JSON fetched and saved")
+                downloadNext()
+            }
+        } else if dataSource.round == 2 && dataSource.position != .FlightAttendant {
+            CBUtils.getMissingTripJSON(
+                year: dataSource.year,
+                month: dataSource.month,
+                round: dataSource.round,
+                base: dataSource.base,
+                position: dataSource.position.shortName
+            ) { status in
+                print(status ? "MissingTripInfo populated." : "Failed to get missing trip info.")
+                downloadNext()
+            }
+        } else {
+            downloadNext()
+        }
     }
 
     private func performPostDownloadTasks(){

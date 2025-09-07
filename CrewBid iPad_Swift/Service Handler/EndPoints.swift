@@ -49,6 +49,6 @@ class EndPoint {
     var GetAllSeniorityListFormatFromDB = "\(baseURL)GetAllSeniorityListFormatFromDB/"
     var getFirstRoundPaperBidVacationsAndUsers = "\(baseURL)GetFirstRoundPaperBidVacationsAndUsers"
     var addSubmittedRawDataToServer = "\(baseURL)AddSubmittedRawDataToServer"
-
+    var VPSPing = "\(baseURL)VPSPing"
 }
 

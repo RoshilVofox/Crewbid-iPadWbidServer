@@ -1309,6 +1309,16 @@ class CBUtils{
         return totalDays + 1
         
     }
+    
+    class func isLocalUserInformationAvailable() -> Bool {
+        let app = UIApplication.shared.delegate as! AppDelegate
+        return app.isUserInformationAvailable()
+    }
+    
+    
+    
+    
+    
 }
 
 class JWTDecoder{

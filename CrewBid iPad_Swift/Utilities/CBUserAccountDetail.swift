@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseCrashlytics
 
-final class CBUserAccountDetail {
+ class CBUserAccountDetail {
     
     var Token = String ()
     var FirstName = String ()
@@ -23,18 +23,22 @@ final class CBUserAccountDetail {
     var LoginuserId = String ()
     var AcceptEmail = Bool ()
     var UserAccountDateTime = String()
-    var IsMonthlySubscribed = Bool()
+    var isYearlySubscribed: Bool = false
+    var isMonthlySubscribed: Bool = false
+    var isCBMonthlySubscribed: Bool = false
+    var isCBYearlySubscribed: Bool = false
     var WBExpirationDate = String()
     var isFree = false
     var topSubscriptionLine = String()
     var secondSubscriptionLine = String()
     var thirdSubscriptionLine = String()
-    
+    var dicLoginAuthDetails: NSMutableDictionary = NSMutableDictionary()
+    var dicLogInAuthExternalUser: NSMutableDictionary = NSMutableDictionary()
     
     var isAutherized : Bool?
     
     // Can't init is singleton
-    private init() { }
+     init() { }
     
     // MARK: Shared Instance
     
@@ -48,7 +52,7 @@ final class CBUserAccountDetail {
     /// Saving user account data to the plist
     // Function to save user information to a plist file
 
-    func saveUserinfo() {
+    func saveUserInfo() {
         let DicUserDetails : NSMutableDictionary = NSMutableDictionary()
         DicUserDetails["CellPhone"] = CellPhone
         DicUserDetails["Email"] = Email
@@ -61,7 +65,7 @@ final class CBUserAccountDetail {
         DicUserDetails["UserAccountDateTime"] = UserAccountDateTime
         DicUserDetails["LoginuserId"] = LoginuserId
         DicUserDetails["WBExpirationDate"] = WBExpirationDate
-        DicUserDetails["IsMonthlySubscribed"] = IsMonthlySubscribed
+        DicUserDetails["IsMonthlySubscribed"] = isMonthlySubscribed
         DicUserDetails["topSubscriptionLine"] = topSubscriptionLine
         DicUserDetails["secondSubscriptionLine"] = secondSubscriptionLine
         DicUserDetails["thirdSubscriptionLine"] = thirdSubscriptionLine
@@ -122,7 +126,7 @@ final class CBUserAccountDetail {
     
     // Function to check if user information is available in the plist file
     
-    func isuserIfoAvaialble() -> Bool {
+    func isUserInfoAvailable() -> Bool {
         var flag: Bool = false
         var dicUserData: NSMutableDictionary = NSMutableDictionary()
         dicUserData = readPlist()
@@ -142,12 +146,12 @@ final class CBUserAccountDetail {
             LoginuserId = dicUserData["LoginuserId"] as! String
             Token = dicUserData["Token"] as! String
             if dicUserData["IsMonthlySubscribed"] as? String == nil {
-                IsMonthlySubscribed = dicUserData["IsMonthlySubscribed"] as! Bool
+                isMonthlySubscribed = dicUserData["IsMonthlySubscribed"] as! Bool
             } else {
                 let IsMonthlySubscribedStr = dicUserData["IsMonthlySubscribed"] as! String
                 if let IsMonthlySubscribedInt = Int(IsMonthlySubscribedStr) {
                     let IsMonthlySubscribedNum = NSNumber(value:IsMonthlySubscribedInt)
-                    IsMonthlySubscribed = IsMonthlySubscribedNum.boolValue
+                    isMonthlySubscribed = IsMonthlySubscribedNum.boolValue
                 }
             }
             if (dicUserData["topSubscriptionLine"] as? String) != nil {
