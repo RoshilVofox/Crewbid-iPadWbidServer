@@ -92,7 +92,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         onLaunch = true
         IQKeyboardManager.shared.isEnabled = true
         CBUtils().initialize()
-        APIService.shared.getApplicationLoadData()
+//        APIService.shared.getApplicationLoadData()
+        self.getApplicationLoadData()
 //        FirebaseApp.configure()
 //        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(false)
 //        Crashlytics.crashlytics().checkForUnsentReports { hasUnsentReports in
@@ -188,6 +189,50 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
             
         }
         
+    }
+    func getApplicationLoadData() {
+        let url = EndPoint.shared.getapplicationLoadDatas
+        let body: [String: Any] = ["FromApp": fromApp]
+
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: body) else { return }
+
+        APIService.shared.fetch(
+            urlString: url,
+            method: .POST,
+            body: jsonData,
+            headers: ["Content-Type": "application/x-www-form-urlencoded"],
+            parse: { data in
+                guard let dict = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                    throw Errors.decodingError
+                }
+                return dict
+            },
+            completion: { result in
+                switch result {
+                case .success(let res):
+                    if let isNeedToEnableVacationDifference = res["IsNeedtoEnableVacationDifference"] as? Bool {
+                        UserDefaults.standard.set(isNeedToEnableVacationDifference, forKey: "IsNeedtoEnableVacationDifference")
+                    }
+
+                    if let isNeedToEnableFourDigitForFA = res["PSFileFormatChange"] as? NSNumber {
+                        UserDefaults.standard.set(isNeedToEnableFourDigitForFA, forKey: "PSFileFormatChange")
+                        UserDefaults.standard.synchronize()
+                        
+                    }
+
+                    if let flightDataVersion = res["FlightDataVersion"] as? String {
+                        let currentVersion = UserDefaults.standard.string(forKey: "FlightDataVersion")
+                        if currentVersion != flightDataVersion {
+                            UserDefaults.standard.setValue(flightDataVersion, forKey: "FlightDataVersion")
+                            UserDefaults.standard.setValue(0, forKey: "IsLatestFlightDataDownloaded")
+                        }
+                    }
+
+                case .failure:
+                    UserDefaults.standard.set(5, forKey: "PSFileFormatChange")
+                }
+            }
+        )
     }
 
     
