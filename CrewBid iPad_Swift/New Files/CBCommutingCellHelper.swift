@@ -473,7 +473,8 @@ class CBCommutingCellHelper: NSObject {
             // block 2
             //Calculating earliest departure time
             // Warning : May need to add a sleep code here, refer crewbid iPad
-            let nonConnect1 = getNonConnectFlights(withCommuteCity: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
+//     MARK:       function name is diffrent from block 1
+            let nonConnect1 = getNonConnectFlights(withCommuteCity1: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
             
 //            union of oneConnect and NonConnect
             let oneAndNonConnect1: NSMutableArray = NSMutableArray()
@@ -482,7 +483,8 @@ class CBCommutingCellHelper: NSObject {
             }
             
             if isNonStopOnly != true {
-                let oneConnect1 = getOneConnectFlights(withCommuteCity: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
+                //     MARK:       function name is diffrent from block 1
+                let oneConnect1 = getOneConnectFlights(withCommuteCity1: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
                 if oneConnect1.count > 0 {
                     oneAndNonConnect1.addObjects(from: oneConnect1 as! [Any])
                 }
@@ -524,6 +526,7 @@ class CBCommutingCellHelper: NSObject {
         return (false, commuteCity)
     }
     
+    //    for block 1 earliest arrival
     func getNonConnectFlights(withCommuteCity commutecity: String, domicile: String, date: String, dep Cdep: Int, arr Carr: Int, flightRoteDetailsArr FlightRoteDetailsArr: NSMutableArray, bidperiod: BIBidPeriod, connectTime: Int) -> NSMutableArray {
         self.connectTime = connectTime
         let flightRouteArray: NSMutableArray = FlightRoteDetailsArr
@@ -557,6 +560,7 @@ class CBCommutingCellHelper: NSObject {
         return routeDomainArray
     }
     
+//    for block 1 earliest arrival
     func getOneConnectFlights(withCommuteCity commutecity: String, domicile: String, date: String, dep Cdep: Int, arr Carr: Int, flightRoteDetailsArr FlightRoteDetailsArr: NSMutableArray, bidperiod: BIBidPeriod, connectTime: Int) -> NSMutableArray {
         self.connectTime = connectTime
         var oneConnectRouteDomainArray: NSMutableArray = NSMutableArray()
@@ -566,7 +570,7 @@ class CBCommutingCellHelper: NSObject {
         for item in newFRD1 {
             if let dic = item as? [String: Any] {
                 var carr1 = (dic["Carr"] as? NSNumber)?.intValue ?? 0
-                carr1 += 1
+                carr1 += connectTime
                 let newAr: NSArray = newFRD2.filtered(using: NSPredicate(format: "(Orig == %@)&&((Cdep >= %d)||(RouteNum == %d))&&(Cdep > %d)", dic["Dest"] as! String, carr1, (dic["RouteNum"] as? NSNumber)?.intValue ?? 0, (dic["Cdep"] as? NSNumber)?.intValue ?? 0)) as NSArray
                 if newAr.count > 0 {
                     for newDic in newAr {
@@ -596,6 +600,7 @@ class CBCommutingCellHelper: NSObject {
                 routeDomain.RtDep = tempDict0["Cdep"] as? NSNumber
                 routeDomain.RtArr = tempDict1["Carr"] as? NSNumber
                 routeDomain.RtTime = NSNumber(value: arr2 - dep1)
+                oneConnectRouteDomainArray.add(routeDomain)
             }
         }
         oneConnectRouteDomainArray = (oneConnectRouteDomainArray.sortedArray(using: [NSSortDescriptor(key: "Route", ascending: true), NSSortDescriptor(key: "RtTime", ascending: true)]) as NSArray).mutableCopy() as! NSMutableArray
@@ -687,7 +692,8 @@ class CBCommutingCellHelper: NSObject {
 //            Block 2
             //Calculating earliest departure time
             // Warning : May need to add a sleep code here, refer crewbid iPad
-            let nonConnect1 = getNonConnectFlights(withCommuteCity: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
+            //     MARK:       function name is diffrent from block 1
+            let nonConnect1 = getNonConnectFlights(withCommuteCity1: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
             
 //            union of oneConnect and NonConnect
             let oneAndNonConnect1 = NSMutableArray()
@@ -696,7 +702,8 @@ class CBCommutingCellHelper: NSObject {
             }
             
             if isNonStopOnly != true {
-                let oneConnect1 = getOneConnectFlights(withCommuteCity: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
+                //     MARK:       function name is diffrent from block 1
+                let oneConnect1 = getOneConnectFlights(withCommuteCity1: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
                 if oneConnect1.count > 1 {
                     oneAndNonConnect1.addObjects(from: oneConnect1 as! [Any])
                 }
@@ -741,5 +748,87 @@ class CBCommutingCellHelper: NSObject {
             return (true, commuteArray)
         }
         return(false, commuteArray)
+    }
+    
+    //    for block 2 latest departure
+    func getNonConnectFlights(withCommuteCity1 commutecity: String, domicile: String, date: String, dep Cdep: Int, arr Carr: Int, flightRoteDetailsArr FlightRoteDetailsArr: NSMutableArray, bidperiod: BIBidPeriod, connectTime: Int) -> NSMutableArray {
+        self.connectTime = connectTime
+        var arr: NSMutableArray = NSMutableArray()
+        let filtered = FlightRoteDetailsArr.filtered(using: NSPredicate(format: "(Dest == %@) && (Orig == %@)", commutecity, domicile))
+        let nonconnect = (filtered as NSArray).filtered(using: NSPredicate(format: "(Carr <= %d) && (Cdep >= %d)", Carr, Cdep))
+        for item in nonconnect {
+            if let dic2 = item as? [String : Any]{
+                let dep1 = (dic2["Cdep"] as? NSNumber)?.intValue ?? 0
+                let arr1 = (dic2["Carr"] as? NSNumber)?.intValue ?? 0
+                let routeDomain = CBRouteDomain()
+                let date = self.date(fromDateString: dic2["FlightDate"] as? String, asFormat: "yyyy-MM-dd'T'HH:mm:ss")
+                
+                routeDomain.Date = date
+                if let object = dic2["Orig"], let anObject = dic2["Dest"] {
+                    routeDomain.Route = "\(object)-\(anObject)"
+                }
+                
+                routeDomain.RtDep = dic2["Cdep"] as? NSNumber
+                routeDomain.RtArr = dic2["Carr"] as? NSNumber
+                routeDomain.RtTime = NSNumber(value: arr1 - dep1)
+                arr.add(routeDomain)
+            }
+        }
+        arr = (arr.sortedArray(using: [NSSortDescriptor(key: "Route", ascending: true), NSSortDescriptor(key: "RtTime", ascending: true)]) as NSArray).mutableCopy() as! NSMutableArray
+        return arr
+    }
+    
+//    for block 2 latest departure
+    func getOneConnectFlights(withCommuteCity1 commutecity: String, domicile: String, date: String, dep Cdep: Int, arr Carr: Int, flightRoteDetailsArr FlightRoteDetailsArr: NSMutableArray, bidperiod: BIBidPeriod, connectTime: Int) -> NSMutableArray {
+        var newArr: NSMutableArray = NSMutableArray()
+        /*MARK:
+         For calculating latestDeparture,
+         we need to set the Orig as commute City and Dest as Domicile,
+         for other cases we need to set Orig as Domicle and Dest as Commute city*/
+        let newFRD1 = FlightRoteDetailsArr.filtered(using: NSPredicate(format: "(Orig == %@) &&(Cdep >= %d)&&(Dest != %@) ", domicile, Cdep, commutecity))
+        let newFRD2 = FlightRoteDetailsArr.filtered(using: NSPredicate(format: "(Dest == %@) && (Carr <= %d)", commutecity , Carr))
+        
+        let filteredFinalArray: NSMutableArray = NSMutableArray()
+        
+        for item in newFRD1 {
+            if let dic = item as? [String : Any] {
+                var Carr1 = (dic["Carr"] as? NSNumber)?.intValue ?? 0
+                Carr1 = Carr1 + connectTime
+                let newAr: NSArray = (newFRD2 as NSArray).filtered(using: NSPredicate(format: "(Orig == %@)&&((Cdep >= %d)||(RouteNum == %d))&& (Cdep > %d)", dic["Dest"] as! String, Carr1, (dic["RouteNum"] as? NSNumber)?.intValue ?? 0, (dic["Cdep"] as? NSNumber)?.intValue ?? 0)) as NSArray
+                
+                if newAr.count > 0 {
+                    for newDic in newAr {
+                        let combinationsArray: NSMutableArray = NSMutableArray()
+                        combinationsArray.add(dic)
+                        combinationsArray.add(newDic)
+                        filteredFinalArray.add(combinationsArray)
+                    }
+                }
+            }
+        }
+        
+        
+        for item in filteredFinalArray {
+            if let arr = item as? [[String : Any]] {
+                let myDict0 = arr[0]
+                let myDict1 = arr[1]
+                let dep1 = (myDict0["Cdep"] as? NSNumber)?.intValue ?? 0
+                let arr2 = (myDict1["Carr"] as? NSNumber)?.intValue ?? 0
+                let routeDomain = CBRouteDomain()
+                let date = self.date(fromDateString: myDict0["FlightDate"] as? String, asFormat: "yyyy-MM-dd'T'HH:mm:ss")
+                routeDomain.Date = date
+                if let object = myDict0["Orig"], let anObject = myDict0["Dest"], let aAnObject = myDict1["Dest"] {
+                    routeDomain.Route = "\(object)-\(anObject)-\(aAnObject)"
+                }
+                routeDomain.RtDep = myDict0["Cdep"] as? NSNumber
+                routeDomain.RtArr = myDict1["Carr"] as? NSNumber
+                routeDomain.RtTime = NSNumber(value: arr2 - dep1)
+                newArr.add(routeDomain)
+            }
+        }
+        
+        
+        newArr = (newArr.sortedArray(using: [NSSortDescriptor(key: "Route", ascending: true), NSSortDescriptor(key: "RtTime", ascending: true)]) as NSArray).mutableCopy() as! NSMutableArray
+        return newArr
     }
 }
