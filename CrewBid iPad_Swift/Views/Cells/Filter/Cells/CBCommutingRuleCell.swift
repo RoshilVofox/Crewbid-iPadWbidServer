@@ -309,7 +309,7 @@ class CBCommutingRuleCell: UITableViewCell, CommutingManualRuleCellDelegate, GRB
         else {
             defaultTimes.add(3000)
         }
-        UserDefaults.standard.set(defaultTimes, forKey: "kCBDefaultCommutingTimesKey")
+        UserDefaults.standard.set(defaultTimes, forKey: kCBDefaultCommutingTimesKey)
         UserDefaults.standard.set(self.noMidCheckButton.isSelected, forKey: "NoMidCheckStateCommute")
         setNeedsLayout()
         AlertService.showAlertForTopVC(title: "Commuting Defaults Saved!", message: "")
@@ -322,7 +322,7 @@ class CBCommutingRuleCell: UITableViewCell, CommutingManualRuleCellDelegate, GRB
     func loadDefaults() {
         var defaultCommuteTimes = NSArray()
         if UserDefaults.standard.value(forKey: kCBDefaultCommutingTimesKey) != nil {
-            defaultCommuteTimes = UserDefaults.standard.value(forKey: kCBDefaultCommutingTimesKey) as! NSArray
+            defaultCommuteTimes = (UserDefaults.standard.value(forKey: kCBDefaultCommutingTimesKey) as? NSArray)!
         }
         let state: Bool = UserDefaults.standard.bool(forKey: "NoMidCheckStateCommute")
         self.noMidCheckButton.isSelected = state
@@ -347,49 +347,49 @@ class CBCommutingRuleCell: UITableViewCell, CommutingManualRuleCellDelegate, GRB
             let sunRet = (defaultCommuteTimes[7] as! NSNumber).intValue
             
             if monThursDept > -1 {
-                departureMonThurs.text = String(format: "&04d", monThursDept)
+                departureMonThurs.text = String(format: "%04zd", monThursDept)
             }
             else {
                 departureMonThurs.text = nil
             }
-            if monThursRet > 3000 {
-                returnMonThurs.text = String(format: "&04d", monThursRet)
+            if monThursRet < 3000 {
+                returnMonThurs.text = String(format: "%04zd", monThursRet)
             }
             else {
                 returnMonThurs.text = nil
             }
             if friDept > -1 {
-                departureFri.text = String(format: "&04d", friDept)
+                departureFri.text = String(format: "%04zd", friDept)
             }
             else {
                 departureFri.text = nil
             }
-            if friRet > 3000 {
-                returnFri.text = String(format: "&04d", friRet)
+            if friRet < 3000 {
+                returnFri.text = String(format: "%04zd", friRet)
             }
             else {
                 returnFri.text = nil
             }
             if satDept > -1 {
-                departureSat.text = String(format: "&04d", satDept)
+                departureSat.text = String(format: "%04zd", satDept)
             }
             else {
                 departureSat.text = nil
             }
-            if satRet > 3000 {
-                returnSat.text = String(format: "&04d", satRet)
+            if satRet < 3000 {
+                returnSat.text = String(format: "%04zd", satRet)
             }
             else {
                 returnSat.text = nil
             }
             if sunDept > -1 {
-                departureSun.text = String(format: "&04d", sunDept)
+                departureSun.text = String(format: "%04zd", sunDept)
             }
             else {
                 departureSun.text = nil
             }
-            if sunRet > 3000 {
-                returnSun.text = String(format: "&04d", sunRet)
+            if sunRet < 3000 {
+                returnSun.text = String(format: "%04zd", sunRet)
             }
             else {
                 returnSun.text = nil
@@ -905,7 +905,7 @@ class CBCommutingRuleCell: UITableViewCell, CommutingManualRuleCellDelegate, GRB
         
         self.updateFilterVariableswithInputData()
         
-        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+//        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
     }
     
     func calculateCommutingManualFilter() {
