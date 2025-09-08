@@ -627,8 +627,6 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     
     //    MARK: downloadWBid OR FA Data
     func downloadWBidOrFAData(downloadWbidDetails: [String: Any], canDownloadVacation: @escaping (Bool) -> Void) {
-        print("see me")
-        var urlString = "GetCrewBidJsonVacFile"
         do {
             let data = try JSONSerialization.data(withJSONObject: downloadWbidDetails, options: [])
             guard let jsonString = String(data: data, encoding: .utf8) else {
@@ -636,15 +634,15 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 canDownloadVacation(false)
                 return
             }
-            urlString = constructURLString(urlString: urlString)
+            let urlString = EndPoint.shared.getCrewBidJsonVacFile
             if !urlString.isEmpty {
                 print("Internet is available")
                 
                 self.postDataForVacationDownloading(urlName: urlString, jsonString: jsonString) { success in
                     if success {
-                        print("✅ Vacation data validated/downloaded successfully.")
+                        print("Vacation data validated/downloaded successfully.")
                     } else {
-                        print("❌ Vacation data failed to validate/download.")
+                        print("Vacation data failed to validate/download.")
                     }
                     canDownloadVacation(true)
                 }
@@ -659,200 +657,341 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         }
     }
     
-    func constructURLString(urlString: String) -> String {
-        guard let domain = app.Domain else {
-            print("Error: Domain is nil")
-            return ""
-        }
-        let webData = app.webData
-        let serviceURL = "\(domain)\(urlString)"
-        let finalURLString = serviceURL.replacingOccurrences(of: " ", with: "%20")
-        print(finalURLString)
-        return finalURLString
-    }
+//    func constructURLString(urlString: String) -> String {
+//        guard let domain = app.Domain else {
+//            print("Error: Domain is nil")
+//            return ""
+//        }
+//        let webData = app.webData
+//        let serviceURL = "\(domain)\(urlString)"
+//        let finalURLString = serviceURL.replacingOccurrences(of: " ", with: "%20")
+//        print(finalURLString)
+//        return finalURLString
+//    }
+    
+//    func postDataForVacationDownloading(urlName: String, jsonString: String, completion: @escaping (Bool) -> Void) {
+//        print("in post section")
+//        print(jsonString)
+//        
+//        guard let url = URL(string: urlName) else {
+//            print("Invalid URL")
+//            completion(false)
+//            return
+//        }
+//
+//        
+//        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeoutVD)
+//        request.httpMethod = "POST"
+//        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+//        request.httpBody = jsonString.data(using: .utf8)
+//        
+//        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+//            if let error = error {
+//                print("WBID OR FA DOWNLOAD FAILED")
+//                print("Request failed: \(error)")
+//                DispatchQueue.main.async {
+//                    completion(false)
+//                }
+//                return
+//            }
+//            
+//            guard let data = data else {
+//                print("No data received")
+//                DispatchQueue.main.async {
+//                    completion(false)
+//                }
+//                return
+//            }
+//            
+//            if let responseString = String(data: data, encoding: .utf8) {
+////                print("Mutable Response String: \(responseString)")
+//                do {
+//                    if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+//                        if let fileName = json["FileName"], !(fileName is NSNull),
+//                           let jsonData = json["JsonData"] as? [String: Any] {
+//                            
+//                            if self.vactionDownloadType == .downloadWbidVacation {
+//                                print("able to download wbid vacation from api")
+//                                self.callToSetAutoDownloadOrValidateForWBID(jsonData: jsonData) { success in
+//                                    DispatchQueue.main.async {
+//                                        completion(success)
+//                                    }
+//                                }
+//                            } else if self.vactionDownloadType == .downloadFAVacation {
+//                                print("able to download fa vacation data from api")
+//                                self.callToSetAutoDownloadOrValidateForFA(jsonData: jsonData) { success in
+//                                    DispatchQueue.main.async {
+//                                        completion(success)
+//                                    }
+//                                }
+//                            } else {
+//                                print("Unknown vacation download type")
+//                                DispatchQueue.main.async {
+//                                    completion(false)
+//                                }
+//                            }
+//                            return
+//                        } else {
+//                            print("FileName is null or missing")
+//                            if let message = json["Message"] as? String,
+//                               message.lowercased().hasPrefix("it takes us about") {
+//                                AlertService.showAlertForTopVC(title: "EOM Vacation", message: "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button.")
+//                            }
+//                            DispatchQueue.main.async {
+//                                completion(false)
+//                            }
+//                            return
+//                        }
+//                    }
+//                } catch {
+//                    print("JSON parsing error: \(error)")
+//                    DispatchQueue.main.async {
+//                        completion(false)
+//                    }
+//                    return
+//                }
+//            } else {
+//                print("Received binary mutable data of size: \(data.count) bytes")
+//                DispatchQueue.main.async {
+//                    completion(false)
+//                }
+//            }
+//        }
+//        
+//        task.resume()
+//    }
     
     func postDataForVacationDownloading(urlName: String, jsonString: String, completion: @escaping (Bool) -> Void) {
-        print("in post section")
-        print(jsonString)
+//        print("in post section")
+//        print(jsonString)
         
-        guard let url = URL(string: urlName) else {
-            print("Invalid URL")
+        guard let bodyData = jsonString.data(using: .utf8) else {
+            print("Invalid JSON string encoding")
             completion(false)
             return
         }
-
         
-        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeoutVD)
-        request.httpMethod = "POST"
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.httpBody = jsonString.data(using: .utf8)
-        
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("WBID OR FA DOWNLOAD FAILED")
-                print("Request failed: \(error)")
+        APIService.shared.fetch(
+            urlString: urlName,
+            method: .POST,
+            body: bodyData,
+            headers: [
+                "Content-Type": "application/x-www-form-urlencoded"
+            ],
+            parse: { data in
+                // Try parsing JSON
+                try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] ?? [:]
+            },
+            completion: { result in
                 DispatchQueue.main.async {
-                    completion(false)
-                }
-                return
-            }
-            
-            guard let data = data else {
-                print("No data received")
-                DispatchQueue.main.async {
-                    completion(false)
-                }
-                return
-            }
-            
-            if let responseString = String(data: data, encoding: .utf8) {
-//                print("Mutable Response String: \(responseString)")
-                do {
-                    if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    switch result {
+                    case .success(let json):
                         if let fileName = json["FileName"], !(fileName is NSNull),
                            let jsonData = json["JsonData"] as? [String: Any] {
                             
                             if self.vactionDownloadType == .downloadWbidVacation {
                                 print("able to download wbid vacation from api")
                                 self.callToSetAutoDownloadOrValidateForWBID(jsonData: jsonData) { success in
-                                    DispatchQueue.main.async {
-                                        completion(success)
-                                    }
+                                    completion(success)
                                 }
                             } else if self.vactionDownloadType == .downloadFAVacation {
                                 print("able to download fa vacation data from api")
                                 self.callToSetAutoDownloadOrValidateForFA(jsonData: jsonData) { success in
-                                    DispatchQueue.main.async {
-                                        completion(success)
-                                    }
+                                    completion(success)
                                 }
                             } else {
                                 print("Unknown vacation download type")
-                                DispatchQueue.main.async {
-                                    completion(false)
-                                }
-                            }
-                            return
-                        } else {
-                            print("FileName is null or missing")
-                            if let message = json["Message"] as? String,
-                               message.lowercased().hasPrefix("it takes us about") {
-                                AlertService.showAlertForTopVC(title: "EOM Vacation", message: "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button.")
-                            }
-                            DispatchQueue.main.async {
                                 completion(false)
                             }
-                            return
+                            
+                        } else {
+//                            print("FileName is null or missing")
+                            if let message = json["Message"] as? String,
+                               message.lowercased().hasPrefix("it takes us about") {
+                                AlertService.showAlertForTopVC(
+                                    title: "EOM Vacation",
+                                    message: "You do not have Vacation this month. If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button."
+                                )
+                            }
+                            completion(false)
                         }
-                    }
-                } catch {
-                    print("JSON parsing error: \(error)")
-                    DispatchQueue.main.async {
+                        
+                    case .failure(let error):
+                        print("WBID OR FA DOWNLOAD FAILED with error: \(error)")
                         completion(false)
                     }
-                    return
-                }
-            } else {
-                print("Received binary mutable data of size: \(data.count) bytes")
-                DispatchQueue.main.async {
-                    completion(false)
                 }
             }
-        }
-        
-        task.resume()
+        )
     }
 
     
     //    MARK: download crewbid Vacation file
+//    func downloadCrewbidVacationFiles(crewbidType: String, completion: @escaping (Bool) -> Void) {
+//        self.bidPeriod?.userVacationWbidOrCrewBid = crewbidType
+//        let secretEnabled = self.bidPeriod?.secretSwitchOn ?? "NO"
+//        var pilot: NSNumber?
+//        var isEom = 1
+//
+//        if secretEnabled == "YES" {
+//            pilot = self.bidPeriod?.crewIdentifier ?? 0
+//            self.urlRequest = URLRequest(url: kSwaptimizerUrlTest, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeout)
+//        } else {
+//            pilot = self.bidPeriod?.swaptimizerIdentifier ?? 0
+//            self.urlRequest = URLRequest(url: kSwaptimizerUrl, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeout)
+//        }
+//
+//        guard let pilotNumber = pilot else {
+//            print("not a valid pilot")
+//            completion(false)
+//            return
+//        }
+//
+//        let accessKey = kswaptimizerAccessKey
+//        let appVersion = CBUtils.AppVersion()
+//        let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid
+//        isEom = (vacationType == "CREWBIDF") ? 1 : 0
+//
+//        let postDict: [String: Any] = ["Pilot": pilotNumber, "CrewBidVersion": appVersion, "AccessKey": accessKey, "FWeek": isEom]
+//
+//        self.urlRequest?.httpMethod = "POST"
+//        self.urlRequest?.setValue("text/plain", forHTTPHeaderField: "Accept")
+//        self.urlRequest?.setValue("text/plain", forHTTPHeaderField: "Content-Type")
+//
+//        do {
+//            let jsonData = try JSONSerialization.data(withJSONObject: postDict, options: [])
+//            self.urlRequest?.setValue("\(jsonData.count)", forHTTPHeaderField: "Content-Length")
+//            self.urlRequest?.httpBody = jsonData
+//        } catch {
+//            print("Error serializing JSON: \(error)")
+//            completion(false)
+//            return
+//        }
+//
+//        let task = URLSession.shared.dataTask(with: self.urlRequest!) { data, response, error in
+//            if let error = error {
+//                print("WBID OR FA DOWNLOAD FAILED")
+//                print("Request failed: \(error)")
+//                DispatchQueue.main.async {
+//                    completion(false)
+//                }
+//                return
+//            }
+//
+//            guard let data = data else {
+//                print("No data received")
+//                DispatchQueue.main.async {
+//                    completion(false)
+//                }
+//                return
+//            }
+//
+//            if let responseString = String(data: data, encoding: .utf8) {
+////                print("Mutable Response String: \(responseString)")
+//            }
+//
+//            do {
+//                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+//                   let pilotInfo = json["PilotInfo"] as? [String: Any],
+//                   pilotInfo["HasAccount"] as? Int == 1 {
+//                    
+//                    print("Able to download crewbid vacation from API")
+//                    self.callToSetAutoDownloadOrValidateForSwaptimizer(jsonData: json) { success in
+//                        DispatchQueue.main.async {
+//                            completion(success)
+//                        }
+//                    }
+//                } else {
+//                    print("No swaptimizer account")
+//                    DispatchQueue.main.async {
+//                        completion(false)
+//                    }
+//                }
+//            } catch {
+//                print("Error finding has account while parsing")
+//                DispatchQueue.main.async {
+//                    completion(false)
+//                }
+//            }
+//        }
+//        task.resume()
+//    }
+    
     func downloadCrewbidVacationFiles(crewbidType: String, completion: @escaping (Bool) -> Void) {
         self.bidPeriod?.userVacationWbidOrCrewBid = crewbidType
         let secretEnabled = self.bidPeriod?.secretSwitchOn ?? "NO"
         var pilot: NSNumber?
         var isEom = 1
-
+        
+        // Select pilot number and base URL
         if secretEnabled == "YES" {
             pilot = self.bidPeriod?.crewIdentifier ?? 0
-            self.urlRequest = URLRequest(url: kSwaptimizerUrlTest, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeout)
         } else {
             pilot = self.bidPeriod?.swaptimizerIdentifier ?? 0
-            self.urlRequest = URLRequest(url: kSwaptimizerUrl, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: kURLConnectionTimeout)
         }
-
+        
         guard let pilotNumber = pilot else {
             print("not a valid pilot")
             completion(false)
             return
         }
-
+        
+        let baseUrl = (secretEnabled == "YES") ? kSwaptimizerUrlTest : kSwaptimizerUrl
         let accessKey = kswaptimizerAccessKey
         let appVersion = CBUtils.AppVersion()
         let vacationType = self.bidPeriod?.userVacationWbidOrCrewBid
         isEom = (vacationType == "CREWBIDF") ? 1 : 0
-
-        let postDict: [String: Any] = ["Pilot": pilotNumber, "CrewBidVersion": appVersion, "AccessKey": accessKey, "FWeek": isEom]
-
-        self.urlRequest?.httpMethod = "POST"
-        self.urlRequest?.setValue("text/plain", forHTTPHeaderField: "Accept")
-        self.urlRequest?.setValue("text/plain", forHTTPHeaderField: "Content-Type")
-
-        do {
-            let jsonData = try JSONSerialization.data(withJSONObject: postDict, options: [])
-            self.urlRequest?.setValue("\(jsonData.count)", forHTTPHeaderField: "Content-Length")
-            self.urlRequest?.httpBody = jsonData
-        } catch {
-            print("Error serializing JSON: \(error)")
+        
+        let postDict: [String: Any] = [
+            "Pilot": pilotNumber,
+            "CrewBidVersion": appVersion,
+            "AccessKey": accessKey,
+            "FWeek": isEom
+        ]
+        
+        // Serialize JSON body
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: postDict, options: []) else {
+            print("Error serializing JSON")
             completion(false)
             return
         }
-
-        let task = URLSession.shared.dataTask(with: self.urlRequest!) { data, response, error in
-            if let error = error {
-                print("WBID OR FA DOWNLOAD FAILED")
-                print("Request failed: \(error)")
+        
+        // Use APIService.shared.fetch
+        APIService.shared.fetch(
+            urlString: baseUrl.absoluteString,
+            method: .POST,
+            body: jsonData,
+            headers: [
+                "Accept": "text/plain",
+                "Content-Type": "text/plain",
+                "Content-Length": "\(jsonData.count)"
+            ],
+            parse: { data in
+                // Parse into JSON dictionary
+                try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] ?? [:]
+            },
+            completion: { result in
                 DispatchQueue.main.async {
-                    completion(false)
-                }
-                return
-            }
-
-            guard let data = data else {
-                print("No data received")
-                DispatchQueue.main.async {
-                    completion(false)
-                }
-                return
-            }
-
-            if let responseString = String(data: data, encoding: .utf8) {
-//                print("Mutable Response String: \(responseString)")
-            }
-
-            do {
-                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-                   let pilotInfo = json["PilotInfo"] as? [String: Any],
-                   pilotInfo["HasAccount"] as? Int == 1 {
-                    
-                    print("Able to download crewbid vacation from API")
-                    self.callToSetAutoDownloadOrValidateForSwaptimizer(jsonData: json) { success in
-                        DispatchQueue.main.async {
-                            completion(success)
+                    switch result {
+                    case .success(let json):
+                        if let pilotInfo = json["PilotInfo"] as? [String: Any],
+                           pilotInfo["HasAccount"] as? Int == 1 {
+                            print("Able to download crewbid vacation from API")
+                            self.callToSetAutoDownloadOrValidateForSwaptimizer(jsonData: json) { success in
+                                completion(success)
+                            }
+                        } else {
+                            print("No swaptimizer account")
+                            completion(false)
                         }
-                    }
-                } else {
-                    print("No swaptimizer account")
-                    DispatchQueue.main.async {
+                        
+                    case .failure(let error):
+                        print("WBID OR FA DOWNLOAD FAILED with error: \(error)")
                         completion(false)
                     }
                 }
-            } catch {
-                print("Error finding has account while parsing")
-                DispatchQueue.main.async {
-                    completion(false)
-                }
             }
-        }
-        task.resume()
+        )
     }
 
     
@@ -1764,68 +1903,137 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     }
 
     
+//    func captureVacationDetails(jsonData: [String: Any]) {
+//        let app = UIApplication.shared.delegate as! AppDelegate
+//        let file = jsonData["File"] as! [String: Any]
+//        let topLevel = file["SWAPtimizer_CrewBid_Data"] as! [String: Any]
+//        let header = topLevel["Header"] as! [String: Any]
+//        var dicVacationDetails: [String: Any] = [:]
+//        var sampleDic : [String: Any] = [:]
+//        sampleDic["Test"] = "Test"
+//        var pilotInfo = jsonData["PilotInfo"] as! [String: Any]
+//        dicVacationDetails["EmpNum"] = Int(pilotInfo["Pilot"] as? String ?? "") ?? 0
+//        dicVacationDetails["Base"] = header["Base"]
+//        dicVacationDetails["Month"] = Int(header["BidPeriodMonth"] as? String ?? "") ?? 0
+//        dicVacationDetails["Year"] = Int(header["BidPeriodYear"] as? String ?? "") ?? 0
+//        dicVacationDetails["Round"] = Int(header["Round"] as? String ?? "") ?? 0
+//        var position = pilotInfo["Seat"] as? String ?? ""
+//        
+//        if(position == "CA") {
+//            position = "CP"
+//        }
+//        dicVacationDetails["Position"] = position
+//        dicVacationDetails["SwapJsonFileName"] = header["FileIdent"]
+//        var url2 = URL(string: "")
+//        if app.connectedToInternet() {
+//            if let baseURL = URL(string: app.Domain!) {
+//                let url = baseURL.appendingPathComponent("SaveSwaptimizerFileToServer")
+//                print(url) // http://www.wbidmax.com:8000/WBidDataDwonloadAuthService.svc/SaveSwaptimizerFileToServer
+//                url2 = url
+//            }
+//            self.urlRequest = URLRequest(url: url2!)
+//            let jsonDataToSend = try! JSONSerialization.data(withJSONObject: dicVacationDetails, options: [])
+//            let jsonString = String(data: jsonDataToSend, encoding: .utf8)
+//            self.urlRequest?.httpBody = jsonString?.data(using: .utf8)
+//            self.urlRequest?.httpMethod = "POST"
+//            self.urlRequest?.setValue("852275", forHTTPHeaderField: "Content-Length")
+//            let dataTask = URLSession.shared.dataTask(with: urlRequest!) { data, response, error in
+//                // Handle request error
+//                if let error = error as NSError?, error.code == NSURLErrorTimedOut {
+////                    MARK: need to add CBOffline events
+////                    let objEvent = CBOfflineEvents()
+//                    if let monthValue = self.bidPeriod?.month {
+////                        objEvent.sendOfflineDataForTimeOut(url.absoluteString, month: monthValue)
+//                    }
+//                }
+//
+//                if let data = data {
+//                    DispatchQueue.main.async {
+////                        self.hud?.hide(true)
+//                    }
+//                    // check status code and possibly MIME type (which shall start with "application/json"):
+//                    if let httpResponse = response as? HTTPURLResponse,
+//                       httpResponse.statusCode == 200,
+//                       let mimeType = response?.mimeType,
+//                       mimeType.contains("application/json") {
+//                        // Handle successful JSON response
+//                    }
+//                }
+//            }
+//
+//            dataTask.resume()
+//
+//        }
+//        
+//    }
     func captureVacationDetails(jsonData: [String: Any]) {
-        let app = UIApplication.shared.delegate as! AppDelegate
-        let file = jsonData["File"] as! [String: Any]
-        let topLevel = file["SWAPtimizer_CrewBid_Data"] as! [String: Any]
-        let header = topLevel["Header"] as! [String: Any]
+        guard
+            let file = jsonData["File"] as? [String: Any],
+            let topLevel = file["SWAPtimizer_CrewBid_Data"] as? [String: Any],
+            let header = topLevel["Header"] as? [String: Any],
+            let pilotInfo = jsonData["PilotInfo"] as? [String: Any]
+        else {
+            print("Invalid JSON structure in captureVacationDetails")
+            return
+        }
+        
+        // Build vacation details dictionary
         var dicVacationDetails: [String: Any] = [:]
-        var sampleDic : [String: Any] = [:]
-        sampleDic["Test"] = "Test"
-        var pilotInfo = jsonData["PilotInfo"] as! [String: Any]
         dicVacationDetails["EmpNum"] = Int(pilotInfo["Pilot"] as? String ?? "") ?? 0
         dicVacationDetails["Base"] = header["Base"]
         dicVacationDetails["Month"] = Int(header["BidPeriodMonth"] as? String ?? "") ?? 0
         dicVacationDetails["Year"] = Int(header["BidPeriodYear"] as? String ?? "") ?? 0
         dicVacationDetails["Round"] = Int(header["Round"] as? String ?? "") ?? 0
-        var position = pilotInfo["Seat"] as? String ?? ""
         
-        if(position == "CA") {
-            position = "CP"
-        }
+        var position = pilotInfo["Seat"] as? String ?? ""
+        if position == "CA" { position = "CP" }
         dicVacationDetails["Position"] = position
         dicVacationDetails["SwapJsonFileName"] = header["FileIdent"]
-        var url2 = URL(string: "")
-        if app.connectedToInternet() {
-            if let baseURL = URL(string: app.Domain!) {
-                let url = baseURL.appendingPathComponent("SaveSwaptimizerFileToServer")
-                print(url) // http://www.wbidmax.com:8000/WBidDataDwonloadAuthService.svc/SaveSwaptimizerFileToServer
-                url2 = url
-            }
-            self.urlRequest = URLRequest(url: url2!)
-            let jsonDataToSend = try! JSONSerialization.data(withJSONObject: dicVacationDetails, options: [])
-            let jsonString = String(data: jsonDataToSend, encoding: .utf8)
-            self.urlRequest?.httpBody = jsonString?.data(using: .utf8)
-            self.urlRequest?.httpMethod = "POST"
-            self.urlRequest?.setValue("852275", forHTTPHeaderField: "Content-Length")
-            let dataTask = URLSession.shared.dataTask(with: urlRequest!) { data, response, error in
-                // Handle request error
-                if let error = error as NSError?, error.code == NSURLErrorTimedOut {
-//                    MARK: need to add CBOffline events
-//                    let objEvent = CBOfflineEvents()
-                    if let monthValue = self.bidPeriod?.month {
-//                        objEvent.sendOfflineDataForTimeOut(url.absoluteString, month: monthValue)
-                    }
-                }
-
-                if let data = data {
-                    DispatchQueue.main.async {
-//                        self.hud?.hide(true)
-                    }
-                    // check status code and possibly MIME type (which shall start with "application/json"):
-                    if let httpResponse = response as? HTTPURLResponse,
-                       httpResponse.statusCode == 200,
-                       let mimeType = response?.mimeType,
-                       mimeType.contains("application/json") {
-                        // Handle successful JSON response
-                    }
-                }
-            }
-
-            dataTask.resume()
-
+        
+        // Ensure we have a base URL
+        let app = UIApplication.shared.delegate as! AppDelegate
+        guard app.connectedToInternet() else {
+            print("No internet")
+            return
+        }
+        let url = EndPoint.shared.saveSwaptimizerFileToServer
+        print("Upload URL:", url)
+        
+        // Encode vacation details JSON
+        guard let bodyData = try? JSONSerialization.data(withJSONObject: dicVacationDetails, options: []) else {
+            print("Failed to serialize vacation details")
+            return
         }
         
+        // Use APIService.shared.fetch
+        APIService.shared.fetch(
+            urlString: url,
+            method: .POST,
+            body: bodyData,
+            headers: [
+                "Content-Type": "application/json",
+                "Content-Length": "\(bodyData.count)"
+            ],
+            parse: { data in
+                // Return parsed JSON response (if any)
+                try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] ?? [:]
+            },
+            completion: { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let responseJSON):
+                        print("Vacation details successfully sent. Response:", responseJSON)
+                        // TODO: handle success logic here
+                    case .failure(let error):
+                        print("Failed to send vacation details with error:", error)
+                        // TODO: handle offline event fallback here
+                        if let monthValue = self.bidPeriod?.month {
+//                             objEvent.sendOfflineDataForTimeOut(saveURL.absoluteString, month: monthValue)
+                        }
+                    }
+                }
+            }
+        )
     }
     
     func readVacationFile(fileName: String?) -> [String: Any]? {

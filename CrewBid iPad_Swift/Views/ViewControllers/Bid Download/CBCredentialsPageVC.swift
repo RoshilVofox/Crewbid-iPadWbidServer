@@ -66,10 +66,16 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         if CBUtils.isRunningOnSimulator(){
             self.txtUserID.text = DevUserID
             self.txtPassword.text = DevUserPassword
+        }else{
+            let service = "loginCredentials"
+            if let username = KeychainHelper.retrieveUsername(forService: service),
+            let password = KeychainHelper.retrieve(account: username, service: service) {
+                txtUserID.text = username
+                txtPassword.text = password
+            }
         }
         NotificationCenter.default.addObserver(self, selector: #selector(showProgressView), name: Notification.Name("ShowProgressView"), object: nil)
 
-        
         
     }
     @objc func showProgressView() {
@@ -94,12 +100,14 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     func setupUI(){
         setupTitle()
         checkEarlyBidding()
-        txtUserID.becomeFirstResponder()
         txtUserID.delegate = self
         txtPassword.delegate = self
         txtUserID.textContentType = .username
         txtPassword.textContentType = .password
-       
+        txtUserID.layer.borderWidth = 4
+        txtUserID.layer.borderColor = UIColor.gray.cgColor
+        txtPassword.layer.borderWidth = 4
+        txtPassword.layer.borderColor = UIColor.gray.cgColor
         showPasswordBtn.setImage(UIImage(named: "showPwd")?.withRenderingMode(.alwaysTemplate), for: .normal)
         showPasswordBtn.tintColor = .label
         txtUserID.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtUserID.frame.height))
@@ -110,7 +118,13 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
 
         //------viewmodel--------
         loginViewModel.onLoginSuccess = { sessionKey in
-            print("Session Key: \(sessionKey)")
+//            print("Session Key: \(sessionKey)")
+            //Saving userID to keychain
+            let service = "com.yourapp.login"
+            let account = self.txtUserID.text ?? ""
+            let password = self.txtPassword.text ?? ""
+            KeychainHelper.save(account: account, service: service, value: password)
+            
             if self.type == "Retrieve Awards"{
                 self.handleAwardRetrieval(sessionKey: sessionKey)
             }
@@ -409,25 +423,64 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             formattedUserID = (rawUserID == DevUserID) ? "x\(rawUserID)" : "e\(rawUserID)"
         }
         txtUserID.text = formattedUserID
-        guard let empID = self.txtUserID.text else { return }
+        var empID = self.txtUserID.text ?? ""
         if empID.hasPrefix("e") || empID.hasPrefix("x") {
             let userID = String(empID.dropFirst())
             GlobalBidInfo.shared.userid = userID
         }else if !empID.lowercased().hasPrefix("x") && !empID.lowercased().hasPrefix("e") {
             GlobalBidInfo.shared.userid = empID
         }
+        if empID.lowercased().hasPrefix("x") || empID.lowercased().hasPrefix("e") {
+            empID = String(empID.dropFirst())
+        }
+        self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
+        AuthService.shared.checkAuthentication(empID: empID) { [weak self] authResult in
+            guard let self = self else { return }
+            
+            if authResult.isAuthorized {
+                if authResult.isSomehowSubscribed || formattedUserID == DevUserID {
+                    // Auth success -> proceed with login
+                    if self.bidAlreadyExists() {
+                        self.showAlertForExistingBid {
+                            self.loginViewModel.checkLogin(userID: formattedUserID, password: password)
+                        }
+                    } else {
+                        self.loginViewModel.checkLogin(userID: formattedUserID, password: password)
+                    }
+                }
+             } else {
+                 // Auth failed -> show message
+                 let alert = AlertService.showAlert(
+                     title: "Authentication Failed",
+                     message: authResult.message ?? "You are not subscribed or authorized.",
+                     actions: nil
+                 )
+                 self.present(alert, animated: true)
+             }
+
+         } onFailure: { [weak self] error in
+             let alert = AlertService.showAlert(
+                 title: "Error",
+                 message: error.localizedDescription,
+                 actions: nil
+             )
+             self?.present(alert, animated: true)
+         }
+        
+        
+        
         
         //--Login action--
-        if bidAlreadyExists(){
-            showAlertForExistingBid{
-                self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
-                self.loginViewModel.checkLogin(userID: formattedUserID,password: password)
-            }
-        }else{
-            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
-            loginViewModel.checkLogin(userID: formattedUserID,password: password)
-            
-        }
+//        if bidAlreadyExists(){
+//            showAlertForExistingBid{
+//                self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
+//                self.loginViewModel.checkLogin(userID: formattedUserID,password: password)
+//            }
+//        }else{
+//            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
+//            loginViewModel.checkLogin(userID: formattedUserID,password: password)
+//            
+//        }
         //----------------
     }
 
@@ -655,15 +708,15 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
 
 
 extension CBCredentialsPageVC: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if textField == txtUserID {
-            txtPassword.becomeFirstResponder()
-        } else if textField == txtPassword {
-            txtPassword.resignFirstResponder()
-            self.loginValidation()
-        }
-        return true
-    }
+//    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+//        if textField == txtUserID {
+//            txtPassword.becomeFirstResponder()
+//        } else if textField == txtPassword {
+//            txtPassword.resignFirstResponder()
+//            self.loginValidation()
+//        }
+//        return true
+//    }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         var shouldChangeCharacters: Bool = true
@@ -728,17 +781,19 @@ extension CBCredentialsPageVC: UITextFieldDelegate {
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        if textField.text!.isEmpty {
-            textField.layer.borderWidth = 4
-            textField.layer.borderColor = UIColor.purple.cgColor
-        } else {
-            textField.layer.borderWidth = 4
-            textField.layer.borderColor = UIColor.gray.cgColor
-        }
+        // Reset both fields to gray first
+        txtUserID.layer.borderWidth = 4
+        txtUserID.layer.borderColor = UIColor.gray.cgColor
+        txtPassword.layer.borderWidth = 4
+        txtPassword.layer.borderColor = UIColor.gray.cgColor
+
+        // Then highlight only the active one
+        textField.layer.borderWidth = 4
+        textField.layer.borderColor = UIColor.purple.cgColor
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.layer.borderColor = UIColor.gray.cgColor
+        textField.layer.borderColor = UIColor.purple.cgColor
     }
     
     

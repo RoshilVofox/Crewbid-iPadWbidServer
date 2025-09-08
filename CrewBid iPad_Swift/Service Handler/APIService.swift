@@ -18,6 +18,7 @@ enum Errors: Error {
     case timeout
     case unzipFailed
     case emptyData
+    case networkError
     case other(Error)
 }
 
@@ -56,6 +57,8 @@ extension Errors {
             return "Empty Data"
         case .encodingError:
             return "Failed to encode the request"
+        case .networkError:
+            return "A network error occurred. Please check your connection and try again."
         }
     }
 }
@@ -67,9 +70,10 @@ extension Errors: LocalizedError {
 }
 
 struct AuthResult{
-    let isSomehowSubscribed:Bool
-    let message:String?
-    let empName:String?
+    let isAuthorized: Bool           
+    let isSomehowSubscribed: Bool
+    let message: String?
+    let empName: String
 }
 
 class APIService {
@@ -240,7 +244,7 @@ class APIService {
 //    }
 //    
     
-    //MARK: Emp Check, Prelogon, Session Cred, Historic bid
+    //MARK: Emp Check, Prelogon, Session Cred, Historic bid, Awards, Server log, Bid Submission
     func fetch<T>(
         urlString: String,
         method: HTTPMethod = .GET,

@@ -11,7 +11,7 @@ class CBSubmissionCertifyVC: UIViewController {
     @IBOutlet weak var imgvw: UIImageView!
     @IBOutlet weak var submitBtn: UIButton!
     @IBOutlet weak var cancelBtn: UIButton!
-    private let viewModel = CBDefaultEmployeeViewModel()
+//    private let viewModel = AuthService()
     var bidderEmpNum = ""
     var submittedEmpNum = ""
     var submittedEmpName = ""
