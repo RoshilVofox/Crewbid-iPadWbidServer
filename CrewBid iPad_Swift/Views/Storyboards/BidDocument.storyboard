@@ -2655,6 +2655,9 @@
                                                     <state key="selected">
                                                         <color key="titleColor" red="0.16862745100000001" green="0.18823529410000001" blue="0.2156862745" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     </state>
+                                                    <connections>
+                                                        <action selector="btnCheckNoMidAction:" destination="GSd-kf-1Bn" eventType="touchUpInside" id="prQ-aF-2e3"/>
+                                                    </connections>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jn0-Kt-JW4" userLabel="Delete Button">
                                                     <rect key="frame" x="5" y="107.5" width="35" height="35"/>
@@ -2706,6 +2709,9 @@
                                                             <state key="highlighted">
                                                                 <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="calculateCommutingSort:" destination="GSd-kf-1Bn" eventType="touchUpInside" id="laC-Hq-4db"/>
+                                                            </connections>
                                                         </button>
                                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aZP-oC-i0N" userLabel="Title Label">
                                                             <rect key="frame" x="0.0" y="57" width="130" height="25"/>
@@ -2727,6 +2733,9 @@
                                                             <state key="selected">
                                                                 <color key="titleColor" red="0.16862745100000001" green="0.18823529410000001" blue="0.2156862745" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="saveCurrentValuesAsDefault:" destination="GSd-kf-1Bn" eventType="touchUpInside" id="lUa-8p-S6a"/>
+                                                            </connections>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" adjustsImageWhenDisabled="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jmb-M8-BJq">
                                                             <rect key="frame" x="0.0" y="163" width="130" height="33"/>
@@ -2742,6 +2751,9 @@
                                                             <state key="selected">
                                                                 <color key="titleColor" red="0.16862745100000001" green="0.18823529410000001" blue="0.2156862745" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="loadDefaults:" destination="GSd-kf-1Bn" eventType="touchUpInside" id="xiL-gw-qYm"/>
+                                                            </connections>
                                                         </button>
                                                     </subviews>
                                                     <constraints>
@@ -2840,6 +2852,9 @@
                                                             <color key="tintColor" name="controlAccentColor" catalog="System" colorSpace="catalog"/>
                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                             <state key="normal" image="oval_unselected"/>
+                                                            <connections>
+                                                                <action selector="btnNoMidActionSelectionWithSender:" destination="GSd-kf-1Bn" eventType="touchUpInside" id="8Ep-rL-D7V"/>
+                                                            </connections>
                                                         </button>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Mid" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vza-dk-pIc">
                                                             <rect key="frame" x="49" y="0.0" width="49" height="22"/>
@@ -2906,6 +2921,19 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="btnCheckNoMid" destination="Elf-Vm-CJp" id="EqI-wY-CmM"/>
+                                            <outlet property="calculateButton" destination="hew-Np-cvr" id="g9X-zR-GoC"/>
+                                            <outlet property="departureFri" destination="QdR-Lf-hKx" id="eb6-Fn-qDs"/>
+                                            <outlet property="departureMonThurs" destination="t1R-JS-Zmy" id="qE4-E9-5Iv"/>
+                                            <outlet property="departureSat" destination="Hbo-KM-ad2" id="hph-d6-ls0"/>
+                                            <outlet property="departureSun" destination="fbp-l3-xGf" id="Y2G-h0-jZx"/>
+                                            <outlet property="loadDefaultsButton" destination="Jmb-M8-BJq" id="NbU-aH-19B"/>
+                                            <outlet property="noMidCheckButton" destination="mEj-vz-hti" id="4OC-gi-EpJ"/>
+                                            <outlet property="returnFri" destination="aga-Ve-gus" id="cHM-uU-W4E"/>
+                                            <outlet property="returnMonThurs" destination="tZZ-dh-v00" id="CkD-5a-oFB"/>
+                                            <outlet property="returnSat" destination="f3J-xK-9Vc" id="Ake-Ho-zqA"/>
+                                            <outlet property="returnSun" destination="SHc-qZ-58c" id="Oqh-A8-GCx"/>
+                                            <outlet property="saveDefaultsButton" destination="PUp-mS-YdK" id="axP-8j-8d2"/>
                                             <outlet property="titleLabel" destination="aZP-oC-i0N" id="Ykh-87-YMp"/>
                                         </connections>
                                     </tableViewCell>
@@ -3120,7 +3148,7 @@
             <objects>
                 <viewController storyboardIdentifier="CommuteInformation" useStoryboardIdentifierAsRestorationIdentifier="YES" id="f4C-eD-MJK" customClass="CBCommuteInfoViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="45B-y9-u7f">
-                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Commute Information" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pws-az-Rje">
@@ -4457,7 +4485,7 @@
             <objects>
                 <viewController storyboardIdentifier="CBReportReleaseCollectionViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="gKe-KE-fCA" customClass="CBReportReleaseCollectionViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="zkJ-Mz-YY7">
-                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
+                        <rect key="frame" x="0.0" y="0.0" width="400" height="250"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="40" translatesAutoresizingMaskIntoConstraints="NO" id="JD4-0a-MWZ">
