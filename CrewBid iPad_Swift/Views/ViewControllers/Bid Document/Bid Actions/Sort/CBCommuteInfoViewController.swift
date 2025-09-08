@@ -257,7 +257,7 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
             
             line.totalCommutes = NSNumber(value: totalCommutes)
             line.commutabilityFront = NSNumber(value:  (line.commutableFronts!.doubleValue / line.totalCommutes!.doubleValue) * 100)
-            line.commutabilityBack = NSNumber(value:  (line.commutableBacks!.doubleValue / line.commutableBacks!.doubleValue) * 100)
+            line.commutabilityBack = NSNumber(value:  (line.commutableBacks!.doubleValue / line.totalCommutes!.doubleValue) * 100)
             line.commutabilityOverall = NSNumber(value:  (line.commutabilityFront!.doubleValue + line.commutabilityBack!.doubleValue) / 2)
         }
         
