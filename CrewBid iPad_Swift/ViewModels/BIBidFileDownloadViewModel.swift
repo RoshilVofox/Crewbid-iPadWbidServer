@@ -189,19 +189,46 @@ class BIBidFileDownloadViewModel {
                 case .success(let tempURL):
                     let destinationDir = BIBidInfo.shared.downloadDirectory()
                     let destinationURL = destinationDir.appendingPathComponent(nextFile)
+
                     do {
+                        // Ensure base directory exists
                         try FileManager.default.createDirectory(at: destinationDir, withIntermediateDirectories: true, attributes: nil)
+
+                        // Clean up old file if it exists
                         if FileManager.default.fileExists(atPath: destinationURL.path) {
                             try FileManager.default.removeItem(at: destinationURL)
                         }
+
+                        // Move the downloaded file into the permanent directory
                         try FileManager.default.moveItem(at: tempURL, to: destinationURL)
 
-                        let unzipSuccess = SSZipArchive.unzipFile(atPath: destinationURL.path, toDestination: destinationDir.path)
+                        // Unzip into a fresh temp folder first
+                        let tempUnzipDir = destinationDir.appendingPathComponent(UUID().uuidString)
+                        try FileManager.default.createDirectory(at: tempUnzipDir, withIntermediateDirectories: true, attributes: nil)
+
+                        let unzipSuccess = SSZipArchive.unzipFile(atPath: destinationURL.path, toDestination: tempUnzipDir.path)
+
                         if unzipSuccess {
+                            // Move unzipped contents into destinationDir
+                            let contents = try FileManager.default.contentsOfDirectory(atPath: tempUnzipDir.path)
+                            for item in contents {
+                                let src = tempUnzipDir.appendingPathComponent(item)
+                                let dst = destinationDir.appendingPathComponent(item)
+                                if FileManager.default.fileExists(atPath: dst.path) {
+                                    try FileManager.default.removeItem(at: dst)
+                                }
+                                try FileManager.default.moveItem(at: src, to: dst)
+                            }
+                            // Clean up temp unzip folder
+                            try FileManager.default.removeItem(at: tempUnzipDir)
+
                             downloadNext()
                         } else {
+                            // Clean up temp unzip folder if unzip failed
+                            try? FileManager.default.removeItem(at: tempUnzipDir)
                             completion(.failure(Errors.unzipFailed))
                         }
+
                     } catch {
                         completion(.failure(error))
                     }

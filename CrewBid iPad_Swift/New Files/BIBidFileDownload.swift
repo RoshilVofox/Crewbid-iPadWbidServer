@@ -136,120 +136,117 @@ class BIBidFileDownload: NSObject{
 //        }
 //    }
     
-    func stringByAddingPercentEscapes(to unescapedString: String) -> String {
-        let allowedCharacterSet = CharacterSet(charactersIn: ";/?:@&=+$,").inverted
-        return unescapedString.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet)!
-    }
-    
+
+//    
     
     //MARK: Bid Submission
     
-    func submitBid(httpBody: String, completion: @escaping (Result<String, Error>) -> Void){
-        guard let bodyData = httpBody.data(using: .utf8), let url = URL(string: EndPoint.shared.thirdpartyURL) else {
-            completion(.failure(Errors.invalidURL))
-            return}
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.httpBody = bodyData
-        let downloadTask = URLSession.shared.dataTask(with: request) { data, _, error in
-            if let error = error{
-                completion(.failure(error))
-                return}
-            guard let data = data else{
-                completion(.failure(Errors.noData))
-                return}
-            let dataString = String(data: data, encoding: .utf8)
-            completion(.success(dataString!))
-        }
-        downloadTask.resume()
-    }
+//    func submitBid(httpBody: String, completion: @escaping (Result<String, Error>) -> Void){
+//        guard let bodyData = httpBody.data(using: .utf8), let url = URL(string: EndPoint.shared.thirdpartyURL) else {
+//            completion(.failure(Errors.invalidURL))
+//            return}
+//        var request = URLRequest(url: url)
+//        request.httpMethod = "POST"
+//        request.httpBody = bodyData
+//        let downloadTask = URLSession.shared.dataTask(with: request) { data, _, error in
+//            if let error = error{
+//                completion(.failure(error))
+//                return}
+//            guard let data = data else{
+//                completion(.failure(Errors.noData))
+//                return}
+//            let dataString = String(data: data, encoding: .utf8)
+//            completion(.success(dataString!))
+//        }
+//        downloadTask.resume()
+//    }
     
     //MARK: Bid Submission Logging
     
-    func sendRawDataToServer(dict: NSMutableDictionary){
-        let url = EndPoint.shared.addSubmittedRawDataToServer
-        var urlRequest = URLRequest(url: URL(string: url)!)
-        
-        let jsondata = try! JSONSerialization.data(withJSONObject: dict)
-        let jsonString = String(data: jsondata, encoding: .utf8)
-            
-        urlRequest.httpBody = jsonString?.data(using: .utf8)
-        urlRequest.httpMethod = "POST"
-        urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        
-        let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, _, error in
-            if let error = error {
-                print("Error: \(error)")
-                //offline event
-                // send offlinedata
-            }
-            if let data = data {
-                do{
-                    let json = try JSONSerialization.jsonObject(with: data, options: [])
-                    print("Response JSON: \(json)")
-                }catch{
-                    print("Error parsing JSON: \(error)")
-                }
-            }
-        }
-        dataTask.resume()
-    }
+//    func sendRawDataToServer(dict: NSMutableDictionary){
+//        let url = EndPoint.shared.addSubmittedRawDataToServer
+//        var urlRequest = URLRequest(url: URL(string: url)!)
+//        
+//        let jsondata = try! JSONSerialization.data(withJSONObject: dict)
+//        let jsonString = String(data: jsondata, encoding: .utf8)
+//            
+//        urlRequest.httpBody = jsonString?.data(using: .utf8)
+//        urlRequest.httpMethod = "POST"
+//        urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+//        
+//        let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, _, error in
+//            if let error = error {
+//                print("Error: \(error)")
+//                //offline event
+//                // send offlinedata
+//            }
+//            if let data = data {
+//                do{
+//                    let json = try JSONSerialization.jsonObject(with: data, options: [])
+//                    print("Response JSON: \(json)")
+//                }catch{
+//                    print("Error parsing JSON: \(error)")
+//                }
+//            }
+//        }
+//        dataTask.resume()
+//    }
     
+//    
+//    func logBidSubmission(dict:NSMutableDictionary){
+//        
+//        let url = EndPoint.shared.logCrewBidSubmitBidDetails
+//        
+//        var urlRequest = URLRequest(url: URL(string: url)!)
+//        
+//        let jsondata = try! JSONSerialization.data(withJSONObject: dict, options: [])
+//        let jsonString = String(data: jsondata, encoding: .utf8)
+//        
+//        urlRequest.httpBody = jsonString?.data(using: .utf8)
+//        urlRequest.httpMethod = "POST"
+//        
+//        let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+//            if let error = error {
+//                print("Error: \(error)")
+//            }
+//            if let data = data {
+//                let httpResponse = response as! HTTPURLResponse
+//                let range = response?.mimeType?.range(of: "application/json")
+//                if httpResponse.statusCode == 200 && range != nil {
+//                    do{
+//                        let json = try JSONSerialization.jsonObject(with: data, options: [])
+//                        print("Response JSON: \(json)")
+//                    }catch{
+//                        print("Error parsing JSON: \(error)")
+//                    }
+//                }
+//                
+//            }
+//        }
+//    }
     
-    func logBidSubmission(dict:NSMutableDictionary){
-        
-        let url = EndPoint.shared.logCrewBidSubmitBidDetails
-        
-        var urlRequest = URLRequest(url: URL(string: url)!)
-        
-        let jsondata = try! JSONSerialization.data(withJSONObject: dict, options: [])
-        let jsonString = String(data: jsondata, encoding: .utf8)
-        
-        urlRequest.httpBody = jsonString?.data(using: .utf8)
-        urlRequest.httpMethod = "POST"
-        
-        let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            if let error = error {
-                print("Error: \(error)")
-            }
-            if let data = data {
-                let httpResponse = response as! HTTPURLResponse
-                let range = response?.mimeType?.range(of: "application/json")
-                if httpResponse.statusCode == 200 && range != nil {
-                    do{
-                        let json = try JSONSerialization.jsonObject(with: data, options: [])
-                        print("Response JSON: \(json)")
-                    }catch{
-                        print("Error parsing JSON: \(error)")
-                    }
-                }
-                
-            }
-        }
-    }
-    
-    func addSubmittedBid(dict:NSMutableDictionary, completion:@escaping (Bool)->Void){
-        
-        let url = EndPoint.shared.SaveBidSubmittedData
-        var urlRequest = URLRequest(url: URL(string: url)!)
-        
-        let jsonData = try! JSONSerialization.data(withJSONObject: dict, options: [])
-        let jsonString = String(data: jsonData, encoding: .utf8)
-        
-        urlRequest.httpBody = jsonString?.data(using: .utf8)
-        urlRequest.httpMethod = "POST"
-        
-        let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            if let data = data {
-                let httpresponse = response as! HTTPURLResponse
-                let range = response?.mimeType?.range(of: "application/json")
-                if httpresponse.statusCode == 200 && range != nil {
-                    completion(true)
-                }
-            }
-        }
-        dataTask.resume()
-    }
+//    func addSubmittedBid(dict:NSMutableDictionary, completion:@escaping (Bool)->Void){
+//        
+//        let url = EndPoint.shared.SaveBidSubmittedData
+//        var urlRequest = URLRequest(url: URL(string: url)!)
+//        
+//        let jsonData = try! JSONSerialization.data(withJSONObject: dict, options: [])
+//        let jsonString = String(data: jsonData, encoding: .utf8)
+//        
+//        urlRequest.httpBody = jsonString?.data(using: .utf8)
+//        urlRequest.httpMethod = "POST"
+//        
+//        let dataTask = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+//            if let data = data {
+//                let httpresponse = response as! HTTPURLResponse
+//                let range = response?.mimeType?.range(of: "application/json")
+//                if httpresponse.statusCode == 200 && range != nil {
+//                    completion(true)
+//                }
+//            }
+//        }
+//        dataTask.resume()
+//    }
     
 }
 
