@@ -3634,8 +3634,8 @@
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1965"
-            endingLineNumber = "1965"
+            startingLineNumber = "2183"
+            endingLineNumber = "2183"
             landmarkName = "processJsonFile(file:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -3650,9 +3650,9 @@
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2346"
-            endingLineNumber = "2346"
-            landmarkName = "processJsonFile(file:)"
+            startingLineNumber = "2564"
+            endingLineNumber = "2564"
+            landmarkName = "getDisplayType(date:startDate:endDate:label:displayType:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3666,9 +3666,9 @@
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2377"
-            endingLineNumber = "2377"
-            landmarkName = "processJsonFile(file:)"
+            startingLineNumber = "2595"
+            endingLineNumber = "2595"
+            landmarkName = "areDateRangesOverlapping(range1:range2:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3682,9 +3682,9 @@
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2381"
-            endingLineNumber = "2381"
-            landmarkName = "processJsonFile(file:)"
+            startingLineNumber = "2599"
+            endingLineNumber = "2599"
+            landmarkName = "areDateRangesOverlapping(range1:range2:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3698,9 +3698,9 @@
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2385"
-            endingLineNumber = "2385"
-            landmarkName = "processJsonFile(file:)"
+            startingLineNumber = "2603"
+            endingLineNumber = "2603"
+            landmarkName = "areDateRangesOverlapping(range1:range2:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3714,8 +3714,8 @@
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2737"
-            endingLineNumber = "2737"
+            startingLineNumber = "2955"
+            endingLineNumber = "2955"
             landmarkName = "processFAVacationWithJsonFile(file:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -3730,9 +3730,9 @@
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3073"
-            endingLineNumber = "3073"
-            landmarkName = "processFAVacationWithJsonFile(file:)"
+            startingLineNumber = "3291"
+            endingLineNumber = "3291"
+            landmarkName = "deleteAllVacation()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3746,9 +3746,9 @@
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3077"
-            endingLineNumber = "3077"
-            landmarkName = "processFAVacationWithJsonFile(file:)"
+            startingLineNumber = "3295"
+            endingLineNumber = "3295"
+            landmarkName = "deleteAllVacation()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3762,9 +3762,9 @@
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3081"
-            endingLineNumber = "3081"
-            landmarkName = "processFAVacationWithJsonFile(file:)"
+            startingLineNumber = "3299"
+            endingLineNumber = "3299"
+            landmarkName = "deleteAllVacation()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -3778,10 +3778,10 @@
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2376"
-            endingLineNumber = "2376"
-            landmarkName = "processJsonFile(file:)"
-            landmarkType = "7">
+            startingLineNumber = "2594"
+            endingLineNumber = "2594"
+            landmarkName = "CBVacationDownloader"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -3794,9 +3794,9 @@
             filePath = "CrewBid iPad_Swift/New Files/CBVacationDownloader.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3072"
-            endingLineNumber = "3072"
-            landmarkName = "processFAVacationWithJsonFile(file:)"
+            startingLineNumber = "3290"
+            endingLineNumber = "3290"
+            landmarkName = "deleteAllVacation()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -4834,10 +4834,10 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BIBidFileDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "274"
-            endingLineNumber = "274"
-            landmarkName = "checkFlightData()"
-            landmarkType = "7">
+            startingLineNumber = "301"
+            endingLineNumber = "301"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4850,10 +4850,10 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BIBidFileDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "277"
-            endingLineNumber = "277"
-            landmarkName = "checkFlightData()"
-            landmarkType = "7">
+            startingLineNumber = "304"
+            endingLineNumber = "304"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4866,10 +4866,10 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BIBidFileDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "270"
-            endingLineNumber = "270"
-            landmarkName = "BIBidFileDownloadViewModel"
-            landmarkType = "3">
+            startingLineNumber = "297"
+            endingLineNumber = "297"
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

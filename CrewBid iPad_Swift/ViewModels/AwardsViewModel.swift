@@ -46,7 +46,7 @@ class AwardsViewModel {
             return
         }
 
-        downloadBidFile(sessionKey: sessionKey, filename: filename) { result in
+        downloadAwardFile(sessionKey: sessionKey, filename: filename) { result in
             switch result {
             case .success(let fileURL):
                 do {
@@ -65,7 +65,7 @@ class AwardsViewModel {
         }
     }
 
-    private func downloadBidFile(sessionKey: String, filename: String, completion: @escaping (Result<URL, Error>) -> Void) {
+    private func downloadAwardFile(sessionKey: String, filename: String, completion: @escaping (Result<URL, Error>) -> Void) {
         let isTxt = (filename as NSString).pathExtension.uppercased() == "TXT"
         let requestType = isTxt ? "TXTPACKET" : "ZIPPACKET"
         let key = sessionKey.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? sessionKey

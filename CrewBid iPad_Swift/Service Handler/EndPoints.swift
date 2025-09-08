@@ -34,6 +34,7 @@ class EndPoint {
     var sendMail = "\(baseURL)SendMailRest"
     var getScrappedMissedTrips = "\(baseURL)GetScrappedMissedTrips"
     var saveSwaptimizerFileToServer = "\(baseURL)SaveSwaptimizerFileToServer"
+    var getCrewBidJsonVacFile = "\(baseURL)GetCrewBidJsonVacFile"
     var getUserDetails = "\(baseURL)GetUserDetails/"
     var updateCrewBidPaidUntilDate = "\(baseURL)UpdateCrewBidPaidUntilDate"
     var logCrewBidSubmitBidDetails = "\(baseURL)LogCrewBidSubmitBidDetails/"

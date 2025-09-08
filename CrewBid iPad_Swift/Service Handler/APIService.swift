@@ -13,6 +13,7 @@ enum Errors: Error {
     case invalidResponse
     case noData
     case decodingError
+    case encodingError
     case unauthorized
     case timeout
     case unzipFailed
@@ -53,6 +54,8 @@ extension Errors {
             return "Invalid Response"
         case .emptyData:
             return "Empty Data"
+        case .encodingError:
+            return "Failed to encode the request"
         }
     }
 }

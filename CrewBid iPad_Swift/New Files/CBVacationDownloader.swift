@@ -737,7 +737,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                             print("FileName is null or missing")
                             if let message = json["Message"] as? String,
                                message.lowercased().hasPrefix("it takes us about") {
-                                AlertService.showAlertForTopVC(title: "EOM Vacation", message: "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of next month, then touch the EOM button\(self.eomMonth())")
+                                AlertService.showAlertForTopVC(title: "EOM Vacation", message: "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button.")
                             }
                             DispatchQueue.main.async {
                                 completion(false)
