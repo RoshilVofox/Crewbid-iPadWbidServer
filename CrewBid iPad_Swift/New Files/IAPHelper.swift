@@ -662,12 +662,16 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         defaults.synchronize()
         
         // Save into Keychain
-        let keychain = KeychainItemWrapper(identifier: "CrewBidExpirationDate", accessGroup: nil)
-        keychain?.setObject(encryptedString, forKey: kSecAttrService as String)
+        let account = "CrewBidExpirationDate"
+        let service = "com.yourapp.expiration" // you can namespace it to avoid conflicts
+    
+        let success = KeychainHelper.save(account: account, service: service, value: encryptedString)
+        if !success {
+            print("Failed to save encrypted expiration date in Keychain")
+        }
     }
     
     func setLocalEncryptedWbidExpirationDate(_ expiryDate: Date) {
-        let keychain = KeychainItemWrapper(identifier: "CrewBidWbidExpirationDate", accessGroup: nil)
         
         // Encrypt the date
         let encryptedString = encryptedDateString(expiryDate)
@@ -680,7 +684,13 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         store.synchronize()
         
         // Update Keychain
-        keychain?.setObject(encryptedString, forKey: kSecAttrAccount as String)
+        let account = "CrewBidWbidExpirationDate"
+        let service = "com.yourapp.wbidExpiration"
+        
+        let success = KeychainHelper.save(account: account, service: service,value: encryptedString)
+        if !success {
+            print("Failed to save WBID expiration date in Keychain")
+        }
     }
     
     func getLocalDecryptedWbidExpirationDate() -> Date? {
@@ -702,11 +712,12 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         }
         
         // Grab the expiration date from Keychain
-        let keychain = KeychainItemWrapper(identifier: "CrewBidWbidExpirationDate", accessGroup: nil)
+        let account = "CrewBidWbidExpirationDate"
+        let service = "com.yourapp.wbidExpiration"
         var keychainExpirationDate: Date?
         var keychainEncryptedString: String?
         
-        if let encryptedString = keychain?.object(forKey: kSecAttrAccount as String) as? String {
+        if let encryptedString = KeychainHelper.retrieve(account: account, service: service) {
             keychainEncryptedString = encryptedString
             if let decryptedString = FBEncryptorAES.decryptBase64String(encryptedString, keyString: kFreeMonthEncryptionKey) {
                 keychainExpirationDate = dateFormatter.date(from: decryptedString)
@@ -1054,8 +1065,10 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
             }
             
             // Grab the expiration date from the Keychain
-            let keychain = KeychainItemWrapper(identifier: "CrewBidExpirationDate", accessGroup: nil)
-            if let keychainEncryptedString = keychain?.object(forKey: kSecAttrService as String) as? String {
+            let account = "CrewBidExpirationDate"
+            let service = "com.yourapp.expiration"
+            
+            if let keychainEncryptedString = KeychainHelper.retrieve(account: account, service: service) {
                 keychainDateString = FBEncryptorAES.decryptBase64String(keychainEncryptedString, keyString: kFreeMonthEncryptionKey)
                 if let decryptedString = keychainDateString {
                     keychainExpirationDate = dateFormatter.date(from: decryptedString)

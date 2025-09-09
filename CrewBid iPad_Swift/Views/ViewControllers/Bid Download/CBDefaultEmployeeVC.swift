@@ -13,7 +13,7 @@ class CBDefaultEmployeeVC: BaseViewController {
     @IBOutlet weak var backBtn: UIButton!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var descriptionTextView: UITextView!
-    private let viewModel = CBDefaultEmployeeViewModel()
+//    private let viewModel = AuthService()
     var type:String?
     var confirmEmpNum:String?
     var hud = MBProgressHUD()
@@ -41,19 +41,19 @@ class CBDefaultEmployeeVC: BaseViewController {
     }
     func setupUI(){
         titleSetup()
-        textEmpNum.becomeFirstResponder()
         textEmpNum.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: textEmpNum.frame.height))
         textEmpNum.leftViewMode = .always
         textEmpNum.delegate = self
-       
-            viewModel.onAuthSuccess = { [weak self] result in
-                self?.view.hideActivityIndicator()
-                self?.handleAuthResult(result)
-            }
-            viewModel.onAuthFailure = { [weak self] error in
-                self?.view.hideActivityIndicator()
-                self?.showAlert(message: error.localizedDescription)
-            }
+        textEmpNum.layer.borderWidth = 4
+        textEmpNum.layer.borderColor = UIColor.gray.cgColor
+//            viewModel.onAuthSuccess = { [weak self] result in
+//                self?.view.hideActivityIndicator()
+//                self?.handleAuthResult(result)
+//            }
+//            viewModel.onAuthFailure = { [weak self] error in
+//                self?.view.hideActivityIndicator()
+//                self?.showAlert(message: error.localizedDescription)
+//            }
         if type == "Submit Employee Number"{
             backBtn.setImage(UIImage(named: "cc"), for: .normal)
         }else{
@@ -66,6 +66,7 @@ class CBDefaultEmployeeVC: BaseViewController {
             textEmpNum.text = UserDefaults.standard.string(forKey: kCBDefaultEmployeeNumberKey)
         }
     }
+
     
     func titleSetup(){
         if type == "Show Awarded Line" {
@@ -93,22 +94,37 @@ class CBDefaultEmployeeVC: BaseViewController {
     }
     
     @IBAction func btnNextAction(_ sender: Any) {
-        if !isEmpIDVerified{
-            guard let empID = textEmpNum.text, !empID.isEmpty else {
-                shakeTextField(textField: textEmpNum)
-                return
-            }
-            dataSource.employeeNumber = empID
-            UserDefaults.standard.set(textEmpNum.text!, forKey: kCBDefaultEmployeeNumberKey)
-            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
-            viewModel.checkAuthentication(empID: empID)
-        }else{
-            if confirmEmpNum != self.textEmpNum.text!{
-                self.navigationController?.popViewController(animated: true)
-            }else{
-                self.goToNextPage()
-            }
-        }
+        if !isEmpIDVerified {
+             guard let empID = textEmpNum.text, !empID.isEmpty else {
+                 shakeTextField(textField: textEmpNum)
+                 return
+             }
+
+             dataSource.employeeNumber = empID
+             UserDefaults.standard.set(empID, forKey: kCBDefaultEmployeeNumberKey)
+
+             self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
+
+             // Use new AuthService
+             AuthService.shared.checkAuthentication(empID: empID) { [weak self] authResult in
+                 guard let self = self else { return }
+                 self.view.hideActivityIndicator()
+                 self.handleAuthResult(authResult)
+
+             } onFailure: { [weak self] error in
+                 guard let self = self else { return }
+                 self.view.hideActivityIndicator()
+                 self.showAlert(message: error.localizedDescription)
+             }
+
+         } else {
+             // Already verified
+             if confirmEmpNum != textEmpNum.text! {
+                 self.navigationController?.popViewController(animated: true)
+             } else {
+                 self.goToNextPage()
+             }
+         }
     }
     func handleAuthResult(_ result: AuthResult) {
         let msg = result.message ?? ""
@@ -255,19 +271,69 @@ extension CBDefaultEmployeeVC : UITextFieldDelegate{
         }
         return true
     }
+//    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+//        textField.resignFirstResponder()
+//        if type != "Confirm Employee Number"{
+//            guard let empID = textEmpNum.text, !empID.isEmpty else {
+//                 showAlert(message: "Please enter a valid employee number.")
+//                 return false
+//             }
+//            UserDefaults.standard.set(textEmpNum.text!, forKey: kCBDefaultEmployeeNumberKey)
+//            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
+//            viewModel.checkAuthentication(empID: empID)
+//            return true
+//        }else{
+//            return false
+//        }
+//    }
+  
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        if type != "Confirm Employee Number"{
+
+        if type != "Confirm Employee Number" {
             guard let empID = textEmpNum.text, !empID.isEmpty else {
-                 showAlert(message: "Please enter a valid employee number.")
-                 return false
-             }
-            UserDefaults.standard.set(textEmpNum.text!, forKey: kCBDefaultEmployeeNumberKey)
+                shakeTextField(textField: textEmpNum)
+                return false
+            }
+
+            dataSource.employeeNumber = empID
+            UserDefaults.standard.set(empID, forKey: kCBDefaultEmployeeNumberKey)
+
             self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
-            viewModel.checkAuthentication(empID: empID)
+
+            AuthService.shared.checkAuthentication(empID: empID) { [weak self] authResult in
+                guard let self = self else { return }
+                self.view.hideActivityIndicator()
+
+                if authResult.isSomehowSubscribed {
+                    self.isEmpIDVerified = true
+                    self.confirmEmpNum = empID
+                    self.handleAuthResult(authResult) // existing method
+                    self.goToNextPage()
+                } else {
+                    let alert = AlertService.showAlert(
+                        title: "Authentication Failed",
+                        message: authResult.message ?? "You are not subscribed or authorized.",
+                        actions: nil
+                    )
+                    self.present(alert, animated: true)
+                }
+
+            } onFailure: { [weak self] error in
+                guard let self = self else { return }
+                self.view.hideActivityIndicator()
+                self.showAlert(message: error.localizedDescription)
+            }
+
             return true
-        }else{
-            return false
+        } else {
+            // Confirm Employee Number
+            if confirmEmpNum != textEmpNum.text! {
+                self.navigationController?.popViewController(animated: true)
+            } else {
+                self.goToNextPage()
+            }
+            return true
         }
     }
     
