@@ -827,7 +827,7 @@ extension CBScratchPadVC: UITextFieldDelegate {
 
 extension CBScratchPadVC: CBUserFlagTableControllerDelegate {
     func changeLineUserFlagTypeTo(flagType: CBUserFlagType, selectedLine: BILine?) {
-        for case let line as BILine in self.linesArray! {
+        for line in self.lines {
             line.userFlagType = flagType.rawValue as NSNumber
         }
         try? self.bidPeriod?.managedObjectContext?.save()
