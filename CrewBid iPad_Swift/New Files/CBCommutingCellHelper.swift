@@ -446,7 +446,7 @@ class CBCommutingCellHelper: NSObject {
             
             //block 1
             //Calculating earliest arrivel time
-            let nonConnect = getNonConnectFlights(withCommuteCity: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
+            let nonConnect = getNonConnectFlightsForEarliestArrivalTime(withCommuteCity: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
             
             let oneAndNonConnect: NSMutableArray = NSMutableArray()
             if nonConnect.count > 0 {
@@ -454,7 +454,7 @@ class CBCommutingCellHelper: NSObject {
             }
             
             if isNonStopOnly != true {
-                let oneConnect = getOneConnectFlights(withCommuteCity: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
+                let oneConnect = getOneConnectFlightsForEarliestArrivalTime(withCommuteCity: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
                 if oneConnect.count > 0 {
                     oneAndNonConnect.addObjects(from: oneConnect as! [Any])
                 }
@@ -474,7 +474,7 @@ class CBCommutingCellHelper: NSObject {
             //Calculating earliest departure time
             // Warning : May need to add a sleep code here, refer crewbid iPad
 //     MARK:       function name is diffrent from block 1
-            let nonConnect1 = getNonConnectFlights(withCommuteCity1: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
+            let nonConnect1 = getNonConnectFlightsEarliestForDepartureTime(withCommuteCity: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
             
 //            union of oneConnect and NonConnect
             let oneAndNonConnect1: NSMutableArray = NSMutableArray()
@@ -484,7 +484,7 @@ class CBCommutingCellHelper: NSObject {
             
             if isNonStopOnly != true {
                 //     MARK:       function name is diffrent from block 1
-                let oneConnect1 = getOneConnectFlights(withCommuteCity1: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
+                let oneConnect1 = getOneConnectFlightsForDepartureTime(withCommuteCity1: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
                 if oneConnect1.count > 0 {
                     oneAndNonConnect1.addObjects(from: oneConnect1 as! [Any])
                 }
@@ -527,7 +527,7 @@ class CBCommutingCellHelper: NSObject {
     }
     
     //    for block 1 earliest arrival
-    func getNonConnectFlights(withCommuteCity commutecity: String, domicile: String, date: String, dep Cdep: Int, arr Carr: Int, flightRoteDetailsArr FlightRoteDetailsArr: NSMutableArray, bidperiod: BIBidPeriod, connectTime: Int) -> NSMutableArray {
+    func getNonConnectFlightsForEarliestArrivalTime(withCommuteCity commutecity: String, domicile: String, date: String, dep Cdep: Int, arr Carr: Int, flightRoteDetailsArr FlightRoteDetailsArr: NSMutableArray, bidperiod: BIBidPeriod, connectTime: Int) -> NSMutableArray {
         self.connectTime = connectTime
         let flightRouteArray: NSMutableArray = FlightRoteDetailsArr
         var routeDomainArray: NSMutableArray = NSMutableArray()
@@ -561,7 +561,7 @@ class CBCommutingCellHelper: NSObject {
     }
     
 //    for block 1 earliest arrival
-    func getOneConnectFlights(withCommuteCity commutecity: String, domicile: String, date: String, dep Cdep: Int, arr Carr: Int, flightRoteDetailsArr FlightRoteDetailsArr: NSMutableArray, bidperiod: BIBidPeriod, connectTime: Int) -> NSMutableArray {
+    func getOneConnectFlightsForEarliestArrivalTime(withCommuteCity commutecity: String, domicile: String, date: String, dep Cdep: Int, arr Carr: Int, flightRoteDetailsArr FlightRoteDetailsArr: NSMutableArray, bidperiod: BIBidPeriod, connectTime: Int) -> NSMutableArray {
         self.connectTime = connectTime
         var oneConnectRouteDomainArray: NSMutableArray = NSMutableArray()
         let newFRD1: NSArray = FlightRoteDetailsArr.filtered(using: NSPredicate(format: "(Orig == %@) &&(Cdep >= %d)&&(Dest != %@) ", commutecity, Cdep, domicile)) as NSArray
@@ -666,14 +666,14 @@ class CBCommutingCellHelper: NSObject {
             
 //            Block 1
 //            calculating earliest Arrival Time
-            let nonConnect = getNonConnectFlights(withCommuteCity: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
+            let nonConnect = getNonConnectFlightsForEarliestArrivalTime(withCommuteCity: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
             let oneAndNonConnect: NSMutableArray = NSMutableArray()
             if nonConnect.count > 0 {
                 oneAndNonConnect.addObjects(from: nonConnect as! [Any])
             }
             
             if isNonStopOnly != true {
-                let oneConnect = getOneConnectFlights(withCommuteCity: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
+                let oneConnect = getOneConnectFlightsForEarliestArrivalTime(withCommuteCity: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
                 if oneConnect.count > 0 {
                     oneAndNonConnect.addObjects(from: oneConnect as! [Any])
                 }
@@ -692,8 +692,7 @@ class CBCommutingCellHelper: NSObject {
 //            Block 2
             //Calculating earliest departure time
             // Warning : May need to add a sleep code here, refer crewbid iPad
-            //     MARK:       function name is diffrent from block 1
-            let nonConnect1 = getNonConnectFlights(withCommuteCity1: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
+            let nonConnect1 = getNonConnectFlightsEarliestForDepartureTime(withCommuteCity: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
             
 //            union of oneConnect and NonConnect
             let oneAndNonConnect1 = NSMutableArray()
@@ -702,8 +701,7 @@ class CBCommutingCellHelper: NSObject {
             }
             
             if isNonStopOnly != true {
-                //     MARK:       function name is diffrent from block 1
-                let oneConnect1 = getOneConnectFlights(withCommuteCity1: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
+                let oneConnect1 = getOneConnectFlightsForDepartureTime(withCommuteCity1: commuteCity, domicile: domicile, date: "\(date)T00:00:00", dep: depTime, arr: arrTime, flightRoteDetailsArr: tempArray, bidperiod: bidperiod, connectTime: connectTime)
                 if oneConnect1.count > 1 {
                     oneAndNonConnect1.addObjects(from: oneConnect1 as! [Any])
                 }
@@ -751,7 +749,7 @@ class CBCommutingCellHelper: NSObject {
     }
     
     //    for block 2 latest departure
-    func getNonConnectFlights(withCommuteCity1 commutecity: String, domicile: String, date: String, dep Cdep: Int, arr Carr: Int, flightRoteDetailsArr FlightRoteDetailsArr: NSMutableArray, bidperiod: BIBidPeriod, connectTime: Int) -> NSMutableArray {
+    func getNonConnectFlightsEarliestForDepartureTime(withCommuteCity commutecity: String, domicile: String, date: String, dep Cdep: Int, arr Carr: Int, flightRoteDetailsArr FlightRoteDetailsArr: NSMutableArray, bidperiod: BIBidPeriod, connectTime: Int) -> NSMutableArray {
         self.connectTime = connectTime
         var arr: NSMutableArray = NSMutableArray()
         let filtered = FlightRoteDetailsArr.filtered(using: NSPredicate(format: "(Dest == %@) && (Orig == %@)", commutecity, domicile))
@@ -779,7 +777,7 @@ class CBCommutingCellHelper: NSObject {
     }
     
 //    for block 2 latest departure
-    func getOneConnectFlights(withCommuteCity1 commutecity: String, domicile: String, date: String, dep Cdep: Int, arr Carr: Int, flightRoteDetailsArr FlightRoteDetailsArr: NSMutableArray, bidperiod: BIBidPeriod, connectTime: Int) -> NSMutableArray {
+    func getOneConnectFlightsForDepartureTime(withCommuteCity1 commutecity: String, domicile: String, date: String, dep Cdep: Int, arr Carr: Int, flightRoteDetailsArr FlightRoteDetailsArr: NSMutableArray, bidperiod: BIBidPeriod, connectTime: Int) -> NSMutableArray {
         var newArr: NSMutableArray = NSMutableArray()
         /*MARK:
          For calculating latestDeparture,

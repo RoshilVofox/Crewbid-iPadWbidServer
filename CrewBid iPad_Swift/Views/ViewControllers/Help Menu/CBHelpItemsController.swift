@@ -142,7 +142,7 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
             break
             
         case 6:
-            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "mySubscriptionViewController") as! CBSubscriptionInfoController
+            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "CBSubscriptionInfoController") as! CBSubscriptionInfoController
             self.navigationController?.pushViewController(vc, animated: true)
             break
             
