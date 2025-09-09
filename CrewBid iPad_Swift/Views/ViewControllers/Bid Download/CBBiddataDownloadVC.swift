@@ -120,6 +120,7 @@ class CBBiddataDownloadVC: BaseViewController {
         }
     }
     
+    
     @IBAction func btnBackAction(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
     }
@@ -145,7 +146,7 @@ class CBBiddataDownloadVC: BaseViewController {
         }
 
         print("Base: \(selectedDomicile!)")
-//        navigationAction()
+        proceedIfReady()
     }
     
     @IBAction func btnPositionAction(_ sender: UIButton) {
@@ -170,7 +171,7 @@ class CBBiddataDownloadVC: BaseViewController {
         }
         
         print("Position: \(selectedPosition!)")
-//        navigationAction()
+        proceedIfReady()
     }
     
     @IBAction func btnRoundAction(_ sender: UIButton) {
@@ -193,7 +194,7 @@ class CBBiddataDownloadVC: BaseViewController {
         default:break
         }
         print("Round: \(selectedRound!)")
-//        navigationAction()
+        proceedIfReady()
     }
     
     @IBAction func btnMonthAction(_ sender: UIButton) {
@@ -226,7 +227,7 @@ class CBBiddataDownloadVC: BaseViewController {
         default:break
         }
         print("Month: \(month!)")
-//        navigationAction()
+        proceedIfReady()
     }
     
     @IBAction func btnYearAction(_ sender: UIButton) {
@@ -294,7 +295,7 @@ class CBBiddataDownloadVC: BaseViewController {
                 }
             }
         }
-//        navigationAction()
+        proceedIfReady()
     }
     
     func currentYear() -> String {
@@ -360,6 +361,10 @@ class CBBiddataDownloadVC: BaseViewController {
                     button.isUserInteractionEnabled = false
                     button.alpha = 0.3
                 }
+                if button.tag > bidMonth {
+                    button.isUserInteractionEnabled = false
+                    button.alpha = 0.3
+                }
                 if button.tag == bidMonth {
                     button.backgroundColor = UIColor.systemOrange
                 }
@@ -408,16 +413,47 @@ class CBBiddataDownloadVC: BaseViewController {
     }
     
     //Automatic navigation
-    func navigationAction() {
-        if selectedDomicile == nil || selectedPosition == nil || selectedRound == nil || month == nil || year == nil {
+    private func proceedIfReady() {
+        guard let selectedDomicile = selectedDomicile,
+              let selectedPosition = selectedPosition,
+              let selectedRound = selectedRound,
+              let month = month,
+              let year = year else {
             return
-        } else {
-            let storyboard : UIStoryboard = UIStoryboard(name: "BidInfo", bundle: nil)
-            let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
-            vc.isHistoricBid = self.isHistoricBid
-//            vc.preferredContentSize = CGSize(width: 600, height: 500)
-            self.navigationController?.pushViewController(vc, animated: true)
-//            NotificationCenter.default.post(name: NSNotification.Name("contentSizechanging"), object: CGSize(width: 600, height: 540))
         }
+        
+        // Save to shared data
+        AppData.shared.Round = selectedRound
+        AppData.shared.postion = selectedPosition
+        
+        let emp = UserDefaults.standard.string(forKey: kCBDefaultEmployeeNumberKey) ?? ""
+        print("Base:\(selectedDomicile) Position:\(selectedPosition) Rnd:\(selectedRound) EmpNo:\(self.empNum ?? emp) Month:\(month) Year:\(year)")
+        
+        GlobalBidInfo.shared.base = selectedDomicile
+        if let position = BICrewPositionType(from: selectedPosition) {
+            GlobalBidInfo.shared.position = position
+        }
+        GlobalBidInfo.shared.employeeNumber = self.empNum ?? emp
+        GlobalBidInfo.shared.round = selectedRound
+        GlobalBidInfo.shared.month = month
+        GlobalBidInfo.shared.year = year
+        
+        AppState.shared.mockDataMonth = month
+        AppState.shared.mockDataYear = year
+        
+        // Navigate
+        let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
+        vc.isNewBid = self.isNewBid
+        vc.isHistoricBid = self.isHistoricBid
+        vc.selectedDomicile = selectedDomicile
+        if let position = BICrewPositionType(from: selectedPosition) {
+            vc.selectedPosition = position
+        }
+        vc.selectedRound = selectedRound
+        vc.empNum = self.empNum
+        vc.month = month
+        vc.year = year
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }

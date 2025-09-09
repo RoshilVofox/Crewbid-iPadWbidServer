@@ -52,7 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     var sendTimer: Timer?
     var locationManager = CLLocationManager()
     var objNetworkType: NetworkType = .ground
-
+    var sc:ServiceConnection?
     func checkUpdate(){
         if self.connectedToInternet(){
             self.checkForUpdate(false)
