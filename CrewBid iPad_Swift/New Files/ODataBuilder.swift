@@ -8,7 +8,7 @@
 import Foundation
 
 class ODataBuilder {
-    
+    var app:AppDelegate?
     
     func getFirstRoundPaperBidVactionsAndUsers(details:[String:Any], completion: @escaping ([Any])  -> Void, errorHandler: @escaping (Error) -> Void ) {
         let urlString = EndPoint.shared.getFirstRoundPaperBidVacationsAndUsers
@@ -46,5 +46,21 @@ class ODataBuilder {
         }
         dataTask.resume()
     }
+    
+    func checkUserExistOrNot(_ empNo: String) {
+        app = UIApplication.shared.delegate as? AppDelegate
+        guard let app = app else { return }
+        
+        let url = "GetUserDetails/\(empNo)"
+        print("weeeebb \(url)")
+        
+        app.sc?.constructUrl(url)
+        app.sc?.checkCrewBidServiceAccessibility { [weak self] isAccessible in
+            if isAccessible {
+                self?.app?.sc?.get()
+            }
+        }
+    }
+    
     
 }

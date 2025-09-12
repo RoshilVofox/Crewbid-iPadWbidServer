@@ -102,9 +102,9 @@ class CBDocumentsCollectionViewController: BaseViewController {
                           if fileManager.fileExists(atPath: fileURL.path) {
                               do {
                                   try fileManager.removeItem(at: fileURL)
-                                  print("✅ Deleted file: \(fileURL.lastPathComponent)")
+                                  print(" Deleted file: \(fileURL.lastPathComponent)")
                               } catch {
-                                  print("❌ Failed to delete file: \(error.localizedDescription)")
+                                  print(" Failed to delete file: \(error.localizedDescription)")
                               }
                           }
                         

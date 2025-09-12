@@ -95,8 +95,8 @@ class ServiceConnection: NSObject, URLSessionDelegate{
     
     
     func get() {
-        var baseData = Data()
-        var isPost = false
+        baseData = Data()
+        isPost = false
         totalBytes = 0
         receivedBytes = 0
 
