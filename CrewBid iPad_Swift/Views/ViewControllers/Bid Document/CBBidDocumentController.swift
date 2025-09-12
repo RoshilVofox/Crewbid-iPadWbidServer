@@ -63,6 +63,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     var commutingSortCell = CBCommutingSortCell()
     var isOldBidPackage: Bool = false
     var totalNumberString: String?
+    var didDisplayMonthToMonthAlert = true
     override func viewDidLoad() {
         super.viewDidLoad()
         updateLocalHerbSwitchUI()
@@ -89,6 +90,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutViewForSwitch), name: NSNotification.Name("SyncSwitchStateAction"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(showCommutablilityFilterView), name: Notification.Name("ShowCommutabilityFilterView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(ShowCommutablilitySortView), name: Notification.Name("ShowCommutabilitySortView"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(tapWBidMaxBtn), name: Notification.Name("TapWBidMaxBtn"), object: nil)
         
         firstTimeBidOpen()
         NotificationCenter.default.addObserver(self, selector: #selector(didDismissLatestNews), name: NSNotification.Name("DidDismissLatestNews"), object: nil)
@@ -1094,13 +1096,17 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
             let monthToMonthAlert = storyboard.instantiateViewController(withIdentifier: "CBMonthToMonthAlertVC") as! CBMonthToMonthAlertVC
             monthToMonthAlert.text = alertMessage
-            monthToMonthAlert.showAlertFromViewController(from: self) { tappedOk in
-                if tappedOk {
-                    self.bidPeriod?.vactionWeekAlertDisplayed = NSNumber(value: true)
-                    completionHandler(true)
+            if didDisplayMonthToMonthAlert == false {
+                monthToMonthAlert.showAlertFromViewController(from: self) { tappedOk in
+                    if tappedOk {
+                        self.bidPeriod?.vactionWeekAlertDisplayed = NSNumber(value: true)
+                        completionHandler(true)
+                    }
                 }
             }
-            
+            else {
+                completionHandler(true)
+            }
         }
         else {
             completionHandler(true)
@@ -1272,7 +1278,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             btnEOM.isSelected = true
             self.bidPeriod?.isEomOn = NSNumber(value: true)
             btnEOM.backgroundColor = UIColor(red: 35.00/255.0, green: 177.0/255.0, blue: 76.0/255.0, alpha: 1.00)
-            btnEOM.setTitleColor(.white, for: .normal)
+            btnEOM.setTitleColor(.white, for: .selected)
         }
         else if (self.bidPeriod?.vacationType == "CREWBID" || self.bidPeriod?.vacationType == "WBID" || self.bidPeriod?.vacationType == "FAVacation") {
             self.bidPeriod?.currentDateTime = Date()
@@ -2256,7 +2262,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 else {
                     NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
                     self.bidPeriod!.userVacationWbidOrCrewBid = ""
-                    self.disableVacationButton()
+//                    self.disableVacationButton()
                     self.view.hideActivityIndicator()
                     self.btnSwaptimizer.isEnabled = true
                     self.btnWbidMax.isEnabled = true
@@ -2387,34 +2393,43 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     func showEOMAlert() {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd MMM"
-        if let vacations = self.bidPeriod?.vacations?.allObjects,
-           let firstVacation = vacations.first as? BIVacation,
-           let startDate = firstVacation.startDate,
-           let endDate = firstVacation.endDate {
-            var vacationStartDateDisp = formatter.string(from: startDate)
-            var dayComponent = DateComponents()
-            dayComponent.day = -1 // because the vacation.endDate is 1 day ahead
+//      added an extra condition to check vacation startdate is equal eom vacation start date
+        let vacations = self.bidPeriod!.vacations!.allObjects
+        var firstVacation = vacations.first as! BIVacation
+        if vacations.count > 0 {
+            let vacationmonthForCheck = firstVacation.startDate!
+            let month = Calendar.current.component(.month, from: vacationmonthForCheck)
+            if self.bidPeriod!.month!.intValue == month {
+                firstVacation = vacations.last as! BIVacation
+            }
+        }
+        let startDate = firstVacation.startDate!
+        let endDate = firstVacation.endDate!
+        var vacationStartDateDisp = formatter.string(from: startDate)
+        var dayComponent = DateComponents()
+        dayComponent.day = -1 // because the vacation.endDate is 1 day ahead
 
-            let calendar = Calendar.current
-            if var exactVacEndDate = calendar.date(byAdding: dayComponent, to: endDate) {
-                if (self.bidPeriod!.vacations?.allObjects.count ?? 0 > 1) {
-                    var array: NSArray = self.bidPeriod!.vacations!.allObjects as NSArray
-                    let sortDescriptor = [NSSortDescriptor(key: "startDate", ascending: false)]
-                    array = (array.sortedArray(using: sortDescriptor) as NSArray)
-                    exactVacEndDate = calendar.date(byAdding: dayComponent, to: endDate)!
-                    var subtractSixDays =  DateComponents()
-                    subtractSixDays.day = -6
-                    let resultDate = calendar.date(byAdding: subtractSixDays, to: exactVacEndDate)!
-                    vacationStartDateDisp = formatter.string(from: resultDate)
-                }
-                
-                btnEOM.isSelected = true
-                self.bidPeriod!.isEomOn = NSNumber(value: true)
-                btnEOM.backgroundColor = UIColor(red: 35.0/255.0, green: 177.0/255.0, blue: 76.0/255.0, alpha: 1.0)
-                btnEOM.setTitleColor(.white, for: .normal)
-                let vacationEndDateDisp = formatter.string(from: exactVacEndDate)
-                let alertMessage = "You have an `EOM` Vacation: \(vacationStartDateDisp) - \(vacationEndDateDisp).\n\nEOM weeks can affect the vacation pay in the current bid period and also the next month.\n\nWe have two documents regarding Month-to-Month vacations that also apply to EOM vacation weeks.\n\nWe suggest you read the following documents to improve your bidding knowledge."
-                let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+        let calendar = Calendar.current
+        if var exactVacEndDate = calendar.date(byAdding: dayComponent, to: endDate) {
+            if (self.bidPeriod!.vacations?.allObjects.count ?? 0 > 1) {
+                var array: NSArray = self.bidPeriod!.vacations!.allObjects as NSArray
+                let sortDescriptor = [NSSortDescriptor(key: "startDate", ascending: false)]
+                array = (array.sortedArray(using: sortDescriptor) as NSArray)
+                exactVacEndDate = calendar.date(byAdding: dayComponent, to: endDate)!
+                var subtractSixDays =  DateComponents()
+                subtractSixDays.day = -6
+                let resultDate = calendar.date(byAdding: subtractSixDays, to: exactVacEndDate)!
+                vacationStartDateDisp = formatter.string(from: resultDate)
+            }
+            
+            btnEOM.isSelected = true
+            self.bidPeriod!.isEomOn = NSNumber(value: true)
+            btnEOM.backgroundColor = UIColor(red: 35.0/255.0, green: 177.0/255.0, blue: 76.0/255.0, alpha: 1.0)
+            btnEOM.setTitleColor(.white, for: .selected)
+            let vacationEndDateDisp = formatter.string(from: exactVacEndDate)
+            let alertMessage = "You have an `EOM` Vacation: \(vacationStartDateDisp) - \(vacationEndDateDisp).\n\nEOM weeks can affect the vacation pay in the current bid period and also the next month.\n\nWe have two documents regarding Month-to-Month vacations that also apply to EOM vacation weeks.\n\nWe suggest you read the following documents to improve your bidding knowledge."
+            let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+            if didDisplayMonthToMonthAlert == false {
                 let monthToMonthAlert = storyboard.instantiateViewController(withIdentifier: "CBMonthToMonthAlertVC") as! CBMonthToMonthAlertVC
                 monthToMonthAlert.text = alertMessage
                 monthToMonthAlert.showAlertFromViewController(from: self) { tappedOk in }
@@ -2897,7 +2912,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             self.bidPeriod!.isEomOn = NSNumber(value: false)
             btnEOM.backgroundColor = .white
             btnEOM.setTitleColor(.black, for: .normal)
-            if (self.bidPeriod!.seniorityVacayAvailable?.boolValue == false) {
+            if (self.bidPeriod!.seniorityVacayAvailable?.boolValue != true) {
                 if btnWbidMax.isSelected {
                     btnWbidMax.isSelected = false
                     btnWbidMax.backgroundColor = .white
@@ -2908,10 +2923,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         else {
             btnEOM.isSelected = true
             self.bidPeriod!.isEomOn = NSNumber(value: true)
-            DispatchQueue.main.async {
+//            DispatchQueue.main.async {
                 self.btnEOM.backgroundColor = UIColor(red: 35.0/255.0, green: 177.0/255.0, blue: 76.0/255.0, alpha: 1.0)
-                self.btnEOM.setTitleColor(.white, for: .normal)
-            }
+                self.btnEOM.setTitleColor(.white, for: .selected)
+//            }
             self.bidPeriod!.isSwaptimizerOn = NSNumber(value: false)
             btnSwaptimizer.backgroundColor = .white
             btnSwaptimizer.setTitleColor(.black, for: .normal)
@@ -3084,6 +3099,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     func alertTitleActionPilot(_ title: String) {
         let dayForPilot = eomDayForPilot()
         let eomMonthString = eomMonth()
+        didDisplayMonthToMonthAlert = false
         if let day1 = dayForPilot["Day1"] {
             if title == "\(eomMonthString) \(day1)" {
                 bidPeriod!.faEomSelectedDate = 1
@@ -3435,6 +3451,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     print("error saving from wbidVacationButtonAction \(error.localizedDescription)")
                 }
             }
+            self.enableOrDisableEOMButton()
         }
     }
     
@@ -3490,6 +3507,12 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     self.checkForSWAPtimizerFile()
                 }
             }
+        }
+    }
+    
+    @objc func tapWBidMaxBtn() {
+        if bidPeriod?.isFABid() == false {
+            wbidVacationButtonAction(btnWbidMax)
         }
     }
 }
