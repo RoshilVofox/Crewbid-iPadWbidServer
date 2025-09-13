@@ -39,7 +39,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     var rightNavController:UINavigationController!
     var bidsTableNavController:UINavigationController!
     var dataSource = GlobalBidInfo.shared
-//    var linesManager:BILinesManager!
+    var bdPrd = 1
     var calendarData:BICalendarData = BICalendarData()
     var managedObjectContext: NSManagedObjectContext {
         return CoreDataManager.shared.persistentContainer.viewContext
@@ -968,9 +968,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     @IBAction func settingsAction(_ sender: Any) {
-        let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "CBBidActionsViewController") as! CBBidActionsViewController
-//        vc.bidPeriod = self.bidPeriod
+        let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedSettingsVC") as! EmbeddedSettingsVC
+        vc.bidPeriod = bidPeriod
+        vc.bdPrd = bdPrd
+        vc.preferredContentSize = CGSize(width: 300, height: 210)
         vc.modalPresentationStyle = .custom
         let frame = CGRect(x: 15, y: 35, width: 0, height: 0)
         vc.showPopover(sourceView: btnSettings, sourceRect: frame)

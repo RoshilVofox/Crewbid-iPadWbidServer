@@ -16,7 +16,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
     @IBOutlet weak var editButton: UIButton!
     @IBOutlet weak var helpMenuButton: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
-    var bdPrd:Int!
+    var bdPrd = 0
     
     var isPlusImage = true
     var selectedRows : [Int] = []
@@ -33,7 +33,6 @@ class CBDocumentsCollectionViewController: BaseViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         isPlusImage = true
-        bdPrd = 0
         if !UserDefaults.standard.bool(forKey: "isFirstLaunch"){
             self.showQuickTutorialForFirstTime()
         }

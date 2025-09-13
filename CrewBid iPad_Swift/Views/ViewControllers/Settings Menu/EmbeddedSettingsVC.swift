@@ -18,14 +18,13 @@ class EmbeddedSettingsVC: BaseViewController,KUIPopOverUsable {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Do any additional setup after loading the view.
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let navVC = segue.destination as? UINavigationController
         let vc = navVC?.viewControllers.first as! SettingsViewController
-//        vc.bidPeriod = bidPeriod
+        vc.bidPeriod = bidPeriod
         vc.bdPrd = bdPrd
     }
 

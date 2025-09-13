@@ -36,6 +36,7 @@ class SettingsViewController: BaseViewController,KUIPopOverUsable {
     override func viewDidLoad() {
         super.viewDidLoad()
         viewBG.layer.cornerRadius = 5
+        viewBG.layer.masksToBounds = true
         setSwitchState()
         setUiForCell()
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewTapped))
