@@ -1738,10 +1738,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     func tableViewReloadWithHud() {
-        let condition1 = /*!btnEOM.isHidden && !btnSwaptimizer.isSelected && !btnWbidMax.isSelected*/ false
-        let condition2 = /*!btnEOM.isHidden*/ false
-        let condition3 = /*!btnSwaptimizer.isSelected && !btnWbidMax.isSelected*/ false
-        let condition4 = /*!self.manageVacationsEnabled*/ false
+        let condition1 = !btnEOM.isHidden && !btnSwaptimizer.isSelected && !btnWbidMax.isSelected
+        let condition2 = !btnEOM.isHidden
+        let condition3 = !btnSwaptimizer.isSelected && !btnWbidMax.isSelected
+        let condition4 = !self.manageVacationsEnabled
         DispatchQueue.main.async {
             if (condition1) {
                 if (condition2) {
@@ -2623,7 +2623,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     @objc func tableViewReloadForFAWithHud() {
-        let condition1 = /*!self.btnEOM.isHidden && self.btnWbidMax.isSelected*/ false
+        let condition1 = /*!self.btnEOM.isHidden && !self.btnWbidMax.isSelected*/ false
         let condition2 = /*!self.btnEOM.isSelected*/ false
         let condition3 = /*!self.btnWbidMax.isSelected*/ false
         let condition4 = /*!self.manageVacationsEnabled*/ false
@@ -2779,7 +2779,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 }
 
                 if self.bidPeriod!.containsVacay?.boolValue == true {
-                    if self.bidPeriod!.isMaxSubScriptionOfEnteredUser?.boolValue == false {
+                    if self.bidPeriod!.isMaxSubScriptionOfEnteredUser?.boolValue != true {
 //                        MARK: need to add subscription case
 //                        if CBIAPHelper.sharedInstance().daysRemainingOnSubscription() > 0 {
                             self.bidPeriod!.userVacationWbidOrCrewBid = "FAVacation"
@@ -3195,12 +3195,12 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             self.checkForSWAPtimizerFile()
         }
         else {
-            self.showEomVacationConfirmationAlert()
+            self.showEomVacationConfirmationAlertForPilot()
         }
     }
     
     // To show this alert whenever open the bid from home screen.
-    func showEomVacationConfirmationAlert() {
+    func showEomVacationConfirmationAlertForPilot() {
         if ((!(bidPeriod!.eomIsNo == "YES") && !(bidPeriod!.isFABid())) ||
             bidPeriod!.vacationType == "WBID" || bidPeriod!.vacationType == "WBIDF") {
             AlertService.showAlertForTopVC(title: "Vacation!", message: "Do you have Vacation Starting in the first 3 days of the next bid period \(self.eomMonth()) ?", actions: [(
@@ -3302,7 +3302,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 AlertService.showAlertForTopVC(title: "Sorry!", message: "You cannot get needed access via SouthwestWifi or 2Wire. Try again later when you are safely on the ground and have another internet access. \(self.eomMonth())")
                 return
             }
-            if (self.bidPeriod!.seniorityVacayAvailable?.boolValue != true && !btnWbidMax.isSelected) {
+            if (!self.bidPeriod!.seniorityVacayAvailable!.boolValue && !btnWbidMax.isSelected) {
                 AlertService.showAlertForTopVC(title: "Vacation", message: "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button")
             }
             else {
@@ -3442,7 +3442,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 btnWbidMax.setTitleColor(.black, for: .normal)
                 self.bidPeriod!.currentDateTime = Date()
                 self.bidPeriod!.isStateFileModifiedToSync = NSNumber(value: true)
-                NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3){
+                    NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+                }
                 do {
                     try self.context?.save()
                     print(" saved successfully from wbidVacationButtonAction")
