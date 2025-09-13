@@ -87,7 +87,7 @@ class CBExpandedBidLinesTableController: BaseViewController {
             let array = self.bidPeriod.awardDetails?.allObjects as! [AwardDetails]
             var awardSequenceNumArray = [NSNumber]()
             //let bidUserId = CBUserAccountDetail.shared.EmpNum
-            var bidUserId = CBUserAccountDetail.shared.EmpNum
+            var bidUserId = CBUserAccountDetail.shared.employeeNumber
             if self.bidPeriod.crewIdentifier?.stringValue != nil{
                 bidUserId = self.bidPeriod.crewIdentifier!.stringValue
             }

@@ -302,7 +302,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                         }else if cell.lblTitle.text == "Restore Last Bid" {
                             self.dismiss(animated: false, completion: nil)
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                let notification = Notification(name: Notification.Name("RestoreLastBidNotification"), object: nil, userInfo: ["employeeID": CBUserAccountDetail.shared.EmpNum])
+                                let notification = Notification(name: Notification.Name("RestoreLastBidNotification"), object: nil, userInfo: ["employeeID": CBUserAccountDetail.shared.employeeNumber])
                                 NotificationCenter.default.post(notification)
                             }
                         }
@@ -312,7 +312,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                     if cell.lblTitle.text == "Restore Last Bid" {
                         self.dismiss(animated: false, completion: nil)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            let notification = Notification(name: Notification.Name("RestoreLastBidNotification"), object: nil, userInfo: ["employeeID": CBUserAccountDetail.shared.EmpNum])
+                            let notification = Notification(name: Notification.Name("RestoreLastBidNotification"), object: nil, userInfo: ["employeeID": CBUserAccountDetail.shared.employeeNumber])
                             NotificationCenter.default.post(notification)
                         }
                     }
@@ -393,7 +393,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                         }else if cell.lblTitle.text == "Restore Last Bid" {
                             self.dismiss(animated: false, completion: nil)
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                let notification = Notification(name: Notification.Name("RestoreLastBidNotification"), object: nil, userInfo: ["employeeID": CBUserAccountDetail.shared.EmpNum])
+                                let notification = Notification(name: Notification.Name("RestoreLastBidNotification"), object: nil, userInfo: ["employeeID": CBUserAccountDetail.shared.employeeNumber])
                                            NotificationCenter.default.post(notification)
                             }
                         }
@@ -403,7 +403,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                     if cell.lblTitle.text == "Restore Last Bid" {
                         self.dismiss(animated: false, completion: nil)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            let notification = Notification(name: Notification.Name("RestoreLastBidNotification"), object: nil, userInfo: ["employeeID": CBUserAccountDetail.shared.EmpNum])
+                            let notification = Notification(name: Notification.Name("RestoreLastBidNotification"), object: nil, userInfo: ["employeeID": CBUserAccountDetail.shared.employeeNumber])
                             NotificationCenter.default.post(notification)
                         }
                     }

@@ -83,7 +83,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         self.bidLinesController = self.storyboard?.instantiateViewController(withIdentifier: "CBBidListVC") as? CBBidListVC
         self.bidLinesController.managedObjectContext = self.managedObjectContext
         self.bidLinesController.bidPeriod = self.bidPeriod!
-        
+        app.ObjUserAccount?.saveUserInfo()
         setupUI()
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutViewForSwitch), name: NSNotification.Name("SyncSwitchStateAction"), object: nil)

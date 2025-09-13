@@ -31,7 +31,7 @@ class AlertService{
         guard let alertVC = storyboard.instantiateViewController(withIdentifier: "CBAlertVC") as? CBAlertVC else {
             return}
         alertVC.modalPresentationStyle = .currentContext
-        alertVC.modalTransitionStyle = .coverVertical
+        alertVC.modalTransitionStyle = .crossDissolve
         alertVC.alertTitle = title
         alertVC.attributedMessage = attributedMessage
         alertVC.fromView = viewController

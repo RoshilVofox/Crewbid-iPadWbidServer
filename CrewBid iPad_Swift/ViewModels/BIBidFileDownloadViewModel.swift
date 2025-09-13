@@ -202,6 +202,10 @@ class BIBidFileDownloadViewModel {
                         // Move the downloaded file into the permanent directory
                         try FileManager.default.moveItem(at: tempURL, to: destinationURL)
 
+                        // Force flush: open + close handle
+                        let handle = try FileHandle(forReadingFrom: destinationURL)
+                        try handle.close()
+                        
                         // Unzip into a fresh temp folder first
                         let tempUnzipDir = destinationDir.appendingPathComponent(UUID().uuidString)
                         try FileManager.default.createDirectory(at: tempUnzipDir, withIntermediateDirectories: true, attributes: nil)

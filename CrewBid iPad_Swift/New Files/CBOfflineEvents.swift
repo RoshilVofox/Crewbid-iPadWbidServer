@@ -297,26 +297,41 @@ class CBOfflineEvents{
     }
     
     
+    func saveCBExpirationDate(_ date: String) {
+        guard let expiryDate = getDateFromJSON(date) else {
+            return
+        }
+
+        let formattedDate = "\(expiryDate)"
+        guard !formattedDate.isEmpty else {
+            return
+        }
+
+        let bestAvailableDate = CBIAPHelper.shared.getBestAvailableExpirationDate()
+        let maxCBDate = CBIAPHelper.shared.bestDate(from: expiryDate, date2: bestAvailableDate)
+
+        CBIAPHelper.shared.setICloudEncryptedExpirationDate(maxCBDate)
+        CBIAPHelper.shared.setLocalEncryptedExpirationDate(maxCBDate)
+    }
+    
     func saveWbidExpirationDate(_ date: String) {
-//        // Convert JSON date string to Date using your helper
-//        guard let expiryDate = getDateFromJSON(date) else {
-//            return
-//        }
-//
-//        let formattedDate = "\(expiryDate)"
-//        guard !formattedDate.isEmpty else {
-//            return
-//        }
-//
-//        // Compare with best available WBID expiration date
-//        if let bestAvailableDate = CBIAPHelper.sharedInstance().getBestAvailableWbidExpirationDate() {
-//            let maxWBDate = CBIAPHelper.sharedInstance().bestDate(from: expiryDate, date2: bestAvailableDate)
-//
-//            // Save encrypted expiration dates
-//            CBIAPHelper.sharedInstance().setICloudEncryptedWbidExpirationDate(maxWBDate)
-//            CBIAPHelper.sharedInstance().setLocalEncryptedWbidExpirationDate(maxWBDate)
-//
-//        }
+        // Convert JSON date string to Date using your helper
+        guard let expiryDate = getDateFromJSON(date) else {
+            return
+        }
+
+        let formattedDate = "\(expiryDate)"
+        guard !formattedDate.isEmpty else {
+            return
+        }
+
+        // Compare with best available WBID expiration date
+        let bestAvailableDate = CBIAPHelper.shared.getBestAvailableWbidExpirationDate()
+        let maxWBDate = CBIAPHelper.shared.bestDate(from: expiryDate, date2: bestAvailableDate)
+
+        // Save encrypted expiration dates
+        CBIAPHelper.shared.setICloudEncryptedWbidExpirationDate(maxWBDate)
+        CBIAPHelper.shared.setLocalEncryptedWbidExpirationDate(maxWBDate)
     }
     
     func getDateFromJSON(_ string: String) -> Date? {
@@ -410,7 +425,7 @@ class CBOfflineEvents{
                             app.ObjUserAccount?.topSubscriptionLine = res["TopSubscriptionLine"] as! String
                             app.ObjUserAccount?.secondSubscriptionLine = res["SecondSubscriptionLine"] as! String
                             app.ObjUserAccount?.thirdSubscriptionLine = res["ThirdSubscriptionLine"] as! String
-                            app.ObjUserAccount?.LoginuserId = app.ObjUserAccount!.EmpNum
+                            app.ObjUserAccount?.LoginuserId = app.ObjUserAccount!.employeeNumber
                             
                             app.ObjUserAccount?.dicLoginAuthDetails["TopSubscriptionLine"] = app.ObjUserAccount?.topSubscriptionLine
                             app.ObjUserAccount?.dicLoginAuthDetails["SecondSubscriptionLine"] = app.ObjUserAccount?.secondSubscriptionLine
@@ -545,7 +560,7 @@ class CBOfflineEvents{
                             app.ObjUserAccount?.thirdSubscriptionLine = thirdLine
                             app.ObjUserAccount?.dicLoginAuthDetails["ThirdSubscriptionLine"] = thirdLine
                         }
-                        app.ObjUserAccount?.LoginuserId = app.ObjUserAccount!.EmpNum
+                        app.ObjUserAccount?.LoginuserId = app.ObjUserAccount!.employeeNumber
                         
                         // Handle expiration dates
                         if let cbExpirationDate = result["CBExpirationDate"] as? String,
@@ -661,8 +676,8 @@ class CBOfflineEvents{
             let position: NSNumber
             
             if objUserAccount.isUserInfoAvailable() {
-                empNum = objUserAccount.EmpNum
-                position = NSNumber(value: objUserAccount.Position)
+                empNum = objUserAccount.employeeNumber
+                position = NSNumber(value: objUserAccount.position)
             } else {
                 empNum = ""
                 position = 1

@@ -123,8 +123,10 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             let service = "com.yourapp.login"
             let account = self.txtUserID.text ?? ""
             let password = self.txtPassword.text ?? ""
-            KeychainHelper.save(account: account, service: service, value: password)
-            
+            let success = KeychainHelper.save(account: account, service: service, value: password)
+            if success{
+                print("Saved to keychain")
+            }
             if self.type == "Retrieve Awards"{
                 self.handleAwardRetrieval(sessionKey: sessionKey)
             }
@@ -137,10 +139,10 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }
         loginViewModel.onLoginFailure = { error in
             self.view.hideActivityIndicator()
-            
+           
             let errorString = error.localizedDescriptionString.lowercased()
             print("Error:\(errorString)")
-            if errorString.contains("unauthorized request"){
+            if errorString.contains("login failed") || errorString.contains("security purposes"){
                 if let account = KeychainHelper.retrieveUsername(forService: "SaveLoginDetails") {
                     KeychainHelper.delete(account: account, service: "SaveLoginDetails")
                 }
@@ -154,6 +156,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                 str1.append(str4)
                 str1.append(str5)
                 AlertService.showDBAlert(title: "Oops!", attributedMessage: str1, from: self)
+                
             }else if errorString.contains("timed out"){
                 if self.app.objNetworkType == .free || self.app.objNetworkType == .paid{
                     AlertService.showDBAlert(title: "Darn it!", attributedMessage: NSAttributedString(string: "The company 3rd Party server is not responding.\nThis is not uncommon.\nYour only cources of action are to wait a while and try again, or try another internet connection.\nSometimes the internet signal on the plane is just too weak"), from: self)
@@ -433,43 +436,60 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         if empID.lowercased().hasPrefix("x") || empID.lowercased().hasPrefix("e") {
             empID = String(empID.dropFirst())
         }
+        if bidAlreadyExists() {
+                showAlertForExistingBid {
+                    self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
+                }
+            } else {
+                startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
+            }
+//        AuthService.shared.checkAuthentication(empID: empID) { [weak self] authResult in
+//            guard let self = self else { return }
+//            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
+//            if authResult.isAuthorized {
+//                if authResult.isSomehowSubscribed || formattedUserID == DevUserID {
+//                    // Auth success -> proceed with login
+//                    if self.bidAlreadyExists() {
+//                        self.showAlertForExistingBid {
+//                            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
+//                            self.loginViewModel.checkLogin(userID: formattedUserID, password: password)
+//                        }
+//                    } else {
+//                        self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
+//                        self.loginViewModel.checkLogin(userID: formattedUserID, password: password)
+//                    }
+//                }
+//            } else {
+//                // Auth failed -> forward to onLoginFailure
+//                self.loginViewModel.onLoginFailure?(Errors.unauthorized(message: authResult.message ?? "You are not subscribed or authorized."))
+//            }
+//            
+//        } onFailure: { [weak self] error in
+//            self?.loginViewModel.onLoginFailure?(error)
+//        }
+        
+    }
+        
+    private func startAuthentication(empID: String, formattedUserID: String, password: String) {
         self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
+
         AuthService.shared.checkAuthentication(empID: empID) { [weak self] authResult in
             guard let self = self else { return }
-            
-            if authResult.isAuthorized {
-                if authResult.isSomehowSubscribed || formattedUserID == DevUserID {
-                    // Auth success -> proceed with login
-                    if self.bidAlreadyExists() {
-                        self.showAlertForExistingBid {
-                            self.loginViewModel.checkLogin(userID: formattedUserID, password: password)
-                        }
-                    } else {
-                        self.loginViewModel.checkLogin(userID: formattedUserID, password: password)
-                    }
-                }
-             } else {
-                 // Auth failed -> show message
-                 let alert = AlertService.showAlert(
-                     title: "Authentication Failed",
-                     message: authResult.message ?? "You are not subscribed or authorized.",
-                     actions: nil
-                 )
-                 self.present(alert, animated: true)
-             }
 
-         } onFailure: { [weak self] error in
-             let alert = AlertService.showAlert(
-                 title: "Error",
-                 message: error.localizedDescription,
-                 actions: nil
-             )
-             self?.present(alert, animated: true)
-         }
-        
-        
-        
-        
+            if authResult.isAuthorized, authResult.isSomehowSubscribed || formattedUserID == DevUserID {
+                self.loginViewModel.checkLogin(userID: formattedUserID, password: password)
+            } else {
+                self.view.hideActivityIndicator()
+                self.loginViewModel.onLoginFailure?(
+                    Errors.unauthorized(message: authResult.message ?? "You are not subscribed or authorized.")
+                )
+            }
+
+        } onFailure: { [weak self] error in
+            self?.view.hideActivityIndicator()
+            self?.loginViewModel.onLoginFailure?(error)
+        }
+    }
         //--Login action--
 //        if bidAlreadyExists(){
 //            showAlertForExistingBid{
@@ -482,7 +502,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
 //            
 //        }
         //----------------
-    }
+    
 
     private func bidAlreadyExists() -> Bool {
         var status = false

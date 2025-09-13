@@ -157,7 +157,7 @@
 		F41EBF082DC4DB20001413DE /* AwardCalendarCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD292DC4DB20001413DE /* AwardCalendarCollectionViewCell.swift */; };
 		F41EBF092DC4DB20001413DE /* contactUsCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD2A2DC4DB20001413DE /* contactUsCollectionViewCell.swift */; };
 		F41EBF0A2DC4DB20001413DE /* helpMenuItemCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD2B2DC4DB20001413DE /* helpMenuItemCollectionViewCell.swift */; };
-		F41EBF0B2DC4DB20001413DE /* mySubscriptionCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD2C2DC4DB20001413DE /* mySubscriptionCollectionViewCell.swift */; };
+		F41EBF0B2DC4DB20001413DE /* SubscriptionCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD2C2DC4DB20001413DE /* SubscriptionCollectionViewCell.swift */; };
 		F41EBF0C2DC4DB20001413DE /* quickTutorialCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD2D2DC4DB20001413DE /* quickTutorialCollectionViewCell.swift */; };
 		F41EBF0D2DC4DB20001413DE /* swaptimizerHelpMenuCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD2E2DC4DB20001413DE /* swaptimizerHelpMenuCollectionViewCell.swift */; };
 		F41EBF0E2DC4DB20001413DE /* VideoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBD2F2DC4DB20001413DE /* VideoCollectionViewCell.swift */; };
@@ -358,18 +358,23 @@
 		F4C5D66A2DC9EBC200D86BD2 /* NSData+AES.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6692DC9EBC200D86BD2 /* NSData+AES.m */; };
 		F4C6F9362DCB72940092C00C /* CBUserAccountDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C6F9352DCB72940092C00C /* CBUserAccountDetail.swift */; };
 		F4C6F93A2DCB78770092C00C /* SimplePing.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C6F9392DCB78770092C00C /* SimplePing.m */; };
+		F4CAAF892E70469E0094ADB6 /* SoapWebServiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4CAAF882E70469E0094ADB6 /* SoapWebServiceController.swift */; };
+		F4CAAF8D2E704DB40094ADB6 /* XMLDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CAAF8C2E704DB40094ADB6 /* XMLDictionary.m */; };
 		F4CF5A8E2D892B9800A351DB /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = F4CF5A8D2D892B9800A351DB /* ZipArchive */; };
 		F4D572F52E5472A000757145 /* CBBidSubmissionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D572F42E5472A000757145 /* CBBidSubmissionViewModel.swift */; };
 		F4DA88132E5722D000ECC906 /* BISwaBidDataDownload.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DA88122E5722D000ECC906 /* BISwaBidDataDownload.swift */; };
 		F4DA88152E57231D00ECC906 /* BISwaBidDataDownloadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DA88142E57231D00ECC906 /* BISwaBidDataDownloadViewModel.swift */; };
 		F4DB59522E30B5080079930A /* BILinesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DB59512E30B5080079930A /* BILinesManager.swift */; };
 		F4DBD8362DDC5FF700423856 /* BIBidInfoReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DBD8352DDC5FF700423856 /* BIBidInfoReader.swift */; };
+		F4DE35432E72A5C100777D47 /* CBUserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DE35422E72A5C100777D47 /* CBUserInfo.swift */; };
+		F4DE35452E72C1F800777D47 /* CBGlobal.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DE35442E72C1F800777D47 /* CBGlobal.swift */; };
 		F4DF6DCD2DD5EA2700761057 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DF6DCC2DD5EA2700761057 /* KeychainHelper.swift */; };
 		F4E5DA042E3C908D00C96BDF /* CBCalendarDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E5DA032E3C908D00C96BDF /* CBCalendarDayCell.swift */; };
 		F4E5DA062E3C9F9700C96BDF /* CBLineCalendarCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E5DA052E3C9F9700C96BDF /* CBLineCalendarCollectionViewController.swift */; };
 		F4E5DA0C2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E5DA0B2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift */; };
 		F4E659F82E656C5200E78B2A /* CBSendMail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E659F72E656C5200E78B2A /* CBSendMail.swift */; };
 		F4E659FA2E65806900E78B2A /* CBOfflineEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E659F92E65806900E78B2A /* CBOfflineEvents.swift */; };
+		F4E66E6E2E73FB540038D148 /* ChimpKit.m in Sources */ = {isa = PBXBuildFile; fileRef = F4E66E6D2E73FB540038D148 /* ChimpKit.m */; };
 		F4EBBCAB2E4C6E1E00C87336 /* SegmentedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4EBBCAA2E4C6E1D00C87336 /* SegmentedTableViewCell.swift */; };
 		F4FE7F4A2E66ADA700795CC7 /* ServiceConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FE7F492E66ADA700795CC7 /* ServiceConnection.swift */; };
 		F4FE7F4E2E66F0F600795CC7 /* IAPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FE7F4D2E66F0F600795CC7 /* IAPHelper.swift */; };
@@ -410,7 +415,7 @@
 		F41EBD292DC4DB20001413DE /* AwardCalendarCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwardCalendarCollectionViewCell.swift; sourceTree = "<group>"; };
 		F41EBD2A2DC4DB20001413DE /* contactUsCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = contactUsCollectionViewCell.swift; sourceTree = "<group>"; };
 		F41EBD2B2DC4DB20001413DE /* helpMenuItemCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = helpMenuItemCollectionViewCell.swift; sourceTree = "<group>"; };
-		F41EBD2C2DC4DB20001413DE /* mySubscriptionCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mySubscriptionCollectionViewCell.swift; sourceTree = "<group>"; };
+		F41EBD2C2DC4DB20001413DE /* SubscriptionCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionCollectionViewCell.swift; sourceTree = "<group>"; };
 		F41EBD2D2DC4DB20001413DE /* quickTutorialCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = quickTutorialCollectionViewCell.swift; sourceTree = "<group>"; };
 		F41EBD2E2DC4DB20001413DE /* swaptimizerHelpMenuCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = swaptimizerHelpMenuCollectionViewCell.swift; sourceTree = "<group>"; };
 		F41EBD2F2DC4DB20001413DE /* VideoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -735,18 +740,25 @@
 		F4C6F9352DCB72940092C00C /* CBUserAccountDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUserAccountDetail.swift; sourceTree = "<group>"; };
 		F4C6F9392DCB78770092C00C /* SimplePing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SimplePing.m; sourceTree = "<group>"; };
 		F4C6F93B2DCB85580092C00C /* CrewBid iPad_SwiftRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CrewBid iPad_SwiftRelease.entitlements"; sourceTree = "<group>"; };
+		F4CAAF882E70469E0094ADB6 /* SoapWebServiceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoapWebServiceController.swift; sourceTree = "<group>"; };
+		F4CAAF8B2E704DB40094ADB6 /* XMLDictionary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XMLDictionary.h; sourceTree = "<group>"; };
+		F4CAAF8C2E704DB40094ADB6 /* XMLDictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XMLDictionary.m; sourceTree = "<group>"; };
 		F4CF5A282D891A3800A351DB /* CrewBid iPad_Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CrewBid iPad_Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4D572F42E5472A000757145 /* CBBidSubmissionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidSubmissionViewModel.swift; sourceTree = "<group>"; };
 		F4DA88122E5722D000ECC906 /* BISwaBidDataDownload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BISwaBidDataDownload.swift; sourceTree = "<group>"; };
 		F4DA88142E57231D00ECC906 /* BISwaBidDataDownloadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BISwaBidDataDownloadViewModel.swift; sourceTree = "<group>"; };
 		F4DB59512E30B5080079930A /* BILinesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BILinesManager.swift; sourceTree = "<group>"; };
 		F4DBD8352DDC5FF700423856 /* BIBidInfoReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIBidInfoReader.swift; sourceTree = "<group>"; };
+		F4DE35422E72A5C100777D47 /* CBUserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUserInfo.swift; sourceTree = "<group>"; };
+		F4DE35442E72C1F800777D47 /* CBGlobal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBGlobal.swift; sourceTree = "<group>"; };
 		F4DF6DCC2DD5EA2700761057 /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
 		F4E5DA032E3C908D00C96BDF /* CBCalendarDayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCalendarDayCell.swift; sourceTree = "<group>"; };
 		F4E5DA052E3C9F9700C96BDF /* CBLineCalendarCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLineCalendarCollectionViewController.swift; sourceTree = "<group>"; };
 		F4E5DA0B2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidLineCalendarCollectionView.swift; sourceTree = "<group>"; };
 		F4E659F72E656C5200E78B2A /* CBSendMail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSendMail.swift; sourceTree = "<group>"; };
 		F4E659F92E65806900E78B2A /* CBOfflineEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBOfflineEvents.swift; sourceTree = "<group>"; };
+		F4E66E6C2E73FB540038D148 /* ChimpKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChimpKit.h; sourceTree = "<group>"; };
+		F4E66E6D2E73FB540038D148 /* ChimpKit.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChimpKit.m; sourceTree = "<group>"; };
 		F4EBBCAA2E4C6E1D00C87336 /* SegmentedTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedTableViewCell.swift; sourceTree = "<group>"; };
 		F4FE7F492E66ADA700795CC7 /* ServiceConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceConnection.swift; sourceTree = "<group>"; };
 		F4FE7F4D2E66F0F600795CC7 /* IAPHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPHelper.swift; sourceTree = "<group>"; };
@@ -847,6 +859,8 @@
 		F414757E2DC8D8220064CD25 /* StoreKit */ = {
 			isa = PBXGroup;
 			children = (
+				F4E66E6C2E73FB540038D148 /* ChimpKit.h */,
+				F4E66E6D2E73FB540038D148 /* ChimpKit.m */,
 				F4C5D6682DC9EBC200D86BD2 /* NSData+AES.h */,
 				F4C5D6692DC9EBC200D86BD2 /* NSData+AES.m */,
 				F4C5D6602DC9E25500D86BD2 /* NSData+Base64.h */,
@@ -866,7 +880,7 @@
 				F41EBD292DC4DB20001413DE /* AwardCalendarCollectionViewCell.swift */,
 				F41EBD2A2DC4DB20001413DE /* contactUsCollectionViewCell.swift */,
 				F41EBD2B2DC4DB20001413DE /* helpMenuItemCollectionViewCell.swift */,
-				F41EBD2C2DC4DB20001413DE /* mySubscriptionCollectionViewCell.swift */,
+				F41EBD2C2DC4DB20001413DE /* SubscriptionCollectionViewCell.swift */,
 				F41EBD2D2DC4DB20001413DE /* quickTutorialCollectionViewCell.swift */,
 				F41EBD2E2DC4DB20001413DE /* swaptimizerHelpMenuCollectionViewCell.swift */,
 				F41EBD2F2DC4DB20001413DE /* VideoCollectionViewCell.swift */,
@@ -1065,6 +1079,7 @@
 		F41EBDD42DC4DB20001413DE /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				F4CAAF8E2E704DCC0094ADB6 /* SoapWebService */,
 				F414757E2DC8D8220064CD25 /* StoreKit */,
 				F41EBDCA2DC4DB20001413DE /* PopOver */,
 				F49849CC2DC76EF900FE9426 /* Reachability.swift */,
@@ -1668,6 +1683,8 @@
 				F4E659F92E65806900E78B2A /* CBOfflineEvents.swift */,
 				F4FE7F492E66ADA700795CC7 /* ServiceConnection.swift */,
 				F4FE7F4D2E66F0F600795CC7 /* IAPHelper.swift */,
+				F4DE35422E72A5C100777D47 /* CBUserInfo.swift */,
+				F4DE35442E72C1F800777D47 /* CBGlobal.swift */,
 			);
 			path = "New Files";
 			sourceTree = "<group>";
@@ -1799,6 +1816,16 @@
 				F41EBD542DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift */,
 			);
 			path = CommuteTime;
+			sourceTree = "<group>";
+		};
+		F4CAAF8E2E704DCC0094ADB6 /* SoapWebService */ = {
+			isa = PBXGroup;
+			children = (
+				F4CAAF8B2E704DB40094ADB6 /* XMLDictionary.h */,
+				F4CAAF8C2E704DB40094ADB6 /* XMLDictionary.m */,
+				F4CAAF882E70469E0094ADB6 /* SoapWebServiceController.swift */,
+			);
+			path = SoapWebService;
 			sourceTree = "<group>";
 		};
 		F4CF5A1F2D891A3800A351DB = {
@@ -2033,7 +2060,7 @@
 				F41EBF082DC4DB20001413DE /* AwardCalendarCollectionViewCell.swift in Sources */,
 				F41EBF092DC4DB20001413DE /* contactUsCollectionViewCell.swift in Sources */,
 				F41EBF0A2DC4DB20001413DE /* helpMenuItemCollectionViewCell.swift in Sources */,
-				F41EBF0B2DC4DB20001413DE /* mySubscriptionCollectionViewCell.swift in Sources */,
+				F41EBF0B2DC4DB20001413DE /* SubscriptionCollectionViewCell.swift in Sources */,
 				F481E9712DD0908800DED8FE /* BIBidFileDownload.swift in Sources */,
 				F41EBF0C2DC4DB20001413DE /* quickTutorialCollectionViewCell.swift in Sources */,
 				F41EBF0D2DC4DB20001413DE /* swaptimizerHelpMenuCollectionViewCell.swift in Sources */,
@@ -2075,6 +2102,7 @@
 				F41EBF282DC4DB20001413DE /* BITripInfo+CoreDataProperties.swift in Sources */,
 				F41EBF292DC4DB20001413DE /* BIVacation+CoreDataClass.swift in Sources */,
 				F4DBD8362DDC5FF700423856 /* BIBidInfoReader.swift in Sources */,
+				F4DE35432E72A5C100777D47 /* CBUserInfo.swift in Sources */,
 				F41EBF2A2DC4DB20001413DE /* BIVacation+CoreDataProperties.swift in Sources */,
 				F41EBF2D2DC4DB20001413DE /* CommuteTime+CoreDataClass.swift in Sources */,
 				F41EBF2E2DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift in Sources */,
@@ -2173,6 +2201,7 @@
 				F41EBF7A2DC4DB20001413DE /* CBCommutingSortCell.swift in Sources */,
 				F41EBF7B2DC4DB20001413DE /* CBDayMonthSortCell.swift in Sources */,
 				F41EBF7C2DC4DB20001413DE /* CBFlagSortCell.swift in Sources */,
+				F4CAAF8D2E704DB40094ADB6 /* XMLDictionary.m in Sources */,
 				F410AA6A2E4DE7D200101EAB /* AwardsViewModel.swift in Sources */,
 				F41EBF7D2DC4DB20001413DE /* CBLineSortCell.swift in Sources */,
 				F41EBF7E2DC4DB20001413DE /* CBCommuteInfoViewController.swift in Sources */,
@@ -2219,6 +2248,7 @@
 				F41EBF9C2DC4DB20001413DE /* CBOptionalEmployeesPageViewController.swift in Sources */,
 				F41EBF9D2DC4DB20001413DE /* CBSubmissionCertifyVC.swift in Sources */,
 				F41EBF9E2DC4DB20001413DE /* CBSubmitCredentialVC.swift in Sources */,
+				F4DE35452E72C1F800777D47 /* CBGlobal.swift in Sources */,
 				F41EBF9F2DC4DB20001413DE /* SubmissionErrorVC.swift in Sources */,
 				F41EBFA02DC4DB20001413DE /* CBBidReciptViewController.swift in Sources */,
 				F41EBFA12DC4DB20001413DE /* CBCAPViewController.swift in Sources */,
@@ -2237,6 +2267,8 @@
 				F4E5DA0C2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift in Sources */,
 				F4DF6DCD2DD5EA2700761057 /* KeychainHelper.swift in Sources */,
 				F41475812DC8D8290064CD25 /* KeychainItemWrapper.m in Sources */,
+				F4E66E6E2E73FB540038D148 /* ChimpKit.m in Sources */,
+				F4CAAF892E70469E0094ADB6 /* SoapWebServiceController.swift in Sources */,
 				F41EBFAA2DC4DB20001413DE /* defenitionsViewController.swift in Sources */,
 				F41EBFAB2DC4DB20001413DE /* faqViewController.swift in Sources */,
 				F41EBFAC2DC4DB20001413DE /* CBHelpItemsController.swift in Sources */,

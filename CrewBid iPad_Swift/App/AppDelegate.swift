@@ -31,7 +31,7 @@ enum NetworkType: Int {
 class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLocationManagerDelegate, UNUserNotificationCenterDelegate {
     
     var dicCurrentBidDetails: [String: Any]?
-    var webData: Data?
+    var webData: NSMutableData?
     var Domain: String?
     var isNetWorkAvailable: Bool = false
     var IPAddress: String?
@@ -113,6 +113,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         self.notificationChecking()
         self.testInternetConnection()
         self.simplePingStarter()
+        self.ObjUserAccount = CBUserAccountDetail()
+        self.sc = ServiceConnection()
+        _ = self.isUserInformationAvailable()
         //MARK: need code
         // for transactions
         if UserDefaults.standard.object(forKey: "FirstRun") == nil{

@@ -33,7 +33,7 @@ class CBSendMail{
         dicMailInfo["Subject"] = "CrewBid Error Log ( \(version) )"
         
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            dicMailInfo["UserAppEmail"] = appDelegate.ObjUserAccount?.Email ?? ""
+            dicMailInfo["UserAppEmail"] = appDelegate.ObjUserAccount?.email ?? ""
         }
         // Call the mail sending function
         sendMail(dicMailInfo)
@@ -53,7 +53,7 @@ class CBSendMail{
         dicMailInfo["Subject"] = "Bid Package Error - CrewBid iPad"
         
         if let app = UIApplication.shared.delegate as? AppDelegate {
-            dicMailInfo["UserAppEmail"] = app.ObjUserAccount?.Email ?? ""
+            dicMailInfo["UserAppEmail"] = app.ObjUserAccount?.email ?? ""
         }
         
         sendMail(dicMailInfo)
@@ -74,7 +74,7 @@ class CBSendMail{
         dicMailInfo["Alias"] = "\(empNo) iOS16 Preset Conversion"
         dicMailInfo["EmployeeNumber"] = userDefaultsEmployeeNumber
         dicMailInfo["Subject"] = "\(empNo) iOS16 Preset Conversion"
-        dicMailInfo["UserAppEmail"] = app.ObjUserAccount?.Email ?? ""
+        dicMailInfo["UserAppEmail"] = app.ObjUserAccount?.email ?? ""
         
         sendMail(dicMailInfo)
     }
@@ -95,7 +95,7 @@ class CBSendMail{
         dicMailInfo["Alias"] = "\(empNo) CrewBid-iPad Bid receipt error"
         dicMailInfo["EmployeeNumber"] = userDefaultsEmployeeNumber
         dicMailInfo["Subject"] = "Bid receipt with incomplete data"
-        dicMailInfo["UserAppEmail"] = app.ObjUserAccount?.Email ?? ""
+        dicMailInfo["UserAppEmail"] = app.ObjUserAccount?.email ?? ""
         
         sendMail(dicMailInfo)
     }
@@ -175,7 +175,7 @@ class CBSendMail{
         
         // AppDelegate instance
         if let app = UIApplication.shared.delegate as? AppDelegate {
-            dicMailInfo["UserAppEmail"] = app.ObjUserAccount?.Email ?? ""
+            dicMailInfo["UserAppEmail"] = app.ObjUserAccount?.email ?? ""
         }
         
         sendMail(dicMailInfo)

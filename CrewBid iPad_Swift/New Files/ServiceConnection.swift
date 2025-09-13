@@ -15,7 +15,6 @@ protocol ServiceConnectionDelegate: AnyObject {
     func connectionFailed()
     func requestFailed()
     func connectionDataReceived(_ progress: Float)
-    func returnData(_ soapData: Data)
 }
 let kURLConnectionTimeout: TimeInterval = 90.0
 
@@ -37,7 +36,7 @@ class ServiceConnection: NSObject, URLSessionDelegate{
     var arrData1: [Any] = []
     var successKey: String?
     var splitterTag: String?
-    var webData: Data?
+    var webData: NSMutableData?
     var domain: String?
     var authenticationFlag: Bool = false
 
@@ -79,7 +78,7 @@ class ServiceConnection: NSObject, URLSessionDelegate{
         self.port = ""
         self.ssl = "http"
         
-        app.webData = Data()
+        app.webData = NSMutableData()
         self.ssl = "https"
         
         // Build service URL
@@ -125,8 +124,8 @@ class ServiceConnection: NSObject, URLSessionDelegate{
             }
             
             if let data = data {
-                self.webData = data
-                self.app.webData = data
+                self.webData = data as! NSMutableData
+                self.app.webData = data as! NSMutableData
             }
         }
         
@@ -161,8 +160,8 @@ class ServiceConnection: NSObject, URLSessionDelegate{
             }
             
             if let data = data {
-                self.webData = data
-                self.app.webData = data
+                self.webData = data as! NSMutableData
+                self.app.webData = data as! NSMutableData
             }
         }
         
@@ -270,13 +269,13 @@ class ServiceConnection: NSObject, URLSessionDelegate{
             }
             
             if let data = data {
-                self.webData = data
-                app.webData = data
+                self.webData = data as! NSMutableData
+                app.webData = data as? NSMutableData
             }
         }
         
-        webData = Data()
-        app.webData = Data()
+        webData = Data() as! NSMutableData
+        app.webData = NSMutableData()
         
         dataTask.resume()
     }
@@ -328,8 +327,8 @@ class ServiceConnection: NSObject, URLSessionDelegate{
         }
         
         if dataTask != nil {
-            webData = Data()
-            app.webData = Data()
+            webData = Data() as! NSMutableData
+            app.webData = NSMutableData()
         } else {
             delegate?.connectionFailed()
         }
@@ -551,8 +550,8 @@ class ServiceConnection: NSObject, URLSessionDelegate{
         
         let task = vacationSession?.downloadTask(with: request)
         if task != nil {
-            webData = Data()
-            app?.webData = Data()
+            webData = NSMutableData()
+            app?.webData = NSMutableData()
         } else {
             delegate?.connectionFailed()
         }
@@ -628,7 +627,7 @@ class ServiceConnection: NSObject, URLSessionDelegate{
         }
         
         print("webdatalength -- \(app?.webData?.count ?? 0)")
-        app?.webData?.removeAll()
+        app?.webData?.length = 0
         
         totalBytes = response.expectedContentLength
         completionHandler(.allow)
@@ -659,7 +658,7 @@ class ServiceConnection: NSObject, URLSessionDelegate{
         
         // Access app delegate
         app = UIApplication.shared.delegate as? AppDelegate
-        webData = app.webData as Data?
+        webData = app.webData
         
         // Append incoming data
         app?.webData?.append(data)
@@ -718,13 +717,13 @@ class ServiceConnection: NSObject, URLSessionDelegate{
             
         } else {
             if let webData = webData,
-               let str = String(data: webData, encoding: .utf8) {
+               let str = String(data: webData as Data, encoding: .utf8) {
                 print("output \(str)")
             }
             
             do {
                 if let webData = webData {
-                    if let res = try JSONSerialization.jsonObject(with: webData, options: .mutableLeaves) as? [String: Any] {
+                    if let res = try JSONSerialization.jsonObject(with: webData as Data, options: .mutableLeaves) as? [String: Any] {
                         let fbIds = res["Responce"]
                         print("Result---\(String(describing: fbIds))")
                         
@@ -755,7 +754,7 @@ class ServiceConnection: NSObject, URLSessionDelegate{
         
         // You can get progress here
         print("webdatalength --\(app?.webData?.count ?? 0)")
-        app?.webData?.removeAll()
+        app?.webData?.length = 0
         
         totalBytes = totalBytesExpectedToWrite
         
@@ -763,7 +762,7 @@ class ServiceConnection: NSObject, URLSessionDelegate{
         
         let percentDone = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)
         
-        webData = app.webData as Data?
+        webData = app.webData as Data? as! NSMutableData
         delegate?.connectionDataReceived(Float(percentDone))
     }
     
@@ -811,7 +810,7 @@ class ServiceConnection: NSObject, URLSessionDelegate{
         }
         
         print("webdatalength --\(app.webData?.count ?? 0)")
-        app.webData?.removeAll(keepingCapacity: false)
+        app.webData?.length = 0
         
         totalBytes = httpResponse.expectedContentLength
         
@@ -828,7 +827,7 @@ class ServiceConnection: NSObject, URLSessionDelegate{
         if isPost {
             do {
                 let fileData = try Data(contentsOf: location)
-                app.webData = fileData
+                app.webData = fileData as! NSMutableData
                 print("datalen--\(app.webData?.count ?? 0)--\(webData?.count ?? 0)")
                 
                 if let res = try JSONSerialization.jsonObject(with: fileData, options: .mutableLeaves) as? [String: Any] {
@@ -912,7 +911,7 @@ class ServiceConnection: NSObject, URLSessionDelegate{
         }
 
         print("webdatalength --\(app?.webData?.count ?? 0)")
-        app?.webData?.removeAll()
+        app?.webData?.length = 0
         totalBytes = response.expectedContentLength
     }
     

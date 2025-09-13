@@ -44,6 +44,7 @@ class CBLoginViewModel{
     var onLoginFailure: ((Errors) -> Void)?
 
     func checkLogin(userID: String, password: String) {
+        
         saveSelectionToUserDefaults()
         // 1. Get PreLogon Credential
         APIService.shared.fetch(
@@ -95,7 +96,7 @@ class CBLoginViewModel{
                 if responseString.contains("BADCREDENTIALS")
                     || responseString.uppercased().contains("LOGIN FAILED")
                     || responseString.contains("AUTHENTICATION FAILED") {
-                    throw Errors.unauthorized
+                    throw Errors.unauthorized(message: responseString)
                 }
                 return responseString
             },

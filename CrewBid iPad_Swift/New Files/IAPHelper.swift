@@ -210,7 +210,7 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         
         var offlineData: [String: Any] = [:]
         
-        if let employeeNumber = app.ObjUserAccount?.EmpNum {
+        if let employeeNumber = app.ObjUserAccount?.employeeNumber {
             let cleanedNumber = "\(employeeNumber)"
                 .replacingOccurrences(of: "e", with: "")
                 .trimmingCharacters(in: CharacterSet.symbols)
@@ -225,7 +225,7 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         offlineData["Base"] = "BWI"
         offlineData["Month"] = ""
         
-        if let position = app.ObjUserAccount?.Position {
+        if let position = app.ObjUserAccount?.position {
             offlineData["Position"] = CBUtils.shortName(for: BICrewPositionType(rawValue: position)!)
         }
         
@@ -454,7 +454,7 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
     
     func OfflinePayment(productID: String, transactionID: String, months: Int, purchaseType: String) {
         guard let app = UIApplication.shared.delegate as? AppDelegate,
-              let employeeNumber = app.ObjUserAccount?.EmpNum,
+              let employeeNumber = app.ObjUserAccount?.employeeNumber,
               !employeeNumber.isEmpty else {
             return
         }
@@ -520,7 +520,7 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         
         var offlineData: [String: Any] = [:]
         
-        if let employeeNumber = app.ObjUserAccount?.EmpNum {
+        if let employeeNumber = app.ObjUserAccount?.employeeNumber {
             let cleanedEmpNum = employeeNumber
                 .replacingOccurrences(of: "e", with: "")
                 .trimmingCharacters(in: .symbols)
@@ -531,7 +531,7 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         offlineData["Base"] = "BWI"
         offlineData["Month"] = ""
         
-        if let position = app.ObjUserAccount?.Position {
+        if let position = app.ObjUserAccount?.position {
             offlineData["Position"] = CBUtils.shortName(for: BICrewPositionType(rawValue: position)!)
         }
         
@@ -541,7 +541,7 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         offlineData["PlatformNumber"] = "iPad"
         offlineData["OperatingSystemNum"] = "iPad OS"
         
-        if let employeeNumber = app.ObjUserAccount?.EmpNum {
+        if let employeeNumber = app.ObjUserAccount?.employeeNumber {
             let cleanedEmpNum = employeeNumber
                 .replacingOccurrences(of: "e", with: "")
                 .trimmingCharacters(in: .symbols)
@@ -595,8 +595,8 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         dict["transactionID"] = transactionID
         dict["transactionDate"] = transactionDate
         dict["transactionState"] = state
-        dict["position"] = app!.ObjUserAccount?.Position
-        dict["userId"] = app!.ObjUserAccount?.EmpNum
+        dict["position"] = app!.ObjUserAccount?.position
+        dict["userId"] = app!.ObjUserAccount?.employeeNumber
         
         // Add new transaction
         transactions.append(dict)
@@ -608,7 +608,8 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
     }
     
     
-    func setICloudEncryptedWbidExpirationDate(_ expiryDate: Date) {
+    func setICloudEncryptedWbidExpirationDate(_ expiryDate: Date?) {
+        guard let expiryDate = expiryDate else { return }
         let encryptedString = encryptedDateString(expiryDate)
         let store = NSUbiquitousKeyValueStore.default
         
@@ -671,8 +672,8 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         }
     }
     
-    func setLocalEncryptedWbidExpirationDate(_ expiryDate: Date) {
-        
+    func setLocalEncryptedWbidExpirationDate(_ expiryDate: Date?) {
+        guard let expiryDate = expiryDate else { return }
         // Encrypt the date
         let encryptedString = encryptedDateString(expiryDate)
         
@@ -771,12 +772,17 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
     
     
     func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        self.productsRequest = nil
-        let skProducts = response.products
-        if let handler = completionHandler {
-            handler(true, skProducts)
-            completionHandler = nil
-        }
+        print("didReceive called")
+        productsRequest = nil
+        completionHandler?(true, response.products)
+        completionHandler = nil
+    }
+    
+    func request(_ request: SKRequest, didFailWithError error: Error) {
+        print("request failed:", error.localizedDescription)
+        productsRequest = nil
+        completionHandler?(false, nil)
+        completionHandler = nil
     }
     
     func daysRemainingOnSubscription() -> Int {
@@ -851,7 +857,7 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         }
         
         var isFree = false
-        var enteredEmpNo = app.ObjUserAccount?.EmpNum ?? ""
+        var enteredEmpNo = app.ObjUserAccount?.employeeNumber ?? ""
         
         // Defaults from ObjUserAccount
         var isMonthlySubscribed = app.ObjUserAccount?.isMonthlySubscribed
@@ -864,7 +870,7 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         if let loginUserId = app.ObjUserAccount?.LoginuserId, !loginUserId.isEmpty {
             enteredEmpNo = loginUserId
             
-            if app.ObjUserAccount?.EmpNum == enteredEmpNo {
+            if app.ObjUserAccount?.employeeNumber == enteredEmpNo {
                 dicAutoRenewUser = (app.ObjUserAccount?.dicLoginAuthDetails ?? [:]) as! [String : Any]
             } else {
                 dicAutoRenewUser = (app.ObjUserAccount?.dicLogInAuthExternalUser ?? [:]) as! [String : Any]
@@ -901,7 +907,7 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         }
 
         var bestAvailableSubscriptionDate: Date? = nil
-        var enteredEmpNo = app.ObjUserAccount?.EmpNum ?? ""
+        var enteredEmpNo = app.ObjUserAccount?.employeeNumber ?? ""
         var dicCWAMasterDetails: [String: Any] = [:]
 
         let isLocalUserAccAvailable = CBUtils.isLocalUserInformationAvailable()
@@ -909,7 +915,7 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         if let loginUserId = app.ObjUserAccount?.LoginuserId, !loginUserId.isEmpty {
             enteredEmpNo = loginUserId
 
-            if app.ObjUserAccount?.EmpNum == enteredEmpNo {
+            if app.ObjUserAccount?.employeeNumber == enteredEmpNo {
                 dicCWAMasterDetails = (app.ObjUserAccount?.dicLoginAuthDetails ?? [:]) as! [String : Any]
             } else {
                 dicCWAMasterDetails = (app.ObjUserAccount?.dicLogInAuthExternalUser ?? [:]) as! [String : Any]
@@ -921,7 +927,7 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         let subscriptionDateCWAMaster = getSubscriptionDate("cwamaster", user: enteredEmpNo, authorizationDetails: app.ObjUserAccount?.dicLoginAuthDetails as! [String : Any])
 
         if isLocalUserAccAvailable {
-            if app.ObjUserAccount?.EmpNum == enteredEmpNo {
+            if app.ObjUserAccount?.employeeNumber == enteredEmpNo {
                 // Local user matches entered employee number
                 if let subscriptionDateCWAMaster = subscriptionDateCWAMaster {
                     print("Entered into save section")
@@ -970,7 +976,7 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
             subscriptionDate = bestDate(from: cbDate, date2: wbDate)
             
         } else if whichDate == "icloud" {
-            if "\(app?.ObjUserAccount?.EmpNum ?? "")" != empNo {
+            if "\(app?.ObjUserAccount?.employeeNumber ?? "")" != empNo {
                 if !empNo.isEmpty {
                     let cbDate = getDateFromJSON("\(dicCWAMasterDetails["CBExpirationDate"] ?? "")")
                     let wbDate = getDateFromJSON("\(dicCWAMasterDetails["WBExpirationDate"] ?? "")")
@@ -1137,14 +1143,14 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
             return nil
         }
 
-        var enteredEmpNo = "\(app.ObjUserAccount?.EmpNum ?? "")"
+        var enteredEmpNo = "\(app.ObjUserAccount?.employeeNumber ?? "")"
         var expirationDate: Date?
 
         if let loginUserId = app.ObjUserAccount?.LoginuserId, !loginUserId.isEmpty {
             enteredEmpNo = loginUserId
         }
 
-        if "\(app.ObjUserAccount?.EmpNum ?? "")" != enteredEmpNo {
+        if "\(app.ObjUserAccount?.employeeNumber ?? "")" != enteredEmpNo {
             // External user check
             if let dicExternalUser = app.ObjUserAccount!.dicLogInAuthExternalUser as? [String: Any] {
                 dicCWAMasterDetails = NSMutableDictionary(dictionary: dicExternalUser, copyItems: true) as! [AnyHashable : Any]
@@ -1179,6 +1185,90 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         }
 
         return expirationDate
+    }
+    
+    func daysRemainingOnFreeTrial() -> Int {
+        guard let expirationDate = getFreeTrialDecryptedExpirationDate() else {
+            return 0
+        }
+        
+        let timeInterval = expirationDate.timeIntervalSince(Date())
+        let days = timeInterval / 60.0 / 60.0 / 24.0
+        
+        if days < 0 {
+            return 0
+        } else if days < 1 {
+            return 1
+        } else {
+            return Int(round(days))
+        }
+    }
+    
+    func getFreeTrialDecryptedExpirationDate() -> Date? {
+        // Retrieve the encrypted string from the Keychain
+        guard let encryptedString = KeychainHelper.retrieve(account: "CrewBidFreeMonthToken", service: "CrewBidFreeMonthToken") else {
+            return nil
+        }
+        
+        // Decrypt the string
+        guard let dateString = FBEncryptorAES.decryptBase64String(encryptedString, keyString: kFreeMonthEncryptionKey) else {
+            return nil
+        }
+        
+        // Convert to Date
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = kCBExpirationDateFormat
+        return dateFormatter.date(from: dateString)
+    }
+    
+    func getFreeTrialExpirationDateString() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM dd, yyyy"
+        
+        guard let expirationDate = getFreeTrialDecryptedExpirationDate() else {
+            return "Not Subscribed"
+        }
+        
+        let daysRemaining = daysRemainingOnFreeTrial()
+        
+        if daysRemaining > 0 {
+            return "Subscription Active!\nFree Trial Expires: \(dateFormatter.string(from: expirationDate)) (\(daysRemaining) Days)"
+        } else {
+            return "Subscription Expired!\nFree Trial Expired on: \(dateFormatter.string(from: expirationDate))"
+        }
+    }
+    
+    func getExpirationDateString() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM dd, yyyy"
+        
+        guard let expiryDate = getBestAvailableExpirationDate() else {
+            return "Not Subscribed"
+        }
+        
+        let formattedDate = dateFormatter.string(from: expiryDate)
+        print("ExpiryDateFormat---\(formattedDate)")
+        
+        guard let app = UIApplication.shared.delegate as? AppDelegate else {
+            return "Not Subscribed"
+        }
+        
+        // Check account subscription type
+        if app.ObjUserAccount!.isFree {
+            return "Account is Free"
+        } else if app.ObjUserAccount!.isMonthlySubscribed {
+            return "Monthly Auto Renew"
+        } else if app.ObjUserAccount!.isYearlySubscribed {
+            return "Yearly Auto Renew"
+        }
+        
+        let daysRemaining = daysRemainingOnSubscription()
+        
+        if daysRemaining > 0 {
+            return "Subscription Active!\nExpires: \(formattedDate) (\(daysRemaining) Days)"
+        } else {
+            return "Subscription Expired!\nExpired on: \(formattedDate)"
+        }
     }
     
     func getDateFromJSON(_ string: String) -> Date? {
@@ -1347,7 +1437,7 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         
         var offlineData: [String: Any] = [:]
         
-        if let empNum = app.ObjUserAccount?.EmpNum {
+        if let empNum = app.ObjUserAccount?.employeeNumber {
             let cleanedEmpNum = empNum
                 .replacingOccurrences(of: "e", with: "")
                 .trimmingCharacters(in: CharacterSet.symbols)
@@ -1360,7 +1450,7 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         offlineData["Base"] = ""
         offlineData["Month"] = ""
         
-        if let position = app.ObjUserAccount?.Position {
+        if let position = app.ObjUserAccount?.position {
             offlineData["Position"] = CBUtils.shortName(for: BICrewPositionType(rawValue: position)!)
         }
         
@@ -1372,7 +1462,7 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         offlineData["PlatformNumber"] = "iPad"
         offlineData["OperatingSystemNum"] = "iPad OS"
         
-        if let empNum = app.ObjUserAccount?.EmpNum {
+        if let empNum = app.ObjUserAccount?.employeeNumber {
             let cleanedEmpNum = empNum
                 .replacingOccurrences(of: "e", with: "")
                 .trimmingCharacters(in: CharacterSet.symbols)

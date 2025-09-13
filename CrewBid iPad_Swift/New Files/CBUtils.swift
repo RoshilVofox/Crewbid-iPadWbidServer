@@ -1316,7 +1316,116 @@ class CBUtils{
     }
     
     
-    
+    static func setPushNotifications() {
+           DispatchQueue.main.async {
+               let center = UNUserNotificationCenter.current()
+               center.removeAllPendingNotificationRequests()
+               
+               guard let app = UIApplication.shared.delegate as? AppDelegate else { return }
+               
+               let positionName = (app.ObjUserAccount?.position == 3) ? "Flight Attendant" : "Pilot"
+               
+               var round1LinesPostedDay = 0
+               var round1LinesDueDay = 0
+               var round2LinesPostedDay = 0
+               var round2LinesDueDay = 0
+               
+               var round1LinesPostedDayMessage = ""
+               var round1LinesDueDayMessage = ""
+               var round2LinesPostedDayMessage = ""
+               var round2LinesDueDayMessage = ""
+               
+               let defaults = UserDefaults.standard
+               
+               if positionName == "Flight Attendant" {
+                   if (defaults.string(forKey: "FAround1LinesPostedDayActive") as NSString?)?.boolValue ?? false {
+                       round1LinesPostedDay = Int(defaults.string(forKey: "FAround1LinesPostedDay") ?? "0") ?? 0
+                       round1LinesPostedDayMessage = defaults.string(forKey: "FAround1LinesPostedDayMessage") ?? ""
+                   }
+                   if (defaults.string(forKey: "FAround1LinesDueDayActive") as NSString?)?.boolValue ?? false {
+                       round1LinesDueDay = Int(defaults.string(forKey: "FAround1LinesDueDay") ?? "0") ?? 0
+                       round1LinesDueDayMessage = defaults.string(forKey: "FAround1LinesDueDayMessage") ?? ""
+                   }
+                   if (defaults.string(forKey: "FAround2LinesPostedDayActive") as NSString?)?.boolValue ?? false {
+                       round2LinesPostedDay = Int(defaults.string(forKey: "FAround2LinesPostedDay") ?? "0") ?? 0
+                       round2LinesPostedDayMessage = defaults.string(forKey: "FAround2LinesPostedDayMessage") ?? ""
+                   }
+                   if (defaults.string(forKey: "FAround2LinesDueDayActive") as NSString?)?.boolValue ?? false {
+                       round2LinesDueDay = Int(defaults.string(forKey: "FAround2LinesDueDay") ?? "0") ?? 0
+                       round2LinesDueDayMessage = defaults.string(forKey: "FAround2LinesDueDayMessage") ?? ""
+                   }
+               } else {
+                   if (defaults.string(forKey: "NonFAround1LinesPostedDayActive") as NSString?)?.boolValue ?? false {
+                       round1LinesPostedDay = Int(defaults.string(forKey: "NonFAround1LinesPostedDay") ?? "0") ?? 0
+                       round1LinesPostedDayMessage = defaults.string(forKey: "NonFAround1LinesPostedDayMessage") ?? ""
+                   }
+                   if (defaults.string(forKey: "NonFAround1LinesDueDayActive") as NSString?)?.boolValue ?? false {
+                       round1LinesDueDay = Int(defaults.string(forKey: "NonFAround1LinesDueDay") ?? "0") ?? 0
+                       round1LinesDueDayMessage = defaults.string(forKey: "NonFAround1LinesDueDayMessage") ?? ""
+                   }
+                   if (defaults.string(forKey: "NonFAround2LinesPostedDayActive") as NSString?)?.boolValue ?? false {
+                       round2LinesPostedDay = Int(defaults.string(forKey: "NonFAround2LinesPostedDay") ?? "0") ?? 0
+                       round2LinesPostedDayMessage = defaults.string(forKey: "NonFAround2LinesPostedDayMessage") ?? ""
+                   }
+                   if (defaults.string(forKey: "NonFAround2LinesDueDayActive") as NSString?)?.boolValue ?? false {
+                       round2LinesDueDay = Int(defaults.string(forKey: "NonFAround2LinesDueDay") ?? "0") ?? 0
+                       round2LinesDueDayMessage = defaults.string(forKey: "NonFAround2LinesDueDayMessage") ?? ""
+                   }
+               }
+               
+               let calendar = Calendar(identifier: .gregorian)
+               let varCalendar = Calendar(identifier: .gregorian)
+               let now = Date()
+               let someDate = calendar.date(byAdding: .month, value: 4, to: now)!
+               
+               let today = Date()
+               var currentDate = now
+               var i = 0
+               
+               while currentDate.compare(someDate) == .orderedAscending {
+                   let comps = varCalendar.dateComponents([.year, .month], from: currentDate)
+                   
+                   func scheduleNotification(day: Int, hour: Int, message: String, key: String) {
+                       var dc = DateComponents()
+                       dc.year = comps.year
+                       dc.month = comps.month
+                       dc.day = day
+                       dc.hour = hour
+                       dc.minute = 0
+                       dc.second = 0
+                       
+                       if let compareDate = varCalendar.date(from: dc),
+                          today.compare(compareDate) == .orderedAscending {
+                           
+                           let content = UNMutableNotificationContent()
+                           content.title = "CrewBid!"
+                           content.body = message
+                           content.sound = .default
+                           
+                           let trigger = UNCalendarNotificationTrigger(dateMatching: dc, repeats: false)
+                           let request = UNNotificationRequest(identifier: "\(key)\(i)", content: content, trigger: trigger)
+                           center.add(request, withCompletionHandler: nil)
+                       }
+                   }
+                   
+                   // Round 1 posted
+                   scheduleNotification(day: round1LinesPostedDay, hour: 12, message: round1LinesPostedDayMessage, key: "BidNotificationKey0")
+                   // Round 2 posted
+                   scheduleNotification(day: round2LinesPostedDay, hour: 12, message: round2LinesPostedDayMessage, key: "BidNotificationKey1")
+                   // Round 1 due
+                   scheduleNotification(day: round1LinesDueDay, hour: 20, message: round1LinesDueDayMessage, key: "BidNotificationKey2")
+                   // Round 2 due
+                   scheduleNotification(day: round2LinesDueDay, hour: 20, message: round2LinesDueDayMessage, key: "BidNotificationKey3")
+                   
+                   i += 1
+                   currentDate = varCalendar.date(byAdding: .month, value: 1, to: currentDate)!
+               }
+               
+               center.getPendingNotificationRequests { requests in
+                   // You can log requests here if needed
+               }
+           }
+       }
     
     
 }

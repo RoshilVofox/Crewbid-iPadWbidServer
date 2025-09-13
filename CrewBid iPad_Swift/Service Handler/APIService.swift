@@ -14,7 +14,7 @@ enum Errors: Error {
     case noData
     case decodingError
     case encodingError
-    case unauthorized
+    case unauthorized(message: String)
     case timeout
     case unzipFailed
     case emptyData
@@ -41,8 +41,8 @@ extension Errors {
             return "No data received."
         case .decodingError:
             return "Failed to decode the response."
-        case .unauthorized:
-            return "Unauthorized request."
+        case .unauthorized(let message):
+            return message
         case .timeout:
             return "Request timed out."
         case .unzipFailed:
@@ -284,7 +284,9 @@ class APIService {
             do {
                 let parsed = try parse(data)
                 completion(.success(parsed))
-            } catch {
+            } catch let error as Errors{
+                completion(.failure(error))
+            }catch{
                 completion(.failure(.decodingError))
             }
         }.resume()

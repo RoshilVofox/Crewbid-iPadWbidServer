@@ -161,7 +161,7 @@ let kCBFaVacationLineValuesKey = "FA Vacation Line Values"
 let kCBRound2DefaultLineValuesKey = "Round 2 Default Line Values"
 let kCBDefaultLineValuesKey = "Default Line Values"
 let kCBSwaptimizerLineValuesKey = "Swaptimizer Line Values"
-
+let kCBUserInfoUserEmailKey = "UserInfoUserEmail"
 let KCBOpenCoverletter = "KCBOpenCoverletter"
 let KCBOpenSeniority = "KCBOpenSeniority"
 let KCBOpenLatestNews = "KCBOpenLatestNews"

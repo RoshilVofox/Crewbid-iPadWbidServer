@@ -96,4 +96,54 @@ class KeychainHelper {
         }
         return nil
     }
+    
+    static func saveDictionary(account: String, service: String, value: [String: Any]) -> Bool {
+            do {
+                let data = try NSKeyedArchiver.archivedData(withRootObject: value, requiringSecureCoding: false)
+
+                let query: [String: Any] = [
+                    kSecClass as String: kSecClassGenericPassword,
+                    kSecAttrAccount as String: account,
+                    kSecAttrService as String: service
+                ]
+                SecItemDelete(query as CFDictionary)
+
+                let attributes: [String: Any] = [
+                    kSecClass as String: kSecClassGenericPassword,
+                    kSecAttrAccount as String: account,
+                    kSecAttrService as String: service,
+                    kSecValueData as String: data
+                ]
+                let status = SecItemAdd(attributes as CFDictionary, nil)
+                return status == errSecSuccess
+            } catch {
+                print("Failed to archive dictionary: \(error)")
+                return false
+            }
+        }
+    
+    static func retrieveDictionary(account: String, service: String) -> [String: Any]? {
+            let query: [String: Any] = [
+                kSecClass as String: kSecClassGenericPassword,
+                kSecAttrAccount as String: account,
+                kSecAttrService as String: service,
+                kSecReturnData as String: true,
+                kSecMatchLimit as String: kSecMatchLimitOne
+            ]
+
+            var dataTypeRef: AnyObject?
+            let status = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
+
+            if status == errSecSuccess,
+               let data = dataTypeRef as? Data {
+                do {
+                    if let dict = try NSKeyedUnarchiver.unarchivedObject(ofClasses: [NSDictionary.self, NSArray.self, NSString.self, NSNumber.self], from: data) as? [String: Any] {
+                        return dict
+                    }
+                } catch {
+                    print("Failed to unarchive dictionary: \(error)")
+                }
+            }
+            return nil
+        }
 }

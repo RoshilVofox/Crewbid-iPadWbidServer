@@ -7,4 +7,5 @@
 #import "NSData+AES.h"
 #import "SimplePing.h"
 #import "MBProgressHUD.h"
-
+#import "XMLDictionary.h"
+#import "ChimpKit.h"
