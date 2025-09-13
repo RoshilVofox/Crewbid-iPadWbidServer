@@ -251,45 +251,46 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     func downloadWbidEOMVacationFilesWithHud(completion: @escaping (Bool) -> Void) {
         self.bidPeriod?.userVacationWbidOrCrewBid = "WBIDF"
         try? self.bidPeriod?.managedObjectContext?.save()
-        if let _ = self.bidPeriod?.wbFileIntentF {
-            guard let dicVactionFile = self.readVacationFile(fileName: "WBIDF"),
-                  let configInfo = dicVactionFile["ConfigInfo"] as? [String: Any],
-                  let yearMonth = configInfo["YearMonth"] as? String else {
-                self.downloadWbidVacation { success in
-                    completion(success)
-                }
-                return
-            }
-
-            let vacayMonth = Int(yearMonth.dropFirst(4).prefix(2)) ?? 0
-
-            if vacayMonth != self.bidPeriod?.month?.intValue {
-                let moc = self.bidPeriod?.managedObjectContext
-                self.bidPeriod?.wbFileIntentF = ""
-
-                do {
-                    try moc?.save()
-                    print("file name saved")
-                } catch {
-                    print("file name not saved")
-                }
-
-                // Optionally: remove the vacation file from disk here
-
-                self.downloadWbidVacation { success in
-                    completion(success)
-                }
-            } else {
-                if self.bidPeriod?.isWBidmaxOverlapWithEom() == true {
-                    AlertService.showAlertForTopVC(title: "Crewbid Error", message: "Your current vacation conflicts with the EOM dates, so we cannot display any EOM vacation. We will display your current vacation only.")
-                    NotificationCenter.default.post(name: Notification.Name("HandleEOMConflict"), object: self)
-                    completion(false)
-                } else {
-                    self.validateWBIDVacation(jsonData: dicVactionFile) { success in
+        let downloadedEomDate = getTheDateOfDownloadedEOM(self.bidPeriod!.wbFileIntentF ?? "")
+        if (downloadedEomDate == self.bidPeriod?.faEomSelectedDate) && (self.bidPeriod!.wbFileIntentF != nil) {
+                guard let dicVactionFile = self.readVacationFile(fileName: "WBIDF"),
+                      let configInfo = dicVactionFile["ConfigInfo"] as? [String: Any],
+                      let yearMonth = configInfo["YearMonth"] as? String else {
+                    self.downloadWbidVacation { success in
                         completion(success)
                     }
+                    return
                 }
-            }
+                
+                let vacayMonth = Int(yearMonth.dropFirst(4).prefix(2)) ?? 0
+                
+                if vacayMonth != self.bidPeriod?.month?.intValue {
+                    let moc = self.bidPeriod?.managedObjectContext
+                    self.bidPeriod?.wbFileIntentF = ""
+                    
+                    do {
+                        try moc?.save()
+                        print("file name saved")
+                    } catch {
+                        print("file name not saved")
+                    }
+                    
+                    // Optionally: remove the vacation file from disk here
+                    
+                    self.downloadWbidVacation { success in
+                        completion(success)
+                    }
+                } else {
+                    if self.bidPeriod?.isWBidmaxOverlapWithEom() == true {
+                        AlertService.showAlertForTopVC(title: "Crewbid Error", message: "Your current vacation conflicts with the EOM dates, so we cannot display any EOM vacation. We will display your current vacation only.")
+                        NotificationCenter.default.post(name: Notification.Name("HandleEOMConflict"), object: self)
+                        completion(false)
+                    } else {
+                        self.validateWBIDVacation(jsonData: dicVactionFile) { success in
+                            completion(success)
+                        }
+                    }
+                }
         } else {
             self.downloadWbidVacation { success in
                 completion(success)
@@ -364,8 +365,8 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         let header = topLevel?["Header"] as? [String: Any]
         let fileName = header?["FileIdent"] as? String
     
-
-        if fileName == self.bidPeriod?.faFileIntentF {
+        let downloadedEomDate = getTheDateOfDownloadedEOM(self.bidPeriod!.faFileIntent ?? "")
+        if (fileName == self.bidPeriod?.faFileIntentF) && (self.bidPeriod?.faFileIntentF != nil) && ("\(downloadedEomDate)" == EOMSelectedIndex) {
             if EOMSelectedIndex != "" {
                 _ = self.readVacationFile(fileName: self.setFaFileIntentFWithSelectedIndex(selectedIndex: EOMSelectedIndex)!)
             } else {
@@ -402,6 +403,20 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             }
         }
     }
+    
+    func getTheDateOfDownloadedEOM(_ wbFileIntentF: String) -> NSNumber {
+        var dateInteger: NSNumber = 0
+
+        if !wbFileIntentF.isEmpty {
+            let lastChar = wbFileIntentF.last!
+            if lastChar.isWholeNumber, let lastDigit = Int(String(lastChar)) {
+                dateInteger = NSNumber(value: lastDigit)
+            }
+        }
+
+        return dateInteger
+    }
+
 
     
     //    MARK: vacation File type = "FAVACATION_EOMOnly" and download
@@ -641,10 +656,11 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 self.postDataForVacationDownloading(urlName: urlString, jsonString: jsonString) { success in
                     if success {
                         print("Vacation data validated/downloaded successfully.")
+                        canDownloadVacation(true)
                     } else {
                         print("Vacation data failed to validate/download.")
+                        canDownloadVacation(false)
                     }
-                    canDownloadVacation(true)
                 }
             }
             else {
@@ -789,6 +805,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                         if let fileName = json["FileName"], !(fileName is NSNull),
                            let jsonData = json["JsonData"] as? [String: Any] {
                             
+                            self.bidPeriod?.seniorityVacayAvailable = NSNumber(booleanLiteral: true)
                             if self.vactionDownloadType == .downloadWbidVacation {
                                 print("able to download wbid vacation from api")
                                 self.callToSetAutoDownloadOrValidateForWBID(jsonData: jsonData) { success in
@@ -806,12 +823,51 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                             
                         } else {
 //                            print("FileName is null or missing")
-                            if let message = json["Message"] as? String,
-                               message.lowercased().hasPrefix("it takes us about") {
-                                AlertService.showAlertForTopVC(
-                                    title: "EOM Vacation",
-                                    message: "You do not have Vacation this month. If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button."
-                                )
+                            self.bidPeriod?.seniorityVacayAvailable = NSNumber(booleanLiteral: false)
+                            let message = json["Message"] as? String ?? ""
+                            var messageContent = message
+                            if message.lowercased().hasPrefix("it takes us about") {
+                                if(self.bidPeriod!.containsVacay?.boolValue != true) {
+                                    messageContent = "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button"
+                                }
+                            }
+                            else {
+                                if self.bidPeriod?.isFABid() == true {
+                                    messageContent = "It takes us about 4 hours to create the vacation files when the bid data is released.  If you have vacation,and the bid data was just release, come back later and touch the WBidMax or Swaptimizer button if a pilot."
+                                    if self.bidPeriod?.containsVacay?.boolValue != true {
+                                        messageContent = "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button"
+                                    }
+                                }
+                                else {
+                                    messageContent = "It takes us about 12 hours to create the vacation files when the bid data is released.  If you have vacation,and the bid data was just release, come back later and touch the WBidMax or Swaptimizer button if a pilot."
+                                    if self.bidPeriod?.containsVacay?.boolValue != true {
+                                        messageContent = "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button"
+                                    }
+                                }
+                                
+                            }
+                            if !messageContent.lowercased().hasPrefix("it takes us about") || !messageContent.lowercased().hasPrefix("You do not have Vacation this month") {
+                                AlertService.showAlertForTopVC(title: "WBidMax Error", message: messageContent, actions: [(
+                                    title: "OK",
+                                    style: .default,
+                                    handler: { _ in
+                                        self.bidPeriod?.userVacationWbidOrCrewBid = ""
+                                        self.bidPeriod?.vacationType = ""
+                                        self.deleteAllVacation()
+//                                        NotificationCenter.default.post(name: NSNotification.Name("TapWBidMaxBtn"), object: self)
+                                    }
+                                )])
+                            }
+                            else {
+                                AlertService.showAlertForTopVC(title: "WBidMax Error", message: messageContent, actions: [(
+                                    title: "OK",
+                                    style: .default,
+                                    handler: { _ in
+                                        self.bidPeriod?.userVacationWbidOrCrewBid = ""
+                                        self.bidPeriod?.vacationType = ""
+                                        self.deleteAllVacation()
+                                    }
+                                )])
                             }
                             completion(false)
                         }
