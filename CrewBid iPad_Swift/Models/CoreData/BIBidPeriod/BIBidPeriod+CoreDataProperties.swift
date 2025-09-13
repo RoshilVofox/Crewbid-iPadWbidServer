@@ -1009,7 +1009,18 @@ extension BIBidPeriod : Identifiable {
         }
        
     }
-    
+    func getTrashedLines() -> [BILine] {
+        let lines = (self.lines!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "number", ascending: true)]) as! [BILine]
+        var array : [NSPredicate] = []
+        // Create a predicate to filter lines by isTrashed status
+
+        array.append(NSPredicate(format: "isTrashed == %@", NSNumber(booleanLiteral: true)))
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
+        // Filter the lines using the predicate and return the result
+
+        let predicateValue = (lines as NSArray).filtered(using: predicate) as! [BILine]
+        return predicateValue
+    }
 
     
     func getBidListLines() -> [BILine] {

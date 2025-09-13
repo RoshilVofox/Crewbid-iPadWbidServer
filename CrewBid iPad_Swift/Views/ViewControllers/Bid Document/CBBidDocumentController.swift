@@ -703,10 +703,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                                 alertText = "We found you in the Seniority List.  You are number \(self.bidPeriod!.seniorityNumber!)."
                             }
 //                            self.showSeniorityAlert(text: alertText)
-                            AlertService.showAlertForTopVC(title: "Seniority List", message: alertText, actions: [(title: "OK", style: .default, handler:{_ in
-                                self.showCoverLetter()
-                            }),(title: "View Seniority List", style: .default, handler:{_ in
+                            AlertService.showAlertForTopVC(title: "Seniority List", message: alertText, actions: [(title: "View Seniority List", style: .default, handler:{_ in
                                 self.showSeniority()
+                            }),(title: "OK", style: .default, handler:{_ in
+                                self.showCoverLetter()
                             })])
                         }
                     }else{
@@ -725,10 +725,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                                 alertText = String(format: "\nWe found you in the Seniority List.\nYou are number %@ out of %@", self.bidPeriod!.seniorityNumber!, self.totalNumberString!)
                             }
 //                            self.showSeniorityAlert(text: alertText)
-                            AlertService.showAlertForTopVC(title: "Seniority List", message: alertText, actions: [(title: "OK", style: .default, handler:{_ in
-                                self.showCoverLetter()
-                            }),(title: "View Seniority List", style: .default, handler:{_ in
+                            AlertService.showAlertForTopVC(title: "Seniority List", message: alertText, actions: [(title: "View Seniority List", style: .default, handler:{_ in
                                 self.showSeniority()
+                            }),(title: "OK", style: .default, handler:{_ in
+                                self.showCoverLetter()
                             })])
                         }
                     }else{
@@ -757,10 +757,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                             alertText = String(format: "\nWe found you in the Seniority List.\nYou are number %@ out of %@", self.bidPeriod!.seniorityNumber!, newDes)
                         }
 //                        self.showSeniorityAlert(text: alertText)
-                        AlertService.showAlertForTopVC(title: "Seniority List", message: alertText, actions: [(title: "OK", style: .default, handler:{_ in
-                            self.showCoverLetter()
-                        }),(title: "View Seniority List", style: .default, handler:{_ in
+                        AlertService.showAlertForTopVC(title: "Seniority List", message: alertText, actions: [(title: "View Seniority List", style: .default, handler:{_ in
                             self.showSeniority()
+                        }),(title: "OK", style: .default, handler:{_ in
+                            self.showCoverLetter()
                         })])
                     }
                 }else{
@@ -799,11 +799,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                             message = String(format: "%@, %@ to %@", message, startStrLong, endStrLong)
                         }
 //                        self.showSeniorityAlert(text: message)
-                        AlertService.showAlertForTopVC(title: "Seniority List", message: message, actions: [(title: "OK", style: .default, handler:{_ in
+                        AlertService.showAlertForTopVC(title: "Seniority List", message: message, actions: [(title: "View Seniority List", style: .default, handler:{_ in
+                            self.showSeniority()
+                        }),(title: "OK", style: .default, handler:{_ in
                             self.bidPeriod?.coverLetterDisplayed = true
                             self.showCoverLetter()
-                        }),(title: "View Seniority List", style: .default, handler:{_ in
-                            self.showSeniority()
                         })])
                     }else{
                         var message = "We did not find you in the Seniority list.  Sometimes the format of the list will cause problems and we will incorrectly read the list.  We will display the Seniority list next.  If you do not see yourself in the list, we suggest you call Planning to find out why you are missing from the seniority list."
@@ -811,11 +811,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                             message = "We did not find you in the Second round Seniority list, but we did find you in the First round as a \"Paper\" bidder."
                         }
 //                        self.showSeniorityAlert(text: message)
-                        AlertService.showAlertForTopVC(title: "Seniority List", message: message, actions: [(title: "OK", style: .default, handler:{_ in
+                        AlertService.showAlertForTopVC(title: "Seniority List", message: message, actions: [(title: "View Seniority List", style: .default, handler:{_ in
+                            self.showSeniority()
+                        }),(title: "OK", style: .default, handler:{_ in
                             self.bidPeriod?.coverLetterDisplayed = true
                             self.showCoverLetter()
-                        }),(title: "View Seniority List", style: .default, handler:{_ in
-                            self.showSeniority()
                         })])
                     }
                 }else{
@@ -837,11 +837,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     //MARK: need to check this alert fn
     func showSeniorityAlert(text: String){
-        AlertService.showAlertForTopVC(title: "Seniority List", message: text, actions: [(title: "OK", style: .default, handler:{_ in
+        AlertService.showAlertForTopVC(title: "Seniority List", message: text, actions: [(title: "View Seniority List", style: .default, handler:{_ in
+            self.showSeniority()
+        }),(title: "OK", style: .default, handler:{_ in
             self.bidPeriod?.coverLetterDisplayed = true
             self.showCoverLetter()
-        }),(title: "View Seniority List", style: .default, handler:{_ in
-            self.showSeniority()
         })])
     }
     

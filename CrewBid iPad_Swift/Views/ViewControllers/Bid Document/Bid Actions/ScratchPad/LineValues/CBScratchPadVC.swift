@@ -526,7 +526,6 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
     
     //Scroll to Line
     @IBAction func btnMoveToLineAction(_ sender: Any) {
-//        AlertService.showAlertForTopVC(title: "Scroll to Line", message: "Enter the line number you wish to scroll to:", actions: [], textFields: [(placeholder: "Enter line no", keyboardType: .numberPad, tag: 333, delegate: self)])
         
         let alert = UIAlertController(title: "Scroll to Line", message: "Enter the line number you wish to scroll to:", preferredStyle: .alert)
         alert.addTextField { (textField) in
@@ -600,6 +599,7 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ScratchPadTableCellTableViewCell") as! ScratchPadTableCellTableViewCell
+        cell.selectionStyle = .none
         if indexPath.row > self.sectionLines.count - 1 {
             return UITableViewCell()
         } else {

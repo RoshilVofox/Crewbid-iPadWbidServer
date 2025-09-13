@@ -553,6 +553,7 @@ extension CBExpandedBidLinesTableController: UITableViewDelegate,UITableViewData
         cell.setMarkerText(line.markerTitle)
         cell.bidListCellCalendarDaysArr = bidListCalendarData.calendarDaysExpandedBidLinesView() as! [Any]
         configureCell(cell, at: indexPath)
+        cell.refreshTripButtons(highlightFlag: true)
         cell.tripButtonActionBlock = {(_ tripButton: CBTripButton) -> Void in
             DispatchQueue.main.async {
                 self.showTripTextPopover(for: tripButton)

@@ -4390,12 +4390,13 @@
                                                                 <constraint firstAttribute="height" constant="53" id="zBG-S3-2oz"/>
                                                             </constraints>
                                                         </view>
-                                                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Cell-reorder-control-off" translatesAutoresizingMaskIntoConstraints="NO" id="Wif-TM-uC3">
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Cell-reorder-control-off" translatesAutoresizingMaskIntoConstraints="NO" id="Wif-TM-uC3">
                                                             <rect key="frame" x="987" y="51.5" width="27" height="27"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="27" id="SYp-pD-8KS"/>
                                                                 <constraint firstAttribute="width" constant="27" id="rAk-zj-DYI"/>
                                                             </constraints>
+                                                            <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="small"/>
                                                         </imageView>
                                                         <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Untitled Marker" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="tBf-gh-lY9">
                                                             <rect key="frame" x="0.0" y="110.5" width="1024" height="19.5"/>

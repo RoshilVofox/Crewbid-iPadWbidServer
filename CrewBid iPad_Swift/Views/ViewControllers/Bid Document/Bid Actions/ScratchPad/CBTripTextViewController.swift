@@ -85,6 +85,14 @@ class CBTripTextViewController: UIViewController, KUIPopOverUsable {
         
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        let appendDictionary = NSMutableDictionary()
+        appendDictionary["isFromScratchpad"] = isFromScratchpad
+        appendDictionary["isFromBidList"] = isFromBidList
+        NotificationCenter.default.post(name: Notification.Name(CBLineTableCellTripButtonDehighlightNotification), object: appendDictionary)
+    }
+    
     
     class func instantiateFromStoryboard(withTripText tripText: String, button: CBTripButton) -> Any {
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)

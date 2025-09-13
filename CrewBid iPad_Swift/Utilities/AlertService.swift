@@ -58,42 +58,67 @@ class AlertService{
     }
     
     static func showAlertForTopVC(
-        title: String?,
-        message: String?,
-        actions: [(title: String, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Void)?)]? = nil,
-        textFields: [(placeholder: String, keyboardType: UIKeyboardType, tag: Int, delegate: UITextFieldDelegate?)]? = nil
-    ) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        
-        // Add text fields if provided
-        if let tfArray = textFields {
-            for tfData in tfArray {
-                alert.addTextField { textField in
-                    textField.placeholder = tfData.placeholder
-                    textField.keyboardType = tfData.keyboardType
-                    textField.tag = tfData.tag
-                    textField.delegate = tfData.delegate
+            title: String?,
+            message: String?,
+            actions: [(title: String, style: UIAlertAction.Style, handler: ((UIAlertAction, [UITextField]?) -> Void)?)]? = nil,
+            textFields: [(placeholder: String, keyboardType: UIKeyboardType, tag: Int, delegate: UITextFieldDelegate?)]? = nil
+        ) {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+            // Add text fields if provided
+            if let tfArray = textFields {
+                for tfData in tfArray {
+                    alert.addTextField { textField in
+                        textField.placeholder = tfData.placeholder
+                        textField.keyboardType = tfData.keyboardType
+                        textField.tag = tfData.tag
+                        textField.delegate = tfData.delegate
+                    }
+                }
+            }
+
+            // Add actions
+            if let actionArray = actions, !actionArray.isEmpty {
+                for actionData in actionArray {
+                    let action = UIAlertAction(
+                        title: actionData.title,
+                        style: actionData.style,
+                        handler: { alertAction in
+                            actionData.handler?(alertAction, alert.textFields)
+                        }
+                    )
+                    alert.addAction(action)
+                }
+            } else {
+                let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                alert.addAction(okAction)
+            }
+
+            DispatchQueue.main.async {
+                if let currentTopVC = currentTopViewController() {
+                    currentTopVC.present(alert, animated: true, completion: nil)
                 }
             }
         }
-        
-        // Add actions
-        if let actionArray = actions, !actionArray.isEmpty {
-            for actionData in actionArray {
-                let action = UIAlertAction(title: actionData.title, style: actionData.style, handler: actionData.handler)
-                alert.addAction(action)
+
+        /// Backward-compatible version (keeps old signature)
+        static func showAlertForTopVC(
+            title: String?,
+            message: String?,
+            actions: [(title: String, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Void)?)]?
+        ) {
+            let convertedActions = actions?.map { action -> (title: String, style: UIAlertAction.Style, handler: ((UIAlertAction, [UITextField]?) -> Void)?) in
+                return (
+                    title: action.title,
+                    style: action.style,
+                    handler: { alertAction, _ in
+                        action.handler?(alertAction)
+                    }
+                )
             }
-        } else {
-            let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
-            alert.addAction(okAction)
+
+            showAlertForTopVC(title: title, message: message, actions: convertedActions, textFields: nil)
         }
-        
-        DispatchQueue.main.async {
-            if let currentTopVC = currentTopViewController() {
-                currentTopVC.present(alert, animated: true, completion: nil)
-            }
-        }
-    }
 
 
     

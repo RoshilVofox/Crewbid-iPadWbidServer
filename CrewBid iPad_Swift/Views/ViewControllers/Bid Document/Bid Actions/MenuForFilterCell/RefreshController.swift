@@ -353,6 +353,65 @@ class RefreshController: UIViewController, UITableViewDataSource, UITableViewDel
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if popOverType == PopoverViewType.Refresh {
 //            MARK: code need to be added for refresh
+            if indexPath.row == 0 {
+                let results = self.bidPeriod.getTrashedLines()
+                for line in results {
+                    line.isTrashed = false
+                }
+                
+                let objDeleteArray = self.bidPeriod.lastTrashedDetails?.mutableCopy() as! NSMutableArray
+                objDeleteArray.removeAllObjects()
+                self.bidPeriod.lastTrashedDetails = objDeleteArray.copy() as? NSArray
+                try? self.bidPeriod.managedObjectContext!.save()
+                self.dismissPopover(animated: true)
+            }
+            else if indexPath.row == 1 {
+                
+                let LastObject = self.bidPeriod.lastTrashedDetails?.lastObject as! String
+                let seperatedComponents = LastObject.components(separatedBy: ",") as [String]
+                let arrAll: NSMutableArray = NSMutableArray(array: seperatedComponents)
+                
+
+                let Objresults = bidPeriod.lines!.allObjects as NSArray
+                for case let line as BILine in Objresults {
+                    for i in 0...arrAll.count - 1 {
+                        let lineNumber: Int = line.number as! Int
+                        let arrLinevalue = (arrAll[i] as! NSString).integerValue
+                        
+                        if lineNumber == arrLinevalue {
+                            line.isTrashed = false
+                        }
+                    }
+                }
+                let objDeleteArray = self.bidPeriod.lastTrashedDetails?.mutableCopy() as! NSMutableArray
+                objDeleteArray.removeLastObject()
+                self.bidPeriod.lastTrashedDetails = objDeleteArray.copy() as? NSArray
+                try? self.bidPeriod.managedObjectContext!.save()
+                self.dismissPopover(animated: true)
+            }
+            else if indexPath.row == 2 {
+                for case let line as BILine in arrayLinesDetails {
+                    // for line: BILine in arrayLinesDetails {
+                    line.isTrashed = true
+                }
+                
+                let LinesList  = self.arrayLinesDetails.value(forKey: "number") as Any
+                // var arr = Array(LinesList as! Array<Any>)
+                let arrLinesList : NSArray = LinesList as! NSArray
+                
+                let joinedComponents: String? = arrLinesList.componentsJoined(by: ",")
+                let objDeleteArray:NSMutableArray = self.bidPeriod.lastTrashedDetails?.mutableCopy() as! NSMutableArray
+                objDeleteArray.add(joinedComponents!)
+                self.bidPeriod.lastTrashedDetails = objDeleteArray.copy() as? NSArray
+                try? self.bidPeriod.managedObjectContext!.save()
+                self.dismissPopover(animated: true)
+            }
+                
+            else if indexPath.row == 3 {
+                
+                self.dismissPopover(animated: true)
+            }
+
         }
         else if popOverType == PopoverViewType.MockYear {
             self.dismissPopover(animated: true)
@@ -361,10 +420,108 @@ class RefreshController: UIViewController, UITableViewDataSource, UITableViewDel
             self.dismissPopover(animated: true)
         }
         else if popOverType == PopoverViewType.MoveFAPositions {
-//            MARK: needed to add did select for move fa positions
+            self.bidPeriod.loadedPresetIdentifier = nil
+            CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
+            CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
+            let arrValues:NSMutableDictionary = arrFAPositions[indexPath.row] as! NSMutableDictionary
+            let value = arrValues.value(forKey: "lineValue")
+            let isAll: Bool = arrValues.value(forKey: "bidAll") as! Bool
+            let appendDictionary = NSMutableDictionary()
+            appendDictionary["bidAll"] = isAll
+            appendDictionary["lineValue"] = value
+            let bidLinesNotification = Notification(name: Notification.Name("MoveFALines"), object: self, userInfo: [CBLinesTableBidLinesArrayKey: appendDictionary])
+            NotificationCenter.default.post(bidLinesNotification)
+            self.dismissPopover(animated: true)
         }
         else if popOverType == PopoverViewType.MoreButton {
 //            MARK: needed to add did select for more button
+            if indexPath.row == 0 {
+                let message = """
+                Enter a line number to scroll to\(bidPeriod.isFABid() ? " in the format [number][position] (i.e. 287A)" : "") or select another option. 
+                You can auto-scroll to the top by tapping the middle of the gray bar above the Bid List.
+                """
+                
+                AlertService.showAlertForTopVC(
+                    title: "Scroll to Line",
+                    message: message,
+                    actions: [
+                        (title: "Scroll to Line", style: .default, handler: { _, textFields in
+                            if let text = textFields?.first?.text {
+                                let appendDictionary = NSMutableDictionary()
+                                appendDictionary["lineNumber"] = text
+                                NotificationCenter.default.post(name: Notification.Name("ScrollToLineNotification"), object: appendDictionary)
+                            }
+                        }),
+                        (title: "Scroll to Insertion Bar", style: .default, handler: { _, _ in
+                            NotificationCenter.default.post(name: Notification.Name("ScrollToInsertionLineNotification"), object: nil)
+                        }),
+                        (title: "Scroll to Bottom", style: .default, handler: { _, _ in
+                            NotificationCenter.default.post(name: Notification.Name("ScrollToBottomLineNotification"), object: nil)
+                        }),
+                        (title: "Cancel", style: .cancel, handler: nil)
+                    ],
+                    textFields: [
+                        (placeholder: "Line number", keyboardType: .namePhonePad, tag: 401, delegate: self)
+                    ]
+                )
+                
+            }
+            else if indexPath.row == 1 {
+                
+                NotificationCenter.default.post(name: Notification.Name("CBDeselectAllLinesNotification"), object: nil)
+                self.dismissPopover(animated: true)
+            }
+            else if indexPath.row == 2 {
+                NotificationCenter.default.post(name: Notification.Name("CBMoveSelectedNotification"), object: nil)
+                self.dismissPopover(animated: true)
+            }
+            else if indexPath.row == 3 {
+                NotificationCenter.default.post(name: Notification.Name("CBUndoNotification"), object: nil)
+                self.bidPeriod.loadedPresetIdentifier = nil
+                CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
+                CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
+                 self.dismissPopover(animated: true)
+            }
+            else if indexPath.row == 4 {
+               NotificationCenter.default.post(name: Notification.Name("CBRedoNotification"), object: nil)
+                self.bidPeriod.loadedPresetIdentifier = nil
+                CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
+                CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
+                self.dismissPopover(animated: true)
+            }
+            else if indexPath.row == 5 {
+                NotificationCenter.default.post(name: Notification.Name("CBReturnSelectedLinesNotification"), object: nil)
+                self.dismissPopover(animated: true)
+            }
+            else if indexPath.row == 6 {
+                AlertService.showAlertForTopVC(
+                    title: "Tap OK to remove all unfrozen lines.",
+                    message: nil,
+                    actions: [
+                        (
+                            title: "OK",
+                            style: .default,
+                            handler: { _ in
+                                NotificationCenter.default.post(
+                                    name: Notification.Name("CBReturnUnfrozenLinesNotification"),
+                                    object: nil
+                                )
+                                self.dismissPopover(animated: true)
+                                self.bidPeriod.loadedPresetIdentifier = nil
+                                CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
+                                CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
+                            }
+                        ),
+                        (
+                            title: "Cancel",
+                            style: .cancel,
+                            handler: { _ in
+                                self.dismissPopover(animated: true)
+                            }
+                        )
+                    ]
+                )
+            }
         }
         else if popOverType == PopoverViewType.comparisonButton {
             

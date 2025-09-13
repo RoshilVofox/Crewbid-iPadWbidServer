@@ -161,7 +161,7 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
 //            collectionViewRightConstraint.constant = (line?.isFrozen == true) ? 52.0 : 10.0
             cellWidth = collectionView.frame.size.width / CGFloat(bidListCellCalendarDaysArr.count)
             cellWidth = cellWidth - interItemSpacing
-            refreshTripButtons(highlightFlag: true)
+//            refreshTripButtons(highlightFlag: true)
             collectionView.reloadData()
         }
 //        self.layoutIfNeeded()
