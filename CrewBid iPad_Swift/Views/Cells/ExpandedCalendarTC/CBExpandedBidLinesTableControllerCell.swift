@@ -81,7 +81,7 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        layoutIfNeeded()
+//        layoutIfNeeded()
         setupUI()
         userFlagControl.addTarget(self, action: #selector(showUserFlagMenu), for: .touchUpInside)
         let flagDiameter: CGFloat = 25
@@ -158,14 +158,13 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
     override func layoutSubviews() {
         super.layoutSubviews()
         if line != nil {
-//            collectionViewRightConstraint.constant = (line?.isFrozen == true) ? 52.0 : 10.0
+            collectionViewRightConstraint.constant = (line?.isFrozen == true) ? 52.0 : 10.0
             cellWidth = collectionView.frame.size.width / CGFloat(bidListCellCalendarDaysArr.count)
             cellWidth = cellWidth - interItemSpacing
-//            refreshTripButtons(highlightFlag: true)
-            collectionView.reloadData()
+            refreshTripButtons(highlightFlag: true)
         }
-//        self.layoutIfNeeded()
-//        collectionView.reloadData()
+        self.layoutIfNeeded()
+        collectionView.reloadData()
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -422,7 +421,6 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
         if nil == tripButtons {
             tripButtons = NSMutableArray()
         }
-        
         let count: Int = (tripButtons?.count)!
         for i in 0..<count {
             let tripButton = tripButtons?[i] as? UIButton
@@ -519,7 +517,7 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
                 //                button.addGestureRecognizer(longPressGesture)
                 //                longPressGesture.delegate = self
             }
-            //            button.addTarget(self, action: #selector(self.tripButtonAction), for: .touchUpInside)
+            button.addTarget(self, action: #selector(self.tripButtonAction), for: .touchUpInside)
             // Replace the button at the corresponding index in tripButtons.
             
             tripButtons?.replaceObject(at: index, with: button)
@@ -820,17 +818,17 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
                         if day.displayType?.intValue == BIDayDisplayType.normal.rawValue{
                             var xValue:CGFloat = 0.0
                             xValue = label.frame.origin.x + cellWidth - 13
-                            let weekDayInt = CBUtils.weekDay(from: trip.startDate!)
-                            let isSaturday = (weekDayInt + d == 7)
+//                            let weekDayInt = CBUtils.weekDay(from: trip.startDate!)
+//                            let isSaturday = (weekDayInt + d == 7)
 //                            if isSaturday{
 //                                xValue = fromScrachpadView == true ? xValue - 6 : xValue - 7
 //                            }
-                            let verticalLabelFrame = CGRect(x: xValue, y: labelFrame.origin.y + 15, width: 26, height: 10)
+                            let verticalLabelFrame = CGRect(x: xValue, y: labelFrame.origin.y + 12, width: 26, height: 10)
                             
                             let verticalLabel = UILabel(frame: verticalLabelFrame)
                             verticalLabel.textColor = CBColor.cbGreen
                             verticalLabel.textAlignment = .center
-                            verticalLabel.font = UIFont.boldSystemFont(ofSize: 9)
+                            verticalLabel.font = UIFont.boldSystemFont(ofSize: 8)
                             verticalLabel.transform = CGAffineTransform(rotationAngle: CGFloat(-90.0 * .pi / 180.0))
                             verticalLabel.translatesAutoresizingMaskIntoConstraints = true
                             labelButton.addSubview(verticalLabel)
@@ -1125,6 +1123,9 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
         collectionView.fvVacationButtons = fvVacationButtons
         collectionView.cfvVacationButtons = cfvVacationButtons
     }
+    @objc func tripButtonAction(_ tripButton: CBTripButton) {
+        tripButtonActionBlock!(tripButton)
+    }
    
 }
 
@@ -1145,7 +1146,6 @@ extension CBExpandedBidLinesTableControllerCell:UICollectionViewDelegate, UIColl
         let kDayCellIdentifer = "ExpandedCalendarCollectionViewCell"
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kDayCellIdentifer, for: indexPath as IndexPath) as! ExpandedCalendarCollectionViewCell
         cell.contentView.frame = cell.bounds
-        cell.contentView.isUserInteractionEnabled = false
         cell.contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         cell.dayLabel.textColor = .black
         cell.lblWeekDays.textColor = .label
