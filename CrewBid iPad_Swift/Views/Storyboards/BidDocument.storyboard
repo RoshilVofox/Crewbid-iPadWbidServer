@@ -131,7 +131,6 @@
                                                     <constraint firstAttribute="height" constant="30" id="rvm-qC-gGt"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <color key="textColor" name="BlackLabelColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GOa-xD-exU">
@@ -333,7 +332,7 @@
                         <outlet property="btnSwaptimizer" destination="k68-4D-kio" id="JsG-fJ-xPJ"/>
                         <outlet property="btnSync" destination="fe4-fG-3Qi" id="4gG-rG-hSP"/>
                         <outlet property="btnWbidMax" destination="omP-p3-FZ2" id="RSL-qA-1tX"/>
-                        <outlet property="herbLabel" destination="wqh-3z-ZPW" id="hf7-sV-hq1"/>
+                        <outlet property="herbLabel" destination="wqh-3z-ZPW" id="fIQ-Gi-ZJ5"/>
                         <outlet property="lblHome" destination="Hno-fj-B0g" id="YHb-3l-foM"/>
                         <outlet property="leftContainerView" destination="wsv-BL-8wb" id="JkT-Er-Z4m"/>
                         <outlet property="leftShadowView" destination="aCx-CY-HlG" id="xOx-EX-x2l"/>

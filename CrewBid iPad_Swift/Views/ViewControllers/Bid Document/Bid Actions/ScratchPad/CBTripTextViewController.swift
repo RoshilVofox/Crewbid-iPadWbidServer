@@ -124,7 +124,11 @@ class CBTripTextViewController: UIViewController, KUIPopOverUsable {
         }
         let tripButton  = button
         
-        tripTextView.text = "\(tripButton.trip!.tripText())"
+//        tripTextView.text = "\(tripButton.trip!.tripText())"
+        if let trip = button.trip {
+            tripTextView.text = trip.tripText()
+        }
+        NotificationCenter.default.post(name: NSNotification.Name("updateLocalHerbSwitchUI"), object: nil)
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
     }
 }
