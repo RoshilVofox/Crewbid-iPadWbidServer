@@ -25,12 +25,11 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     @IBOutlet weak var lblBidLineCount: UILabel!
     @IBOutlet weak var scrollToButton: UIButton!
     var managedObjectContext:NSManagedObjectContext?
-    var bidPeriod = BIBidPeriod()
+    var bidPeriod : BIBidPeriod!
     var count = 0
     var bidListCalenderDays = [Any]()
     var bidListCalendarData = BICalendarData()
     var awardedLineNum: String!
-    var bidPeriod1: BIBidPeriod?
     var isShouldScrollToInsertionIndex = false
     var lineValuesKey = ""
     var lineValuesToDisplay = [AnyHashable]()
@@ -111,8 +110,17 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     }
     
     func setupVariables(){
-        bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
-        
+//        bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
+        guard let shared = CBGlobalMethods.shared.selectedBidPeriod else {
+            assertionFailure("No selectedBidPeriod")
+            return
+        }
+        bidPeriod = shared
+        // Make sure this context has an undo manager
+        if bidPeriod.managedObjectContext?.undoManager == nil {
+            bidPeriod.managedObjectContext?.undoManager = UndoManager()
+            bidPeriod.managedObjectContext?.undoManager?.levelsOfUndo = 10
+        }
         // Check if an insertion point exists, otherwise create one
 
         if bidPeriod.insertionPoints?.allObjects.count ?? 0 > 0 {
@@ -130,17 +138,17 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     }
     
     func setupUI(){
-        bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
+//        bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
+        setupVariables()
         if bidPeriod.isSortBySubmitOn?.boolValue ?? false {
             self.isSubmitSort = true
             self.btnASort.backgroundColor = CBColor.cbGreenColor
         }
-        bidListCalendarData = bidListCalendarData.initWithBidPeriod(bidPeriod: CBGlobalMethods.shared.selectedBidPeriod!)!
+        bidListCalendarData = bidListCalendarData.initWithBidPeriod(bidPeriod: bidPeriod)!
         bidListCalenderDays = bidListCalendarData.calendarDays as! [Any]
-        self.bidPeriod1 = CBGlobalMethods.shared.selectedBidPeriod
         lineValuesKey = CBLineValuesMenuController.lineValuesKey(for: bidPeriod)
         lineValuesToDisplay = UserDefaults.standard.value(forKey: lineValuesKey) as! [AnyHashable]
-        setupVariables()
+        
         manageViewSelection()
         btnNormalView.layer.borderWidth = 1
         btnNormalView.layer.borderColor = UIColor.lightGray.cgColor
@@ -376,7 +384,6 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         if let undoManager = bidPeriod.managedObjectContext?.undoManager, undoManager.canUndo {
             undoManager.undo()
             NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
-//            NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: self)
         }
     }
 
@@ -384,7 +391,6 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         if let undoManager = bidPeriod.managedObjectContext?.undoManager, undoManager.canRedo {
             undoManager.redo()
             NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
-//            NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: self)
         }
     }
     
@@ -1627,6 +1633,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         vc.ArrLinesDetails = self.linesArray
         vc.selectedLinesCount = selectedCellIndexPaths
         vc.delegate = self
+        vc.bidPeriod = self.bidPeriod
         vc.modalPresentationStyle = .custom
         let frame = CGRect(x: 15, y: 35, width: 0, height: 0)
         vc.showPopover(sourceView: btnActions, sourceRect: frame)

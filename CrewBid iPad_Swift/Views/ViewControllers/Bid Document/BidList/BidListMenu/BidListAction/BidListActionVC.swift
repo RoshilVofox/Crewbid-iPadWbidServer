@@ -10,7 +10,7 @@ import UIKit
 class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate {
     
     private let bidListActionArray = ["Scrolling Options","Deselect All Lines","Move Selected Lines","Undo","Redo","Return Selected Lines to Scratchpad","Return Unfrozen Lines to Scratchpad", "Start Over"]
-    var bidPeriod = BIBidPeriod()
+    var bidPeriod:BIBidPeriod!
     var ArrLinesDetails: [BILine] = []
     var selectedLinesCount:NSMutableArray = NSMutableArray()
     weak var delegate:StartOverDelegate?

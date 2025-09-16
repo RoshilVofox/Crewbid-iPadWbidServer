@@ -35,7 +35,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @IBOutlet weak var bidCont: UIView!
     var bidPeriod: BIBidPeriod?
     var bidVC: CBBidListVC!
-    var bidLinesController:CBBidListVC!
+//    var bidLinesController:CBBidListVC!
     var rightNavController:UINavigationController!
     var bidsTableNavController:UINavigationController!
     var dataSource = GlobalBidInfo.shared
@@ -86,9 +86,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             btnEOM.isHidden = true
             btnWbidMax.isHidden = true
         }
-        self.bidLinesController = self.storyboard?.instantiateViewController(withIdentifier: "CBBidListVC") as? CBBidListVC
-        self.bidLinesController.managedObjectContext = self.managedObjectContext
-        self.bidLinesController.bidPeriod = self.bidPeriod!
+//        self.bidLinesController = self.storyboard?.instantiateViewController(withIdentifier: "CBBidListVC") as? CBBidListVC
+//        self.bidLinesController.managedObjectContext = self.managedObjectContext
+//        self.bidLinesController.bidPeriod = self.bidPeriod!
         app.ObjUserAccount?.saveUserInfo()
         setupUI()
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
