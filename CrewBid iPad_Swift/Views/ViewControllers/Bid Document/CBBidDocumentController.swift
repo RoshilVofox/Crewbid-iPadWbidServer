@@ -1848,12 +1848,12 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                             self.commutingSortCell.lineSort = lineSort
                             self.commutingSortCell.calculateSortAfterVacationLoading()
     //                        MARK: needed to be addded regarding commmuting sort and CBCommutingSortCell
-                            self.perform(#selector(self.showAlertforVacationLoading), with: nil, afterDelay: 0.5)
                         }
                     }
                     catch {
                         print("failed to fetch line sort \(error.localizedDescription)")
                     }
+                    self.perform(#selector(self.showAlertforVacationLoading), with: nil, afterDelay: 0.5)
                 }
             }
             
@@ -2599,7 +2599,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     self.btnWbidMax.isEnabled = true
                     if (self.bidPeriod!.containsVacay?.boolValue == true) {
                         NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
-//                        self.selectWBidVacationButton()
+                        self.selectWBidVacationButton()
                         self.setVacationBackgroundColor()
                         self.reprocessWorkBlock()
                         NotificationCenter.default.post(name: NSNotification.Name("ReloadSortTable"), object: self)
@@ -2738,12 +2738,12 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                             lineSort.ascending = NSNumber(value: false)
                             self.commutingSortCell.lineSort = lineSort
                             self.commutingSortCell.calculateSortAfterVacationLoading()
-                            self.perform(#selector(self.showAlertforVacationLoading), with: nil, afterDelay: 0.5)
                         }
                     }
                     catch {
                         print("error fetching \(error.localizedDescription)")
                     }
+                    self.perform(#selector(self.showAlertforVacationLoading), with: nil, afterDelay: 0.5)
                 }
             }
             DispatchQueue.main.async {
