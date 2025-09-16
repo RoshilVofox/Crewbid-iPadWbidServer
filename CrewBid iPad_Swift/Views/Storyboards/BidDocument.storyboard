@@ -131,7 +131,6 @@
                                                     <constraint firstAttribute="height" constant="30" id="rvm-qC-gGt"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <color key="textColor" name="BlackLabelColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GOa-xD-exU">
@@ -333,7 +332,7 @@
                         <outlet property="btnSwaptimizer" destination="k68-4D-kio" id="JsG-fJ-xPJ"/>
                         <outlet property="btnSync" destination="fe4-fG-3Qi" id="4gG-rG-hSP"/>
                         <outlet property="btnWbidMax" destination="omP-p3-FZ2" id="RSL-qA-1tX"/>
-                        <outlet property="herbLabel" destination="wqh-3z-ZPW" id="hf7-sV-hq1"/>
+                        <outlet property="herbLabel" destination="wqh-3z-ZPW" id="fIQ-Gi-ZJ5"/>
                         <outlet property="lblHome" destination="Hno-fj-B0g" id="YHb-3l-foM"/>
                         <outlet property="leftContainerView" destination="wsv-BL-8wb" id="JkT-Er-Z4m"/>
                         <outlet property="leftShadowView" destination="aCx-CY-HlG" id="xOx-EX-x2l"/>
@@ -4331,8 +4330,11 @@
                                                             </constraints>
                                                         </view>
                                                         <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="ZIn-Se-PxN" customClass="CBLineCalendarCollectionView" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                            <rect key="frame" x="80" y="0.0" width="879" height="77"/>
+                                                            <rect key="frame" x="80" y="0.0" width="899" height="35"/>
                                                             <color key="backgroundColor" name="contentBgColor"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="35" id="jDW-hG-rRJ"/>
+                                                            </constraints>
                                                             <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="cY2-1q-fiZ">
                                                                 <size key="itemSize" width="121" height="121"/>
                                                                 <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -4384,14 +4386,14 @@
                                                             </cells>
                                                         </collectionView>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AHV-mr-na1">
-                                                            <rect key="frame" x="80" y="77" width="879" height="53"/>
+                                                            <rect key="frame" x="80" y="35" width="899" height="40"/>
                                                             <color key="backgroundColor" name="contentBgColor"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="53" id="zBG-S3-2oz"/>
+                                                                <constraint firstAttribute="height" constant="40" id="zBG-S3-2oz"/>
                                                             </constraints>
                                                         </view>
                                                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Cell-reorder-control-off" translatesAutoresizingMaskIntoConstraints="NO" id="Wif-TM-uC3">
-                                                            <rect key="frame" x="987" y="51.5" width="27" height="27"/>
+                                                            <rect key="frame" x="987" y="4" width="27" height="27"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="27" id="SYp-pD-8KS"/>
                                                                 <constraint firstAttribute="width" constant="27" id="rAk-zj-DYI"/>
@@ -4417,13 +4419,12 @@
                                                         <constraint firstAttribute="bottom" secondItem="POn-Yx-3HS" secondAttribute="bottom" constant="-10" id="Um0-TP-nOh"/>
                                                         <constraint firstItem="POn-Yx-3HS" firstAttribute="top" secondItem="5x4-fp-2cz" secondAttribute="top" id="Vic-9m-Xjc"/>
                                                         <constraint firstItem="0tE-dv-pqD" firstAttribute="leading" secondItem="5x4-fp-2cz" secondAttribute="leading" constant="5" id="Xr1-ga-VhW"/>
-                                                        <constraint firstAttribute="bottom" secondItem="AHV-mr-na1" secondAttribute="bottom" id="hXW-1I-ZVv"/>
                                                         <constraint firstItem="POn-Yx-3HS" firstAttribute="leading" secondItem="0tE-dv-pqD" secondAttribute="trailing" id="hdr-tz-ihH"/>
                                                         <constraint firstAttribute="trailing" secondItem="Wif-TM-uC3" secondAttribute="trailing" constant="10" id="jx4-cl-D1V"/>
                                                         <constraint firstItem="AHV-mr-na1" firstAttribute="top" secondItem="ZIn-Se-PxN" secondAttribute="bottom" id="k7S-PR-1Un"/>
                                                         <constraint firstAttribute="bottom" secondItem="tBf-gh-lY9" secondAttribute="bottom" id="nS3-NK-FyN"/>
-                                                        <constraint firstItem="Wif-TM-uC3" firstAttribute="centerY" secondItem="5x4-fp-2cz" secondAttribute="centerY" id="quv-Lt-PeX"/>
-                                                        <constraint firstAttribute="trailing" secondItem="ZIn-Se-PxN" secondAttribute="trailing" constant="65" id="tAN-n0-snF"/>
+                                                        <constraint firstItem="Wif-TM-uC3" firstAttribute="centerY" secondItem="ZIn-Se-PxN" secondAttribute="centerY" id="quv-Lt-PeX"/>
+                                                        <constraint firstAttribute="trailing" secondItem="ZIn-Se-PxN" secondAttribute="trailing" constant="45" id="tAN-n0-snF"/>
                                                         <constraint firstItem="AHV-mr-na1" firstAttribute="trailing" secondItem="ZIn-Se-PxN" secondAttribute="trailing" id="ycW-TK-weV"/>
                                                         <constraint firstItem="0tE-dv-pqD" firstAttribute="top" secondItem="5x4-fp-2cz" secondAttribute="top" id="zTd-Rm-wpp"/>
                                                     </constraints>
@@ -4440,6 +4441,7 @@
                                         <color key="backgroundColor" name="contentBgColor"/>
                                         <connections>
                                             <outlet property="collectionView" destination="ZIn-Se-PxN" id="dgn-7n-XyX"/>
+                                            <outlet property="collectionViewRightConstraint" destination="tAN-n0-snF" id="y0o-dA-wTc"/>
                                             <outlet property="imgAccessoryView" destination="Wif-TM-uC3" id="1KR-Ja-jET"/>
                                             <outlet property="lineValuesContainerView" destination="AHV-mr-na1" id="XhP-dp-vaf"/>
                                             <outlet property="mLblLineNo" destination="VhE-sI-yAL" id="ddS-qd-VGk"/>
@@ -7164,37 +7166,37 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="quaternarySystemFillColor">
-            <color red="0.45490196078431372" green="0.45490196078431372" blue="0.50196078431372548" alpha="0.080000000000000002" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.4549019608" green="0.4549019608" blue="0.50196078430000002" alpha="0.080000000000000002" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="secondarySystemBackgroundColor">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBlueColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray2Color">
-            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGreenColor">
-            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemOrangeColor">
-            <color red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemYellowColor">
             <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tertiaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29803921568627451" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29803921570000003" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tintColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

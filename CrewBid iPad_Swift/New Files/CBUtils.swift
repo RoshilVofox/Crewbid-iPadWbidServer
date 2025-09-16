@@ -908,37 +908,56 @@ class CBUtils{
         }.resume()
     }
     class func getFALISTWB4JSONFromServer(completion: (() -> Void)? = nil) {
-        guard let url = URL(string: EndPoint.shared.faListWB4Json) else {
-            print("Invalid URL")
-            completion?()
-            return
-        }
-
-        let request = URLRequest(url: url)
-        let session = URLSession(configuration: .default)
-
-        let task = session.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("Error in getting FA list from server: \(error.localizedDescription)")
-                completion?()
-                return
-            }
-
-            if let data = data {
-                do {
-                    if let responseDict = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                        self.writeJSONDictToFile(jsonDict: responseDict)
-                    }
-                } catch {
-                    print("JSON Parsing Error: \(error.localizedDescription)")
+//        guard let url = URL(string: EndPoint.shared.faListWB4Json) else {
+//            print("Invalid URL")
+//            completion?()
+//            return
+//        }
+//
+//        let request = URLRequest(url: url)
+//        let session = URLSession(configuration: .default)
+//
+//        let task = session.dataTask(with: request) { data, response, error in
+//            if let error = error {
+//                print("Error in getting FA list from server: \(error.localizedDescription)")
+//                completion?()
+//                return
+//            }
+//
+//            if let data = data {
+//                do {
+//                    if let responseDict = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+//                        self.writeJSONDictToFile(jsonDict: responseDict)
+//                    }
+//                } catch {
+//                    print("JSON Parsing Error: \(error.localizedDescription)")
+//                }
+//            }
+//
+//            // Notify caller when done
+//            completion?()
+//        }
+//
+//        task.resume()
+        APIService.shared.fetch(
+            urlString: EndPoint.shared.faListWB4Json,
+            parse: { data in
+                // Try parsing JSON into a dictionary
+                guard let dict = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                    throw Errors.decodingError
                 }
+                return dict
+            },
+            completion: { result in
+                switch result {
+                case .success(let responseDict):
+                    self.writeJSONDictToFile(jsonDict: responseDict)
+                case .failure(let error):
+                    print("Error in getting FA list from server: \(error)")
+                }
+                completion?()
             }
-
-            // Notify caller when done
-            completion?()
-        }
-
-        task.resume()
+        )
     }
         
     static func writeJSONDictToFile(jsonDict: [String: Any]) {

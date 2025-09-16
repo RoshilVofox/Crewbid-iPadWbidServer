@@ -84,7 +84,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         }
         //sorting the line numbers
         let sortPredicates = updateSorts()
-        print(sortPredicates)
+//        print(sortPredicates)
         self.lines = (lines as NSArray).sortedArray(using: sortPredicates) as! [BILine]
         
         //Filtering the lines
@@ -98,7 +98,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         var array : [NSPredicate] = []
         //For getting filter predicate
         array = subpredicatesArr.map { $0.predicate }
-        print("QuickFilters", array)
+//        print("QuickFilters", array)
         array.append(NSPredicate(format: "bidOrder == %@", NSNumber(integerLiteral: 0)))
         array.append(NSPredicate(format: "isTrashed == %@", NSNumber(booleanLiteral: false)))
         
@@ -183,7 +183,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
             }
             if positionFlag1 == 1{
                 let lineSorts = getSortDiscriptorsPosition()
-                print(lineSorts)
+//                print(lineSorts)
                 tempPositionLine = (tempLines as NSArray).sortedArray(using: lineSorts ) as! [BILine]
                 tempLines = (tempPositionLine as NSArray).sortedArray(using: [NSSortDescriptor(key: "number", ascending: true)]) as! [BILine]
                 positionFlag1 = 0
@@ -365,6 +365,10 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
     @objc func removedTrashLines(notification: NSNotification){
         if self.bidPeriod!.isFABid(){
             if let index = notification.object as? Int {
+                guard index >= 0, index < self.sectionLines.count else {
+                    // Index is stale or invalid; ignore safely or log
+                    return
+                }
                 for line in self.sectionLines[index]{
                     if line.isTrashed == NSNumber(true) {
                         return

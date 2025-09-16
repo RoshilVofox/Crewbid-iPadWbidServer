@@ -641,12 +641,12 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                             if isSaturday{
                                 xValue = fromScrachpadView == true ? xValue - 6 : xValue - 7
                             }
-                            let verticalLabelFrame = CGRect(x: xValue, y: labelFrame.origin.y + 15, width: 26, height: 10)
+                            let verticalLabelFrame = CGRect(x: xValue, y: labelFrame.origin.y + 12, width: 26, height: 10)
                             
                             let verticalLabel = UILabel(frame: verticalLabelFrame)
                             verticalLabel.textColor = CBColor.cbGreen
                             verticalLabel.textAlignment = .center
-                            verticalLabel.font = UIFont.boldSystemFont(ofSize: 9)
+                            verticalLabel.font = UIFont.boldSystemFont(ofSize: 8)
                             verticalLabel.transform = CGAffineTransform(rotationAngle: CGFloat(-90.0 * .pi / 180.0))
                             verticalLabel.translatesAutoresizingMaskIntoConstraints = true
                             labelButton?.addSubview(verticalLabel)

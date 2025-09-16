@@ -227,6 +227,7 @@ class CBExpandedBidLinesTableController: BaseViewController {
             cell.backgroundView = UIView(frame: cell.bounds)
             cell.backgroundView?.backgroundColor = UIColor.appColor(.contentBgColor)
         }
+        cell.handlingFreezingCondition(line: line)
         if bidPeriod.isFABid() && line.faPosition?.intValue != BIFaPosition.FaPositionNA.rawValue {
             cell.mLblLineNo.textColor = .white
             if line.faPosition?.intValue == BIFaPosition.FaPositionA.rawValue {
@@ -246,7 +247,7 @@ class CBExpandedBidLinesTableController: BaseViewController {
                 cell.mLblLineNo.text = cell.mLblLineNo.text! + ("M")
             }
             cell.positionCircleView.alpha = 1.0
-            cell.handlingFreezingCondition(line: line)
+//            cell.handlingFreezingCondition(line: line)
             cell.positionCircleView.alpha = 1.0
             if isAwardSort {
                 if let awardedLineNum = self.awardedLineNum {
@@ -553,7 +554,7 @@ extension CBExpandedBidLinesTableController: UITableViewDelegate,UITableViewData
         cell.setMarkerText(line.markerTitle)
         cell.bidListCellCalendarDaysArr = bidListCalendarData.calendarDaysExpandedBidLinesView() as! [Any]
         configureCell(cell, at: indexPath)
-        cell.refreshTripButtons(highlightFlag: true)
+
         cell.tripButtonActionBlock = {(_ tripButton: CBTripButton) -> Void in
             DispatchQueue.main.async {
                 self.showTripTextPopover(for: tripButton)

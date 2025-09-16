@@ -632,10 +632,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
 
     
     
-    func persistantStoreCoordinator() -> NSPersistentStoreCoordinator {
-        return persistentContainer.persistentStoreCoordinator
-        //MARK: needs code here
-    }
+//    func persistantStoreCoordinator() -> NSPersistentStoreCoordinator {
+//        return persistentContainer.persistentStoreCoordinator
+//        //MARK: needs code here
+//    }
     func applicationDocumentDirectory() -> URL {
         return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last!
     }

@@ -55,28 +55,28 @@ class FaMoveBidListMenu: UIViewController,UITableViewDelegate,UITableViewDataSou
         case "Move Position A to Bid List" :
             for line in self.lines {
                 if line.faPositionString == "A" {
-                    moveObj.insertLines([line], faBidAllPositions: false)
+                    moveObj.insertLines([line])
                 }
             }
             break
         case "Move Position B to Bid List" :
             for line in self.lines {
                 if line.faPositionString == "B" {
-                    moveObj.insertLines([line], faBidAllPositions: false)
+                    moveObj.insertLines([line])
                 }
             }
             break
         case "Move Position C to Bid List" :
             for line in self.lines {
                 if line.faPositionString == "C" {
-                    moveObj.insertLines([line], faBidAllPositions: false)
+                    moveObj.insertLines([line])
                 }
             }
             break
         case "Move Position D to Bid List" :
             for line in self.lines {
                 if line.faPositionString == "D" {
-                    moveObj.insertLines([line], faBidAllPositions: false)
+                    moveObj.insertLines([line])
                 }
             }
             break

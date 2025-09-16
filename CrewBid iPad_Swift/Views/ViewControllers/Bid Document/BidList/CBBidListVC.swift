@@ -74,6 +74,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         UserDefaults.standard.set(false, forKey: kCBNoAutoswitchToBids)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(rawValue: "CBReturnLinesNotification"), object: nil)
     }
     
     override func viewDidLoad() {
@@ -169,8 +170,8 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         NotificationCenter.default.addObserver(self, selector: #selector(self.unfreezeTopLines(_:)), name: NSNotification.Name(rawValue: "CBUnFreezeLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.deselectAllLines), name: NSNotification.Name(rawValue: "CBDeselectAllLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.moveSelectedLinesToInsertionIndex), name: NSNotification.Name(rawValue: "CBMoveSelectedNotification"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.undo), name: NSNotification.Name(rawValue: "CBUndoNotification"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.redo), name: NSNotification.Name(rawValue: "CBRedoNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.undoAction), name: NSNotification.Name(rawValue: "CBUndoNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.redoAction), name: NSNotification.Name(rawValue: "CBRedoNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.deleteSelectedLines), name: NSNotification.Name(rawValue: "CBReturnSelectedLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.deleteAllLines), name: NSNotification.Name(rawValue: "CBReturnUnfrozenLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.cellDidSelect(notification:)), name: Notification.Name("CBBidLineTableCellDidSelectNotification"), object: nil)
@@ -358,17 +359,32 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         }
     }
     
-    @objc func undo() {
-        if (bidPeriod.managedObjectContext!.undoManager?.canUndo)! && !(bidPeriod.managedObjectContext!.undoManager?.undoActionName == "") {
-            bidPeriod.managedObjectContext!.undoManager?.undo()
+//    @objc func undoAction() {
+//        if (bidPeriod.managedObjectContext!.undoManager?.canUndo)! && !(bidPeriod.managedObjectContext!.undoManager?.undoActionName == "") {
+//            bidPeriod.managedObjectContext!.undoManager?.undo()
+//            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+//        }
+//    }
+//    
+//    @objc func redoAction () {
+//        if bidPeriod.managedObjectContext!.undoManager?.canRedo ?? false {
+//            bidPeriod.managedObjectContext!.undoManager?.redo()
+//            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+//        }
+//    }
+    @objc func undoAction() {
+        if let undoManager = bidPeriod.managedObjectContext?.undoManager, undoManager.canUndo {
+            undoManager.undo()
             NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+//            NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: self)
         }
     }
-    
-    @objc func redo () {
-        if bidPeriod.managedObjectContext!.undoManager?.canRedo ?? false {
-            bidPeriod.managedObjectContext!.undoManager?.redo()
+
+    @objc func redoAction() {
+        if let undoManager = bidPeriod.managedObjectContext?.undoManager, undoManager.canRedo {
+            undoManager.redo()
             NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+//            NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: self)
         }
     }
     
@@ -1115,6 +1131,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         }
     }
     
+    
     @objc func updateBidList(_ notification: Notification? = nil) {
         var isTableviewReload = true
         var notifictionFromTripTextView = false
@@ -1137,7 +1154,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         self.linesArray = (linesArray as NSArray).filtered(using: predicate) as! [BILine]
         
         let sort = NSSortDescriptor(key: "bidOrder", ascending: true)
-        if bidPeriod.isBidListSortOn?.boolValue ?? false{
+        if bidPeriod.isBidListSortOn?.intValue == 1{
             let lineSorts = getSortDescriptorsForBidList()
             print(lineSorts)
             self.linesArray = (linesArray as NSArray).sortedArray(using: lineSorts ) as! [BILine]
@@ -1244,7 +1261,8 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         }
         // Begin an undo grouping for the transaction.
 
-        bidPeriod.managedObjectContext!.undoManager?.beginUndoGrouping()
+        guard let undoManager = bidPeriod.managedObjectContext?.undoManager else { return }
+        undoManager.beginUndoGrouping()
         // If inserting above, and line at insertion row has marker, move marker to
         // first line in inserted lines.
         var insertionRowLine: BILine? = nil
@@ -1313,12 +1331,14 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         isShouldScrollToInsertionIndex = true
         UserDefaults.standard.setValue(true, forKey: "isShouldScrollToInsertionIndex")
         // Set undo action name.
-        bidPeriod.managedObjectContext!.undoManager?.setActionName("Insert Line\(lines.count > 1 ? "s" : "")")
-        bidPeriod.managedObjectContext!.undoManager?.endUndoGrouping()
-        
+//        bidPeriod.managedObjectContext!.undoManager?.setActionName("Insert Line\(lines.count > 1 ? "s" : "")")
+//        bidPeriod.managedObjectContext!.undoManager?.endUndoGrouping()
+        undoManager.setActionName("Insert Line\(lines.count > 1 ? "s" : "")")
+        undoManager.endUndoGrouping()
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
         NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: nil)
     }
+    
     
     func getSortDescriptorsForBidList() -> [NSSortDescriptor] {
 //        return lineSorts
@@ -2633,7 +2653,7 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
         line?.markerTitle = nil
         // If inserting above a line that has a marker, transfer marker to
         // moved line.
-        var insertionPointLine: BILine? = affectedRows.object(at: insertionIndex) as? BILine
+        let insertionPointLine: BILine? = affectedRows.object(at: insertionIndex) as? BILine
         if insertionPointLine?.markerTitle != nil &&  insertionPointLine?.markerTitle != ""{
             line?.markerTitle = insertionPointLine?.markerTitle
             insertionPointLine?.markerTitle = nil
@@ -2671,6 +2691,7 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
             self.insertionIndex -= 1
         }
         selectedCellIndexPaths.removeAllObjects()
+        
         bidPeriod.managedObjectContext!.undoManager?.setActionName("Move Line")
         NotificationCenter.default.post(name: NSNotification.Name("SortBidListAction"), object: self)
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)

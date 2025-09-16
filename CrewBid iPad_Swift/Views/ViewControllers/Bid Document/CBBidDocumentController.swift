@@ -96,6 +96,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         NotificationCenter.default.addObserver(self, selector: #selector(showCommutablilityFilterView), name: Notification.Name("ShowCommutabilityFilterView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(ShowCommutablilitySortView), name: Notification.Name("ShowCommutabilitySortView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(tapWBidMaxBtn), name: Notification.Name("TapWBidMaxBtn"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateLocalHerbSwitchUI), name: NSNotification.Name("updateLocalHerbSwitchUI"), object: nil)
         
         firstTimeBidOpen()
         NotificationCenter.default.addObserver(self, selector: #selector(didDismissLatestNews), name: NSNotification.Name("DidDismissLatestNews"), object: nil)
@@ -546,10 +547,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @objc func bidLines(_ notification: Notification) {
     }
     
-    func updateLocalHerbSwitchUI() {
-        let setting = UserDefaults.standard.integer(forKey: kCBTimeZoneSetting)
-        
-        if setting == CBTimeZoneSetting.herbTime.rawValue {
+    @objc func updateLocalHerbSwitchUI() {
+        if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.herbTime.rawValue {
             herbLabel.backgroundColor = .purple
             herbLabel.textColor = .white
             
@@ -564,9 +563,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         }
     }
     
-    func showBidLines(completion: (() -> Void)? = nil) {
-        
-    }
     
     func setupUI(){
         let positionArray = ["CP","FO","FA"]
@@ -590,8 +586,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         btnLocalHerbView.layer.borderColor = UIColor.black.cgColor
         btnLocalHerbView.layer.cornerRadius = 16
     
-        herbLabel.backgroundColor = UIColor.purple
-        herbLabel.textColor = UIColor.white
         
         herbLabel.layer.borderColor = UIColor.white.cgColor
         herbLabel.layer.borderWidth = 0.4
@@ -952,20 +946,22 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @IBAction func localHerbAction(_ sender: Any) {
         if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.herbTime.rawValue{
             UserDefaults.standard.set(CBTimeZoneSetting.localTime.rawValue, forKey: kCBTimeZoneSetting)
-            localLabel.backgroundColor = UIColor.purple
-            localLabel.textColor = UIColor.white
-            herbLabel.backgroundColor = UIColor.white
-            herbLabel.textColor = UIColor.black
+//            localLabel.backgroundColor = UIColor.purple
+//            localLabel.textColor = UIColor.white
+//            herbLabel.backgroundColor = UIColor.white
+//            herbLabel.textColor = UIColor.black
         }else{
             UserDefaults.standard.set(CBTimeZoneSetting.herbTime.rawValue, forKey: kCBTimeZoneSetting)
-            localLabel.backgroundColor = UIColor.white
-            localLabel.textColor = UIColor.black
-            herbLabel.backgroundColor = UIColor.purple
-            herbLabel.textColor = UIColor.white
+//            localLabel.backgroundColor = UIColor.white
+//            localLabel.textColor = UIColor.black
+//            herbLabel.backgroundColor = UIColor.purple
+//            herbLabel.textColor = UIColor.white
         }
+        updateLocalHerbSwitchUI()
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
-//        NotificationCenter.default.post(name: NSNotification.Name("amPmValueChangedFromButton"), object: self)
     }
+    
+    
     
     @IBAction func settingsAction(_ sender: Any) {
         let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)

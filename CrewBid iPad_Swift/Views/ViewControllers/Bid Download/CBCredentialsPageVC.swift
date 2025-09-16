@@ -118,7 +118,6 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
 
         //------viewmodel--------
         loginViewModel.onLoginSuccess = { sessionKey in
-//            print("Session Key: \(sessionKey)")
             //Saving userID to keychain
             let service = "com.yourapp.login"
             let account = self.txtUserID.text ?? ""
