@@ -2154,7 +2154,7 @@ class BIBidInfoReader{
             }
         }
 
-        if !arrOrderedDaysDay.isEmpty {
+        if arrOrderedDaysDay.count > 0 {
             dicTrip["BIDay"] = arrOrderedDaysDay
             dicTrip["StartDate"] = trip.startDate
             dicTrip["BITripInfo"] = arrOrderedDaysTripInfoDay
