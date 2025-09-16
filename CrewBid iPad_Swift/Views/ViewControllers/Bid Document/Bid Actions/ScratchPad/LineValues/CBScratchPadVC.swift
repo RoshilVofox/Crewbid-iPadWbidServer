@@ -378,7 +378,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
                 let temp : NSMutableArray = self.bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
                 
                 temp.add([self.sectionLines[index][0].number!.stringValue])
-                self.bidPeriod?.lastTrashedDetails = temp/*.mutableCopy() as? NSArray*/
+                self.bidPeriod?.lastTrashedDetails = temp.mutableCopy() as? NSArray
 //                try? self.bidPeriod?.managedObjectContext?.save()
 //                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
                     NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
