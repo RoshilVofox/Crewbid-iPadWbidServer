@@ -1744,6 +1744,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     if (UserDefaults.standard.bool(forKey: "isStateSync")) {
                         UserDefaults.standard.set(false, forKey: "isStateSync")
                     }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+                    }
                 }
             }
         }
@@ -2175,7 +2178,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             btnWbidMax.isEnabled = true
             return
         }
-        self.view.showActivityIndicator(color: UIColor.blue, message: "Contacting SWAPtimizer...")
+        self.view.showActivityIndicator(color: UIColor.blue, message: "Getting EOM Vacation...")
         DispatchQueue.main.async {
             vDL.downloadSwaptimizerEOMVacationFilesWithHud() { finished in
                 if finished {
@@ -2235,7 +2238,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 //            return
 //        }
         
-        self.view.showActivityIndicator(message: "Contacting SWAPtimizer...")
+        self.view.showActivityIndicator(message: "Processing WbidMax Vacation...")
         DispatchQueue.main.async {
             vDL.downloadWbidVacationFilesWithHud() { finished in
                 if (finished) {
@@ -2362,7 +2365,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 //            btnWbidMax.isEnabled = true
 //            return
 //        }
-        self.view.showActivityIndicator(message: "Contacting SWAPtimizer...")
+        self.view.showActivityIndicator(message: "Getting EOM Vacation...")
         DispatchQueue.main.async {
             vDL.downloadWbidEOMVacationFilesWithHud() { finished in
                 if finished {
@@ -2447,7 +2450,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             if didDisplayMonthToMonthAlert == false {
                 let monthToMonthAlert = storyboard.instantiateViewController(withIdentifier: "CBMonthToMonthAlertVC") as! CBMonthToMonthAlertVC
                 monthToMonthAlert.text = alertMessage
-                monthToMonthAlert.showAlertFromViewController(from: self) { tappedOk in }
+//                monthToMonthAlert.showAlertFromViewController(from: self) { tappedOk in }
             }
         }
     }
@@ -2478,7 +2481,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                         self.enableOrDisableEOMButton()
                         NotificationCenter.default.post(name: NSNotification.Name("ReloadSortTable"), object: self)
                         NotificationCenter.default.post(name: NSNotification.Name("ReloadFilterTable"), object: self)
-                        NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+                        }
                         NotificationCenter.default.post(name: Notification.Name("CBLineValuesToDisplayDidChangeNotification"), object: self)
                         self.perform(#selector(self.tableViewReloadForFAWithHud), with: nil, afterDelay: 0.2)
 
@@ -2528,7 +2533,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 //            btnWbidMax.isEnabled = true
 //            return
 //        }
-        self.view.showActivityIndicator(message: "Contacting ...")
+        self.view.showActivityIndicator(message: "Getting EOM Vacation...")
         DispatchQueue.main.async {
             if self.eomSelectedIndex.isEmpty {
                 vDL.EOMSelectedIndex = self.eomSelectedIndex
@@ -2586,7 +2591,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 //        }
         
         DispatchQueue.main.async {
-            self.view.showActivityIndicator(message: "Contacting ...")
+            self.view.showActivityIndicator(message: "Getting EOM Vacation...")
             if self.eomSelectedIndex.isEmpty {
                 vDL.EOMSelectedIndex = self.eomSelectedIndex
             }
@@ -2598,7 +2603,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     self.btnWbidMax.isEnabled = true
                     if (self.bidPeriod!.containsVacay?.boolValue == true) {
                         NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
-                        self.selectWBidVacationButton()
+//                        self.selectWBidVacationButton()
                         self.setVacationBackgroundColor()
                         self.reprocessWorkBlock()
                         NotificationCenter.default.post(name: NSNotification.Name("ReloadSortTable"), object: self)
@@ -2638,10 +2643,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     @objc func tableViewReloadForFAWithHud() {
-        let condition1 = /*!self.btnEOM.isHidden && !self.btnWbidMax.isSelected*/ false
-        let condition2 = /*!self.btnEOM.isSelected*/ false
-        let condition3 = /*!self.btnWbidMax.isSelected*/ false
-        let condition4 = /*!self.manageVacationsEnabled*/ false
+        let condition1 = !self.btnEOM.isHidden && !self.btnWbidMax.isSelected
+        let condition2 = !self.btnEOM.isSelected
+        let condition3 = !self.btnWbidMax.isSelected
+        let condition4 = !self.manageVacationsEnabled
         DispatchQueue.main.async {
             if (condition1) {
                 if (condition2) {
@@ -2719,7 +2724,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                         
                         NotificationCenter.default.post(name: Notification.Name(kCBPresetSyncReload), object: self)
                     }
-                    NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+                    DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.7) {
+                        NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+                    }
                     if (self.isVacationsRemoved) {
                         self.resetAllVacationDetails()
                     }
@@ -2744,7 +2751,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 }
             }
             DispatchQueue.main.async {
-                NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+//                DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.7) {
+                    NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+//                }
                 self.view.hideActivityIndicator()
             }
         }
@@ -3152,7 +3161,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 
     func removeCurrentVacation() {
         DispatchQueue.main.async {
-            self.view.showActivityIndicator(message: "Processing...")
+            self.view.showActivityIndicator(message: "Removing Vacation...")
             self.bidPeriod!.isVacationRemoved = NSNumber(value: true)
             let vDL = CBVacationDownloader()
             vDL.bidPeriod = self.bidPeriod
@@ -3317,7 +3326,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 AlertService.showAlertForTopVC(title: "Sorry!", message: "You cannot get needed access via SouthwestWifi or 2Wire. Try again later when you are safely on the ground and have another internet access. \(self.eomMonth())")
                 return
             }
-            if (!self.bidPeriod!.seniorityVacayAvailable!.boolValue && !btnWbidMax.isSelected) {
+            if (!(self.bidPeriod!.seniorityVacayAvailable?.boolValue ?? false) && !btnWbidMax.isSelected) {
                 AlertService.showAlertForTopVC(title: "Vacation", message: "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button")
             }
             else {
@@ -3336,7 +3345,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                                     btn.tag = 20
                                     if self.bidPeriod?.containsFvVacay?.boolValue == true {
                                         DispatchQueue.main.async {
-                                            self.view.showActivityIndicator(message: "Processing")
+                                            self.view.showActivityIndicator(message: "Removing Vacation...")
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                                                 self.view.hideActivityIndicator()
                                             }
@@ -3434,7 +3443,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 btnSwaptimizer.setTitleColor(.black, for: .normal)
                 self.bidPeriod!.currentDateTime = Date()
                 self.bidPeriod!.isStateFileModifiedToSync = NSNumber(value: true)
-                NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+                }
             }
         }
         else {

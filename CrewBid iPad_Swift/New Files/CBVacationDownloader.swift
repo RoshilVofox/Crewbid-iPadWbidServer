@@ -302,6 +302,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     func downloadFaVacationFilesWithHud(completion: @escaping (Bool) -> Void) {
         self.bidPeriod?.userVacationWbidOrCrewBid = "FAVacation"
         try? self.bidPeriod?.managedObjectContext?.save()
+        UserDefaults.standard.set(false, forKey: kCBHideVacationKey)
 
         if let fileIntent = self.bidPeriod?.faFileIntent, !fileIntent.isEmpty {
             guard let dicVacationFile = self.readVacationFile(fileName: fileIntent) else {
@@ -2996,7 +2997,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         var vacay: BIVacation?
 
         
-        if vacationType == "FAVacation" || vacationType == "FAVacation" || vacationType == "FAVacationEomOnly" {
+        if vacationType == "FAVacation" || vacationType == "FAVacationF" || vacationType == "FAVacationEomOnly" {
             lineName = "Line1";
             frontVO = "FrontVO";
             frontVO1 = "FrontVO1";

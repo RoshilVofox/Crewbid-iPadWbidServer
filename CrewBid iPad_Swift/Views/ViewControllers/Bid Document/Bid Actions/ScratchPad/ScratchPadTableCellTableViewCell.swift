@@ -492,6 +492,9 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                 
                 let day:BIDay = orderedDays[d]
                 let dayInfo:BIDayInfo = day.info!
+                if day.displayType?.intValue != 0 {
+                    print("")
+                }
                 
                 if trip.isRedEyeTrip && d == missingDateIndex && (self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue) && trip.vacationOverlapType!.intValue > 0 {
                     redEyePayLabel?.textAlignment = .center
