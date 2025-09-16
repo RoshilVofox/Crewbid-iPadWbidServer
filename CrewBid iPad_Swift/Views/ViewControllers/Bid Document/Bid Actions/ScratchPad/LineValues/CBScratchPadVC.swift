@@ -365,10 +365,10 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
     @objc func removedTrashLines(notification: NSNotification){
         if self.bidPeriod!.isFABid(){
             if let index = notification.object as? Int {
-                guard index >= 0, index < self.sectionLines.count else {
-                    // Index is stale or invalid; ignore safely or log
-                    return
-                }
+//                guard index >= 0, index < self.sectionLines.count else {
+//                    // Index is stale or invalid; ignore safely or log
+//                    return
+//                }
                 for line in self.sectionLines[index]{
                     if line.isTrashed == NSNumber(true) {
                         return
