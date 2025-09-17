@@ -431,8 +431,10 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         if empID.hasPrefix("e") || empID.hasPrefix("x") {
             let userID = String(empID.dropFirst())
             GlobalBidInfo.shared.userid = userID
+            CBGlobalMethods.shared.userid = userID
         }else if !empID.lowercased().hasPrefix("x") && !empID.lowercased().hasPrefix("e") {
             GlobalBidInfo.shared.userid = empID
+            CBGlobalMethods.shared.userid = empID
         }
         if empID.lowercased().hasPrefix("x") || empID.lowercased().hasPrefix("e") {
             empID = String(empID.dropFirst())

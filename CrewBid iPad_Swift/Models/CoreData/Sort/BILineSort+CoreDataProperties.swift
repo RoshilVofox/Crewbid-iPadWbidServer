@@ -55,19 +55,26 @@ extension BILineSort : Identifiable, NSFetchedResultsControllerDelegate {
         // If the Swaptimizer is enabled, merge additional sorting categories.
 
         if bidPeriod.swaptimizerStatus?.intValue == Int(CBSwaptimizerStatus.enabled.rawValue) {
-            if bidPeriod.isFABid() == true {
-                let swaptimizerFileURL: URL? = Bundle.main.url(forResource: "LineSortsFaVacation", withExtension: "plist")
-                let swaptimizerFileURLString:String = swaptimizerFileURL!.path
-                let swapSortsDictionary = NSDictionary(contentsOfFile: swaptimizerFileURLString)
-                let swapSortsArray: NSArray = swapSortsDictionary?["sorts"] as! NSArray
-                lineSortCategories = swapSortsArray.addingObjects(from: lineSortCategories as! [Any]) as NSArray
-            }else{
+//            if bidPeriod.isFABid() == true {
+//                let swaptimizerFileURL: URL? = Bundle.main.url(forResource: "LineSortsFaVacation", withExtension: "plist")
+//                let swaptimizerFileURLString:String = swaptimizerFileURL!.path
+//                let swapSortsDictionary = NSDictionary(contentsOfFile: swaptimizerFileURLString)
+//                let swapSortsArray: NSArray = swapSortsDictionary?["sorts"] as! NSArray
+//                lineSortCategories = swapSortsArray.addingObjects(from: lineSortCategories as! [Any]) as NSArray
+//            }else{
                 let swaptimizerFileURL: URL? = Bundle.main.url(forResource: "LineSortsSwaptimizer", withExtension: "plist")
                 let swaptimizerFileURLString:String = swaptimizerFileURL!.path
                 let swapSortsDictionary = NSDictionary(contentsOfFile: swaptimizerFileURLString)
                 let swapSortsArray: NSArray = swapSortsDictionary?["sorts"] as! NSArray
                 lineSortCategories = swapSortsArray.addingObjects(from: lineSortCategories as! [Any]) as NSArray
-            }
+//            }
+        }
+        if bidPeriod.faVacationStatus?.intValue ==  BIFaVacationStatus.enabled.rawValue {
+            let swaptimizerFileURL: URL? = Bundle.main.url(forResource: "LineSortsFaVacation", withExtension: "plist")
+            let swaptimizerFileURLString:String = swaptimizerFileURL!.path
+            let swapSortsDictionary = NSDictionary(contentsOfFile: swaptimizerFileURLString)
+            let swapSortsArray: NSArray = swapSortsDictionary?["sorts"] as! NSArray
+            lineSortCategories = swapSortsArray.addingObjects(from: lineSortCategories as! [Any]) as NSArray
         }
         return lineSortCategories!
     }

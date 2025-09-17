@@ -438,7 +438,7 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
                 else {
                     myCell.swapImgView.alpha = 1
                     myCell.textLabel?.alpha = 1
-                    myCell.isUserInteractionEnabled = false
+                    myCell.isUserInteractionEnabled = true
                     myCell.contentView.alpha = 1
                 }
             }

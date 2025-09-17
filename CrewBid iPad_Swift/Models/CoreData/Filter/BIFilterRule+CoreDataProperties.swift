@@ -164,15 +164,23 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
         }
         // Check if Swaptimizer is enabled for the bid period
         if (bidPeriod.swaptimizerStatus ?? 0).intValue == CBSwaptimizerStatus.enabled.rawValue {
-            if bidPeriod.isFABid(){
+//            if bidPeriod.isFABid(){
                 // Load FilterRulesFaVacation.plist for flight attendant bids
-                let swaptimizerFileURL = Bundle.main.path(forResource: "FilterRulesFaVacation", ofType: "plist")
+                let swaptimizerFileURL = Bundle.main.path(forResource: "FilterRulesSwaptimizer", ofType: "plist")
                 let swapRulesDictionary = NSMutableDictionary(contentsOfFile: swaptimizerFileURL!)!
                 var swapRulesArray: NSArray!
                 swapRulesArray = (swapRulesDictionary["rules"]! as! NSArray)
                 // Combine the menu items with swap rules
                 menuItems = swapRulesArray.addingObjects(from: menuItems as! [Any]) as NSArray
-            }
+//            }
+        }
+        if bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue {
+            let swaptimizerFileURL = Bundle.main.path(forResource: "FilterRulesFaVacation", ofType: "plist")
+            let swapRulesDictionary = NSMutableDictionary(contentsOfFile: swaptimizerFileURL!)!
+            var swapRulesArray: NSArray!
+            swapRulesArray = (swapRulesDictionary["rules"]! as! NSArray)
+            // Combine the menu items with swap rules
+            menuItems = swapRulesArray.addingObjects(from: menuItems as! [Any]) as NSArray
         }
         
         return menuItems! as NSArray
