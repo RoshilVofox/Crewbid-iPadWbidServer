@@ -64,6 +64,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     var isOldBidPackage: Bool = false
     var totalNumberString: String?
     var didDisplayMonthToMonthAlert = true
+    var alertShouldDisplay: Bool = true
     override func viewDidLoad() {
         super.viewDidLoad()
         updateLocalHerbSwitchUI()
@@ -86,6 +87,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             btnEOM.isHidden = true
             btnWbidMax.isHidden = true
         }
+        alertShouldDisplay = true
 //        self.bidLinesController = self.storyboard?.instantiateViewController(withIdentifier: "CBBidListVC") as? CBBidListVC
 //        self.bidLinesController.managedObjectContext = self.managedObjectContext
 //        self.bidLinesController.bidPeriod = self.bidPeriod!
@@ -1319,14 +1321,17 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     func executeEOMForFA() {
         if ( self.bidPeriod!.vacationType == "FAVacationF") {
             self.bidPeriod!.userVacationWbidOrCrewBid = "FAVacationF"
+            alertShouldDisplay = false
             self.checkForSWAPtimizerFile()
         }
         else if ( self.bidPeriod!.vacationType == "FAVacation") {
             self.bidPeriod!.userVacationWbidOrCrewBid = "FAVacation"
+            alertShouldDisplay = false
             self.checkForSWAPtimizerFile()
         }
         else if ( self.bidPeriod!.vacationType == "FAVacationEomOnly") {
             self.bidPeriod!.userVacationWbidOrCrewBid = "FAVacationEomOnly"
+            alertShouldDisplay = false
             self.checkForSWAPtimizerFile()
         }
         else {
@@ -2064,7 +2069,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @objc func showAlertforVacationLoading() {
         let vacationType = self.bidPeriod!.userVacationWbidOrCrewBid
         if (vacationType == "CREWBID" || vacationType == "CREWBIDF") {
-            if (self.bidPeriod?.crewIdentifier?.intValue != Int(GlobalBidInfo.shared.userid)) {
+            if ((self.bidPeriod?.crewIdentifier?.intValue != Int(GlobalBidInfo.shared.userid)) && alertShouldDisplay) {
                 self.enableOrDisableEOMButton()
                 DispatchQueue.main.async {
                     AlertService.showAlertForTopVC(title: "SWAPtimizer loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(GlobalBidInfo.shared.userid)).", actions: [(
@@ -2081,22 +2086,24 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             }
             else {
                 DispatchQueue.main.async {
-                    AlertService.showAlertForTopVC(title: "SWAPtimizer loaded!", message: "You now have access to over 20 Sorts and Filters based on SWAPtimizer's vacation prediction algorithms. SWAPtimizer-specific Sorts and Filters display the SWAPtimizer logo. SWAPtimizer line values are displayed in blue.", actions: [(
-                        title: "OK",
-                        style: .default,
-                        handler: { _ in
-                            if self.bidPeriod!.isReportReleaseFilterApplied?.boolValue == true {
-                                NotificationCenter.default.post(name: NSNotification.Name("ReloadFilterTable"), object: self)
+                    if self.alertShouldDisplay {
+                        AlertService.showAlertForTopVC(title: "SWAPtimizer loaded!", message: "You now have access to over 20 Sorts and Filters based on SWAPtimizer's vacation prediction algorithms. SWAPtimizer-specific Sorts and Filters display the SWAPtimizer logo. SWAPtimizer line values are displayed in blue.", actions: [(
+                            title: "OK",
+                            style: .default,
+                            handler: { _ in
+                                if self.bidPeriod!.isReportReleaseFilterApplied?.boolValue == true {
+                                    NotificationCenter.default.post(name: NSNotification.Name("ReloadFilterTable"), object: self)
+                                }
                             }
-                        }
-                        
-                    )])
+                            
+                        )])
+                    }
                 }
             }
             self.bidPeriod!.vacayAlertDisplayed = NSNumber(value: true)
         }
         else if (vacationType == "WBID" || vacationType == "WBIDF") {
-            if (self.bidPeriod?.crewIdentifier?.intValue != Int(GlobalBidInfo.shared.userid)) {
+            if ((self.bidPeriod?.crewIdentifier?.intValue != Int(GlobalBidInfo.shared.userid)) && alertShouldDisplay) {
                 DispatchQueue.main.async {
                     AlertService.showAlertForTopVC(title: "WBidmax loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(GlobalBidInfo.shared.userid)).", actions: [(
                         title: "OK",
@@ -2113,22 +2120,24 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             }
             else {
                 DispatchQueue.main.async {
-                    AlertService.showAlertForTopVC(title: "SWAPtimizer loaded!", message: "You now have access to over 20 Sorts and Filters based on SWAPtimizer's vacation prediction algorithms. SWAPtimizer-specific Sorts and Filters display the SWAPtimizer logo. SWAPtimizer line values are displayed in blue.", actions: [(
-                        title: "OK",
-                        style: .default,
-                        handler: { _ in
-                            if self.bidPeriod!.isReportReleaseFilterApplied?.boolValue == true {
-                                NotificationCenter.default.post(name: NSNotification.Name("ReloadFilterTable"), object: self)
-                                try? self.context!.save()
+                    if self.alertShouldDisplay {
+                        AlertService.showAlertForTopVC(title: "SWAPtimizer loaded!", message: "You now have access to over 20 Sorts and Filters based on SWAPtimizer's vacation prediction algorithms. SWAPtimizer-specific Sorts and Filters display the SWAPtimizer logo. SWAPtimizer line values are displayed in blue.", actions: [(
+                            title: "OK",
+                            style: .default,
+                            handler: { _ in
+                                if self.bidPeriod!.isReportReleaseFilterApplied?.boolValue == true {
+                                    NotificationCenter.default.post(name: NSNotification.Name("ReloadFilterTable"), object: self)
+                                    try? self.context!.save()
+                                }
                             }
-                        }
-                        
-                    )])
+                            
+                        )])
+                    }
                 }
             }
             self.bidPeriod!.vacayAlertDisplayed = NSNumber(value: true)
         }
-        else if (vacationType == "FAVacation" || vacationType == "FAVacationF") {
+        else if ((vacationType == "FAVacation" || vacationType == "FAVacationF")) && alertShouldDisplay {
             if (self.bidPeriod?.crewIdentifier?.intValue != Int(GlobalBidInfo.shared.userid)) {
                 DispatchQueue.main.async {
                     AlertService.showAlertForTopVC(title: "Vacation loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(GlobalBidInfo.shared.userid)).", actions: [(
@@ -2145,16 +2154,18 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             }
             else {
                 DispatchQueue.main.async {
-                    AlertService.showAlertForTopVC(title: "SWAPtimizer loaded!", message: "You now have access to over 20 Sorts and Filters based on SWAPtimizer's vacation prediction algorithms. SWAPtimizer-specific Sorts and Filters display the SWAPtimizer logo. SWAPtimizer line values are displayed in blue.", actions: [(
-                        title: "OK",
-                        style: .default,
-                        handler: { _ in
-                            if self.bidPeriod!.isReportReleaseFilterApplied?.boolValue == true {
-                                NotificationCenter.default.post(name: NSNotification.Name("ReloadFilterTable"), object: self)
+                    if self.alertShouldDisplay {
+                        AlertService.showAlertForTopVC(title: "SWAPtimizer loaded!", message: "You now have access to over 20 Sorts and Filters based on SWAPtimizer's vacation prediction algorithms. SWAPtimizer-specific Sorts and Filters display the SWAPtimizer logo. SWAPtimizer line values are displayed in blue.", actions: [(
+                            title: "OK",
+                            style: .default,
+                            handler: { _ in
+                                if self.bidPeriod!.isReportReleaseFilterApplied?.boolValue == true {
+                                    NotificationCenter.default.post(name: NSNotification.Name("ReloadFilterTable"), object: self)
+                                }
                             }
-                        }
-                        
-                    )])
+                            
+                        )])
+                    }
                 }
             }
             self.bidPeriod!.vacayAlertDisplayed = NSNumber(value: true)
@@ -2862,14 +2873,17 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         if title == "\(eomJanuaryMonthCase()) \(dayForFA["Day1"] ?? 0)" {
             bidPeriod!.faEomSelectedDate = 1
             eomSelectedIndex = "1"
+            alertShouldDisplay = true
             enableFAVacationF()
         } else if title == "\(eomMonth()) \(dayForFA["Day2"] ?? 0)" {
             bidPeriod!.faEomSelectedDate = 2
             eomSelectedIndex = "2"
+            alertShouldDisplay = true
             enableFAVacationF()
         } else if title == "\(eomMonth()) \(dayForFA["Day3"] ?? 0)" {
             bidPeriod!.faEomSelectedDate = 3
             eomSelectedIndex = "3"
+            alertShouldDisplay = true
             enableFAVacationF()
         }
     }
@@ -3126,6 +3140,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 if bidPeriod!.isMaxSubScriptionOfEnteredUser?.boolValue == true {
                     //                checkSecretUser()
                 } else {
+                    alertShouldDisplay = true
                     checkForSWAPtimizerFile()
                 }
             }
@@ -3137,6 +3152,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 if bidPeriod!.isMaxSubScriptionOfEnteredUser?.boolValue == true {
                     //                checkSecretUser()
                 } else {
+                    alertShouldDisplay = true
                     checkForSWAPtimizerFile()
                 }
             }
@@ -3148,6 +3164,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 if bidPeriod!.isMaxSubScriptionOfEnteredUser?.boolValue == true {
                     //                checkSecretUser()
                 } else {
+                    alertShouldDisplay = true
                     checkForSWAPtimizerFile()
                 }
             }
@@ -3199,19 +3216,23 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     func executeEOMModule() {
         if self.bidPeriod!.vacationType == "CREWBIDF" {
             self.bidPeriod?.userVacationWbidOrCrewBid = "CREWBIDF"
+            alertShouldDisplay = false
             self.checkForSWAPtimizerFile()
         }
         else if self.bidPeriod!.vacationType == "CREWBID" {
             self.bidPeriod?.userVacationWbidOrCrewBid = "CREWBID"
+            alertShouldDisplay = false
             self.checkForSWAPtimizerFile()
 //            self.selectSwaptimizerVacationButton()
         }
         else if self.bidPeriod!.vacationType == "WBID" {
             self.bidPeriod?.userVacationWbidOrCrewBid = "WBID"
+            alertShouldDisplay = false
             self.checkForSWAPtimizerFile()
         }
         else if self.bidPeriod!.vacationType == "WBIDF" {
             self.bidPeriod?.userVacationWbidOrCrewBid = "WBIDF"
+            alertShouldDisplay = false
             self.checkForSWAPtimizerFile()
         }
         else {
@@ -3295,6 +3316,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 ])
             }
             else {
+                alertShouldDisplay = true
                 if btnEOM.isSelected {
                     self.bidPeriod!.userVacationWbidOrCrewBid = "FAVacationF"
                     self.checkForSWAPtimizerFile()
@@ -3316,6 +3338,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 if (self.bidPeriod!.containsCFV?.boolValue == true) {
                     UserDefaults.standard.set(false, forKey: "RemoveCfv")
                 }
+                alertShouldDisplay = true
             }
             switch (app.objNetworkType) {
             case .free:
@@ -3534,6 +3557,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     self.checkForSWAPtimizerFile()
                 }
                 else {
+                    alertShouldDisplay = true
                     self.bidPeriod!.userVacationWbidOrCrewBid = "CREWBID"
                     self.checkForSWAPtimizerFile()
                 }
