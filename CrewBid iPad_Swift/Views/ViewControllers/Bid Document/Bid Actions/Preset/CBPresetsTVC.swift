@@ -343,7 +343,7 @@ extension CBPresetsTVC: CBPresetCellDelegate{
                 do {
                     if let res = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves) as? [String: Any] {
                         UserDefaults.standard.setValue("YES", forKey: "iOS16PresetSavedToServer")
-                        print(res)
+//                        print(res)
                     }
                 } catch {
                     print("Failed to parse response JSON: \(error.localizedDescription)")

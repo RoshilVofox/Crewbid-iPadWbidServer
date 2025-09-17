@@ -686,7 +686,7 @@ extension BIBidPeriod : Identifiable {
             lineSortKeyMap.lineKey = lineSortKey
             let array = Array(lines!)
             for (index, value) in array.enumerated() {
-                print(index)
+//                print(index)
                 let line: BILine = value as! BILine
                 if line.faPositionString == posString {
                     line.setValue(1, forKey: lineSortKey)
@@ -776,7 +776,7 @@ extension BIBidPeriod : Identifiable {
             let daysOffBits: UInt64 = lineSort.variables!["DAYS_OFF_MONTH_BITS"] as! UInt64
             let array = Array(lines!)
             for (index, value) in array.enumerated() {
-                print(index)
+//                print(index)
                 let line:BILine = value as! BILine
                 let flippedMonthBits: UInt64 = UInt64(Int(truncating: line.monthBits!))
                 let daysOffForLineBits: UInt64 = flippedMonthBits & daysOffBits
@@ -853,7 +853,7 @@ extension BIBidPeriod : Identifiable {
         let daysOffBits: UInt64 = lineSort.variables!["DAYS_OFF_MONTH_BITS"] as! UInt64
         let array = Array(lines!)
         for (index, value) in array.enumerated() {
-            print(index)
+//            print(index)
             let line:BILine = value as! BILine
             let flippedMonthBits: UInt64 = UInt64(Int(truncating: line.monthBits!))
             let daysOffForLineBits: UInt64 = flippedMonthBits & daysOffBits
@@ -927,7 +927,7 @@ extension BIBidPeriod : Identifiable {
         let daysOffBits: UInt64 = lineSort.variables!["DAYS_OFF_MONTH_BITS"] as! UInt64
         let array = Array(lines!)
         for (index, value) in array.enumerated() {
-            print(index)
+//            print(index)
             let line:BILine = value as! BILine
             let flippedMonthBits: UInt64 = UInt64(Int(truncating: line.tripStartMonthBits!))
             let daysOffForLineBits: UInt64 = flippedMonthBits & daysOffBits

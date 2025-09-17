@@ -1,5 +1,5 @@
 //
-//  CBScatchPadVC.swift
+//  CBScratchPadVC.swift
 //  CrewBid iPad_Swift
 //
 //  Created by Fayaz on 21/03/25.
@@ -8,7 +8,15 @@
 import UIKit
 import CoreData
 
-class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UIPopoverControllerDelegate {
+
+protocol ScratchPadCellDelegate: AnyObject {
+    func scratchPadCellRemoveLineRequest(_ cell: ScratchPadTableCellTableViewCell)
+}
+class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UIPopoverControllerDelegate, ScratchPadCellDelegate {
+    
+    
+
+
 
     @IBOutlet weak var lblTrashLineCount: UILabel!
     @IBOutlet weak var btnTrash: UIButton!
@@ -66,7 +74,6 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         btnTrash.addGestureRecognizer(refreshTapGesture)
         refreshTapGesture.delaysTouchesBegan = true
         notificationObserver()
-        self.arrayLinesDetails = self.bidPeriod?.lastTrashedDetails ?? NSMutableArray()
 //        calculateAMPMFromSync()
         //For setting undo in bidlist
         self.arrayLinesDetails = self.bidPeriod?.lastTrashedDetails ?? NSMutableArray()
@@ -75,6 +82,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         }
         
     }
+
         
     @objc func updateLines(){
         self.lines.removeAll()
@@ -135,7 +143,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
     
     func notificationObserver(){
         NotificationCenter.default.addObserver(self, selector: #selector(updateLines), name: NSNotification.Name("refreshLines"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(removedTrashLines), name: NSNotification.Name("removedLines"), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(removedTrashLines), name: NSNotification.Name("removedLines"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(undoTrashLast), name: NSNotification.Name("undoTrashLast"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(trashAll), name: NSNotification.Name("trashAll"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(recoverAllTrashed), name: NSNotification.Name("recoverAllTrashed"), object: nil)
@@ -152,12 +160,13 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         //Remove Observe Scratchpad line trashing notification
+//        NotificationCenter.default.removeObserver(self)
         NotificationCenter.default.removeObserver("refreshLines")
         NotificationCenter.default.removeObserver(self, name: Notification.Name("CBLineTableCellTripButtonDehighlightNotification"), object: nil)
         NotificationCenter.default.removeObserver(self, name: Notification.Name(CBLineTableCellTripButtonDehighlightNotification), object: nil)
         NotificationCenter.default.removeObserver(self, name: Notification.Name(CBLineTableCellBidLineNotification), object: nil)
     }
-    
+
     //Adding line to bidlist
     @objc func bidCellLine(_ notification: Notification) {
         //For passing FA line to bidlist we need to show a view for position
@@ -360,39 +369,57 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         updateLines()
     }
     
-    
     //Remove trashed lines from scratchpad
-    @objc func removedTrashLines(notification: NSNotification){
-        if self.bidPeriod!.isFABid(){
-            if let index = notification.object as? Int {
-//                guard index >= 0, index < self.sectionLines.count else {
-//                    // Index is stale or invalid; ignore safely or log
-//                    return
-//                }
-                for line in self.sectionLines[index]{
-                    if line.isTrashed == NSNumber(true) {
-                        return
-                    }
-                    line.isTrashed = NSNumber(true)
-                }
-                let temp : NSMutableArray = self.bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
-                
-                temp.add([self.sectionLines[index][0].number!.stringValue])
-                self.bidPeriod?.lastTrashedDetails = temp.mutableCopy() as? NSArray
-//                try? self.bidPeriod?.managedObjectContext?.save()
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
-                    NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
-//                }
-            }
-        }else{
-            if let lineNumArray = notification.object as? NSArray {
-                let temp : NSMutableArray = self.bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
-                temp.add(lineNumArray)
-                self.bidPeriod?.lastTrashedDetails = temp
-                NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
-            }
-        }
+    
+    func scratchPadCellRemoveLineRequest( _ cell: ScratchPadTableCellTableViewCell) {
+        guard let indexPath = scratchPadTableView.indexPath(for: cell) else { return }
+        let sectionIndex = indexPath.section
+        removeLine(at: sectionIndex)
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
     }
+    
+    private func removeLine(at sectionIndex: Int) {
+        for line in sectionLines[sectionIndex] {
+            if line.isTrashed == NSNumber(true) { return }
+            line.isTrashed = NSNumber(value: true)
+        }
+
+        let lineNumbers = sectionLines[sectionIndex].compactMap { $0.number?.stringValue }
+        let temp: NSMutableArray = bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
+        temp.add(lineNumbers)
+        bidPeriod?.lastTrashedDetails = temp.mutableCopy() as? NSArray
+
+        try? bidPeriod?.managedObjectContext?.save()
+//        print("Saving lastTrashedDetails = \(bidPeriod?.lastTrashedDetails ?? [])")
+    }
+
+//    @objc func removedTrashLines(notification: NSNotification){
+//        print("removedTrashLines fired with object: \(String(describing: notification.object)) in \(self)")
+//        if self.bidPeriod!.isFABid(){
+//            if let index = notification.object as? Int {
+//                for line in self.sectionLines[index]{
+//                    if line.isTrashed == NSNumber(true) {
+//                        return
+//                    }
+//                    line.isTrashed = NSNumber(true)
+//                }
+//                let temp : NSMutableArray = self.bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
+//                temp.add([self.sectionLines[index][0].number!.stringValue])
+//                self.bidPeriod?.lastTrashedDetails = temp.mutableCopy() as? NSArray
+//
+//                print("Saving lastTrashedDetails = \(self.bidPeriod?.lastTrashedDetails ?? [])")
+//                try? self.bidPeriod?.managedObjectContext?.save()
+//                    NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+//            }
+//        }else{
+//            if let lineNumArray = notification.object as? NSArray {
+//                let temp : NSMutableArray = self.bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
+//                temp.add(lineNumArray)
+//                self.bidPeriod?.lastTrashedDetails = temp
+//                NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+//            }
+//        }
+//    }
     
     func updateSorts() -> [NSSortDescriptor] {
         var count: Int = (bidPeriod!.lineSorts ?? NSSet()).count
@@ -604,6 +631,7 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ScratchPadTableCellTableViewCell") as! ScratchPadTableCellTableViewCell
         cell.selectionStyle = .none
+        cell.delegate = self
         if indexPath.row > self.sectionLines.count - 1 {
             return UITableViewCell()
         } else {

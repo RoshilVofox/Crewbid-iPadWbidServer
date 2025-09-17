@@ -377,7 +377,7 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
 
     
     func configureCell(cell: UITableViewCell?, for rule: BIFilterRule?) {
-        print(rule?.category?.intValue as Any)
+//        print(rule?.category?.intValue as Any)
         var useComparisonCell = false
         if BIFilterRuleCategory.BITypeFilterRuleCategory.rawValue == rule?.category?.intValue {
             //fetch etops filter

@@ -45,7 +45,6 @@ class CBPresetCell: UITableViewCell, UITextFieldDelegate {
     
     @IBAction func deletePresetBtnTapped(_ sender: Any) {
         self.Delegate?.deleteButtonPressed(presetCell: self, indexpath: self.indexPath)
-        print("tap me")
     }
     
     

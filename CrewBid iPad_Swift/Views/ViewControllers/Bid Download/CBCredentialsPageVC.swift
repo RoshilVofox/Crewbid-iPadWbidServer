@@ -122,9 +122,11 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             let service = "com.yourapp.login"
             let account = self.txtUserID.text ?? ""
             let password = self.txtPassword.text ?? ""
-            let success = KeychainHelper.save(account: account, service: service, value: password)
-            if success{
-                print("Saved to keychain")
+            if !CBUtils.isRunningOnSimulator(){
+                let success = KeychainHelper.save(account: account, service: service, value: password)
+                if success{
+                    print("Saved to keychain")
+                }
             }
             if self.type == "Retrieve Awards"{
                 self.handleAwardRetrieval(sessionKey: sessionKey)
@@ -618,7 +620,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     print("Failed to fetch bid periods: \(error)")
                     self.bidPeriodList = []
                 }
-        
+        CBUserAccountDetail.shared.saveUserInfo()
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let docVC = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
         if let homeNav = UIApplication.shared.windows.first?.rootViewController as? UINavigationController {

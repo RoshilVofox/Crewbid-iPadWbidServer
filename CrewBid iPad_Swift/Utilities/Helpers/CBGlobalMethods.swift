@@ -10,7 +10,6 @@ import UIKit
 import CloudKit
 
 public final class CBGlobalMethods: NSObject {
-//    var activityView: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
     // Can't init is singleton
     private override init() { }
     
@@ -32,7 +31,6 @@ public final class CBGlobalMethods: NSObject {
     var password: String?
     var secretKey: String?
     var isBulkDownload: Bool = false
-//    var activityIndicatorView = UIActivityIndicatorView()
     var isLatestNewsDisplayed: Bool = false
     
     var selectedBidPeriod: BIBidPeriod?
@@ -345,7 +343,7 @@ public final class CBGlobalMethods: NSObject {
     }
     
     
-    /// Show alert
+    // Show alert
     // Displays a simple alert with an OK button.
 
     @objc func ShowAlert(TitleString : String, MessageString : String, buttonTitle: String = "OK") {
@@ -359,48 +357,7 @@ public final class CBGlobalMethods: NSObject {
             UIApplication.topViewController()?.present(alert, animated: true, completion: nil)
         })
     }
-    
-    // Displays an alert with an OK button and a custom action.
-//    @objc func ShowAlertWithOnlyOKAction(TitleString : String, MessageString : String, buttonTitle: String = "OK", OKAction: ((UIAlertAction) -> Void)?) {
-//        let alert = UIAlertController(title: TitleString, message: MessageString, preferredStyle: UIAlertController.Style.alert)
-//        let okAction = UIAlertAction(title: buttonTitle, style: .default, handler: OKAction)
-//        alert.addAction(okAction)
-//        DispatchQueue.main.async {
-//            UIApplication.topViewController()?.present(alert, animated: true, completion: nil)
-//        }
-//    }
-    
-    //  Displays an alert with OK and Cancel buttons.
 
-//    @objc func ShowAlertWithOKAction(TitleString : String, MessageString : String, buttonTitle: String = "OK", cancelTitle: String = "Cancel", isCancelButtonFirst: Bool = true, OKAction: ((UIAlertAction) -> Void)?) {
-//        let alert = UIAlertController(title: TitleString, message: MessageString, preferredStyle: UIAlertController.Style.alert)
-//        let okAction = UIAlertAction(title: buttonTitle, style: .default, handler: OKAction)
-//        let cancelAction = UIAlertAction(title: cancelTitle, style: UIAlertAction.Style.cancel) {
-//            UIAlertAction in
-//            NSLog("OK Pressed")
-//        }
-//        if isCancelButtonFirst {
-//            alert.addAction(cancelAction)
-//            alert.addAction(okAction)
-//        } else {
-//            alert.addAction(okAction)
-//            alert.addAction(cancelAction)
-//        }
-//        DispatchQueue.main.async {
-//            UIApplication.topViewController()?.present(alert, animated: true, completion: nil)
-//        }
-//    }
-    
-    //  Displays an alert with an OK button and a custom action.
-    
-//    @objc func ShowAlertWithOKAndCancelAction(TitleString : String, MessageString : String, OKAction: ((UIAlertAction) -> Void)?) {
-//        let alert = UIAlertController(title: TitleString, message: MessageString, preferredStyle: UIAlertController.Style.alert)
-//        let okAction = UIAlertAction(title: "OK", style: .default, handler: OKAction)
-//        alert.addAction(okAction)
-//        DispatchQueue.main.async {
-//            UIApplication.topViewController()?.present(alert, animated: true, completion: nil)
-//        }
-//    }
     
     //    Sets up and schedules a push notification.
 
@@ -420,21 +377,7 @@ public final class CBGlobalMethods: NSObject {
             }
         }
     }
-    //  Displays an alert with customizable actions and handlers.
 
-//    
-//    func showAlertWithAction(title: String?, message: String?, actionTitles:[String?], actions:[((UIAlertAction) -> Void)?]) {
-//        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-//        for (index, title) in actionTitles.enumerated() {
-//            let style: UIAlertAction.Style = (title == "Cancel" || title == "No") ? .cancel : .default
-//            let action = UIAlertAction(title: title, style: style, handler: actions[index])
-//            alert.addAction(action)
-//        }
-//        DispatchQueue.main.async {
-//            UIApplication.topViewController()?.present(alert, animated: true, completion: nil)
-//        }
-//    }
-//    
     
     // MARK: - generate a unique identifier
     func generateUniqueIdentifier() -> String {
@@ -452,7 +395,9 @@ public final class CBGlobalMethods: NSObject {
             let loadingAlertController: UIAlertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
             loadingAlertController.view.tintColor = UIColor.blue
             loadingAlertController.setMessage(font: UIFont(name: "UIFontWeightLight", size: 15), color: UIColor.white)
-            let activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
+            let activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView(
+                style: UIActivityIndicatorView.Style.medium
+            )
             if #available(iOS 13.0, *) {
                 activityIndicator.style = UIActivityIndicatorView.Style.large
             }
@@ -476,173 +421,7 @@ public final class CBGlobalMethods: NSObject {
             UIApplication.topViewController()?.present(loadingAlertController, animated: true, completion: nil)
         }
     }
-//    func showActivityIndicator(bgColor: UIColor){
-//        DispatchQueue.main.async {
-//            self.activityIndicatorView = UIActivityIndicatorView(frame: CGRect(x:UIScreen.main.bounds.size.width,y: UIScreen.main.bounds.size.height,width: 80,height: 80))
-//            self.activityIndicatorView.layer.cornerRadius = 05
-//            if #available(iOS 13.0, *) {
-//                self.activityIndicatorView.style = UIActivityIndicatorView.Style.large
-//            }
-//            self.activityIndicatorView.isOpaque = false
-//            self.activityIndicatorView.backgroundColor = bgColor.withAlphaComponent(0.7)
-//            self.activityIndicatorView.center = (UIApplication.topViewController()?.view.center)!
-//            self.activityIndicatorView.color = UIColor.white
-//            self.activityIndicatorView.startAnimating()
-//            UIApplication.topViewController()?.view.addSubview(self.activityIndicatorView)
-//        }
-//    }
-    //  Displays an activity indicator without blocking the main thread.
-    
-//    func showActivityIndicatorWithoudAsync(bgColor: UIColor){
-//        self.activityIndicatorView = UIActivityIndicatorView(frame: CGRect(x:UIScreen.main.bounds.size.width,y: UIScreen.main.bounds.size.height,width: 80,height: 80))
-//        self.activityIndicatorView.layer.cornerRadius = 05
-//        if #available(iOS 13.0, *) {
-//            self.activityIndicatorView.style = UIActivityIndicatorView.Style.large
-//        }
-//        self.activityIndicatorView.isOpaque = false
-//        self.activityIndicatorView.backgroundColor = bgColor.withAlphaComponent(0.7)
-//        self.activityIndicatorView.center = (UIApplication.topViewController()?.view.center)!
-//        self.activityIndicatorView.color = UIColor.white
-//        self.activityIndicatorView.startAnimating()
-//        UIApplication.topViewController()?.view.addSubview(self.activityIndicatorView)
-//    }
-    
-    //To hide activity indicator with custom background color
-//    func hideActivityIndicator(){
-//        DispatchQueue.main.async {
-//            self.activityIndicatorView.stopAnimating()
-//        }
-//    }
-    
-    //Activity indicator with custom message, background color and height
-//    func showCustomActivityIndicatoronMainThread(message: String, bgcolor: UIColor, height: CGFloat) {
-//        let loadingAlertController: UIAlertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-//        loadingAlertController.view.tintColor = UIColor.blue
-//        loadingAlertController.setMessage(font: UIFont(name: "UIFontWeightLight", size: 15), color: UIColor.white)
-//        let activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
-//        if #available(iOS 13.0, *) {
-//            activityIndicator.style = UIActivityIndicatorView.Style.large
-//        }
-//        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-//        // change the background color
-//        let subview = (loadingAlertController.view.subviews.first?.subviews.first?.subviews.first!)! as UIView
-//        subview.layer.cornerRadius = 1
-//        subview.backgroundColor = bgcolor.withAlphaComponent(0.7)
-//        activityIndicator.color = .white
-//        loadingAlertController.view.addSubview(activityIndicator)
-//        
-//        let xConstraint: NSLayoutConstraint = NSLayoutConstraint(item: activityIndicator, attribute: .centerX, relatedBy: .equal, toItem: loadingAlertController.view, attribute: .centerX, multiplier: 1, constant: 0)
-//        let yConstraint: NSLayoutConstraint = NSLayoutConstraint(item: activityIndicator, attribute: .centerY, relatedBy: .equal, toItem: loadingAlertController.view, attribute: .centerY, multiplier: 1.4, constant: 0)
-//        
-//        NSLayoutConstraint.activate([ xConstraint, yConstraint])
-//        activityIndicator.isUserInteractionEnabled = false
-//        activityIndicator.startAnimating()
-//        
-//        let height: NSLayoutConstraint = NSLayoutConstraint(item: loadingAlertController.view ?? UIView(), attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: height)
-//        loadingAlertController.view.addConstraint(height)
-//        UIApplication.topViewController()?.present(loadingAlertController, animated: true, completion: nil)
-//    }
-    
-    //Activity indicator with custom message, background color and height
-//    func showCustomActivityIndicator(message: String, bgcolor: UIColor, height: CGFloat) {
-//        DispatchQueue.main.async {
-//            let loadingAlertController: UIAlertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-//            loadingAlertController.view.tintColor = UIColor.blue
-//            loadingAlertController.setMessage(font: UIFont(name: "UIFontWeightLight", size: 15), color: UIColor.white)
-//            let activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.gray)
-//            if #available(iOS 13.0, *) {
-//                activityIndicator.style = UIActivityIndicatorView.Style.large
-//            }
-//            activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-//            // change the background color
-//            let subview = (loadingAlertController.view.subviews.first?.subviews.first?.subviews.first!)! as UIView
-//            subview.layer.cornerRadius = 1
-//            subview.backgroundColor = bgcolor.withAlphaComponent(0.7)
-//            activityIndicator.color = .white
-//            loadingAlertController.view.addSubview(activityIndicator)
-//            
-//            let xConstraint: NSLayoutConstraint = NSLayoutConstraint(item: activityIndicator, attribute: .centerX, relatedBy: .equal, toItem: loadingAlertController.view, attribute: .centerX, multiplier: 1, constant: 0)
-//            let yConstraint: NSLayoutConstraint = NSLayoutConstraint(item: activityIndicator, attribute: .centerY, relatedBy: .equal, toItem: loadingAlertController.view, attribute: .centerY, multiplier: 1.4, constant: 0)
-//            
-//            NSLayoutConstraint.activate([ xConstraint, yConstraint])
-//            activityIndicator.isUserInteractionEnabled = false
-//            activityIndicator.startAnimating()
-//            
-//            let height: NSLayoutConstraint = NSLayoutConstraint(item: loadingAlertController.view ?? UIView(), attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: nil, attribute: NSLayoutConstraint.Attribute.notAnAttribute, multiplier: 1, constant: height)
-//            loadingAlertController.view.addConstraint(height)
-//            UIApplication.topViewController()?.present(loadingAlertController, animated: true, completion: nil)
-//        }
-//    }
-    //To hide activity indicator with custom message, background color and height
-//    func hideCustomActivityIndicator(completion: (() -> Void)? = nil) {
-//        DispatchQueue.main.async {
-//            if let topVC = UIApplication.topViewController() as? UIAlertController {
-//                topVC.dismiss(animated: true, completion: {
-//                    completion?() // Call the completion block if provided
-//                })
-//            }
-//        }
-//    }
-    //Saves the expiration date to the Keychain.
-    
-//    func saveExpairyToKeychain(date: Date) {
-//        let keyChain = KeychainItemWrapper(identifier: "CrewBidWbidExpirationDate", accessGroup: nil)
-//        keyChain?.setObject(encryptedDateString(date: date), forKey: kSecAttrAccount)
-//    }
-    //new keychainHelper
-//    func saveExpiryToKeychain(date: Date) {
-//        let encryptedString = encryptedDateString(date: date)
-//        let success = KeychainHelper.save(account: "expiry", service: "CrewBidWbidExpirationDate", value: encryptedString)
-//
-//        if success {
-//            print("Encrypted expiry date saved to Keychain.")
-//        } else {
-//            print("Failed to save expiry date to Keychain.")
-//        }
-//    }
-    
-   // Encrypts a given date into a string.
-    
-//    private func encryptedDateString(date: Date) -> String {
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = kCBExpirationDateFormat
-//        let dateString = dateFormatter.string(from: date)
-//        let encryptedString = FBEncryptorAES.encryptBase64String(dateString, keyString: kFreeMonthEncryptionKey, separateLines: false)
-//        return encryptedString!
-//    }
-    // Retrieves the expiration date from the Keychain.
-//    
-//    func getExpairtDateFromKeychain() -> Date?{
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = kCBExpirationDateFormat
-//        if let keyChain = KeychainItemWrapper(identifier: "CrewBidWbidExpirationDate", accessGroup: nil), let encValue = keyChain.object(forKey: kSecAttrAccount) as? String{
-//            // Successfully retrieved account value from keychain
-//            let keychainDateString = FBEncryptorAES.decryptBase64String(encValue, keyString: kFreeMonthEncryptionKey) ?? ""
-//            if let keychainExpirationDate = dateFormatter.date(from: keychainDateString){
-//                return keychainExpirationDate
-//            }
-//        } else {
-//            // Keychain is nil or account value not found in keychain
-//            print("Keychain is nil or account value not found in keychain")
-//        }
-//        return nil
-//    }
-    //  Shows the user account import view after a delay.
-//    
-//    func showUserAccountImportView() {
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-//            let storyboard : UIStoryboard = UIStoryboard(name: "BidInfo", bundle: nil)
-//            let vc = storyboard.instantiateViewController(withIdentifier: "LoginEmbeddController") as! LoginEmbeddController
-//            vc.preferredContentSize = CGSize(width: 650, height: 550)
-//            if #available(iOS 13.0, *) {
-//                vc.isModalInPresentation = true
-//            } else {
-//                    // Fallback on earlier versions
-//            }
-//            UIApplication.topViewController()?.present(vc, animated: true, completion: nil)
-//        }
-//        
-//    }
+
     
 }
 enum SWVacation : String {

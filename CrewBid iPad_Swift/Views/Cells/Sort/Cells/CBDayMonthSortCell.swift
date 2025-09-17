@@ -54,9 +54,9 @@ class CBDayMonthSortCell: UITableViewCell {
         calculateButton.layer.borderWidth = 2
         calculateButton.layer.borderColor = CBColor.purpleColor.cgColor
         
-        if calendarData == nil {
-            print("")
-        }
+//        if calendarData == nil {
+//            print("")
+//        }
         
         // Grab the old calendar title if it exists.
         let callTitleToRemove = self.viewWithTag(67)

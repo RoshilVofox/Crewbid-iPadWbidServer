@@ -51,7 +51,7 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
     
     @IBAction func btnSecretBidDownload(_ sender: Any) {
         if (self.btnSecretBidload1.isTouchInside &&  self.btnSecretBidload2.isTouchInside){
-            print("hello")
+//            print("hello")
             let storyBoard = UIStoryboard(name: "Secret", bundle: nil)
             if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "SecretMethodsViewController") as? SecretMethodsViewController{
                 //            helpMenuVC.modalPresentationStyle = .formSheet
@@ -173,8 +173,8 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
             break
             
             
-        default:
-            print("default")
+        default:break
+//            print("default")
         }
         
         //        userAccount.modalPresentationStyle = .overCurrentContext

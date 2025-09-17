@@ -113,7 +113,7 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
     }
     
     func serviceResponse(_ arrResponse: [Any]) {
-        print(arrResponse.description)
+//        print(arrResponse.description)
 
         if webType == .getSubscriptionDetails {
             self.view.hideActivityIndicator()
@@ -855,7 +855,6 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
         
         if products?.count != 2 {
             CBIAPHelper.shared.requestProducts { success, products  in
-            print("hello")
             }
             DispatchQueue.main.async {
                 CBIAPHelper.shared.requestProducts { success, products in

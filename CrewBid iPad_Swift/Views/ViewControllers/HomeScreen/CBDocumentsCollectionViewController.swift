@@ -268,6 +268,7 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
             bidDownloadButton.isEnabled = true
             let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
+            vc.bidPeriod = self.bidPeriodList[indexPath.item]
             let bidPeriod : BIBidPeriod = bidPeriodList[indexPath.item]
             dataSource.year = (bidPeriod.year as? Int)!
             dataSource.base = bidPeriod.base!
