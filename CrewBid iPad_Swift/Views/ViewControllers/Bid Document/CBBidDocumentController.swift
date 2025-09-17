@@ -47,7 +47,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     var positionFlag1 = 0
     var tempPositionLine : [BILine] = []
     var filtersTableController = CBFilterRulesTableVC()
-    var scratchpadTableController = CBScratchPadVC()
+//    var scratchpadTableController = CBScratchPadVC()
     var sortsTableController = CBLineSortsTVC()
     var swaptimizerVacationImage = "WBidmax-logo"
     var context = CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext
@@ -89,7 +89,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 //        self.bidLinesController = self.storyboard?.instantiateViewController(withIdentifier: "CBBidListVC") as? CBBidListVC
 //        self.bidLinesController.managedObjectContext = self.managedObjectContext
 //        self.bidLinesController.bidPeriod = self.bidPeriod!
-        app.ObjUserAccount?.saveUserInfo()
         setupUI()
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutViewForSwitch), name: NSNotification.Name("SyncSwitchStateAction"), object: nil)
@@ -737,7 +736,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 if let startIndex = startIndex {
                     let endIndex = textFile!.text!.index(startIndex, offsetBy: 5, limitedBy: textFile!.text!.endIndex) ?? textFile!.text!.endIndex
                         newDes = String(textFile!.text![startIndex..<endIndex])
-                        print(newDes)
+//                        print(newDes)
                     }
                 }
                 if !(self.bidPeriod?.coverLetterDisplayed?.boolValue ?? false){

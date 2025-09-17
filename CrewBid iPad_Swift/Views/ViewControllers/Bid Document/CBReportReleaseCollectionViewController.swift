@@ -99,7 +99,7 @@ class CBReportReleaseCollectionViewController: UIViewController, KUIPopOverUsabl
         }
         let userInfo: [String: Any] = ["rptrlsType": self.rptRlsType, "ischangedDays": ischangedDays]
         NotificationCenter.default.post(name: NSNotification.Name("ReloadReportCollectionView"), object: nil, userInfo: userInfo)
-        print("ia, here")
+//        print("ia, here")
         self.dismissPopover(animated: true)
     }
     
@@ -184,7 +184,7 @@ class CBReportReleaseCollectionViewController: UIViewController, KUIPopOverUsabl
             let day: BICalendarDay = (self.calendarData?.calendarDays[i] as? BICalendarDay)!
             
             if day.text == "1" {
-                print()
+//                print()
             }
             if (day.text == "31" && self.bidPeriod?.month?.intValue == 2 && self.bidPeriod?.positionType?.intValue == BICrewPositionType.FlightAttendant.rawValue) {
                 day.isPreviousMonth = false

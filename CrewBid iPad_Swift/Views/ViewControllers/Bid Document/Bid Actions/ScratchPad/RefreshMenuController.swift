@@ -16,7 +16,7 @@ class RefreshMenuController: BaseViewController,UITableViewDelegate,UITableViewD
     @IBOutlet weak var viewBackground: UIView!
     @IBOutlet weak var tableView: UITableView!
     
-    var bidPeriod:BIBidPeriod?
+    var bidPeriod:BIBidPeriod!
     var lines:[BILine] = []
     private let refreshArray = ["Recover All","Recover Last","Trash All","Cancel"]
     var arrayLinesDetails:NSArray = NSArray()
@@ -45,8 +45,9 @@ class RefreshMenuController: BaseViewController,UITableViewDelegate,UITableViewD
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "RefreshMenuTableViewCell") as! RefreshMenuTableViewCell
         cell.lblTitle.text = refreshArray[indexPath.row]
+        
         if indexPath.row == 0 { //Recover All
-            if (self.bidPeriod?.lastTrashedDetails?.count ?? 0) > 0 {
+            if (self.bidPeriod.lastTrashedDetails?.count ?? 0) > 0 {
                 cell.isUserInteractionEnabled = true
                 cell.lblTitle.alpha = 1.0
             }else{
@@ -54,7 +55,7 @@ class RefreshMenuController: BaseViewController,UITableViewDelegate,UITableViewD
                 cell.lblTitle.alpha = 0.3
             }
         }else if indexPath.row == 1 { //Recover Last
-            if (self.bidPeriod?.lastTrashedDetails?.count ?? 0) > 0 {
+            if (self.bidPeriod.lastTrashedDetails?.count ?? 0) > 0 {
                 cell.isUserInteractionEnabled = true
                 cell.lblTitle.alpha = 1.0
             }else{
@@ -74,9 +75,12 @@ class RefreshMenuController: BaseViewController,UITableViewDelegate,UITableViewD
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
-        CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
-        CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
+        bidPeriod.loadedPresetIdentifier = nil
+        bidPeriod.currentDateTime = Date()
+        bidPeriod.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
+//        CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
+//        CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
+//        CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
         if popOverType == PopoverViewType.Refresh{
             if indexPath.row == 0{ //Recover All
                 NotificationCenter.default.post(name: NSNotification.Name("recoverAllTrashed"), object: nil)

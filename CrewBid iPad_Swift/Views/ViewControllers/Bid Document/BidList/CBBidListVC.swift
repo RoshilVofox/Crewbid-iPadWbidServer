@@ -459,7 +459,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
                     line!.isFrozen = true
                 }
             } else {
-               print("Sorry")
+//               print("Sorry")
             }
             
         }
@@ -1162,7 +1162,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         let sort = NSSortDescriptor(key: "bidOrder", ascending: true)
         if bidPeriod.isBidListSortOn?.intValue == 1{
             let lineSorts = getSortDescriptorsForBidList()
-            print(lineSorts)
+//            print(lineSorts)
             self.linesArray = (linesArray as NSArray).sortedArray(using: lineSorts ) as! [BILine]
             var tmp : Int = 0
             for case let line in  self.linesArray {
@@ -2638,7 +2638,7 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
         if let rows = affectedRows as? [BILine] {
             for index in 0..<rows.count {
                 let item = rows[index]
-                print("Index: \(index), Item: \(item)")
+//                print("Index: \(index), Item: \(item)")
                 if item.markerTitle != nil &&  item.markerTitle != ""{
                     markerTitle.append(item.markerTitle!)
                 }
@@ -2684,7 +2684,7 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
             for index in 0..<rows.count {
                 let item = rows[index]
                 item.markerTitle = nil
-                print("Index: \(index), Item: \(item)")
+//                print("Index: \(index), Item: \(item)")
                 if markerTitle[index] != ""{
                     item.markerTitle = markerTitle[index]
                 }
@@ -2729,7 +2729,7 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
     //For handling the reorder UI for calendar view
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         for view in cell.subviews {
-            print(view.classForCoder.description())
+//            print(view.classForCoder.description())
             if view.self.description.contains("UITableViewCellReorderControl") {
                 view.removeFromSuperview()
                 let width: CGFloat = 30.0

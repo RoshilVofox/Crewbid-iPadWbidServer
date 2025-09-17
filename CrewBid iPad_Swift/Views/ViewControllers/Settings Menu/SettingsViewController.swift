@@ -98,7 +98,6 @@ class SettingsViewController: BaseViewController,KUIPopOverUsable {
 
     
     @objc func viewTapped() {
-        print("hello")
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let vc = storyboard.instantiateViewController(withIdentifier: "CBBrightnessViewController") as? CBBrightnessViewController {
             vc.preferredContentSize = CGSize(width: 300, height: 200)

@@ -129,6 +129,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     @IBOutlet weak var lineNumberLabel: UILabel!
     @IBOutlet weak var redEyeImage: UIImageView!
     
+    weak var delegate: ScratchPadCellDelegate?
     var calendarData: BICalendarData?
     var line: BILine?
     var index: Int?
@@ -493,7 +494,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                 let day:BIDay = orderedDays[d]
                 let dayInfo:BIDayInfo = day.info!
                 if day.displayType?.intValue != 0 {
-                    print("")
+//                    print("")
                 }
                 
                 if trip.isRedEyeTrip && d == missingDateIndex && (self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue) && trip.vacationOverlapType!.intValue > 0 {
@@ -1465,21 +1466,22 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     }
 
     @IBAction func removeLineAction(_ sender: Any) {
-        if self.bidPeriod!.isFABid() {
-            NotificationCenter.default.post(name: NSNotification.Name("removedLines"), object: self.contentView.tag)
-        }else{
-            line?.isTrashed = true
-            do{
-                try self.bidPeriod?.managedObjectContext?.save()
-            }catch{
-                print("Error removing lines: \(error.localizedDescription)")
-            }
-            let lineNumber = line?.number as! Int
-            let number = String(lineNumber)
-            let objDeleteArray = NSMutableArray()
-            objDeleteArray.add(number)
-            NotificationCenter.default.post(name: NSNotification.Name("removedLines"), object: objDeleteArray)
-        }
+//        if self.bidPeriod!.isFABid() {
+//            NotificationCenter.default.post(name: NSNotification.Name("removedLines"), object: self.contentView.tag)
+//        }else{
+//            line?.isTrashed = true
+//            do{
+//                try self.bidPeriod?.managedObjectContext?.save()
+//            }catch{
+//                print("Error removing lines: \(error.localizedDescription)")
+//            }
+//            let lineNumber = line?.number as! Int
+//            let number = String(lineNumber)
+//            let objDeleteArray = NSMutableArray()
+//            objDeleteArray.add(number)
+//            NotificationCenter.default.post(name: NSNotification.Name("removedLines"), object: objDeleteArray)
+//        }
+        delegate?.scratchPadCellRemoveLineRequest(self)
     }
     
     @IBAction func moveLinesToBidListAction(_ sender: Any) {

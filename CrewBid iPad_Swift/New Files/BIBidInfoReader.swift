@@ -331,9 +331,6 @@ class BIBidInfoReader{
                     if let lines = self.bidPeriod?.lines?.allObjects as? [BILine] {
                         for line in lines {
                             self.updateEndDateForRedEyeTrips(line: line)
-                            if line.number == 305 {
-                                print("")
-                            }
                             self.initRigRelatedProperties(for: line, isReprocessing: false)
                         }
                     }
@@ -403,8 +400,6 @@ class BIBidInfoReader{
 //        let coverLetter = (self.bidPeriod?.textFile(withName: "Seniority List"))! as BITextFile
         if let coverLetter = self.bidPeriod?.textFile(withName: "Seniority List") as? BITextFile {
             text = coverLetter.text!
-        } else {
-            print("")
         }
         var emp = 0
         if !AppState.shared.isSenioritySecretOn{
@@ -934,8 +929,6 @@ class BIBidInfoReader{
         var text = ""
         if let coverLetter = self.bidPeriod?.textFile(withName: "Seniority List") {
             text = coverLetter.text!
-        } else {
-            print("")
         }
         var emp = 0
         if !AppState.shared.isSenioritySecretOn{
@@ -4613,9 +4606,6 @@ class BIBidInfoReader{
             f.numberStyle = .decimal
             
             line.numTrips = (line.turnsCount!.intValue + line.twoDayTripsCount!.intValue + line.threeDayTripsCount!.intValue + line.fourDayTripsCount!.intValue) as NSNumber
-        if line.number == 305 {
-            print("")
-        }
         self.initRigRelatedProperties(for: line, isReprocessing: isReprocessing)
         self.calculateNewProperties(line: line)
         self.updateEndDateForRedEyeTrips(line: line)
@@ -4713,10 +4703,6 @@ class BIBidInfoReader{
             
             var tripMinimum = NSNumber(value: Float(trip.orderedDays.count) * tripMinimumDefaultPay)
             var tripMinimumBasedOnTAFBHour:NSNumber = 0
-            if line.number!.intValue > 305{
-                print("")
-            }
-//            print(line.number!.intValue)
             if trip.isReserve{
                 tripMinimumBasedOnTAFBHour = 0
             }else{

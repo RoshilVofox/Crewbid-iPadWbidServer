@@ -55,7 +55,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
     
     @IBAction func btnNextAction(_ sender: Any) {
         if buddyBidTxtField_1.text!.isEmpty && buddyBidTxtField_2.text!.isEmpty{
-            print("Job Share Alert")
+//            print("Job Share Alert")
             NotificationCenter.default.post(name:Notification.Name("showJobShareAlert"), object: nil)
         }else{
             if self.buddyBidTxtField_1.text == self.buddyBidTxtField_2.text {
