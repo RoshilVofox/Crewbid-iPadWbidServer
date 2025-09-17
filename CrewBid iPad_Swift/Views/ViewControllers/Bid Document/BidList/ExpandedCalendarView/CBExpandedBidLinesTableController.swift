@@ -227,7 +227,6 @@ class CBExpandedBidLinesTableController: BaseViewController {
             cell.backgroundView = UIView(frame: cell.bounds)
             cell.backgroundView?.backgroundColor = UIColor.appColor(.contentBgColor)
         }
-        cell.handlingFreezingCondition(line: line)
         if bidPeriod.isFABid() && line.faPosition?.intValue != BIFaPosition.FaPositionNA.rawValue {
             cell.mLblLineNo.textColor = .white
             if line.faPosition?.intValue == BIFaPosition.FaPositionA.rawValue {
@@ -247,8 +246,8 @@ class CBExpandedBidLinesTableController: BaseViewController {
                 cell.mLblLineNo.text = cell.mLblLineNo.text! + ("M")
             }
             cell.positionCircleView.alpha = 1.0
-//            cell.handlingFreezingCondition(line: line)
             cell.positionCircleView.alpha = 1.0
+            cell.handlingFreezingCondition(line: line)
             if isAwardSort {
                 if let awardedLineNum = self.awardedLineNum {
                     var lineNum = line.number!.stringValue
@@ -462,7 +461,7 @@ class CBExpandedBidLinesTableController: BaseViewController {
             }
             cell.mLblLineNo.attributedText = attributedString
         }
-//        cell.handlingFreezingCondition(line: line)
+        cell.handlingFreezingCondition(line: line)
         if setupLineValues {
             // Line values.
             let lineValuesKey: String = CBLineValuesMenuController.lineValuesKey(for: bidPeriod)
