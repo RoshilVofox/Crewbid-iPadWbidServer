@@ -2065,10 +2065,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @objc func showAlertforVacationLoading() {
         let vacationType = self.bidPeriod!.userVacationWbidOrCrewBid
         if (vacationType == "CREWBID" || vacationType == "CREWBIDF") {
-            if (self.bidPeriod?.crewIdentifier?.intValue != self.bidPeriod?.swaptimizerIdentifier?.intValue) {
+            if (self.bidPeriod?.crewIdentifier?.intValue != Int(GlobalBidInfo.shared.userid)) {
                 self.enableOrDisableEOMButton()
                 DispatchQueue.main.async {
-                    AlertService.showAlertForTopVC(title: "SWAPtimizer loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(self.bidPeriod!.swaptimizerIdentifier?.stringValue ?? "")).", actions: [(
+                    AlertService.showAlertForTopVC(title: "SWAPtimizer loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(GlobalBidInfo.shared.userid)).", actions: [(
                         title: "OK",
                         style: .default,
                         handler: { _ in
@@ -2097,9 +2097,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             self.bidPeriod!.vacayAlertDisplayed = NSNumber(value: true)
         }
         else if (vacationType == "WBID" || vacationType == "WBIDF") {
-            if (self.bidPeriod?.crewIdentifier?.intValue != self.bidPeriod?.swaptimizerIdentifier?.intValue) {
+            if (self.bidPeriod?.crewIdentifier?.intValue != Int(GlobalBidInfo.shared.userid)) {
                 DispatchQueue.main.async {
-                    AlertService.showAlertForTopVC(title: "WBidmax loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(self.bidPeriod!.swaptimizerIdentifier?.stringValue ?? "")).", actions: [(
+                    AlertService.showAlertForTopVC(title: "WBidmax loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(GlobalBidInfo.shared.userid)).", actions: [(
                         title: "OK",
                         style: .default,
                         handler: { _ in
@@ -2130,9 +2130,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             self.bidPeriod!.vacayAlertDisplayed = NSNumber(value: true)
         }
         else if (vacationType == "FAVacation" || vacationType == "FAVacationF") {
-            if (self.bidPeriod?.crewIdentifier?.intValue != self.bidPeriod?.swaptimizerIdentifier?.intValue) {
+            if (self.bidPeriod?.crewIdentifier?.intValue != Int(GlobalBidInfo.shared.userid)) {
                 DispatchQueue.main.async {
-                    AlertService.showAlertForTopVC(title: "Vacation loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(self.bidPeriod!.swaptimizerIdentifier?.stringValue ?? "")).", actions: [(
+                    AlertService.showAlertForTopVC(title: "Vacation loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(GlobalBidInfo.shared.userid)).", actions: [(
                         title: "OK",
                         style: .default,
                         handler: { _ in
@@ -2446,7 +2446,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             if didDisplayMonthToMonthAlert == false {
                 let monthToMonthAlert = storyboard.instantiateViewController(withIdentifier: "CBMonthToMonthAlertVC") as! CBMonthToMonthAlertVC
                 monthToMonthAlert.text = alertMessage
-//                monthToMonthAlert.showAlertFromViewController(from: self) { tappedOk in }
+                monthToMonthAlert.showAlertFromViewController(from: self) { tappedOk in }
             }
         }
     }
@@ -3205,6 +3205,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         else if self.bidPeriod!.vacationType == "CREWBID" {
             self.bidPeriod?.userVacationWbidOrCrewBid = "CREWBID"
             self.checkForSWAPtimizerFile()
+//            self.selectSwaptimizerVacationButton()
         }
         else if self.bidPeriod!.vacationType == "WBID" {
             self.bidPeriod?.userVacationWbidOrCrewBid = "WBID"
@@ -3219,6 +3220,12 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         }
     }
     
+    func selectEOMButton() {
+        btnEOM.isSelected = true
+        self.bidPeriod!.isEomOn = NSNumber(value: true)
+        btnEOM.backgroundColor = UIColor(red: 35.0/255.0, green: 177.0/255.0, blue: 76.0/255.0, alpha: 1.0)
+        btnEOM.setTitleColor(.white, for: .selected)
+    }
     // To show this alert whenever open the bid from home screen.
     func showEomVacationConfirmationAlertForPilot() {
         if ((!(bidPeriod!.eomIsNo == "YES") && !(bidPeriod!.isFABid())) ||
@@ -3322,7 +3329,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 AlertService.showAlertForTopVC(title: "Sorry!", message: "You cannot get needed access via SouthwestWifi or 2Wire. Try again later when you are safely on the ground and have another internet access. \(self.eomMonth())")
                 return
             }
-            if (!(self.bidPeriod!.seniorityVacayAvailable?.boolValue ?? false) && !btnWbidMax.isSelected) {
+            let seniorityVacayValue = self.bidPeriod?.seniorityVacayAvailable!
+            if (!(self.bidPeriod!.seniorityVacayAvailable?.boolValue ?? false) && !btnWbidMax.isSelected && seniorityVacayValue != 0) {
                 AlertService.showAlertForTopVC(title: "Vacation", message: "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button")
             }
             else {

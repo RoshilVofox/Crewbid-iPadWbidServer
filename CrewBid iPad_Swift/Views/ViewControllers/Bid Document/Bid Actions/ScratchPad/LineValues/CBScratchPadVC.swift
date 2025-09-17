@@ -90,7 +90,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         //Filtering the lines
         var subpredicatesArr = [BIFilterRule]()
         subpredicatesArr = (self.bidPeriod!.lineFilters ?? NSSet()).allObjects as! [BIFilterRule]
-        if !(Int(bidPeriod?.vacationType ?? "0") ?? 0 > 0) {
+        if !(bidPeriod!.vacationType?.count ?? 0 > 0) {
             let pr = NSPredicate(format: "category != \(NSNumber(value: BIFilterRuleCategory.BIVacationFilterRuleCategory.rawValue))")
             let pr2 = NSPredicate(format: "category != \(NSNumber(value: BIFilterRuleCategory.BIFaVacationFilterRuleCategory.rawValue))")
             subpredicatesArr = (subpredicatesArr as NSArray).filtered(using: NSCompoundPredicate.init(andPredicateWithSubpredicates: [pr, pr2])) as! [BIFilterRule]
