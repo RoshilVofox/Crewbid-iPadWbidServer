@@ -763,6 +763,7 @@ class CBCommutingRuleCell: UITableViewCell, CommutingManualRuleCellDelegate, GRB
         let storyboard : UIStoryboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let refreshViewController = storyboard.instantiateViewController(withIdentifier: "RefreshController") as! RefreshController
         refreshViewController.popOverType = PopoverViewType.CommutingManualNoMidInfo
+        refreshViewController.bidPeriod = self.bidPeriod!
         refreshViewController.selectedValue =  (sender as! UIButton).currentTitle ?? ""
         refreshViewController.modalPresentationStyle = .popover
         refreshViewController.showPopover(sourceView: btnCheckNoMid,isMidOn: true)

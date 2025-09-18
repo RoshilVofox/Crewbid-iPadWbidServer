@@ -155,7 +155,7 @@ class CBCityComparisonRuleCell: CBComparisonRuleCell, UITextFieldDelegate {
         let storyboard : UIStoryboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let refreshViewController = storyboard.instantiateViewController(withIdentifier: "RefreshController") as! RefreshController
         refreshViewController.popOverType = PopoverViewType.cityPopUp
-        refreshViewController.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
+        refreshViewController.bidPeriod = self.bidPeriod!
         refreshViewController.selectedValue = cityTextField.text ?? ""
         //Edited by Kripa to resolve the crash issue on 11 Dec
         var arrayCities = cityMenuItems()

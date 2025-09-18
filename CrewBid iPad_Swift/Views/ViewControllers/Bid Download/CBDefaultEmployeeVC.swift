@@ -21,10 +21,11 @@ class CBDefaultEmployeeVC: BaseViewController {
     var isNewBid:Bool = false
     var isEmpIDVerified:Bool = false
     let dataSource = GlobalBidInfo.shared
-    var bidPeriod = BIBidPeriod()
+    var bidPeriod: BIBidPeriod?
     var isJobShareAlertShowing:Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()
+        bidPeriod = BIBidPeriod(context: CoreDataManager.shared.managedObjectContext)
         setupUI()
         textEmpNum.keyboardType = UIKeyboardType.numberPad
         if type == "Confirm Employee Number"{
@@ -186,7 +187,7 @@ class CBDefaultEmployeeVC: BaseViewController {
     }
     
     func goToNextPage(){
-        if self.bidPeriod.positionType?.intValue == BICrewPositionType.FlightAttendant.rawValue && self.bidPeriod.round == 1 {
+        if self.bidPeriod!.positionType?.intValue == BICrewPositionType.FlightAttendant.rawValue && self.bidPeriod!.round == 1 {
                 AlertService.showAlertForTopVC(title: "Alert", message: "If you are Buddy Bidding you need to verify that you are buddy bidders on your Buddy list, and they know you are buddy bidding with them.", actions: [(title: "I have Verified", style: .default, handler: {_ in
                     self.buddyBid(selected: true)
 
@@ -194,7 +195,7 @@ class CBDefaultEmployeeVC: BaseViewController {
                     self.buddyBid(selected: false)
                 })])
             }
-            else if self.bidPeriod.positionType?.intValue == BICrewPositionType.FirstOfficer.rawValue && self.bidPeriod.round == 1 {
+            else if self.bidPeriod!.positionType?.intValue == BICrewPositionType.FirstOfficer.rawValue && self.bidPeriod!.round == 1 {
                 let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
                 let vc = storyboard.instantiateViewController(withIdentifier: "CBAvoidanceBidViewController") as! CBAvoidanceBidViewController
                 vc.empID = self.textEmpNum.text!
@@ -223,7 +224,7 @@ class CBDefaultEmployeeVC: BaseViewController {
             let vc = storyboard.instantiateViewController(withIdentifier: "CBOptionalEmployeesPageViewController") as! CBOptionalEmployeesPageViewController
             vc.preferredContentSize = CGSize(width: 600, height: 500)
             vc.empID = self.textEmpNum.text!
-            vc.bidPeriod = self.bidPeriod
+            vc.bidPeriod = self.bidPeriod!
             self.navigationController?.pushViewController(vc, animated: true)
         }else{
             jobShareAlert()
@@ -238,7 +239,7 @@ class CBDefaultEmployeeVC: BaseViewController {
             let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "JobShareViewController") as! JobShareViewController
             vc.preferredContentSize = CGSize(width: 600, height: 500)
-            vc.bidPeriod = self.bidPeriod
+            vc.bidPeriod = self.bidPeriod!
             self.navigationController?.pushViewController(vc, animated: true)
         }),
         (title:"No", style: .cancel , handler: {_ in

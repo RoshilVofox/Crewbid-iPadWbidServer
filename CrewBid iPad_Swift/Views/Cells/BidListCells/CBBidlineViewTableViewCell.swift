@@ -65,8 +65,8 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
     var cellType = CBBidLineTableCellType(rawValue: 0)
     var markerAtTop = false
     weak var userFlagIconView: UIView?
-    var bidPeriod = BIBidPeriod()
-    var line = BILine()
+    var bidPeriod: BIBidPeriod!
+    var line = BILine(context: CoreDataManager.shared.managedObjectContext)
     var calendarData: BICalendarData?
     var calendarDaysCount: NSMutableArray?
     var markerTextField = UITextField ()

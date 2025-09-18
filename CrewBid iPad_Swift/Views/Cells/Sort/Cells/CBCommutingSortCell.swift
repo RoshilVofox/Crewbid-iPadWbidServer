@@ -722,6 +722,7 @@ class CBCommutingSortCell: UITableViewCell, GRButtonDelegate {
         let storybIard = UIStoryboard(name: "BidDocument", bundle: nil)
         let vc = storybIard.instantiateViewController(withIdentifier: "RefreshController") as! RefreshController
         vc.popOverType = PopoverViewType.CommutingManualNoMidInfoSort
+        vc.bidPeriod = self.bidPeriod
         vc.selectedValue = (sender as! UIButton).currentTitle ?? ""
         vc.modalPresentationStyle = .popover
         vc.showPopover(sourceView: self, sourceRect: self.btnNoMidInfo.frame)

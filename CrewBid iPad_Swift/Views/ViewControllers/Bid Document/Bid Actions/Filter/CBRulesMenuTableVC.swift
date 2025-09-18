@@ -16,7 +16,7 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
     private var kCellReuseIdentifier = "menuCell"
     var menuItems = NSArray()
     var disabledCellIndexPaths = NSMutableArray()
-    var bidPeriod = BIBidPeriod()
+    var bidPeriod: BIBidPeriod!
     var arrowDirection: UIPopoverArrowDirection = UIPopoverArrowDirection.right
     var context = CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext
     
