@@ -791,7 +791,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     @objc func cellDidSelect(notification: Notification) {
         let dict = notification.object as! NSDictionary
         let object = dict["object"]
-        print("selectedCellIndexPaths \(selectedCellIndexPaths)")
+//        print("selectedCellIndexPaths \(selectedCellIndexPaths)")
         let indexPath = dict["indexPath"] as? IndexPath
         if (object as! UITableViewCell).classForCoder.description() == "CrewBid_iPad_Swift.CBBidlineViewTableViewCell" {
             let cell = object as? CBBidlineViewTableViewCell
