@@ -198,9 +198,9 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
         let dict = NSDictionary(dictionary: dictCityStatus!)
         objOvernight?.citystatus = dict
         try? context?.save()
-        let noArray = dictCityStatus!.filter { $0.value as? String == "1" }.map { $0.key }
+        let noArray = (dictCityStatus!.filter { $0.value as? String == "1" }.map { $0.key } as? NSArray)!
 
-        CBUtils.overnightBulkRedApply()
+        CBUtils.overnightBulkRedApply(noArray: noArray)
         reloadContent()
         CBGlobalMethods.shared.hideActivityIndicator()
     }
