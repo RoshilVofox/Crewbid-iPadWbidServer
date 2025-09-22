@@ -7,11 +7,15 @@
 
 import UIKit
 
+protocol CBMonthToMonthAlertDelegate: AnyObject {
+    func monthToMonthViewDismissed() -> Void
+}
+
 class CBMonthToMonthAlertVC: UIViewController {
     
     @IBOutlet weak var content: UILabel!
     var text = ""
-    var tapOkBlock: ((Bool) -> Void)?
+    var delegate: CBMonthToMonthAlertDelegate?
 
 
     override func viewDidLoad() {
@@ -22,12 +26,12 @@ class CBMonthToMonthAlertVC: UIViewController {
     }
     
 
-    func showAlertFromViewController(from viewController: UIViewController, tappedOK: @escaping (Bool) -> Void) {
-        self.modalPresentationStyle = .overFullScreen
-        self.modalTransitionStyle = .crossDissolve
-        viewController.present(self, animated: true, completion: nil)
-        self.tapOkBlock = tappedOK
-    }
+//    func showAlertFromViewController(from viewController: UIViewController, tappedOK: @escaping (Bool) -> Void) {
+//        self.modalPresentationStyle = .overFullScreen
+//        self.modalTransitionStyle = .crossDissolve
+//        viewController.present(self, animated: true, completion: nil)
+//        self.tapOkBlock = tappedOK
+//    }
     
     // Action method when the first link button is tapped
     @IBAction func linkBtn1Tapped(_ sender: Any) {
@@ -51,7 +55,12 @@ class CBMonthToMonthAlertVC: UIViewController {
     }
 
     @IBAction func btnOkAction(_ sender: UIButton) {
+        CBGlobalMethods.shared.selectedBidPeriod!.vactionWeekAlertDisplayed = NSNumber(value: true)
         self.dismiss(animated: true)
+//        {
+//            //CBGlobalMethods.shared.showActivityIndicator(bgColor: .purple)
+//            self.delegate?.monthToMonthViewDismissed()
+//        }
     }
     
 }

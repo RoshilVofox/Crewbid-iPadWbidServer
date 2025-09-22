@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		350B8B3F2DDEDBFF005D5E76 /* CBVacationDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350B8B3E2DDEDBFF005D5E76 /* CBVacationDownloader.swift */; };
+		3514CF412E7D1EF10040D75B /* CBOvernightCitiesBulkCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3514CF402E7D1EF10040D75B /* CBOvernightCitiesBulkCollectionViewCell.swift */; };
 		35162E032DCDBEA600BD8E2E /* UIView+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35162E022DCDBEA600BD8E2E /* UIView+extensions.swift */; };
 		353FC68F2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */; };
 		353FC6912DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */; };
@@ -382,6 +383,7 @@
 
 /* Begin PBXFileReference section */
 		350B8B3E2DDEDBFF005D5E76 /* CBVacationDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBVacationDownloader.swift; sourceTree = "<group>"; };
+		3514CF402E7D1EF10040D75B /* CBOvernightCitiesBulkCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBOvernightCitiesBulkCollectionViewCell.swift; sourceTree = "<group>"; };
 		35162E022DCDBEA600BD8E2E /* UIView+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+extensions.swift"; sourceTree = "<group>"; };
 		353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
 		353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBConfirmSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
@@ -884,6 +886,7 @@
 				F41EBD2D2DC4DB20001413DE /* quickTutorialCollectionViewCell.swift */,
 				F41EBD2E2DC4DB20001413DE /* swaptimizerHelpMenuCollectionViewCell.swift */,
 				F41EBD2F2DC4DB20001413DE /* VideoCollectionViewCell.swift */,
+				3514CF402E7D1EF10040D75B /* CBOvernightCitiesBulkCollectionViewCell.swift */,
 			);
 			path = collectionViewCells;
 			sourceTree = "<group>";
@@ -2112,6 +2115,7 @@
 				35F6C8B32DD856B40072BAD9 /* CBAvoidanceBidViewController.swift in Sources */,
 				F4400BD62DD9BA370066C7E0 /* APIService.swift in Sources */,
 				F41EBF372DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift in Sources */,
+				3514CF412E7D1EF10040D75B /* CBOvernightCitiesBulkCollectionViewCell.swift in Sources */,
 				F41EBF382DC4DB20001413DE /* AppDelegate.swift in Sources */,
 				F41EBF392DC4DB20001413DE /* SceneDelegate.swift in Sources */,
 				F41EBF3A2DC4DB20001413DE /* BICalendarData.swift in Sources */,

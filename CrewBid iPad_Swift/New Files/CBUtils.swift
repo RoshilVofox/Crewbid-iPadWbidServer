@@ -1446,7 +1446,94 @@ class CBUtils{
            }
        }
     
+    static func overnightBulkRedApply(noArray: NSArray) {
+        let lineFechRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
+        lineFechRequest.predicate = NSPredicate(format: "type != 4")
+        lineFechRequest.sortDescriptors = [NSSortDescriptor(key: "bidOrder", ascending: true)]
+        let results = try? CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!.fetch(lineFechRequest)
+        for line in results! {
+            var isContainCity = false
+            for case let day as BIDay in line.days! {
+                if noArray.contains(day.info?.city) {
+                    isContainCity = true
+                }
+            }
+            if isContainCity {
+                line.isOvernightFiltered = 1
+            }
+            else {
+                line.isOvernightFiltered = 0
+            }
+        }
+        try? CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!.save()
+    }
     
+    static func highlightTripsOverNightBulk() {
+        let tripsFetch: NSFetchRequest<BITrip> = BITrip.fetchRequest()
+        let subPrepicates = NSMutableArray()
+        if CBGlobalMethods.shared.selectedBidPeriod?.isOverNightBulkApplied == "YES" {
+            subPrepicates.addObjects(from: CBUtils.checkOvernightPredicate())
+        }
+        tripsFetch.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subPrepicates as! [NSPredicate])
+        guard tripsFetch.predicate != nil else {return}
+        tripsFetch.sortDescriptors = [NSSortDescriptor(key: "info.number", ascending: true)]
+        do {
+            let results = try CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext?.fetch(tripsFetch)
+            for trip in results! {
+                trip.highlightCount = trip.highlightCount!.intValue + 1 as NSNumber
+            }
+        }
+        catch {
+            print("error fetching \(error.localizedDescription)")
+        }
+
+    }
+    
+    func checkOvernightPredicate() -> NSMutableArray {
+        var overnightPredicate = NSMutableArray()
+        let fetchRequest: NSFetchRequest<OvernightBulk> = OvernightBulk.fetchRequest()
+        let results: [OvernightBulk]? = try? CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!.fetch(fetchRequest)
+        var dictAllValues = [String: Any]()
+        if let results = results, results.count > 0 {
+            if let citystatusValue = results[0].value(forKey: "citystatus"), !(citystatusValue is NSNull) {
+                dictAllValues = (citystatusValue as? [String: Any])!
+            }
+            let noArray = dictAllValues.keys.filter { dictAllValues[$0] as? String == "1" }
+            let yesArray = dictAllValues.keys.filter { dictAllValues[$0] as? String == "2" }
+            if (yesArray.count == 0 && noArray.count == 0) {
+                return overnightPredicate
+            }
+            else {
+                var filterVars: [String: Any] = [:]
+
+                let set = Set(yesArray)
+                filterVars["SET"] = set
+
+                let avoidSet = Set(noArray)
+                filterVars["AVOIDSET"] = avoidSet
+
+                var formatString = "SUBQUERY(legs, $LEG,"
+                var format: NSPredicate
+
+                if noArray.count > 0 {
+                    formatString = "isOvernightFiltered == 0"
+                    format = NSPredicate(format: formatString)
+                    overnightPredicate.add(format)
+                }
+
+                if yesArray.count > 0 {
+                    formatString = "SUBQUERY(days, $DAY, ($DAY.info.city IN $SET) && $DAY.trip.dropForFiltersSorts == 0).@count > 0"
+                    format = NSPredicate(format: formatString)
+                    overnightPredicate.add(format.withSubstitutionVariables(filterVars))
+                }
+            }
+
+        }
+        else {
+            return overnightPredicate
+        }
+        return overnightPredicate
+    }
 }
 
 class JWTDecoder{

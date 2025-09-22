@@ -1109,12 +1109,19 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             let monthToMonthAlert = storyboard.instantiateViewController(withIdentifier: "CBMonthToMonthAlertVC") as! CBMonthToMonthAlertVC
             monthToMonthAlert.text = alertMessage
             if didDisplayMonthToMonthAlert == false {
-                monthToMonthAlert.showAlertFromViewController(from: self) { tappedOk in
-                    if tappedOk {
-                        self.bidPeriod?.vactionWeekAlertDisplayed = NSNumber(value: true)
-                        completionHandler(true)
-                    }
-                }
+                let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+                let vc = storyboard.instantiateViewController(withIdentifier: "CBMonthToMonthAlertVC") as! CBMonthToMonthAlertVC
+                vc.text = alertMessage
+//                vc.delegate = self
+                vc.preferredContentSize = CGSize(width: 764, height: 630)
+                vc.providesPresentationContextTransitionStyle = true
+                vc.definesPresentationContext = true
+                vc.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
+                vc.view.backgroundColor = UIColor.clear
+//                    vc.onDoneBlock = { result in
+//                        dismissHandler(true)
+//                    }
+                self.present(vc, animated: true, completion: nil)
             }
             else {
                 completionHandler(true)
@@ -2404,12 +2411,15 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 else {
                     //                self.sortsTableController.tableView.reloadData()
                     //                self.filtersTableController.objFilterTableView.reloadData()
-                    NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
+                    if self.btnWbidMax.isSelected && self.bidPeriod?.isWBidmaxOverlapWithEom() == true {
+                        self.removeCurrentVacation()
+                    }
                     self.bidPeriod!.userVacationWbidOrCrewBid = ""
                     self.disableVacationButton()
                     self.view.hideActivityIndicator()
                     self.btnSwaptimizer.isEnabled = true
                     self.btnWbidMax.isEnabled = true
+                    NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
                 }
             }
         }
@@ -2454,9 +2464,19 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             let alertMessage = "You have an `EOM` Vacation: \(vacationStartDateDisp) - \(vacationEndDateDisp).\n\nEOM weeks can affect the vacation pay in the current bid period and also the next month.\n\nWe have two documents regarding Month-to-Month vacations that also apply to EOM vacation weeks.\n\nWe suggest you read the following documents to improve your bidding knowledge."
             let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
             if didDisplayMonthToMonthAlert == false {
-                let monthToMonthAlert = storyboard.instantiateViewController(withIdentifier: "CBMonthToMonthAlertVC") as! CBMonthToMonthAlertVC
-                monthToMonthAlert.text = alertMessage
-                monthToMonthAlert.showAlertFromViewController(from: self) { tappedOk in }
+                let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+                let vc = storyboard.instantiateViewController(withIdentifier: "CBMonthToMonthAlertVC") as! CBMonthToMonthAlertVC
+                vc.text = alertMessage
+//                vc.delegate = self
+                vc.preferredContentSize = CGSize(width: 764, height: 630)
+                vc.providesPresentationContextTransitionStyle = true
+                vc.definesPresentationContext = true
+                vc.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
+                vc.view.backgroundColor = UIColor.clear
+//                    vc.onDoneBlock = { result in
+//                        dismissHandler(true)
+//                    }
+                self.present(vc, animated: true, completion: nil)
             }
         }
     }
