@@ -34,11 +34,15 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
         lblOvernightBulkTitle.transform = CGAffineTransformMakeRotation(3.14/2)
         lblnoOvernightCities.transform = CGAffineTransformMakeRotation(3.14/2)
         dictCityStatus = [:]
+        collectionView.delegate = self
+        collectionView.dataSource = self
     }
     
     func reloadContent() {
         if self.filterRule?.ruleHighlightsTrips() == true {
             CBUtils.highlightTripsOverNightBulk()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
             NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
         }
     }
@@ -75,7 +79,7 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
                let overnightCities = arrOverNightCitiesList {
                 
                 let intersection = Set(cities).intersection(Set(overnightCities))
-                arrIntersected = (Array(intersection) as? NSMutableArray)!
+                arrIntersected =  NSMutableArray(array: Array(intersection))
             }
             self.collectionView.reloadData()
         }
@@ -124,11 +128,15 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let kCityCellIdentifier = "CityCell"
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kCityCellIdentifier, for: indexPath) as! CBOvernightCitiesBulkCollectionViewCell
+        if arrCitiesList![indexPath.row] as! String == "ATL" {
+            print("")
+        }
         cell.lblCityName.text = arrCitiesList![indexPath.row] as? String
         if arrIntersected.contains(arrCitiesList![indexPath.row]) {
             if dictCityStatus![arrCitiesList![indexPath.row] as! String] != nil {
                 let key = String(describing: arrCitiesList![indexPath.row])
-                let type = (dictCityStatus![key] as? NSNumber)?.intValue ?? 0
+                let type1 = dictCityStatus![key] as? String ?? "0"
+                let type = Int(type1)
                 switch type {
                 case ColorType.red.rawValue:
                     cell.lblCityName.backgroundColor = .red
@@ -156,12 +164,13 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
             else {
                 cell.isUserInteractionEnabled = true
                 cell.lblCityName.backgroundColor = .clear
+                cell.lblCityName.textColor = .label
             }
         }
         else {
             cell.isUserInteractionEnabled = false
-            cell.lblCityName.textColor = .label
-            cell.lblCityName.backgroundColor = .clear
+            cell.lblCityName.textColor = .white
+            cell.lblCityName.backgroundColor = .black
         }
         return cell
     }
@@ -174,11 +183,11 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
             self.filterRule?.deHighlightTrips()
         }
         let cell = collectionView.cellForItem(at: indexPath) as! CBOvernightCitiesBulkCollectionViewCell
-        if cell.lblCityName.backgroundColor == .clear {
-            cell.lblCityName.backgroundColor = .red
-            cell.lblCityName.textColor = .white
-            dictCityStatus![arrCitiesList![indexPath.row] as! String] = String(ColorType.red.rawValue)
-        }
+//        if cell.lblCityName.backgroundColor == .clear {
+//            cell.lblCityName.backgroundColor = .red
+//            cell.lblCityName.textColor = .white
+//            dictCityStatus![arrCitiesList![indexPath.row] as! String] = String(ColorType.red.rawValue)
+//        }
         if cell.lblCityName.backgroundColor == .clear {
             cell.lblCityName.backgroundColor = .red
             cell.lblCityName.textColor = .white
@@ -203,5 +212,10 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
         CBUtils.overnightBulkRedApply(noArray: noArray)
         reloadContent()
         CBGlobalMethods.shared.hideActivityIndicator()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let collectionviewWidth = collectionView.frame.size.width
+        return CGSize(width: collectionviewWidth/7, height: 45)
     }
 }

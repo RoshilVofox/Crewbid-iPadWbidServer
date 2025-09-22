@@ -1248,50 +1248,50 @@ class CBUtils{
     
 
     
-    class func checkOvernightPredicate() -> [NSPredicate] {
-            var overnightPredicate: [NSPredicate] = []
-            
-            let context = GlobalBidInfo.shared.managedObjectContext
-            
-            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "OvernightBulk")
-            
-            do {
-                let fetchedObjects = try context.fetch(fetchRequest)
-                
-                guard let firstObject = fetchedObjects.first,
-                      let cityStatusAny = firstObject.value(forKey: "citystatus"),
-                      !(cityStatusAny is NSNull),
-                      let dictAllValues = cityStatusAny as? [String: Any] else {
-                    return overnightPredicate
-                }
-                
-                let yesArray = dictAllValues.filter { $0.value as? String == "2" }.map { $0.key }
-                let noArray = dictAllValues.filter { $0.value as? String == "1" }.map { $0.key }
-                
-                if yesArray.isEmpty && noArray.isEmpty {
-                    return overnightPredicate
-                }
-                
-                var filterVars: [String: Any] = [:]
-                
-                if !noArray.isEmpty {
-                    let formatString = "isOvernightFiltered == 0"
-                    let format = NSPredicate(format: formatString)
-                    overnightPredicate.append(format)
-                }
-                
-                if !yesArray.isEmpty {
-                    filterVars["SET"] = Set(yesArray)
-                    let formatString = "SUBQUERY(days, $DAY, ($DAY.info.city IN $SET) && $DAY.trip.dropForFiltersSorts == 0).@count > 0"
-                    let format = NSPredicate(format: formatString).withSubstitutionVariables(filterVars)
-                    overnightPredicate.append(format)
-                }
-            } catch {
-                print("Overnight fetch failed: \(error.localizedDescription)")
-            }
-            
-            return overnightPredicate
-        }
+//    class func checkOvernightPredicate() -> [NSPredicate] {
+//            var overnightPredicate: [NSPredicate] = []
+//            
+//            let context = GlobalBidInfo.shared.managedObjectContext
+//            
+//            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "OvernightBulk")
+//            
+//            do {
+//                let fetchedObjects = try context.fetch(fetchRequest)
+//                
+//                guard let firstObject = fetchedObjects.first,
+//                      let cityStatusAny = firstObject.value(forKey: "citystatus"),
+//                      !(cityStatusAny is NSNull),
+//                      let dictAllValues = cityStatusAny as? [String: Any] else {
+//                    return overnightPredicate
+//                }
+//                
+//                let yesArray = dictAllValues.filter { $0.value as? String == "2" }.map { $0.key }
+//                let noArray = dictAllValues.filter { $0.value as? String == "1" }.map { $0.key }
+//                
+//                if yesArray.isEmpty && noArray.isEmpty {
+//                    return overnightPredicate
+//                }
+//                
+//                var filterVars: [String: Any] = [:]
+//                
+//                if !noArray.isEmpty {
+//                    let formatString = "isOvernightFiltered == 0"
+//                    let format = NSPredicate(format: formatString)
+//                    overnightPredicate.append(format)
+//                }
+//                
+//                if !yesArray.isEmpty {
+//                    filterVars["SET"] = Set(yesArray)
+//                    let formatString = "SUBQUERY(days, $DAY, ($DAY.info.city IN $SET) && $DAY.trip.dropForFiltersSorts == 0).@count > 0"
+//                    let format = NSPredicate(format: formatString).withSubstitutionVariables(filterVars)
+//                    overnightPredicate.append(format)
+//                }
+//            } catch {
+//                print("Overnight fetch failed: \(error.localizedDescription)")
+//            }
+//            
+//            return overnightPredicate
+//        }
     
     static func GenerateOvernightCities() -> [String] {
         var arrCities: [String] = []
@@ -1527,8 +1527,8 @@ class CBUtils{
 
     }
     
-    func checkOvernightPredicate() -> NSMutableArray {
-        var overnightPredicate = NSMutableArray()
+    static func checkOvernightPredicate() -> [NSPredicate] {
+        var overnightPredicate = [NSPredicate]()
         let fetchRequest: NSFetchRequest<OvernightBulk> = OvernightBulk.fetchRequest()
         let results: [OvernightBulk]? = try? CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!.fetch(fetchRequest)
         var dictAllValues = [String: Any]()
@@ -1556,13 +1556,13 @@ class CBUtils{
                 if noArray.count > 0 {
                     formatString = "isOvernightFiltered == 0"
                     format = NSPredicate(format: formatString)
-                    overnightPredicate.add(format)
+                    overnightPredicate.append(format)
                 }
 
                 if yesArray.count > 0 {
                     formatString = "SUBQUERY(days, $DAY, ($DAY.info.city IN $SET) && $DAY.trip.dropForFiltersSorts == 0).@count > 0"
                     format = NSPredicate(format: formatString)
-                    overnightPredicate.add(format.withSubstitutionVariables(filterVars))
+                    overnightPredicate.append(format.withSubstitutionVariables(filterVars))
                 }
             }
 
