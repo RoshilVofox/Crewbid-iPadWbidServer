@@ -576,6 +576,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
     func buddyBidSelected() {
         let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBOptionalEmployeesPageViewController") as! CBOptionalEmployeesPageViewController
+        vc.bidPeriod = self.bidPeriod!
         vc.preferredContentSize = CGSize(width: 600, height: 500)
         present(vc, animated: true)
     }

@@ -7,9 +7,9 @@
 
 import UIKit
 
-class CBConfirmSubmitEmployeeNumberVC:
-    UIViewController {
+class CBConfirmSubmitEmployeeNumberVC: UIViewController {
     
+    var bidPeriod: BIBidPeriod?
     var employeeNumber: String = ""
     @IBOutlet weak var txtEmpNum: customUITextField!
     
@@ -76,6 +76,7 @@ class CBConfirmSubmitEmployeeNumberVC:
     func buddyBidSelected() {
         let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBOptionalEmployeesPageViewController") as! CBOptionalEmployeesPageViewController
+        vc.bidPeriod = self.bidPeriod!
         vc.preferredContentSize = CGSize(width: 600, height: 500)
         self.navigationController?.pushViewController(vc, animated: true)
     }

@@ -9,7 +9,6 @@ import UIKit
 
 class CBSubmitEmployeeNumberVC: UIViewController {
     @IBOutlet weak var txtEmpNum: customUITextField!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         txtEmpNum.delegate = self

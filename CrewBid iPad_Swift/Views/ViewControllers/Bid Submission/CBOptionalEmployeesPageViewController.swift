@@ -22,7 +22,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
     var isBuddy1Valid: Bool = false
     var isBuddy2Valid: Bool = false
     var empID: String?
-    var bidPeriod = BIBidPeriod()
+    var bidPeriod: BIBidPeriod!
     var FAListDict:[String:Any]? = nil
     var optionalEmployees = NSMutableArray()
     override func viewDidLoad() {

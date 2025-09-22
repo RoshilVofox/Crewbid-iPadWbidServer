@@ -22,7 +22,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
     var cfvVacationButtons: NSMutableArray?
     var vacationButtons: NSMutableArray?
     var tripButtonsArray: NSMutableArray?
-    var bidPeriod = BIBidPeriod()
+    var bidPeriod: BIBidPeriod!
     var vacayGestureRecognizers = NSMutableArray()
     let kCBButtonTag = 800
     var isTripButtonsInitialized = false

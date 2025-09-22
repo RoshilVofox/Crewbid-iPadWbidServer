@@ -245,45 +245,83 @@ class CBUtils{
 //        
 //    }
     
+//    static func parseCrewBidUpdateFile(_ fileContent: String) -> Bool {
+//        //
+//        var success:Bool = true
+//        //Parse CrewBid Update file
+//        if fileContent.contains("File or directory not found") || fileContent.contains("internal server error") {
+//            return true
+//        }
+//        // 1. Initialize NSScanner with string
+//        let scanner = Scanner(string: fileContent)
+//        // Auto release pool for releasing local variable after usage
+//        autoreleasepool {
+//            //2. Load Core data version list
+//            var crewBidDataVersion = CrewBidUpdateData(context: GlobalBidInfo.shared.managedObjectContext)
+//            
+//            let managedContext = GlobalBidInfo.shared.managedObjectContext
+//            let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+//            
+//            //Create object for entity description
+//            let entity = NSEntityDescription.entity(forEntityName: "CrewBidUpdateData", in: (managedContext))
+//            // Set entity to fetch request
+//            fetchRequest.entity = entity
+//            // Execute fetch request
+//            let fetchedObjects = try? managedContext.fetch(fetchRequest)
+//            if fetchedObjects != nil && (fetchedObjects?.count)! > 0 {
+//                crewBidDataVersion = (fetchedObjects?[0] as? CrewBidUpdateData)!
+//            } else {
+//                crewBidDataVersion = CrewBidUpdateData(entity: entity!, insertInto: managedContext)
+//            }
+//            
+//            success = self.fetchCityList(crewBidDataVersion, fileContent: fileContent)
+//            
+//            
+//            if crewBidDataVersion.cities != nil {
+//                self.fetchLatestNews(crewBidDataVersion, scanner: scanner, fileContent: fileContent)
+//            }
+//            
+//        }
+//        return success
+//    }
+    
     static func parseCrewBidUpdateFile(_ fileContent: String) -> Bool {
-        //
-        var success:Bool = true
-        //Parse CrewBid Update file
+        var success = true
+        
+        // Early exit if file has errors
         if fileContent.contains("File or directory not found") || fileContent.contains("internal server error") {
             return true
         }
-        // 1. Initialize NSScanner with string
+        
         let scanner = Scanner(string: fileContent)
-        // Auto release pool for releasing local variable after usage
+        
         autoreleasepool {
-            //2. Load Core data version list
-            var crewBidDataVersion = CrewBidUpdateData()
-            
             let managedContext = GlobalBidInfo.shared.managedObjectContext
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+            var crewBidDataVersion: CrewBidUpdateData?
             
-            //Create object for entity description
-            let entity = NSEntityDescription.entity(forEntityName: "CrewBidUpdateData", in: (managedContext))
-            // Set entity to fetch request
-            fetchRequest.entity = entity
-            // Execute fetch request
-            let fetchedObjects = try? managedContext.fetch(fetchRequest)
-            if fetchedObjects != nil && (fetchedObjects?.count)! > 0 {
-                crewBidDataVersion = (fetchedObjects?[0] as? CrewBidUpdateData)!
+            // Fetch existing CrewBidUpdateData
+            let fetchRequest: NSFetchRequest<CrewBidUpdateData> = CrewBidUpdateData.fetchRequest()
+            
+            if let results = try? managedContext.fetch(fetchRequest),
+               let first = results.first {
+                crewBidDataVersion = first
             } else {
-                crewBidDataVersion = CrewBidUpdateData(entity: entity!, insertInto: managedContext)
+                // Create a new CrewBidUpdateData if none exists
+                crewBidDataVersion = CrewBidUpdateData(context: managedContext)
             }
             
-            success = self.fetchCityList(crewBidDataVersion, fileContent: fileContent)
-            
-            
-            if crewBidDataVersion.cities != nil {
-                self.fetchLatestNews(crewBidDataVersion, scanner: scanner, fileContent: fileContent)
+            if let crewBidDataVersion = crewBidDataVersion {
+                success = self.fetchCityList(crewBidDataVersion, fileContent: fileContent)
+                
+                if crewBidDataVersion.cities != nil {
+                    self.fetchLatestNews(crewBidDataVersion, scanner: scanner, fileContent: fileContent)
+                }
             }
-            
         }
+        
         return success
     }
+    
     static func fetchLatestNews(_ crewBidVersionController: CrewBidUpdateData, scanner: Scanner, fileContent:String) {
         //1. Scan to the latest news position
         _ = scanner.scanUpToString("LatestNews")

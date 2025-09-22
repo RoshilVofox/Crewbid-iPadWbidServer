@@ -791,7 +791,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     @objc func cellDidSelect(notification: Notification) {
         let dict = notification.object as! NSDictionary
         let object = dict["object"]
-        print("selectedCellIndexPaths \(selectedCellIndexPaths)")
+//        print("selectedCellIndexPaths \(selectedCellIndexPaths)")
         let indexPath = dict["indexPath"] as? IndexPath
         if (object as! UITableViewCell).classForCoder.description() == "CrewBid_iPad_Swift.CBBidlineViewTableViewCell" {
             let cell = object as? CBBidlineViewTableViewCell
@@ -1651,6 +1651,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     @IBAction func btnExpandedViewAction(_ sender: Any) {
         let storyboard : UIStoryboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBExpandedBidLinesTableController") as! CBExpandedBidLinesTableController
+        vc.bidPeriod = self.bidPeriod!
         vc.modalPresentationStyle = .fullScreen
         self.present(vc, animated: true)
     }
@@ -2200,6 +2201,7 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
             let cell = tableView.dequeueReusableCell(withIdentifier: "CBBidlineViewTableViewCell",for: indexPath)as! CBBidlineViewTableViewCell
             cell.setMarkerText(line.markerTitle)
             cell.bidListCellCalendarDaysArr = bidListCalenderDays
+            cell.bidPeriod = self.bidPeriod
             cell.selectionStyle = .none
             configureCell(cell, at: indexPath)
             cell.accessoryType = .none
@@ -2210,6 +2212,7 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
         let cell = tableView.dequeueReusableCell(withIdentifier: "CBBidListCalenderViewCell",for: indexPath)as! CBBidListCalenderViewCell
         cell.setMarkerText(line.markerTitle)
         cell.delegate = self
+        cell.bidPeriod = self.bidPeriod
         cell.indexPath = indexPath
         cell.bidListCellCalendarDaysArr = bidListCalenderDays
         cell.selectionStyle = .none

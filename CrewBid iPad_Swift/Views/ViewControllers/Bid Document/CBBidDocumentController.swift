@@ -580,7 +580,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         }else{
             empID = String(format: "e%@", empID)
         }
-        lblHome.text = "\(version) \(month) \(position) \(year) \(base) Rnd \(round) - \(empID)"
+        lblHome.text = "\(version) \(month) \(year) \(base) \(position) Rnd \(round) - \(empID)"
 
 
         btnLocalHerbView.layer.borderWidth = 1

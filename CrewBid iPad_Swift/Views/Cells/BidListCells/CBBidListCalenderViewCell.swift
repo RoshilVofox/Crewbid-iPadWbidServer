@@ -38,7 +38,7 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
     var fvVacationButtons: NSMutableArray?
     var cfvVacationButtons: NSMutableArray?
     var tripButtonsArray: NSMutableArray?
-    var bidPeriod = BIBidPeriod()
+    var bidPeriod: BIBidPeriod!
     var delegate: CBBidListCalenderViewCellDelegate?
     var vacayGestureRecognizers = NSMutableArray()
     var userFlagIconView: UIView = UIView()

@@ -17,7 +17,7 @@ class CBBidLineMenuController: BaseViewController, UITableViewDelegate, UITableV
     
     
     
-    var bidPeriod = BIBidPeriod()
+    var bidPeriod: BIBidPeriod!
     
     var selectedLinesCount:NSMutableArray = NSMutableArray()
     var popOverType = PopoverViewType.MockYear

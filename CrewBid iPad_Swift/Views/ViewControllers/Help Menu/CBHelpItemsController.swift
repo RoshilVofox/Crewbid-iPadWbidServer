@@ -4,6 +4,7 @@ import UIKit
 
 class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
+    @IBOutlet weak var menuTitle: UILabel!
     var helpMenuItems: [HelpMenuItem] = []
     struct HelpMenuItem {
         let imageName:String?
@@ -18,7 +19,7 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.menuTitle.text = String(format: "Help Menu (CrewBid Version %@)", CBUtils.AppVersion())
         setupUI()
         NotificationCenter.default.addObserver(self, selector: #selector(self.openSubScriptionPage), name: Notification.Name(openSubscriptionPageNotification), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.openLatestNews), name: Notification.Name("goToLatestNews"), object: nil)

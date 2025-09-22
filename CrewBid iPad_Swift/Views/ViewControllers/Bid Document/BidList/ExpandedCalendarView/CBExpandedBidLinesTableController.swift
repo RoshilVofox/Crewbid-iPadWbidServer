@@ -20,14 +20,14 @@ class CBExpandedBidLinesTableController: BaseViewController {
     
     var CollectionCellCalendarDaysArr = [Any]()
     var linesArray : [BILine] = []
-    var bidPeriod = BIBidPeriod()
+    var bidPeriod: BIBidPeriod!
     var bidListCalenderDays = [Any]()
     var bidListCalendarData = BICalendarData()
     var tripCBButton: CBTripButton!
     var isAwardSort = false
     var isSubmitSort = false
     var awardedLineNum: String!
-    var navTitle = "Expanded Bid List"
+    var dataSource = GlobalBidInfo.shared
     
     var selectedCellIndexPaths = NSMutableArray()
     var insertionPoint: BIInsertionPoint?
@@ -107,8 +107,16 @@ class CBExpandedBidLinesTableController: BaseViewController {
             }
         }
         NotificationCenter.default.addObserver(self, selector: #selector(self.deHighlightTrip), name: NSNotification.Name(rawValue: CBLineTableCellTripButtonDehighlightNotification), object: nil)
-        
-        lblTitle.text = navTitle
+
+        let positionArray = ["CP","FO","FA"]
+        let index = dataSource.position.rawValue
+        let version = "(\(CBUtils.AppVersion()))"
+        let month = CBGlobalMethods.shortMonthNameOf(monthInt: dataSource.month)
+        let position = positionArray[index]
+        let year = dataSource.year
+        let base = dataSource.base
+        let round = dataSource.round
+        lblTitle.text = "Expanded Bid List \(version) \(month) \(year) \(base) \(position) Rnd \(round)"
         
         let closeImg = UIImage(named: "NewBid-navbar-xcancelbutton")?.withRenderingMode(.alwaysTemplate)
         let shareImg = UIImage(named: "NavBarGray-ActionButton")?.withRenderingMode(.alwaysTemplate)
@@ -227,7 +235,6 @@ class CBExpandedBidLinesTableController: BaseViewController {
             cell.backgroundView = UIView(frame: cell.bounds)
             cell.backgroundView?.backgroundColor = UIColor.appColor(.contentBgColor)
         }
-        cell.handlingFreezingCondition(line: line)
         if bidPeriod.isFABid() && line.faPosition?.intValue != BIFaPosition.FaPositionNA.rawValue {
             cell.mLblLineNo.textColor = .white
             if line.faPosition?.intValue == BIFaPosition.FaPositionA.rawValue {
@@ -247,8 +254,8 @@ class CBExpandedBidLinesTableController: BaseViewController {
                 cell.mLblLineNo.text = cell.mLblLineNo.text! + ("M")
             }
             cell.positionCircleView.alpha = 1.0
-//            cell.handlingFreezingCondition(line: line)
             cell.positionCircleView.alpha = 1.0
+            cell.handlingFreezingCondition(line: line)
             if isAwardSort {
                 if let awardedLineNum = self.awardedLineNum {
                     var lineNum = line.number!.stringValue
@@ -462,7 +469,7 @@ class CBExpandedBidLinesTableController: BaseViewController {
             }
             cell.mLblLineNo.attributedText = attributedString
         }
-//        cell.handlingFreezingCondition(line: line)
+        cell.handlingFreezingCondition(line: line)
         if setupLineValues {
             // Line values.
             let lineValuesKey: String = CBLineValuesMenuController.lineValuesKey(for: bidPeriod)
