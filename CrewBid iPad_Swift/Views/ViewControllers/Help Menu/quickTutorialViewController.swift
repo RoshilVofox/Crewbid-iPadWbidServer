@@ -6,7 +6,7 @@ class quickTutorialViewController: UIViewController {
     @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var btndone: UIButton!
     @IBOutlet weak var pageControl: UIPageControl!
-    
+    var isFirstTime = true
     var images: [String] = ["WelcomeSlide", "Slide01", "Slide02", "Slide03", "Slide04", "Slide05", "Slide06", "Slide07", "Slide08", "Slide09", "Slide10", "Slide11" , "Slide12", "Slide13", "Slide14", "Slide15", "Slide16", "Slide17", "Slide18", "Slide19", "Slide20", "Slide21", "Slide22", "Slide23", "Slide24", "Slide25", "Slide26", "Slide27", "Slide28", "Slide29"]
     var totalPages: Int = 0
     
@@ -29,6 +29,11 @@ class quickTutorialViewController: UIViewController {
         collectionView.delegate = self
         collectionView.isPagingEnabled = true
         
+        if isFirstTime == true {
+            self.btnBack.isHidden = true
+        }else{
+            self.btnBack.isHidden = false
+        }
 
         totalPages = images.count
         pageControl.numberOfPages = totalPages

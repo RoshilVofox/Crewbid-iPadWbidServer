@@ -112,6 +112,7 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
         switch indexPath.item {
         case 0:
             let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "quickTutorialViewController") as! quickTutorialViewController
+            vc.isFirstTime = false
             self.navigationController?.pushViewController(vc, animated: true)
             break
             
