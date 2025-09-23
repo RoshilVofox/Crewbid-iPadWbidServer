@@ -32,6 +32,9 @@ class GlobalBidInfo: BIBidInfoDataSource {
     var employeeNumber: String = ""
     var swaptimizerID: String = ""
     var managedObjectContext: NSManagedObjectContext
+    var allDomicileDownloadDictionary: [String: Any] = [:]
+    var isCurrentlyDownloadingAllBid = 0
+    var alertCount = 0
     private init() {
         self.managedObjectContext = CoreDataManager.shared.persistentContainer.newBackgroundContext()
         self.managedObjectContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy

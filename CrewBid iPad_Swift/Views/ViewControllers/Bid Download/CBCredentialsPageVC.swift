@@ -47,6 +47,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     var defaultEmplyeeNumber:String?
     var optionalEmployees = NSMutableArray()
     var bidListNumbers = NSMutableArray()
+    let allbidDownloadViewModel = BIAllDomicileDownloadViewModel()
     
     var jobShare1:String?
     var jobShare2:String?
@@ -74,13 +75,24 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                 txtPassword.text = password
             }
         }
-        NotificationCenter.default.addObserver(self, selector: #selector(showProgressView), name: Notification.Name("ShowProgressView"), object: nil)
+        if !UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
+            NotificationCenter.default.addObserver(self, selector: #selector(showProgressView), name: Notification.Name("ShowProgressView"), object: nil)
+        }
 
         
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(self, selector: #selector(closeCredentilaPage), name: Notification.Name("CloseCredentilaPage"), object: nil)
+    }
+    
     @objc func showProgressView() {
         let progressVC = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBProgressVC") as! CBProgressVC
         self.navigationController?.pushViewController(progressVC, animated: true)
+    }
+    
+    @objc func closeCredentilaPage() {
+        self.navigationController?.popViewController(animated: true)
     }
     
     func setupTitle(){
@@ -210,8 +222,25 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }else if AppState.shared.isMockData{//MARK:  Mock Bid Data
             
             print("Bid: Mock data")
-            
-        }else{//MARK:  New Bid Data
+        }
+//        MARK: bulk data download
+        if UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") == true {
+            var dictionary = GlobalBidInfo.shared.allDomicileDownloadDictionary
+            var tableViewData: [String] = []
+            let isBothSelected: Bool = (dictionary["both"] as? Bool)!
+            var initialbases: [String] = (dictionary["bases"] as! [String])
+            if isBothSelected {
+               for base in initialbases {
+                   initialbases.append(base)
+                }
+                GlobalBidInfo.shared.allDomicileDownloadDictionary["bases"] = initialbases
+            }
+            GlobalBidInfo.shared.isCurrentlyDownloadingAllBid = 1
+            GlobalBidInfo.shared.alertCount = 0
+            self.allbidDownloadViewModel.downladAllDomicileBid(bases: initialbases, tableViewData: tableViewData)
+        }
+        
+        else{//MARK:  New Bid Data
             
             print("Bid: New bid")
             bidDownloadViewModel.fetchNewBidData(sessionKey: sessionKey, fileName: bidFileName) { result in
@@ -439,13 +468,19 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         if empID.lowercased().hasPrefix("x") || empID.lowercased().hasPrefix("e") {
             empID = String(empID.dropFirst())
         }
-        if bidAlreadyExists() {
+        if !UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
+            if bidAlreadyExists() {
                 showAlertForExistingBid {
                     self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
                 }
             } else {
                 startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
             }
+        }
+        else {
+//            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
+            self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
+        }
 //        AuthService.shared.checkAuthentication(empID: empID) { [weak self] authResult in
 //            guard let self = self else { return }
 //            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")

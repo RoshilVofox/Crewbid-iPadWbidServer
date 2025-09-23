@@ -44,7 +44,14 @@ class CBLoginViewModel{
     var onLoginFailure: ((Errors) -> Void)?
 
     func checkLogin(userID: String, password: String) {
-        
+        var dictionary = GlobalBidInfo.shared.allDomicileDownloadDictionary
+        if UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") == true {
+            
+            dictionary["userName"] = userID
+            dictionary["password"] = password
+            GlobalBidInfo.shared.allDomicileDownloadDictionary = dictionary
+
+        }
         saveSelectionToUserDefaults()
         // 1. Get PreLogon Credential
         APIService.shared.fetch(
@@ -59,11 +66,20 @@ class CBLoginViewModel{
                 switch result {
                 case .success(let preLogonCredential):
                     // 2. Use PreLogon Credential to request Session Key
-                    self?.requestSessionKey(
-                        userID: userID,
-                        password: password,
-                        credentials: preLogonCredential
-                    )
+                    if UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") == true {
+                        self?.requestSessionKey(
+                            userID: dictionary["userName"] as! String,
+                            password: dictionary["password"] as! String,
+                            credentials: preLogonCredential
+                            )
+                    }
+                    else {
+                        self?.requestSessionKey(
+                            userID: userID,
+                            password: password,
+                            credentials: preLogonCredential
+                        )
+                    }
                 case .failure(let error):
                     DispatchQueue.main.async {
                         self?.onLoginFailure?(error)
