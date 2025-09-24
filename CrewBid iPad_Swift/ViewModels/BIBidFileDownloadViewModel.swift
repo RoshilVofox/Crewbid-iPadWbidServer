@@ -286,7 +286,7 @@ class BIBidFileDownloadViewModel {
     }
 
     private func performPostDownloadTasks(){
-//        checkCrewBidUpdateFile()
+        checkCrewBidUpdateFile()
     }
     
     private func checkCrewBidUpdateFile(){

@@ -13,14 +13,15 @@ protocol CBMonthToMonthAlertDelegate: AnyObject {
 
 class CBMonthToMonthAlertVC: UIViewController {
     
-    @IBOutlet weak var content: UILabel!
+    
+    @IBOutlet weak var content: UITextView!
     var text = ""
     var delegate: CBMonthToMonthAlertDelegate?
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        preferredContentSize = CGSize(width: 400, height: 400)
+        preferredContentSize = CGSize(width: 700, height: 500)
         content.text = text
         // Do any additional setup after loading the view.
     }

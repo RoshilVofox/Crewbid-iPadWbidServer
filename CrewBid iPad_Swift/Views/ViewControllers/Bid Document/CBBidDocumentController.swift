@@ -1113,11 +1113,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 let vc = storyboard.instantiateViewController(withIdentifier: "CBMonthToMonthAlertVC") as! CBMonthToMonthAlertVC
                 vc.text = alertMessage
 //                vc.delegate = self
-                vc.preferredContentSize = CGSize(width: 764, height: 630)
-                vc.providesPresentationContextTransitionStyle = true
-                vc.definesPresentationContext = true
-                vc.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
-                vc.view.backgroundColor = UIColor.clear
+                vc.preferredContentSize = CGSize(width: 700, height: 600)
+//                vc.providesPresentationContextTransitionStyle = true
+//                vc.definesPresentationContext = true
+//                vc.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
+//                vc.view.backgroundColor = UIColor.clear
 //                    vc.onDoneBlock = { result in
 //                        dismissHandler(true)
 //                    }
@@ -2076,7 +2076,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @objc func showAlertforVacationLoading() {
         let vacationType = self.bidPeriod!.userVacationWbidOrCrewBid
         if (vacationType == "CREWBID" || vacationType == "CREWBIDF") {
-            if ((self.bidPeriod?.crewIdentifier?.intValue != Int(GlobalBidInfo.shared.userid)) && alertShouldDisplay) {
+            if ((self.bidPeriod?.crewIdentifier?.intValue != self.bidPeriod!.credentialEmployeenumber!.intValue) && alertShouldDisplay) {
                 self.enableOrDisableEOMButton()
                 DispatchQueue.main.async {
                     AlertService.showAlertForTopVC(title: "SWAPtimizer loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(GlobalBidInfo.shared.userid)).", actions: [(
@@ -2110,7 +2110,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             self.bidPeriod!.vacayAlertDisplayed = NSNumber(value: true)
         }
         else if (vacationType == "WBID" || vacationType == "WBIDF") {
-            if ((self.bidPeriod?.crewIdentifier?.intValue != Int(GlobalBidInfo.shared.userid)) && alertShouldDisplay) {
+            if ((self.bidPeriod?.crewIdentifier?.intValue != self.bidPeriod!.credentialEmployeenumber!.intValue) && alertShouldDisplay) {
                 DispatchQueue.main.async {
                     AlertService.showAlertForTopVC(title: "WBidmax loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(GlobalBidInfo.shared.userid)).", actions: [(
                         title: "OK",
@@ -2145,7 +2145,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             self.bidPeriod!.vacayAlertDisplayed = NSNumber(value: true)
         }
         else if ((vacationType == "FAVacation" || vacationType == "FAVacationF")) && alertShouldDisplay {
-            if (self.bidPeriod?.crewIdentifier?.intValue != Int(GlobalBidInfo.shared.userid)) {
+            if (self.bidPeriod?.crewIdentifier?.intValue != self.bidPeriod!.credentialEmployeenumber!.intValue) {
                 DispatchQueue.main.async {
                     AlertService.showAlertForTopVC(title: "Vacation loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(GlobalBidInfo.shared.userid)).", actions: [(
                         title: "OK",
@@ -2468,11 +2468,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 let vc = storyboard.instantiateViewController(withIdentifier: "CBMonthToMonthAlertVC") as! CBMonthToMonthAlertVC
                 vc.text = alertMessage
 //                vc.delegate = self
-                vc.preferredContentSize = CGSize(width: 764, height: 630)
-                vc.providesPresentationContextTransitionStyle = true
-                vc.definesPresentationContext = true
-                vc.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
-                vc.view.backgroundColor = UIColor.clear
+                vc.preferredContentSize = CGSize(width: 700, height: 600)
+//                vc.providesPresentationContextTransitionStyle = true
+//                vc.definesPresentationContext = true
+//                vc.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
+//                vc.view.backgroundColor = UIColor.clear
 //                    vc.onDoneBlock = { result in
 //                        dismissHandler(true)
 //                    }

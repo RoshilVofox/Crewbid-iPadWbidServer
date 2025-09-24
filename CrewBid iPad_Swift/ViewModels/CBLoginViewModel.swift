@@ -120,6 +120,7 @@ class CBLoginViewModel{
                 DispatchQueue.main.async {
                     switch result {
                     case .success(let sessionKey):
+                        GlobalBidInfo.shared.credentialEmployeeNumber = userID
                         self?.onLoginSuccess?(sessionKey)
                     case .failure(let error):
                         self?.onLoginFailure?(error)

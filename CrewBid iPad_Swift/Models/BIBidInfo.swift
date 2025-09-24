@@ -35,6 +35,7 @@ class GlobalBidInfo: BIBidInfoDataSource {
     var allDomicileDownloadDictionary: [String: Any] = [:]
     var isCurrentlyDownloadingAllBid = 0
     var alertCount = 0
+    var credentialEmployeeNumber: String = ""
     private init() {
         self.managedObjectContext = CoreDataManager.shared.persistentContainer.newBackgroundContext()
         self.managedObjectContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy

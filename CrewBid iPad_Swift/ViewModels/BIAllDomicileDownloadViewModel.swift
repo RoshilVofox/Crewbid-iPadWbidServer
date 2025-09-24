@@ -101,23 +101,4 @@ class BIAllDomicileDownloadViewModel {
         }
     }
     
-    private func handleNewBidDownloadSuccess(fileURL: URL) -> Bool {
-        print("File unzipped at: \(fileURL)")
-        var result = false
-        BIBidInfoReader.shared.checkForSeniorityVacationAndReadBidInfo { success in
-            if success {
-                result = true
-                DispatchQueue.main.async {
-                    self.nullfunc()
-                }
-            } else {
-                NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
-            }
-        }
-        return result
-    }
-    
-    func nullfunc() {
-        
-    }
 }
