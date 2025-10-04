@@ -86,12 +86,15 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     }
                     let formattedUserID = self.txtUserID.text ?? ""
                     let password = self.txtPassword.text ?? ""
-
-                    if self.bidAlreadyExists() {
-                        self.showAlertForExistingBid {
+                    if !UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
+                        if self.bidAlreadyExists() {
+                            self.showAlertForExistingBid {
+                                self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
+                            }
+                        } else {
                             self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
                         }
-                    } else {
+                    }else{
                         self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
                     }
                 } else {
@@ -372,7 +375,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     var defaultEmplyeeNumber:String?
     var optionalEmployees = NSMutableArray()
     var bidListNumbers = NSMutableArray()
-    
+    let allbidDownloadViewModel = BIAllDomicileDownloadViewModel()
     var jobShare1:String?
     var jobShare2:String?
     
@@ -399,10 +402,19 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                 txtPassword.text = password
             }
         }
-        NotificationCenter.default.addObserver(self, selector: #selector(showProgressView), name: Notification.Name("ShowProgressView"), object: nil)
-
-        
+        if !UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
+            NotificationCenter.default.addObserver(self, selector: #selector(showProgressView), name: Notification.Name("ShowProgressView"), object: nil)
+        }
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+            NotificationCenter.default.addObserver(self, selector: #selector(closeCredentilaPage), name: Notification.Name("CloseCredentilaPage"), object: nil)
+        }
+    
+    @objc func closeCredentilaPage() {
+            self.navigationController?.popViewController(animated: true)
+        }
+    
     @objc func showProgressView() {
         let progressVC = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBProgressVC") as! CBProgressVC
         self.navigationController?.pushViewController(progressVC, animated: true)
@@ -537,7 +549,21 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             print("Bid: Mock data")
             
         }
-        
+        if UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") == true {
+                    var dictionary = GlobalBidInfo.shared.allDomicileDownloadDictionary
+                    var tableViewData: [String] = []
+                    let isBothSelected: Bool = (dictionary["both"] as? Bool)!
+                    var initialbases: [String] = (dictionary["bases"] as! [String])
+                    if isBothSelected {
+                       for base in initialbases {
+                           initialbases.append(base)
+                        }
+                        GlobalBidInfo.shared.allDomicileDownloadDictionary["bases"] = initialbases
+                    }
+                    GlobalBidInfo.shared.isCurrentlyDownloadingAllBid = 1
+                    GlobalBidInfo.shared.alertCount = 0
+                    self.allbidDownloadViewModel.downladAllDomicileBid(bases: initialbases, tableViewData: tableViewData)
+                }
         
         else{//MARK:  New Bid Data
             
