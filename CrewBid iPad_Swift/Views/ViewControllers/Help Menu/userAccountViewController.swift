@@ -16,6 +16,7 @@ class userAccountViewController: BaseViewController, UITextFieldDelegate {
     @IBOutlet weak var updateBtn: UIButton!
     @IBOutlet weak var switchMail: UISwitch!
     @IBOutlet weak var btnBack: UIButton!
+    @IBOutlet weak var doneBtn: UIButton!
     var isfrom:UIViewController?
     
     
@@ -29,6 +30,9 @@ class userAccountViewController: BaseViewController, UITextFieldDelegate {
     
     func setupUI(){
         btnBack.setTitle("", for: .normal)
+        doneBtn.setTitle("", for: .normal)
+        updateBtn.layer.masksToBounds = true
+        updateBtn.layer.cornerRadius = 5
         if isfrom!.isKind(of: CBCredentialsPageVC.self){
             btnBack.setImage(UIImage(named: "NewBid-navbar-ncelbutton"), for: .normal)
         }

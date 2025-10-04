@@ -1101,7 +1101,6 @@ class CBUtils{
 
                 do {
                     let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-                    print("Response JSON: \(String(describing: json))")
                     
                     if app.jsonSecretIsOn {
                         app.missingTripInfo = json

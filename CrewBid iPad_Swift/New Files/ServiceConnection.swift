@@ -596,8 +596,6 @@ class ServiceConnection: NSObject, URLSessionDelegate, URLSessionDataDelegate{
             let temp = [getCreatedCode(headers)]
             delegate?.serviceResponse(temp)
         }
-        
-        print(responseStatus)
         app = UIApplication.shared.delegate as? AppDelegate
         
         switch responseStatus {
@@ -653,8 +651,6 @@ class ServiceConnection: NSObject, URLSessionDelegate, URLSessionDataDelegate{
                     dataTask: URLSessionDataTask,
                     didReceive data: Data) {
         
-        print("data received")
-        
         // Access app delegate
         app = UIApplication.shared.delegate as? AppDelegate
         webData = app.webData
@@ -679,9 +675,7 @@ class ServiceConnection: NSObject, URLSessionDelegate, URLSessionDataDelegate{
                     dataTask: URLSessionDataTask,
                     willCacheResponse proposedResponse: CachedURLResponse,
                     completionHandler: @escaping (CachedURLResponse?) -> Void) {
-        
-        print("Test")
-        
+
         // Early exits based on response status
         if !authenticationFlag && responseStatus == 200 {
             authenticationFlag = true
@@ -698,8 +692,6 @@ class ServiceConnection: NSObject, URLSessionDelegate, URLSessionDataDelegate{
         // Process server response
         if !isPost {
             app = UIApplication.shared.delegate as? AppDelegate
-            print("datalen--\(app?.webData?.count ?? 0)--\(webData?.count ?? 0)")
-            
             do {
                 if let data = app?.webData {
                     if let res = try JSONSerialization.jsonObject(with: data as Data, options: .mutableLeaves) as? [String: Any] {
@@ -715,17 +707,9 @@ class ServiceConnection: NSObject, URLSessionDelegate, URLSessionDataDelegate{
             }
             
         } else {
-            if let webData = webData,
-               let str = String(data: webData as Data, encoding: .utf8) {
-                print("output \(str)")
-            }
-            
             do {
                 if let webData = webData {
                     if let res = try JSONSerialization.jsonObject(with: webData as Data, options: .mutableLeaves) as? [String: Any] {
-                        let fbIds = res["Responce"]
-                        print("Result---\(String(describing: fbIds))")
-                        
                         var array1 = [Any]()
                         if !res.isEmpty {
                             array1.append(res)
@@ -737,8 +721,6 @@ class ServiceConnection: NSObject, URLSessionDelegate, URLSessionDataDelegate{
                 print("JSON parse error: \(error)")
             }
         }
-        
-        // Always call completion handler
         completionHandler(proposedResponse)
     }
     
@@ -751,17 +733,13 @@ class ServiceConnection: NSObject, URLSessionDelegate, URLSessionDataDelegate{
         
         app = UIApplication.shared.delegate as? AppDelegate
         
-        // You can get progress here
-        print("webdatalength --\(app?.webData?.count ?? 0)")
         app?.webData?.length = 0
         
         totalBytes = totalBytesExpectedToWrite
         
-        print("Received: \(bytesWritten) bytes (Downloaded: \(totalBytesWritten) bytes)  Expected: \(totalBytesExpectedToWrite) bytes.")
-        
         let percentDone = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)
         
-        webData = app.webData as Data? as! NSMutableData
+        webData = app.webData as Data? as? NSMutableData
         delegate?.connectionDataReceived(Float(percentDone))
     }
     
@@ -779,7 +757,6 @@ class ServiceConnection: NSObject, URLSessionDelegate, URLSessionDataDelegate{
         if responseStatus == 200 && !authenticationFlag {
             if let token = headers["x-csrf-token"] as? String {
                 UserDefaults.standard.set(token, forKey: "tocken")
-                print("token: \(token)")
             }
         }
         
@@ -788,8 +765,6 @@ class ServiceConnection: NSObject, URLSessionDelegate, URLSessionDataDelegate{
             let temp = [getCreatedCode(headers)]
             delegate?.serviceResponse(temp)
         }
-        
-        print("Status: \(responseStatus)")
         
         switch responseStatus {
         case 200, 201:
@@ -807,8 +782,6 @@ class ServiceConnection: NSObject, URLSessionDelegate, URLSessionDataDelegate{
         if responseStatus == 401 {
             return
         }
-        
-        print("webdatalength --\(app.webData?.count ?? 0)")
         app.webData?.length = 0
         
         totalBytes = httpResponse.expectedContentLength
@@ -822,12 +795,10 @@ class ServiceConnection: NSObject, URLSessionDelegate, URLSessionDataDelegate{
         if responseStatus == 400 { return }
         if responseStatus == 401 { return }
         
-        // If it's a POST, load file from location
         if isPost {
             do {
                 let fileData = try Data(contentsOf: location)
-                app.webData = fileData as! NSMutableData
-                print("datalen--\(app.webData?.count ?? 0)--\(webData?.count ?? 0)")
+                app.webData = fileData as? NSMutableData
                 
                 if let res = try JSONSerialization.jsonObject(with: fileData, options: .mutableLeaves) as? [String: Any] {
                     var arr: [[String: Any]] = []
