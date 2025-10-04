@@ -51,12 +51,52 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
     @IBAction func btnSecretBidDownload(_ sender: Any) {
         if (self.btnSecretBidload1.isTouchInside &&  self.btnSecretBidload2.isTouchInside){
 //            print("hello")
-            let storyBoard = UIStoryboard(name: "Secret", bundle: nil)
-            if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "SecretMethodsViewController") as? SecretMethodsViewController{
-                //            helpMenuVC.modalPresentationStyle = .formSheet
-                helpMenuVC.preferredContentSize = CGSize(width: 700, height: 600)
-                present(helpMenuVC, animated: true)
-            }
+            AlertService.showAlertForTopVC(
+                title: "Secret Menu",
+                message: "please enter the Password:",
+                actions: [
+                    (
+                        title: "Cancel",
+                        style: .cancel,
+                        handler: { _, _ in
+                            print("User tapped Cancel")
+                        }
+                    ),
+                    (
+                        title: "OK",
+                        style: .default,
+                        handler: { _, textFields in
+                            if let value = textFields?.first?.text {
+                                if value == "Vofox2013-1" {
+                                    let storyBoard = UIStoryboard(name: "Secret", bundle: nil)
+                                    if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "SecretMethodsViewController") as? SecretMethodsViewController{
+                                        //            helpMenuVC.modalPresentationStyle = .formSheet
+                                        helpMenuVC.preferredContentSize = CGSize(width: 700, height: 600)
+                                        self.present(helpMenuVC, animated: true)
+                                    }
+                                } else {
+                                    print("invalid input")
+                                }
+                            }
+                        }
+                    )
+                ],
+                textFields: [
+                    (
+                        placeholder: "Enter Password here",
+                        keyboardType: .default,
+                        tag: 0,
+                        delegate: nil
+                    )
+                ]
+            )
+
+//            let storyBoard = UIStoryboard(name: "Secret", bundle: nil)
+//            if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "SecretMethodsViewController") as? SecretMethodsViewController{
+//                //            helpMenuVC.modalPresentationStyle = .formSheet
+//                helpMenuVC.preferredContentSize = CGSize(width: 700, height: 600)
+//                present(helpMenuVC, animated: true)
+//            }
         }
     }
     

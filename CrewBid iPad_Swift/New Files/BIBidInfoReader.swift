@@ -212,6 +212,7 @@ class BIBidInfoReader{
         
         func finishParsingBid(success: Bool) {
             if success {
+                NotificationCenter.default.post(name: NSNotification.Name("ReloadCollectionView"), object: nil)
                 NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                     NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
@@ -2744,6 +2745,9 @@ class BIBidInfoReader{
     
     //MARK: initialize Reading Variables
     private func initializeReadingVariables(){
+        if UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") == true {
+            NotificationCenter.default.post(name: NSNotification.Name("ReloadCollectionView"), object: nil)
+        }
         tripNumberPredicate = NSPredicate(format: "SELF MATCHES %@", tripNumberRegex)
         cityPredicate = NSPredicate(format: "SELF MATCHES %@", cityRegex)
         
@@ -2793,6 +2797,9 @@ class BIBidInfoReader{
         self.thanksgivingDay = CBUtils.thanksgivingDay(for: (self.bidPeriod?.year!.intValue)!)
         self.includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
         self.bidPeriod?.swaptimizerIdentifier = Int(self.dataSource.employeeNumber) as? NSNumber
+        let original = GlobalBidInfo.shared.credentialEmployeeNumber
+        let credentialEmployeenumber = String(original.dropFirst())
+        self.bidPeriod?.credentialEmployeenumber = Int(credentialEmployeenumber) as? NSNumber
          
         self.intlCities = UserDefaults.standard.object(forKey: kCBInternationalCitiesDict) as! [String : Any]
         

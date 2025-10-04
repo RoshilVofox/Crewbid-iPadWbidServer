@@ -8,14 +8,14 @@
 import UIKit
 import CoreData
 
-class CBOvernightBulkRuleCell: UITableViewCell {
+class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     @IBOutlet weak var yesBtn: UIButton!
     @IBOutlet weak var noBtn: UIButton!
     @IBOutlet weak var noneBtn: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
-    @IBOutlet weak var overnightCities: UILabel!
-    @IBOutlet weak var noOvernightCities: UILabel!
+    @IBOutlet weak var lblOvernightBulkTitle: UILabel!
+    @IBOutlet weak var lblnoOvernightCities: UILabel!
     @IBOutlet weak var deleteButton: UIButton!
     
     var dictCityStatus: [String: Any]?
@@ -24,14 +24,28 @@ class CBOvernightBulkRuleCell: UITableViewCell {
     var objOvernight: OvernightBulk?
     var arrOverNightCitiesList: [String]?
     var arrCitiesList: NSMutableArray?
-    var arrIntersected: NSMutableArray?
+    var arrIntersected = NSMutableArray()
     var context = CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        
+        arrCitiesList = UserDefaults.standard.value(forKey: kCBAllCitiesList) as? NSMutableArray
+        lblOvernightBulkTitle.transform = CGAffineTransformMakeRotation(3.14/2)
+        lblnoOvernightCities.transform = CGAffineTransformMakeRotation(3.14/2)
+        dictCityStatus = [:]
+        collectionView.delegate = self
+        collectionView.dataSource = self
     }
     
+    func reloadContent() {
+        if self.filterRule?.ruleHighlightsTrips() == true {
+            CBUtils.highlightTripsOverNightBulk()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+        }
+    }
     func configureOvernightBulkCell() {
         let context = GlobalBidInfo.shared.managedObjectContext
         let fetchRequest: NSFetchRequest<OvernightBulk> = OvernightBulk.fetchRequest()
@@ -44,6 +58,7 @@ class CBOvernightBulkRuleCell: UITableViewCell {
                 }
             }
             else {
+                objOvernight = OvernightBulk(context: context)
                 objOvernight?.citystatus = [:] as NSObject
                 dictCityStatus = [:]
                 
@@ -64,7 +79,7 @@ class CBOvernightBulkRuleCell: UITableViewCell {
                let overnightCities = arrOverNightCitiesList {
                 
                 let intersection = Set(cities).intersection(Set(overnightCities))
-                arrIntersected = Array(intersection) as? NSMutableArray
+                arrIntersected =  NSMutableArray(array: Array(intersection))
             }
             self.collectionView.reloadData()
         }
@@ -80,16 +95,127 @@ class CBOvernightBulkRuleCell: UITableViewCell {
     }
     
     @IBAction func deleteCellAction(_ sender: Any) {
-        //        code need to be added here
-                self.bidPeriod!.managedObjectContext!.delete(filterRule!)
-                do {
-                    try context?.save()
+        
+        self.bidPeriod?.isOverNightBulkApplied = "NO"
+        if (self.filterRule?.ruleHighlightsTrips() == true) {
+            self.filterRule?.deHighlightTrips()
+        }
+        
+        let filterFetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+        filterFetchRequest.predicate = NSPredicate(format: "category == 34")
+        let fetchedFilter = try? context?.fetch(filterFetchRequest)
+        for filter in fetchedFilter! {
+            context?.delete(filter)
+        }
+        let overnightBulkFetchRequest: NSFetchRequest<OvernightBulk> = OvernightBulk.fetchRequest()
+        let resuts = try? context?.fetch(overnightBulkFetchRequest)
+        for bulk in resuts! {
+            context?.delete(bulk)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+        }
+    }
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return arrCitiesList!.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let kCityCellIdentifier = "CityCell"
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kCityCellIdentifier, for: indexPath) as! CBOvernightCitiesBulkCollectionViewCell
+        if arrCitiesList![indexPath.row] as! String == "ATL" {
+            print("")
+        }
+        cell.lblCityName.text = arrCitiesList![indexPath.row] as? String
+        if arrIntersected.contains(arrCitiesList![indexPath.row]) {
+            if dictCityStatus![arrCitiesList![indexPath.row] as! String] != nil {
+                let key = String(describing: arrCitiesList![indexPath.row])
+                let type1 = dictCityStatus![key] as? String ?? "0"
+                let type = Int(type1)
+                switch type {
+                case ColorType.red.rawValue:
+                    cell.lblCityName.backgroundColor = .red
+                    cell.lblCityName.textColor = .white
+                    cell.isUserInteractionEnabled = true
+                    break
+                case ColorType.green.rawValue:
+                    cell.lblCityName.backgroundColor = .green
+                    cell.lblCityName.textColor = .white
+                    cell.isUserInteractionEnabled = true
+                    break
+                case ColorType.nocolor.rawValue:
+                    cell.lblCityName.backgroundColor = .clear
+                    cell.isUserInteractionEnabled = true
+                    if #available(iOS 13.0, *) {
+                        cell.lblCityName.textColor = UIColor.label
+                    } else {
+                        cell.lblCityName.textColor = UIColor.black // Fallback on earlier versions
+                    }
+                    break
+                default:
+                    break
                 }
-                catch {
-                    print("Error deleting object \(error.localizedDescription)")
-                }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
-                    NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
-                }
+            }
+            else {
+                cell.isUserInteractionEnabled = true
+                cell.lblCityName.backgroundColor = .clear
+                cell.lblCityName.textColor = .label
+            }
+        }
+        else {
+            cell.isUserInteractionEnabled = false
+            cell.lblCityName.textColor = .white
+            cell.lblCityName.backgroundColor = .black
+        }
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        CBGlobalMethods.shared.showActivityIndicator(bgColor: .purple)
+        self.bidPeriod?.currentDateTime = Date()
+        self.bidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
+        if self.filterRule?.ruleHighlightsTrips() == true {
+            self.filterRule?.deHighlightTrips()
+        }
+        let cell = collectionView.cellForItem(at: indexPath) as! CBOvernightCitiesBulkCollectionViewCell
+//        if cell.lblCityName.backgroundColor == .clear {
+//            cell.lblCityName.backgroundColor = .red
+//            cell.lblCityName.textColor = .white
+//            dictCityStatus![arrCitiesList![indexPath.row] as! String] = String(ColorType.red.rawValue)
+//        }
+        if cell.lblCityName.backgroundColor == .clear {
+            cell.lblCityName.backgroundColor = .red
+            cell.lblCityName.textColor = .white
+            dictCityStatus![arrCitiesList![indexPath.row] as! String] = String(ColorType.red.rawValue)
+        }
+        else if cell.lblCityName.backgroundColor == .red {
+            cell.lblCityName.backgroundColor = .green
+            cell.lblCityName.textColor = .white
+            dictCityStatus![arrCitiesList![indexPath.row] as! String] = String(ColorType.green.rawValue)
+        }
+        else if cell.lblCityName.backgroundColor == .green {
+            cell.lblCityName.backgroundColor = .clear
+            cell.lblCityName.textColor = .label
+            dictCityStatus![arrCitiesList![indexPath.row] as! String] = String(ColorType.nocolor.rawValue)
+        }
+        
+        let dict = NSDictionary(dictionary: dictCityStatus!)
+        objOvernight?.citystatus = dict
+        try? context?.save()
+        let noArray = (dictCityStatus!.filter { $0.value as? String == "1" }.map { $0.key } as? NSArray)!
+
+        CBUtils.overnightBulkRedApply(noArray: noArray)
+        reloadContent()
+        CBGlobalMethods.shared.hideActivityIndicator()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let collectionviewWidth = collectionView.frame.size.width
+        return CGSize(width: collectionviewWidth/7, height: 45)
     }
 }

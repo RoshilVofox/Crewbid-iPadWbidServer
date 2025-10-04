@@ -51,6 +51,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
     }
     @IBAction func downloadBid(_ sender: Any) {
         if isPlusImage {
+            UserDefaults.standard.set(false, forKey: "isSecretForAllDomicileDownloadEnabled")
             let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "CBNewBidVC") as! CBNewBidVC
             vc.preferredContentSize = CGSize(width: 600, height: 550)

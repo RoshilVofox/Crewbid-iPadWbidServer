@@ -151,12 +151,21 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
 //        print("QuickFilters", array)
         array.append(NSPredicate(format: "bidOrder == %@", NSNumber(integerLiteral: 0)))
         array.append(NSPredicate(format: "isTrashed == %@", NSNumber(booleanLiteral: false)))
+        if bidPeriod?.isOverNightBulkApplied == "YES" {
+            let overnightPredicates = CBUtils.checkOvernightPredicate()
+            for predicate in overnightPredicates {
+                array.append(predicate)
+            }
+        }
         
         let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
         self.lines = (lines as NSArray).filtered(using: predicate) as! [BILine]
         var tempArray : [BILine] = []
         var count : Int = -1
         for line in self.lines {
+            if line.number?.intValue == 1 {
+                print("")
+            }
             count = count + 1
             if tempArray.count == 0 {
                 tempArray.append(line)

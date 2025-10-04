@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		350B8B3F2DDEDBFF005D5E76 /* CBVacationDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350B8B3E2DDEDBFF005D5E76 /* CBVacationDownloader.swift */; };
+		3514CF412E7D1EF10040D75B /* CBOvernightCitiesBulkCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3514CF402E7D1EF10040D75B /* CBOvernightCitiesBulkCollectionViewCell.swift */; };
 		35162E032DCDBEA600BD8E2E /* UIView+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35162E022DCDBEA600BD8E2E /* UIView+extensions.swift */; };
 		353FC68F2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */; };
 		353FC6912DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */; };
@@ -16,6 +17,8 @@
 		357F66402E5829E3000273BE /* CBCommutability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357F663F2E5829E3000273BE /* CBCommutability.swift */; };
 		357F66422E589626000273BE /* CBRouteDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357F66412E589626000273BE /* CBRouteDomain.swift */; };
 		358DC4E32E59BD34005F3D9A /* CBMonthToMonthPdfVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358DC4E22E59BD34005F3D9A /* CBMonthToMonthPdfVC.swift */; };
+		35A420FA2E828B7800D6C951 /* BulkDownloadStatusCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A420F92E828B7700D6C951 /* BulkDownloadStatusCell.swift */; };
+		35A420FC2E828BDC00D6C951 /* BIAllDomicileDownloadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A420FB2E828BD800D6C951 /* BIAllDomicileDownloadViewModel.swift */; };
 		35A965A22E276E2D0001B62B /* LineValuesVacation.plist in Resources */ = {isa = PBXBuildFile; fileRef = F4A622572E13AA2000A09315 /* LineValuesVacation.plist */; };
 		35EFE82A2E53034900AFDF8F /* CBCommutingCellHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35EFE8292E53034900AFDF8F /* CBCommutingCellHelper.swift */; };
 		35F6C8B12DD843840072BAD9 /* JobShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F6C8B02DD843840072BAD9 /* JobShareViewController.swift */; };
@@ -382,6 +385,7 @@
 
 /* Begin PBXFileReference section */
 		350B8B3E2DDEDBFF005D5E76 /* CBVacationDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBVacationDownloader.swift; sourceTree = "<group>"; };
+		3514CF402E7D1EF10040D75B /* CBOvernightCitiesBulkCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBOvernightCitiesBulkCollectionViewCell.swift; sourceTree = "<group>"; };
 		35162E022DCDBEA600BD8E2E /* UIView+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+extensions.swift"; sourceTree = "<group>"; };
 		353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
 		353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBConfirmSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
@@ -390,6 +394,8 @@
 		357F663F2E5829E3000273BE /* CBCommutability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCommutability.swift; sourceTree = "<group>"; };
 		357F66412E589626000273BE /* CBRouteDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBRouteDomain.swift; sourceTree = "<group>"; };
 		358DC4E22E59BD34005F3D9A /* CBMonthToMonthPdfVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMonthToMonthPdfVC.swift; sourceTree = "<group>"; };
+		35A420F92E828B7700D6C951 /* BulkDownloadStatusCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkDownloadStatusCell.swift; sourceTree = "<group>"; };
+		35A420FB2E828BD800D6C951 /* BIAllDomicileDownloadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIAllDomicileDownloadViewModel.swift; sourceTree = "<group>"; };
 		35EFE8292E53034900AFDF8F /* CBCommutingCellHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCommutingCellHelper.swift; sourceTree = "<group>"; };
 		35F6C8B02DD843840072BAD9 /* JobShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobShareViewController.swift; sourceTree = "<group>"; };
 		35F6C8B22DD856B40072BAD9 /* CBAvoidanceBidViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBAvoidanceBidViewController.swift; sourceTree = "<group>"; };
@@ -884,6 +890,7 @@
 				F41EBD2D2DC4DB20001413DE /* quickTutorialCollectionViewCell.swift */,
 				F41EBD2E2DC4DB20001413DE /* swaptimizerHelpMenuCollectionViewCell.swift */,
 				F41EBD2F2DC4DB20001413DE /* VideoCollectionViewCell.swift */,
+				3514CF402E7D1EF10040D75B /* CBOvernightCitiesBulkCollectionViewCell.swift */,
 			);
 			path = collectionViewCells;
 			sourceTree = "<group>";
@@ -1105,6 +1112,7 @@
 				F41EBDDA2DC4DB20001413DE /* ShowCAPTableViewCell.swift */,
 				F41EBDDB2DC4DB20001413DE /* SwitchTableViewCell.swift */,
 				F4EBBCAA2E4C6E1D00C87336 /* SegmentedTableViewCell.swift */,
+				35A420F92E828B7700D6C951 /* BulkDownloadStatusCell.swift */,
 			);
 			path = tableViewCells;
 			sourceTree = "<group>";
@@ -1528,6 +1536,7 @@
 		F41EBFBF2DC4DCF7001413DE /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				35A420FB2E828BD800D6C951 /* BIAllDomicileDownloadViewModel.swift */,
 				F41EBFC22DC4E19A001413DE /* DocumentsCollectionViewModel.swift */,
 				F4400BD72DD9DB1C0066C7E0 /* AuthService.swift */,
 				F4400BD92DD9E5D60066C7E0 /* CBLoginViewModel.swift */,
@@ -2112,6 +2121,7 @@
 				35F6C8B32DD856B40072BAD9 /* CBAvoidanceBidViewController.swift in Sources */,
 				F4400BD62DD9BA370066C7E0 /* APIService.swift in Sources */,
 				F41EBF372DC4DB20001413DE /* WorkBlockList+CoreDataProperties.swift in Sources */,
+				3514CF412E7D1EF10040D75B /* CBOvernightCitiesBulkCollectionViewCell.swift in Sources */,
 				F41EBF382DC4DB20001413DE /* AppDelegate.swift in Sources */,
 				F41EBF392DC4DB20001413DE /* SceneDelegate.swift in Sources */,
 				F41EBF3A2DC4DB20001413DE /* BICalendarData.swift in Sources */,
@@ -2138,6 +2148,7 @@
 				F4C6F9362DCB72940092C00C /* CBUserAccountDetail.swift in Sources */,
 				F41EBF4C2DC4DB20001413DE /* AwardActionsTableController.swift in Sources */,
 				8B0044192DC72AA900CAEF82 /* CBPresetCell.swift in Sources */,
+				35A420FA2E828B7800D6C951 /* BulkDownloadStatusCell.swift in Sources */,
 				F4371C5C2DF1559700391303 /* AppState.swift in Sources */,
 				F41EBF4D2DC4DB20001413DE /* CBAwardEmpValidationVC.swift in Sources */,
 				F4E5DA062E3C9F9700C96BDF /* CBLineCalendarCollectionViewController.swift in Sources */,
@@ -2244,6 +2255,7 @@
 				F41EBF992DC4DB20001413DE /* CBDownloadAlldomicileViewController.swift in Sources */,
 				F41EBFC32DC4E19A001413DE /* DocumentsCollectionViewModel.swift in Sources */,
 				F41EBF9A2DC4DB20001413DE /* CBNewBidVC.swift in Sources */,
+				35A420FC2E828BDC00D6C951 /* BIAllDomicileDownloadViewModel.swift in Sources */,
 				F41EBF9B2DC4DB20001413DE /* CBProgressVC.swift in Sources */,
 				F41EBF9C2DC4DB20001413DE /* CBOptionalEmployeesPageViewController.swift in Sources */,
 				F41EBF9D2DC4DB20001413DE /* CBSubmissionCertifyVC.swift in Sources */,

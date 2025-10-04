@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24127" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="iPad13_0rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -367,42 +367,28 @@
                                 <rect key="frame" x="0.0" y="0.0" width="700" height="600"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ano-0I-5RT" userLabel="popView">
-                                        <rect key="frame" x="0.0" y="100" width="700" height="400"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="700" height="600"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Month To Month Vacation Alert" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qCu-s4-TSZ">
-                                                <rect key="frame" x="32" y="16" width="636" height="26"/>
+                                                <rect key="frame" x="32" y="40" width="636" height="26"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="21"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pCE-up-lmo">
-                                                <rect key="frame" x="32" y="66" width="636" height="21"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3sO-Fi-cCD">
-                                                <rect key="frame" x="32" y="127" width="636" height="35"/>
+                                                <rect key="frame" x="32" y="386" width="636" height="35"/>
                                                 <state key="normal" title="Button"/>
                                                 <buttonConfiguration key="configuration" style="plain" title="- The Limitations and Opportunity of a Month-to-Month Vacation"/>
                                                 <connections>
                                                     <action selector="linkBtn1Tapped:" destination="xPW-2Q-tgQ" eventType="touchUpInside" id="BIy-oU-zoX"/>
                                                 </connections>
                                             </button>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3vT-SU-kHF">
-                                                <rect key="frame" x="32" y="202" width="636" height="35"/>
-                                                <state key="normal" title="Button"/>
-                                                <buttonConfiguration key="configuration" style="plain" title="- Who Wants 65 tfp for one week of Vacation"/>
-                                                <connections>
-                                                    <action selector="linkBtn2Tapped:" destination="xPW-2Q-tgQ" eventType="touchUpInside" id="u0b-2c-87F"/>
-                                                </connections>
-                                            </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6uS-eP-IOV">
-                                                <rect key="frame" x="300" y="328" width="100" height="40"/>
+                                                <rect key="frame" x="291" y="510" width="120" height="50"/>
                                                 <color key="backgroundColor" red="0.90956138959999999" green="0.52766042530000001" blue="0.01170270411" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="100" id="Kzp-Rs-peI"/>
-                                                    <constraint firstAttribute="height" constant="40" id="pPx-rf-EmI"/>
+                                                    <constraint firstAttribute="height" constant="50" id="K22-tc-JrC"/>
+                                                    <constraint firstAttribute="width" constant="120" id="Ze0-YM-fwI"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="19"/>
                                                 <state key="normal" title="OK">
@@ -412,32 +398,48 @@
                                                     <action selector="btnOkAction:" destination="xPW-2Q-tgQ" eventType="touchUpInside" id="Q37-lQ-bJo"/>
                                                 </connections>
                                             </button>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3vT-SU-kHF">
+                                                <rect key="frame" x="32" y="453" width="636" height="35"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="plain" title="- Who Wants 65 tfp for one week of Vacation"/>
+                                                <connections>
+                                                    <action selector="linkBtn2Tapped:" destination="xPW-2Q-tgQ" eventType="touchUpInside" id="u0b-2c-87F"/>
+                                                </connections>
+                                            </button>
+                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="hUH-Gg-af7">
+                                                <rect key="frame" x="32" y="98" width="636" height="256"/>
+                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                                <color key="textColor" systemColor="labelColor"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                            </textView>
                                         </subviews>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
-                                            <constraint firstItem="3sO-Fi-cCD" firstAttribute="top" secondItem="pCE-up-lmo" secondAttribute="bottom" constant="40" id="8dT-XR-YgW"/>
-                                            <constraint firstAttribute="trailing" secondItem="6uS-eP-IOV" secondAttribute="trailing" constant="300" id="9ig-RD-mLJ"/>
-                                            <constraint firstAttribute="trailing" secondItem="3vT-SU-kHF" secondAttribute="trailing" constant="32" id="E9r-fy-Ivp"/>
-                                            <constraint firstAttribute="bottom" secondItem="6uS-eP-IOV" secondAttribute="bottom" constant="32" id="KyI-31-pom"/>
+                                            <constraint firstAttribute="trailing" secondItem="3vT-SU-kHF" secondAttribute="trailing" constant="32" id="4ff-LR-ona"/>
+                                            <constraint firstAttribute="trailing" secondItem="hUH-Gg-af7" secondAttribute="trailing" constant="32" id="5Ye-dU-zYe"/>
+                                            <constraint firstItem="qCu-s4-TSZ" firstAttribute="top" secondItem="Ano-0I-5RT" secondAttribute="top" constant="40" id="81i-7b-8Ot"/>
+                                            <constraint firstAttribute="trailing" secondItem="3sO-Fi-cCD" secondAttribute="trailing" constant="32" id="ClQ-9u-YKy"/>
+                                            <constraint firstItem="6uS-eP-IOV" firstAttribute="top" secondItem="3vT-SU-kHF" secondAttribute="bottom" constant="22" id="MQJ-lr-U3r"/>
+                                            <constraint firstAttribute="bottom" secondItem="6uS-eP-IOV" secondAttribute="bottom" constant="40" id="N1q-tV-LQ2"/>
+                                            <constraint firstItem="3sO-Fi-cCD" firstAttribute="leading" secondItem="Ano-0I-5RT" secondAttribute="leading" constant="32" id="N9f-mi-PLZ"/>
                                             <constraint firstItem="qCu-s4-TSZ" firstAttribute="leading" secondItem="Ano-0I-5RT" secondAttribute="leading" constant="32" id="O4K-RZ-RfW"/>
-                                            <constraint firstItem="pCE-up-lmo" firstAttribute="top" secondItem="qCu-s4-TSZ" secondAttribute="bottom" constant="24" id="a31-Ix-7LX"/>
-                                            <constraint firstAttribute="trailing" secondItem="pCE-up-lmo" secondAttribute="trailing" constant="32" id="cbF-ke-KRz"/>
-                                            <constraint firstItem="3vT-SU-kHF" firstAttribute="leading" secondItem="Ano-0I-5RT" secondAttribute="leading" constant="32" id="cop-m5-zTi"/>
-                                            <constraint firstItem="3sO-Fi-cCD" firstAttribute="leading" secondItem="Ano-0I-5RT" secondAttribute="leading" constant="32" id="eNc-SH-RpZ"/>
-                                            <constraint firstItem="3vT-SU-kHF" firstAttribute="top" secondItem="3sO-Fi-cCD" secondAttribute="bottom" constant="40" id="f4g-iW-4ME"/>
-                                            <constraint firstAttribute="trailing" secondItem="3sO-Fi-cCD" secondAttribute="trailing" constant="32" id="k06-aH-7Qx"/>
-                                            <constraint firstItem="6uS-eP-IOV" firstAttribute="leading" secondItem="Ano-0I-5RT" secondAttribute="leading" constant="300" id="kNv-6u-5u8"/>
-                                            <constraint firstItem="qCu-s4-TSZ" firstAttribute="top" secondItem="Ano-0I-5RT" secondAttribute="top" constant="16" id="nls-Xm-6vF"/>
-                                            <constraint firstItem="pCE-up-lmo" firstAttribute="leading" secondItem="Ano-0I-5RT" secondAttribute="leading" constant="32" id="pQS-kG-ead"/>
+                                            <constraint firstItem="6uS-eP-IOV" firstAttribute="centerX" secondItem="Ano-0I-5RT" secondAttribute="centerX" constant="1" id="PmV-VU-jW9"/>
+                                            <constraint firstItem="hUH-Gg-af7" firstAttribute="leading" secondItem="Ano-0I-5RT" secondAttribute="leading" constant="32" id="UeT-IM-JmJ"/>
+                                            <constraint firstItem="3vT-SU-kHF" firstAttribute="top" secondItem="3sO-Fi-cCD" secondAttribute="bottom" constant="32" id="X3g-KO-gCy"/>
+                                            <constraint firstItem="3sO-Fi-cCD" firstAttribute="top" secondItem="hUH-Gg-af7" secondAttribute="bottom" constant="32" id="Y89-be-mpP"/>
+                                            <constraint firstItem="3vT-SU-kHF" firstAttribute="leading" secondItem="Ano-0I-5RT" secondAttribute="leading" constant="32" id="g7q-M3-2ga"/>
+                                            <constraint firstItem="hUH-Gg-af7" firstAttribute="top" secondItem="qCu-s4-TSZ" secondAttribute="bottom" constant="32" id="iTr-9H-CuO"/>
                                             <constraint firstAttribute="trailing" secondItem="qCu-s4-TSZ" secondAttribute="trailing" constant="32" id="pYv-bd-Ry6"/>
                                         </constraints>
                                     </view>
                                 </subviews>
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="Ano-0I-5RT" secondAttribute="bottom" constant="100" id="V4U-9k-RqW"/>
+                                    <constraint firstAttribute="bottom" secondItem="Ano-0I-5RT" secondAttribute="bottom" id="V4U-9k-RqW"/>
                                     <constraint firstItem="Ano-0I-5RT" firstAttribute="leading" secondItem="1SE-CL-2En" secondAttribute="leading" id="evW-zg-wkV"/>
-                                    <constraint firstItem="Ano-0I-5RT" firstAttribute="top" secondItem="1SE-CL-2En" secondAttribute="top" constant="100" id="hn5-yx-T6z"/>
+                                    <constraint firstItem="Ano-0I-5RT" firstAttribute="top" secondItem="1SE-CL-2En" secondAttribute="top" id="hn5-yx-T6z"/>
                                     <constraint firstAttribute="trailing" secondItem="Ano-0I-5RT" secondAttribute="trailing" id="o6u-Ow-gxK"/>
                                 </constraints>
                             </view>
@@ -453,12 +455,12 @@
                     </view>
                     <size key="freeformSize" width="700" height="600"/>
                     <connections>
-                        <outlet property="content" destination="pCE-up-lmo" id="Xve-xN-3bD"/>
+                        <outlet property="content" destination="hUH-Gg-af7" id="XVV-ob-2qa"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="97U-Dp-0CA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-414" y="3344"/>
+            <point key="canvasLocation" x="-414.24418604651163" y="3343.6046511627906"/>
         </scene>
         <!--Month To Month PdfVC-->
         <scene sceneID="iRN-vw-ISO">
@@ -651,10 +653,10 @@
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="cell" id="HPs-m5-m8o">
-                                        <rect key="frame" x="0.0" y="50" width="284" height="43.5"/>
+                                        <rect key="frame" x="0.0" y="50" width="284" height="51"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="HPs-m5-m8o" id="zSZ-0L-FqJ">
-                                            <rect key="frame" x="0.0" y="0.0" width="284" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="284" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -3530,28 +3532,28 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray2Color">
-            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGreenColor">
-            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemOrangeColor">
-            <color red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemYellowColor">
             <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tintColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

@@ -47,6 +47,7 @@ extension BIBidPeriod {
     @NSManaged public var coverLetterDisplayed: NSNumber?
     @NSManaged public var crewBidSecretVacation: NSObject?
     @NSManaged public var crewIdentifier: NSNumber?
+    @NSManaged public var credentialEmployeenumber: NSNumber?
     @NSManaged public var currentAmPmHerb: NSNumber?
     @NSManaged public var currentDateTime: Date?
     @NSManaged public var cWeekDays: String?
