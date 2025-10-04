@@ -468,7 +468,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                         }
                         self.seniorityAlert()
                     })])
-                    if !self.bidPeriod!.bidPackageErrorDisplayed!.boolValue{
+                    if !(self.bidPeriod!.bidPackageErrorDisplayed?.boolValue == true){
                         // mailbidpackageerror fx
                     }
                 }
@@ -986,10 +986,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     @IBAction func btnHelpAction(_ sender: Any) {
-        print("HelpMenu")
         let storyBoard = UIStoryboard(name: "HelpMenu", bundle: nil)
         if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "CBHelpMenuController") as? CBHelpMenuController{
-//            helpMenuVC.modalPresentationStyle = .formSheet
+            helpMenuVC.modalTransitionStyle = .crossDissolve
             helpMenuVC.preferredContentSize = CGSize(width: 764, height: 630)
             present(helpMenuVC, animated: true)
         }

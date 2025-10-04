@@ -55,7 +55,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
             let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "CBNewBidVC") as! CBNewBidVC
             vc.preferredContentSize = CGSize(width: 600, height: 550)
-            vc.modalPresentationStyle = .formSheet
+            vc.modalTransitionStyle = .crossDissolve
             vc.isModalInPresentation = true
             present(vc, animated: true)
             self.bidDownloadButton.tag = 1
@@ -167,12 +167,11 @@ class CBDocumentsCollectionViewController: BaseViewController {
     }
     
     @IBAction func helpAction(_ sender: Any) {
-        print("HelpMenu")
-        //        print("HelpMenu")
         let storyBoard = UIStoryboard(name: "HelpMenu", bundle: nil)
         if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "CBHelpMenuController") as? CBHelpMenuController{
             //            helpMenuVC.modalPresentationStyle = .formSheet
             helpMenuVC.preferredContentSize = CGSize(width: 764, height: 630)
+            helpMenuVC.modalTransitionStyle = .crossDissolve
             present(helpMenuVC, animated: true)
         }
     }

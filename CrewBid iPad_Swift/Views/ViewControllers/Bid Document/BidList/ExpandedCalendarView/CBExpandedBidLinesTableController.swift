@@ -39,7 +39,7 @@ class CBExpandedBidLinesTableController: BaseViewController {
     var insertionIndex: Int  {
         get {
             //code to execute
-            return Int(truncating: insertionPoint!.index!)
+            return Int(truncating: insertionPoint!.index ?? 0)
         }
         set(newValue) {
             _insertionIndex = newValue

@@ -491,28 +491,31 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
         }
     }
     
-    func selectedRegionalCities() -> NSArray {
-        var cities: NSArray? = []
+    func selectedRegionalCities() -> [Any] {
+        var cities: [Any]? = []
         let type = self.type?.intValue
         if (type == BICitiesFilterRuleType.BICitiesFilterRuleTypeEastCoast.rawValue) {
-            cities = (UserDefaults.standard.object(forKey: kCBSelectedEastCoastCities) as? NSArray)
+            cities = (UserDefaults.standard.object(forKey: kCBSelectedEastCoastCities) as? [Any])
         }
         else if (type == BICitiesFilterRuleType.BICitiesFilterRuleTypeWestCoast.rawValue) {
-            cities = (UserDefaults.standard.object(forKey: kCBSelectedWestCoastCities) as? NSArray)
+            cities = (UserDefaults.standard.object(forKey: kCBSelectedWestCoastCities) as? [Any])
         }
         else if (type == BICitiesFilterRuleType.BICitiesFilterRuleTypeNonConus.rawValue) {
-            cities = (UserDefaults.standard.object(forKey: kCBSelectedNonConusCities) as? NSArray)
+            cities = (UserDefaults.standard.object(forKey: kCBSelectedNonConusCities) as? [Any])
         }
         else if (type == BICitiesFilterRuleType.BICitiesFilterRuleTypeIntl.rawValue) {
-            cities = (UserDefaults.standard.object(forKey: kCBSelectedInternationalCities) as? NSArray)
+            cities = (UserDefaults.standard.object(forKey: kCBSelectedInternationalCities) as? [Any])
         }
         else if (type == BICitiesFilterRuleType.BICitiesFilterRuleTypeAll.rawValue) {
-            cities = (UserDefaults.standard.object(forKey: kCBSelectedAllCities) as? NSArray)
+            cities = (UserDefaults.standard.object(forKey: kCBSelectedAllCities) as? [Any])
         }
         else if (type == BICitiesFilterRuleType.BICitiesFilterRuleTypeHawaii.rawValue) {
-            cities = (UserDefaults.standard.object(forKey: kCBSelectedHawaiiCities) as? NSArray)
+            cities = (UserDefaults.standard.object(forKey: kCBSelectedHawaiiCities) as? [Any])
         }
-        return cities ?? []
+        if cities == nil {
+            cities = [Any]()
+        }
+        return cities!
     }
     
     
@@ -534,40 +537,55 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
     
     var predicate : NSPredicate {
         var format:NSPredicate? = nil
-        let category = self.category?.intValue
-        let type = self.type?.intValue
-        if category == BIFilterRuleCategory.BITypeFilterRuleCategory.rawValue || category == BIFilterRuleCategory.BIAmPmFilterRuleCategory.rawValue || category == BIFilterRuleCategory.BIUserFlagFilterRuleCategory.rawValue || category == BIFilterRuleCategory.BIFaReserveFilterRuleCategory.rawValue || category == BIFilterRuleCategory.BIPositionFilterRuleCategory.rawValue || category == BIFilterRuleCategory.BIEtopsFilterRuleCategory.rawValue || category == BIFilterRuleCategory.BIEtopsResFilterRuleCategory.rawValue {
-            format = BIFilterRule.formatForCategory(category: category!, type: type!)
+        let category = Int(truncating: self.category!)
+        let type = Int(truncating: self.type!)
+        if category == BIFilterRuleCategory.BITypeFilterRuleCategory.rawValue ||
+            category == BIFilterRuleCategory.BIAmPmFilterRuleCategory.rawValue ||
+            category == BIFilterRuleCategory.BIUserFlagFilterRuleCategory.rawValue ||
+            category == BIFilterRuleCategory.BIFaReserveFilterRuleCategory.rawValue ||
+            category == BIFilterRuleCategory.BIPositionFilterRuleCategory.rawValue ||
+            category == BIFilterRuleCategory.BIEtopsFilterRuleCategory.rawValue ||
+            category == BIFilterRuleCategory.BIEtopsResFilterRuleCategory.rawValue {
+            
+            format = BIFilterRule.formatForCategory(category: category, type: type)
+            
         }else if category == BIFilterRuleCategory.BIDaysOfWeekFilterRuleCategory.rawValue {
+            
             if BIWeekdaysFilterRuleType.BIWeekdaysCompoundType.rawValue == type {
-                format = BIFilterRule.formatForCategory(category: category!, type: type!)
+                format = BIFilterRule.formatForCategory(category: category, type: type)
             }else{
                 let formatString = String(format: "%@ %@ $%@",self.keyPath!,self.predicateOperatorString(),BIFilterRuleValueVariablesKey)
+                
                 format = NSPredicate(format: formatString)
             }
         }else if category == BIFilterRuleCategory.BITripLengthFilterRuleCategory.rawValue {
             if self.abbreviation == "Su" || self.abbreviation == "Mo" || self.abbreviation == "Tu" || self.abbreviation == "Wed" || self.abbreviation == "Th" || self.abbreviation == "Fr" || self.abbreviation == "Sa" || self.abbreviation == "Wknds" {
                 if BIWeekdaysFilterRuleType.BIWeekdaysCompoundType.rawValue == type {
-                    format = BIFilterRule.formatForCategory(category: category!, type: type!)
+                    format = BIFilterRule.formatForCategory(category: category, type: type)
                 }else{
                     let formatString = String(format: "%@ %@ $%@", self.keyPath!,self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
                     format = NSPredicate(format: formatString)
                 }
             }else{
                 if BITripLengthFilterRuleType.BITripLengthCompoundType.rawValue == type {
-                    format = BIFilterRule.formatForCategory(category: category!, type: type!)
+                    format = BIFilterRule.formatForCategory(category: category, type: type)
                 }else{
                     let formatString = String(format: "%@ %@ $%@", keyPath!, self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
                     format = NSPredicate(format: formatString)
                 }
             }
         }else if category == BIFilterRuleCategory.BICitiesFilterRuleCategory.rawValue && type != BICitiesFilterRuleType.BICitiesFilterRuleTypeNonConusLegs.rawValue {
-            if type == BICitiesFilterRuleType.BICitiesFilterRuleTypeEastCoast.rawValue || type == BICitiesFilterRuleType.BICitiesFilterRuleTypeWestCoast.rawValue || type == BICitiesFilterRuleType.BICitiesFilterRuleTypeNonConus.rawValue || type == BICitiesFilterRuleType.BICitiesFilterRuleTypeIntl.rawValue || type == BICitiesFilterRuleType.BICitiesFilterRuleTypeAll.rawValue || type == BICitiesFilterRuleType.BICitiesFilterRuleTypeHawaii.rawValue{
+            if type == BICitiesFilterRuleType.BICitiesFilterRuleTypeEastCoast.rawValue ||
+                type == BICitiesFilterRuleType.BICitiesFilterRuleTypeWestCoast.rawValue ||
+                type == BICitiesFilterRuleType.BICitiesFilterRuleTypeNonConus.rawValue ||
+                type == BICitiesFilterRuleType.BICitiesFilterRuleTypeIntl.rawValue ||
+                type == BICitiesFilterRuleType.BICitiesFilterRuleTypeAll.rawValue ||
+                type == BICitiesFilterRuleType.BICitiesFilterRuleTypeHawaii.rawValue{
                 let formatString = String(format: "SUBQUERY(days, $DAY, ($DAY.info.city IN $SET) && $DAY.trip.dropForFiltersSorts == 0).@count %@ $%@", self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
                 format = NSPredicate(format: formatString)
                 var filterVars = self.variables as! [String : Any]
                 if filterVars["SET"] == nil {
-                    let SET = NSSet(array: self.selectedRegionalCities() as! [Any])
+                    let SET = self.selectedRegionalCities()
                     filterVars["SET"] = SET
                     self.variables = filterVars as NSDictionary
                 }
@@ -589,7 +607,8 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
             }
         }else if category == BIFilterRuleCategory.BIOvernightCitiesBulkRuleCategory.rawValue{
             AppState.shared.currentBidPeriod?.isOverNightBulkApplied = "YES"
-            let formatString = "isTrashed == NO"
+//            let formatString = "isTrashed == NO"
+            let formatString: String = "isTrashed == NO AND  isOvernightFiltered == NO"
             format = NSPredicate(format: formatString)
             return format!
         }
@@ -612,11 +631,13 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
                 if fetchedObjects.count > 0 {
                     formatString = "commutabilityOverall == 100"
                 }
-                if !(formatString.length > 1){
+                if !(formatString.count > 1){
                     formatString = "commutabilityOverall == 0"
                 }
                 format = NSPredicate(format: String(format: "(%@)", formatString))
-                
+                if bidPeriod!.orderedLines().first!.totalCommutes!.intValue == 0 && bidPeriod!.orderedLines().first!.orderedTripObjects().count > 0{
+                    format = NSPredicate(value: true)
+                }
             } catch {
                 print("Fetch error: \(error.localizedDescription)")
             }
@@ -624,6 +645,7 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
             
         }else if category == BIFilterRuleCategory.BICommutabilityFilterRuleCategory.rawValue{
             let fetchRequest:NSFetchRequest<Commutability> = Commutability.fetchRequest()
+            
             do{
                 let fetchedObjects = try self.managedObjectContext!.fetch(fetchRequest)
                 

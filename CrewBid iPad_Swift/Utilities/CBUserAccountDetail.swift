@@ -88,10 +88,8 @@ import FirebaseCrashlytics
     
 
      func saveUserInfo() {
-         let fileManager = FileManager.default
          let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
          guard let documentsDirectory = paths.first else { return }
-         let path = documentsDirectory.appending("/UserAccountDetails.plist")
          
          var dicUserDetails: [String: Any] = [:]
          
@@ -219,7 +217,7 @@ import FirebaseCrashlytics
     // Function to read user information from a plist file
 
     func readPlist() -> NSMutableDictionary {
-        let plistFileName = "UserAccountDetails.plist"
+        let plistFileName = "LocalUserDetails.plist"
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .allDomainsMask, true)
         let documentPath = paths[0] as NSString
         let plistPath = documentPath.appendingPathComponent(plistFileName)
@@ -240,7 +238,7 @@ import FirebaseCrashlytics
     
      func isUserInfoAvailable() -> Bool {
          var flag = false
-         guard var dicUserData = readPlist() as? [String: Any] else {
+         guard let dicUserData = readPlist() as? [String: Any] else {
              return false
          }
 

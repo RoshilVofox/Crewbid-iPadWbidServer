@@ -53,6 +53,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     var locationManager = CLLocationManager()
     var objNetworkType: NetworkType = .ground
     var sc:ServiceConnection?
+    var lastDownloadedBidInfo: NSMutableDictionary?
     func checkUpdate(){
         if self.connectedToInternet(){
             self.checkForUpdate(false)

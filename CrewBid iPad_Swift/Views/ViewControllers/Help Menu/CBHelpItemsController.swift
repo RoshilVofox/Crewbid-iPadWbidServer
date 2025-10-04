@@ -1,5 +1,3 @@
-
-
 import UIKit
 
 class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
@@ -119,8 +117,19 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     @IBAction func btnDismissAction(_ sender: Any) {
+        self.modalTransitionStyle = .crossDissolve
         self.dismiss(animated: true)
     }
+    
+    func isUserInfoAvailable() -> Bool{
+        var isAvailable = false
+        let app = UIApplication.shared.delegate as! AppDelegate
+        if app.isUserInformationAvailable(){
+            isAvailable = true
+        }
+        return isAvailable
+    }
+    
     
     // MARK: - Collection View
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -152,6 +161,7 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
         switch indexPath.item {
         case 0:
             let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "quickTutorialViewController") as! quickTutorialViewController
+            vc.isFirstTime = false
             self.navigationController?.pushViewController(vc, animated: true)
             break
             
@@ -183,8 +193,12 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
             break
             
         case 6:
-            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "CBSubscriptionInfoController") as! CBSubscriptionInfoController
-            self.navigationController?.pushViewController(vc, animated: true)
+            if self.isUserInfoAvailable(){
+                let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "CBSubscriptionInfoController") as! CBSubscriptionInfoController
+                self.navigationController?.pushViewController(vc, animated: true)
+            }else{
+                AlertService.showAlertForTopVC(title: "CrewBid", message: "You cannot check your subscription because you have not yet validated.  To validate, all you have to do is download bid data.  Then you can verify your subscription details.", actions: nil)
+            }
             break
             
         case 7:
@@ -203,8 +217,15 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
             break
             
         case 10:
-            let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "userAccountViewController") as! userAccountViewController
-            self.navigationController?.pushViewController(vc, animated: true)
+            if self.isUserInfoAvailable(){
+                let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "userAccountViewController") as! userAccountViewController
+                vc.isfrom = self
+                self.navigationController?.pushViewController(vc, animated: true)
+            }else{
+                AlertService.showAlertForTopVC(title: "CrewBid", message: "User account not available.\nPlease login in CrewBid with your employee number.", actions: [(title: "OK", style: .default, handler: { _ in
+                    self.dismiss(animated: true)
+                })])
+            }
             break
             
             
@@ -215,11 +236,8 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
             
             
         default:break
-//            print("default")
         }
-        
-        //        userAccount.modalPresentationStyle = .overCurrentContext
-        //        present(userAccount, animated: false)
+
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
