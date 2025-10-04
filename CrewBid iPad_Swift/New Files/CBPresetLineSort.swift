@@ -22,7 +22,9 @@ class CBPresetLineSort: NSObject, NSCoding {
     var order: NSNumber?
     var abbreviation: String?
     var variables: [String: Any]?
+    var lineSortKeyMap: [String: Any]?
     var isBidListSort: NSNumber?
+    var arrayVariables: NSMutableArray?
 
     override init() {
         super.init()

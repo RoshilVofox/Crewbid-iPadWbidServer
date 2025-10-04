@@ -110,9 +110,17 @@ class CBDownloadAlldomicileViewController: UIViewController {
         if GlobalBidInfo.shared.alertCount == 0 {
             AlertService.showAlertForTopVC(title: "Success", message: "All Domicile Bids Downloaded Successfully")
             GlobalBidInfo.shared.alertCount = 1
+            checkFlightData()
         }
     }
 
+    func checkFlightData(){
+        CBUtils.downloadFlightData(){ (result:Bool?) in
+            if result!{
+                print("Flight Data downloaded successfully")
+            }
+        }
+    }
     
     func setUpUI(){
         let currentDate = Date()

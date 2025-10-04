@@ -662,4 +662,18 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
             return false
         }
     }
+    
+    static func lineValuesKeyForBidPeriod(bidPeriod: BIBidPeriod) -> String {
+        var lineValueKey = ""
+        if bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue {
+            lineValueKey = kCBSwaptimizerLineValuesKey
+        }
+        else if bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue {
+            lineValueKey = kCBFaVacationLineValuesKey
+        }
+        else {
+            lineValueKey = (bidPeriod.containsMissingTripLines?.boolValue) ?? false && !bidPeriod.isFABid() ? kCBRound2DefaultLineValuesKey : kCBDefaultLineValuesKey
+        }
+        return lineValueKey
+    }
 }

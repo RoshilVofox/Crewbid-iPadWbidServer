@@ -286,7 +286,9 @@ class BIBidFileDownloadViewModel {
     }
 
     private func performPostDownloadTasks(){
-        checkCrewBidUpdateFile()
+        if !UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
+            checkCrewBidUpdateFile()
+        }
     }
     
     private func checkCrewBidUpdateFile(){

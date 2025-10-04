@@ -773,4 +773,14 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
         return format!.withSubstitutionVariables(self.variables as! [String : Any])
     }
     
+    func loadFilterPreset(pRule: CBPresetFilterRule) {
+        self.abbreviation = pRule.abbreviation
+        self.category = pRule.category
+        self.type = pRule.type
+        self.name = pRule.name
+        self.keyPath = pRule.keyPath
+        self.comparison = pRule.comparison
+        self.variables = pRule.variables as NSDictionary?
+    }
+    
 }
