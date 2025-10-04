@@ -616,6 +616,102 @@ extension BIBidPeriod : Identifiable {
         return lineSortKey
     }
     
+    func lineSortKey(forCommute lineSort: BILineSort) -> String? {
+        // assert-like check (optional)
+        // precondition(lineSort.category?.intValue == BICommutingLineSortCategory, "Commuting line sort must have category equal to BICommutingLineSortCategory")
+
+        var lineSortKey: String?
+        let sortKey = "commuting"
+
+        // Filter existing lineSortKeyMaps for sortKey == "commuting"
+        let sortKeyPredicate = NSPredicate(format: "sortKey == %@", sortKey)
+        let filteredLineSortMaps = self.lineSortKeyMaps?.filtered(using: sortKeyPredicate) as? Set<BILineSortKeyMap> ?? []
+
+        // If no existing sort key map, create a new one
+        if filteredLineSortMaps.isEmpty {
+            guard let context = self.managedObjectContext else { return nil }
+
+            // Create new LineSortKeyMap entity
+            let lineSortKeyMap = BILineSortKeyMap(context: context)
+            lineSortKeyMap.lineSort = lineSort
+            lineSort.lineSortKeyMap = lineSortKeyMap
+            lineSortKeyMap.bidPeriod = self
+            lineSortKeyMap.sortKey = sortKey
+
+            // Find next available dynamic sort key name
+            guard let lineEntity = NSEntityDescription.entity(forEntityName: BILineEntityName, in: context) else {
+                return nil
+            }
+
+            let lineAttributeNames = Array(lineEntity.attributesByName.keys)
+            let dynamicValueNames = lineAttributeNames.filter { $0.hasPrefix("dynamicSortValue") }
+
+            // Collect all used dynamic keys
+            let usedLineValues = self.lineSortKeyMaps?.value(forKey: "lineKey") as? Set<String> ?? []
+
+            var foundDynamicVariable = false
+            for name in dynamicValueNames {
+                if !usedLineValues.contains(name) {
+                    lineSortKey = name
+                    foundDynamicVariable = true
+                    break
+                }
+            }
+
+            // If all dynamic keys used, fallback to newSortKey()
+            if !foundDynamicVariable {
+                lineSortKey = self.newSortKey()
+                if lineSortKey == nil {
+                    context.delete(lineSortKeyMap)
+                    context.delete(lineSort)
+                    return nil
+                }
+            }
+
+            lineSortKeyMap.lineKey = lineSortKey
+
+        } else {
+            // Reuse existing map
+            if let existingMap = filteredLineSortMaps.first {
+                lineSortKey = existingMap.lineKey
+            }
+        }
+
+        guard let lineSortKey = lineSortKey else { return nil }
+
+        // Build predicate for trips based on commute times
+        let formatString = """
+        line == $LINE &&
+        !(((startWeekday == 1 && info.departTime < $\(BISortSunDepartTimeVariablesKey)) ||
+          (endWeekday == 1 && info.returnTime > $\(BISortSunReturnTimeVariablesKey)) ||
+          (startWeekday < 6 && startWeekday != 1 && info.departTime < $\(BISortMonThursDepartTimeVariablesKey)) ||
+          (endWeekday < 6 && endWeekday != 1 && info.returnTime > $\(BISortMonThursReturnTimeVariablesKey)) ||
+          (startWeekday == 6 && info.departTime < $\(BISortFriDepartTimeVariablesKey)) ||
+          (endWeekday == 6 && info.returnTime > $\(BISortFriReturnTimeVariablesKey)) ||
+          (startWeekday == 7 && info.departTime < $\(BISortSatDepartTimeVariablesKey)) ||
+          (endWeekday == 7 && info.returnTime > $\(BISortSatReturnTimeVariablesKey))) &&
+          dropForFiltersSorts == 0)
+        """
+
+        var predicate = NSPredicate(format: formatString)
+        predicate = predicate.withSubstitutionVariables(lineSort.variables! as? [String : Any] ?? [:])
+
+        guard let moc = self.managedObjectContext else { return lineSortKey }
+
+        // Fetch trips for each line, count, and assign value to dynamic sort key
+        let fetchRequest: NSFetchRequest<BITrip> = BITrip.fetchRequest()
+        fetchRequest.resultType = .countResultType
+
+        for case let line as BILine in self.lines! {
+            fetchRequest.predicate = predicate.withSubstitutionVariables(["LINE": line])
+            let count = (try? moc.count(for: fetchRequest)) ?? 0
+            line.setValue(count, forKey: lineSortKey)
+        }
+
+        return lineSortKey
+    }
+
+    
     func lineSortKeyForPosition( posLineSort: BILineSort) -> String? {
         var lineSortKey:String = String()
         // Create line sort key, depending on type of line sort and city.

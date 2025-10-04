@@ -11,7 +11,8 @@ protocol CBPresetCellDelegate {
     
     func deleteButtonPressed(presetCell: CBPresetCell, indexpath: IndexPath)
     func nameTextFieldEndedEditing(presetCell: CBPresetCell)
-    func nameTextFieldBeginEditing()
+    func nameTextFieldBeginEditing(presetCell: CBPresetCell)
+    func setPrests()
 }
 
 class CBPresetCell: UITableViewCell, UITextFieldDelegate {
@@ -59,7 +60,7 @@ class CBPresetCell: UITableViewCell, UITextFieldDelegate {
     }
         
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        self.Delegate?.nameTextFieldBeginEditing()
+        self.Delegate?.nameTextFieldBeginEditing(presetCell: self)
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {

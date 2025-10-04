@@ -15,21 +15,21 @@ class CBPreset: NSObject, NSCoding {
     var filterRules: [CBPresetFilterRule] = []
     var lineValues: [Any] = []
     
-    var month: String?
-    var year: String?
-    var position: String?
+    var month: NSNumber?
+    var year: NSNumber?
+    var position: NSNumber?
     
     var name: String?
     var presetIdentifier: String?
     var appVersion: String?
     
-    var selected: String?
-    var commutabilityFilterDetails: Any?
-    var commutabilitySortDetails: Any?
-    var commuteTimeDetails: Any?
-    var overnight: Any?
+    var selected: NSNumber?
+    var commutabilityFilterDetails: NSMutableDictionary?
+    var commutabilitySortDetails: NSMutableDictionary?
+    var commuteTimeDetails: NSMutableArray?
+    var overnight: NSMutableArray?
     
-    var isRedEyeFilterAdded: Bool = false
+    var isRedEyeFilterAdded: NSNumber?
     
     init(rules: [BIFilterRule], sorts: [BILineSort], lineValues: [Any], name pname: String) {
         super.init()
@@ -69,16 +69,16 @@ class CBPreset: NSObject, NSCoding {
         self.lineSorts = decoder.decodeObject(forKey: "lineSorts") as? [CBPresetLineSort] ?? []
         self.filterRules = decoder.decodeObject(forKey: "filterRules") as? [CBPresetFilterRule] ?? []
         self.lineValues = decoder.decodeObject(forKey: "lineValues") as? [Any] ?? []
-        self.month = decoder.decodeObject(forKey: "month") as? String
-        self.year = decoder.decodeObject(forKey: "year") as? String
-        self.position = decoder.decodeObject(forKey: "position") as? String
+        self.month = decoder.decodeObject(forKey: "month") as? NSNumber
+        self.year = decoder.decodeObject(forKey: "year") as? NSNumber
+        self.position = decoder.decodeObject(forKey: "position") as? NSNumber
         self.name = decoder.decodeObject(forKey: "name") as? String
-        self.selected = decoder.decodeObject(forKey: "selected") as? String
+        self.selected = decoder.decodeObject(forKey: "selected") as? NSNumber
         self.presetIdentifier = decoder.decodeObject(forKey: "presetIdentifier") as? String
         self.appVersion = decoder.decodeObject(forKey: "appVersion") as? String
-        self.commutabilityFilterDetails = decoder.decodeObject(forKey: "commutabilityFilterDetails")
-        self.commutabilitySortDetails = decoder.decodeObject(forKey: "commutabilitySortDetails")
-        self.commuteTimeDetails = decoder.decodeObject(forKey: "commuteTimeDetails")
-        self.overnight = decoder.decodeObject(forKey: "overnight")
+        self.commutabilityFilterDetails = decoder.decodeObject(forKey: "commutabilityFilterDetails") as? NSMutableDictionary
+        self.commutabilitySortDetails = decoder.decodeObject(forKey: "commutabilitySortDetails") as? NSMutableDictionary
+        self.commuteTimeDetails = decoder.decodeObject(forKey: "commuteTimeDetails") as? NSMutableArray
+        self.overnight = decoder.decodeObject(forKey: "overnight") as? NSMutableArray
     }
 }
