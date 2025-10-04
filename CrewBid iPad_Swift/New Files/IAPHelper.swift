@@ -901,6 +901,41 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         return isFree
     }
     
+    func getBestAvailableCBExpirationDateFromiCloudAndKeyChain() -> Date? {
+        // First check to see if the iCloud date is available, if not,
+        // get the local date
+        let iCloudExpirationDate = getICloudDecryptedExpirationDate()
+        let localExpirationDate = getLocalDecryptedExpirationDate()
+        // let parseDate = getParseExpirationDate()
+        // let cwaMasterExpirationDate = getCWAMasterExpirationDate()
+        
+        var expirationDate: Date?
+        
+        if let iCloudDate = iCloudExpirationDate, let localDate = localExpirationDate {
+            if iCloudDate == localDate {
+                expirationDate = iCloudDate
+            } else if iCloudDate > localDate {
+                expirationDate = iCloudDate
+                setLocalEncryptedExpirationDate(iCloudDate)
+            } else {
+                expirationDate = localDate
+                setICloudEncryptedExpirationDate(localDate)
+            }
+        } else if let iCloudDate = iCloudExpirationDate {
+            expirationDate = iCloudDate
+            setLocalEncryptedExpirationDate(iCloudDate)
+        } else if let localDate = localExpirationDate {
+            expirationDate = localDate
+            setICloudEncryptedExpirationDate(localDate)
+        } else {
+            expirationDate = getFreeTrialDecryptedExpirationDate()
+        }
+        
+        return expirationDate
+    }
+    
+    
+    
     func getBestAvailableExpirationDate() -> Date? {
         guard let app = UIApplication.shared.delegate as? AppDelegate else {
             return nil
@@ -1237,6 +1272,24 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
             return "Subscription Expired!\nFree Trial Expired on: \(dateFormatter.string(from: expirationDate))"
         }
     }
+    
+    func latestPurchaseType() -> Int {
+        var productType = 0
+        guard let userInfo = CBUserInfo.bestAvailableUserInfoDictionary() else {
+            return productType
+        }
+        
+        if let productIDs = userInfo[kCBUserInfoPurchaseTypesKey] as? [String], !productIDs.isEmpty {
+            if let lastProductID = productIDs.last {
+                if lastProductID == "NewHirePromo" {
+                    productType = 3
+                }
+            }
+        }
+        
+        return productType
+    }
+    
     
     func getExpirationDateString() -> String {
         let dateFormatter = DateFormatter()

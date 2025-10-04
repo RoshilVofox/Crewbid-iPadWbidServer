@@ -11,14 +11,13 @@ protocol ServiceConnectionDelegate: AnyObject {
     func responseError(_ errMsg: String)
     func serviceResponse(_ arrResponse: [Any])
     func responseStatus(_ responseStatus: Int)
-    func serviceResponse(_ connection: ServiceConnection, response arrResponse: [Any])
     func connectionFailed()
     func requestFailed()
     func connectionDataReceived(_ progress: Float)
 }
 let kURLConnectionTimeout: TimeInterval = 90.0
 
-class ServiceConnection: NSObject, URLSessionDelegate{
+class ServiceConnection: NSObject, URLSessionDelegate, URLSessionDataDelegate{
     var userName: String?
     var password: String?
     var hostName: String?
@@ -56,6 +55,10 @@ class ServiceConnection: NSObject, URLSessionDelegate{
     var baseData: Data?
     var app: AppDelegate!
     var vacationSession: URLSession?
+    
+    override init() {
+        self.app = UIApplication.shared.delegate as? AppDelegate
+    }
     
     func initialize(username: String, password: String, authenticationName serviceName: String) {
         let defaults = UserDefaults.standard
@@ -114,20 +117,22 @@ class ServiceConnection: NSObject, URLSessionDelegate{
                                  delegate: self,
                                  delegateQueue: OperationQueue.main)
         
-        let task = session.dataTask(with: request) { [weak self] data, response, error in
-            guard let self = self else { return }
-            
-            if let error = error {
-                print("GET failed with error: \(error.localizedDescription)")
-                self.delegate?.connectionFailed()
-                return
-            }
-            
-            if let data = data {
-                self.webData = data as! NSMutableData
-                self.app.webData = data as! NSMutableData
-            }
-        }
+//        let task = session.dataTask(with: request) { [weak self] data, response, error in
+//            guard let self = self else { return }
+//            
+//            if let error = error {
+//                print("GET failed with error: \(error.localizedDescription)")
+//                self.delegate?.connectionFailed()
+//                return
+//            }
+//            
+//            if let data = data {
+//                self.webData = NSMutableData(data: data)
+//                print(self.webData!)
+//                self.app.webData = NSMutableData(data: data)
+//            }
+//        }
+        let task = session.dataTask(with: request)
         
         task.resume()
     }
@@ -247,37 +252,31 @@ class ServiceConnection: NSObject, URLSessionDelegate{
     }
     
     func postData(urlName: String, jsonString: String) {
-        var request = URLRequest(url: URL(string: serviceURL!)!)
+        guard let serviceURL = serviceURL, let url = URL(string: serviceURL) else {
+            delegate?.connectionFailed()
+            return
+        }
+        
+        var request = URLRequest(url: url)
         request.cachePolicy = .reloadIgnoringLocalCacheData
         request.timeoutInterval = kURLConnectionTimeout
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.httpBody = jsonString.data(using: .utf8)
         
-        let app = UIApplication.shared.delegate as! AppDelegate
-        
-        let session = URLSession(configuration: .default, delegate: self, delegateQueue: .main)
-        
-        let dataTask = session.dataTask(with: request) { data, response, error in
-            if let error = error as NSError? {
-                if error.code == NSURLErrorTimedOut {
-                    let objEvent = CBOfflineEvents()
-                    objEvent.sendOfflineDataForTimeOut(url: urlName, month: nil)
-                }
-                self.delegate?.connectionFailed()
-                return
-            }
-            
-            if let data = data {
-                self.webData = data as! NSMutableData
-                app.webData = data as? NSMutableData
-            }
-        }
-        
-        webData = Data() as! NSMutableData
+        // Reset buffers
+        webData = NSMutableData()
         app.webData = NSMutableData()
+        isPost = true
         
-        dataTask.resume()
+        // Create a delegate-based session
+        let session = URLSession(configuration: .default,
+                                 delegate: self,
+                                 delegateQueue: OperationQueue.main)
+        
+        // Create task WITHOUT closure, so delegate methods fire
+        let task = session.dataTask(with: request)
+        task.resume()
     }
     
     func postDataForUpdateInApp(urlName: String, jsonString: String) {
@@ -380,7 +379,7 @@ class ServiceConnection: NSObject, URLSessionDelegate{
             
             do {
                 let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
-                print("Response JSON: \(json)")
+//                print("Response JSON: \(json)")
                 
                 var jsonArray: [Any] = []
                 if let arr = json as? [Any] {
@@ -445,7 +444,7 @@ class ServiceConnection: NSObject, URLSessionDelegate{
             
             do {
                 let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
-                print("Response JSON: \(json)")
+//                print("Response JSON: \(json)")
                 
                 // Wrap into array (same as your Obj-C)
                 let jsonArray: [Any] = [json]
@@ -503,7 +502,7 @@ class ServiceConnection: NSObject, URLSessionDelegate{
             
             do {
                 let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
-                print("Response JSON: \(json)")
+//                print("Response JSON: \(json)")
                 
                 // Wrap in array (like Obj-C)
                 let jsonArray: [Any] = [json]
@@ -575,7 +574,7 @@ class ServiceConnection: NSObject, URLSessionDelegate{
                     didReceive response: URLResponse,
                     completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         
-        print("response received \(response)")
+//        print("response received \(response)")
         
         guard let res = response as? HTTPURLResponse else {
             completionHandler(.cancel)

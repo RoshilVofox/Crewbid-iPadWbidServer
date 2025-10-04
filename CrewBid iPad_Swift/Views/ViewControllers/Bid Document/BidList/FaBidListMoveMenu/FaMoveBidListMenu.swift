@@ -24,7 +24,7 @@ class FaMoveBidListMenu: UIViewController,UITableViewDelegate,UITableViewDataSou
     
     var array : [String] = []
     var lines : [BILine] = []
-    var moveObj =  CBBidListVC()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +32,6 @@ class FaMoveBidListMenu: UIViewController,UITableViewDelegate,UITableViewDataSou
         tableView.delegate = self
         viewBackground.clipsToBounds = true
         viewBackground.layer.cornerRadius = 5
-        moveObj.setupVariables()
     }
    
     
@@ -50,42 +49,42 @@ class FaMoveBidListMenu: UIViewController,UITableViewDelegate,UITableViewDataSou
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedString = self.array[indexPath.row]
-        NotificationCenter.default.post(name: NSNotification.Name("flipToBidList"), object: nil)
         switch selectedString {
         case "Move Position A to Bid List" :
             for line in self.lines {
                 if line.faPositionString == "A" {
-                    moveObj.insertLines([line])
+                    NotificationCenter.default.post(name: NSNotification.Name("flipToBidList"),object: nil,userInfo: ["lines": [line], "faBidAllPositions": false])
                 }
             }
             break
         case "Move Position B to Bid List" :
             for line in self.lines {
                 if line.faPositionString == "B" {
-                    moveObj.insertLines([line])
+                    NotificationCenter.default.post(name: NSNotification.Name("flipToBidList"),object: nil,userInfo: ["lines": [line], "faBidAllPositions": false])
                 }
             }
             break
         case "Move Position C to Bid List" :
             for line in self.lines {
                 if line.faPositionString == "C" {
-                    moveObj.insertLines([line])
+                    NotificationCenter.default.post(name: NSNotification.Name("flipToBidList"),object: nil,userInfo: ["lines": [line], "faBidAllPositions": false])
                 }
             }
             break
         case "Move Position D to Bid List" :
             for line in self.lines {
                 if line.faPositionString == "D" {
-                    moveObj.insertLines([line])
+                    NotificationCenter.default.post(name: NSNotification.Name("flipToBidList"),object: nil,userInfo: ["lines": [line], "faBidAllPositions": false])
                 }
             }
             break
         case "Move All Positions to Bid List" :
-            moveObj.insertLines(self.lines, faBidAllPositions: true)
+            NotificationCenter.default.post(name: NSNotification.Name("flipToBidList"),object: nil,userInfo: ["lines": self.lines, "faBidAllPositions": true])
             break
         default:
             break
         }
+        self.dismiss(animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

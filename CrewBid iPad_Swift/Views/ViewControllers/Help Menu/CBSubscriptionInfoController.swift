@@ -728,10 +728,6 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
         
     }
     
-    func serviceResponse(_ connection: ServiceConnection, response arrResponse: [Any]) {
-        
-    }
-    
     func connectionFailed() {
         self.networkFailureMessage()
     }
@@ -755,7 +751,7 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
     private var products:[SKProduct]?
     private var priceFormatter = NumberFormatter()
     private var observing: Bool = false
-    private var objDataBuilder: ODataBuilder?
+    private var objDataBuilder = ODataBuilder()
     private var dicOfflinePaymentData: [String: Any] = [:]
     private var isFetching: Bool = false
     private var purchaseType: String?
@@ -1011,7 +1007,7 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
         
         app.sc?.delegate = self
         webType = .getSubscriptionDetails
-        objDataBuilder?.checkAuthentication(&dicAuthenticationInfo)
+        objDataBuilder.checkAuthentication(&dicAuthenticationInfo)
     }
     
     func checkIsFree() -> Bool {
@@ -1060,7 +1056,7 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
                 app.sc?.delegate = self
                 webType = .updateMaxSubscription
                 
-                objDataBuilder?.updateMaxInAppPurchaseDetails(dicData)
+                objDataBuilder.updateMaxInAppPurchaseDetails(dicData)
             }else if purchaseType == "CrewBid" {
                 guard let empNumber = app.ObjUserAccount?.employeeNumber, !empNumber.isEmpty else {
                     return
@@ -1087,9 +1083,9 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
                 webType = .updateSubscriptionDetails
                 
                 if isRest {
-                    objDataBuilder?.updateInAppPurchaseDetails(dicData)
+                    objDataBuilder.updateInAppPurchaseDetails(dicData)
                 } else {
-                    objDataBuilder?.soapUpdateInAppPurchaseDetails(dicData)
+                    objDataBuilder.soapUpdateInAppPurchaseDetails(dicData)
                 }
             }
     }
@@ -1122,7 +1118,7 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
 
             app.sc?.delegate = self
             webType = .updateMaxSubscription
-            objDataBuilder?.updateMaxInAppPurchaseDetails(dicData)
+            objDataBuilder.updateMaxInAppPurchaseDetails(dicData)
         }
     }
     
@@ -1152,7 +1148,7 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
 
             app.sc?.delegate = self
             webType = .updateMaxSubscription   // assuming you mapped enum in Swift
-            objDataBuilder?.updateMaxInAppPurchaseDetailsAfterPending(dicData)
+            objDataBuilder.updateMaxInAppPurchaseDetailsAfterPending(dicData)
         }
     }
     

@@ -190,7 +190,6 @@ class ODataBuilder {
         }
         
         app.sc?.constructUrl(urlString)
-        // app.SC.SplitterTag = "Response" // Uncomment if needed
         print("json string--\(jsonString)")
         
         app.sc?.checkCrewBidServiceAccessibility { isAccessible in
@@ -202,5 +201,25 @@ class ODataBuilder {
             }
         }
     }
+    
+    func getWBidVacationFileNames(_ employeeDetails: [String: Any]) {
+        let urlString = "GetCrewBidVacFileNames"
+        guard let data = try? JSONSerialization.data(withJSONObject: employeeDetails, options: []) else {
+            print("Failed to serialize employeeDetails to JSON")
+            return
+        }
+        
+        let jsonString = String(data: data, encoding: .utf8) ?? ""
+        app?.sc?.constructUrl(urlString)
+        
+        print("json string--\(jsonString)")
+        
+        app?.sc?.checkCrewBidServiceAccessibility { isAccessible in
+            if isAccessible {
+                self.app?.sc?.postData(urlName: urlString, jsonString: jsonString)
+            }
+        }
+    }
+    
     
 }

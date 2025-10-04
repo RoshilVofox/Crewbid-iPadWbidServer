@@ -16,4 +16,10 @@ extension UIView {
     func hideActivityIndicator() {
         MBProgressHUD.hide(for: self, animated: true)
     }
+    
+    func updateActivityIndicator(message: String) {
+        DispatchQueue.main.async {
+            MBProgressHUD.forView(self)?.label.text = message
+        }
+    }
 }

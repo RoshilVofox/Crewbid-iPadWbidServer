@@ -163,6 +163,7 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
                     if let rootVC = UIApplication.shared.windows.first?.rootViewController {
                         let vc = storyboard.instantiateViewController(withIdentifier: "CBHelpMenuController") as! CBHelpMenuController
                         vc.preferredContentSize = CGSize(width: 764, height: 630)
+                        vc.modalTransitionStyle = .crossDissolve
                         vc.isModalInPresentation = true
                         rootVC.present(vc, animated: false, completion: nil)
                     }

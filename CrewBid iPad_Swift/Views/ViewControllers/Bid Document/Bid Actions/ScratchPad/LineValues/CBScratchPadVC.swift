@@ -81,8 +81,50 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
             self.bidPeriod!.managedObjectContext!.undoManager = UndoManager()
         }
         
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(moveLinesToScratchpad(_:)),
+            name: NSNotification.Name("moveLinesToScratchpad"),
+            object: nil
+        )
     }
 
+    
+    @objc func moveLinesToScratchpad(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let movedLines = userInfo["Lines"] as? [BILine] else { return }
+
+        // Add them into your local lines array
+        self.lines.append(contentsOf: movedLines)
+
+        // Resort + regroup just like updateLines()
+        let sortPredicates = updateSorts()
+        self.lines = (lines as NSArray).sortedArray(using: sortPredicates) as! [BILine]
+
+        // Rebuild sectionLines (same logic as updateLines)
+        self.sectionLines.removeAll()
+        var tempArray: [BILine] = []
+        for (i, line) in self.lines.enumerated() {
+            if tempArray.isEmpty {
+                tempArray.append(line)
+            } else if tempArray[0].number == line.number {
+                tempArray.append(line)
+            } else {
+                self.sectionLines.append(tempArray)
+                tempArray = [line]
+            }
+            if i == self.lines.count - 1 {
+                self.sectionLines.append(tempArray)
+            }
+        }
+
+        // Update UI
+        DispatchQueue.main.async {
+            self.lblScratchpadLineCount.text = "Scratchpad- \(self.lines.count) Lines"
+            self.fetchTrashedLinesCount()
+            self.scratchPadTableView.reloadData()
+        }
+    }
         
     @objc func updateLines(){
         self.lines.removeAll()
@@ -210,10 +252,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
             if tempLines.count == 0 {
                 return
             } else if tempLines.count == 1 { //Lines move directly to bidlist
-                let bidlist = CBBidListVC()
-                bidlist.setupVariables()
-                bidlist.insertLines(tempLines)
-                NotificationCenter.default.post(name: NSNotification.Name("flipToBidList"), object: nil)
+                NotificationCenter.default.post(name: NSNotification.Name("flipToBidList"),object: nil,userInfo: ["lines": tempLines, "faBidAllPositions": false])
             } else {
                 var arr : [String] = []
                 for item in tempLines {
@@ -608,11 +647,8 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
     }
     
     @IBAction func btnMoveAllToBidListAction(_ sender: Any) {
-        let bidlist = CBBidListVC()
-        bidlist.setupVariables()
-        bidlist.insertLines(self.lines)
         CBGlobalMethods.shared.isMoveAllAction = true
-        NotificationCenter.default.post(name: NSNotification.Name("flipToBidList"), object: nil)
+        NotificationCenter.default.post(name: NSNotification.Name("flipToBidList"),object: nil,userInfo: ["lines": self.lines, "faBidAllPositions": false])
         
     }
     
