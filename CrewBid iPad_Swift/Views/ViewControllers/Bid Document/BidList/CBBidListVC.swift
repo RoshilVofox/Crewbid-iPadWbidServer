@@ -272,10 +272,73 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     
     
     //latest
+    @objc func deleteSelectedLines() {
+        guard selectedCellIndexPaths.count > 0 else { return }
+
+        var selectedRows = Set<Int>()
+        for ip in selectedCellIndexPaths {
+            if let indexPath = ip as? IndexPath {
+                selectedRows.insert(indexPath.row)
+            }
+        }
+
+        var insertionIndex = self.insertionIndex
+        var countOfLinesRemovedBelowInsertionIndex = 0
+
+        for i in (0..<linesArray.count).reversed() {
+            let line = linesArray[i]
+
+            if selectedRows.contains(i) {
+                // Preserve marker
+                if let marker = line.markerTitle, i < linesArray.count - 1 {
+                    let nextLine = linesArray[i + 1]
+                    if nextLine.markerTitle == nil {
+                        nextLine.markerTitle = marker
+                    }
+                }
+
+                // Remove line
+                if line.faBidLineReserve?.boolValue == true {
+                    bidPeriod.faReserveLineExists = false
+                    line.removeFromBidLines()
+                    bidPeriod.managedObjectContext!.delete(line)
+                } else if line.faBidLineMrt?.boolValue == true {
+                    bidPeriod.faMrtLineExists = false
+                    line.removeFromBidLines()
+                    bidPeriod.managedObjectContext!.delete(line)
+                } else {
+                    line.removeFromBidLines()
+                }
+
+                if i <= insertionIndex {
+                    countOfLinesRemovedBelowInsertionIndex += 1
+                }
+
+                linesArray.remove(at: i)
+            }
+        }
+        for (idx, line) in linesArray.enumerated() {
+            line.bidOrder = NSNumber(value: idx + 1)
+        }
+
+        // Adjust insertion index
+        countOfLinesRemovedBelowInsertionIndex = min(countOfLinesRemovedBelowInsertionIndex, insertionIndex)
+        previousInsertionIndex = insertionIndex
+        insertionIndex -= countOfLinesRemovedBelowInsertionIndex
+
+        selectedCellIndexPaths.removeAllObjects()
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
+        insertionIndexUpdate()
+    }
+    
+    
+    
 //    @objc func deleteSelectedLines() {
 //        guard selectedCellIndexPaths.count > 0 else { return }
+//        guard let context = bidPeriod.managedObjectContext,
+//              let undoManager = context.undoManager else { return }
 //
-//        // Build a Set of selected rows for fast lookup
+//        // Build a Set of selected rows
 //        var selectedRows = Set<Int>()
 //        for ip in selectedCellIndexPaths {
 //            if let indexPath = ip as? IndexPath {
@@ -285,6 +348,9 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
 //
 //        var insertionIndex = self.insertionIndex
 //        var countOfLinesRemovedBelowInsertionIndex = 0
+//
+//        // Capture lines to remove for undo
+//        var removedLines: [(line: BILine?, index: Int?, bidOrder: NSNumber?)] = []
 //
 //        // Pass 1: delete selected lines
 //        for i in (0..<linesArray.count).reversed() {
@@ -299,15 +365,18 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
 //                    }
 //                }
 //
+//                // Capture for undo
+//                removedLines.append((line: line, index: i, bidOrder: line.bidOrder))
+//
 //                // Remove line
 //                if line.faBidLineReserve?.boolValue == true {
 //                    bidPeriod.faReserveLineExists = false
 //                    line.removeFromBidLines()
-//                    bidPeriod.managedObjectContext!.delete(line)
+//                    context.delete(line)
 //                } else if line.faBidLineMrt?.boolValue == true {
 //                    bidPeriod.faMrtLineExists = false
 //                    line.removeFromBidLines()
-//                    bidPeriod.managedObjectContext!.delete(line)
+//                    context.delete(line)
 //                } else {
 //                    line.removeFromBidLines()
 //                }
@@ -320,7 +389,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
 //            }
 //        }
 //
-//        // Pass 2: renumber remaining lines in forward order
+//        // Pass 2: renumber remaining lines
 //        for (idx, line) in linesArray.enumerated() {
 //            line.bidOrder = NSNumber(value: idx + 1)
 //        }
@@ -333,98 +402,25 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
 //        selectedCellIndexPaths.removeAllObjects()
 //        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
 //        insertionIndexUpdate()
+//
+//        // Register undo
+//        undoManager.registerUndo(withTarget: self) { targetSelf in
+//            // Restore lines in original positions
+//            for removed in removedLines.sorted(by: { $0.index! < $1.index! }) {
+//                targetSelf.linesArray.insert(removed.line!, at: removed.index!)
+//                removed.line!.bidOrder = removed.bidOrder
+//                // Optionally restore markers if needed
+//            }
+//
+//            // Adjust insertion index
+//            targetSelf.insertionIndex = insertionIndex
+//            targetSelf.previousInsertionIndex = self.previousInsertionIndex
+//
+//            // Refresh UI
+//            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
+//            targetSelf.insertionIndexUpdate()
+//        }
 //    }
-    
-    
-    
-    @objc func deleteSelectedLines() {
-        guard selectedCellIndexPaths.count > 0 else { return }
-        guard let context = bidPeriod.managedObjectContext,
-              let undoManager = context.undoManager else { return }
-
-        // Build a Set of selected rows
-        var selectedRows = Set<Int>()
-        for ip in selectedCellIndexPaths {
-            if let indexPath = ip as? IndexPath {
-                selectedRows.insert(indexPath.row)
-            }
-        }
-
-        var insertionIndex = self.insertionIndex
-        var countOfLinesRemovedBelowInsertionIndex = 0
-
-        // Capture lines to remove for undo
-        var removedLines: [(line: BILine?, index: Int?, bidOrder: NSNumber?)] = []
-
-        // Pass 1: delete selected lines
-        for i in (0..<linesArray.count).reversed() {
-            let line = linesArray[i]
-
-            if selectedRows.contains(i) {
-                // Preserve marker
-                if let marker = line.markerTitle, i < linesArray.count - 1 {
-                    let nextLine = linesArray[i + 1]
-                    if nextLine.markerTitle == nil {
-                        nextLine.markerTitle = marker
-                    }
-                }
-
-                // Capture for undo
-                removedLines.append((line: line, index: i, bidOrder: line.bidOrder))
-
-                // Remove line
-                if line.faBidLineReserve?.boolValue == true {
-                    bidPeriod.faReserveLineExists = false
-                    line.removeFromBidLines()
-                    context.delete(line)
-                } else if line.faBidLineMrt?.boolValue == true {
-                    bidPeriod.faMrtLineExists = false
-                    line.removeFromBidLines()
-                    context.delete(line)
-                } else {
-                    line.removeFromBidLines()
-                }
-
-                if i <= insertionIndex {
-                    countOfLinesRemovedBelowInsertionIndex += 1
-                }
-
-                linesArray.remove(at: i)
-            }
-        }
-
-        // Pass 2: renumber remaining lines
-        for (idx, line) in linesArray.enumerated() {
-            line.bidOrder = NSNumber(value: idx + 1)
-        }
-
-        // Adjust insertion index
-        countOfLinesRemovedBelowInsertionIndex = min(countOfLinesRemovedBelowInsertionIndex, insertionIndex)
-        previousInsertionIndex = insertionIndex
-        insertionIndex -= countOfLinesRemovedBelowInsertionIndex
-
-        selectedCellIndexPaths.removeAllObjects()
-        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
-        insertionIndexUpdate()
-
-        // Register undo
-        undoManager.registerUndo(withTarget: self) { targetSelf in
-            // Restore lines in original positions
-            for removed in removedLines.sorted(by: { $0.index! < $1.index! }) {
-                targetSelf.linesArray.insert(removed.line!, at: removed.index!)
-                removed.line!.bidOrder = removed.bidOrder
-                // Optionally restore markers if needed
-            }
-
-            // Adjust insertion index
-            targetSelf.insertionIndex = insertionIndex
-            targetSelf.previousInsertionIndex = self.previousInsertionIndex
-
-            // Refresh UI
-            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
-            targetSelf.insertionIndexUpdate()
-        }
-    }
     
     //MARK: perplexity
 //    @objc func deleteSelectedLines() {
@@ -1796,149 +1792,149 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
 //    }
     
 
-    func insertLines(_ lines: [BILine], faBidAllPositions: Bool = false) {
-        guard !lines.isEmpty else { return }
-
-        CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
-        CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = true
-        CBGlobalMethods.shared.selectedBidPeriod?.loadedPresetIdentifier = nil
-
-        removeASortUI()
-
-        let context = bidPeriod.managedObjectContext!
-        guard let undoManager = context.undoManager else { return }
-        undoManager.beginUndoGrouping()
-
-        // Handle markers
-        let insertionRowLine: BILine? = (insertionIndex < linesArray.count) ? linesArray[insertionIndex] : nil
-        let insertingDirectlyBelowMarker = insertAbove && insertionRowLine?.markerTitle != nil
-        if insertingDirectlyBelowMarker {
-            lines.first?.markerTitle = insertionRowLine?.markerTitle
-            insertionRowLine?.markerTitle = nil
-        } else if lines.count > 1 && !faBidAllPositions {
-            lines.last?.markerTitle = "Marker: \(markerTitleForMultipleInsert())"
-        }
-
-        // Perform insertion
-        var bidOrder = insertAbove ? insertionIndex + 1 : insertionIndex + 2
-        var row = insertAbove ? insertionIndex : insertionIndex + 1
-        let countOfBidLines = linesArray.count
-        let bidOrderOffset = lines.count
-
-        previousInsertionIndex = insertionIndex
-        insertionIndex += lines.count
-
-        if countOfBidLines == 0 {
-            bidOrder = 1
-            row = 0
-            insertionIndex = lines.count - 1
-        }
-
-        for line in lines {
-            line.bidOrder = NSNumber(value: bidOrder)
-            line.previousBidOrder = NSNumber(value: bidOrder)
-            bidOrder += 1
-        }
-
-        while row < countOfBidLines {
-            let ln = linesArray[row]
-            ln.bidOrder = NSNumber(value: row + bidOrderOffset + 1)
-            ln.previousBidOrder = ln.bidOrder
-            row += 1
-        }
-
-        isShouldScrollToInsertionIndex = true
-        UserDefaults.standard.set(true, forKey: "isShouldScrollToInsertionIndex")
-
-        undoManager.setActionName("Insert Line\(lines.count > 1 ? "s" : "")")
-        undoManager.endUndoGrouping()
-
-        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
-        NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: nil)
-    }
-    
-    
-    //latest
 //    func insertLines(_ lines: [BILine], faBidAllPositions: Bool = false) {
 //        guard !lines.isEmpty else { return }
-//        guard let context = bidPeriod.managedObjectContext else { return }
-//        // Update current bid period state
+//
 //        CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
 //        CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = true
 //        CBGlobalMethods.shared.selectedBidPeriod?.loadedPresetIdentifier = nil
-//        
+//
 //        removeASortUI()
-//        
-//        if 0 == lines.count {
-//            return
-//        }
-//        context.undoManager?.beginUndoGrouping()
-//        var insertionRowLine: BILine? = nil
-//        var insertingDirectlyBelowMarker: Bool = insertionIndex < linesArray.count
+//
+//        let context = bidPeriod.managedObjectContext!
+//        guard let undoManager = context.undoManager else { return }
+//        undoManager.beginUndoGrouping()
+//
+//        // Handle markers
+//        let insertionRowLine: BILine? = (insertionIndex < linesArray.count) ? linesArray[insertionIndex] : nil
+//        let insertingDirectlyBelowMarker = insertAbove && insertionRowLine?.markerTitle != nil
 //        if insertingDirectlyBelowMarker {
-//            if insertionIndex == -1 {
-//                insertionIndex = 0
-//            }
-//            if linesArray.count != 0 {
-//                if insertionIndex < linesArray.count {
-//                    insertionRowLine = linesArray[insertionIndex]
-//                }
-//            }
-//            insertingDirectlyBelowMarker = insertAbove && nil != insertionRowLine?.markerTitle
+//            lines.first?.markerTitle = insertionRowLine?.markerTitle
+//            insertionRowLine?.markerTitle = nil
+//        } else if lines.count > 1 && !faBidAllPositions {
+//            lines.last?.markerTitle = "Marker: \(markerTitleForMultipleInsert())"
 //        }
 //
-//        if insertingDirectlyBelowMarker {
-//            let firstInsertedLine: BILine? = lines[0]
-//            firstInsertedLine?.markerTitle = insertionRowLine?.markerTitle
-//            insertionRowLine?.markerTitle = nil
-//        }
-//        else if (lines.count > 1 && !faBidAllPositions) {
-//            let lastInsertedLine: BILine? = lines.last
-//            var markerTitle = "Marker: "
-//            markerTitle += markerTitleForMultipleInsert()
-//            lastInsertedLine?.markerTitle = markerTitle
-//        }
-//   
-//        var bidOrder: Int = insertAbove ? self.insertionIndex + 1 : self.insertionIndex + 2
-//        var row: Int = insertAbove ? self.insertionIndex : self.insertionIndex + 1
-//        let countOfBidLines: Int? = linesArray.count
-//        let bidOrderOffset: Int = lines.count
+//        // Perform insertion
+//        var bidOrder = insertAbove ? insertionIndex + 1 : insertionIndex + 2
+//        var row = insertAbove ? insertionIndex : insertionIndex + 1
+//        let countOfBidLines = linesArray.count
+//        let bidOrderOffset = lines.count
+//
 //        previousInsertionIndex = insertionIndex
 //        insertionIndex += lines.count
 //
-//        if 0 == countOfBidLines {
+//        if countOfBidLines == 0 {
 //            bidOrder = 1
-//            row = countOfBidLines ?? 0
-//            self.insertionIndex = lines.count - 1
+//            row = 0
+//            insertionIndex = lines.count - 1
 //        }
 //
-//        // Set bid order for inserted lines
-//        for line1 in lines {
-//            let line = line1
-//            line.bidOrder = (bidOrder as NSNumber)
-//            line.previousBidOrder = (bidOrder as NSNumber)
+//        for line in lines {
+//            line.bidOrder = NSNumber(value: bidOrder)
+//            line.previousBidOrder = NSNumber(value: bidOrder)
 //            bidOrder += 1
 //        }
 //
-//        // Adjust bid order for existing lines below insertion point
-//        while row < countOfBidLines! {
+//        while row < countOfBidLines {
 //            let ln = linesArray[row]
-//            ln.bidOrder = row + bidOrderOffset + 1 as NSNumber
-//            ln.previousBidOrder = row + bidOrderOffset + 1 as NSNumber
+//            ln.bidOrder = NSNumber(value: row + bidOrderOffset + 1)
+//            ln.previousBidOrder = ln.bidOrder
 //            row += 1
 //        }
 //
-//        // Scroll flag
 //        isShouldScrollToInsertionIndex = true
 //        UserDefaults.standard.set(true, forKey: "isShouldScrollToInsertionIndex")
 //
-//        // Core Data undo will handle undo/redo automatically
-//        context.undoManager?.setActionName("Insert Line\(lines.count > 1 ? "s" : "")")
-//        context.undoManager?.endUndoGrouping()
-//        // Notify UI
+//        undoManager.setActionName("Insert Line\(lines.count > 1 ? "s" : "")")
+//        undoManager.endUndoGrouping()
+//
 //        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
 //        NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: nil)
 //    }
+    
+    
+    //latest
+    func insertLines(_ lines: [BILine], faBidAllPositions: Bool = false) {
+        guard !lines.isEmpty else { return }
+        guard let context = bidPeriod.managedObjectContext else { return }
+        // Update current bid period state
+        CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
+        CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = true
+        CBGlobalMethods.shared.selectedBidPeriod?.loadedPresetIdentifier = nil
+        
+        removeASortUI()
+        
+        if 0 == lines.count {
+            return
+        }
+        context.undoManager?.beginUndoGrouping()
+        var insertionRowLine: BILine? = nil
+        var insertingDirectlyBelowMarker: Bool = insertionIndex < linesArray.count
+        if insertingDirectlyBelowMarker {
+            if insertionIndex == -1 {
+                insertionIndex = 0
+            }
+            if linesArray.count != 0 {
+                if insertionIndex < linesArray.count {
+                    insertionRowLine = linesArray[insertionIndex]
+                }
+            }
+            insertingDirectlyBelowMarker = insertAbove && nil != insertionRowLine?.markerTitle
+        }
+
+        if insertingDirectlyBelowMarker {
+            let firstInsertedLine: BILine? = lines[0]
+            firstInsertedLine?.markerTitle = insertionRowLine?.markerTitle
+            insertionRowLine?.markerTitle = nil
+        }
+        else if (lines.count > 1 && !faBidAllPositions) {
+            let lastInsertedLine: BILine? = lines.last
+            var markerTitle = "Marker: "
+            markerTitle += markerTitleForMultipleInsert()
+            lastInsertedLine?.markerTitle = markerTitle
+        }
+   
+        var bidOrder: Int = insertAbove ? self.insertionIndex + 1 : self.insertionIndex + 2
+        var row: Int = insertAbove ? self.insertionIndex : self.insertionIndex + 1
+        let countOfBidLines: Int? = linesArray.count
+        let bidOrderOffset: Int = lines.count
+        previousInsertionIndex = insertionIndex
+        insertionIndex += lines.count
+
+        if 0 == countOfBidLines {
+            bidOrder = 1
+            row = countOfBidLines ?? 0
+            self.insertionIndex = lines.count - 1
+        }
+
+        // Set bid order for inserted lines
+        for line1 in lines {
+            let line = line1
+            line.bidOrder = (bidOrder as NSNumber)
+            line.previousBidOrder = (bidOrder as NSNumber)
+            bidOrder += 1
+        }
+
+        // Adjust bid order for existing lines below insertion point
+        while row < countOfBidLines! {
+            let ln = linesArray[row]
+            ln.bidOrder = row + bidOrderOffset + 1 as NSNumber
+            ln.previousBidOrder = row + bidOrderOffset + 1 as NSNumber
+            row += 1
+        }
+
+        // Scroll flag
+        isShouldScrollToInsertionIndex = true
+        UserDefaults.standard.set(true, forKey: "isShouldScrollToInsertionIndex")
+
+        // Core Data undo will handle undo/redo automatically
+        context.undoManager?.setActionName("Insert Line\(lines.count > 1 ? "s" : "")")
+        context.undoManager?.endUndoGrouping()
+        // Notify UI
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
+        NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: nil)
+    }
     
     func getSortDescriptorsForBidList() -> [NSSortDescriptor] {
 //        return lineSorts
