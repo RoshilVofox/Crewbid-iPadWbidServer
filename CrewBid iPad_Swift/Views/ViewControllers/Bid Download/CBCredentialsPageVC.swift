@@ -64,11 +64,12 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     break
                 } else if type == "invalid version" {
                     DispatchQueue.main.async {
+                        self.view.hideActivityIndicator()
                         AlertService.showAlertForTopVC(title: "Oops!", message: message, actions: [
                             (title: "Cancel", style: .cancel, handler: { _ in
                                 self.dismiss(animated: true)
                             }),
-                            (title: "Go to App Store", style: .default, handler: { _ in
+                            (title: "Go to AppStore", style: .default, handler: { _ in
                                 if let url = URL(string: "https://itunes.apple.com/us/app/crewbid/id563832596?mt=8") {
                                     UIApplication.shared.open(url)
                                 }

@@ -1,5 +1,3 @@
-
-
 import UIKit
 
 class userAccountViewController: BaseViewController, UITextFieldDelegate {
@@ -96,18 +94,22 @@ class userAccountViewController: BaseViewController, UITextFieldDelegate {
         }
     }
     @IBAction func updateBtnAction(_ sender: Any) {
+        
     }
     
     @IBAction func BtnPrivacyAction(_ sender: Any) {
+        let storyboard : UIStoryboard = UIStoryboard(name: "HelpMenu", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedPrivacyVC")
+        vc.preferredContentSize = CGSize(width: 600, height: 600)
+        present(vc, animated: true)
     }
     
     @IBAction func BtnLicenceAction(_ sender: Any) {
+        let storyboard : UIStoryboard = UIStoryboard(name: "HelpMenu", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedLicenseVC")
+        vc.preferredContentSize = CGSize(width: 600, height: 600)
+        present(vc, animated: true)
     }
-    
-    //Populate account values
-
-    
     
     
 }
-

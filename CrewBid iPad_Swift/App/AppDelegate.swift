@@ -56,7 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     var lastDownloadedBidInfo: NSMutableDictionary?
     func checkUpdate(){
         if self.connectedToInternet(){
-            self.checkForUpdate(false)
+            self.checkForAppUpdate(false)
         }
     }
     
@@ -87,6 +87,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
             UserDefaults.standard.set("0", forKey: "QATestYear")
         }
         return true
+    }
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        if self.connectedToInternet(){
+            self.checkForAppUpdate(false)
+        }
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -387,10 +392,62 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         }
     }
     
-    func checkForUpdate(_ isPingSuccess:Bool){
+    func checkForAppUpdate(_ isPingSuccess:Bool){
         if !isPingSuccess{
             self.simplePingStarter()
         }
+        let ssid = (dicSSIDDetails?["SSID"] as? String)?.lowercased()
+            if ssid == "southwestwifi" || ssid == "2wire" {
+                return
+            }
+
+            guard isPingSuccess else { return }
+
+            guard
+                let infoDictionary = Bundle.main.infoDictionary,
+                let bundleID = infoDictionary["CFBundleIdentifier"] as? String
+            else { return }
+
+            let urlString = "http://itunes.apple.com/lookup?bundleId=\(bundleID)"
+            guard let url = URL(string: urlString) else { return }
+
+            let session = URLSession.shared
+            let task = session.dataTask(with: url) { data, _, error in
+                if let error = error {
+                    print("Error fetching app info: \(error.localizedDescription)")
+                    return
+                }
+
+                guard let data = data else { return }
+
+                do {
+                    if let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                       let results = jsonResponse["results"] as? [[String: Any]],
+                       let appInfo = results.first,
+                       let appStoreVersion = appInfo["version"] as? String {
+
+                        DispatchQueue.main.async {
+                            if let currentVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String {
+                                if appStoreVersion.compare(currentVersion, options: .numeric) == .orderedDescending {
+                                    print("Need to update [\(appStoreVersion) != \(currentVersion)]")
+                                    let dict: [String: String] = [
+                                        "appStoreVersion": appStoreVersion,
+                                        "currentVersion": currentVersion
+                                    ]
+                                    NotificationCenter.default.post(
+                                        name: Notification.Name("versionAlert"),
+                                        object: dict,
+                                        userInfo: nil
+                                    )
+                                }
+                            }
+                        }
+                    }
+                } catch {
+                    print("JSON parsing error: \(error.localizedDescription)")
+                }
+            }
+            task.resume()
     }
     
     func simplePingStarter(){
@@ -451,7 +508,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
             print("\(sequenceNumber) received")
         }
                 self.simplePingStatus(true)
-                self.checkForUpdate(true)
+                self.checkForAppUpdate(true)
                 self.pinger?.stop()
                 self.sendTimer?.invalidate()
     }

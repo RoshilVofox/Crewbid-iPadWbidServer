@@ -20,7 +20,6 @@ class CBDocumentsCollectionViewController: BaseViewController {
     
     var isPlusImage = true
     var selectedRows : [Int] = []
-//    var collectionViewData = [1,2,3,4,5,6,7,8,9]
     var bidPeriodList : [BIBidPeriod] = []
     var dataSource = GlobalBidInfo.shared
     
@@ -39,7 +38,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
         }
         NotificationCenter.default.addObserver(self, selector: #selector(refreshBidPeriods), name: NSNotification.Name(ReloadCollectionView), object: nil)
         refreshBidPeriods()
-        
+        isUpdateAvailable()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -49,12 +48,33 @@ class CBDocumentsCollectionViewController: BaseViewController {
             didPostInitialSubscriptionCheck = true
             NotificationCenter.default.post(name: NSNotification.Name("checkSubscription"), object: nil)
         }
+        NotificationCenter.default.addObserver(self, selector: #selector(showVersionAlert), name: NSNotification.Name("versionAlert"), object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(ReloadCollectionView)
     }
+    
+    @objc func showVersionAlert(_ notification: Notification){
+        DispatchQueue.main.async {
+            guard let dict = notification.object as? [String: String],
+                  let appStoreVersion = dict["appStoreVersion"],
+                  let currentVersion = dict["currentVersion"] else { return }
+
+            let message = "You do not have the newest version of Crewbid. You are using version \(currentVersion) and the latest version is \(appStoreVersion)."
+            
+            AlertService.showAlertForTopVC(title: "App Update Available!", message: message, actions: [(title:"Go To AppStore", style: .default, handler:{_ in
+                if let url = URL(string: "https://itunes.apple.com/us/app/crewbid/id563832596?mt=8") {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                }
+            }),(title: "Cancel", style: .cancel, handler:{_ in
+//                self.dismiss(animated: true)
+                self.view.hideActivityIndicator()
+            })])
+        }
+    }
+    
     
     @objc func checkSubscription(){
         // show alert for expiry check
@@ -233,6 +253,77 @@ class CBDocumentsCollectionViewController: BaseViewController {
             helpMenuVC.preferredContentSize = CGSize(width: 764, height: 630)
             helpMenuVC.modalTransitionStyle = .crossDissolve
             present(helpMenuVC, animated: true)
+        }
+    }
+    
+    func isUpdateAvailable(){
+        guard let infoDictionary = Bundle.main.infoDictionary,
+              let bundleID = infoDictionary["CFBundleIdentifier"] as? String
+        else { return }
+
+        let urlString = "http://itunes.apple.com/lookup?bundleId=\(bundleID)"
+        guard let url = URL(string: urlString) else { return }
+        let session = URLSession.shared
+        let task = session.dataTask(with: url) { data, _, error in
+            if let error = error {
+                print("Error checking update: \(error.localizedDescription)")
+                return
+            }
+            guard let data = data else { return }
+            do {
+                if let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String:Any],
+                    let results = jsonResponse["results"] as? [[String: Any]],
+                    let appInfo = results.first,
+                    let appStoreVersion = appInfo["version"] as? String,
+                    let currentVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString")as? String {
+                    if appStoreVersion.compare(currentVersion, options: .numeric) == .orderedDescending {
+                        DispatchQueue.main.async {
+                            self.textColorBlinking()
+                        }
+                    }
+                }
+            } catch {
+                print("JSON parsing error: \(error.localizedDescription)")
+            }
+        }
+        task.resume()
+    }
+    func textColorBlinking() {
+        self.lblHome.textColor = .white
+        self.lblHome.backgroundColor = .clear
+        self.lblHome.isUserInteractionEnabled = true
+        
+        if let app = UIApplication.shared.delegate as? AppDelegate, let domain = app.Domain, domain.contains("122") {
+                self.lblHome.text = "Home (\(CBUtils.AppVersion()) VOFOX SERVER)"
+            } else {
+                self.lblHome.text = "Home (\(CBUtils.AppVersion()))"
+            }
+        
+        let animation = CATransition()
+        animation.duration = 1.0
+        animation.fillMode = .forwards
+        animation.repeatCount = .infinity
+        animation.isRemovedOnCompletion = false
+        animation.type = .fade
+        animation.subtype = .fromTop
+        
+        CATransaction.begin()
+        CATransaction.setCompletionBlock {
+            self.lblHome.layer.add(animation, forKey: "animation")
+            self.lblHome.textColor = .white
+        }
+        
+        self.lblHome.textColor = .red
+        CATransaction.commit()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(newVersionDownload))
+        tapGesture.numberOfTapsRequired = 1
+        self.lblHome.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc func newVersionDownload() {
+        if let url = URL(string: "https://apps.apple.com/us/app/crewbid/id563832596") {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
     

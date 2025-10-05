@@ -303,8 +303,6 @@
 		F41EBFA32DC4DB20001413DE /* CBCommuteDiffVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE682DC4DB20001413DE /* CBCommuteDiffVC.swift */; };
 		F41EBFA42DC4DB20001413DE /* CBFlighDataChangeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE692DC4DB20001413DE /* CBFlighDataChangeVC.swift */; };
 		F41EBFA52DC4DB20001413DE /* CBAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE6B2DC4DB20001413DE /* CBAlertVC.swift */; };
-		F41EBFA62DC4DB20001413DE /* CBLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE6F2DC4DB20001413DE /* CBLoginViewController.swift */; };
-		F41EBFA72DC4DB20001413DE /* LoginEmbeddedController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE702DC4DB20001413DE /* LoginEmbeddedController.swift */; };
 		F41EBFA82DC4DB20001413DE /* CBHelpVideosController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE722DC4DB20001413DE /* CBHelpVideosController.swift */; };
 		F41EBFA92DC4DB20001413DE /* contactUsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE732DC4DB20001413DE /* contactUsViewController.swift */; };
 		F41EBFAA2DC4DB20001413DE /* defenitionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE742DC4DB20001413DE /* defenitionsViewController.swift */; };
@@ -333,6 +331,12 @@
 		F4400BD62DD9BA370066C7E0 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4400BD52DD9BA370066C7E0 /* APIService.swift */; };
 		F4400BD82DD9DB1C0066C7E0 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4400BD72DD9DB1C0066C7E0 /* AuthService.swift */; };
 		F4400BDA2DD9E5D60066C7E0 /* CBLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4400BD92DD9E5D60066C7E0 /* CBLoginViewModel.swift */; };
+		F474F42E2E92407D00B940B7 /* CrewBid Privacy Policy.pdf in Resources */ = {isa = PBXBuildFile; fileRef = F474F42D2E92407D00B940B7 /* CrewBid Privacy Policy.pdf */; };
+		F474F4302E92408200B940B7 /* CrewBid License Agreement.pdf in Resources */ = {isa = PBXBuildFile; fileRef = F474F42F2E92408200B940B7 /* CrewBid License Agreement.pdf */; };
+		F474F4322E9243CC00B940B7 /* EmbeddedLicenseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F474F4312E9243CC00B940B7 /* EmbeddedLicenseVC.swift */; };
+		F474F4342E9243DE00B940B7 /* EmbeddedPrivacyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F474F4332E9243DE00B940B7 /* EmbeddedPrivacyVC.swift */; };
+		F474F4362E9245DE00B940B7 /* CBPrivacyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F474F4352E9245DE00B940B7 /* CBPrivacyVC.swift */; };
+		F474F4382E9245FA00B940B7 /* CBLicenseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F474F4372E9245FA00B940B7 /* CBLicenseVC.swift */; };
 		F481E96A2DD05ED200DED8FE /* CBUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F481E9692DD05ED200DED8FE /* CBUtils.swift */; };
 		F481E96F2DD0906C00DED8FE /* BIBidInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F481E96E2DD0906B00DED8FE /* BIBidInfo.swift */; };
 		F481E9712DD0908800DED8FE /* BIBidFileDownload.swift in Sources */ = {isa = PBXBuildFile; fileRef = F481E9702DD0908800DED8FE /* BIBidFileDownload.swift */; };
@@ -683,8 +687,6 @@
 		F41EBE692DC4DB20001413DE /* CBFlighDataChangeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBFlighDataChangeVC.swift; sourceTree = "<group>"; };
 		F41EBE6B2DC4DB20001413DE /* CBAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBAlertVC.swift; sourceTree = "<group>"; };
 		F41EBE6D2DC4DB20001413DE /* YouTubeTemplate.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = YouTubeTemplate.txt; sourceTree = "<group>"; };
-		F41EBE6F2DC4DB20001413DE /* CBLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLoginViewController.swift; sourceTree = "<group>"; };
-		F41EBE702DC4DB20001413DE /* LoginEmbeddedController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginEmbeddedController.swift; sourceTree = "<group>"; };
 		F41EBE722DC4DB20001413DE /* CBHelpVideosController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBHelpVideosController.swift; sourceTree = "<group>"; };
 		F41EBE732DC4DB20001413DE /* contactUsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = contactUsViewController.swift; sourceTree = "<group>"; };
 		F41EBE742DC4DB20001413DE /* defenitionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = defenitionsViewController.swift; sourceTree = "<group>"; };
@@ -714,6 +716,12 @@
 		F4400BD52DD9BA370066C7E0 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		F4400BD72DD9DB1C0066C7E0 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		F4400BD92DD9E5D60066C7E0 /* CBLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLoginViewModel.swift; sourceTree = "<group>"; };
+		F474F42D2E92407D00B940B7 /* CrewBid Privacy Policy.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "CrewBid Privacy Policy.pdf"; sourceTree = "<group>"; };
+		F474F42F2E92408200B940B7 /* CrewBid License Agreement.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "CrewBid License Agreement.pdf"; sourceTree = "<group>"; };
+		F474F4312E9243CC00B940B7 /* EmbeddedLicenseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedLicenseVC.swift; sourceTree = "<group>"; };
+		F474F4332E9243DE00B940B7 /* EmbeddedPrivacyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedPrivacyVC.swift; sourceTree = "<group>"; };
+		F474F4352E9245DE00B940B7 /* CBPrivacyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPrivacyVC.swift; sourceTree = "<group>"; };
+		F474F4372E9245FA00B940B7 /* CBLicenseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLicenseVC.swift; sourceTree = "<group>"; };
 		F481E9692DD05ED200DED8FE /* CBUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUtils.swift; sourceTree = "<group>"; };
 		F481E96E2DD0906B00DED8FE /* BIBidInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIBidInfo.swift; sourceTree = "<group>"; };
 		F481E9702DD0908800DED8FE /* BIBidFileDownload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIBidFileDownload.swift; sourceTree = "<group>"; };
@@ -1442,8 +1450,10 @@
 		F41EBE712DC4DB20001413DE /* User Account */ = {
 			isa = PBXGroup;
 			children = (
-				F41EBE6F2DC4DB20001413DE /* CBLoginViewController.swift */,
-				F41EBE702DC4DB20001413DE /* LoginEmbeddedController.swift */,
+				F474F4312E9243CC00B940B7 /* EmbeddedLicenseVC.swift */,
+				F474F4332E9243DE00B940B7 /* EmbeddedPrivacyVC.swift */,
+				F474F4352E9245DE00B940B7 /* CBPrivacyVC.swift */,
+				F474F4372E9245FA00B940B7 /* CBLicenseVC.swift */,
 			);
 			path = "User Account";
 			sourceTree = "<group>";
@@ -1518,6 +1528,7 @@
 		F41EBE8E2DC4DB20001413DE /* CrewBid iPad_Swift */ = {
 			isa = PBXGroup;
 			children = (
+				F474F42C2E92407100B940B7 /* User Account */,
 				F407B29F2DD9AE17003E4042 /* Service Handler */,
 				F481E96D2DD0905700DED8FE /* New Files */,
 				8BAEE8012DCC68AF002EF328 /* Notes for developer */,
@@ -1663,6 +1674,15 @@
 				F41EBE812DC4DB20001413DE /* DocumentCell.swift */,
 			);
 			path = HomescreenDocCell;
+			sourceTree = "<group>";
+		};
+		F474F42C2E92407100B940B7 /* User Account */ = {
+			isa = PBXGroup;
+			children = (
+				F474F42D2E92407D00B940B7 /* CrewBid Privacy Policy.pdf */,
+				F474F42F2E92408200B940B7 /* CrewBid License Agreement.pdf */,
+			);
+			path = "User Account";
 			sourceTree = "<group>";
 		};
 		F481E96D2DD0905700DED8FE /* New Files */ = {
@@ -1951,6 +1971,7 @@
 				F4C3837A2E2527AE00AD8034 /* TripButton-rounded-right-redEye_red_iOS7@2x.png in Resources */,
 				F4C3837B2E2527AE00AD8034 /* TripButton-rounded-both-redEye_red_iOS7@2x.png in Resources */,
 				F4C3837C2E2527AE00AD8034 /* TripButton-rounded-both-redEye_red_iOS7.png in Resources */,
+				F474F4302E92408200B940B7 /* CrewBid License Agreement.pdf in Resources */,
 				F4C3837D2E2527AE00AD8034 /* TripButton-rounded-left-redEye_red_iOS7.png in Resources */,
 				F4C3837E2E2527AE00AD8034 /* TripButton-rounded-left-redEye_red_iOS7@2x.png in Resources */,
 				F41EBEA52DC4DB20001413DE /* user.png in Resources */,
@@ -2035,6 +2056,7 @@
 				F41EBEEF2DC4DB20001413DE /* TripButton-rounded-right-yellow_iOS7@2x.png in Resources */,
 				F41EBEF02DC4DB20001413DE /* YellowRect.png in Resources */,
 				F41EBEF12DC4DB20001413DE /* BidActions.storyboard in Resources */,
+				F474F42E2E92407D00B940B7 /* CrewBid Privacy Policy.pdf in Resources */,
 				F41EBEF22DC4DB20001413DE /* BidDocument.storyboard in Resources */,
 				F41EBEF32DC4DB20001413DE /* BidInfo.storyboard in Resources */,
 				F41EBEF42DC4DB20001413DE /* Filter.storyboard in Resources */,
@@ -2091,6 +2113,7 @@
 				F41EBF192DC4DB20001413DE /* BIDayInfo+CoreDataClass.swift in Sources */,
 				F49849CD2DC76EF900FE9426 /* Reachability.swift in Sources */,
 				F41EBF1A2DC4DB20001413DE /* BIDayInfo+CoreDataProperties.swift in Sources */,
+				F474F4382E9245FA00B940B7 /* CBLicenseVC.swift in Sources */,
 				F4A472212DDDEDA900065720 /* CBExceedingTripCalculation.swift in Sources */,
 				F41EBF1D2DC4DB20001413DE /* BILeg+CoreDataClass.swift in Sources */,
 				8BAEE8092DCC73E3002EF328 /* MBProgressHUD.m in Sources */,
@@ -2197,6 +2220,7 @@
 				F41EBF702DC4DB20001413DE /* CBLineCalendarCollectionView.swift in Sources */,
 				F41EBF712DC4DB20001413DE /* CBLineValuesMenuController.swift in Sources */,
 				F41EBF722DC4DB20001413DE /* CBScratchPadVC.swift in Sources */,
+				F474F4342E9243DE00B940B7 /* EmbeddedPrivacyVC.swift in Sources */,
 				F41EBF732DC4DB20001413DE /* CBLineValueView.swift in Sources */,
 				F4E5DA042E3C908D00C96BDF /* CBCalendarDayCell.swift in Sources */,
 				F41EBF742DC4DB20001413DE /* CBTripTextViewController.swift in Sources */,
@@ -2271,9 +2295,7 @@
 				8BA705FE2DCB5BE20090EA71 /* CityPickerCell.swift in Sources */,
 				F41EBFA52DC4DB20001413DE /* CBAlertVC.swift in Sources */,
 				F4C5D66A2DC9EBC200D86BD2 /* NSData+AES.m in Sources */,
-				F41EBFA62DC4DB20001413DE /* CBLoginViewController.swift in Sources */,
 				8B77C52B2DC7973B00E5B3B4 /* AppData.swift in Sources */,
-				F41EBFA72DC4DB20001413DE /* LoginEmbeddedController.swift in Sources */,
 				F41EBFA82DC4DB20001413DE /* CBHelpVideosController.swift in Sources */,
 				F41EBFA92DC4DB20001413DE /* contactUsViewController.swift in Sources */,
 				F4E5DA0C2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift in Sources */,
@@ -2294,9 +2316,11 @@
 				F4400BD82DD9DB1C0066C7E0 /* AuthService.swift in Sources */,
 				F41EBFB22DC4DB20001413DE /* serviceAgreementViewController.swift in Sources */,
 				F41EBFB32DC4DB20001413DE /* swaptimizerHelpMenuViewController.swift in Sources */,
+				F474F4322E9243CC00B940B7 /* EmbeddedLicenseVC.swift in Sources */,
 				F4984C5A2E2E2F7A004E020E /* CBMenuController.swift in Sources */,
 				353FC68F2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift in Sources */,
 				F41EBFB42DC4DB20001413DE /* userAccountViewController.swift in Sources */,
+				F474F4362E9245DE00B940B7 /* CBPrivacyVC.swift in Sources */,
 				F41EBFB52DC4DB20001413DE /* CBDocumentsCollectionViewController.swift in Sources */,
 				F41EBFB62DC4DB20001413DE /* DocumentCell.swift in Sources */,
 				F41EBFB72DC4DB20001413DE /* SecretMethodsViewController.swift in Sources */,
@@ -2344,6 +2368,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "CrewBid iPad_Swift/Resources/pList/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = CrewBid;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Enable Location service to detect the Wi-Fi Connectivity name from your device.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Enable Location service to detect the Wi-Fi Connectivity name from your device.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Enable Location service to detect the Wi-Fi Connectivity name from your device.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -2354,7 +2381,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 7.34.19;
-				PRODUCT_BUNDLE_IDENTIFIER = com.brainbagsoftware1.CrewBid;
+				PRODUCT_BUNDLE_IDENTIFIER = com.brainbagsoftware.CrewBid;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "CrewBid iPad_Swift/Utilities/Helpers/StoreKit/CrewBid iPad_Swift-Bridging-Header.h";
@@ -2377,6 +2404,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "CrewBid iPad_Swift/Resources/pList/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = CrewBid;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Enable Location service to detect the Wi-Fi Connectivity name from your device.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Enable Location service to detect the Wi-Fi Connectivity name from your device.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Enable Location service to detect the Wi-Fi Connectivity name from your device.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
