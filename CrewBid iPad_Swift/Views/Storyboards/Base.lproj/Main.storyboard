@@ -49,8 +49,8 @@
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dcy-Nm-xmF">
                                         <rect key="frame" x="1010" y="32" width="85" height="30"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="85" id="Ht6-gS-mrH"/>
-                                            <constraint firstAttribute="height" constant="30" id="Ieb-Bk-5Rg"/>
+                                            <constraint firstAttribute="height" constant="30" id="RhQ-Iw-AJl"/>
+                                            <constraint firstAttribute="width" constant="85" id="k1b-J6-C1P"/>
                                         </constraints>
                                         <fontDescription key="fontDescription" type="system" weight="heavy" pointSize="20"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -73,8 +73,8 @@
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="VtF-NG-YDa">
                                         <rect key="frame" x="1125" y="34.5" width="25" height="25"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="25" id="PZe-HS-Tci"/>
-                                            <constraint firstAttribute="height" constant="25" id="aWW-IC-1NS"/>
+                                            <constraint firstAttribute="height" constant="25" id="RaN-BZ-HCL"/>
+                                            <constraint firstAttribute="width" constant="25" id="uYa-S7-gEg"/>
                                         </constraints>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                         <state key="normal" title="  " backgroundImage="questionmark"/>
@@ -85,16 +85,16 @@
                                 </subviews>
                                 <color key="backgroundColor" name="CrewbidOrange"/>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="VtF-NG-YDa" secondAttribute="trailing" constant="30" id="8SY-er-blP"/>
-                                    <constraint firstItem="Dcy-Nm-xmF" firstAttribute="centerY" secondItem="6iQ-Qs-GBG" secondAttribute="centerY" constant="10" id="8mL-ej-nyT"/>
-                                    <constraint firstItem="VtF-NG-YDa" firstAttribute="leading" secondItem="Dcy-Nm-xmF" secondAttribute="trailing" constant="30" id="ECc-ha-iT0"/>
                                     <constraint firstItem="64f-bC-cT6" firstAttribute="centerY" secondItem="6iQ-Qs-GBG" secondAttribute="centerY" constant="10" id="LZ3-gI-Qpm"/>
                                     <constraint firstItem="DMr-j5-kMA" firstAttribute="centerY" secondItem="6iQ-Qs-GBG" secondAttribute="centerY" constant="10" id="LZ8-vQ-DoX"/>
                                     <constraint firstItem="64f-bC-cT6" firstAttribute="centerX" secondItem="6iQ-Qs-GBG" secondAttribute="centerX" id="Pfq-xe-Qhc"/>
                                     <constraint firstItem="jYU-UZ-fPX" firstAttribute="leading" secondItem="6iQ-Qs-GBG" secondAttribute="leading" constant="40" id="QeW-Fb-hvK"/>
                                     <constraint firstItem="jYU-UZ-fPX" firstAttribute="centerY" secondItem="6iQ-Qs-GBG" secondAttribute="centerY" constant="10" id="RhN-p3-JBU"/>
+                                    <constraint firstAttribute="trailing" secondItem="VtF-NG-YDa" secondAttribute="trailing" constant="30" id="TNv-7i-Ij1"/>
                                     <constraint firstItem="DMr-j5-kMA" firstAttribute="leading" secondItem="jYU-UZ-fPX" secondAttribute="trailing" constant="35" id="X30-ci-hkQ"/>
-                                    <constraint firstItem="VtF-NG-YDa" firstAttribute="centerY" secondItem="6iQ-Qs-GBG" secondAttribute="centerY" constant="10" id="isg-j0-zZw"/>
+                                    <constraint firstItem="VtF-NG-YDa" firstAttribute="centerY" secondItem="64f-bC-cT6" secondAttribute="centerY" id="YMj-Ko-CZs"/>
+                                    <constraint firstItem="Dcy-Nm-xmF" firstAttribute="centerY" secondItem="64f-bC-cT6" secondAttribute="centerY" id="khz-2a-oab"/>
+                                    <constraint firstItem="VtF-NG-YDa" firstAttribute="leading" secondItem="Dcy-Nm-xmF" secondAttribute="trailing" constant="30" id="rOz-mA-le2"/>
                                     <constraint firstAttribute="height" constant="74" id="z8u-qD-AOS"/>
                                 </constraints>
                             </view>
@@ -133,10 +133,6 @@
                                                             <color key="textColor" red="0.41210135819999999" green="0.46647906300000003" blue="0.51675605769999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <activityIndicatorView hidden="YES" opaque="NO" tag="60" contentMode="scaleToFill" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="HyU-RE-ytO" userLabel="Activity Indicator">
-                                                            <rect key="frame" x="203.5" y="214.5" width="37" height="37"/>
-                                                            <color key="color" red="0.29803922770000002" green="0.090196080509999998" blue="0.79607844350000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        </activityIndicatorView>
                                                         <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="40" contentMode="left" text="Bidding Status" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ysy-1G-sbu">
                                                             <rect key="frame" x="10" y="201" width="424" height="21"/>
                                                             <constraints>
@@ -200,17 +196,21 @@
                                                                 </view>
                                                             </subviews>
                                                         </stackView>
+                                                        <activityIndicatorView hidden="YES" opaque="NO" tag="60" contentMode="scaleToFill" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="HyU-RE-ytO" userLabel="Activity Indicator">
+                                                            <rect key="frame" x="203.5" y="125.5" width="37" height="37"/>
+                                                            <color key="color" red="0.29803922770000002" green="0.090196080509999998" blue="0.79607844350000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        </activityIndicatorView>
                                                     </subviews>
                                                     <color key="backgroundColor" name="color_14"/>
                                                     <constraints>
-                                                        <constraint firstItem="HyU-RE-ytO" firstAttribute="centerY" secondItem="sEf-9b-qxK" secondAttribute="bottom" constant="-55" id="3Kl-k1-Zru"/>
                                                         <constraint firstItem="Ysy-1G-sbu" firstAttribute="leading" secondItem="sEf-9b-qxK" secondAttribute="leading" constant="10" id="6Fa-3l-9lF"/>
                                                         <constraint firstItem="NHY-Ry-brD" firstAttribute="top" secondItem="9S1-qG-LcA" secondAttribute="bottom" constant="28" id="A3E-1y-JdV"/>
                                                         <constraint firstItem="Ysy-1G-sbu" firstAttribute="top" secondItem="NHY-Ry-brD" secondAttribute="bottom" constant="10" id="FXQ-cI-19D"/>
                                                         <constraint firstAttribute="trailing" secondItem="9S1-qG-LcA" secondAttribute="trailing" constant="20" id="G07-xU-Aku"/>
                                                         <constraint firstAttribute="trailing" secondItem="Ysy-1G-sbu" secondAttribute="trailing" constant="10" id="NJG-d5-xos"/>
-                                                        <constraint firstItem="HyU-RE-ytO" firstAttribute="centerX" secondItem="sEf-9b-qxK" secondAttribute="centerX" id="Nig-p7-zA1"/>
                                                         <constraint firstItem="jtx-6Y-8Ub" firstAttribute="leading" secondItem="sEf-9b-qxK" secondAttribute="leading" constant="10" id="YvM-RF-f6S"/>
+                                                        <constraint firstItem="HyU-RE-ytO" firstAttribute="centerY" secondItem="sEf-9b-qxK" secondAttribute="centerY" id="acK-LT-sGN"/>
+                                                        <constraint firstItem="HyU-RE-ytO" firstAttribute="centerX" secondItem="sEf-9b-qxK" secondAttribute="centerX" id="b5F-4z-2MA"/>
                                                         <constraint firstItem="NHY-Ry-brD" firstAttribute="leading" secondItem="sEf-9b-qxK" secondAttribute="leading" constant="40" id="bBA-VC-wx4"/>
                                                         <constraint firstItem="9S1-qG-LcA" firstAttribute="top" secondItem="sEf-9b-qxK" secondAttribute="top" constant="25" id="n8V-6o-5tq"/>
                                                         <constraint firstAttribute="trailing" secondItem="jtx-6Y-8Ub" secondAttribute="trailing" constant="10" id="ngh-Jp-HCv"/>
@@ -222,6 +222,7 @@
                                                 </collectionViewCellContentView>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <connections>
+                                                    <outlet property="activityIndicator" destination="HyU-RE-ytO" id="SuK-tp-dML"/>
                                                     <outlet property="base" destination="Lx5-BQ-jrL" id="yWc-al-nXA"/>
                                                     <outlet property="baseIconView" destination="0Fw-Wy-o0b" id="4hp-Ke-pZ7"/>
                                                     <outlet property="lastBidDate" destination="jtx-6Y-8Ub" id="z4O-U6-F4o"/>
@@ -980,16 +981,16 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray2Color">
-            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray6Color">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

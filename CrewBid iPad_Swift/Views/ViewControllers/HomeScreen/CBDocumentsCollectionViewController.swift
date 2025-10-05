@@ -568,7 +568,8 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cell: UICollectionViewCell = collectionView.cellForItem(at: indexPath)!
+//        let cell: UICollectionViewCell = collectionView.cellForItem(at: indexPath)!
+        guard let cell = collectionView.cellForItem(at: indexPath) as? DocumentCell else { return }
         if self.editButton.currentTitle! == "Done" {
             
             cell.layer.borderColor = UIColor.systemOrange.cgColor
@@ -585,25 +586,56 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
             }
         }
         else {
+            
             bidDownloadButton.isEnabled = true
-            let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
-            let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
-            vc.modalTransitionStyle = .crossDissolve
-            vc.bidPeriod = self.bidPeriodList[indexPath.item]
-            let bidPeriod : BIBidPeriod = bidPeriodList[indexPath.item]
-            dataSource.year = (bidPeriod.year as? Int)!
-            dataSource.base = bidPeriod.base!
-            dataSource.month = (bidPeriod.month as? Int)!
-            dataSource.round = (bidPeriod.round as? Int)!
-            CBGlobalMethods.shared.selectedBidPeriod = bidPeriod
-            if let rawValue = bidPeriod.positionType as? Int,
-               let position = BICrewPositionType(rawValue: rawValue) {
-                // Successfully converted and initialized the enum
-                dataSource.position = position
-            }
-            self.navigationController?.pushViewController(vc, animated: true)
+            cell.activityIndicator.isHidden = false
+            cell.activityIndicator.startAnimating()
+            cell.isUserInteractionEnabled = false
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
+                guard let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as? CBBidDocumentController else {
+                    cell.activityIndicator.stopAnimating()
+                    cell.isUserInteractionEnabled = true
+                    return
+                    }
+
+                vc.modalTransitionStyle = .crossDissolve
+                let bidPeriod = self.bidPeriodList[indexPath.item]
+                vc.bidPeriod = bidPeriod
+                self.dataSource.year = bidPeriod.year?.intValue ?? 0
+                self.dataSource.base = bidPeriod.base ?? ""
+                self.dataSource.month = bidPeriod.month?.intValue ?? 0
+                self.dataSource.round = bidPeriod.round?.intValue ?? 0
+                CBGlobalMethods.shared.selectedBidPeriod = bidPeriod
+                if let rawValue = bidPeriod.positionType?.intValue,
+                    let position = BICrewPositionType(rawValue: rawValue) {
+                    self.dataSource.position = position
+                }
+                cell.activityIndicator.stopAnimating()
+                cell.isUserInteractionEnabled = true
+                cell.backgroundView = nil
+                self.navigationController?.pushViewController(vc, animated: true)
+                }
+//            let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
+//            let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
+//            vc.modalTransitionStyle = .crossDissolve
+//            vc.bidPeriod = self.bidPeriodList[indexPath.item]
+//            let bidPeriod : BIBidPeriod = bidPeriodList[indexPath.item]
+//            dataSource.year = (bidPeriod.year as? Int)!
+//            dataSource.base = bidPeriod.base!
+//            dataSource.month = (bidPeriod.month as? Int)!
+//            dataSource.round = (bidPeriod.round as? Int)!
+//            CBGlobalMethods.shared.selectedBidPeriod = bidPeriod
+//            if let rawValue = bidPeriod.positionType as? Int,
+//               let position = BICrewPositionType(rawValue: rawValue) {
+//                // Successfully converted and initialized the enum
+//                dataSource.position = position
+//            }
+//            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
+    
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         let cell: UICollectionViewCell = collectionView.cellForItem(at: indexPath)!
         if self.editButton.currentTitle! == "Done" {
