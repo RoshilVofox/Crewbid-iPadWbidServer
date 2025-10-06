@@ -343,6 +343,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.setNavigationBarHidden(true, animated: animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshWorkBlock), name: NSNotification.Name("refreshWorkBlock"), object: nil)
+    }
+    
+    @objc func refreshWorkBlock() {
+        self.reprocessWorkBlock()
     }
     
     override func viewWillDisappear(_ animated: Bool) {

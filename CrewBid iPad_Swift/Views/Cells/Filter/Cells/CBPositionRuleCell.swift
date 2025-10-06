@@ -21,14 +21,23 @@ class CBPositionRuleCell: UITableViewCell {
     var filterRule: BIFilterRule? {
         didSet {
             guard let filterRule = filterRule else { return }
-
-            if let variables = filterRule.variables!["SET"] as? Set<Int> {
-                positionAButton.isSelected = variables.contains(BIFaPosition.FaPositionA.rawValue)
-                positionBButton.isSelected = variables.contains(BIFaPosition.FaPositionB.rawValue)
-                positionCButton.isSelected = variables.contains(BIFaPosition.FaPositionC.rawValue)
-                positionDButton.isSelected = variables.contains(BIFaPosition.FaPositionD.rawValue)
-                positionMButton.isSelected = variables.contains(BIFaPosition.FaPositionMultiple.rawValue)
+            
+            var variables: Set<NSNumber> = NSSet() as! Set<NSNumber>
+            if let value = filterRule.variables?["SET"] {
+                if let set = value as? NSSet {
+                    variables = set as! Set<NSNumber>
+                } else if let array = value as? [Any] {
+                    variables = NSSet(array: array) as! Set<NSNumber>
+                } else {
+                    print("Unexpected type:", type(of: value))
+                }
             }
+
+            positionAButton.isSelected = variables.contains(BIFaPosition.FaPositionA.rawValue as NSNumber)
+            positionBButton.isSelected = variables.contains(BIFaPosition.FaPositionB.rawValue as NSNumber)
+            positionCButton.isSelected = variables.contains(BIFaPosition.FaPositionC.rawValue as NSNumber)
+            positionDButton.isSelected = variables.contains(BIFaPosition.FaPositionD.rawValue as NSNumber)
+            positionMButton.isSelected = variables.contains(BIFaPosition.FaPositionMultiple.rawValue as NSNumber)
         }
     }
     

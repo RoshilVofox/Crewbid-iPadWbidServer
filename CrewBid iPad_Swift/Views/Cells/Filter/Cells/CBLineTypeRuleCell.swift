@@ -413,7 +413,18 @@ class CBLineTypeRuleCell: UITableViewCell {
                 if bidPeriod.isFirstRoundBid() {
                     var Etopsvariables = etopsfilterRule?.variables
                     var EtopsResvariables = etopsResfilterRule?.variables
-                    let variables = filterRule.variables?["SET"] as! NSSet
+                    var variables = NSSet()
+                    if let value = filterRule.variables?["SET"] {
+                        if let set = value as? NSSet {
+                            variables = set
+                        } else if let array = value as? [Any] {
+                            variables = NSSet(array: array)
+                        } else {
+                            print("Unexpected type:", type(of: value))
+                        }
+                    }
+
+//                    let variables = filterRule.variables?["SET"] as! NSSet
                     let arrVariables = NSMutableArray(array:variables.allObjects)
                     hardLinesButton.isSelected = arrVariables.contains(BILineType.HardLine.rawValue)
                     if bidPeriod.isEtopsLinesContainsInBid?.boolValue == true {
@@ -492,7 +503,19 @@ class CBLineTypeRuleCell: UITableViewCell {
                 // first Round data
                 if bidPeriod.isFirstRoundBid() {
                     let Etopsvariables = etopsfilterRule?.variables
-                    let variables = filterRule.variables?["SET"] as! NSSet
+                    if filterRule.category?.intValue == 1 {
+                        print("")
+                    }
+                    var variables = NSSet()
+                    if let value = filterRule.variables?["SET"] {
+                        if let set = value as? NSSet {
+                            variables = set
+                        } else if let array = value as? [Any] {
+                            variables = NSSet(array: array)
+                        } else {
+                            print("Unexpected type:", type(of: value))
+                        }
+                    }
                     let arrVariables = NSMutableArray(array:variables.allObjects)
                     if bidPeriod.isEtopsLinesContainsInBid?.boolValue == true {
                         nonConusButton.isSelected = arrVariables.contains(BILineType.NonEtopsNonConUS.rawValue)

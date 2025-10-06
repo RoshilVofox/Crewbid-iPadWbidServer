@@ -20,23 +20,26 @@ class CBAmPmRuleCell: UITableViewCell {
         didSet {
             guard let filterRule = filterRule else { return }
             
-
-            if let variables = filterRule.variables!["SET"] as? Set<NSNumber> {
-                amLinesButton.isSelected = variables.contains(NSNumber(value: BILineAMPM.AMLine.rawValue))
-                pmLinesButton.isSelected = variables.contains(NSNumber(value: BILineAMPM.PMLine.rawValue))
-                mixedAmPmLinesButton.isSelected = variables.contains(NSNumber(value: BILineAMPM.MixedAMPMLine.rawValue))
-                redEyeLinesButton.isSelected = variables.contains(NSNumber(value: BILineAMPM.RedEyeAMPMLine.rawValue))
-            } else {
-                // Reset buttons if variables is nil
-                amLinesButton.isSelected = false
-                pmLinesButton.isSelected = false
-                mixedAmPmLinesButton.isSelected = false
-                redEyeLinesButton.isSelected = false
+            var variables: Set<NSNumber> = NSSet() as! Set<NSNumber>
+            if let value = filterRule.variables?["SET"] {
+                if let set = value as? NSSet {
+                    variables = set as! Set<NSNumber>
+                } else if let array = value as? [Any] {
+                    variables = NSSet(array: array) as! Set<NSNumber>
+                } else {
+                    print("Unexpected type:", type(of: value))
+                }
             }
+            
+            
+            amLinesButton.isSelected = variables.contains(NSNumber(value: BILineAMPM.AMLine.rawValue)) ? true : false
+            pmLinesButton.isSelected = variables.contains(NSNumber(value: BILineAMPM.PMLine.rawValue)) ? true : false
+            mixedAmPmLinesButton.isSelected = variables.contains(NSNumber(value: BILineAMPM.MixedAMPMLine.rawValue)) ? true : false
+            redEyeLinesButton.isSelected = variables.contains(NSNumber(value: BILineAMPM.RedEyeAMPMLine.rawValue)) ? true : false
         }
     }
-
-
+    
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         
