@@ -275,7 +275,6 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
             dataSource.month = (bidPeriod.month as? Int)!
             dataSource.round = (bidPeriod.round as? Int)!
             CBGlobalMethods.shared.selectedBidPeriod = bidPeriod
-            CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
             if let rawValue = bidPeriod.positionType as? Int,
                let position = BICrewPositionType(rawValue: rawValue) {
                 // Successfully converted and initialized the enum
