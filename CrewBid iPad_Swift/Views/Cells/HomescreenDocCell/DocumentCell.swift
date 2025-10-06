@@ -15,6 +15,7 @@ class DocumentCell: UICollectionViewCell {
     @IBOutlet weak var baseIconView: UIImageView!
     @IBOutlet weak var position: UILabel!
     @IBOutlet weak var userIconView: UIImageView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     //MARK: - Wiggle Animation
     private let kWiggleAnimationKey = "wiggle"
@@ -65,4 +66,14 @@ class DocumentCell: UICollectionViewCell {
         let layer: CALayer = self.layer
         layer.removeAnimation(forKey: "shaking")
     }
+    
+    func startLoading() {
+            activityIndicator.isHidden = false
+            activityIndicator.startAnimating()
+        }
+
+        func stopLoading() {
+            activityIndicator.stopAnimating()
+            activityIndicator.isHidden = true
+        }
 }

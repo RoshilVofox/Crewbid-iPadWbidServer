@@ -26,11 +26,5 @@
 			</array>
 		</dict>
 	</dict>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>Enable Location service to detect the Wi-Fi Connectivity name from your device.</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Enable Location service to detect the Wi-Fi Connectivity name from your device.</string>
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Enable Location service to detect the Wi-Fi Connectivity name from your device.</string>
 </dict>
 </plist>

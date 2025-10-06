@@ -1,5 +1,3 @@
-
-
 import UIKit
 
 class userAccountViewController: BaseViewController, UITextFieldDelegate {
@@ -16,6 +14,7 @@ class userAccountViewController: BaseViewController, UITextFieldDelegate {
     @IBOutlet weak var updateBtn: UIButton!
     @IBOutlet weak var switchMail: UISwitch!
     @IBOutlet weak var btnBack: UIButton!
+    @IBOutlet weak var doneBtn: UIButton!
     var isfrom:UIViewController?
     
     
@@ -29,6 +28,9 @@ class userAccountViewController: BaseViewController, UITextFieldDelegate {
     
     func setupUI(){
         btnBack.setTitle("", for: .normal)
+        doneBtn.setTitle("", for: .normal)
+        updateBtn.layer.masksToBounds = true
+        updateBtn.layer.cornerRadius = 5
         if isfrom!.isKind(of: CBCredentialsPageVC.self){
             btnBack.setImage(UIImage(named: "NewBid-navbar-ncelbutton"), for: .normal)
         }
@@ -92,18 +94,22 @@ class userAccountViewController: BaseViewController, UITextFieldDelegate {
         }
     }
     @IBAction func updateBtnAction(_ sender: Any) {
+        
     }
     
     @IBAction func BtnPrivacyAction(_ sender: Any) {
+        let storyboard : UIStoryboard = UIStoryboard(name: "HelpMenu", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedPrivacyVC")
+        vc.preferredContentSize = CGSize(width: 600, height: 600)
+        present(vc, animated: true)
     }
     
     @IBAction func BtnLicenceAction(_ sender: Any) {
+        let storyboard : UIStoryboard = UIStoryboard(name: "HelpMenu", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedLicenseVC")
+        vc.preferredContentSize = CGSize(width: 600, height: 600)
+        present(vc, animated: true)
     }
-    
-    //Populate account values
-
-    
     
     
 }
-

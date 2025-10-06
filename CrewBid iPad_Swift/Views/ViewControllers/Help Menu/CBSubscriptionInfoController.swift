@@ -1,5 +1,3 @@
-
-
 import UIKit
 import StoreKit
 
@@ -951,29 +949,31 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
 
             subscriptionInfoTextLbl.isHidden = false
         } else {
-            updateSubscriptionDetails()
+            updateSubscriptionDetails(silent: false)
         }
 
         CBUserInfo.setUserInfoDictionary(userInfo)
     }
     
-    
-    func updateSubscriptionDetails() {
+    func updateSubscriptionDetails(silent: Bool = false) {
         guard let app = UIApplication.shared.delegate as? AppDelegate else { return }
         
         if app.connectedToInternet() {
-            self.view.showActivityIndicator()
-            checkAuthentication()
-            
-        } else {
-            let alert = UIAlertController(title: "Network not available!!",
-                                          message: "Please check your internet connection",
-                                          preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "Ok", style: .default) { _ in
-                self.view.hideActivityIndicator()
+            if !silent {
+                self.view.showActivityIndicator()
             }
-            alert.addAction(okAction)
-            present(alert, animated: true)
+            checkAuthentication()
+        } else {
+            if !silent {
+                let alert = UIAlertController(title: "Network not available!!",
+                                              message: "Please check your internet connection",
+                                              preferredStyle: .alert)
+                let okAction = UIAlertAction(title: "Ok", style: .default) { _ in
+                    self.view.hideActivityIndicator()
+                }
+                alert.addAction(okAction)
+                present(alert, animated: true)
+            }
         }
     }
     
@@ -1191,7 +1191,6 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
             self.viewDidLoad()
         }
     }
-    
     
     
     

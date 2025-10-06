@@ -64,11 +64,12 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     break
                 } else if type == "invalid version" {
                     DispatchQueue.main.async {
+                        self.view.hideActivityIndicator()
                         AlertService.showAlertForTopVC(title: "Oops!", message: message, actions: [
                             (title: "Cancel", style: .cancel, handler: { _ in
                                 self.dismiss(animated: true)
                             }),
-                            (title: "Go to App Store", style: .default, handler: { _ in
+                            (title: "Go to AppStore", style: .default, handler: { _ in
                                 if let url = URL(string: "https://itunes.apple.com/us/app/crewbid/id563832596?mt=8") {
                                     UIApplication.shared.open(url)
                                 }
@@ -98,7 +99,6 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                         self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
                     }
                 } else {
-                    self.view.updateActivityIndicator(message: "Importing user data...")
                     if let account = KeychainHelper.retrieveUsername(forService: "CWAUserAccountDetails"){
                         KeychainHelper.delete(account: account, service: "CWAUserAccountDetails")
                     }
@@ -244,8 +244,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     print("Status code -- \(httpResponse.statusCode)")
                     if httpResponse.statusCode == 200 && mimeType.contains("application/json") {
                         do {
-                            let json = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
-                            print("Response JSON: \(json)")
+                            _ = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
                         } catch {
                             print("JSON parse error: \(error)")
                         }
@@ -549,21 +548,22 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             print("Bid: Mock data")
             
         }
+        //MARK:  Bulk Data
         if UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") == true {
-                    var dictionary = GlobalBidInfo.shared.allDomicileDownloadDictionary
-                    var tableViewData: [String] = []
-                    let isBothSelected: Bool = (dictionary["both"] as? Bool)!
-                    var initialbases: [String] = (dictionary["bases"] as! [String])
-                    if isBothSelected {
-                       for base in initialbases {
-                           initialbases.append(base)
-                        }
-                        GlobalBidInfo.shared.allDomicileDownloadDictionary["bases"] = initialbases
-                    }
-                    GlobalBidInfo.shared.isCurrentlyDownloadingAllBid = 1
-                    GlobalBidInfo.shared.alertCount = 0
-                    self.allbidDownloadViewModel.downladAllDomicileBid(bases: initialbases, tableViewData: tableViewData)
+            let dictionary = GlobalBidInfo.shared.allDomicileDownloadDictionary
+            let tableViewData: [String] = []
+            let isBothSelected: Bool = (dictionary["both"] as? Bool)!
+            var initialbases: [String] = (dictionary["bases"] as! [String])
+            if isBothSelected {
+                for base in initialbases {
+                    initialbases.append(base)
                 }
+                GlobalBidInfo.shared.allDomicileDownloadDictionary["bases"] = initialbases
+            }
+            GlobalBidInfo.shared.isCurrentlyDownloadingAllBid = 1
+            GlobalBidInfo.shared.alertCount = 0
+            self.allbidDownloadViewModel.downladAllDomicileBid(bases: initialbases, tableViewData: tableViewData)
+        }
         
         else{//MARK:  New Bid Data
             
@@ -990,6 +990,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         CBUserAccountDetail.shared.saveUserInfo()
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let docVC = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
+        docVC.modalTransitionStyle = .crossDissolve
         if let homeNav = UIApplication.shared.windows.first?.rootViewController as? UINavigationController {
             self.dismiss(animated: false) {
                 homeNav.pushViewController(docVC, animated: true)
@@ -1100,7 +1101,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     
     func getUserInformation(){
         if app.connectedToInternet(){
-            self.view.updateActivityIndicator(message: "Importing user data...")
+            self.view.updateActivityIndicator(message: "Importing User Information...")
             app.sc?.delegate = self
             webType = .importUserDetails
             let formattedUserID = txtUserID.text!.replacingOccurrences(of: "e", with: "").replacingOccurrences(of: "x", with: "").trimmingCharacters(in: .symbols)

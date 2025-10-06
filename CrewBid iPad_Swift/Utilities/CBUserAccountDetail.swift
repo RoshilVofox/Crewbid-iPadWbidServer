@@ -246,14 +246,14 @@ import FirebaseCrashlytics
              flag = true
 
              // Strings
-             self.cellPhone = dicUserData["CellPhone"] as! String
-             self.firstName = dicUserData["firstName"] as! String
-             self.lastName = dicUserData["lastname"] as! String
-             self.employeeNumber = dicUserData["employeeNumber"] as! String
-             self.email = dicUserData["email"] as! String
-             self.Password = dicUserData["Password"] as! String
-             self.LoginuserId = dicUserData["LoginuserId"] as! String
-             self.UserAccountDateTime = dicUserData["UserAccountDateTime"] as! String
+             self.cellPhone = dicUserData["CellPhone"] as? String ?? ""
+             self.firstName = dicUserData["firstName"] as? String ?? ""
+             self.lastName = dicUserData["lastname"] as? String ?? ""
+             self.employeeNumber = dicUserData["employeeNumber"] as? String ?? ""
+             self.email = dicUserData["email"] as? String ?? ""
+             self.Password = dicUserData["Password"] as? String ?? ""
+             self.LoginuserId = dicUserData["LoginuserId"] as? String ?? ""
+             self.UserAccountDateTime = dicUserData["UserAccountDateTime"] as? String ?? ""
 
              // Ints
              if let pos = dicUserData["Position"] as? Int {
@@ -298,8 +298,8 @@ import FirebaseCrashlytics
 
          // Crashlytics logging
          if let empId = dicUserData["LoginuserId"] {
-             Crashlytics.crashlytics().log("Employee ID: \(empId)")
-             Crashlytics.crashlytics().setCustomValue(empId, forKey: "EmployeeNumber")
+//             Crashlytics.crashlytics().log("Employee ID: \(empId)")
+//             Crashlytics.crashlytics().setCustomValue(empId, forKey: "EmployeeNumber")
          }
 
          // Save to Keychain
