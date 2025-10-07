@@ -608,6 +608,7 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
                 self.dataSource.month = bidPeriod.month?.intValue ?? 0
                 self.dataSource.round = bidPeriod.round?.intValue ?? 0
                 CBGlobalMethods.shared.selectedBidPeriod = bidPeriod
+                CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
                 if let rawValue = bidPeriod.positionType?.intValue,
                     let position = BICrewPositionType(rawValue: rawValue) {
                     self.dataSource.position = position

@@ -69,9 +69,9 @@ class CBPresetCell: UITableViewCell, UITextFieldDelegate {
                 CBGlobalMethods.shared.ShowAlert(TitleString: "Warning !", MessageString: "The 'Preset Name' field has taken the default value. You may choose to enter a name of your choice if required.")
             }
             self.nameTextField.backgroundColor = .clear
-            if self.Delegate != nil {
+//            if self.Delegate != nil {
                 self.Delegate?.nameTextFieldEndedEditing(presetCell: self)
-            }
+//            }
         }
     }
     

@@ -31,7 +31,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
         self.view.clipsToBounds = true
         self.view.layer.cornerRadius = 5
         NotificationCenter.default.addObserver(self, selector: #selector(updateBidListCount), name: NSNotification.Name("updateBidListCount"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(updatePresets), name: NSNotification.Name("refreshLines"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updatePresets(_:)), name: NSNotification.Name("refreshLines"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(deselectPresetsNotification), name: NSNotification.Name(CBLineValuesToDisplayDidChangeNotification), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(deselectPresetsNotification), name: NSNotification.Name("refreshLines"), object: nil)
         NotificationCenter.default.removeObserver(kCBPresetSyncReload)
@@ -105,7 +105,11 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
     }
     
     
-    @objc func updatePresets() {
+    @objc func updatePresets(_ notification: Notification) {
+        if let sender = notification.object as? UIViewController, sender === self {
+                // 👇 Ignore notification posted by self
+                return
+            }
         tableView.reloadData()
     }
     
@@ -139,6 +143,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                     }
                 }
             }
+        }
             else {
                 let presetFileName = app.ObjUserAccount?.employeeNumber
                 let arr = openPresetsFromFileWithFileName(presetFileName: presetFileName!)
@@ -209,17 +214,33 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                 self.tableView.reloadData()
             }
         }
-    }
     
     func openPresetsFromFileWithFileName(presetFileName: String) -> [Any] {
         let result = FileManager.default.contents(atPath: self.presetsDocumentFilePathWithFileName(presetFileName: presetFileName))
         var presets: [Any] = []
         
         do {
-            if let unarchived = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: result!) as? [Any] {
-                presets = unarchived
-                print(presets, result != nil ? result! : "nil")
+            if let result = result {
+                do {
+                    // Try secure unarchiving first
+                    if let unarchived = try NSKeyedUnarchiver.unarchivedObject(ofClasses: [NSArray.self, NSDictionary.self, NSString.self, NSNumber.self], from: result) as? [Any] {
+                        presets = unarchived
+                        print("Presets:", presets)
+                    }
+                } catch {
+                    // Fallback for legacy archives (Objective-C style)
+                    if let legacyPresets = try? NSKeyedUnarchiver(forReadingFrom: result).decodeTopLevelObject() as? [Any] {
+                        presets = legacyPresets
+                        print("Legacy presets decoded")
+                    } else if let legacyPresets = NSKeyedUnarchiver.unarchiveObject(with: result) as? [Any] {
+                        presets = legacyPresets
+                        print("Legacy unarchive success")
+                    } else {
+                        print("Failed to unarchive presets")
+                    }
+                }
             }
+
         } catch {
             print("Unarchive error: \(error.localizedDescription)")
             
@@ -398,10 +419,27 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
         let result = FileManager.default.contents(atPath: self.presetsDocumentFilePathWithBidPeriod(bidPeriod: bidPeriod))
         var presets: [Any] = []
         do {
-            if let unarchived = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: result!) as? [Any] {
-                presets = unarchived
-                print(presets, result != nil ? result! : "nil")
+            if let result = result {
+                do {
+                    // Try secure unarchiving first
+                    if let unarchived = try NSKeyedUnarchiver.unarchivedObject(ofClasses: [NSArray.self, NSDictionary.self, NSString.self, NSNumber.self], from: result) as? [Any] {
+                        presets = unarchived
+                        print("Presets:", presets)
+                    }
+                } catch {
+                    // Fallback for legacy archives (Objective-C style)
+                    if let legacyPresets = try? NSKeyedUnarchiver(forReadingFrom: result).decodeTopLevelObject() as? [Any] {
+                        presets = legacyPresets
+                        print("Legacy presets decoded")
+                    } else if let legacyPresets = NSKeyedUnarchiver.unarchiveObject(with: result) as? [Any] {
+                        presets = legacyPresets
+                        print("Legacy unarchive success")
+                    } else {
+                        print("Failed to unarchive presets")
+                    }
+                }
             }
+
         } catch {
             print("Unarchive error: \(error.localizedDescription)")
             
@@ -529,6 +567,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                     sortDict["order"] = sort.order
                     sortDict["lineSortKeyMap"] = sort.lineSortKeyMap
                     sortDict["variables"] = sort.variables
+                    sortDict["name"] = sort.name
                     sortDict["arrayVariables"] = sort.arrayVariables
                     sortDict["isBidListSort"] = sort.isBidListSort
                     lineSorts.add(sortDict)
@@ -789,7 +828,13 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
     //    MARK: CBPReset cell delegate
     
     func deleteButtonPressed(presetCell: CBPresetCell, indexpath: IndexPath) {
-        AlertService.showAlertForTopVC(title: "Delete preset?", message: "Tap OK to confirm.", actions: [(
+        AlertService.showAlertForTopVC(title: "Delete preset?", message: "Tap OK to confirm.", actions: [
+            (
+               title: "Cancel",
+               style: .default,
+               handler: nil
+            ),
+            (
             title: "OK",
             style: .default,
             handler: { _ in
@@ -806,12 +851,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                     self.tableView.reloadData()
                 }
             }
-        ),
-                                                                                                         (
-                                                                                                            title: "Cancel",
-                                                                                                            style: .default,
-                                                                                                            handler: nil
-                                                                                                         )])
+        )])
     }
     
     func nameTextFieldEndedEditing(presetCell: CBPresetCell) {
@@ -862,6 +902,8 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "presetCell", for: indexPath) as! CBPresetCell
+        cell.selectionStyle = .none
+        cell.Delegate = self
         if indexPath.row == self.presetsArray.count {
             cell.nameLabel.text = "New Preset With Current Settings"
             cell.isEditing = true
@@ -876,10 +918,11 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
             let preset: CBPreset = self.presetsArray[indexPath.row] as! CBPreset
             cell.nameLabel.text = preset.name
             cell.nameLabel.alpha = 0
+            cell.nameTextField.alpha = 1
             cell.nameTextField.text = preset.name
             cell.nameTextField.borderStyle = .none
             cell.indexPath = indexPath
-            if preset.presetIdentifier == self.bidPeriod?.loadedPresetIdentifier {
+            if preset.presetIdentifier == self.bidPeriod!.loadedPresetIdentifier {
                 cell.loadLabel.alpha = 1
                 cell.loadLabel.textColor = .label
                 cell.loadLabel.layer.borderColor = CBColor.purple.cgColor
@@ -964,21 +1007,19 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
             UserDefaults.standard.set(true, forKey: kCBIsPresetModified)
             
             // See if a current preset was selected, and if so, reload that row
-            if bidPeriod?.loadedPresetIdentifier != nil {
-                let selectedPredicate = NSPredicate(format: "presetIdentifier == %@", bidPeriod!.loadedPresetIdentifier!)
-                let selectedPresets = (presetsArray as NSArray).filtered(using: selectedPredicate) as! [CBPreset]
-                if selectedPresets.count > 0 {
-                    let selectedPreset = selectedPresets[0]
-                    let pRArray = self.presetsArray as! [CBPreset]
-                    let row = pRArray.firstIndex(where: { $0 === selectedPreset })
-                    self.bidPeriod?.loadedPresetIdentifier = nil
-                    self.tableView.beginUpdates()
-                    tableView.beginUpdates()
-                    let indexPath = IndexPath(row: row!, section: 0)
-                    tableView.reloadRows(at: [indexPath], with: .none)
-                    tableView.endUpdates()
-                }
+            if let loadedID = bidPeriod?.loadedPresetIdentifier,
+               let presetArrayHere = presetsArray as? [CBPreset],
+               let selectedPreset = presetArrayHere.first(where: { $0.presetIdentifier == loadedID }),
+               let row = presetArrayHere.firstIndex(where: { $0 === selectedPreset }) {
+                
+                bidPeriod?.loadedPresetIdentifier = nil
+
+                tableView.beginUpdates()
+                let indexPath = IndexPath(row: row, section: 0)
+                tableView.reloadRows(at: [indexPath], with: .none)
+                tableView.endUpdates()
             }
+
             
             // Grab the current filters set and add to the preset
             // FILTERS FETCH
@@ -1151,16 +1192,25 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
                 self.justChangedPreset = true
                 let preset: CBPreset = self.presetsArray[indexPath.row] as! CBPreset
-                var valuesArray = NSMutableArray()
-                let filterPredicate = NSPredicate(format: "(abbreviation like[c] '500s') OR (abbreviation like[c] '300s') OR (abbreviation like[c] 'Classic') OR (abbreviation like[c] 'NG')")
-                valuesArray = (preset.filterRules as NSArray).filtered(using: filterPredicate) as! NSMutableArray
-                preset.filterRules.removeAll { item in
-                    valuesArray.contains { ($0 as AnyObject) === (item as AnyObject) }
+                let valuesArrayforFilter = preset.filterRules.filter { rule in
+                    guard let abbreviation = rule.abbreviation?.lowercased() else { return false }
+                    return ["500s", "300s", "classic", "ng"].contains(abbreviation)
                 }
-                let sortPredicate = NSPredicate(format: "(abbreviation like[c] '500s') OR (abbreviation like[c] '300s') OR (abbreviation like[c] 'Classic') OR (abbreviation like[c] 'NG')")
-                valuesArray = (preset.lineSorts as NSArray).filtered(using: sortPredicate) as! NSMutableArray
+                if valuesArrayforFilter.count > 0 {
+                    print("")
+                }
+                preset.filterRules.removeAll { item in
+                    valuesArrayforFilter.contains { ($0 as AnyObject) === (item as AnyObject) }
+                }
+                let valuesArrayforSorts = preset.lineSorts.filter { rule in
+                    guard let abbreviation = rule.abbreviation?.lowercased() else { return false }
+                    return ["500s", "300s", "classic", "ng"].contains(abbreviation)
+                }
+                if valuesArrayforSorts.count > 0 {
+                    print("")
+                }
                 preset.lineSorts.removeAll { item in
-                    valuesArray.contains { ($0 as AnyObject) === (item as AnyObject) }
+                    valuesArrayforSorts.contains { ($0 as AnyObject) === (item as AnyObject) }
                 }
                 // Reset the trip highlight count
                 BITrip.resetTripHighlightCount(in: self.context)
@@ -1209,6 +1259,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                     }
                     let rule = BIFilterRule(context: self.context)
                     rule.loadFilterPreset(pRule: pRule)
+                    rule.bidPeriod = self.bidPeriod
                     
                     if (pRule.category?.intValue == BIFilterRuleCategory.BIDaysOfMonthFilterRuleCategory.rawValue && (!( self.bidPeriod?.month?.intValue == preset.month?.intValue) || !(self.bidPeriod?.year?.intValue == preset.year?.intValue))) {
                         var monthBits = (pRule.variables!["MONTH_BITS"] as? NSNumber)?.uint64Value ?? 0
@@ -1622,45 +1673,47 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                     if preset.lineSorts.count > 0 {
                         self.justLoadedSortPreset = true
                     }
-                    
-                    if isOverNightBulkApplied {
-                        self.bidPeriod?.isOverNightBulkApplied = "YES"
-                        
-                        // Fetch OvernightBulk objects
-                        let fetchRequest: NSFetchRequest<OvernightBulk> = OvernightBulk.fetchRequest()
-                        
-                        if let fetchedObjects = try? self.context.fetch(fetchRequest),
-                           let firstObject = fetchedObjects.first,
-                           let cityStatus = firstObject.value(forKey: "citystatus") as? [String: String] {
-                            
-                            // Filter keys where value == "1"
-                            let noArray = cityStatus.filter { $0.value == "1" }.map { $0.key }
-                            
-                            CBUtils.overnightBulkRedApply(noArray: noArray as NSArray)
-                            
-                        } else {
-                            // No objects or cityStatus is nil
-                            CBUtils.overnightBulkRedApply(noArray: [])
-                        }
-                        
-                        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
-                    }
-                    var linesValueKey = ""
-                    if self.bidPeriod?.containsVacay?.boolValue != true {
-                        linesValueKey = self.bidPeriod!.isSecondRoundBid() && self.bidPeriod!.isFABid() != true ? kCBRound2DefaultLineValuesKey : kCBDefaultLineValuesKey
-                        AlertService.showAlertForTopVC(title: "Alert", message: "Your Preset includes line vacation properties.Because you do not have vacation, we are displaying the default line properties.")
-                    }
-                    else {
-                        linesValueKey = CBLineValuesMenuController.lineValuesKeyForBidPeriod(bidPeriod: self.bidPeriod!)
-                        UserDefaults.standard.set(preset.lineValues, forKey: linesValueKey)
-                    }
-                    self.deselectPresets()
-                    let presetToSelect = self.presetsArray[indexPath.row] as! CBPreset
-                    presetToSelect.selected = true
-                    self.bidPeriod?.loadedPresetIdentifier = presetToSelect.presetIdentifier
-                    self.tableView.reloadData()
-//                    need to add observer for notification
                 }
+                
+                if isOverNightBulkApplied {
+                    self.bidPeriod?.isOverNightBulkApplied = "YES"
+                    
+                    // Fetch OvernightBulk objects
+                    let fetchRequest: NSFetchRequest<OvernightBulk> = OvernightBulk.fetchRequest()
+                    
+                    if let fetchedObjects = try? self.context.fetch(fetchRequest),
+                       let firstObject = fetchedObjects.first,
+                       let cityStatus = firstObject.value(forKey: "citystatus") as? [String: String] {
+                        
+                        // Filter keys where value == "1"
+                        let noArray = cityStatus.filter { $0.value == "1" }.map { $0.key }
+                        
+                        CBUtils.overnightBulkRedApply(noArray: noArray as NSArray)
+                        
+                    } else {
+                        // No objects or cityStatus is nil
+                        CBUtils.overnightBulkRedApply(noArray: [])
+                    }
+                    
+                    NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+                }
+                var linesValueKey = ""
+                if self.bidPeriod?.containsVacay?.boolValue == true {
+                    linesValueKey = self.bidPeriod!.isSecondRoundBid() && self.bidPeriod!.isFABid() != true ? kCBRound2DefaultLineValuesKey : kCBDefaultLineValuesKey
+                    AlertService.showAlertForTopVC(title: "Alert", message: "Your Preset includes line vacation properties.Because you do not have vacation, we are displaying the default line properties.")
+                }
+                else {
+                    linesValueKey = CBLineValuesMenuController.lineValuesKeyForBidPeriod(bidPeriod: self.bidPeriod!)
+                    UserDefaults.standard.set(preset.lineValues, forKey: linesValueKey)
+                }
+                self.deselectPresets()
+                let presetToSelect = self.presetsArray[indexPath.row] as! CBPreset
+                presetToSelect.selected = true
+                self.bidPeriod!.loadedPresetIdentifier = presetToSelect.presetIdentifier
+                self.tableView.reloadData()
+                NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+                //                    need to add observer for notification
+                try? self.context.save()
             }
             try? self.context.save()
         }
@@ -1697,6 +1750,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
             if bidPeriod!.isFirstRoundBid() {
                 if categories.contains(BIFilterRuleCategory.BIPositionFilterRuleCategory.rawValue) == false {
                     rule = BIFilterRule(context: self.context)
+                    rule?.bidPeriod = self.bidPeriod
                     rule!.category = BIFilterRuleCategory.BIPositionFilterRuleCategory.rawValue as NSNumber
                     rule!.type = BIPositionFilterRuleType.BIPositionCompoundType.rawValue as NSNumber
                     let SET: Set<Int> = [BIFaPosition.FaPositionA.rawValue, BIFaPosition.FaPositionA.rawValue, BIFaPosition.FaPositionB.rawValue, BIFaPosition.FaPositionC.rawValue, BIFaPosition.FaPositionD.rawValue, BIFaPosition.FaPositionMultiple.rawValue, BIFaPosition.FaPositionNA.rawValue]
@@ -1706,6 +1760,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
             if bidPeriod!.isSecondRoundBid() {
                 if categories.contains(BIFilterRuleCategory.BIPositionFilterRuleCategory.rawValue) == false {
                     rule = BIFilterRule(context: self.context)
+                    rule?.bidPeriod = self.bidPeriod
                     rule!.category = BIFilterRuleCategory.BIPositionFilterRuleCategory.rawValue as NSNumber
                     rule!.type = BIPositionFilterRuleType.BIPositionCompoundType.rawValue as NSNumber
                     let SET: Set<Int> = [BIFaPosition.FaPositionA.rawValue, BIFaPosition.FaPositionA.rawValue, BIFaPosition.FaPositionB.rawValue, BIFaPosition.FaPositionC.rawValue, BIFaPosition.FaPositionD.rawValue, BIFaPosition.FaPositionMultiple.rawValue, BIFaPosition.FaPositionNA.rawValue]
@@ -1713,6 +1768,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                 }
                 if categories.contains(BIFilterRuleCategory.BIFaReserveFilterRuleCategory.rawValue) == false {
                     rule = BIFilterRule(context: self.context)
+                    rule?.bidPeriod = self.bidPeriod
                     rule?.category = BIFilterRuleCategory.BIFaReserveFilterRuleCategory.rawValue as NSNumber
                     let SET: Set<Int> = [BIFaPosition.FaPositionA.rawValue, BIFaReserveLineType.SnrAMres.rawValue, BIFaReserveLineType.SnrPMres.rawValue, BIFaReserveLineType.JnrAMres.rawValue, BIFaReserveLineType.JnrPMres.rawValue, BIFaReserveLineType.JnrLateRes.rawValue, BIFaReserveLineType.NoType.rawValue]
                     rule!.variables = ["SET": SET]
