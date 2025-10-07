@@ -354,6 +354,8 @@
 		F4B8B6CF2E471F440031229E /* BIInsertionPoint+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B8B6CD2E471F440031229E /* BIInsertionPoint+CoreDataClass.swift */; };
 		F4B8B6D02E471F440031229E /* BIInsertionPoint+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B8B6CE2E471F440031229E /* BIInsertionPoint+CoreDataProperties.swift */; };
 		F4BAEFE62E055F1000109A1B /* ODataBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4BAEFE52E055F1000109A1B /* ODataBuilder.swift */; };
+		F4C352D52E94C4D10033A1E5 /* CBDifferentAccountDetailsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C352D42E94C4D10033A1E5 /* CBDifferentAccountDetailsVC.swift */; };
+		F4C352D72E94C8310033A1E5 /* UserAccountUpdateCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C352D62E94C8310033A1E5 /* UserAccountUpdateCell.swift */; };
 		F4C383792E2527AE00AD8034 /* TripButton-rounded-right-redEye_red_iOS7.png in Resources */ = {isa = PBXBuildFile; fileRef = F4C383772E2527AE00AD8034 /* TripButton-rounded-right-redEye_red_iOS7.png */; };
 		F4C3837A2E2527AE00AD8034 /* TripButton-rounded-right-redEye_red_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F4C383782E2527AE00AD8034 /* TripButton-rounded-right-redEye_red_iOS7@2x.png */; };
 		F4C3837B2E2527AE00AD8034 /* TripButton-rounded-both-redEye_red_iOS7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F4C383742E2527AE00AD8034 /* TripButton-rounded-both-redEye_red_iOS7@2x.png */; };
@@ -738,6 +740,8 @@
 		F4B8B6CD2E471F440031229E /* BIInsertionPoint+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIInsertionPoint+CoreDataClass.swift"; sourceTree = "<group>"; };
 		F4B8B6CE2E471F440031229E /* BIInsertionPoint+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIInsertionPoint+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F4BAEFE52E055F1000109A1B /* ODataBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ODataBuilder.swift; sourceTree = "<group>"; };
+		F4C352D42E94C4D10033A1E5 /* CBDifferentAccountDetailsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBDifferentAccountDetailsVC.swift; sourceTree = "<group>"; };
+		F4C352D62E94C8310033A1E5 /* UserAccountUpdateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAccountUpdateCell.swift; sourceTree = "<group>"; };
 		F4C383732E2527AE00AD8034 /* TripButton-rounded-both-redEye_red_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-redEye_red_iOS7.png"; sourceTree = "<group>"; };
 		F4C383742E2527AE00AD8034 /* TripButton-rounded-both-redEye_red_iOS7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-both-redEye_red_iOS7@2x.png"; sourceTree = "<group>"; };
 		F4C383752E2527AE00AD8034 /* TripButton-rounded-left-redEye_red_iOS7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TripButton-rounded-left-redEye_red_iOS7.png"; sourceTree = "<group>"; };
@@ -1121,6 +1125,7 @@
 				F41EBDDB2DC4DB20001413DE /* SwitchTableViewCell.swift */,
 				F4EBBCAA2E4C6E1D00C87336 /* SegmentedTableViewCell.swift */,
 				35A420F92E828B7700D6C951 /* BulkDownloadStatusCell.swift */,
+				F4C352D62E94C8310033A1E5 /* UserAccountUpdateCell.swift */,
 			);
 			path = tableViewCells;
 			sourceTree = "<group>";
@@ -1476,6 +1481,7 @@
 				F41EBE7C2DC4DB20001413DE /* serviceAgreementViewController.swift */,
 				F41EBE7D2DC4DB20001413DE /* swaptimizerHelpMenuViewController.swift */,
 				F41EBE7E2DC4DB20001413DE /* userAccountViewController.swift */,
+				F4C352D42E94C4D10033A1E5 /* CBDifferentAccountDetailsVC.swift */,
 			);
 			path = "Help Menu";
 			sourceTree = "<group>";
@@ -2133,6 +2139,7 @@
 				F41EBF272DC4DB20001413DE /* BITripInfo+CoreDataClass.swift in Sources */,
 				F41EBF282DC4DB20001413DE /* BITripInfo+CoreDataProperties.swift in Sources */,
 				F41EBF292DC4DB20001413DE /* BIVacation+CoreDataClass.swift in Sources */,
+				F4C352D72E94C8310033A1E5 /* UserAccountUpdateCell.swift in Sources */,
 				F4DBD8362DDC5FF700423856 /* BIBidInfoReader.swift in Sources */,
 				F4DE35432E72A5C100777D47 /* CBUserInfo.swift in Sources */,
 				F41EBF2A2DC4DB20001413DE /* BIVacation+CoreDataProperties.swift in Sources */,
@@ -2249,6 +2256,7 @@
 				F41EBF842DC4DB20001413DE /* CBBidActionsVC.swift in Sources */,
 				F41EBF852DC4DB20001413DE /* CBBidlineViewTableViewCell.swift in Sources */,
 				F4400BDA2DD9E5D60066C7E0 /* CBLoginViewModel.swift in Sources */,
+				F4C352D52E94C4D10033A1E5 /* CBDifferentAccountDetailsVC.swift in Sources */,
 				F41EBF862DC4DB20001413DE /* CBBidListCalenderViewCell.swift in Sources */,
 				F41EBF872DC4DB20001413DE /* InnerCollectionViewCell.swift in Sources */,
 				F4BAEFE62E055F1000109A1B /* ODataBuilder.swift in Sources */,

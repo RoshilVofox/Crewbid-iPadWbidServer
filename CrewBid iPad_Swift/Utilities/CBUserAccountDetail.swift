@@ -259,8 +259,8 @@ import FirebaseCrashlytics
              if let pos = dicUserData["Position"] as? Int {
                  self.position = pos
              }
-             if let carrierNum = dicUserData["CarrierNum"] as? Int {
-                 self.CarrierNum = carrierNum
+             if let carrierNum = dicUserData["CarrierNum"] as? String {
+                 self.CarrierNum = Int(carrierNum) ?? 0
              }
 
              // Booleans from "YES"/"NO"
