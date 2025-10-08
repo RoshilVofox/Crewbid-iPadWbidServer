@@ -33,7 +33,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
         NotificationCenter.default.addObserver(self, selector: #selector(updateBidListCount), name: NSNotification.Name("updateBidListCount"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updatePresets(_:)), name: NSNotification.Name("refreshLines"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(deselectPresetsNotification), name: NSNotification.Name(CBLineValuesToDisplayDidChangeNotification), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(deselectPresetsNotification), name: NSNotification.Name("refreshLines"), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(deselectPresetsNotification), name: NSNotification.Name("refreshLines"), object: nil)
         NotificationCenter.default.removeObserver(kCBPresetSyncReload)
         CBGlobalMethods.shared.isSortAvailable = false
         tableView.allowsSelectionDuringEditing = true
@@ -225,7 +225,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                     // Try secure unarchiving first
                     if let unarchived = try NSKeyedUnarchiver.unarchivedObject(ofClasses: [NSArray.self, NSDictionary.self, NSString.self, NSNumber.self], from: result) as? [Any] {
                         presets = unarchived
-                        print("Presets:", presets)
+                        print("Presets:")
                     }
                 } catch {
                     // Fallback for legacy archives (Objective-C style)
@@ -424,7 +424,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                     // Try secure unarchiving first
                     if let unarchived = try NSKeyedUnarchiver.unarchivedObject(ofClasses: [NSArray.self, NSDictionary.self, NSString.self, NSNumber.self], from: result) as? [Any] {
                         presets = unarchived
-                        print("Presets:", presets)
+                        print("Presets:")
                     }
                 } catch {
                     // Fallback for legacy archives (Objective-C style)
@@ -886,7 +886,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
     }
     
     func deselectPresets() {
-        self.bidPeriod?.loadedPresetIdentifier = nil
+        self.bidPeriod!.loadedPresetIdentifier = nil
         self.tableView.reloadData()
     }
     
@@ -1095,21 +1095,23 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
             newPreset.appVersion = bidPeriod!.appVersion
             
             if (arrFilterCommute?.count ?? 0 > 0 && !(arrSortCommute?.count ?? 0 > 0)) {
-                newPreset.commutabilityFilterDetails!["baseTime"] = objCommuteFilter!.baseTime
-                newPreset.commutabilityFilterDetails!["checkInTime"] = objCommuteFilter!.checkInTime
-                newPreset.commutabilityFilterDetails!["city"] = objCommuteFilter!.city
-                newPreset.commutabilityFilterDetails!["commutableType"] = objCommuteFilter!.commutableType
-                newPreset.commutabilityFilterDetails!["commuteCity"] = objCommuteFilter!.commuteCity
-                newPreset.commutabilityFilterDetails!["connectTime"] = objCommuteFilter!.connectTime
-                newPreset.commutabilityFilterDetails!["secondCellValue"] = objCommuteFilter!.secondCellValue
-                newPreset.commutabilityFilterDetails!["thirdCellValue"] = objCommuteFilter!.thirdCellValue
-                newPreset.commutabilityFilterDetails!["type"] = objCommuteFilter!.type
-                newPreset.commutabilityFilterDetails!["value"] = objCommuteFilter!.value
-                newPreset.commutabilityFilterDetails!["weight"] = objCommuteFilter!.weight
-                newPreset.commutabilityFilterDetails!["isNonStop"] = objCommuteFilter!.isNonStop
+                newPreset.commutabilityFilterDetails = NSMutableDictionary()
+                newPreset.commutabilityFilterDetails?["baseTime"] = objCommuteFilter!.baseTime
+                newPreset.commutabilityFilterDetails?["checkInTime"] = objCommuteFilter!.checkInTime
+                newPreset.commutabilityFilterDetails?["city"] = objCommuteFilter!.city
+                newPreset.commutabilityFilterDetails?["commutableType"] = objCommuteFilter!.commutableType
+                newPreset.commutabilityFilterDetails?["commuteCity"] = objCommuteFilter!.commuteCity
+                newPreset.commutabilityFilterDetails?["connectTime"] = objCommuteFilter!.connectTime
+                newPreset.commutabilityFilterDetails?["secondCellValue"] = objCommuteFilter!.secondCellValue
+                newPreset.commutabilityFilterDetails?["thirdCellValue"] = objCommuteFilter!.thirdCellValue
+                newPreset.commutabilityFilterDetails?["type"] = objCommuteFilter!.type
+                newPreset.commutabilityFilterDetails?["value"] = objCommuteFilter!.value
+                newPreset.commutabilityFilterDetails?["weight"] = objCommuteFilter!.weight
+                newPreset.commutabilityFilterDetails?["isNonStop"] = objCommuteFilter!.isNonStop
             }
             
             if (arrSortCommute?.count ?? 0 > 0 && !(arrFilterCommute?.count ?? 0 > 0)) {
+                newPreset.commutabilitySortDetails = NSMutableDictionary()
                 newPreset.commutabilitySortDetails!["baseTime"] = objCommuteSort!.baseTime
                 newPreset.commutabilitySortDetails!["checkInTime"] = objCommuteSort!.checkInTime
                 newPreset.commutabilitySortDetails!["city"] = objCommuteSort!.city
@@ -1125,6 +1127,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
             }
             
             if (arrFilterCommute?.count ?? 0 > 0 && arrSortCommute?.count ?? 0 > 0) {
+                newPreset.commutabilityFilterDetails = NSMutableDictionary()
                 newPreset.commutabilityFilterDetails!["baseTime"] = objCommuteFilter!.baseTime
                 newPreset.commutabilityFilterDetails!["checkInTime"] = objCommuteFilter!.checkInTime
                 newPreset.commutabilityFilterDetails!["city"] = objCommuteFilter!.city
@@ -1138,6 +1141,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                 newPreset.commutabilityFilterDetails!["weight"] = objCommuteFilter!.weight
                 newPreset.commutabilityFilterDetails!["isNonStop"] = objCommuteFilter!.isNonStop
                 
+                newPreset.commutabilitySortDetails = NSMutableDictionary()
                 newPreset.commutabilitySortDetails!["baseTime"] = objCommuteSort!.baseTime
                 newPreset.commutabilitySortDetails!["checkInTime"] = objCommuteSort!.checkInTime
                 newPreset.commutabilitySortDetails!["city"] = objCommuteSort!.city
@@ -1187,9 +1191,10 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
         }
         //If user selected any other row, load that preset
         else {
+            self.view.showActivityIndicator()
             UserDefaults.standard.set(true, forKey: kCBIsPresetModified)
             let cell = tableView.cellForRow(at: indexPath)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.justChangedPreset = true
                 let preset: CBPreset = self.presetsArray[indexPath.row] as! CBPreset
                 let valuesArrayforFilter = preset.filterRules.filter { rule in
@@ -1385,6 +1390,38 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                             objCommuteTimeImport.bidDayStringValue = (preset.commuteTimeDetails![i] as? [String: Any])?["bidDayStringValue"] as? String
                         }
                         try? self.context.save()
+                        let thirdCellValue = preset.commutabilityFilterDetails!["thirdCellValue"] as? NSNumber
+                        let city = preset.commutabilityFilterDetails!["city"] as? String
+                        let checkInTime = preset.commutabilityFilterDetails!["checkInTime"] as? NSNumber
+                        let connectTime = preset.commutabilityFilterDetails!["connectTime"] as? NSNumber
+                        let baseTime = preset.commutabilityFilterDetails!["baseTime"] as? NSNumber
+                        let nonStop = preset.commutabilityFilterDetails!["isNonStop"] as? NSNumber
+                        
+                        var commuteCity = city ?? ""
+                        var isNonStop = nonStop?.boolValue ?? false
+                        
+                        let commuteVC = CommuteCityViewController()
+//                        CBGlobalMethods.shared.showCustomActivityIndicator(message: "Calculating commute values..", bgcolor: .purple, height: 100)
+                        let (success, commuteCityReturn) = commuteVC.commutabilityCalculationWithForSync(city: city!, isNonStop: isNonStop, connectTimeFromPreset: connectTime as! Int)
+//                        CBGlobalMethods.shared.hideCustomActivityIndicator()
+                        let commutInfoVC = CBCommuteInfoViewController()
+                        commutInfoVC.backToBaseFromSync = self.getHours(minutes: baseTime!)
+                        let connectTimeStr = self.getHours(minutes: connectTime!)
+                        if connectTimeStr == "--:--" {
+                            commutInfoVC.connectTimeFromSync = "0:0"
+                        }
+                        else {
+                            commutInfoVC.connectTimeFromSync = connectTimeStr
+                        }
+                        commutInfoVC.checkInFromSync = self.getHours(minutes: checkInTime!)
+                        commutInfoVC.bidPeriod = self.bidPeriod
+                        commutInfoVC.commutabilityType = CommutabilityType.filter
+                        commutInfoVC.isNonStop = isNonStop
+                        commutInfoVC.commuteCityFromSync = city
+                        commutInfoVC.thirdCellValue = thirdCellValue!
+                        commutInfoVC.calculateCommuteLineProperties()
+                        NotificationCenter.default.post(name: NSNotification.Name("refreshWorkBlock"), object: self)
+                        try? self.context.save()
                     }
                     else if pRule.category?.intValue == BIFilterRuleCategory.BIReportReleaseFilterCategory.rawValue {
                         if rule.variables!["selectedOption"] != nil {
@@ -1529,7 +1566,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                             sort.arrayVariables = pSort.arrayVariables
                         }
                     }
-                    else if (sort.category?.intValue == BILineSortCategory.BIDeadheadsLineSortCategory.rawValue && sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtEndSortType.rawValue || sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtBothSortType.rawValue || sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtStartSortType.rawValue) {
+                    else if sort.category?.intValue == BILineSortCategory.BIDeadheadsLineSortCategory.rawValue && (sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtEndSortType.rawValue || sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtBothSortType.rawValue || sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtStartSortType.rawValue) {
                         var deadHeadCitiesSet = NSMutableSet()
                         var alertMsg: String = ""
                         if sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtStartSortType.rawValue {
@@ -1642,9 +1679,9 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                         var isNonStop = nonStop?.boolValue ?? false
                         
                         let commuteVC = CommuteCityViewController()
-                        CBGlobalMethods.shared.showCustomActivityIndicator(message: "Calculating commute values..", bgcolor: .purple, height: 100)
-                        let (success, commuteCityReturn) = commuteVC.commutabilityCalculationWithForSync(city: city!, isNonStop: isNonStop)
-                        CBGlobalMethods.shared.hideCustomActivityIndicator()
+//                        CBGlobalMethods.shared.showCustomActivityIndicator(message: "Calculating commute values..", bgcolor: .purple, height: 100)
+                        let (success, commuteCityReturn) = commuteVC.commutabilityCalculationWithForSync(city: city!, isNonStop: isNonStop, connectTimeFromPreset: connectTime as! Int)
+//                        CBGlobalMethods.shared.hideCustomActivityIndicator()
                         let commutInfoVC = CBCommuteInfoViewController()
                         commutInfoVC.backToBaseFromSync = self.getHours(minutes: baseTime!)
                         let connectTimeStr = self.getHours(minutes: connectTime!)
@@ -1710,10 +1747,11 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                 let presetToSelect = self.presetsArray[indexPath.row] as! CBPreset
                 presetToSelect.selected = true
                 self.bidPeriod!.loadedPresetIdentifier = presetToSelect.presetIdentifier
+                try! self.context.save()
                 self.tableView.reloadData()
                 NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
                 //                    need to add observer for notification
-                try? self.context.save()
+                self.view.hideActivityIndicator()
             }
             try? self.context.save()
         }

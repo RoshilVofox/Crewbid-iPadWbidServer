@@ -645,7 +645,7 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
             
         }else if category == BIFilterRuleCategory.BICommutabilityFilterRuleCategory.rawValue{
             let fetchRequest:NSFetchRequest<Commutability> = Commutability.fetchRequest()
-            
+            fetchRequest.predicate = NSPredicate(format: "commutableType == %d", CommutabilityType.filter.rawValue)
             do{
                 let fetchedObjects = try self.managedObjectContext!.fetch(fetchRequest)
                 

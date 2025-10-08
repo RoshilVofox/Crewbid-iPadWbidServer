@@ -45,7 +45,9 @@ class CommuteCityViewController: UIViewController, KUIPopOverUsable, UICollectio
         self.dismiss(animated: true, completion: nil)
     }
     
-    func commutabilityCalculationWithForSync(city: String, isNonStop: Bool) -> (Bool, String) {
+    func commutabilityCalculationWithForSync(city: String, isNonStop: Bool, connectTimeFromPreset: Int) -> (Bool, String) {
+        self.connectTime = connectTimeFromPreset
+        bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         let startOfMonth = self.startOfMonth()!
         var endOfMonth = self.endOfMonth()!
         let flightRoteDetails = CBUtils.getFlightData()
