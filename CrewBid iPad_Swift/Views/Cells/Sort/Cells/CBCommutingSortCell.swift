@@ -413,7 +413,7 @@ class CBCommutingSortCell: UITableViewCell, GRButtonDelegate {
         returnSun.text = nil
         
         let resultsFilter = (CBGlobalMethods.shared.selectedBidPeriod!.lineFilters!.allObjects as NSArray).filtered(using: NSPredicate(format: "category == 12")) as! [BIFilterRule]
-        if (resultsFilter.count > 0) {
+        if (resultsFilter.count == 0) {
             for line in CBGlobalMethods.shared.selectedBidPeriod!.orderedLines() {
                 line.totalCommutes = NSNumber(integerLiteral: 0)
                 line.commutableBacks = NSNumber(integerLiteral: 0)
@@ -643,7 +643,7 @@ class CBCommutingSortCell: UITableViewCell, GRButtonDelegate {
         components.hour = 0
         components.minute = 0
         components.second = 0
-        components.isLeapMonth = true
+//        components.isLeapMonth = true
         
         var dateComponents = DateComponents()
         dateComponents.day = -1

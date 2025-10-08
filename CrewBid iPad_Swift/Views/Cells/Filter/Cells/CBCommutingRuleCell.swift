@@ -1020,8 +1020,11 @@ class CBCommutingRuleCell: UITableViewCell, CommutingManualRuleCellDelegate, GRB
         returnSat.text = nil
         departureSun.text = nil
         returnSun.text = nil
-
-        for line in  CBGlobalMethods.shared.selectedBidPeriod!.orderedLines(){
+        
+        let resultSort = (CBGlobalMethods.shared.selectedBidPeriod!.lineSorts!.allObjects as NSArray).filtered(using: NSPredicate(format: "category == 4")) as! [BILineSort]
+        
+        if resultSort.count == 0 {
+            for line in  CBGlobalMethods.shared.selectedBidPeriod!.orderedLines(){
             line.totalCommutes = NSNumber(integerLiteral: 0)
             line.commutableBacks = NSNumber(integerLiteral: 0)
             line.commutableFronts = NSNumber(integerLiteral: 0)
@@ -1033,11 +1036,12 @@ class CBCommutingRuleCell: UITableViewCell, CommutingManualRuleCellDelegate, GRB
                 trip.highlightCount = NSNumber(integerLiteral: 0)
             }
         }
+    }
         
-        let result = CBGlobalMethods.shared.selectedBidPeriod!.commuteTime?.allObjects
-        for basket in result! {
-            self.context.delete(basket as! NSManagedObject)
-        }
+//        let result = CBGlobalMethods.shared.selectedBidPeriod!.commuteTime?.allObjects
+//        for basket in result! {
+//            self.context.delete(basket as! NSManagedObject)
+//        }
         try? self.context.save()
         // Remove the filtering by commute times
         filterRule?.managedObjectContext?.delete(filterRule!)
