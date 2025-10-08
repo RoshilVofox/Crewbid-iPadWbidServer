@@ -222,4 +222,25 @@ class ODataBuilder {
     }
     
     
+    func updateUserAccount(employeeDetails: [String: Any]) {
+        let urlString = "UpdateCrewbidUserDetails"
+        guard let app = UIApplication.shared.delegate as? AppDelegate else { return }
+        // Convert dictionary to JSON string
+        if let data = try? JSONSerialization.data(withJSONObject: employeeDetails, options: []),
+           let jsonString = String(data: data, encoding: .utf8) {
+            
+            print("json string -- \(jsonString)")
+            
+            app.sc?.constructUrl(urlString)
+            
+            // Check service accessibility
+            app.sc?.checkCrewBidServiceAccessibility { isAccessible in
+                if isAccessible {
+                    app.sc?.postData(urlName: urlString, jsonString: jsonString)
+                }
+            }
+        } else {
+            print("Failed to serialize employeeDetails to JSON")
+        }
+    }
 }
