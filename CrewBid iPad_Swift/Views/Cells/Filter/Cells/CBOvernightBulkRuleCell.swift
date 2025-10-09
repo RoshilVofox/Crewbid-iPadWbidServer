@@ -53,7 +53,10 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
             let fetchedObjects = try context.fetch(fetchRequest)
             if fetchedObjects.count > 0 {
                 objOvernight = fetchedObjects[0]
-                if let cityStatus = fetchedObjects.first?.value(forKey: "citystatus") as? [String: Any] {
+                if let cityStatusValueArray = objOvernight!.value(forKey: "citystatus") as? NSMutableArray, cityStatusValueArray.count > 0 {
+                    dictCityStatus = (cityStatusValueArray[0] as? [String: Any])!
+                }
+                else if let cityStatus = fetchedObjects.first?.value(forKey: "citystatus") as? [String: Any] {
                     dictCityStatus = cityStatus  // [String: Any] is already mutable in Swift
                 }
             }
@@ -81,7 +84,7 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
                 let intersection = Set(cities).intersection(Set(overnightCities))
                 arrIntersected =  NSMutableArray(array: Array(intersection))
             }
-            self.collectionView.reloadData()
+//            self.collectionView.reloadData()
         }
         catch {
             print("error fetching overnightBulk: \(error.localizedDescription)")
@@ -95,6 +98,7 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
     }
     
     @IBAction func deleteCellAction(_ sender: Any) {
+        CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
         
         self.bidPeriod?.isOverNightBulkApplied = "NO"
         if (self.filterRule?.ruleHighlightsTrips() == true) {

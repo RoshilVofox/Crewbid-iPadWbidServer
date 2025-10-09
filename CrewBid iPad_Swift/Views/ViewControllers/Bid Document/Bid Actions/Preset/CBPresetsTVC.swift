@@ -1175,7 +1175,11 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
             let fetchOvernightBulk: NSFetchRequest<OvernightBulk> = OvernightBulk.fetchRequest()
             let ovwerNightBulkResult = try? self.context.fetch(fetchOvernightBulk)
             if ovwerNightBulkResult?.count ?? 0 > 0 {
-                newPreset.overnight = ovwerNightBulkResult![0].value(forKey: "cityStatus") as? NSMutableArray
+                let first = ovwerNightBulkResult![0]
+                if let dict = first.citystatus as? [String: Any] {
+                    let array = NSMutableArray(array: [dict])
+                    newPreset.overnight = array
+                }
             }
             self.presetsArray.append(newPreset)
             self.bidPeriod?.loadedPresetIdentifier = newPreset.presetIdentifier
