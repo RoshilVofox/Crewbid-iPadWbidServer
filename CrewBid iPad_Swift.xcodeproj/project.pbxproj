@@ -35,6 +35,7 @@
 		8BFCEE9E2DC4F62F0068C00B /* Box.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEE9D2DC4F62F0068C00B /* Box.png */; };
 		8BFCEEA02DC4F6400068C00B /* Chat.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEE9F2DC4F6400068C00B /* Chat.png */; };
 		8BFCEEA22DC4F6DB0068C00B /* oneMonth.png in Resources */ = {isa = PBXBuildFile; fileRef = 8BFCEEA12DC4F6DB0068C00B /* oneMonth.png */; };
+		F40743542E9B934E0014E4B9 /* LatestNews.pdf in Resources */ = {isa = PBXBuildFile; fileRef = F40743532E9B934E0014E4B9 /* LatestNews.pdf */; };
 		F407B2A12DD9AE5B003E4042 /* EndPoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = F407B2A02DD9AE5B003E4042 /* EndPoints.swift */; };
 		F410AA6A2E4DE7D200101EAB /* AwardsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F410AA692E4DE7D200101EAB /* AwardsViewModel.swift */; };
 		F41475812DC8D8290064CD25 /* KeychainItemWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = F41475802DC8D8290064CD25 /* KeychainItemWrapper.m */; };
@@ -417,6 +418,7 @@
 		8BFCEE9D2DC4F62F0068C00B /* Box.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Box.png; sourceTree = "<group>"; };
 		8BFCEE9F2DC4F6400068C00B /* Chat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Chat.png; sourceTree = "<group>"; };
 		8BFCEEA12DC4F6DB0068C00B /* oneMonth.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = oneMonth.png; sourceTree = "<group>"; };
+		F40743532E9B934E0014E4B9 /* LatestNews.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = LatestNews.pdf; sourceTree = "<group>"; };
 		F407B2A02DD9AE5B003E4042 /* EndPoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndPoints.swift; sourceTree = "<group>"; };
 		F410AA692E4DE7D200101EAB /* AwardsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwardsViewModel.swift; sourceTree = "<group>"; };
 		F414757D2DC8D6520064CD25 /* CrewBid iPad_Swift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CrewBid iPad_Swift.entitlements"; sourceTree = "<group>"; };
@@ -968,6 +970,7 @@
 			children = (
 				F41EBD692DC4DB20001413DE /* Definitions.pdf */,
 				F41EBD6A2DC4DB20001413DE /* FAQs.pdf */,
+				F40743532E9B934E0014E4B9 /* LatestNews.pdf */,
 				F41EBD6B2DC4DB20001413DE /* LatestNewssdsds.pdf */,
 				F41EBD6C2DC4DB20001413DE /* LineValues.pdf */,
 				F41EBD6D2DC4DB20001413DE /* SWAPtimizerDefinitions.pdf */,
@@ -1916,7 +1919,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1620;
-				LastUpgradeCheck = 1620;
+				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					F4CF5A272D891A3800A351DB = {
 						CreatedOnToolsVersion = 16.2;
@@ -1989,6 +1992,7 @@
 				F41EBEAB2DC4DB20001413DE /* OrangeRect.png in Resources */,
 				8BFCEEA02DC4F6400068C00B /* Chat.png in Resources */,
 				F41EBEAC2DC4DB20001413DE /* PurpleRect.png in Resources */,
+				F40743542E9B934E0014E4B9 /* LatestNews.pdf in Resources */,
 				8BFCEE9E2DC4F62F0068C00B /* Box.png in Resources */,
 				F41EBEAD2DC4DB20001413DE /* RedRect.png in Resources */,
 				F41EBEAE2DC4DB20001413DE /* TripButton-rounded-both-brown_iOS7.png in Resources */,
@@ -2388,7 +2392,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 7.34.19;
+				MARKETING_VERSION = 7.34.20;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brainbagsoftware.CrewBid;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2424,7 +2428,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 7.34.19;
+				MARKETING_VERSION = 7.34.20;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "CrewBid iPad_Swift/Utilities/Helpers/StoreKit/CrewBid iPad_Swift-Bridging-Header.h";
@@ -2491,6 +2495,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -2547,6 +2552,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};

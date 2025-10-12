@@ -259,9 +259,8 @@ class BIBidFileDownloadViewModel {
                 httpMethod: .POST,
                 body: bodyData,
                 headers: nil,
-                timeout: 300
-            ) {
-                completion($0.mapError { $0 as Error }) }
+                timeout: 1800
+            ) {completion($0.mapError { $0 as Error })}
         }
 
         if dataSource.round == 1 && dataSource.position == .FlightAttendant {

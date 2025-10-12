@@ -12,6 +12,7 @@ import SystemConfiguration.CaptiveNetwork
 import CoreLocation
 import Firebase
 import IQKeyboardManagerSwift
+import StoreKit
 private let TestFlightAppToken = "acc37fb4-d850-42d1-b030-bc968f5ac8a7"
 private let kCBFreeMonthToken = "CrewBidFreeMonthToken"
 private let kFreeMonthEncryptionKey = "acc37fb4-d850"
@@ -54,6 +55,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     var objNetworkType: NetworkType = .ground
     var sc:ServiceConnection?
     var lastDownloadedBidInfo: NSMutableDictionary?
+    let sendMail = CBSendMail()
+    var observer:IAPHelper?
+    
     func checkUpdate(){
         if self.connectedToInternet(){
             self.checkForAppUpdate(false)
@@ -88,17 +92,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         }
         return true
     }
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        if self.connectedToInternet(){
-            self.checkForAppUpdate(false)
-        }
-    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         onLaunch = true
         IQKeyboardManager.shared.isEnabled = true
         CBUtils().initialize()
-//        APIService.shared.getApplicationLoadData()
         self.getApplicationLoadData()
 //        FirebaseApp.configure()
 //        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(false)
@@ -114,16 +112,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         dicCurrentBidDetails?["bidEmployeeNum"] = ""
         NotificationCenter.default.addObserver(self, selector: #selector(handleAppEnteringForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).tintColor = UIColor.lightGray
-        //MARK: need code
+        
         objNetworkType = .ground
+        self.disableBackup()
         self.notificationChecking()
         self.testInternetConnection()
         self.simplePingStarter()
         self.ObjUserAccount = CBUserAccountDetail()
         self.sc = ServiceConnection()
         _ = self.isUserInformationAvailable()
-        //MARK: need code
-        // for transactions
+        CBUtils.fetchLatestNews()
+        self.sendCrashMail()
+        let transactions = self.getTransactions()
+        if !transactions.isEmpty{
+            let dict = transactions.last
+            let productIdentifiers = Set([dict?["transactionIdentifier"] as? String].compactMap { $0 })
+            observer = IAPHelper(productIdentifiers: productIdentifiers)
+            observer?.checkReceiptWithICloud()
+            let appRecPath = Bundle.main.appStoreReceiptURL?.path
+            let positionFromIcloud = dict?["position"] as? Int ?? 0
+            let userType = (positionFromIcloud == 3) ? "FA" : "CT"
+            let userIdFromIcloud = (dict?["userId"] as? NSNumber)?.stringValue
+            let userId = self.ObjUserAccount?.employeeNumber
+            
+            if userIdFromIcloud == userId {
+                let newDate = self.getNewPayDate(iCloudDate: dict?["transactionDate"] as! Date, currentDate: Date(), userType: userType)
+                if newDate?.compare(Date()) == .orderedDescending{
+                    if let appRecPath = appRecPath,
+                       FileManager.default.fileExists(atPath: appRecPath),
+                       dict?["transactionState"] as? String != "1" {
+                        SKPaymentQueue.default().add(observer!)
+                    }
+                }else{
+                    observer?.removeTransactionIcloud(withTransactionIdentifier: dict?["transactionID"] as! String)
+                }
+            }
+        }
         if UserDefaults.standard.object(forKey: "FirstRun") == nil{
              if let account = KeychainHelper.retrieveUsername(forService: "SaveLoginDetails") {
                  KeychainHelper.delete(account: account, service: "SaveLoginDetails")
@@ -132,13 +156,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
             UserDefaults.standard.synchronize()
         }
         IPAddress = self.getIPAddress()
-        print("IP Address: \(String(describing: IPAddress))")
-        self.iCloudAccessCheck()
-//        NotificationCenter.default.addObserver(self, selector: #selector(ubiquitousKeyValueStoreDidChange), name: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: NSUbiquitousKeyValueStore.default)
-//        NotificationCenter.default.addObserver(self, selector: #selector(iCloudAccountAvailabilityChanged), name: .NSUbiquityIdentityDidChange, object: nil)
-//        NSUbiquitousKeyValueStore.default.synchronize()
+        let firstLaunchWithiCloudAvailable = !UserDefaults.standard.bool(forKey: "firstLaunchWithiCloudAvailable")
+        let currentiCloudToken = FileManager.default.ubiquityIdentityToken
         
-        //needs code relsted to subscription reset
+        if currentiCloudToken == nil && firstLaunchWithiCloudAvailable {
+            AlertService.showAlertForTopVC(title: "No iCloud Access!", message: "CrewBid requires iCloud access to sync your subscriptions across devices. To enable go to Settings > iCloud")
+            UserDefaults.standard.set(true, forKey: "firstLaunchWithiCloudAvailable")
+        }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(ubiquitousKeyValueStoreDidChange), name: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: NSUbiquitousKeyValueStore.default)
+        NotificationCenter.default.addObserver(self, selector: #selector(iCloudAccountAvailabilityChanged), name: .NSUbiquityIdentityDidChange, object: nil)
+        NSUbiquitousKeyValueStore.default.synchronize()
         
         UIApplication.shared.applicationIconBadgeNumber = 0
         if (UserDefaults.standard.object(forKey: kCBIncludeDroppedTripsInProcessingKey) == nil){
@@ -148,9 +176,126 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
             UserDefaults.standard.set(false, forKey: kCBHideVacationKey)
         }
         self.showDeviceUptimeAlert()
-        
         return true
     }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        self.updateBadgeCountForPushNotification()
+    }
+    
+    
+    func updateBadgeCountForPushNotification() {
+        guard let deviceId = UIDevice.current.identifierForVendor?.uuidString else { return }
+        
+        let soapMessage = """
+        <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+            <s:Body>
+                <ResetPushBadge xmlns="http://tempuri.org/">
+                    <resetbadgeParam xmlns:d4p1="http://schemas.datacontract.org/2004/07/WBidPushService.Model" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+                        <d4p1:FromAppNumber>5</d4p1:FromAppNumber>
+                        <d4p1:deviceId>\(deviceId)</d4p1:deviceId>
+                    </resetbadgeParam>
+                </ResetPushBadge>
+            </s:Body>
+        </s:Envelope>
+        """
+        
+        let serviceURL = "http://www.wbidmax.com:8007/WBidPushSerivce.svc"
+        guard let url = URL(string: serviceURL) else { return }
+        
+        var request = URLRequest(url: url)
+        let soapAction = "http://tempuri.org/IWBidPushSerivce/ResetPushBadge"
+        
+        request.httpMethod = "POST"
+        request.timeoutInterval = 10
+        request.setValue("text/xml; charset=utf-8", forHTTPHeaderField: "Content-Type")
+        request.setValue(soapAction, forHTTPHeaderField: "SOAPAction")
+        request.setValue("\(soapMessage.count)", forHTTPHeaderField: "Content-Length")
+        request.httpBody = soapMessage.data(using: .utf8)
+        
+        let dataTask = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                print("ResetPushBadge Success: \(httpResponse.statusCode)")
+            } else if let error = error {
+                print("Error resetting push badge: \(error.localizedDescription)")
+            }
+        }
+        dataTask.resume()
+    }
+    
+    
+    func application(_ application: UIApplication, shouldSaveSecureApplicationState coder: NSCoder) -> Bool {
+        return true
+    }
+    
+    func application(_ application: UIApplication, shouldRestoreSecureApplicationState coder: NSCoder) -> Bool {
+        return true
+    }
+    
+    
+    func getNewPayDate(iCloudDate: Date, currentDate: Date, userType: String) -> Date? {
+        let calendar = Calendar.current
+        let iCloudDay = calendar.component(.day, from: iCloudDate)
+        let currentComponents = calendar.dateComponents([.day, .month, .year], from: currentDate)
+        
+        var newComponents = DateComponents()
+        newComponents.year = currentComponents.year
+        
+        if userType == "FA" {
+            if (1...5).contains(iCloudDay) {
+                newComponents.day = 10
+                newComponents.month = currentComponents.month
+            } else if (6...15).contains(iCloudDay) {
+                newComponents.day = 28
+                newComponents.month = currentComponents.month
+            } else if (16...31).contains(iCloudDay) {
+                newComponents.day = 10
+                newComponents.month = (currentComponents.month ?? 0) + 1
+            }
+        } else {
+            if (1...9).contains(iCloudDay) {
+                newComponents.day = 15
+                newComponents.month = currentComponents.month
+            } else if (10...19).contains(iCloudDay) {
+                newComponents.day = 28
+                newComponents.month = currentComponents.month
+            } else if (20...31).contains(iCloudDay) {
+                newComponents.day = 15
+                newComponents.month = (currentComponents.month ?? 0) + 1
+            }
+        }
+        
+        // Create the new date from components
+        return calendar.date(from: newComponents)
+    }
+    
+    func sendCrashMail() {
+        if let errorText = UserDefaults.standard.value(forKey: "ErrorText") as? String {
+            print("Error Details -- \(errorText)")
+            if errorText.count > 10 {
+                sendMail.sendCrashMail(errorText)
+            }
+        }
+    }
+    
+    func disableBackup() {
+        if let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                addSkipBackupAttributeToItem(at: documentsPath)
+        }
+    }
+    @discardableResult
+    func addSkipBackupAttributeToItem(at url: URL) -> Bool {
+        do {
+            try (url as NSURL).setResourceValue(true, forKey: .isExcludedFromBackupKey)
+            return true
+        } catch {
+            print("Error excluding \(url.lastPathComponent) from backup: \(error)")
+            return false
+        }
+    }
+    
+    
+    
     func showDeviceUptimeAlert(){
         let uptime = ProcessInfo.processInfo.systemUptime
         let uptimeDate = Date(timeIntervalSinceNow: -uptime)
@@ -159,11 +304,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         print(components.day!, components.hour!, components.minute!)
         if components.day! > 7{
             let uptimeMessage = "Your device has been running for \(components.day!) days, \(components.hour!) hours, \(components.minute!) minutes. You should Restart your iPad."
-            let alert = AlertService.showAlert(title: "Device Uptime", message: uptimeMessage, actions: nil)
-            DispatchQueue.main.async {
-                let topVC = self.getTopViewController()
-                topVC?.present(alert, animated: true)
-            }
+            AlertService.showAlertForTopVC(title: "Device Uptime", message: uptimeMessage)
         }
     }
     
@@ -179,7 +320,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         var reason = -1
         reason = reasonForChange.intValue
         if reason == NSUbiquitousKeyValueStoreServerChange || reason == NSUbiquitousKeyValueStoreInitialSyncChange{
-            let changedKeys = userInfo1[NSUbiquitousKeyValueStoreChangeReasonKey] as! NSArray
+            let changedKeys = userInfo1[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String]
             let ubiquitousKeyValueStore = NSUbiquitousKeyValueStore.default
             let userInfo = ubiquitousKeyValueStore.object(forKey: kCBUserInfoDictionaryKey) as? [String: Any]
             let encryptedString = userInfo![kCBUserInfoEncryptedExpirationDateKey] as! String
@@ -189,16 +330,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
             }
             let dateFormateer = DateFormatter()
             dateFormateer.dateFormat = kCBExpirationDateFormat
-            let iCloudDate = dateFormateer.date(from: dateString)
+            if let iCloudDate = dateFormateer.date(from: dateString){
+                if let localDate = CBIAPHelper.shared.getLocalDecryptedExpirationDate(){
+                    if localDate > iCloudDate {
+                        CBIAPHelper.shared.setICloudEncryptedExpirationDate(localDate)
+                        NSUbiquitousKeyValueStore.default.synchronize()
+                    }else{
+                        CBIAPHelper.shared.setLocalEncryptedExpirationDate(iCloudDate)
+                    }
+                }
+            }
             
-            //MARK: needs code
-            //related to IAP
-            
-            
-            
+            if let encryptedString = userInfo?[kCBUserInfoEncryptedWbidExpirationDateKey] as? String {
+                let WBdateString = FBEncryptorAES.decryptBase64String(encryptedString, keyString: kFreeMonthEncryptionKey)
+            }
+            let WBdateFormatter = DateFormatter()
+            WBdateFormatter.dateFormat = "dd/MM/yyyy"
+            if let WBiCloudDate = WBdateFormatter.date(from: dateString) {
+                if let WBlocalDate = CBIAPHelper.shared.getLocalDecryptedWbidExpirationDate() {
+                    if WBlocalDate > WBiCloudDate {
+                        CBIAPHelper.shared.setICloudEncryptedWbidExpirationDate(WBlocalDate)
+                        NSUbiquitousKeyValueStore.default.synchronize()
+                    } else {
+                        CBIAPHelper.shared.setLocalEncryptedWbidExpirationDate(WBiCloudDate)
+                    }
+                } else {
+                    CBIAPHelper.shared.setLocalEncryptedWbidExpirationDate(WBiCloudDate)
+                }
+            }
+            for key in changedKeys! {
+                if let value = NSUbiquitousKeyValueStore.default.object(forKey: key) {
+                    UserDefaults.standard.set(value, forKey: key)
+                }
+            }
         }
-        
     }
+    
+    
     func getApplicationLoadData() {
         let url = EndPoint.shared.getapplicationLoadDatas
         let body: [String: Any] = ["FromApp": fromApp]
@@ -218,6 +386,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
             },
             completion: { result in
                 switch result {
+                    
                 case .success(let res):
                     if let isNeedToEnableVacationDifference = res["IsNeedtoEnableVacationDifference"] as? Bool {
                         UserDefaults.standard.set(isNeedToEnableVacationDifference, forKey: "IsNeedtoEnableVacationDifference")
@@ -236,7 +405,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
                             UserDefaults.standard.setValue(0, forKey: "IsLatestFlightDataDownloaded")
                         }
                     }
-
+                    
                 case .failure:
                     UserDefaults.standard.set(5, forKey: "PSFileFormatChange")
                 }
@@ -245,27 +414,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     }
 
     
-    func iCloudAccessCheck(){
-        if let topVC = self.getTopViewController(){
-        let firstLaunchWithiCloudAvailable = UserDefaults.standard.bool(forKey: "firstLaunchWithiCloudAvailable")
-        let currentiCloudToken = FileManager.default.ubiquityIdentityToken
-        if currentiCloudToken == nil && firstLaunchWithiCloudAvailable{
-            let alert = AlertService.showAlert(title: "No iCloud Access!", message: "CrewBid requires iCloud access to sync your subscriptions across devices. To enable go to Settings > iCloud", actions: nil)
-                topVC.present(alert, animated: true)
-            }
-            UserDefaults.standard.set(true, forKey: "firstLaunchWithiCloudAvailable")
-        }
-    }
-    func getTopViewController() -> UIViewController? {
-        guard let rootVC = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
-            return nil
-        }
-        var topVC = rootVC
-        while let presentedVC = topVC.presentedViewController {
-            topVC = presentedVC
-        }
-        return topVC
-    }
+//    func iCloudAccessCheck(){
+//        if let topVC = self.getTopViewController(){
+//        let firstLaunchWithiCloudAvailable = UserDefaults.standard.bool(forKey: "firstLaunchWithiCloudAvailable")
+//        let currentiCloudToken = FileManager.default.ubiquityIdentityToken
+//        if currentiCloudToken == nil && firstLaunchWithiCloudAvailable{
+//            AlertService.showAlertForTopVC(title: "No iCloud Access!", message: "CrewBid requires iCloud access to sync your subscriptions across devices. To enable go to Settings > iCloud")
+//            }
+//            UserDefaults.standard.set(true, forKey: "firstLaunchWithiCloudAvailable")
+//        }
+//    }
+//    func getTopViewController() -> UIViewController? {
+//        guard let rootVC = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
+//            return nil
+//        }
+//        var topVC = rootVC
+//        while let presentedVC = topVC.presentedViewController {
+//            topVC = presentedVC
+//        }
+//        return topVC
+//    }
     
     func locationAccess() {
         locationManager.delegate = self
@@ -289,17 +457,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
            }
     }
     
-    func getTransactions() -> [String]?{
+
+    func getTransactions() -> [[String: Any]] {
         let store = NSUbiquitousKeyValueStore.default
-        var transactionIdentifiers = store.object(forKey: "transaction") as? [String]
-        if transactionIdentifiers == nil{
-            transactionIdentifiers = []
-        }
-        return transactionIdentifiers
+        let transactionArray = store.array(forKey: "transaction") as? [[String: Any]] ?? []
+        return transactionArray
     }
     
     @objc func handleAppEnteringForeground(){
-        
+        let objEvent = CBOfflineEvents()
+        objEvent.sendOfflineData()
+        objEvent.addFromOfflineNewSKPaymentStatusLog()
+//        NotificationCenter.default.post(name: Notification.Name("checkSubscription"), object: nil)
+//        NotificationCenter.default.post(name: Notification.Name("GetApplicationLoadDatas"), object: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            objEvent.updateOfflinePayment()
+        }
     }
   
     func testInternetConnection(){
@@ -335,8 +508,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
                         print("PendingNotificationRequests: ",Int(requests.count))
                         if self.isUserInformationAvailable(){
                             if requests.count == 0{
-                                //MARK: need code
-                                //cbutils
+                                CBUtils.setPushNotifications()
                             }
                         }
                     }
@@ -531,6 +703,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         print("TimeOut")
         self.simplePingStatus(false)
     }
+
     func simplePingStatus(_ isSuccess:Bool){
         isPingSuccess = isSuccess
             print("WiFi Status: ", isSuccess)
@@ -563,7 +736,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
             if isSouthWestWifi == "YES"{
                 objNetworkType = .free
             }
-            //MARK: needs code
     }
     
     func fetchSSIDInfo() -> NSMutableDictionary? {

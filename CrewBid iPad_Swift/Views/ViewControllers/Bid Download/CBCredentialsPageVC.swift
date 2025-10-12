@@ -860,18 +860,6 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             self?.loginViewModel.onLoginFailure?(error)
         }
     }
-        //--Login action--
-//        if bidAlreadyExists(){
-//            showAlertForExistingBid{
-//                self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
-//                self.loginViewModel.checkLogin(userID: formattedUserID,password: password)
-//            }
-//        }else{
-//            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Please wait...")
-//            loginViewModel.checkLogin(userID: formattedUserID,password: password)
-//            
-//        }
-        //----------------
     
 
     private func bidAlreadyExists() -> Bool {
@@ -926,19 +914,39 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     print("Failed to delete file: \(error.localizedDescription)")
                 }
             }
-            if list.count > 0 {
-                let obj = list[0]
-                self.context.delete(obj)
-                do {
-                    try self.context.save()
-                } catch {
-                    print("Failed to save context after deletion: \(error)")
+//            if list.count > 0 {
+//                let obj = list[0]
+//                self.context.delete(obj)
+//                do {
+//                    try self.context.save()
+//                } catch {
+//                    print("Failed to save context after deletion: \(error)")
+//                }
+//                NotificationCenter.default.post(name: NSNotification.Name(ReloadCollectionView), object: nil)
+//                onRetry()
+//            }
+            let context = self.context
+            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = BIBidPeriod.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "month == %d AND base == %@ AND positionType == %d AND round == %d AND year == %d",self.dataSource.month, self.dataSource.base, self.dataSource.position.rawValue, self.dataSource.round, self.dataSource.year)
+            let batchDelete = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            batchDelete.resultType = .resultTypeObjectIDs
+
+            do {
+                let result = try context.execute(batchDelete) as? NSBatchDeleteResult
+                if let objectIDs = result?.result as? [NSManagedObjectID] {
+                    // Merge changes into context so collectionView sees deletion
+                    let changes: [AnyHashable: Any] = [NSDeletedObjectsKey: objectIDs]
+                    NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [context])
                 }
                 NotificationCenter.default.post(name: NSNotification.Name(ReloadCollectionView), object: nil)
+                print("Deleted BidPeriod objects using batch delete.")
                 onRetry()
+            } catch {
+                print("Failed batch delete: \(error)")
             }
             
         }), (title: "Cancel", style: .cancel, handler: {_ in}), (title: "Open Bid", style: .default, handler: {_ in
+            self.view.hideActivityIndicator()
             if list.count > 0 {
                 let obj = list[0]
                 CBGlobalMethods.shared.selectedBidPeriod = obj
@@ -987,7 +995,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     print("Failed to fetch bid periods: \(error)")
                     self.bidPeriodList = []
                 }
-        CBUserAccountDetail.shared.saveUserInfo()
+//        CBUserAccountDetail.shared.saveUserInfo()
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let docVC = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
         docVC.modalTransitionStyle = .crossDissolve

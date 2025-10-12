@@ -7,17 +7,12 @@ class CBNewsController: BaseViewController, WKNavigationDelegate,WKUIDelegate {
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var btnDone: UIButton!
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.webView.navigationDelegate = self
         self.webView.uiDelegate = self
-        setupUI()
         loadLatestNews()
-    }
-    
-    func setupUI() {
-//        btnBack.setTitle("", for: .normal)
-//        btnDone.setTitle("", for: .normal)
     }
     
     @IBAction func btnDoneAction(_ sender: Any) {
@@ -35,23 +30,27 @@ class CBNewsController: BaseViewController, WKNavigationDelegate,WKUIDelegate {
 
     
     func loadLatestNews() {
-        let path = getLatestNewsFilePath()
-        webView.loadFileURL(path, allowingReadAccessTo: path)
+        let fileURL = getLatestNewsFilePath()
+        let directoryURL = fileURL.deletingLastPathComponent()
         webView.navigationDelegate = self
-        if path.pathComponents.count == 0 {
-            let path1 = Bundle.main.path(forResource: "LatestNews", ofType: "pdf")!
-            let targetUrl = URL(fileURLWithPath: path1)
-            webView.loadFileURL(targetUrl, allowingReadAccessTo: targetUrl)
-            webView.navigationDelegate = self
+
+        if FileManager.default.fileExists(atPath: fileURL.path) {
+            webView.loadFileURL(fileURL, allowingReadAccessTo: directoryURL)
+        } else {
+            if let bundlePath = Bundle.main.url(forResource: "LatestNews", withExtension: "pdf") {
+                let bundleDir = bundlePath.deletingLastPathComponent()
+                webView.loadFileURL(bundlePath, allowingReadAccessTo: bundleDir)
+            } else {
+                print("Could not find LatestNews.pdf in app bundle.")
+            }
         }
     }
     
     
     //MARK: getLatestNewsFilePath
     func getLatestNewsFilePath() -> URL {
-        let paths: [Any] = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
-        let documentsDir: String = paths[0] as? String ?? ""
-        return URL(fileURLWithPath: documentsDir).appendingPathComponent("LatestNews.pdf")
+        let documentsDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+            return documentsDir.appendingPathComponent("LatestNews.pdf")
     }
 
     func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {

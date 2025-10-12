@@ -313,9 +313,9 @@ class CBUtils{
             if let crewBidDataVersion = crewBidDataVersion {
                 success = self.fetchCityList(crewBidDataVersion, fileContent: fileContent)
                 
-                if crewBidDataVersion.cities != nil {
-                    self.fetchLatestNews(crewBidDataVersion, scanner: scanner, fileContent: fileContent)
-                }
+//                if crewBidDataVersion.cities != nil {
+//                    self.fetchLatestNews(crewBidDataVersion, scanner: scanner, fileContent: fileContent)
+//                }
             }
         }
         
@@ -551,8 +551,52 @@ class CBUtils{
         }
         return isCompleted
     }
+
+    
+    static func fetchLatestNews(){
+        let fileManager = FileManager.default
+        let destinationPath = self.getLatestNewsFilePath()
+        guard let destinationURL = URL(string: destinationPath) else {
+            print("Invalid destination URL")
+            return
+        }
+        if fileManager.fileExists(atPath: destinationURL.path) {
+            print("LatestNews.pdf already exists at: \(destinationURL.path)")
+            return
+        }
+        let reachability: Reachability = try! Reachability()
+            
+        if !reachability.isReachable {
+            NotificationCenter.default.post(name: Notification.Name("NetWorkError"), object: nil)
+            return
+        }
+        
+        
+        let stringURL = "http://www.wbidmax.com/downloads/CrewBid/LatestNews.pdf"
+        guard let url = URL(string: stringURL) else {
+            print("Invalid URL")
+            return
+        }
+        
+        let task = URLSession.shared.downloadTask(with: url) { tempLocalUrl, response, error in
+            if let error = error {
+                print("Error downloading file: \(error.localizedDescription)")
+                return
+            }
+            guard let tempLocalUrl = tempLocalUrl else {
+                print("No file URL found")
+                return
+            }
+            do {
+                try fileManager.moveItem(at: tempLocalUrl, to: destinationURL)
+            } catch {
+                print("Error saving latest news: \(error.localizedDescription)")
+            }
+        }
+        task.resume()
+    }
+    
     static func checkForNewsWithCompletionHandler(isDownloaded: @escaping (Bool) -> Void) {
-        // 1. Check network status
         let reachability: Reachability = try! Reachability()
         
         if !reachability.isReachable {
@@ -560,8 +604,6 @@ class CBUtils{
             isDownloaded(false)
             return
         }
-        // 2. Contruct URL for fetching News
-        // let error: Error?
         let stringURL: String = "http://www.wbidmax.com/downloads/CrewBid/LatestNews.pdf"
         guard let url = URL(string: stringURL) else {
             print("Invalid URL")
@@ -569,7 +611,6 @@ class CBUtils{
             return
         }
         
-        // 3. Fetch Latest news asynchronously using URLSession
         let task = URLSession.shared.dataTask(with: url) { data, response, error in
             if let error = error {
                 print("Error fetching news: \(error)")
@@ -583,7 +624,6 @@ class CBUtils{
                 return
             }
             
-            // 4. Load save directory
             let pdfFilePath: String = self.getLatestNewsFilePath()
             guard let urlPath = URL(string: pdfFilePath) else {
                 print("Invalid file path")
@@ -591,13 +631,11 @@ class CBUtils{
                 return
             }
             
-            // 5. Write data to directory
             do {
                 try urlData.write(to: urlPath, options: .atomic)
                 let filePath = urlPath.path
                 let fileManager = FileManager.default
                 
-                // 6. Checking if saving is successful
                 if fileManager.fileExists(atPath: filePath) {
                     print("FILE AVAILABLE")
                     isDownloaded(true)
@@ -610,10 +648,9 @@ class CBUtils{
                 isDownloaded(false)
             }
         }
-
-        // Start the async task
         task.resume()
     }
+    
     static func getLatestNewsFilePath() -> String {
         let paths: [Any] = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
         let documentsDir: String = paths[0] as? String ?? ""

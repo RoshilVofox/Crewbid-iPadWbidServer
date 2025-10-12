@@ -163,9 +163,6 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         var tempArray : [BILine] = []
         var count : Int = -1
         for line in self.lines {
-            if line.number?.intValue == 1 {
-                print("")
-            }
             count = count + 1
             if tempArray.count == 0 {
                 tempArray.append(line)
@@ -186,7 +183,13 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         DispatchQueue.main.async {
             self.lblScratchpadLineCount.text = "Scratchpad- \(self.lines.count) Lines"
             self.fetchTrashedLinesCount()
-            self.scratchPadTableView.reloadData()
+            if #available(iOS 26.0, *) {
+                if let visibleIndexPaths = self.scratchPadTableView.indexPathsForVisibleRows {
+                    self.scratchPadTableView.reloadRows(at: visibleIndexPaths, with: .none)
+                }
+            } else {
+                self.scratchPadTableView.reloadData()
+            }
         }
     }
 

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class CBBiddataDownloadVC: BaseViewController {
     
@@ -87,10 +88,14 @@ class CBBiddataDownloadVC: BaseViewController {
         } else if year == nil {
             self.shakeView(view: self.viewYear)
         } else {
-//=======================================
+            
+//            if self.bidAlreadyExists(){
+//                self.showAlertForExistingBid {
+//                    print("")
+//                }
+//            }
             AppData.shared.Round = self.selectedRound!
             AppData.shared.postion = self.selectedPosition!
-//=======================================
             let emp = UserDefaults.standard.string(forKey: kCBDefaultEmployeeNumberKey)!
             print("Base:\(self.selectedDomicile!) Position:\(self.selectedPosition!) Rnd:\(self.selectedRound!) EmpNo:\(self.empNum ?? emp) Month:\(self.month!) Year:\(self.year!)")
             GlobalBidInfo.shared.base = self.selectedDomicile!
@@ -101,7 +106,6 @@ class CBBiddataDownloadVC: BaseViewController {
             GlobalBidInfo.shared.round = self.selectedRound!
             GlobalBidInfo.shared.month = self.month!
             GlobalBidInfo.shared.year = self.year!
-//=======================================
             AppState.shared.mockDataMonth = self.month
             AppState.shared.mockDataYear = self.year
             let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
@@ -119,6 +123,92 @@ class CBBiddataDownloadVC: BaseViewController {
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
+    
+    
+//    private func bidAlreadyExists() -> Bool {
+//        var status = false
+//        let context = CoreDataManager.shared.managedObjectContext
+//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+//        let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: context)
+//        fetchRequest.entity = entity
+//        let positionCode = self.selectedPosition!
+//        let position = BICrewPositionType(from: positionCode)
+//        var array:[NSPredicate] = []
+//        array.append(NSPredicate(format: "base == %@", self.selectedDomicile!))
+//        array.append(NSPredicate(format: "round == %d", self.selectedRound!))
+//        array.append(NSPredicate(format: "month == %d", self.month!))
+//        array.append(NSPredicate(format: "positionType == %d", position!.rawValue))
+//        array.append(NSPredicate(format: "year == %d", self.year!))
+//        
+//        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
+//        let list = try! context.fetch(fetchRequest) as! [BIBidPeriod]
+//        if list.count > 0 {
+//            status = true
+//        }
+//        return status
+//    }
+//    
+//    private func showAlertForExistingBid(onRetry: @escaping () -> Void) {
+//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+//        let context = CoreDataManager.shared.managedObjectContext
+//        let positionCode = self.selectedPosition!
+//        let position = BICrewPositionType(from: positionCode)
+//        let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: context)
+//        fetchRequest.entity = entity
+//        var array:[NSPredicate] = []
+//        array.append(NSPredicate(format: "base == %@", self.selectedDomicile!))
+//        array.append(NSPredicate(format: "round == %d", self.selectedRound!))
+//        array.append(NSPredicate(format: "month == %d", self.month!))
+//        array.append(NSPredicate(format: "positionType == %d", position!.rawValue))
+//        array.append(NSPredicate(format: "year == %d", self.year!))
+//        
+//        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
+//        let list = try! context.fetch(fetchRequest) as! [BIBidPeriod]
+//        
+//        let monthArr = ["January", "February", "March", "April", "May", "June", "July", "August","September","October","November","December"]
+//        let alert = AlertService.showAlert(title: "Download Bid Again?", message: "The Bid for \(monthArr[self.month!-1]) \(self.selectedDomicile!) \(position!) Round \(self.selectedRound!) already exists. If you download it again, all existing data, including bid receipts, will be removed.", actions: [(title: "Download Again", style: .default, handler: {_ in
+//            
+//            // Build file path
+//            let tempDir = BIBidInfo.temporaryDirectory()
+//            let originalFileName = BIBidInfo.shared.dataFilenameBase()
+//            let fileURL = tempDir.appendingPathComponent(originalFileName)
+//             
+//            // Delete the file if it exists
+//            let fileManager = FileManager.default
+//            if fileManager.fileExists(atPath: fileURL.path) {
+//                do {
+//                    try fileManager.removeItem(at: fileURL)
+//                    print("Deleted file: \(fileURL.lastPathComponent)")
+//                } catch {
+//                    print("Failed to delete file: \(error.localizedDescription)")
+//                }
+//            }
+//            if list.count > 0 {
+//                let obj = list[0]
+//                context.delete(obj)
+//                do {
+//                    try context.save()
+//                } catch {
+//                    print("Failed to save context after deletion: \(error)")
+//                }
+////                NotificationCenter.default.post(name: NSNotification.Name(ReloadCollectionView), object: nil)
+//                onRetry()
+//            }
+//            
+//        }), (title: "Cancel", style: .cancel, handler: {_ in}), (title: "Open Bid", style: .default, handler: {_ in
+//            if list.count > 0 {
+//                let obj = list[0]
+//                CBGlobalMethods.shared.selectedBidPeriod = obj
+//                UserDefaults.standard.setValue(obj.round!.intValue, forKey: "SelectedRound")
+//                self.dismiss(animated: true)
+//                self.loginActions()
+//                NotificationCenter.default.post(name: NSNotification.Name("openBidPeriodFromDownloadPage"), object: nil)
+//            }
+//            
+//        })])
+//        self.present(alert, animated: true)
+//    }
+    
     
     
     @IBAction func btnBackAction(_ sender: Any) {

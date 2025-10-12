@@ -52,6 +52,7 @@ class CoreDataManager{
             do{
                 try context.save()
             }catch{
+                AlertService.showAlertForTopVC(title: "Save Error", message: "There was a problem saving your data. Please try again later.")
                 print("Error saving data")
             }
         }

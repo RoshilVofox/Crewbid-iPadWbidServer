@@ -430,6 +430,7 @@ extension BILine : Identifiable {
         let tripsObjs = (self.trips!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "startDate", ascending: true)]) as! [BITrip]
         return tripsObjs
     }
+    
 }
 
 @objc enum BILineSortCategory : Int {

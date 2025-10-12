@@ -314,7 +314,7 @@ class APIService {
             headers?.forEach { request.setValue($0.value, forHTTPHeaderField: $0.key) }
 
             let config = URLSessionConfiguration.default
-            config.timeoutIntervalForRequest = timeout / 2
+            config.timeoutIntervalForRequest = timeout
             config.timeoutIntervalForResource = timeout
             let session = URLSession(configuration: config)
 
