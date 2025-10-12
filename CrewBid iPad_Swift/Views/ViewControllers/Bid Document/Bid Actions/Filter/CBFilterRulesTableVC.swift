@@ -557,7 +557,9 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
             useComparisonCell = false
             let ruleCell = cell as? CBComutabilityRuleCell
             ruleCell?.filterRule = rule!
-            ruleCell?.configureCommutabilityCell()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                ruleCell?.configureCommutabilityCell()
+            }
             
         }
         else if BIFilterRuleCategory.BIReportReleaseFilterCategory.rawValue == rule?.category?.intValue {

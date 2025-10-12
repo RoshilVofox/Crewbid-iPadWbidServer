@@ -8,7 +8,7 @@
 import UIKit
 import CoreData
 
-class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSource, UITableViewDelegate {
+class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var btnBidListCount: UIButton!
     @IBOutlet weak var tableView: UITableView!
@@ -33,7 +33,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
         NotificationCenter.default.addObserver(self, selector: #selector(updateBidListCount), name: NSNotification.Name("updateBidListCount"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updatePresets(_:)), name: NSNotification.Name("refreshLines"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(deselectPresetsNotification), name: NSNotification.Name(CBLineValuesToDisplayDidChangeNotification), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(deselectPresetsNotification), name: NSNotification.Name("refreshLines"), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(deselectPresetsNotification), name: NSNotification.Name("refreshLines"), object: nil)
         NotificationCenter.default.removeObserver(kCBPresetSyncReload)
         CBGlobalMethods.shared.isSortAvailable = false
         tableView.allowsSelectionDuringEditing = true
@@ -116,7 +116,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
     func setPrests() {
         let fileManager = FileManager.default
         presetsArray = []
-        let app = UIApplication.shared.delegate as! AppDelegate
+//        let app = UIApplication.shared.delegate as! AppDelegate
         if app.ObjUserAccount?.position == 3 {
             if self.bidPeriod!.isFABid() == true {
                 let presetFileName = app.ObjUserAccount?.employeeNumber
@@ -225,7 +225,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                     // Try secure unarchiving first
                     if let unarchived = try NSKeyedUnarchiver.unarchivedObject(ofClasses: [NSArray.self, NSDictionary.self, NSString.self, NSNumber.self], from: result) as? [Any] {
                         presets = unarchived
-                        print("Presets:", presets)
+                        print("Presets:")
                     }
                 } catch {
                     // Fallback for legacy archives (Objective-C style)
@@ -279,7 +279,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
     }
     
     func saveiOS16PresetsToServerwithData(data: Data) {
-        let app = UIApplication.shared.delegate as! AppDelegate
+//        let app = UIApplication.shared.delegate as! AppDelegate
         var dicInfo: [String: Any] = [:]
         dicInfo["EmployeeNumber"] = app.ObjUserAccount?.employeeNumber
         dicInfo["PresetFileName"] = "\(String(describing: app.ObjUserAccount?.employeeNumber)).plist"
@@ -394,7 +394,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
             return presetsDocument
         }
         else {
-            let app = UIApplication.shared.delegate as! AppDelegate
+//            let app = UIApplication.shared.delegate as! AppDelegate
             let presetsFileName = (app.ObjUserAccount?.employeeNumber)!
             let presetsDocument = prestesDirectoryURL!.appendingPathComponent(presetsFileName).path
             return presetsDocument
@@ -424,7 +424,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                     // Try secure unarchiving first
                     if let unarchived = try NSKeyedUnarchiver.unarchivedObject(ofClasses: [NSArray.self, NSDictionary.self, NSString.self, NSNumber.self], from: result) as? [Any] {
                         presets = unarchived
-                        print("Presets:", presets)
+                        print("Presets:")
                     }
                 } catch {
                     // Fallback for legacy archives (Objective-C style)
@@ -460,7 +460,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
     }
     
     func getCrashedPresetFromServerWithBidPeriod(bidPeriod: BIBidPeriod) {
-        let app = UIApplication.shared.delegate as! AppDelegate
+//        let app = UIApplication.shared.delegate as! AppDelegate
         
         var dicInfo: [String: Any] = [:]
         dicInfo["EmployeeNumber"] = app.ObjUserAccount?.employeeNumber
@@ -503,7 +503,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                                     
                                     
                                     // Save with employeeNumber
-                                    let presetsFilename = String(app.ObjUserAccount!.employeeNumber)
+                                    let presetsFilename = String(self.app.ObjUserAccount!.employeeNumber)
                                     let path2 = self.presetsDocumentFilePathWithFileName(presetFileName: presetsFilename)
                                     try? plistData.write(to: URL(fileURLWithPath: path2))
                                     
@@ -544,6 +544,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                     filtDict["category"] = filter.category
                     filtDict["type"] = filter.type
                     filtDict["name"] = filter.name
+                    filtDict["keyPath"] = filter.keyPath
                     filtDict["abbreviation"] = filter.abbreviation
                     filtDict["comparison"] = filter.comparison
                     var vrb: [String: Any] = filter.variables!
@@ -886,7 +887,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
     }
     
     func deselectPresets() {
-        self.bidPeriod?.loadedPresetIdentifier = nil
+        self.bidPeriod!.loadedPresetIdentifier = nil
         self.tableView.reloadData()
     }
     
@@ -996,7 +997,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let app = UIApplication.shared.delegate as! AppDelegate
+//        let app = UIApplication.shared.delegate as! AppDelegate
         var objCommuteFilter: Commutability? = nil
         var objCommuteSort: Commutability? = nil
         if isKeyboardVisisble {
@@ -1095,21 +1096,23 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
             newPreset.appVersion = bidPeriod!.appVersion
             
             if (arrFilterCommute?.count ?? 0 > 0 && !(arrSortCommute?.count ?? 0 > 0)) {
-                newPreset.commutabilityFilterDetails!["baseTime"] = objCommuteFilter!.baseTime
-                newPreset.commutabilityFilterDetails!["checkInTime"] = objCommuteFilter!.checkInTime
-                newPreset.commutabilityFilterDetails!["city"] = objCommuteFilter!.city
-                newPreset.commutabilityFilterDetails!["commutableType"] = objCommuteFilter!.commutableType
-                newPreset.commutabilityFilterDetails!["commuteCity"] = objCommuteFilter!.commuteCity
-                newPreset.commutabilityFilterDetails!["connectTime"] = objCommuteFilter!.connectTime
-                newPreset.commutabilityFilterDetails!["secondCellValue"] = objCommuteFilter!.secondCellValue
-                newPreset.commutabilityFilterDetails!["thirdCellValue"] = objCommuteFilter!.thirdCellValue
-                newPreset.commutabilityFilterDetails!["type"] = objCommuteFilter!.type
-                newPreset.commutabilityFilterDetails!["value"] = objCommuteFilter!.value
-                newPreset.commutabilityFilterDetails!["weight"] = objCommuteFilter!.weight
-                newPreset.commutabilityFilterDetails!["isNonStop"] = objCommuteFilter!.isNonStop
+                newPreset.commutabilityFilterDetails = NSMutableDictionary()
+                newPreset.commutabilityFilterDetails?["baseTime"] = objCommuteFilter!.baseTime
+                newPreset.commutabilityFilterDetails?["checkInTime"] = objCommuteFilter!.checkInTime
+                newPreset.commutabilityFilterDetails?["city"] = objCommuteFilter!.city
+                newPreset.commutabilityFilterDetails?["commutableType"] = objCommuteFilter!.commutableType
+                newPreset.commutabilityFilterDetails?["commuteCity"] = objCommuteFilter!.commuteCity
+                newPreset.commutabilityFilterDetails?["connectTime"] = objCommuteFilter!.connectTime
+                newPreset.commutabilityFilterDetails?["secondCellValue"] = objCommuteFilter!.secondCellValue
+                newPreset.commutabilityFilterDetails?["thirdCellValue"] = objCommuteFilter!.thirdCellValue
+                newPreset.commutabilityFilterDetails?["type"] = objCommuteFilter!.type
+                newPreset.commutabilityFilterDetails?["value"] = objCommuteFilter!.value
+                newPreset.commutabilityFilterDetails?["weight"] = objCommuteFilter!.weight
+                newPreset.commutabilityFilterDetails?["isNonStop"] = objCommuteFilter!.isNonStop
             }
             
             if (arrSortCommute?.count ?? 0 > 0 && !(arrFilterCommute?.count ?? 0 > 0)) {
+                newPreset.commutabilitySortDetails = NSMutableDictionary()
                 newPreset.commutabilitySortDetails!["baseTime"] = objCommuteSort!.baseTime
                 newPreset.commutabilitySortDetails!["checkInTime"] = objCommuteSort!.checkInTime
                 newPreset.commutabilitySortDetails!["city"] = objCommuteSort!.city
@@ -1125,6 +1128,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
             }
             
             if (arrFilterCommute?.count ?? 0 > 0 && arrSortCommute?.count ?? 0 > 0) {
+                newPreset.commutabilityFilterDetails = NSMutableDictionary()
                 newPreset.commutabilityFilterDetails!["baseTime"] = objCommuteFilter!.baseTime
                 newPreset.commutabilityFilterDetails!["checkInTime"] = objCommuteFilter!.checkInTime
                 newPreset.commutabilityFilterDetails!["city"] = objCommuteFilter!.city
@@ -1138,6 +1142,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                 newPreset.commutabilityFilterDetails!["weight"] = objCommuteFilter!.weight
                 newPreset.commutabilityFilterDetails!["isNonStop"] = objCommuteFilter!.isNonStop
                 
+                newPreset.commutabilitySortDetails = NSMutableDictionary()
                 newPreset.commutabilitySortDetails!["baseTime"] = objCommuteSort!.baseTime
                 newPreset.commutabilitySortDetails!["checkInTime"] = objCommuteSort!.checkInTime
                 newPreset.commutabilitySortDetails!["city"] = objCommuteSort!.city
@@ -1171,7 +1176,11 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
             let fetchOvernightBulk: NSFetchRequest<OvernightBulk> = OvernightBulk.fetchRequest()
             let ovwerNightBulkResult = try? self.context.fetch(fetchOvernightBulk)
             if ovwerNightBulkResult?.count ?? 0 > 0 {
-                newPreset.overnight = ovwerNightBulkResult![0].value(forKey: "cityStatus") as? NSMutableArray
+                let first = ovwerNightBulkResult![0]
+                if let dict = first.citystatus as? [String: Any] {
+                    let array = NSMutableArray(array: [dict])
+                    newPreset.overnight = array
+                }
             }
             self.presetsArray.append(newPreset)
             self.bidPeriod?.loadedPresetIdentifier = newPreset.presetIdentifier
@@ -1187,9 +1196,10 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
         }
         //If user selected any other row, load that preset
         else {
+            self.view.showActivityIndicator()
             UserDefaults.standard.set(true, forKey: kCBIsPresetModified)
             let cell = tableView.cellForRow(at: indexPath)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 self.justChangedPreset = true
                 let preset: CBPreset = self.presetsArray[indexPath.row] as! CBPreset
                 let valuesArrayforFilter = preset.filterRules.filter { rule in
@@ -1299,7 +1309,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                                 variables![BIFilterRuleMonThursDepartTimeVariablesKey] = monThursDept
                             }
                             else {
-                                variables![BIFilterRuleMonThursDepartTimeVariablesKey] = -1
+                                variables![BIFilterRuleMonThursReturnTimeVariablesKey] = -1
                             }
                             if friDept > -1 {
                                 variables![BIFilterRuleFriDepartTimeVariablesKey] = friDept
@@ -1345,6 +1355,9 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                             }
                             pRule.variables = variables
                         }
+                        else {
+                            self.calculateCommuteMannualfilter(pRule: pRule)
+                        }
                     }
                     else if pRule.category?.intValue == BIFilterRuleCategory.BIOvernightCitiesBulkRuleCategory.rawValue {
                         let overNIghtBulk = OvernightBulk(context: self.context)
@@ -1384,6 +1397,38 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                             objCommuteTimeImport.type = (preset.commuteTimeDetails![i] as? [String: Any])?["type"] as? NSNumber
                             objCommuteTimeImport.bidDayStringValue = (preset.commuteTimeDetails![i] as? [String: Any])?["bidDayStringValue"] as? String
                         }
+                        try? self.context.save()
+                        let thirdCellValue = preset.commutabilityFilterDetails!["thirdCellValue"] as? NSNumber
+                        let city = preset.commutabilityFilterDetails!["city"] as? String
+                        let checkInTime = preset.commutabilityFilterDetails!["checkInTime"] as? NSNumber
+                        let connectTime = preset.commutabilityFilterDetails!["connectTime"] as? NSNumber
+                        let baseTime = preset.commutabilityFilterDetails!["baseTime"] as? NSNumber
+                        let nonStop = preset.commutabilityFilterDetails!["isNonStop"] as? NSNumber
+                        
+                        var commuteCity = city ?? ""
+                        var isNonStop = nonStop?.boolValue ?? false
+                        
+                        let commuteVC = CommuteCityViewController()
+//                        CBGlobalMethods.shared.showCustomActivityIndicator(message: "Calculating commute values..", bgcolor: .purple, height: 100)
+                        let (success, commuteCityReturn) = commuteVC.commutabilityCalculationWithForSync(city: city!, isNonStop: isNonStop, connectTimeFromPreset: connectTime as! Int)
+//                        CBGlobalMethods.shared.hideCustomActivityIndicator()
+                        let commutInfoVC = CBCommuteInfoViewController()
+                        commutInfoVC.backToBaseFromSync = self.getHours(minutes: baseTime!)
+                        let connectTimeStr = self.getHours(minutes: connectTime!)
+                        if connectTimeStr == "--:--" {
+                            commutInfoVC.connectTimeFromSync = "0:0"
+                        }
+                        else {
+                            commutInfoVC.connectTimeFromSync = connectTimeStr
+                        }
+                        commutInfoVC.checkInFromSync = self.getHours(minutes: checkInTime!)
+                        commutInfoVC.bidPeriod = self.bidPeriod
+                        commutInfoVC.commutabilityType = CommutabilityType.filter
+                        commutInfoVC.isNonStop = isNonStop
+                        commutInfoVC.commuteCityFromSync = city
+                        commutInfoVC.thirdCellValue = thirdCellValue!
+                        commutInfoVC.calculateCommuteLineProperties()
+                        NotificationCenter.default.post(name: NSNotification.Name("refreshWorkBlock"), object: self)
                         try? self.context.save()
                     }
                     else if pRule.category?.intValue == BIFilterRuleCategory.BIReportReleaseFilterCategory.rawValue {
@@ -1529,7 +1574,7 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                             sort.arrayVariables = pSort.arrayVariables
                         }
                     }
-                    else if (sort.category?.intValue == BILineSortCategory.BIDeadheadsLineSortCategory.rawValue && sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtEndSortType.rawValue || sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtBothSortType.rawValue || sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtStartSortType.rawValue) {
+                    else if sort.category?.intValue == BILineSortCategory.BIDeadheadsLineSortCategory.rawValue && (sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtEndSortType.rawValue || sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtBothSortType.rawValue || sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtStartSortType.rawValue) {
                         var deadHeadCitiesSet = NSMutableSet()
                         var alertMsg: String = ""
                         if sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtStartSortType.rawValue {
@@ -1589,7 +1634,8 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                                     sort.variables = tempDict
                                 }
                             }
-                            sort.keyPath = self.bidPeriod?.lineSortKey(forCommute: sort)
+                            sort.keyPath = "commutabilityOverall"
+                            self.calculateCommuteMannualSort(pRule: pSort)
                         }
                     }
                     else if sort.category?.intValue == BILineSortCategory.BIDaysOffLineSortCategory.rawValue {
@@ -1642,9 +1688,9 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                         var isNonStop = nonStop?.boolValue ?? false
                         
                         let commuteVC = CommuteCityViewController()
-                        CBGlobalMethods.shared.showCustomActivityIndicator(message: "Calculating commute values..", bgcolor: .purple, height: 100)
-                        let (success, commuteCityReturn) = commuteVC.commutabilityCalculationWithForSync(city: city!, isNonStop: isNonStop)
-                        CBGlobalMethods.shared.hideCustomActivityIndicator()
+//                        CBGlobalMethods.shared.showCustomActivityIndicator(message: "Calculating commute values..", bgcolor: .purple, height: 100)
+                        let (success, commuteCityReturn) = commuteVC.commutabilityCalculationWithForSync(city: city!, isNonStop: isNonStop, connectTimeFromPreset: connectTime as! Int)
+//                        CBGlobalMethods.shared.hideCustomActivityIndicator()
                         let commutInfoVC = CBCommuteInfoViewController()
                         commutInfoVC.backToBaseFromSync = self.getHours(minutes: baseTime!)
                         let connectTimeStr = self.getHours(minutes: connectTime!)
@@ -1698,9 +1744,9 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                     NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
                 }
                 var linesValueKey = ""
-                if self.bidPeriod?.containsVacay?.boolValue == true {
+                if self.bidPeriod?.containsVacay?.boolValue == false {
                     linesValueKey = self.bidPeriod!.isSecondRoundBid() && self.bidPeriod!.isFABid() != true ? kCBRound2DefaultLineValuesKey : kCBDefaultLineValuesKey
-                    AlertService.showAlertForTopVC(title: "Alert", message: "Your Preset includes line vacation properties.Because you do not have vacation, we are displaying the default line properties.")
+//                    AlertService.showAlertForTopVC(title: "Alert", message: "Your Preset includes line vacation properties.Because you do not have vacation, we are displaying the default line properties.")
                 }
                 else {
                     linesValueKey = CBLineValuesMenuController.lineValuesKeyForBidPeriod(bidPeriod: self.bidPeriod!)
@@ -1710,10 +1756,11 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
                 let presetToSelect = self.presetsArray[indexPath.row] as! CBPreset
                 presetToSelect.selected = true
                 self.bidPeriod!.loadedPresetIdentifier = presetToSelect.presetIdentifier
+                try! self.context.save()
                 self.tableView.reloadData()
                 NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
                 //                    need to add observer for notification
-                try? self.context.save()
+                self.view.hideActivityIndicator()
             }
             try? self.context.save()
         }
@@ -1791,6 +1838,497 @@ class CBPresetsTVC: UIViewController, CBPresetCellDelegate, UITableViewDataSourc
         let mins = Int(minutes.intValue % 60)
         return String(format: "%02d:%02d", hours, mins)
     }
+    
+    func calculateCommuteMannualfilter(pRule: CBPresetFilterRule) {
+        if setCommuteTimeForDaysForManualFilter(pRule: pRule) {
+            let obj = CBCommutingCellHelper()
+            
+            guard let variables = pRule.variables else {
+                print("⚠️ No variables found in pRule")
+                return
+            }
+            
+            // Helper to safely extract string
+            func stringValue(for key: String, from dict: [String: Any]) -> String {
+                guard let value = dict[key] else { return "" }
+                if let str = value as? String { return str }
+                if let num = value as? NSNumber { return num.stringValue }
+                if let intVal = value as? Int { return String(intVal) }
+                return ""
+            }
+            
+            // Helper to safely extract Int
+            func intValue(for key: String, from dict: [String: Any]) -> Int {
+                guard let value = dict[key] else { return 0 }
+                if let num = value as? NSNumber { return num.intValue }
+                if let intVal = value as? Int { return intVal }
+                if let str = value as? String, let intVal = Int(str) { return intVal }
+                return 0
+            }
+            
+            // Safely extract values
+            let noMidCheckState = intValue(for: "NoMidCheckState", from: variables)
+            let monThursDept = stringValue(for: BIFilterRuleMonThursDepartTimeVariablesKey, from: variables)
+            let monThursRet = stringValue(for: BIFilterRuleMonThursReturnTimeVariablesKey, from: variables)
+            let friDept = stringValue(for: BIFilterRuleFriDepartTimeVariablesKey, from: variables)
+            let friRet = stringValue(for: BIFilterRuleFriReturnTimeVariablesKey, from: variables)
+            let satDept = stringValue(for: BIFilterRuleSatDepartTimeVariablesKey, from: variables)
+            let satRet = stringValue(for: BIFilterRuleSatReturnTimeVariablesKey, from: variables)
+            let sunDept = stringValue(for: BIFilterRuleSunDepartTimeVariablesKey, from: variables)
+            let sunRet = stringValue(for: BIFilterRuleSunReturnTimeVariablesKey, from: variables)
+            
+            guard let bidPeriod = self.bidPeriod else {
+                print("⚠️ Missing bidPeriod")
+                return
+            }
+            
+            // Compute based on mode
+            if noMidCheckState == 1 {
+                obj.calculateCommuteLinePropertiesForWorkblock(withDepartureMonThursText: monThursDept, departureFriText: friDept, departureSatText: satDept, departureSunText: sunDept, returnMonThursText: monThursRet, returnSunText: sunRet, returnSatText: satRet, returnFriText: friRet, bidPeriod: bidPeriod)
+            } else {
+                obj.calculateCommuteLinePropertiesForManualTrips(withDepartureMonThursText: monThursDept, departureFriText: friDept, departureSatText: satDept, departureSunText: sunDept, returnMonThursText: monThursRet, returnSunText: sunRet,returnSatText: satRet,returnFriText: friRet,bidPeriod: bidPeriod)
+            }
+        }
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+    }
+    
+    func calculateCommuteMannualSort(pRule: CBPresetLineSort) {
+        if setCommuteTimeForDaysForManualSort(pRule: pRule) {
+            let obj = CBCommutingCellHelper()
+            
+            guard let variables = pRule.variables else {
+                print("⚠️ No variables found in pRule")
+                return
+            }
+            
+            // Helper to safely extract string
+            func stringValue(for key: String, from dict: [String: Any]) -> String {
+                guard let value = dict[key] else { return "" }
+                if let str = value as? String { return str }
+                if let num = value as? NSNumber { return num.stringValue }
+                if let intVal = value as? Int { return String(intVal) }
+                return ""
+            }
+            
+            // Helper to safely extract Int
+            func intValue(for key: String, from dict: [String: Any]) -> Int {
+                guard let value = dict[key] else { return 0 }
+                if let num = value as? NSNumber { return num.intValue }
+                if let intVal = value as? Int { return intVal }
+                if let str = value as? String, let intVal = Int(str) { return intVal }
+                return 0
+            }
+            
+            // Safely extract values
+            let noMidCheckState = intValue(for: "NoMidCheckState", from: variables)
+            let monThursDept = stringValue(for: BIFilterRuleMonThursDepartTimeVariablesKey, from: variables)
+            let monThursRet = stringValue(for: BIFilterRuleMonThursReturnTimeVariablesKey, from: variables)
+            let friDept = stringValue(for: BIFilterRuleFriDepartTimeVariablesKey, from: variables)
+            let friRet = stringValue(for: BIFilterRuleFriReturnTimeVariablesKey, from: variables)
+            let satDept = stringValue(for: BIFilterRuleSatDepartTimeVariablesKey, from: variables)
+            let satRet = stringValue(for: BIFilterRuleSatReturnTimeVariablesKey, from: variables)
+            let sunDept = stringValue(for: BIFilterRuleSunDepartTimeVariablesKey, from: variables)
+            let sunRet = stringValue(for: BIFilterRuleSunReturnTimeVariablesKey, from: variables)
+            
+            guard let bidPeriod = self.bidPeriod else {
+                print("⚠️ Missing bidPeriod")
+                return
+            }
+            
+            // Compute based on mode
+            if noMidCheckState == 1 {
+                obj.calculateCommuteLinePropertiesForWorkblock(withDepartureMonThursText: monThursDept, departureFriText: friDept, departureSatText: satDept, departureSunText: sunDept, returnMonThursText: monThursRet, returnSunText: sunRet, returnSatText: satRet, returnFriText: friRet, bidPeriod: bidPeriod)
+            } else {
+                obj.calculateCommuteLinePropertiesForManualTrips(withDepartureMonThursText: monThursDept, departureFriText: friDept, departureSatText: satDept, departureSunText: sunDept, returnMonThursText: monThursRet, returnSunText: sunRet,returnSatText: satRet,returnFriText: friRet,bidPeriod: bidPeriod)
+            }
+        }
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+    }
+    
+
+    func setCommuteTimeForDaysForManualFilter(pRule: CBPresetFilterRule) -> Bool {
+        let result = CBGlobalMethods.shared.selectedBidPeriod!.commuteTime?.allObjects
+        for basket in result! {
+            self.context.delete(basket as! NSManagedObject)
+        }
+        let startDate = self.startOfMonth()
+        let dateFormat = DateFormatter()
+        var endDate = self.endOfMonth()
+        let daysToAdd = 4
+        endDate = endDate?.addingTimeInterval(TimeInterval(60 * 60 * 24 * daysToAdd))
+        let minDateString = "01/01/0001 00:00:00"
+        
+        dateFormat.timeZone = TimeZone(secondsFromGMT: 0)
+        dateFormat.locale = Locale.current
+        dateFormat.dateFormat = "MM/dd/yyyy hh:mm:ss"
+        
+        let minDate = dateFormat.date(from: minDateString)
+        var oneWeek = DateComponents()
+        oneWeek.day = 1
+        oneWeek.hour = 1
+        //
+        var tempStartDate = startDate
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd"
+        
+        let dateFormatterForDayname = DateFormatter()
+        dateFormatterForDayname.timeZone = TimeZone(secondsFromGMT: 0)
+        dateFormatterForDayname.dateFormat = "EEEE"
+        
+        while tempStartDate?.compare(endDate!) == .orderedAscending || tempStartDate?.compare(endDate!) == .orderedSame {
+            //Set WorkBlock Details
+            let commuteEntity = NSEntityDescription.entity(forEntityName: "CommuteTime", in: (bidPeriod?.managedObjectContext)!)
+            var objcommuteTime: CommuteTime? = nil
+            objcommuteTime = CommuteTime(entity: commuteEntity!, insertInto: context)
+            objcommuteTime?.commutable = bidPeriod
+            let date = formatter.string(from: tempStartDate!)
+            objcommuteTime?.bidDay = tempStartDate as NSDate? as Date?
+            objcommuteTime?.bidDayStringValue = date
+            objcommuteTime?.earliestArrivel = minDate as Date?
+            objcommuteTime?.latestDeparture = minDate as Date?
+            let dayName = dateFormatterForDayname.string(from: tempStartDate!)
+            
+            let variables = pRule.variables! as NSDictionary
+            var depMonThurs1 : String = (variables["MON_THURS_DEPART"] as? Int ?? -1) == -1 ? "" : "\(variables["MON_THURS_DEPART"] as! Int)"
+            var returnMonThurs1 : String = (variables["MON_THURS_RETURN"] as? Int ?? 3000) == 3000 ? "" : "\(variables["MON_THURS_RETURN"] as! Int)"
+            var depFriday1 : String = (variables["FRI_DEPART"] as? Int ?? -1) == -1 ? "" : "\(variables["FRI_DEPART"] as! Int)"
+            var returnFriday1 : String = (variables["FRI_RETURN"] as? Int ?? 3000) == 3000 ? "" : "\(variables["FRI_RETURN"] as! Int)"
+            var depSat1 : String = (variables["SAT_DEPART"] as? Int ?? -1) == -1 ? "" : "\(variables["SAT_DEPART"] as! Int)"
+            var returnSat1 : String = (variables["SAT_RETURN"] as? Int ?? 3000) == 3000 ? "" : "\(variables["SAT_RETURN"] as! Int)"
+            var depSun1 : String = (variables["SUN_DEPART"] as? Int ?? -1) == -1 ? "" : "\(variables["SUN_DEPART"] as! Int)"
+            var returnSun1 : String = (variables["SUN_RETURN"] as? Int ?? 3000) == 3000 ? "" : "\(variables["SUN_RETURN"] as! Int)"
+            
+            depMonThurs1 = self.getCompleteTime(timeString: depMonThurs1)
+            returnMonThurs1 = self.getCompleteTime(timeString: returnMonThurs1)
+            depFriday1 = self.getCompleteTime(timeString: depFriday1)
+            returnFriday1 = self.getCompleteTime(timeString: returnFriday1)
+            depSat1 = self.getCompleteTime(timeString: depSat1)
+            returnSat1 = self.getCompleteTime(timeString: returnSat1)
+            depSun1 = self.getCompleteTime(timeString: depSun1)
+            returnSun1 = self.getCompleteTime(timeString: returnSun1)
+            
+//            mon - thurs
+            if depMonThurs1.length > 0 {
+                if dayName == "Monday" || dayName == "Tuesday" || dayName == "Wednesday" || dayName == "Thursday" {
+                    objcommuteTime?.earliestArrivel = addminutesWithDates(CurrentDate: tempStartDate!, Minutes: depMonThurs1)
+                }
+            }
+            if returnMonThurs1.length > 0 {
+                if dayName == "Monday" || dayName == "Tuesday" || dayName == "Wednesday" || dayName == "Thursday" {
+                    objcommuteTime?.latestDeparture = addminutesWithDates(CurrentDate: tempStartDate!, Minutes: returnMonThurs1)
+                }
+            }
+//            friday
+            if depFriday1.length > 0 {
+                if dayName == "Friday" {
+                    objcommuteTime?.earliestArrivel = addminutesWithDates(CurrentDate: tempStartDate!, Minutes: depFriday1)
+                }
+            }
+            if returnFriday1.length > 0 {
+                if dayName == "Friday" {
+                    objcommuteTime?.latestDeparture = addminutesWithDates(CurrentDate: tempStartDate!, Minutes: returnFriday1)
+                }
+            }
+//            saturday
+            if depSat1.length > 0 {
+                if dayName == "Saturday" {
+                    objcommuteTime?.earliestArrivel = addminutesWithDates(CurrentDate: tempStartDate!, Minutes: depSat1)
+                }
+            }
+            if returnSat1.length > 0 {
+                if dayName == "Saturday" {
+                    objcommuteTime?.latestDeparture = addminutesWithDates(CurrentDate: tempStartDate!, Minutes: returnSat1)
+                }
+            }
+//            sunday
+            if depSun1.length > 0 {
+                if dayName == "Sunday" {
+                    objcommuteTime?.earliestArrivel = addminutesWithDates(CurrentDate: tempStartDate!, Minutes: depSun1)
+                }
+            }
+            if returnSun1.length > 0 {
+                if dayName == "Sunday" {
+                    objcommuteTime?.latestDeparture = addminutesWithDates(CurrentDate: tempStartDate!, Minutes: returnSun1)
+                }
+            }
+            objcommuteTime?.type = 0
+            let tempdate = Calendar.current.date(byAdding: oneWeek, to: tempStartDate!)
+            var cal = Calendar(identifier: .gregorian)
+            cal.timeZone = TimeZone(secondsFromGMT: 0)!
+            var comps: DateComponents = cal.dateComponents([.year, .month, .day], from: tempdate!)
+            comps.hour = 0
+            comps.minute = 0
+            comps.second = 0
+            tempStartDate = cal.date(from: comps)!
+            
+            if tempStartDate!.compare(endDate!) == .orderedSame {
+                try? self.context.save()
+                return true
+            }
+        }
+        try? self.context.save()
+        return false
+    }
+    
+    func setCommuteTimeForDaysForManualSort(pRule: CBPresetLineSort) -> Bool {
+        let context = self.bidPeriod?.managedObjectContext
+        let result = CBGlobalMethods.shared.selectedBidPeriod!.commuteTime?.allObjects
+        for basket in result! {
+            context?.delete(basket as! NSManagedObject)
+        }
+        let startDate = self.startOfMonth()
+        let dateFormat = DateFormatter()
+        var endDate = self.endOfMonth()
+        let daysToAdd = 4
+        endDate = endDate!.addingTimeInterval(TimeInterval(60 * 60 * 24 * daysToAdd))
+        
+        let minDateString = "01/01/0001 00:00:00"
+        
+        dateFormat.timeZone = TimeZone(secondsFromGMT: 0)
+        dateFormat.locale = Locale.current
+        dateFormat.dateFormat = "MM/dd/yyyy hh:mm:ss"
+        
+        let minDate = dateFormat.date(from: minDateString)
+        var oneWeek = DateComponents()
+        oneWeek.day = 1
+        oneWeek.hour = 1
+        //
+        var TempStartDate = startDate
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd"
+        
+        let dateFormatterForDayname = DateFormatter()
+        dateFormatterForDayname.timeZone = TimeZone(secondsFromGMT: 0)
+        dateFormatterForDayname.dateFormat = "EEEE"
+
+        while TempStartDate!.compare(endDate!) == .orderedAscending || TempStartDate!.compare(endDate!) == .orderedSame {
+            //Set WorkBlock Details
+            let CommuteEntity = NSEntityDescription.entity(forEntityName: "CommuteTime", in: (context!))
+            var ObjcommuteTime: CommuteTime? = nil
+            ObjcommuteTime = CommuteTime(entity: CommuteEntity!, insertInto: (bidPeriod?.managedObjectContext)!)
+            ObjcommuteTime?.commutable = bidPeriod
+            let date = formatter.string(from: TempStartDate!)
+            ObjcommuteTime?.bidDay = TempStartDate as NSDate? as Date?
+            ObjcommuteTime?.bidDayStringValue = date
+            ObjcommuteTime?.earliestArrivel = minDate as Date?
+            ObjcommuteTime?.latestDeparture = minDate as Date?
+            let dayName = dateFormatterForDayname.string(from: TempStartDate!)
+            
+            let variables = pRule.variables! as NSDictionary
+            var depMonThurs1 : String = (variables["MON_THURS_DEPART"] as? Int ?? -1) == -1 ? "" : "\(variables["MON_THURS_DEPART"] as! Int)"
+            var returnMonThurs1 : String = (variables["MON_THURS_RETURN"] as? Int ?? 3000) == 3000 ? "" : "\(variables["MON_THURS_RETURN"] as! Int)"
+            var depFriday1 : String = (variables["FRI_DEPART"] as? Int ?? -1) == -1 ? "" : "\(variables["FRI_DEPART"] as! Int)"
+            var returnFriday1 : String = (variables["FRI_RETURN"] as? Int ?? 3000) == 3000 ? "" : "\(variables["FRI_RETURN"] as! Int)"
+            var depSat1 : String = (variables["SAT_DEPART"] as? Int ?? -1) == -1 ? "" : "\(variables["SAT_DEPART"] as! Int)"
+            var returnSat1 : String = (variables["SAT_RETURN"] as? Int ?? 3000) == 3000 ? "" : "\(variables["SAT_RETURN"] as! Int)"
+            var depSun1 : String = (variables["SUN_DEPART"] as? Int ?? -1) == -1 ? "" : "\(variables["SUN_DEPART"] as! Int)"
+            var returnSun1 : String = (variables["SUN_RETURN"] as? Int ?? 3000) == 3000 ? "" : "\(variables["SUN_RETURN"] as! Int)"
+     
+            depMonThurs1 = self.getCompleteTime(timeString: depMonThurs1)
+            returnMonThurs1 = self.getCompleteTime(timeString: returnMonThurs1)
+            depFriday1 = self.getCompleteTime(timeString: depFriday1)
+            returnFriday1 = self.getCompleteTime(timeString: returnFriday1)
+            depSat1 = self.getCompleteTime(timeString: depSat1)
+            returnSat1 = self.getCompleteTime(timeString: returnSat1)
+            depSun1 = self.getCompleteTime(timeString: depSun1)
+            returnSun1 = self.getCompleteTime(timeString: returnSun1)
+            
+            
+            
+            if depMonThurs1.length > 0 {
+                if dayName == "Monday" || dayName == "Tuesday" || dayName == "Wednesday" || dayName == "Thursday" {
+                    ObjcommuteTime?.earliestArrivel = addMinuteWithDates(currentDate: TempStartDate!, Minutes: depMonThurs1)
+                }
+            }
+            if returnMonThurs1.length > 0 {
+                if dayName == "Monday" || dayName == "Tuesday" || dayName == "Wednesday" || dayName == "Thursday" {
+                    ObjcommuteTime?.latestDeparture = self.addMinuteWithDates(currentDate: TempStartDate!, Minutes: returnMonThurs1)
+                }
+            }
+            if depFriday1.length > 0 {
+                if dayName == "Friday" {
+                    ObjcommuteTime?.earliestArrivel = self.addMinuteWithDates(currentDate: TempStartDate!, Minutes: depFriday1)
+                }
+            }
+            if returnFriday1.length > 0 {
+                if dayName == "Friday" {
+                    ObjcommuteTime?.latestDeparture = self.addMinuteWithDates(currentDate: TempStartDate!, Minutes: returnFriday1)
+                }
+            }
+            if depSat1.length > 0 {
+                if dayName == "Saturday" {
+                    ObjcommuteTime?.earliestArrivel = self.addMinuteWithDates(currentDate: TempStartDate!, Minutes: depSat1)
+                }
+            }
+            if returnSat1.length > 0 {
+                if dayName == "Saturday" {
+                    ObjcommuteTime?.latestDeparture = self.addMinuteWithDates(currentDate: TempStartDate!, Minutes: returnSat1)
+                }
+            }
+            if depSun1.length > 0 {
+                if dayName == "Sunday" {
+                    ObjcommuteTime?.earliestArrivel = self.addMinuteWithDates(currentDate: TempStartDate!, Minutes: depSun1)
+                }
+            }
+            if returnSun1.length > 0 {
+                if dayName == "Sunday" {
+                    ObjcommuteTime?.latestDeparture = self.addMinuteWithDates(currentDate: TempStartDate!, Minutes: returnSun1)
+                }
+            }
+            
+            ObjcommuteTime?.type = 0
+            let tempdate = Calendar.current.date(byAdding: oneWeek, to: TempStartDate!)
+            var cal = Calendar(identifier: .gregorian)
+            cal.timeZone = TimeZone(secondsFromGMT: 0)!
+            var comps: DateComponents = cal.dateComponents([.year, .month, .day], from: tempdate!)
+            comps.hour = 0
+            comps.minute = 0
+            comps.second = 0
+            TempStartDate = cal.date(from: comps)!
+            
+            
+            if TempStartDate!.compare(endDate!) == .orderedSame {
+                try? self.context.save()
+                return true
+            }
+        }
+        try? self.context.save()
+        return false
+    }
+    
+    
+    func startOfMonth() -> Date? {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale.current
+        if let aName = TimeZone(secondsFromGMT: 0) {
+            calendar.timeZone = aName as TimeZone
+        }
+        var day: NSNumber?
+        var month: NSNumber?
+        var year: NSNumber?
+        var components = DateComponents()
+        if (bidPeriod?.isFABid() == true) && (bidPeriod?.month?.intValue == 2) {
+            
+            day = 31
+            month = 1
+            year = bidPeriod?.year
+        } else if (bidPeriod!.isFABid() == true) && (bidPeriod?.month?.intValue == 3) {
+            day = 2
+            month = bidPeriod?.month
+            year = bidPeriod?.year
+        } else {
+            day = 1
+            month = bidPeriod?.month
+            year = bidPeriod?.year
+        }
+        components.day = Int(truncating: day ?? 0)
+        components.month = Int(truncating: month ?? 0)
+        components.year = Int(truncating: year ?? 0)
+        components.minute = 0
+        components.hour = 0
+        components.second = 0
+        
+        return calendar.date(from: components)
+    }
+    
+    func endOfMonth() -> Date? {
+        var daysToAdd: Int = 1
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale.current
+        if let aName = TimeZone(secondsFromGMT: 0) {
+            calendar.timeZone = aName as TimeZone
+        }
+        var components = DateComponents()
+        let day = 1
+        let month = bidPeriod?.month
+        let year = bidPeriod?.year
+        components.day = day
+        components.month = month as? Int
+        components.year = year as? Int
+        components.minute = 0
+        components.hour = 0
+        components.second = 0
+        
+        
+        var dateComponents = DateComponents()
+        dateComponents.month = 1
+        dateComponents.day = -1
+        
+        var lastDayOfMonth: Date? = nil
+        lastDayOfMonth = calendar.date(byAdding: dateComponents, to: calendar.date(from: components)!)
+        
+        //in case of februaury month for FA the last date should be march 1.
+        if (bidPeriod!.isFABid() == true) && bidPeriod?.month == 2 {
+            
+            lastDayOfMonth = lastDayOfMonth?.addingTimeInterval(TimeInterval(60 * 60 * 24 * daysToAdd))
+            return lastDayOfMonth
+        } else if (bidPeriod!.isFABid() == true) && bidPeriod?.month?.intValue == 1 {
+            daysToAdd = -1
+            lastDayOfMonth = lastDayOfMonth?.addingTimeInterval(TimeInterval(daysToAdd * 24 * 60 * 60))
+            return lastDayOfMonth
+        }
+        else {
+            return lastDayOfMonth
+        }
+    }
+    
+    func addminutesWithDates(CurrentDate: Date, Minutes mns: String) -> Date {
+        var temp = ""
+        if mns.count == 4 {
+            temp = mns
+        } else if mns.count == 3 {
+            temp = "0" + mns
+        }else if mns.count == 2 {
+            temp = "00" + mns
+        }else if mns.count == 1 {
+            temp = "000" + mns
+        }else{
+            temp = "0000"
+        }
+        var hours = Int(temp.substring(to: 2))!
+        let mins = Int(temp.substring(with: 2..<2))!
+        hours = (hours * 60) + mins;
+        let ModifiedDate = CurrentDate.addingTimeInterval(TimeInterval(hours * 60))
+        return ModifiedDate
+    }
+    
+    func getCompleteTime(timeString: String) -> String {
+        if timeString == "-1" || timeString == "3000"{
+            return ""
+        }
+        var timeStr = timeString
+        while timeStr.length < 4 {
+            timeStr = "0\(timeStr)"
+        }
+        return timeStr
+    }
+    
+    func addMinuteWithDates(currentDate: Date, Minutes mns: String) -> Date {
+        var temp = ""
+        if mns.count == 4 {
+            temp = mns
+        }
+        else if mns.count == 3 {
+            temp = "0\(mns)"
+        }
+        else if mns.count == 2 {
+            temp = "00\(mns)"
+        }
+        else if mns.count == 1 {
+            temp = "000\(mns)"
+        }
+        else {
+            temp = "0000"
+        }
+        var hours = Int(temp.substring(to: 2))!
+        let mins = Int(temp.substring(with: 2..<2))!
+        hours = (hours * 60) + mins
+        let modifiedDate = currentDate.addingTimeInterval(TimeInterval(hours * 60))
+        return modifiedDate
+    }
+    
 }
 
 //CBFilterRulesTableVC

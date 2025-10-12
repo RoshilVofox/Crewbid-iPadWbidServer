@@ -126,7 +126,7 @@ class CBComutabilityRuleCell: UITableViewCell, CommutabilityCellDelegate {
     
     func configureCommutabilityCell() {
         let fetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "commutableType == %d", CommutabilityType.sort.rawValue)
+        fetchRequest.predicate = NSPredicate(format: "commutableType == %d", CommutabilityType.filter.rawValue)
         let fetchedObjects = (try? self.context!.fetch(fetchRequest)) ?? []
         if fetchedObjects.count > 0 {
             objcommutability = fetchedObjects[0]
@@ -147,6 +147,7 @@ class CBComutabilityRuleCell: UITableViewCell, CommutabilityCellDelegate {
             let commutabilityCity = objcommutability?.city
             
             lblTitle.text = String(format: "Commut%% (%@)", commutabilityCity!)
+//            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
         }
     }
     

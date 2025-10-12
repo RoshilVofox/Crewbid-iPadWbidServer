@@ -1568,8 +1568,13 @@ class CBUtils{
         let fetchRequest: NSFetchRequest<OvernightBulk> = OvernightBulk.fetchRequest()
         let results: [OvernightBulk]? = try? CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!.fetch(fetchRequest)
         var dictAllValues = [String: Any]()
+        var array = NSMutableArray()
         if let results = results, results.count > 0 {
-            if let citystatusValue = results[0].value(forKey: "citystatus"), !(citystatusValue is NSNull) {
+            if let cityStatusValueArray = results[0].value(forKey: "citystatus") as? NSMutableArray, cityStatusValueArray.count > 0 {
+                array = cityStatusValueArray
+                dictAllValues = (cityStatusValueArray[0] as? [String: Any])!
+            }
+            else if let citystatusValue = results[0].value(forKey: "citystatus"), !(citystatusValue is NSNull) {
                 dictAllValues = (citystatusValue as? [String: Any])!
             }
             let noArray = dictAllValues.keys.filter { dictAllValues[$0] as? String == "1" }
@@ -1599,6 +1604,14 @@ class CBUtils{
                     formatString = "SUBQUERY(days, $DAY, ($DAY.info.city IN $SET) && $DAY.trip.dropForFiltersSorts == 0).@count > 0"
                     format = NSPredicate(format: formatString)
                     overnightPredicate.append(format.withSubstitutionVariables(filterVars))
+                }
+                if array.count > 0 {
+                    if dictAllValues.count > 0 {
+                        let noArray = (dictAllValues.filter { $0.value as? String == "1" }.map { $0.key } as? NSArray)!
+                        
+                        self.overnightBulkRedApply(noArray: noArray)
+                        CBOvernightBulkRuleCell().reloadContent()
+                    }
                 }
             }
 

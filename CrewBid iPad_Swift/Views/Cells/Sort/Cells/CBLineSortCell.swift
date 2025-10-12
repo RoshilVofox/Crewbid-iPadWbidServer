@@ -41,6 +41,7 @@ class CBLineSortCell: UITableViewCell, UIPopoverControllerDelegate {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        self.cityTextFieldDelegate = CBCityTextFieldDelegate(textField: self.cityNametxt, delegate: self)
         if let cityTextField = self.cityNametxt {
             if let lineSort = self.lineSort {
                 cityTextField.text = lineSort.city

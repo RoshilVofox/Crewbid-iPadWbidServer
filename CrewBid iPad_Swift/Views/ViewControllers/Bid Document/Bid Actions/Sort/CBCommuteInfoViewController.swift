@@ -111,7 +111,7 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
             let arrConnectTime = Array(self.connectTimeFromSync.components(separatedBy: ":")) as NSArray
             let connectTime: Int = Int(arrConnectTime.object(at: 1) as! String) ?? 0 + (Int(arrConnectTime.object(at: 0) as! String)! * 60)
             cityObj.connectTime = connectTime
-            let (status, city) = cityObj.commutabilityCalculationWithForSync(city: self.commuteCityFromSync, isNonStop: self.isNonStop)
+            let (status, city) = cityObj.commutabilityCalculationWithForSync(city: self.commuteCityFromSync, isNonStop: self.isNonStop, connectTimeFromPreset: connectTime)
             print(status, city)
             self.calculateCommuteLineProperties()
         }
@@ -793,10 +793,23 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
                     nonStopCheckView.isHidden = true
                 }
             }
+            let filterFetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
+            filterFetchRequest.predicate = NSPredicate(format: "commutableType == %d", CommutabilityType.filter.rawValue)
+            let filterFetchObjects = (try? self.context!.fetch(filterFetchRequest)) ?? []
             
-            if objCommutability!.city != nil {
-                self.commuteCityFromSync = objCommutability!.city!
-                _btnCommuteCity.setTitle(objCommutability!.city, for: .normal)
+            let sortFetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
+            sortFetchRequest.predicate = NSPredicate(format: "commutableType == %d", CommutabilityType.sort.rawValue)
+            let sortFetchObjects = (try? self.context!.fetch(sortFetchRequest)) ?? []
+            
+            if sortFetchObjects.count > 0 && filterFetchObjects.count == 0 {
+                self.commuteCityFromSync = "Select"
+                _btnCommuteCity.setTitle("Select", for: .normal)
+            }
+            else {
+                if objCommutability!.city != nil {
+                    self.commuteCityFromSync = objCommutability!.city!
+                    _btnCommuteCity.setTitle(objCommutability!.city, for: .normal)
+                }
             }
             
             if objCommutability!.checkInTime != nil {
@@ -847,7 +860,7 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
         let arrConnectTime = Array(connectTimeFromSync.components(separatedBy: ":")) as NSArray
         let connectTime:Int = Int(arrConnectTime.object(at: 1) as! String) ?? 0 + (Int(arrConnectTime.object(at: 0) as! String)! * 60)
         cityObj.connectTime = connectTime
-        let (status, city) = cityObj.commutabilityCalculationWithForSync(city: self.commuteCityFromSync, isNonStop: self.isNonStop)
+        let (status, city) = cityObj.commutabilityCalculationWithForSync(city: self.commuteCityFromSync, isNonStop: self.isNonStop, connectTimeFromPreset: connectTime)
         print(status, city)
         self.calculateCommuteLineProperties()
     }

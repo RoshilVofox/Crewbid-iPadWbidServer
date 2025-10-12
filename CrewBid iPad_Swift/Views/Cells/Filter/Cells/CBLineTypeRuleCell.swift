@@ -529,7 +529,16 @@ class CBLineTypeRuleCell: UITableViewCell {
                 } else {
                     // Second Round data
                     let Etopsvariables = etopsfilterRule?.variables
-                    let variables = filterRule.variables?["SET"] as! NSSet
+                    var variables = NSSet()
+                    if let value = filterRule.variables?["SET"] {
+                        if let set = value as? NSSet {
+                            variables = set
+                        } else if let array = value as? [Any] {
+                            variables = NSSet(array: array)
+                        } else {
+                            print("Unexpected type:", type(of: value))
+                        }
+                    }
                     let arrVariables = NSMutableArray(array:variables.allObjects)
                     if bidPeriod.isEtopsLinesContainsInBid?.boolValue == true {
                         reserveLinesButton.isSelected = arrVariables.contains(BILineType.NonEtopsReserve.rawValue)

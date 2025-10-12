@@ -570,7 +570,7 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
                 if BITripLengthFilterRuleType.BITripLengthCompoundType.rawValue == type {
                     format = BIFilterRule.formatForCategory(category: category, type: type)
                 }else{
-                    let formatString = String(format: "%@ %@ $%@", keyPath!, self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
+                    let formatString = String(format: "%@ %@ $%@", keyPath ?? "", self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
                     format = NSPredicate(format: formatString)
                 }
             }
@@ -645,7 +645,7 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
             
         }else if category == BIFilterRuleCategory.BICommutabilityFilterRuleCategory.rawValue{
             let fetchRequest:NSFetchRequest<Commutability> = Commutability.fetchRequest()
-            
+            fetchRequest.predicate = NSPredicate(format: "commutableType == %d", CommutabilityType.filter.rawValue)
             do{
                 let fetchedObjects = try self.managedObjectContext!.fetch(fetchRequest)
                 
@@ -708,7 +708,7 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
         }else if category == BIFilterRuleCategory.BIDeadheadsFilterRuleCategory.rawValue && (type == BIDeadheadsFilterRuleType.BIDeadheadsAtStartType.rawValue || type == BIDeadheadsFilterRuleType.BIDeadheadsAtEndType.rawValue || type == BIDeadheadsFilterRuleType.BIDeadheadsAtEitherType.rawValue){
             let city = self.variables![BIFilterRuleCityVariablesKey] as? String
             if city == nil || city == "" {
-                let formatString = String(format: "%@ %@ $%@", self.keyPath!, self.predicateOperatorString(),BIFilterRuleCityVariablesKey)
+                let formatString = String(format: "%@ %@ $%@", self.keyPath!, self.predicateOperatorString(),BIFilterRuleValueVariablesKey)
                 format = NSPredicate(format: formatString)
             }else if BIDeadheadsFilterRuleType.BIDeadheadsAtStartType.rawValue == type {
                 let formatString = String(format: """
