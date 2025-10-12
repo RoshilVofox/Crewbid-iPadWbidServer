@@ -987,7 +987,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     print("Failed to fetch bid periods: \(error)")
                     self.bidPeriodList = []
                 }
-        CBUserAccountDetail.shared.saveUserInfo()
+//        CBUserAccountDetail.shared.saveUserInfo()
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let docVC = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
         docVC.modalTransitionStyle = .crossDissolve

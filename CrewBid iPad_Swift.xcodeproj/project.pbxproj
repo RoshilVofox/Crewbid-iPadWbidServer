@@ -2388,7 +2388,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 7.34.19;
+				MARKETING_VERSION = 7.34.20;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brainbagsoftware.CrewBid;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2424,7 +2424,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 7.34.19;
+				MARKETING_VERSION = 7.34.20;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "CrewBid iPad_Swift/Utilities/Helpers/StoreKit/CrewBid iPad_Swift-Bridging-Header.h";

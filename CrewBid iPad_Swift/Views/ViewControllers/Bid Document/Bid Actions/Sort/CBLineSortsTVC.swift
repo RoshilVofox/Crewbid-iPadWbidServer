@@ -395,7 +395,7 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
             dayMonthCell.calendarData = self.calendarData
             dayMonthCell.lineSort = lineSort
             dayMonthCell.type = .Off
-            dayMonthCell.calendarCollectionView.reloadData()
+            dayMonthCell.configureCell(bidPeriod: bidPeriod!, type: DaysSortType.Off, calendarData: self.calendarData)
         }
         else if lineSort.category?.intValue == BILineSortCategory.BIDaysWorkLineSortCategory.rawValue {
             let dayMonthCell = cell as! CBDayMonthSortCell
@@ -403,7 +403,7 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
             dayMonthCell.calendarData = self.calendarData
             dayMonthCell.lineSort = lineSort
             dayMonthCell.type = .Work
-            dayMonthCell.calendarCollectionView.reloadData()
+            dayMonthCell.configureCell(bidPeriod: bidPeriod!, type: DaysSortType.Work, calendarData: self.calendarData)
         }
         else if lineSort.category?.intValue == BILineSortCategory.BIDaysTripStartSortCategory.rawValue {
             let dayMonthCell = cell as! CBDayMonthSortCell
@@ -411,7 +411,7 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
             dayMonthCell.calendarData = self.calendarData
             dayMonthCell.lineSort = lineSort
             dayMonthCell.type = .TripStart
-            dayMonthCell.calendarCollectionView.reloadData()
+            dayMonthCell.configureCell(bidPeriod: bidPeriod!, type: DaysSortType.TripStart, calendarData: self.calendarData)
         }
         else if lineSort.category?.intValue == BILineSortCategory.BICommutingLineSortCategory.rawValue {
             let sortCell = cell as! CBCommutingSortCell

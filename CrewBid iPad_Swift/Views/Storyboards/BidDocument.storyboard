@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24127" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="06c-Ha-XoX">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="06c-Ha-XoX">
     <device id="ipad11_0rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -3030,6 +3030,10 @@
                                                 <constraint firstItem="nOG-mm-2yE" firstAttribute="top" secondItem="J6R-DN-l4J" secondAttribute="top" id="sTi-wb-3M0"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="calendarCollectionView" destination="ULl-gZ-2wQ" id="qwT-vj-oym"/>
+                                            <outlet property="monthLabel" destination="2Vt-Qe-mwo" id="Stb-Rg-8SX"/>
+                                        </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="UserFlagRuleCell" rowHeight="56" id="kn9-QR-Npc" customClass="CBUserFlagRuleCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="1815" width="652" height="56"/>

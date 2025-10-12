@@ -36,6 +36,40 @@ class CBDayMonthSortCell: UITableViewCell {
         
         calendarCollectionView.delegate = self
         calendarCollectionView.dataSource = self
+        
+        calculateButton.layer.cornerRadius = 5
+        calculateButton.layer.borderWidth = 2
+        calculateButton.layer.borderColor = CBColor.purpleColor.cgColor
+    }
+
+    func configureCell(bidPeriod: BIBidPeriod, type: DaysSortType, calendarData: BICalendarData) {
+        self.bidPeriod = bidPeriod
+        self.type = type
+        self.calendarData = calendarData
+        
+        monthLabel.translatesAutoresizingMaskIntoConstraints = true
+        monthLabel.center.x = 20
+        
+        let month = bidPeriod.month!
+        let dateString = String(format: "%@", month)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM"
+        let myDate = dateFormatter.date(from: dateString)!
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM"
+        var calTitle = formatter.string(from: myDate)
+        if type == .Off {
+            calTitle.append(" Days Off")
+        } else if type == .Work {
+            calTitle.append(" Days Work")
+        } else {
+            calTitle.append(" Trip Start")
+        }
+        monthLabel.text = calTitle
+        monthLabel.transform = CGAffineTransform(rotationAngle: CGFloat(-90.0 * .pi / 180.0))
+        
+        calendarCollectionView.reloadData()
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -46,58 +80,9 @@ class CBDayMonthSortCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        isPreviousMonth = true
-        monthLabel.translatesAutoresizingMaskIntoConstraints = true
-        monthLabel.center.x = 20
-        calculateButton.layer.cornerRadius = 5
-        calculateButton.layer.borderWidth = 2
-        calculateButton.layer.borderColor = CBColor.purpleColor.cgColor
-        
-//        if calendarData == nil {
-//            print("")
-//        }
-        
-        // Grab the old calendar title if it exists.
-        let callTitleToRemove = self.viewWithTag(67)
-        if let callTitleToRemove = callTitleToRemove {
-            callTitleToRemove.removeFromSuperview()
-        }
-        
-        if let bidPeriod = self.bidPeriod {
-            let month = bidPeriod.month!
-            let dateString = String(format: "%@", month)
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "MM"
-            let myDate = dateFormatter.date(from: dateString)!
-            
-            let formatter = DateFormatter()
-            formatter.dateFormat = "MMMM"
-            var calTitle = formatter.string(from: myDate)
-            if type == .Off {
-                calTitle.append(" Days Off")
-            }
-            else if type == .Work {
-                calTitle.append(" Days Work")
-            }
-            else {
-                calTitle.append(" Trip Start")
-            }
-//            rotating the title
-            monthLabel.text = calTitle
-            monthLabel.transform = CGAffineTransform(rotationAngle: CGFloat(-90.0 * .pi / 180.0))
-        }
-        
-        if let calendarData = self.calendarData {
-            for i in 0..<calendarData.calendarDays.count {
-                let viewTag = 500 + i
-                let viewToRemove = self.calendarCollectionView.viewWithTag(viewTag)
-                if let viewToRemove = viewToRemove {
-                    viewToRemove.removeFromSuperview()
-                }
-            }
-        }
+        // only adjust layout if absolutely necessary, no logic or subview removal
     }
+
     
     @IBAction func calculateDaysOffSort(_ sender: Any) {
         guard !isLoading else {
@@ -135,6 +120,9 @@ class CBDayMonthSortCell: UITableViewCell {
     }
     
     @IBAction func btnCloseAction(_ sender: Any) {
+        CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
+        CBGlobalMethods.shared.selectedBidPeriod!.currentDateTime = Date()
+        CBGlobalMethods.shared.selectedBidPeriod!.isStateFileModifiedToSync = true
         for view in self.calendarCollectionView.subviews {
             if view.tag > 499 {
                 view.removeFromSuperview()

@@ -24,6 +24,8 @@ class CBCityComparisonRuleCell: CBComparisonRuleCell, UITextFieldDelegate {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        cityTextField.delegate = self
+
         NotificationCenter.default.addObserver(self, selector: #selector(self.filterViewWillDisappear), name: NSNotification.Name("FilterViewWillDisappear"), object: nil)
     }
     

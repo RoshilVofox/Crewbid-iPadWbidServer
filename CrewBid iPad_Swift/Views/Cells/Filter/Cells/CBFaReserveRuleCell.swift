@@ -77,13 +77,22 @@ class CBFaReserveRuleCell: UITableViewCell {
                 //self.filterRule = filterRule
             }
             setTheme()
-            if let variables = filterRule.variables!["SET"] as? Set<Int> {
+            var variables: Set<Int> = NSSet() as! Set<Int>
+            if let value = filterRule.variables?["SET"] {
+                if let set = value as? NSSet {
+                    variables = set as! Set<Int>
+                } else if let array = value as? [Any] {
+                    variables = NSSet(array: array) as! Set<Int>
+                } else {
+                    print("Unexpected type:", type(of: value))
+                }
+            }
+            
                 SnrAMresButton.isSelected = variables.contains(BIFaReserveLineType.SnrAMres.rawValue)
                 SnrPMresButton.isSelected = variables.contains(BIFaReserveLineType.SnrPMres.rawValue)
                 JnrAMresButton.isSelected = variables.contains(BIFaReserveLineType.JnrAMres.rawValue)
                 JnrPMresButton.isSelected = variables.contains(BIFaReserveLineType.JnrPMres.rawValue)
                 JnrLateResButton.isSelected = variables.contains(BIFaReserveLineType.JnrLateRes.rawValue)
-            }
         }
     }
     
