@@ -184,9 +184,16 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
             self.lblScratchpadLineCount.text = "Scratchpad- \(self.lines.count) Lines"
             self.fetchTrashedLinesCount()
             if #available(iOS 26.0, *) {
-                if let visibleIndexPaths = self.scratchPadTableView.indexPathsForVisibleRows {
-                    self.scratchPadTableView.reloadRows(at: visibleIndexPaths, with: .none)
+               let currentOffset = self.scratchPadTableView.contentOffset
+                
+                UIView.performWithoutAnimation {
+                    self.scratchPadTableView.reloadData()
+                    self.scratchPadTableView.layoutIfNeeded()
                 }
+                 
+                let maxOffsetY = max(0, self.scratchPadTableView.contentSize.height - self.scratchPadTableView.bounds.height)
+                let clampedOffset = CGPoint(x: currentOffset.x, y: min(currentOffset.y, maxOffsetY))
+                self.scratchPadTableView.setContentOffset(clampedOffset, animated: false)
             } else {
                 self.scratchPadTableView.reloadData()
             }
