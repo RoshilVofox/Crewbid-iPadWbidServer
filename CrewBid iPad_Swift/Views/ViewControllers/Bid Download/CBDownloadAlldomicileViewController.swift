@@ -387,7 +387,9 @@ class CBDownloadAlldomicileViewController: UIViewController {
                     try context.save() // Save changes to persist deletion
                     print("Successfully deleted all BIBidPeriod records.")
                     NotificationCenter.default.post(name: NSNotification.Name("ReloadCollectionView"), object: nil)
-                    self.view.hideActivityIndicator()
+                    DispatchQueue.main.async {
+                        self.view.hideActivityIndicator()
+                    }
 //                    view.hideActivityIndicator()
                     self.bidPeriodList = []
                 } catch {
