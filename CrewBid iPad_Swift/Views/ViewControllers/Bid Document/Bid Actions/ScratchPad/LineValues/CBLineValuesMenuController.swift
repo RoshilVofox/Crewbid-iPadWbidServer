@@ -43,6 +43,11 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         lineValues = lineValues1()
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        NotificationCenter.default.post(name: Notification.Name(CBLineValuesToDisplayDidChangeNotification), object: self)
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return lineValues.count
     }

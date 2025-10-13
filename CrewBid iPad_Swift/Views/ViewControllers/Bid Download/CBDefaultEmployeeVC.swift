@@ -105,7 +105,6 @@ class CBDefaultEmployeeVC: BaseViewController {
     @IBAction func btnNextAction(_ sender: Any) {
         if type == .showAwardedLine {
             self.askForEmployeeNumber()
-//            self.showAwardedCalendarLineView()
         }else{
             if !isEmpIDVerified {
                  guard let empID = textEmpNum.text, !empID.isEmpty else {

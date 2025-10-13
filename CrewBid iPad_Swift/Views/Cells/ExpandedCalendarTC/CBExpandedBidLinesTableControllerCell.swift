@@ -94,7 +94,7 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
         flagImage.frame = frame!
         flagImage.tag = 112
         userFlagControl.addSubview(flagImage)
-        userFlagControl.makeCornorRound()
+        userFlagControl.makeCornerRound()
     }
     
     func setupUI() {

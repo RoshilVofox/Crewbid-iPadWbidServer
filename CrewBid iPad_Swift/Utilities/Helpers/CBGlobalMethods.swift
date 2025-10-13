@@ -457,11 +457,11 @@ enum SWVacation : String {
 
 extension UIView {
     
-    func makeCornorRound(radius: CGFloat? = nil) {
+    func makeCornerRound(radius: CGFloat? = nil) {
         if let radius = radius {
             self.layer.cornerRadius = radius
         } else {
-            self.layer.cornerRadius = self.frame.width / 2
+            self.layer.cornerRadius = self.frame.height / 2
         }
         self.layer.masksToBounds = true
     }

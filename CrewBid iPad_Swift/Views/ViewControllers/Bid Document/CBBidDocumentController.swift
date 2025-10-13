@@ -970,7 +970,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @IBAction func btnShareAction(_ sender: Any) {
         let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedBidActionsVC") as! EmbeddedBidActionsVC
-       
         vc.preferredContentSize = CGSize(width: 310, height: 610)
         vc.modalPresentationStyle = .custom
         let frame = CGRect(x: 15, y: 35, width: 0, height: 0)
