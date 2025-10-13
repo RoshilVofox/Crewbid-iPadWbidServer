@@ -16,6 +16,13 @@ enum TypeWebServices {
     case importUserDetails
     case vacationFileNames
 }
+
+
+enum credentialVCType{
+    case defaultType
+    case retrieveAwards
+    case submitBid
+}
 class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAdaptivePresentationControllerDelegate, ServiceConnectionDelegate {
     func responseError(_ errMsg: String) {
         print("responseError")
@@ -360,7 +367,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     var userid:String?
     var password:String?
     var loginType:LoginType = .newBid
-    var type:String?
+    var type:credentialVCType = .defaultType
     var bidPeriod: BIBidPeriod?
     let loginViewModel = CBLoginViewModel()
     let bidDownloadViewModel = BIBidFileDownloadViewModel()
@@ -385,7 +392,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         if let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod {
             awardsViewModel = AwardsViewModel(bidPeriod: bidPeriod)
         }
-        if type == "Retrieve Awards" {
+        if type == .retrieveAwards {
             backBtn.setImage(UIImage(named: "cc"), for: .normal)
         }else{
             backBtn.setImage(UIImage(named: "arrowleftbutton"), for: .normal)
@@ -420,10 +427,10 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     }
     
     func setupTitle(){
-        if type == "Retrieve Awards" {
+        if type == .retrieveAwards {
             lblTitle.text = "Retrieve Awards"
         }
-        else if type == "Submit Bid" {
+        else if type == .submitBid {
             lblTitle.text = "Submit Bid"
         }
         else if isHistoricBid {
@@ -464,10 +471,10 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     print("Saved to keychain")
                 }
             }
-            if self.type == "Retrieve Awards"{
+            if self.type == .retrieveAwards{
                 self.handleAwardRetrieval(sessionKey: sessionKey)
             }
-            else if self.type == "Submit Bid"{
+            else if self.type == .submitBid{
                 self.handleBidSubmission(sessionKey: sessionKey)
             }
             else{
@@ -739,7 +746,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     }
     
     @IBAction func btnBackAction(_ sender: UIButton) {
-        if type == "Retrieve Awards" {
+        if type == .retrieveAwards {
               self.dismiss(animated: true, completion: nil)
           }
           else {
@@ -749,10 +756,10 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     
     @IBAction func btnGoAction(_ sender: UIButton) {
         UserDefaults.standard.set(txtUserID.text, forKey: KCBEmpNumWithPrefix)
-        if type == "Retrieve Awards" {
+        if type == .retrieveAwards {
             self.retriveAwardsAction()
         }
-        else if type == "Submit Bid" {
+        else if type == .submitBid {
             self.submitBidAction()
         }else{
             self.loginValidation()

@@ -7,7 +7,14 @@
 
 import UIKit
 
-class CBBidReciptViewController: UIViewController {
+
+enum LineTypeForRecipt {
+    case normal
+    case blank
+    case reserve
+}
+
+class CBBidReceiptViewController: UIViewController {
     
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var txtView: UITextView!

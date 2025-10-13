@@ -41,7 +41,7 @@ class JobShareViewController: UIViewController {
     @IBAction func btnOkAction(_ sender: Any) {
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
-        vc.type = "Submit Bid"
+        vc.type = .submitBid
         vc.bidPeriod = self.bidPeriod
         vc.jobShare1 = self.txtJobShare1.text ?? ""
         vc.jobShare2 = self.txtJobShare2.text ?? ""

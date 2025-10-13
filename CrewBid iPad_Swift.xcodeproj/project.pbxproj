@@ -298,7 +298,7 @@
 		F41EBF9D2DC4DB20001413DE /* CBSubmissionCertifyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE5E2DC4DB20001413DE /* CBSubmissionCertifyVC.swift */; };
 		F41EBF9E2DC4DB20001413DE /* CBSubmitCredentialVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE5F2DC4DB20001413DE /* CBSubmitCredentialVC.swift */; };
 		F41EBF9F2DC4DB20001413DE /* SubmissionErrorVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE602DC4DB20001413DE /* SubmissionErrorVC.swift */; };
-		F41EBFA02DC4DB20001413DE /* CBBidReciptViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE622DC4DB20001413DE /* CBBidReciptViewController.swift */; };
+		F41EBFA02DC4DB20001413DE /* CBBidReceiptViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE622DC4DB20001413DE /* CBBidReceiptViewController.swift */; };
 		F41EBFA12DC4DB20001413DE /* CBCAPViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE642DC4DB20001413DE /* CBCAPViewController.swift */; };
 		F41EBFA22DC4DB20001413DE /* CBTextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE662DC4DB20001413DE /* CBTextViewController.swift */; };
 		F41EBFA32DC4DB20001413DE /* CBCommuteDiffVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE682DC4DB20001413DE /* CBCommuteDiffVC.swift */; };
@@ -684,7 +684,7 @@
 		F41EBE5E2DC4DB20001413DE /* CBSubmissionCertifyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSubmissionCertifyVC.swift; sourceTree = "<group>"; };
 		F41EBE5F2DC4DB20001413DE /* CBSubmitCredentialVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSubmitCredentialVC.swift; sourceTree = "<group>"; };
 		F41EBE602DC4DB20001413DE /* SubmissionErrorVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubmissionErrorVC.swift; sourceTree = "<group>"; };
-		F41EBE622DC4DB20001413DE /* CBBidReciptViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidReciptViewController.swift; sourceTree = "<group>"; };
+		F41EBE622DC4DB20001413DE /* CBBidReceiptViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidReceiptViewController.swift; sourceTree = "<group>"; };
 		F41EBE642DC4DB20001413DE /* CBCAPViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCAPViewController.swift; sourceTree = "<group>"; };
 		F41EBE662DC4DB20001413DE /* CBTextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBTextViewController.swift; sourceTree = "<group>"; };
 		F41EBE682DC4DB20001413DE /* CBCommuteDiffVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCommuteDiffVC.swift; sourceTree = "<group>"; };
@@ -1409,7 +1409,7 @@
 		F41EBE632DC4DB20001413DE /* BidRecipt */ = {
 			isa = PBXGroup;
 			children = (
-				F41EBE622DC4DB20001413DE /* CBBidReciptViewController.swift */,
+				F41EBE622DC4DB20001413DE /* CBBidReceiptViewController.swift */,
 			);
 			path = BidRecipt;
 			sourceTree = "<group>";
@@ -2298,7 +2298,7 @@
 				F41EBF9E2DC4DB20001413DE /* CBSubmitCredentialVC.swift in Sources */,
 				F4DE35452E72C1F800777D47 /* CBGlobal.swift in Sources */,
 				F41EBF9F2DC4DB20001413DE /* SubmissionErrorVC.swift in Sources */,
-				F41EBFA02DC4DB20001413DE /* CBBidReciptViewController.swift in Sources */,
+				F41EBFA02DC4DB20001413DE /* CBBidReceiptViewController.swift in Sources */,
 				F41EBFA12DC4DB20001413DE /* CBCAPViewController.swift in Sources */,
 				F41EBFA22DC4DB20001413DE /* CBTextViewController.swift in Sources */,
 				F41EBFA32DC4DB20001413DE /* CBCommuteDiffVC.swift in Sources */,

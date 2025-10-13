@@ -101,7 +101,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         
         firstTimeBidOpen()
         NotificationCenter.default.addObserver(self, selector: #selector(didDismissLatestNews), name: NSNotification.Name("DidDismissLatestNews"), object: nil)
-//        NotificationCenter.default.addObserver(self, selector: #selector(openlatestNews), name: NSNotification.Name(KCBOpenLatestNews), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openCoverLetter(notification:)), name: NSNotification.Name(KCBOpenCoverletter), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openSeniority), name: NSNotification.Name(KCBOpenSeniority), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openLineText), name: NSNotification.Name(KCBOpenLineText), object: nil)
@@ -121,7 +120,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         if let userInfo = notification.userInfo as? NSDictionary {
             vc.isFromFirstTimeOpenBid = userInfo["isFromFirstTimeOpenBid"] as! Bool
         }
-//        self.navigationController?.pushViewController(vc, animated: true)
            vc.modalPresentationStyle = .fullScreen
            vc.modalTransitionStyle = .crossDissolve
            self.present(vc, animated: true, completion: nil)
@@ -132,7 +130,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
         vc.bidPeriod = bidPeriod
         vc.dataTypeSelected = TextFileType.seniorityList
-//        self.navigationController?.pushViewController(vc, animated: true)
         vc.modalPresentationStyle = .fullScreen
         vc.modalTransitionStyle = .crossDissolve
         self.present(vc, animated: true, completion: nil)
@@ -143,7 +140,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
         vc.bidPeriod = bidPeriod
         vc.dataTypeSelected = TextFileType.lineText
-//        self.navigationController?.pushViewController(vc, animated: true)
         vc.modalPresentationStyle = .fullScreen
         vc.modalTransitionStyle = .crossDissolve
         self.present(vc, animated: true, completion: nil)
@@ -154,7 +150,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
         vc.bidPeriod = bidPeriod
         vc.dataTypeSelected = TextFileType.tripText
-//        self.navigationController?.pushViewController(vc, animated: true)
         vc.modalPresentationStyle = .fullScreen
         vc.modalTransitionStyle = .crossDissolve
         self.present(vc, animated: true, completion: nil)
@@ -165,7 +160,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
         vc.bidPeriod = bidPeriod
         vc.dataTypeSelected = TextFileType.faMemo
-//        self.navigationController?.pushViewController(vc, animated: true)
         vc.modalPresentationStyle = .fullScreen
         vc.modalTransitionStyle = .crossDissolve
         self.present(vc, animated: true, completion: nil)
@@ -181,20 +175,13 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @objc func openretrieveAwardDownloadPage() {
         let storyboard : UIStoryboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
-        vc.type = "Retrieve Awards"
+        vc.type = .retrieveAwards
         vc.bidPeriod = self.bidPeriod
         vc.preferredContentSize = CGSize(width: 600, height: 500)
         vc.isModalInPresentation = true
         self.present(vc, animated: true, completion: nil)
     }
     
-    // Function to open the Latest News view
-
-//    @objc func openlatestNews() {
-//        let storyboard : UIStoryboard = UIStoryboard(name: "HelpMenu", bundle: nil)
-//        let vc = storyboard.instantiateViewController(withIdentifier: "CBNewsController") as! CBNewsController
-//        self.navigationController?.pushViewController(vc, animated: true)
-//    }
     
     //MARK: -Bid Submission methods
     @objc func checkLinesAvailableInBidList() {
@@ -223,7 +210,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBDefaultEmployeeVC") as! CBDefaultEmployeeVC
         vc.preferredContentSize = CGSize(width: 600, height: 500)
-        vc.type = "Submit Employee Number"
+        vc.type = .submitEmployeeNumber
         vc.bidPeriod = self.bidPeriod!
         vc.isEmpIDVerified = false
         let navController = UINavigationController(rootViewController: vc)

@@ -15,7 +15,14 @@ class CBAwardLineCalendarViewController: UIViewController, UICollectionViewDeleg
     @IBOutlet weak var viewLineValues: UIView!
     @IBOutlet weak var btnClose: UIButton!
     @IBOutlet weak var btnShare: UIButton!
-    
+    var line: BILine?
+    var calendarData: BICalendarData?
+    var calendarDayArr : [BICalendarDay] = []
+    var bidPeriod : BIBidPeriod?
+    var tripTextController: CBTripTextViewController?
+    var employeeNumber : String?
+    var tripCBButton: CBTripButton!
+    var selectedLine: BILine?
     override func viewDidLoad() {
         super.viewDidLoad()
         

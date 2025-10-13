@@ -44,7 +44,6 @@ class CBProgressVC: UIViewController {
             self.indicator2.color = .white
             self.indicator2.startAnimating()
         }
-        
         NotificationCenter.default.addObserver(self, selector: #selector(notificationAction(notification: )), name: Notification.Name("DownloadingBid"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(notificationAction(notification: )), name: Notification.Name("ParsingBid"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(notificationAction(notification: )), name: Notification.Name("ParsingVacation"), object: nil)
