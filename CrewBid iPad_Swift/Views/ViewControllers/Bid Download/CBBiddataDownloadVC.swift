@@ -104,8 +104,19 @@ class CBBiddataDownloadVC: BaseViewController {
             }
             GlobalBidInfo.shared.employeeNumber = self.empNum ?? emp
             GlobalBidInfo.shared.round = self.selectedRound!
-            GlobalBidInfo.shared.month = self.month!
-            GlobalBidInfo.shared.year = self.year!
+            let isQATest = UserDefaults.standard.bool(forKey: "isQATest")
+            if isQATest == true {
+                let qaMonth = UserDefaults.standard.string(forKey: "QATestMonth") ?? "0"
+                let qaYear = UserDefaults.standard.string(forKey: "QATestYear") ?? "0"
+                GlobalBidInfo.shared.month = Int(qaMonth)!
+                GlobalBidInfo.shared.year = Int(qaYear)!
+            }
+            else {
+                GlobalBidInfo.shared.month = self.month!
+                GlobalBidInfo.shared.year = self.year!
+            }
+            
+//=======================================
             AppState.shared.mockDataMonth = self.month
             AppState.shared.mockDataYear = self.year
             let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)

@@ -355,6 +355,8 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     @IBOutlet weak var showPasswordBtn: UIButton!
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var backBtn: UIButton!
+    @IBOutlet weak var lblQaMode: UILabel!
+    
     let reachability = try? Reachability()
     var isHistoricBid : Bool = false
     var isNewBid:Bool = false
@@ -427,6 +429,15 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     }
     
     func setupTitle(){
+        let isQATest = UserDefaults.standard.bool(forKey: "isQATest")
+        if isQATest == true {
+            let qaMonth = UserDefaults.standard.string(forKey: "QATestMonth") ?? "0"
+            let qaYear = UserDefaults.standard.string(forKey: "QATestYear") ?? "0"
+            lblQaMode.text = "QA Mode: \(qaMonth) - \(qaYear)"
+        }
+        else {
+            lblQaMode.text = ""
+        }
         if type == .retrieveAwards {
             lblTitle.text = "Retrieve Awards"
         }

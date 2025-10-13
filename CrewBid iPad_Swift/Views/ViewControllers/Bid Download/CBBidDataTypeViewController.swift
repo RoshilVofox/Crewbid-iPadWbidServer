@@ -13,9 +13,23 @@ class CBBidDataTypeViewController: UIViewController {
     @IBOutlet weak var btnHistoricBP: UIButton!
     @IBOutlet weak var btnNewBP: UIButton!
     @IBOutlet weak var viewBottom: UIView!
+    @IBOutlet weak var lblQaMode: UILabel!
     let app = UIApplication.shared.delegate as! AppDelegate
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupUI()
+    }
+    func setupUI() {
+        let isQATest = UserDefaults.standard.bool(forKey: "isQATest")
+        if isQATest == true {
+            let qaMonth = UserDefaults.standard.string(forKey: "QATestMonth") ?? "0"
+            let qaYear = UserDefaults.standard.string(forKey: "QATestYear") ?? "0"
+            lblQaMode.text = "QA Mode: \(qaMonth) - \(qaYear)"
+        }
+        else {
+            lblQaMode.text = ""
+        }
     }
     
     @IBAction func btnCloseAction(_ sender: Any) {
