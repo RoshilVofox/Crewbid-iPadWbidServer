@@ -789,7 +789,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         }
         vacationButtons?.removeAllObjects()
         vacationButtons?.addObjects(from: calendarData!.calendarDays as! [Any])
-        if self.bidPeriod!.containsVacay!.boolValue{
+        if self.bidPeriod!.containsVacay?.boolValue == true {
             var vacayButtonFrame = CGRect(x: 0, y: 0, width: itemSize.width, height: itemSize.height)
             var buttonImage:UIImage? = nil
             let vacations = self.bidPeriod!.vacations
@@ -897,7 +897,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                 }
             }
         }
-        if self.bidPeriod!.containsVacay!.boolValue {
+        if self.bidPeriod!.containsVacay?.boolValue == true {
             var vacayButtonFrame = CGRect(x: 0, y: 0, width: itemSize.width, height: itemSize.height)
             var buttonImage:UIImage? = nil
             let vacations = self.line?.fvvacations

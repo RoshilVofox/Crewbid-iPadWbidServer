@@ -84,7 +84,7 @@ class BIAllDomicileDownloadViewModel {
                             //                        }
                         case .failure(let error):
                             print("Error downloading new bid: \(error.localizedDescription)")
-                            tableViewData[lastIndex!] = "❌ Failed to download \(bases[0]) \(position.shortName)"
+                            tableViewData[lastIndex!] = "❌ Failed to download \(bases[0]) \(self.dataSource.position.shortName)"
                             NotificationCenter.default.post(name: Notification.Name("AllDomicileTableDataUpdate"), object: nil, userInfo: ["status": tableViewData, "activityStatus": activityStatus])
                             bases.remove(at: 0)
                             self.downladAllDomicileBid(bases: bases, tableViewData: tableViewData)

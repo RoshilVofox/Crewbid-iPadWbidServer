@@ -2070,7 +2070,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             if ((self.bidPeriod?.crewIdentifier?.intValue != self.bidPeriod!.credentialEmployeenumber!.intValue) && alertShouldDisplay) {
                 self.enableOrDisableEOMButton()
                 DispatchQueue.main.async {
-                    AlertService.showAlertForTopVC(title: "SWAPtimizer loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(GlobalBidInfo.shared.userid)).", actions: [(
+                    AlertService.showAlertForTopVC(title: "SWAPtimizer loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(self.bidPeriod!.credentialEmployeenumber!)).", actions: [(
                         title: "OK",
                         style: .default,
                         handler: { _ in
@@ -2103,7 +2103,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         else if (vacationType == "WBID" || vacationType == "WBIDF") {
             if ((self.bidPeriod?.crewIdentifier?.intValue != self.bidPeriod!.credentialEmployeenumber!.intValue) && alertShouldDisplay) {
                 DispatchQueue.main.async {
-                    AlertService.showAlertForTopVC(title: "WBidmax loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(GlobalBidInfo.shared.userid)).", actions: [(
+                    AlertService.showAlertForTopVC(title: "WBidmax loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(self.bidPeriod!.credentialEmployeenumber!)).", actions: [(
                         title: "OK",
                         style: .default,
                         handler: { _ in
@@ -2138,7 +2138,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         else if ((vacationType == "FAVacation" || vacationType == "FAVacationF")) && alertShouldDisplay {
             if (self.bidPeriod?.crewIdentifier?.intValue != self.bidPeriod!.credentialEmployeenumber!.intValue) {
                 DispatchQueue.main.async {
-                    AlertService.showAlertForTopVC(title: "Vacation loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(GlobalBidInfo.shared.userid)).", actions: [(
+                    AlertService.showAlertForTopVC(title: "Vacation loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the SWAPtimizer file is valid (\(self.bidPeriod!.credentialEmployeenumber!)).", actions: [(
                         title: "OK",
                         style: .default,
                         handler: { _ in
