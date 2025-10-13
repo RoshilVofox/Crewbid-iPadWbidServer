@@ -53,7 +53,7 @@ class CBAvoidanceBidViewController: UIViewController {
         
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
-        vc.type = "Submit Bid"
+        vc.type = .submitBid
         vc.bidPeriod = self.bidPeriod
         vc.defaultEmplyeeNumber = self.empID
         vc.optionalEmployees = self.optionalEmployees

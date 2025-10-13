@@ -153,3 +153,27 @@ extension BIBidReceipt : Identifiable {
     }
     
 }
+
+extension String {
+    func addBidreciptSaces() -> String{
+        if self.count == 0 {
+            return "       \(self)" //12
+        }else if self.count == 1 {
+            return "      \(self)"  //11
+        }else if self.count == 2 {
+            return "     \(self)"    //10
+        }else if self.count == 3 {
+            return "    \(self)"      //9
+        }else if self.count == 4 {
+            return "   \(self)"       //8
+        }else if self.count == 5 {
+            return "  \(self)"        //7
+        }
+        return ""
+    }
+    
+    func addBidreciptSacesForPilot() -> String{
+        let a = String(format: "%5s", (self as NSString).utf8String!)
+        return a
+    }
+}

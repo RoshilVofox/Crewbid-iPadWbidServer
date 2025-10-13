@@ -7,14 +7,22 @@
 
 import UIKit
 
+enum defaultVCType {
+    case defaultType
+    case confirmEmployeeNumber
+    case submitEmployeeNumber
+    case showAwardedLine
+}
+
 class CBDefaultEmployeeVC: BaseViewController {
     
     @IBOutlet weak var textEmpNum: customUITextField!
     @IBOutlet weak var backBtn: UIButton!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var descriptionTextView: UITextView!
-//    private let viewModel = AuthService()
-    var type:String?
+    @IBOutlet weak var nextBtn: UIButton!
+    //    private let viewModel = AuthService()
+    var type:defaultVCType = .defaultType
     var confirmEmpNum:String?
     var hud = MBProgressHUD()
     var isHistoricBid:Bool = false
@@ -25,10 +33,10 @@ class CBDefaultEmployeeVC: BaseViewController {
     var isJobShareAlertShowing:Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()
-        bidPeriod = BIBidPeriod(context: CoreDataManager.shared.managedObjectContext)
+//        bidPeriod = BIBidPeriod(context: CoreDataManager.shared.managedObjectContext)
         setupUI()
         textEmpNum.keyboardType = UIKeyboardType.numberPad
-        if type == "Confirm Employee Number"{
+        if type == .confirmEmployeeNumber{
             NotificationCenter.default.addObserver(self, selector: #selector(jobShareAlert), name: NSNotification.Name("showJobShareAlert"), object: nil)
         }
     }
@@ -47,21 +55,21 @@ class CBDefaultEmployeeVC: BaseViewController {
         textEmpNum.delegate = self
         textEmpNum.layer.borderWidth = 4
         textEmpNum.layer.borderColor = UIColor.gray.cgColor
-//            viewModel.onAuthSuccess = { [weak self] result in
-//                self?.view.hideActivityIndicator()
-//                self?.handleAuthResult(result)
-//            }
-//            viewModel.onAuthFailure = { [weak self] error in
-//                self?.view.hideActivityIndicator()
-//                self?.showAlert(message: error.localizedDescription)
-//            }
-        if type == "Submit Employee Number"{
+
+        if type == .showAwardedLine{
+            nextBtn.setImage(nil, for: .normal)
+            let title = "Go"
+            let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 19, weight: .heavy), .foregroundColor: UIColor.black]
+            let attributedTitle = NSAttributedString(string: title, attributes: attributes)
+            nextBtn.setAttributedTitle(attributedTitle, for: .normal)
+        }
+        if type == .submitEmployeeNumber || type == .showAwardedLine{
             backBtn.setImage(UIImage(named: "cc"), for: .normal)
         }else{
             backBtn.setImage(UIImage(named: "arrowleftbutton"), for: .normal)
         }
         
-        if type == "Confirm Employee Number" {
+        if type == .confirmEmployeeNumber {
             textEmpNum.text = ""
         }else{
             textEmpNum.text = UserDefaults.standard.string(forKey: kCBDefaultEmployeeNumberKey)
@@ -70,22 +78,22 @@ class CBDefaultEmployeeVC: BaseViewController {
 
     
     func titleSetup(){
-        if type == "Show Awarded Line" {
+        if type == .showAwardedLine {
             titleLabel.text = "Enter Employee Number"
             descriptionTextView.text = "Enter employee number (no \"e\") to fetch the awarded line."
         }
-        else if type == "Submit Employee Number" {
+        else if type == .submitEmployeeNumber {
             titleLabel.text = "Enter Employee Number"
             descriptionTextView.text = "Enter employee number (no \"e\") for whom the bid will be submitted"
         }
-        else if type == "Confirm Employee Number" {
+        else if type == .confirmEmployeeNumber {
             titleLabel.text = "Confirm Employee Number"
             descriptionTextView.text = "Confirm employee number (no \"e\") for whom the bid will be submitted"
         }
     }
     
     @IBAction func btnBackAction(_ sender: Any) {
-        if type == "Show Awarded Line" || type == "Show Awarded Line" || type == "Submit Employee Number"{
+        if type == .showAwardedLine || type == .submitEmployeeNumber{
             self.dismiss(animated: true, completion: nil)
         }
         else {
@@ -95,37 +103,43 @@ class CBDefaultEmployeeVC: BaseViewController {
     }
     
     @IBAction func btnNextAction(_ sender: Any) {
-        if !isEmpIDVerified {
-             guard let empID = textEmpNum.text, !empID.isEmpty else {
-                 shakeTextField(textField: textEmpNum)
-                 return
-             }
+        if type == .showAwardedLine {
+            self.askForEmployeeNumber()
+//            self.showAwardedCalendarLineView()
+        }else{
+            if !isEmpIDVerified {
+                 guard let empID = textEmpNum.text, !empID.isEmpty else {
+                     shakeTextField(textField: textEmpNum)
+                     return
+                 }
 
-             dataSource.employeeNumber = empID
-             UserDefaults.standard.set(empID, forKey: kCBDefaultEmployeeNumberKey)
+                 dataSource.employeeNumber = empID
+                 UserDefaults.standard.set(empID, forKey: kCBDefaultEmployeeNumberKey)
 
-             self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
+                 self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
 
-             // Use new AuthService
-             AuthService.shared.checkAuthentication(empID: empID) { [weak self] authResult in
-                 guard let self = self else { return }
-                 self.view.hideActivityIndicator()
-                 self.handleAuthResult(authResult)
+                 // Use new AuthService
+                 AuthService.shared.checkAuthentication(empID: empID) { [weak self] authResult in
+                     guard let self = self else { return }
+                     self.view.hideActivityIndicator()
+                     self.handleAuthResult(authResult)
 
-             } onFailure: { [weak self] error in
-                 guard let self = self else { return }
-                 self.view.hideActivityIndicator()
-                 self.showAlert(message: error.localizedDescription)
-             }
+                 } onFailure: { [weak self] error in
+                     guard let self = self else { return }
+                     self.view.hideActivityIndicator()
+                     self.showAlert(message: error.localizedDescription)
+                 }
 
-         } else {
-             // Already verified
-             if confirmEmpNum != textEmpNum.text! {
-                 self.navigationController?.popViewController(animated: true)
              } else {
-                 self.goToNextPage()
+                 // Already verified
+                 if confirmEmpNum != textEmpNum.text! {
+                     self.navigationController?.popViewController(animated: true)
+                 } else {
+                     self.goToNextPage()
+                 }
              }
-         }
+        }
+        
     }
     func handleAuthResult(_ result: AuthResult) {
         let msg = result.message ?? ""
@@ -138,10 +152,7 @@ class CBDefaultEmployeeVC: BaseViewController {
             showAlert(message: msg)
         } else {
             print("Valid Employee ID")
-            if type == "Show Awarded Line" {
-                self.goToAwardedCallendarLine()
-            }
-            else if type == "Submit Employee Number" {
+            if type == .submitEmployeeNumber {
                 self.gotoConfirmEmployeeView()
             }else {
                 self.gotoNextView()
@@ -164,22 +175,215 @@ class CBDefaultEmployeeVC: BaseViewController {
          vc.isNewBid = self.isNewBid
          self.navigationController?.pushViewController(vc, animated: true)
      }
-    
-    func goToAwardedCallendarLine() {
-        if let presentingVC = self.presentingViewController {
-            self.dismiss(animated: true) {
-                let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-                let vc = storyboard.instantiateViewController(withIdentifier: "CBAwardLineCalendarViewController") as! CBAwardLineCalendarViewController
-                vc.preferredContentSize = CGSize(width: 600, height: 500)
-                presentingVC.present(vc, animated: true)
+    //MARK: Show Awarded line
+    var action:String?
+    func askForEmployeeNumber(){
+        if let text = textEmpNum.text, text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            //validate
+        }else{
+            self.textEmpNum.resignFirstResponder()
+            let emp = textEmpNum.text!
+            var line:BILine?
+            if self.bidPeriod!.isFABid(){
+                let awardedLineDic = self.awardedLineForFA(employeeNumber: emp)
+                if let awardedLineString = awardedLineDic["awardedLine"] as? String, let awardedPos = awardedLineDic["awardedPos"] as? String {
+                    let awardedLine = Int(awardedLineString)
+                    if awardedLine != 0 {
+                        line = self.fetchLine(lineNumber: awardedLine!, isFA: true, pos: awardedPos)!
+                    }else{
+                        dismissFn()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            AlertService.showAlertForTopVC(title: "Alert", message: "Awarded Line Not Found")
+                            return
+                        }
+                    }
+                }
+            }else{
+                let awardedLine = self.awardedLineForPilot(employeeNumber: emp)
+                if awardedLine != 0 {
+                    line = self.fetchLine(lineNumber: awardedLine, isFA: false, pos: nil)!
+                }
+            }
+            if action == "Add Awarded Line to Calendar"{
+                if line != nil {
+                    //MARK: need code to save to calendar
+//                    self.selectedLine = line
+//                    addtoLineClnder()
+                }
+            }else{
+                if line != nil {
+                    self.showAwardedCalendarLineView(line: line!)
+                }
             }
         }
+    }
+    
+    func fetchLine(lineNumber: Int, isFA: Bool, pos: String?) -> BILine? {
+        let lineTypeSort = NSSortDescriptor(key: "type", ascending: true)
+        let lineNumberSort = NSSortDescriptor(key: "number", ascending: true)
+        
+        let lineSorts = [lineTypeSort, lineNumberSort]
+        var predicate = NSPredicate(format: "number == %@", NSNumber(value: lineNumber))
+        
+        if isFA && !(bidPeriod?.isSecondRoundBid())! {
+            var faPos : BIFaPosition = BIFaPosition.FaPositionA
+            if pos == "A" {
+                faPos = BIFaPosition.FaPositionA
+            } else if pos == "B" {
+                faPos = BIFaPosition.FaPositionB
+            } else if pos == "C" {
+                faPos = BIFaPosition.FaPositionC
+            } else if pos == "D" {
+                faPos = BIFaPosition.FaPositionD
+            } else {
+                return nil
+            }
+            let posPred = NSPredicate(format: "faPosition == %@", NSNumber(value: faPos.rawValue))
+            predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, posPred])
+        }
+        let lines = (CBGlobalMethods.shared.selectedBidPeriod!.lines!.allObjects as NSArray).sortedArray(using: lineSorts)
+        let results = (lines as NSArray).filtered(using: predicate) as! [BILine]
+        
+        if results.count > 0 {
+            return results.first
+        }
+        return nil
+    }
+    
+    
+    func awardedLineForFA(employeeNumber:String) -> NSDictionary{
+        let awardText = bidPeriod?.awardString
+        var awardedLine: String? = ""
+        var awardedPos: String? = ""
+            // Add leading zeros to the employee number and then pad with a space on each side
+        let stringToScan = "[\(employeeNumber)]"
+        let scanner = Scanner(string: awardText!)
+        let numCharSet = CharacterSet(charactersIn: "0123456789")
+        let posCharSet = CharacterSet(charactersIn: "ABCD")
+        let eidCharSet = CharacterSet(charactersIn: "[]0123456789")
+        let dashCharSet = CharacterSet(charactersIn: "-")
+        let newLineCharSet = CharacterSet(charactersIn: "\r\n")
+        
+        _ = scanner.scanUpToString(stringToScan)
+        if scanner.isAtEnd {
+            AlertService.showAlertForTopVC(title: "Employee Number \(employeeNumber) Not Found", message: "This could be due to an issue with the format of the Bid Awards file. As a workaround, you can use the Show Line option from the Lines Text File under Show Bid Files in the Bid Actions menu.")
+                // This means that the scanner scanned but did not find the employeeNumber
+            return NSDictionary(objects:[NSNumber(value: 0)], forKeys:["awardedLine"] as [NSCopying])
+        } else {
+            let firstEIDLoc = scanner.currentIndex
+            if !(bidPeriod?.isSecondRoundBid())! {
+                    // Scan past the employee number to see if the EID occurs again, if so, the FA
+                    // was awarded a hard line
+                _ = scanner.scanCharacters(from: eidCharSet)
+                _ = scanner.scanUpToString(stringToScan)
+                if !scanner.isAtEnd {
+                        // The EID has occured again, which means we are in the alphabetical listing
+                        // So scan past the EID and then scan the line number and position
+                        // Scan up to the awarded line number
+                    _ = scanner.scanCharacters(from: eidCharSet)
+                    _ = scanner.scanUpToCharacters(from: numCharSet)
+                    if !scanner.isAtEnd {
+                            // Scan the awarded line
+                        awardedLine = scanner.scanCharacters(from: numCharSet)
+                            // Scan the dash
+                        _ = scanner.scanCharacters(from: dashCharSet)
+                            // Scan the awarded position
+                        awardedPos = scanner.scanCharacters(from: posCharSet)
+                    }
+                }
+                else{
+                    let newIndex = scanner.string.index(firstEIDLoc, offsetBy: -50, limitedBy: scanner.string.startIndex)!
+                        scanner.currentIndex = newIndex
+//                    scanner.scanLocation = firstEIDLoc - 50
+                        // scan up to the new line
+                    _ = scanner.scanUpToCharacters(from: newLineCharSet)
+                    if !scanner.isAtEnd {
+                            // scan up to the reserve number
+                        _ = scanner.scanUpToCharacters(from: numCharSet)
+                        if !scanner.isAtEnd {
+                            awardedLine = scanner.scanCharacters(from: numCharSet)
+                                // Alert the FA to their reserve position
+                            AlertService.showAlertForTopVC(title: "Reserve List Award", message: "EID \(employeeNumber) is number \(awardedLine ?? "") on the Reserve List.")
+                            return NSDictionary(objects:[NSNumber(value: 0)], forKeys:["awardedLine"] as [NSCopying])
+                        }
+                    }
+                }
+            }else{
+                    // Back up 50 characters and find the next line
+                var awardedLineCheck: String? = ""
+//                scanner.scanLocation -= 45
+                let newIndex = scanner.string.index(scanner.currentIndex, offsetBy: -45, limitedBy: scanner.string.startIndex)!
+                    scanner.currentIndex = newIndex
+                awardedLineCheck = scanner.scanUpToCharacters(from: newLineCharSet)
+                awardedLineCheck = scanner.scanUpToCharacters(from: numCharSet)
+                    // Scan the awarded line number
+                awardedLine = scanner.scanCharacters(from: numCharSet)
+                awardedPos = " "
+                print("\(String(describing: awardedLineCheck))")
+            }
+        }
+        let returnDict = NSDictionary(objects:[awardedLine!, awardedPos!], forKeys:["awardedLine", "awardedPos"] as [NSCopying]) as Dictionary
+        return returnDict as NSDictionary
+    }
+    
+    
+    func awardedLineForPilot(employeeNumber:String) -> Int {
+        let awardText = bidPeriod?.awardString
+        var awardedLine: NSString? = ""
+        var stringToScan: String? = ""
+        let first = "0"
+        let last = " "
+        
+        let test = employeeNumber[employeeNumber.index(employeeNumber.startIndex, offsetBy: 0)]
+        if employeeNumber.length == 4 {
+            stringToScan = "\(first)\(first)\(employeeNumber)\(last)"
+        } else if employeeNumber.length == 5 {
+            stringToScan = "\(first)\(employeeNumber)\(last)"
+        } else if employeeNumber.length == 6 && test == "0" {
+            stringToScan = "\(employeeNumber)\(last)"
+        } else if employeeNumber.length == 6 {
+            stringToScan = "\(last)\(employeeNumber)\(last)"
+        } else {
+            AlertService.showAlertForTopVC(title: "Employee Number \(employeeNumber) Not Found", message: "This could be due to an issue with the format of the Bid Awards file. As a workaround, you can use the Show Line option from the Lines Text File under Show Bid Files in the Bid Actions menu.")
+            return 0
+        }
+        
+        let scanner = Scanner(string: awardText!)
+        let numCharSet = CharacterSet(charactersIn: "0123456789")
+        
+            // Scan all characters before employee number plus a space
+        _ = scanner.scanUpToString(stringToScan!)
+        if scanner.isAtEnd {
+            AlertService.showAlertForTopVC(title: "Employee Number \(employeeNumber) Not Found", message: "This could be due to an issue with the format of the Bid Awards file. As a workaround, you can use the Show Line option from the Lines Text File under Show Bid Files in the Bid Actions menu.")
+            return 0
+        }else {
+            _ = scanner.scanCharacters(from: numCharSet)
+            if !scanner.isAtEnd {
+                    // Scan up to the awarded line number
+                _ = scanner.scanUpToCharacters(from: numCharSet)
+                if !scanner.isAtEnd {
+                    awardedLine = scanner.scanCharacters(from: numCharSet) as NSString? // Scan the awarded line
+                }
+            }
+        }
+        return awardedLine!.integerValue
+    }
+    
+    func showAwardedCalendarLineView(line:BILine) {
+        let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBAwardLineCalendarViewController") as! CBAwardLineCalendarViewController
+        vc.line = line
+        vc.employeeNumber = self.textEmpNum.text!.replacingOccurrences(of: "e", with: "").replacingOccurrences(of: "x", with: "")
+        vc.bidPeriod = self.bidPeriod
+        vc.preferredContentSize = CGSize(width: 600, height: 500)
+        vc.modalPresentationStyle = .formSheet
+        self.present(vc, animated: true)
     }
     
     func gotoConfirmEmployeeView(){
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBDefaultEmployeeVC") as! CBDefaultEmployeeVC
-        vc.type = "Confirm Employee Number"
+        vc.type = .confirmEmployeeNumber
         vc.isEmpIDVerified = true
         vc.bidPeriod = self.bidPeriod
         vc.confirmEmpNum = self.textEmpNum.text!
@@ -211,7 +415,7 @@ class CBDefaultEmployeeVC: BaseViewController {
     func loginView(){
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
-        vc.type = "Submit Bid"
+        vc.type = .submitBid
         vc.bidPeriod = self.bidPeriod
         vc.defaultEmplyeeNumber = self.textEmpNum.text!
         vc.preferredContentSize = CGSize(width: 600, height: 500)
@@ -291,7 +495,7 @@ extension CBDefaultEmployeeVC : UITextFieldDelegate{
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
 
-        if type != "Confirm Employee Number" {
+        if type != .confirmEmployeeNumber {
             guard let empID = textEmpNum.text, !empID.isEmpty else {
                 shakeTextField(textField: textEmpNum)
                 return false

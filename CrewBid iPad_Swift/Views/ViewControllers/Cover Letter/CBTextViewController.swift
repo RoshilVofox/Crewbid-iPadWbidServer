@@ -177,6 +177,52 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
     }
   
     @IBAction func btnShareAction(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+        
+        if self.dataTypeSelected == .awardText {
+            let bidActionVC = storyboard.instantiateViewController(withIdentifier: "AwardActionsTableController") as! AwardActionsTableController
+            bidActionVC.preferredContentSize = CGSize(width: 350, height: 260)
+            bidActionVC.contentSize = CGSize(width: 350, height: 260)
+            bidActionVC.title = self.titleText
+            bidActionVC.text = textView.text
+            bidActionVC.dataTypeSelected = TextFileType.awardText
+            bidActionVC.modalPresentationStyle = .popover
+            bidActionVC.showPopover(sourceView: btnShare)
+        }
+        
+        else if self.dataTypeSelected == .tripText {
+            let bidActionVC = storyboard.instantiateViewController(withIdentifier: "AwardActionsTableController") as! AwardActionsTableController
+            bidActionVC.preferredContentSize = CGSize(width: 350, height: 210)
+            bidActionVC.contentSize = CGSize(width: 350, height: 210)
+            bidActionVC.title = self.titleText
+            bidActionVC.text = textView.text
+            bidActionVC.dataTypeSelected = TextFileType.tripText
+            bidActionVC.modalPresentationStyle = .popover
+            bidActionVC.showPopover(sourceView: btnShare)
+        }
+        
+        else if self.dataTypeSelected == .lineText {
+            let bidActionVC = storyboard.instantiateViewController(withIdentifier: "AwardActionsTableController") as! AwardActionsTableController
+            bidActionVC.preferredContentSize = CGSize(width: 350, height: 260)
+            bidActionVC.contentSize = CGSize(width: 350, height: 260)
+            bidActionVC.title = self.titleText
+            bidActionVC.text = textView.text
+            bidActionVC.dataTypeSelected = TextFileType.lineText
+            bidActionVC.modalPresentationStyle = .popover
+            bidActionVC.showPopover(sourceView: btnShare)
+        }
+        else{
+            let bidActionVC = storyboard.instantiateViewController(withIdentifier: "AwardActionsTableController") as! AwardActionsTableController
+            bidActionVC.preferredContentSize = CGSize(width: 350, height: 160)
+            bidActionVC.contentSize = CGSize(width: 350, height: 160)
+            bidActionVC.title = self.titleText
+            bidActionVC.text = textView.text
+            bidActionVC.dataTypeSelected = self.dataTypeSelected
+            bidActionVC.modalPresentationStyle = .popover
+            bidActionVC.showPopover(sourceView: btnShare)
+        }
+        
+        
     }
 }
 

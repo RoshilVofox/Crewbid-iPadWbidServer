@@ -98,7 +98,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
         AlertService.showAlertForTopVC(title: "Buddy Bidding Terms", message: "By continuing, you represent that you have the permission of your buddy or buddies to Buddy Bid with them and you have taken the necessary steps inSwA lite to out them on vour BuddyBidding list.I Understand and Accept", actions: [(title: "OK", style: .default, handler: { _ in
             let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
-            vc.type = "Submit Bid"
+            vc.type = .submitBid
             vc.bidPeriod = self.bidPeriod
             vc.optionalEmployees = self.optionalEmployees
             vc.preferredContentSize = CGSize(width: 600, height: 500)
