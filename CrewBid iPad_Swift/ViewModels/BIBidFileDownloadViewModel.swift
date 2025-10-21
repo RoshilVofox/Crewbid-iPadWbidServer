@@ -228,8 +228,8 @@ class BIBidFileDownloadViewModel {
         func downloadFile(sessionKey: String, filename: String, completion: @escaping (Result<URL, Error>) -> Void) {
             let isTxt = (filename as NSString).pathExtension.uppercased() == "TXT"
             let requestType = isTxt ? "TXTPACKET" : "ZIPPACKET"
-            let key = self.stringByAddingPercentEscapes(to: sessionKey)!
-            let bodyString = "REQUEST=\(requestType)&CREDENTIALS=\(key)&NAME=\(filename)"
+//            let key = self.stringByAddingPercentEscapes(to: sessionKey)!
+            let bodyString = "REQUEST=\(requestType)&CREDENTIALS=\(sessionKey)&NAME=\(filename)"
             guard let bodyData = bodyString.data(using: .utf8) else {
                 completion(.failure(Errors.noData))
                 return

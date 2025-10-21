@@ -121,7 +121,8 @@ class CBLoginViewModel{
                     switch result {
                     case .success(let response):
                         GlobalBidInfo.shared.credentialEmployeeNumber = userID
-                        self?.onLoginSuccess?(response)
+                        let sessionKey = self?.stringByAddingPercentEscapes(to: response)
+                        self?.onLoginSuccess?(sessionKey!)
                     case .failure(let error):
                         self?.onLoginFailure?(error)
                     }

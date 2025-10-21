@@ -655,6 +655,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         let empNum = bidPeriod?.crewIdentifier?.stringValue
         CBGlobalMethods.shared.secretKey = sessionKey
+        print("Session key: \(sessionKey)")
         awardsViewModel?.retrieveAwardFile(sessionKey: sessionKey){ result in
             DispatchQueue.main.async{
                 self.dismiss(animated: false) {
