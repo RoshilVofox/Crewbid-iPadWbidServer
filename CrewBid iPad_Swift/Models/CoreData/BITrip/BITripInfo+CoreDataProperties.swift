@@ -140,4 +140,23 @@ extension BITripInfo : Identifiable {
         }
         return dayPaySum
     }
+    
+    func reportTime() -> NSNumber {
+        // Calculate and return the report time based on the first leg's departure time and 'briefMinutes'
+
+        let firstDayInfo: BIDayInfo? = orderedDays().first
+        let firstLegInfo: BILegInfo? = firstDayInfo?.orderedLegs.first
+        let reportTime = CBUtils.convertMinsToHHMM(Int(CInt(truncating: (firstLegInfo?.departMinutes)!) - CInt(truncating: briefMinutes!)))
+        let reportTimeValue: NSNumber = reportTime as NSNumber
+        return reportTimeValue
+    }
+    
+    func releaseTime() -> NSNumber {
+        // Calculate and return the release time based on the last leg's arrival time and 'debriefMinutes'
+
+        let lastDayInfo: BIDayInfo? = orderedDays().last
+        let lastLegInfo: BILegInfo? = lastDayInfo?.orderedLegs.last
+        let releaseTime = CBUtils.convertMinsToHHMM(Int((CInt(truncating: (lastLegInfo?.arriveMinutes)!) + CInt(truncating: debriefMinutes!))))
+        return NSNumber(value: releaseTime)
+    }
 }

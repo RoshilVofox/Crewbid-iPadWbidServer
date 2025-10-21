@@ -2787,7 +2787,7 @@ class BIBidInfoReader{
         self.bidPeriod?.positionType = self.dataSource.position.rawValue as NSNumber
         self.bidPeriod?.round = self.dataSource.round as NSNumber
         self.bidPeriod?.appVersion = CBUtils.AppVersion()
-        
+        self.bidPeriod?.created = Date()
         let secretEnabled = UserDefaults.standard.string(forKey: "isHistoricSecretVDSwitchEnabled")
         if secretEnabled == "YES"{
             self.bidPeriod?.crewIdentifier = Int(UserDefaults.standard.string(forKey: "SecretVDuserName")!) as? NSNumber

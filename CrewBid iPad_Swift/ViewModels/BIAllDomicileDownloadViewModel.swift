@@ -21,7 +21,7 @@ class BIAllDomicileDownloadViewModel {
         var bases = bases
         var tableViewData = tableViewData
         if bases.count > 0 {
-            tableViewData.append("preparing to download \(bases[0]) bid for........")
+            tableViewData.append("Preparing to download bid for \(bases[0])")
         }
         var activityStatus = ""
         let lastIndex = tableViewData.indices.last
@@ -51,7 +51,7 @@ class BIAllDomicileDownloadViewModel {
                     NotificationCenter.default.post(name: Notification.Name("AllDomicileTableDataUpdate"), object: nil, userInfo: ["status": tableViewData, "activityStatus": activityStatus])
                     //            NotificationCenter.default.post(name: Notification.Name("ShowProgressView"), object: nil)
                     let bidFileName = BIBidInfo.shared.bidDataFilename()
-                    let linesTextFileName = BIBidInfo.shared.linesTextFilename()
+//                    let linesTextFileName = BIBidInfo.shared.linesTextFilename()
                     print("Filename: \(bidFileName)")
                     
                     print("Bid: New bid")
@@ -64,11 +64,11 @@ class BIAllDomicileDownloadViewModel {
                                 NotificationCenter.default.post(name: Notification.Name("AllDomicileTableDataUpdate"), object: nil, userInfo: ["status": tableViewData, "activityStatus": activityStatus])
                             }
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                print("File unzipped at: \(fileURL)")
+//                                print("File unzipped at: \(fileURL)")
                                 BIBidInfoReader.shared.checkForSeniorityVacationAndReadBidInfo { success in
                                     if success {
                                         print("success")
-                                        tableViewData[lastIndex!] = "✅ downloaded \(bases[0]) \(self.dataSource.position.shortName) successfully"
+                                        tableViewData[lastIndex!] = "✅ Downloaded \(bases[0]) \(self.dataSource.position.shortName) successfully"
                                         NotificationCenter.default.post(name: Notification.Name("AllDomicileTableDataUpdate"), object: nil, userInfo: ["status": tableViewData, "activityStatus": activityStatus])
                                         bases.remove(at: 0)
                                         self.downladAllDomicileBid(bases: bases, tableViewData: tableViewData)

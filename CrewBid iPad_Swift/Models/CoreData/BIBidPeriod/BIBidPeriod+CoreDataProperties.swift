@@ -156,6 +156,7 @@ extension BIBidPeriod {
     @NSManaged public var lineFilters: NSSet?
     @NSManaged public var insertionPoints: NSSet?
     @NSManaged public var awardString: String?
+    @NSManaged public var created: Date?
 }
 
 // MARK: Generated accessors for awardDetails
@@ -372,8 +373,8 @@ extension BIBidPeriod : Identifiable {
     
     func textFile(withName name: String) -> BITextFile? {
         let predicate = NSPredicate(format: "name == %@", name)
-        let filtered = textFiles!.filtered(using: predicate)
-        return filtered.first as? BITextFile
+        let filtered = textFiles?.filtered(using: predicate)
+        return filtered?.first as? BITextFile
     }
     func isWBidmaxOverlapWithEom() -> Bool {
         var isNextMonth = false

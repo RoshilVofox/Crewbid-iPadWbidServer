@@ -201,38 +201,19 @@ class BIBidFileDownloadViewModel {
 
                         // Move the downloaded file into the permanent directory
                         try FileManager.default.moveItem(at: tempURL, to: destinationURL)
-
-                        // Force flush: open + close handle
-                        let handle = try FileHandle(forReadingFrom: destinationURL)
-                        try handle.close()
                         
-                        // Unzip into a fresh temp folder first
-                        let tempUnzipDir = destinationDir.appendingPathComponent(UUID().uuidString)
-                        try FileManager.default.createDirectory(at: tempUnzipDir, withIntermediateDirectories: true, attributes: nil)
+                        try FileManager.default.createDirectory(at: destinationDir, withIntermediateDirectories: true, attributes: nil)
 
-                        let unzipSuccess = SSZipArchive.unzipFile(atPath: destinationURL.path, toDestination: tempUnzipDir.path)
+                        let unzipSuccess = SSZipArchive.unzipFile(atPath: destinationURL.path, toDestination: destinationDir.path)
+                        
 
                         if unzipSuccess {
-                            // Move unzipped contents into destinationDir
-                            let contents = try FileManager.default.contentsOfDirectory(atPath: tempUnzipDir.path)
-                            for item in contents {
-                                let src = tempUnzipDir.appendingPathComponent(item)
-                                let dst = destinationDir.appendingPathComponent(item)
-                                if FileManager.default.fileExists(atPath: dst.path) {
-                                    try FileManager.default.removeItem(at: dst)
-                                }
-                                try FileManager.default.moveItem(at: src, to: dst)
-                            }
-                            // Clean up temp unzip folder
-                            try FileManager.default.removeItem(at: tempUnzipDir)
-
+                            print("Unzip successful for \(nextFile)")
                             downloadNext()
                         } else {
-                            // Clean up temp unzip folder if unzip failed
-                            try? FileManager.default.removeItem(at: tempUnzipDir)
+                            try? FileManager.default.removeItem(at: destinationURL)
                             completion(.failure(Errors.unzipFailed))
                         }
-
                     } catch {
                         completion(.failure(error))
                     }
@@ -247,13 +228,12 @@ class BIBidFileDownloadViewModel {
         func downloadFile(sessionKey: String, filename: String, completion: @escaping (Result<URL, Error>) -> Void) {
             let isTxt = (filename as NSString).pathExtension.uppercased() == "TXT"
             let requestType = isTxt ? "TXTPACKET" : "ZIPPACKET"
-            let key = sessionKey.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? sessionKey
+            let key = self.stringByAddingPercentEscapes(to: sessionKey)!
             let bodyString = "REQUEST=\(requestType)&CREDENTIALS=\(key)&NAME=\(filename)"
             guard let bodyData = bodyString.data(using: .utf8) else {
                 completion(.failure(Errors.noData))
                 return
             }
-
             APIService.shared.fetchDownload(
                 urlString: EndPoint.shared.thirdpartyURL,
                 httpMethod: .POST,
@@ -282,6 +262,11 @@ class BIBidFileDownloadViewModel {
         } else {
             downloadNext()
         }
+    }
+    
+    private func stringByAddingPercentEscapes(to unescapedString: String) -> String? {
+        let allowedCharacterSet = CharacterSet(charactersIn: ";/?:@&=+$,").inverted
+        return unescapedString.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet)
     }
 
     private func performPostDownloadTasks(){

@@ -155,7 +155,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
             alertController.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default)
                                       { action -> Void in
                 // Iterate over selected rows and delete corresponding bid data
-                self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "deleting...")
+                self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Deleting...")
                 DispatchQueue.main.async{
     //                self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "deleting...")
                     for index in self.selectedRows {
@@ -342,14 +342,28 @@ class CBDocumentsCollectionViewController: BaseViewController {
             }
 
             let context = self.dataSource.managedObjectContext
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
-            let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: context)
-            fetchRequest.entity = entity
-            // Fetch bid periods and reverse to show newest first
-        
-            self.bidPeriodList = try! context.fetch(fetchRequest) as! [BIBidPeriod]
-            self.bidPeriodList = self.bidPeriodList.reversed()
-            self.collectionView.reloadData()
+            
+//            let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+//            let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: context)
+//            fetchRequest.entity = entity
+//            // Fetch bid periods and reverse to show newest first
+//        
+//            self.bidPeriodList = try! context.fetch(fetchRequest) as! [BIBidPeriod]
+//            self.bidPeriodList = self.bidPeriodList.reversed()
+//            self.collectionView.reloadData()
+            
+            
+             let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
+             let sortDescriptor = NSSortDescriptor(key: "created", ascending: false)
+             fetchRequest.sortDescriptors = [sortDescriptor]
+
+             do {
+                 self.bidPeriodList = try context.fetch(fetchRequest)
+                 self.collectionView.reloadData()
+             } catch {
+                 print("Failed to fetch BidPeriods: \(error)")
+             }
+             
             
             if (self.bidPeriodList.count == 0) {
                 self.editButton.setTitle("Edit", for: .normal)
@@ -595,12 +609,13 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
                 guard let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as? CBBidDocumentController else {
-                    cell.activityIndicator.stopAnimating()
+//                    cell.activityIndicator.stopAnimating()
                     cell.isUserInteractionEnabled = true
                     return
                     }
 
-                vc.modalTransitionStyle = .crossDissolve
+//                vc.modalTransitionStyle = .crossDissolve
+//                vc.modalPresentationStyle = .fullScreen
                 let bidPeriod = self.bidPeriodList[indexPath.item]
                 vc.bidPeriod = bidPeriod
                 self.dataSource.year = bidPeriod.year?.intValue ?? 0
@@ -616,7 +631,14 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
                 cell.activityIndicator.stopAnimating()
                 cell.isUserInteractionEnabled = true
                 cell.backgroundView = nil
-                self.navigationController?.pushViewController(vc, animated: true)
+//                self.navigationController?.pushViewController(vc, animated: true)
+                let transition = CATransition()
+                transition.duration = 0.4
+                transition.type = .fade  // cross dissolve effect
+                transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+
+                self.navigationController?.view.layer.add(transition, forKey: kCATransition)
+                self.navigationController?.pushViewController(vc, animated: false)
                 }
 //            let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
 //            let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController

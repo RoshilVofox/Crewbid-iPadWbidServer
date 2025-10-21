@@ -38,13 +38,13 @@ class AwardsViewModel {
 //            }
 //        }
 //    }
-    func retrieveAwardFile(completion: @escaping (Bool) -> Void) {
+    func retrieveAwardFile(sessionKey: String,completion: @escaping (Bool) -> Void) {
         let bidInfo = BIBidInfo()
         let filename = bidInfo.bidAwardTextFilename()
-        guard let sessionKey = CBGlobalMethods.shared.secretKey else {
-            completion(false)
-            return
-        }
+//        guard let sessionKey = CBGlobalMethods.shared.secretKey else {
+//            completion(false)
+//            return
+//        }
 
         downloadAwardFile(sessionKey: sessionKey, filename: filename) { result in
             switch result {
@@ -52,6 +52,9 @@ class AwardsViewModel {
                 do {
                     let fileContents = try String(contentsOf: fileURL, encoding: .utf8)
                     self.bidPeriod.awardString = fileContents
+                    if fileContents.contains("ERROR"){
+                        print("")
+                    }
                     try self.bidPeriod.managedObjectContext?.save()
                     completion(true)
                 } catch {
@@ -175,6 +178,9 @@ class AwardsViewModel {
         if awardedLine != "0" {
             if isPaperBid {
                 alertMessage = "You are a paper bid for the month and you were awarded line \(String(describing: awardedLine))"
+                AlertService.showAlertForTopVC(title: "Award!", message: alertMessage, actions: [(title: "OK", style:.default, handler: {_ in
+                    NotificationCenter.default.post(name: NSNotification.Name(KCBOpenAwardData), object: self)
+                })])
             }
             else if isReserve {
                 alertMessage = "You were awarded line \(String(describing: awardedLine))\(position!) for \(self.shortMonthName(self.bidPeriod.month!.intValue)) \(self.bidPeriod.year!.intValue)."

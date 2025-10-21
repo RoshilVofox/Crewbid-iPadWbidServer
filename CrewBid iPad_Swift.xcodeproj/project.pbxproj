@@ -332,6 +332,7 @@
 		F4400BD62DD9BA370066C7E0 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4400BD52DD9BA370066C7E0 /* APIService.swift */; };
 		F4400BD82DD9DB1C0066C7E0 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4400BD72DD9DB1C0066C7E0 /* AuthService.swift */; };
 		F4400BDA2DD9E5D60066C7E0 /* CBLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4400BD92DD9E5D60066C7E0 /* CBLoginViewModel.swift */; };
+		F4615E0E2EA2448E00DF8F14 /* EmbeddedTripAwardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4615E0D2EA2448E00DF8F14 /* EmbeddedTripAwardViewController.swift */; };
 		F474F42E2E92407D00B940B7 /* CrewBid Privacy Policy.pdf in Resources */ = {isa = PBXBuildFile; fileRef = F474F42D2E92407D00B940B7 /* CrewBid Privacy Policy.pdf */; };
 		F474F4302E92408200B940B7 /* CrewBid License Agreement.pdf in Resources */ = {isa = PBXBuildFile; fileRef = F474F42F2E92408200B940B7 /* CrewBid License Agreement.pdf */; };
 		F474F4322E9243CC00B940B7 /* EmbeddedLicenseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F474F4312E9243CC00B940B7 /* EmbeddedLicenseVC.swift */; };
@@ -353,6 +354,7 @@
 		F4984C602E2E6C12004E020E /* CBPresetFilterRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4984C5F2E2E6C12004E020E /* CBPresetFilterRule.swift */; };
 		F4A472212DDDEDA900065720 /* CBExceedingTripCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4A472202DDDEDA900065720 /* CBExceedingTripCalculation.swift */; };
 		F4B545AB2DCC648F00672102 /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B545AA2DCC648F00672102 /* CoreDataManager.swift */; };
+		F4B792ED2EA3A32600A60785 /* EmbeddedLineNumberController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B792EC2EA3A32600A60785 /* EmbeddedLineNumberController.swift */; };
 		F4B8B6CF2E471F440031229E /* BIInsertionPoint+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B8B6CD2E471F440031229E /* BIInsertionPoint+CoreDataClass.swift */; };
 		F4B8B6D02E471F440031229E /* BIInsertionPoint+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4B8B6CE2E471F440031229E /* BIInsertionPoint+CoreDataProperties.swift */; };
 		F4BAEFE62E055F1000109A1B /* ODataBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4BAEFE52E055F1000109A1B /* ODataBuilder.swift */; };
@@ -721,6 +723,7 @@
 		F4400BD52DD9BA370066C7E0 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		F4400BD72DD9DB1C0066C7E0 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		F4400BD92DD9E5D60066C7E0 /* CBLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLoginViewModel.swift; sourceTree = "<group>"; };
+		F4615E0D2EA2448E00DF8F14 /* EmbeddedTripAwardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedTripAwardViewController.swift; sourceTree = "<group>"; };
 		F474F42D2E92407D00B940B7 /* CrewBid Privacy Policy.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "CrewBid Privacy Policy.pdf"; sourceTree = "<group>"; };
 		F474F42F2E92408200B940B7 /* CrewBid License Agreement.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "CrewBid License Agreement.pdf"; sourceTree = "<group>"; };
 		F474F4312E9243CC00B940B7 /* EmbeddedLicenseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedLicenseVC.swift; sourceTree = "<group>"; };
@@ -741,6 +744,7 @@
 		F4A472202DDDEDA900065720 /* CBExceedingTripCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBExceedingTripCalculation.swift; sourceTree = "<group>"; };
 		F4A622572E13AA2000A09315 /* LineValuesVacation.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = LineValuesVacation.plist; sourceTree = "<group>"; };
 		F4B545AA2DCC648F00672102 /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
+		F4B792EC2EA3A32600A60785 /* EmbeddedLineNumberController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedLineNumberController.swift; sourceTree = "<group>"; };
 		F4B8B6CD2E471F440031229E /* BIInsertionPoint+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIInsertionPoint+CoreDataClass.swift"; sourceTree = "<group>"; };
 		F4B8B6CE2E471F440031229E /* BIInsertionPoint+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BIInsertionPoint+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F4BAEFE52E055F1000109A1B /* ODataBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ODataBuilder.swift; sourceTree = "<group>"; };
@@ -1172,6 +1176,7 @@
 		F41EBDFB2DC4DB20001413DE /* Bid Actions */ = {
 			isa = PBXGroup;
 			children = (
+				F4B792EB2EA3A31200A60785 /* LineTextView */,
 				F41EBDF42DC4DB20001413DE /* CBBidActionsViewController.swift */,
 				F41EBDF52DC4DB20001413DE /* CBSpreadsheetImportController.swift */,
 				F41EBDF62DC4DB20001413DE /* EmbeddedAwardEmpValidationVC.swift */,
@@ -1283,6 +1288,7 @@
 		F41EBE3A2DC4DB20001413DE /* Bid Actions */ = {
 			isa = PBXGroup;
 			children = (
+				F4615E0C2EA2429C00DF8F14 /* TripText */,
 				F41EBFCA2DC4E54B001413DE /* Filter */,
 				F41EBE182DC4DB20001413DE /* Preset */,
 				F41EBE252DC4DB20001413DE /* ScratchPad */,
@@ -1688,6 +1694,14 @@
 			path = HomescreenDocCell;
 			sourceTree = "<group>";
 		};
+		F4615E0C2EA2429C00DF8F14 /* TripText */ = {
+			isa = PBXGroup;
+			children = (
+				F4615E0D2EA2448E00DF8F14 /* EmbeddedTripAwardViewController.swift */,
+			);
+			path = TripText;
+			sourceTree = "<group>";
+		};
 		F474F42C2E92407100B940B7 /* User Account */ = {
 			isa = PBXGroup;
 			children = (
@@ -1857,6 +1871,14 @@
 				F41EBD542DC4DB20001413DE /* CommuteTime+CoreDataProperties.swift */,
 			);
 			path = CommuteTime;
+			sourceTree = "<group>";
+		};
+		F4B792EB2EA3A31200A60785 /* LineTextView */ = {
+			isa = PBXGroup;
+			children = (
+				F4B792EC2EA3A32600A60785 /* EmbeddedLineNumberController.swift */,
+			);
+			path = LineTextView;
 			sourceTree = "<group>";
 		};
 		F4CAAF8E2E704DCC0094ADB6 /* SoapWebService */ = {
@@ -2222,6 +2244,7 @@
 				F481E9752DD0B26D00DED8FE /* BIBidInfoError.swift in Sources */,
 				F41EBF662DC4DB20001413DE /* CBTripLengthRuleCell.swift in Sources */,
 				F41EBF672DC4DB20001413DE /* CBUserFlagRuleCell.swift in Sources */,
+				F4615E0E2EA2448E00DF8F14 /* EmbeddedTripAwardViewController.swift in Sources */,
 				F41EBF682DC4DB20001413DE /* CBWeekdayRuleCell.swift in Sources */,
 				F41EBF692DC4DB20001413DE /* CBWorkBlockRuleCell.swift in Sources */,
 				F4DA88132E5722D000ECC906 /* BISwaBidDataDownload.swift in Sources */,
@@ -2341,6 +2364,7 @@
 				F41EBFB62DC4DB20001413DE /* DocumentCell.swift in Sources */,
 				F41EBFB72DC4DB20001413DE /* SecretMethodsViewController.swift in Sources */,
 				F41EBFB82DC4DB20001413DE /* EmbeddedSettingsVC.swift in Sources */,
+				F4B792ED2EA3A32600A60785 /* EmbeddedLineNumberController.swift in Sources */,
 				F41EBFB92DC4DB20001413DE /* MyCalendarVC.swift in Sources */,
 				F41EBFBA2DC4DB20001413DE /* SettingsViewController.swift in Sources */,
 				F41EBFBB2DC4DB20001413DE /* CBsyncConflictViewController.swift in Sources */,

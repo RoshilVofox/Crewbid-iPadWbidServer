@@ -25,7 +25,7 @@ enum credentialVCType{
 }
 class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAdaptivePresentationControllerDelegate, ServiceConnectionDelegate {
     func responseError(_ errMsg: String) {
-        print("responseError")
+        print("responseError:\(errMsg)")
     }
     
     func serviceResponse(_ arrResponse: [Any]) {
@@ -94,17 +94,17 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     }
                     let formattedUserID = self.txtUserID.text ?? ""
                     let password = self.txtPassword.text ?? ""
-                    if !UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
-                        if self.bidAlreadyExists() {
-                            self.showAlertForExistingBid {
-                                self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
-                            }
-                        } else {
-                            self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
-                        }
-                    }else{
+//                    if !UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
+//                        if self.bidAlreadyExists() {
+//                            self.showAlertForExistingBid {
+//                                self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
+//                            }
+//                        } else {
+//                            self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
+//                        }
+//                    }else{
                         self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
-                    }
+//                    }
                 } else {
                     if let account = KeychainHelper.retrieveUsername(forService: "CWAUserAccountDetails"){
                         KeychainHelper.delete(account: account, service: "CWAUserAccountDetails")
@@ -420,8 +420,10 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }
     
     @objc func closeCredentilaPage() {
+        DispatchQueue.main.async {
             self.navigationController?.popViewController(animated: true)
         }
+    }
     
     @objc func showProgressView() {
         let progressVC = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBProgressVC") as! CBProgressVC
@@ -561,8 +563,9 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     self.downloadHistoricBidFile(bidFileName: bidFileName)
                 }
             
-        }else if AppState.shared.isMockData{//MARK:  Mock Bid Data
-            
+        }
+        else if AppState.shared.isMockData{
+            //MARK:  Mock Bid Data
             print("Bid: Mock data")
             
         }
@@ -583,8 +586,8 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             self.allbidDownloadViewModel.downladAllDomicileBid(bases: initialbases, tableViewData: tableViewData)
         }
         
-        else{//MARK:  New Bid Data
-            
+        else{
+            //MARK:  New Bid Data
             print("Bid: New bid")
             bidDownloadViewModel.fetchNewBidData(sessionKey: sessionKey, fileName: bidFileName) { result in
                 DispatchQueue.main.async {
@@ -652,7 +655,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         let empNum = bidPeriod?.crewIdentifier?.stringValue
         CBGlobalMethods.shared.secretKey = sessionKey
-        awardsViewModel?.retrieveAwardFile(){ result in
+        awardsViewModel?.retrieveAwardFile(sessionKey: sessionKey){ result in
             DispatchQueue.main.async{
                 self.dismiss(animated: false) {
                     if self.awardsViewModel?.bidPeriod.awardString != nil {
@@ -773,7 +776,13 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         else if type == .submitBid {
             self.submitBidAction()
         }else{
-            self.loginValidation()
+            if self.bidAlreadyExists(){
+                self.showAlertForExistingBid {
+                    self.loginValidation()
+                }
+            }else{
+                self.loginValidation()
+            }
         }
     }
     func loginValidation(){
@@ -1016,10 +1025,15 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
 //        CBUserAccountDetail.shared.saveUserInfo()
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let docVC = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
-        docVC.modalTransitionStyle = .crossDissolve
         if let homeNav = UIApplication.shared.windows.first?.rootViewController as? UINavigationController {
             self.dismiss(animated: false) {
-                homeNav.pushViewController(docVC, animated: true)
+//                homeNav.pushViewController(docVC, animated: true)
+                let transition = CATransition()
+                transition.duration = 0.4
+                transition.type = .fade  // cross dissolve effect
+                transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                homeNav.view.layer.add(transition, forKey: kCATransition)
+                homeNav.pushViewController(docVC, animated: false)
             }
         }
     }

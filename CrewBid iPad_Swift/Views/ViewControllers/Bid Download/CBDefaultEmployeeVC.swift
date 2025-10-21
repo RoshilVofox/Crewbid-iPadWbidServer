@@ -374,6 +374,7 @@ class CBDefaultEmployeeVC: BaseViewController {
         vc.line = line
         vc.employeeNumber = self.textEmpNum.text!.replacingOccurrences(of: "e", with: "").replacingOccurrences(of: "x", with: "")
         vc.bidPeriod = self.bidPeriod
+        vc.fromScrachpadView = true
         vc.preferredContentSize = CGSize(width: 600, height: 500)
         vc.modalPresentationStyle = .formSheet
         self.present(vc, animated: true)

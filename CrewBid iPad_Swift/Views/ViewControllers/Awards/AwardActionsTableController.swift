@@ -286,10 +286,16 @@ extension AwardActionsTableController: UITableViewDataSource, UITableViewDelegat
         if dataTypeSelected == .awardText {
             switch indexPath.row {
                 case 0: //Email bid awards
-                    emailTextFile()
+                    self.dismiss(animated: true) { [weak self] in
+                        guard let self = self else { return }
+                        self.emailTextFile()
+                    }
                     break
                 case 1: //Print bid awards
-                    showPrintController()
+                    self.dismiss(animated: true) { [weak self] in
+                        guard let self = self else { return }
+                        self.showPrintController()
+                    }
                     break
                 case 2: //Show awarded line
                     dismissFn()
@@ -317,10 +323,16 @@ extension AwardActionsTableController: UITableViewDataSource, UITableViewDelegat
         } else if dataTypeSelected == .tripText {
             switch indexPath.row {
                 case 0: //Email bid awards
-                    emailTextFile()
+                    self.dismiss(animated: true) { [weak self] in
+                        guard let self = self else { return }
+                        self.emailTextFile()
+                    }
                     break
                 case 1: //Print bid awards
-                    showPrintController()
+                    self.dismiss(animated: true) { [weak self] in
+                        guard let self = self else { return }
+                        self.showPrintController()
+                    }
                     break
                 case 2: //Show trip
                     dismissFn()
@@ -335,10 +347,16 @@ extension AwardActionsTableController: UITableViewDataSource, UITableViewDelegat
             let selectedOption = ["option":lineTextArray[indexPath.row]] as? [String:String]
             switch indexPath.row {
                 case 0: //Email bid awards
-                    emailTextFile()
+                    self.dismiss(animated: true) { [weak self] in
+                        guard let self = self else { return }
+                        self.emailTextFile()
+                    }
                     break
                 case 1: //Print bid awards
-                    showPrintController()
+                    self.dismiss(animated: true) { [weak self] in
+                        guard let self = self else { return }
+                        self.showPrintController()
+                    }
                     break
                 case 2: //Show line
                     dismissFn()
@@ -359,20 +377,22 @@ extension AwardActionsTableController: UITableViewDataSource, UITableViewDelegat
         else {
             switch indexPath.row {
                 case 0: //Email bid awards
-                    emailTextFile()
+                    self.dismiss(animated: true) { [weak self] in
+                        guard let self = self else { return }
+                        self.emailTextFile()
+                    }
                     break
                 case 1: //Print bid awards
-                    showPrintController()
+                    self.dismiss(animated: true) { [weak self] in
+                        guard let self = self else { return }
+                        self.showPrintController()
+                    }
                     break
                 default:
                     break
             }
         }
     }
-//        let item = awardActionArray[indexPath.row]
-//        if item == "Show Awarded Line" {
-
-//        }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 45

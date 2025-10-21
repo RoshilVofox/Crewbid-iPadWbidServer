@@ -431,6 +431,22 @@ extension BILine : Identifiable {
         return tripsObjs
     }
     
+    func lineFfdoLegsSingleSpacing() -> String {
+        var text = NSMutableString()
+        for trip in self.orderedTripObjects() {
+            text.append("\(trip.tripFfdoLegs(trip: trip, doubleSpacing: false))\n")
+        }
+        return text as String
+    }
+    
+    func lineFfdoLegsDoubleSpacing() -> String {
+        var text = NSMutableString()
+        for trip in self.orderedTripObjects() {
+            text.append("\(trip.tripFfdoLegs(trip: trip, doubleSpacing: true))\n")
+        }
+        return text as String
+    }
+    
 }
 
 @objc enum BILineSortCategory : Int {
