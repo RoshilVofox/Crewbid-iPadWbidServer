@@ -26,14 +26,25 @@ class AlertService{
             return alert
         }
     }
-    static func showDBAlert(title: String?, attributedMessage: NSAttributedString?, from viewController: UIViewController) {
+    static func showDBAlert(title: String?, message: String? = nil, attributedMessage: NSAttributedString? = nil, from viewController: UIViewController) {
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         guard let alertVC = storyboard.instantiateViewController(withIdentifier: "CBAlertVC") as? CBAlertVC else {
             return}
-        alertVC.modalPresentationStyle = .currentContext
+        alertVC.modalPresentationStyle = .formSheet
         alertVC.modalTransitionStyle = .crossDissolve
         alertVC.alertTitle = title
-        alertVC.attributedMessage = attributedMessage
+        if let attributedMessage = attributedMessage {
+                alertVC.attributedMessage = attributedMessage
+            } else if let message = message {
+                let paragraphStyle = NSMutableParagraphStyle()
+                    paragraphStyle.alignment = .center  // Center align
+                    let attrs: [NSAttributedString.Key: Any] = [
+                        .font: UIFont.systemFont(ofSize: 18, weight: .regular), // Bigger font
+                        .paragraphStyle: paragraphStyle
+                    ]
+                    alertVC.attributedMessage = NSAttributedString(string: message, attributes: attrs)
+                alertVC.isSimpleAlert = true
+            }
         alertVC.fromView = viewController
         alertVC.preferredContentSize = CGSize(width: 600, height: 500)
         viewController.present(alertVC, animated: true)

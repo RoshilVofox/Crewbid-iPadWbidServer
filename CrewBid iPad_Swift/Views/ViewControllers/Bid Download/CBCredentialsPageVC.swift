@@ -155,7 +155,6 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     }
     
     func showUserAccountView(){
-        print("Show user account screen")
         let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "userAccountViewController") as! userAccountViewController
         vc.isfrom = self
 //        vc.btnBack.setImage(UIImage(named: "NewBid-navbar-ncelbutton"), for: .normal)
@@ -166,12 +165,12 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         self.present(vc, animated: true)
     }
     
-    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        if presentationController.presentedViewController is userAccountViewController {
-            // After user account is dismissed, authenticate again and continue flow
-            self.checkAuthentication(message: "Authenticating...")
-        }
-    }
+//    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+//        if presentationController.presentedViewController is userAccountViewController {
+//            // After user account is dismissed, authenticate again and continue flow
+//            self.checkAuthentication(message: "Authenticating...")
+//        }
+//    }
     
     func getVacationFilenames(){ //need to hanlde the call for this fucntion in the go button
         if app.connectedToInternet(){
@@ -499,7 +498,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
            
             let errorString = error.localizedDescriptionString.lowercased()
             print("Error:\(errorString)")
-            if errorString.contains("login failed") || errorString.contains("security purposes"){
+            if errorString.contains("login failed") || errorString.contains("security purposes") || errorString.contains("invalid account"){
                 if let account = KeychainHelper.retrieveUsername(forService: "SaveLoginDetails") {
                     KeychainHelper.delete(account: account, service: "SaveLoginDetails")
                 }
@@ -522,11 +521,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                 }
             }
         }
-        //-----------------------
-        
-        
-        
-        
+
         NotificationCenter.default.addObserver(self, selector: #selector(dismissVC), name: NSNotification.Name(rawValue: "dismissLoginView"), object: nil)
     }
 
@@ -891,23 +886,48 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     
 
     private func bidAlreadyExists() -> Bool {
-        var status = false
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
-        let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: self.context)
-        fetchRequest.entity = entity
-        var array:[NSPredicate] = []
-        array.append(NSPredicate(format: "base == %@", self.dataSource.base))
-        array.append(NSPredicate(format: "round == %d", self.dataSource.round))
-        array.append(NSPredicate(format: "month == %d", self.dataSource.month))
-        array.append(NSPredicate(format: "positionType == %d", self.dataSource.position.rawValue))
-        array.append(NSPredicate(format: "year == %d", self.dataSource.year))
-        
-        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
-        let list = try! self.context.fetch(fetchRequest) as! [BIBidPeriod]
-        if list.count > 0 {
-            status = true
-        }
-        return status
+//        var status = false
+//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+//        let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: self.context)
+//        fetchRequest.entity = entity
+//        var array:[NSPredicate] = []
+//        array.append(NSPredicate(format: "base == %@", self.dataSource.base))
+//        array.append(NSPredicate(format: "round == %d", self.dataSource.round))
+//        array.append(NSPredicate(format: "month == %d", self.dataSource.month))
+//        array.append(NSPredicate(format: "positionType == %d", self.dataSource.position.rawValue))
+//        array.append(NSPredicate(format: "year == %d", self.dataSource.year))
+//        
+//        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
+//        let list = try! self.context.fetch(fetchRequest) as! [BIBidPeriod]
+//        if list.count > 0 {
+//            status = true
+//        }
+//        return status
+//        do {
+//                let fetchRequest = NSFetchRequest<BIBidPeriod>(entityName: "BidPeriod")
+//                var predicates: [NSPredicate] = []
+//                predicates.append(NSPredicate(format: "base == %@", self.dataSource.base))
+//                predicates.append(NSPredicate(format: "round == %d", self.dataSource.round))
+//                predicates.append(NSPredicate(format: "month == %d", self.dataSource.month))
+//                predicates.append(NSPredicate(format: "positionType == %d", self.dataSource.position.rawValue))
+//                predicates.append(NSPredicate(format: "year == %d", self.dataSource.year))
+//                
+//                fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+//                let list = try self.context.fetch(fetchRequest)
+//                if list.count > 0 {
+//                    return true
+//                }
+//            } catch {
+//                print("Core Data fetch failed: \(error)")
+//            }
+        let downloadDir = BIBidInfo().downloadDirectory()
+
+        // Check if the directory exists
+        var isDir: ObjCBool = false
+        let exists = FileManager.default.fileExists(atPath: downloadDir.path, isDirectory: &isDir)
+
+        // Return true only if it exists and is a directory
+        return exists && isDir.boolValue
     }
     
     private func showAlertForExistingBid(onRetry: @escaping () -> Void) {
@@ -1023,20 +1043,18 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     print("Failed to fetch bid periods: \(error)")
                     self.bidPeriodList = []
                 }
-//        CBUserAccountDetail.shared.saveUserInfo()
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let docVC = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
-        if let homeNav = UIApplication.shared.windows.first?.rootViewController as? UINavigationController {
+        guard let homeNav = UIApplication.shared.windows.first?.rootViewController as? UINavigationController else { return }
             self.dismiss(animated: false) {
-//                homeNav.pushViewController(docVC, animated: true)
                 let transition = CATransition()
                 transition.duration = 0.4
-                transition.type = .fade  // cross dissolve effect
+                transition.type = .fade
                 transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
                 homeNav.view.layer.add(transition, forKey: kCATransition)
                 homeNav.pushViewController(docVC, animated: false)
             }
-        }
+        
     }
     
 //    MARK: Retrieve Awards Action

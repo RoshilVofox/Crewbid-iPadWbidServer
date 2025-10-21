@@ -278,8 +278,8 @@ class BIBidFileDownloadViewModel {
     private func checkCrewBidUpdateFile(){
         DispatchQueue.main.async {
             CBUtils.downloadCrewBidUpdateFile(){ (result:Bool?) in
-                if result!{
-                    print("Crewbid Update file downloaded successfully")
+                if result == true{
+//                    print("Crewbid Update file downloaded successfully")
                     self.checkFlightData()
                 }
             }
@@ -288,10 +288,9 @@ class BIBidFileDownloadViewModel {
     
     private func checkFlightData(){
         CBUtils.downloadFlightData(){ (result:Bool?) in
-            if result!{
-                print("Flight Data downloaded successfully")
+            if result == true{
+//                print("Flight Data downloaded successfully")
             }
         }
-        //needs code
     }
 }

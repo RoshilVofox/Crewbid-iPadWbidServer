@@ -7,6 +7,10 @@
 
 import UIKit
 
+extension Notification.Name {
+    static let bidInfoReadError = Notification.Name("bidInfoReadError")
+}
+
 class CBProgressVC: UIViewController {
 
     @IBOutlet weak var text1: UILabel!
@@ -48,10 +52,28 @@ class CBProgressVC: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(notificationAction(notification: )), name: Notification.Name("ParsingBid"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(notificationAction(notification: )), name: Notification.Name("ParsingVacation"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(notificationAction(notification: )), name: Notification.Name("CloseProgressView"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(showReadErrorAlert(_:)), name: .bidInfoReadError, object: nil)
     }
 
     deinit {
         NotificationCenter.default.removeObserver(self)
+    }
+    
+    @objc private func showReadErrorAlert(_ notification: Notification) {
+        guard let error = notification.object as? Error else { return }
+        DispatchQueue.main.async {
+            self.dismiss(animated: true){
+                if let topVC = AlertService.currentTopViewController() {
+                    AlertService.showDBAlert(title: "Error", message: error.localizedDescription, from: topVC)
+                }
+            }
+        }
+    }
+    
+    func dismissProgressView(){
+        DispatchQueue.main.async {
+            self.dismiss(animated: true)
+        }
     }
 
     @objc func notificationAction(notification:Notification){
@@ -97,3 +119,5 @@ class CBProgressVC: UIViewController {
         }
     }
 }
+
+

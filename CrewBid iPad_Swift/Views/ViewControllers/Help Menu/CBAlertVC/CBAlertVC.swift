@@ -14,8 +14,9 @@ class CBAlertVC: BaseViewController {
     @IBOutlet weak var cancelBtn: UIButton!
     var alertTitle:String?
     var attributedMessage:NSAttributedString?
-    var isFromLoginPage:Bool = false
     var fromView:UIViewController?
+    var isSimpleAlert: Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         textView.attributedText = attributedMessage
@@ -24,11 +25,13 @@ class CBAlertVC: BaseViewController {
     }
     
     func setupUI(){
-        if isFromLoginPage == false{
-            tryAgainBtn.isHidden = false
-        }else{
-            tryAgainBtn.isHidden = true
-        }
+        if isSimpleAlert {
+               tryAgainBtn.isHidden = true
+               cancelBtn.setTitle("OK", for: .normal)
+           } else {
+               tryAgainBtn.isHidden = false
+               cancelBtn.setTitle("Cancel", for: .normal)
+           }
         tryAgainBtn.layer.cornerRadius = 5
         tryAgainBtn.layer.borderWidth = 1
         tryAgainBtn.layer.borderColor = UIColor.black.cgColor
