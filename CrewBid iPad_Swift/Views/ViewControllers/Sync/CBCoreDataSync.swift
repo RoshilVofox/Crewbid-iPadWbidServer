@@ -6,7 +6,10 @@
 //
 
 import UIKit
+import CoreData
 
 class CBCoreDataSync: NSObject {
 
+    var managedObjectContext: NSManagedObjectContext?
+    var bidPeriod: BIBidPeriod?
 }

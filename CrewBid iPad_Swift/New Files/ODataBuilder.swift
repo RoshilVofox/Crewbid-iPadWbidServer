@@ -243,4 +243,248 @@ class ODataBuilder {
             print("Failed to serialize employeeDetails to JSON")
         }
     }
+    
+    func getSyncVersionNumber(dictDetails: [String: Any],
+                              completion: @escaping (_ result: [[String: Any]]?) -> Void) {
+        
+        var urlString = "GetCBServerStateandPresetVersionNumber"
+        let app = UIApplication.shared.delegate as! AppDelegate
+        
+        guard app.connectedToInternet() else {
+            AlertService.showAlertForTopVC(title: "Network Not Available",
+                                           message: "Please check your internet connection")
+            completion(nil)
+            return
+        }
+        
+        guard let data = try? JSONSerialization.data(withJSONObject: dictDetails, options: []),
+              let jsonString = String(data: data, encoding: .utf8) else {
+            print("❌ Failed to encode request body")
+            completion(nil)
+            return
+        }
+        
+        urlString = baseURL + urlString
+        guard let url = URL(string: urlString) else {
+            print("❌ Invalid URL")
+            completion(nil)
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        request.timeoutInterval = kURLConnectionTimeout
+        request.httpMethod = "POST"
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.httpBody = jsonString.data(using: .utf8)
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("❌ Request error:", error.localizedDescription)
+                completion(nil)
+                return
+            }
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print("❌ Invalid response")
+                completion(nil)
+                return
+            }
+            
+            print("📡 Status code:", httpResponse.statusCode)
+            
+            guard let data = data else {
+                print("❌ No response data")
+                completion(nil)
+                return
+            }
+            
+            do {
+                if let jsonArray = try JSONSerialization.jsonObject(with: data) as? [[String: Any]] {
+                    print("✅ Parsed Array Response")
+                    completion(jsonArray)
+                } else if let jsonDict = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                    print("✅ Parsed Dictionary Response")
+                    completion([jsonDict]) // wrap dict in array
+                } else {
+                    print("⚠️ Unexpected JSON format")
+                    completion(nil)
+                }
+            } catch {
+                print("❌ JSON parsing error:", error.localizedDescription)
+                completion(nil)
+            }
+        }.resume()
+    }
+    
+    func saveCrewBidStateAndPresetToServer(dictDetails: [String: Any], completion: @escaping ([[String: Any]]?) -> Void) {
+        var urlString = "SaveCBAppStateAndPresetToServer"
+        let app = UIApplication.shared.delegate as! AppDelegate
+
+        // Check internet connection
+        guard app.connectedToInternet() else {
+            AlertService.showAlertForTopVC(title: "Network Not Available",
+                                           message: "Please check your internet connection")
+            completion(nil)
+            return
+        }
+
+        // Convert request details to JSON string
+        guard let data = try? JSONSerialization.data(withJSONObject: dictDetails, options: []),
+              let jsonString = String(data: data, encoding: .utf8) else {
+            print("❌ Failed to encode request body")
+            completion(nil)
+            return
+        }
+
+        // Create full URL
+        urlString = baseURL + urlString
+        guard let url = URL(string: urlString) else {
+            print("❌ Invalid URL")
+            completion(nil)
+            return
+        }
+
+        // Check CrewBid service availability
+        app.sc?.checkCrewBidServiceAccessibility { isAccessible in
+            guard isAccessible else {
+                print("⚠️ CrewBid service not accessible")
+                completion(nil)
+                return
+            }
+
+            // Configure URL request
+            var request = URLRequest(url: url)
+            request.cachePolicy = .reloadIgnoringLocalCacheData
+            request.timeoutInterval = 2000.0
+            request.httpMethod = "POST"
+            request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+            request.httpBody = jsonString.data(using: .utf8)
+
+            // Send request
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    print("❌ Request error:", error.localizedDescription)
+                    completion(nil)
+                    return
+                }
+
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    print("❌ Invalid response")
+                    completion(nil)
+                    return
+                }
+
+                print("📡 Status code:", httpResponse.statusCode)
+
+                guard let data = data else {
+                    print("❌ No response data")
+                    completion(nil)
+                    return
+                }
+
+                do {
+                    if let jsonArray = try JSONSerialization.jsonObject(with: data) as? [[String: Any]] {
+                        print("✅ Parsed Array Response")
+                        completion(jsonArray)
+                    } else if let jsonDict = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                        print("✅ Parsed Dictionary Response")
+                        completion([jsonDict]) // wrap single dict in array
+                    } else {
+                        print("⚠️ Unexpected JSON format")
+                        completion(nil)
+                    }
+                } catch {
+                    print("❌ JSON parsing error:", error.localizedDescription)
+                    completion(nil)
+                }
+            }.resume()
+        }
+    }
+    
+    func getCrewBidStateAndPresetFromServer(dictDetails: [String: Any], completion: @escaping ([[String: Any]]?) -> Void) {
+        var urlString = "GetCBAppStateAndPresetFromServer"
+        let app = UIApplication.shared.delegate as! AppDelegate
+
+        // Check internet connection
+        guard app.connectedToInternet() else {
+            AlertService.showAlertForTopVC(title: "Network Not Available",
+                                           message: "Please check your internet connection")
+            completion(nil)
+            return
+        }
+
+        // Convert request details to JSON string
+        guard let data = try? JSONSerialization.data(withJSONObject: dictDetails, options: []),
+              let jsonString = String(data: data, encoding: .utf8) else {
+            print("❌ Failed to encode request body")
+            completion(nil)
+            return
+        }
+
+        // Create full URL
+        urlString = baseURL + urlString
+        guard let url = URL(string: urlString) else {
+            print("❌ Invalid URL")
+            completion(nil)
+            return
+        }
+
+        // Check CrewBid service availability
+        app.sc?.checkCrewBidServiceAccessibility { isAccessible in
+            guard isAccessible else {
+                print("⚠️ CrewBid service not accessible")
+                completion(nil)
+                return
+            }
+
+            // Configure URL request
+            var request = URLRequest(url: url)
+            request.cachePolicy = .reloadIgnoringLocalCacheData
+            request.timeoutInterval = 2000.0
+            request.httpMethod = "POST"
+            request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+            request.httpBody = jsonString.data(using: .utf8)
+
+            // Send request
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    print("❌ Request error:", error.localizedDescription)
+                    completion(nil)
+                    return
+                }
+
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    print("❌ Invalid response")
+                    completion(nil)
+                    return
+                }
+
+                print("📡 Status code:", httpResponse.statusCode)
+
+                guard let data = data else {
+                    print("❌ No response data")
+                    completion(nil)
+                    return
+                }
+
+                do {
+                    if let jsonArray = try JSONSerialization.jsonObject(with: data) as? [[String: Any]] {
+                        print("✅ Parsed Array Response")
+                        completion(jsonArray)
+                    } else if let jsonDict = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                        print("✅ Parsed Dictionary Response")
+                        completion([jsonDict]) // wrap single dict in array
+                    } else {
+                        print("⚠️ Unexpected JSON format")
+                        completion(nil)
+                    }
+                } catch {
+                    print("❌ JSON parsing error:", error.localizedDescription)
+                    completion(nil)
+                }
+            }.resume()
+        }
+    }
+
 }

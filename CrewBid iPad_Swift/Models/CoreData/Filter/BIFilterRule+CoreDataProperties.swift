@@ -783,4 +783,20 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
         self.variables = pRule.variables as NSDictionary?
     }
     
+    static func configureMonthDayFilter(_ indices: NSMutableArray) -> [String: Any] {
+        var monthBits: UInt64 = 0
+
+        for case let index as NSNumber in indices {
+            let nsi = index.intValue
+            let mask: UInt64 = 1 << nsi
+            monthBits |= mask
+        }
+
+        let variables: [String: Any] = [
+            "MONTH_BITS": NSNumber(value: monthBits)
+        ]
+
+        return variables
+    }
+
 }

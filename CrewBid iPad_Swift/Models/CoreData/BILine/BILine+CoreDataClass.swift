@@ -29,6 +29,7 @@ enum BILineType : Int {
     case NonEtopsMixed      // 11
     case EtopsReserve       // 12
     case EtopsFAFirstRound  // 13
+    case BILineTypeLoDo     // 14
     
     func name () -> Int {
         switch self {
@@ -46,6 +47,7 @@ enum BILineType : Int {
         case .NonEtopsMixed: return 11
         case .EtopsReserve: return 12
         case .EtopsFAFirstRound: return 13
+        case .BILineTypeLoDo: return 14
         }
     }
 }

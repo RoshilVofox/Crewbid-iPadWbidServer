@@ -82,11 +82,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             btnWbidMax.setTitle("WBidMax", for: .normal)
             btnSwaptimizer.isHidden = false
         }
-        if bidPeriod?.isHistoric?.boolValue == true {
-            btnSwaptimizer.isHidden = true
-            btnEOM.isHidden = true
-            btnWbidMax.isHidden = true
-        }
+//        if bidPeriod?.isHistoric?.boolValue == true {
+//            btnSwaptimizer.isHidden = true
+//            btnEOM.isHidden = true
+//            btnWbidMax.isHidden = true
+//        }
         alertShouldDisplay = true
 //        self.bidLinesController = self.storyboard?.instantiateViewController(withIdentifier: "CBBidListVC") as? CBBidListVC
 //        self.bidLinesController.managedObjectContext = self.managedObjectContext
@@ -454,9 +454,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     // Mismatch, alert the user
                     AlertService.showAlertForTopVC(title: "Bid Package Error", message: "The number of lines in the processed bid package does not match the number of lines in the Cover Letter.  Double check that this is indeed the case.  If so perform the following steps:\n\n  To try again: (1) delete the bid package, (2) close and reopen the app (by double-tapping the iPad's Home button and swiping CrewBid up), (3) downloading the bid package anew.", actions: [(title: "OK", style: .default, handler:{_ in
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
-                            if self?.bidPeriod?.isHistoric?.boolValue != true {
-                                self?.handleVacationData()
-                            }
+                            self?.handleVacationData()
+                            
                         }
                         self.seniorityAlert()
                     })])
@@ -614,18 +613,14 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             AlertService.showAlertForTopVC(title: "Old Bid Package", message: "It looks like you've opened a previous month's bid package.  If you meant to, carry on, if not, download the NEW bid package by tapping the + button on the home screen.", actions: [(title: "OK", style: .default, handler: {_ in
                 //check sanity
                 self.sanityBidCheckingForCoverLetterLineCount()
-                if self.bidPeriod?.isHistoric?.boolValue != true {
-                    self.handleVacationData()
-                }
+                self.handleVacationData()
             })])
         }else{
             self.sanityBidCheckingForCoverLetterLineCount()
             isOldBidPackage = false
             if ((self.bidPeriod?.latestNewsDisplayed?.boolValue) != nil){
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {[weak self] in
-                    if self?.bidPeriod?.isHistoric?.boolValue != true {
-                        self?.handleVacationData()
-                    }
+                    self?.handleVacationData()
                 }
             }
         }
@@ -877,9 +872,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @objc private func didDismissLatestNews() {
         if self.bidPeriod?.latestNewsDisplayed?.boolValue == true{
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {[weak self] in
-                if self?.bidPeriod?.isHistoric?.boolValue != true {
-                    self?.handleVacationData()
-                }
+                self?.handleVacationData()
             }
         }
         
@@ -1046,9 +1039,15 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     
     @IBAction func btnSyncAction(_ sender: Any) {
         let storyboard = UIStoryboard(name: "Sync", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "syncFirstVC")
+        guard let vc = storyboard.instantiateViewController(withIdentifier: "CBSyncInfoViewController") as? CBSyncInfoViewController else { return }
+
+        vc.bidPeriod = bidPeriod
         vc.preferredContentSize = CGSize(width: 768, height: 900)
-        present(vc, animated: true)
+
+        let navController = UINavigationController(rootViewController: vc)
+        navController.modalPresentationStyle = .formSheet // or .fullScreen if needed
+        present(navController, animated: true)
+
     }
     
     func showVacationWeekAlert(completionHandler: @escaping (Bool) -> Void) {

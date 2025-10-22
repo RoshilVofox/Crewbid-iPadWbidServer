@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		350B8B3F2DDEDBFF005D5E76 /* CBVacationDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350B8B3E2DDEDBFF005D5E76 /* CBVacationDownloader.swift */; };
+		350D2CD22E9E76BC002E7FE5 /* CBCoreDataSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350D2CD12E9E76BC002E7FE5 /* CBCoreDataSync.swift */; };
+		350D2CD42E9E77F6002E7FE5 /* CBJSONSyncParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 350D2CD32E9E77F6002E7FE5 /* CBJSONSyncParsing.swift */; };
 		3514CF412E7D1EF10040D75B /* CBOvernightCitiesBulkCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3514CF402E7D1EF10040D75B /* CBOvernightCitiesBulkCollectionViewCell.swift */; };
 		35162E032DCDBEA600BD8E2E /* UIView+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35162E022DCDBEA600BD8E2E /* UIView+extensions.swift */; };
 		353FC68F2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */; };
@@ -392,6 +394,8 @@
 
 /* Begin PBXFileReference section */
 		350B8B3E2DDEDBFF005D5E76 /* CBVacationDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBVacationDownloader.swift; sourceTree = "<group>"; };
+		350D2CD12E9E76BC002E7FE5 /* CBCoreDataSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCoreDataSync.swift; sourceTree = "<group>"; };
+		350D2CD32E9E77F6002E7FE5 /* CBJSONSyncParsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBJSONSyncParsing.swift; sourceTree = "<group>"; };
 		3514CF402E7D1EF10040D75B /* CBOvernightCitiesBulkCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBOvernightCitiesBulkCollectionViewCell.swift; sourceTree = "<group>"; };
 		35162E022DCDBEA600BD8E2E /* UIView+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+extensions.swift"; sourceTree = "<group>"; };
 		353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
@@ -1520,6 +1524,8 @@
 			children = (
 				F41EBE892DC4DB20001413DE /* CBsyncConflictViewController.swift */,
 				F41EBE8A2DC4DB20001413DE /* CBSyncInfoViewController.swift */,
+				350D2CD12E9E76BC002E7FE5 /* CBCoreDataSync.swift */,
+				350D2CD32E9E77F6002E7FE5 /* CBJSONSyncParsing.swift */,
 			);
 			path = Sync;
 			sourceTree = "<group>";
@@ -2125,6 +2131,7 @@
 				F41EBF1A2DC4DB20001413DE /* BIDayInfo+CoreDataProperties.swift in Sources */,
 				F474F4382E9245FA00B940B7 /* CBLicenseVC.swift in Sources */,
 				F4A472212DDDEDA900065720 /* CBExceedingTripCalculation.swift in Sources */,
+				350D2CD22E9E76BC002E7FE5 /* CBCoreDataSync.swift in Sources */,
 				F41EBF1D2DC4DB20001413DE /* BILeg+CoreDataClass.swift in Sources */,
 				8BAEE8092DCC73E3002EF328 /* MBProgressHUD.m in Sources */,
 				F4C5D6642DC9E25500D86BD2 /* FBEncryptorAES.m in Sources */,
@@ -2235,6 +2242,7 @@
 				F41EBF732DC4DB20001413DE /* CBLineValueView.swift in Sources */,
 				F4E5DA042E3C908D00C96BDF /* CBCalendarDayCell.swift in Sources */,
 				F41EBF742DC4DB20001413DE /* CBTripTextViewController.swift in Sources */,
+				350D2CD42E9E77F6002E7FE5 /* CBJSONSyncParsing.swift in Sources */,
 				F41EBF752DC4DB20001413DE /* CBUserFlagTableController.swift in Sources */,
 				357F66422E589626000273BE /* CBRouteDomain.swift in Sources */,
 				F4984C602E2E6C12004E020E /* CBPresetFilterRule.swift in Sources */,
