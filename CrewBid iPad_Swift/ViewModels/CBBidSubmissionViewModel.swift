@@ -287,11 +287,10 @@ class CBBidSubmissionViewModel{
                 optionalParameters.append(contentsOf: "&\(paramName)=\(paramValue)")
             }
         }
-        let key = stringByAddingPercentEscapes(to: sessionKey)
 
         let httpBody = """
          REQUEST=UPLOAD_BID
-         &CREDENTIALS=\(key)
+         &CREDENTIALS=\(sessionKey)
          &PACKETID=\(packetID)
          &BIDDER=\(bidEmployeeNumber)\(optionalParameters)
          &BASE=\(dataSource.base)

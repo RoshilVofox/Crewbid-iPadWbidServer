@@ -560,17 +560,16 @@ class CBUtils{
             print("Invalid destination URL")
             return
         }
-        if fileManager.fileExists(atPath: destinationURL.path) {
-            print("LatestNews.pdf already exists at: \(destinationURL.path)")
-            return
-        }
+//        if fileManager.fileExists(atPath: destinationURL.path) {
+//            print("LatestNews.pdf already exists at: \(destinationURL.path)")
+//            return
+//        }
         let reachability: Reachability = try! Reachability()
             
         if !reachability.isReachable {
             NotificationCenter.default.post(name: Notification.Name("NetWorkError"), object: nil)
             return
         }
-        
         
         let stringURL = "http://www.wbidmax.com/downloads/CrewBid/LatestNews.pdf"
         guard let url = URL(string: stringURL) else {
@@ -588,6 +587,9 @@ class CBUtils{
                 return
             }
             do {
+                if fileManager.fileExists(atPath: destinationURL.path) {
+                    try fileManager.removeItem(at: destinationURL)
+                }
                 try fileManager.moveItem(at: tempLocalUrl, to: destinationURL)
             } catch {
                 print("Error saving latest news: \(error.localizedDescription)")

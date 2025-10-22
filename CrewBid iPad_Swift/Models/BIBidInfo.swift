@@ -8,6 +8,8 @@
 import Foundation
 import CoreData
 
+let kCBCrewBidDocumentExtension = "crewbiddoc"
+
 protocol BIBidInfoDataSource {
     var userid: String { get set }
     var password: String { get set }

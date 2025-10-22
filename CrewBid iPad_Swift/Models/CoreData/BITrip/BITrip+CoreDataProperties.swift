@@ -533,6 +533,54 @@ extension BITrip : Identifiable {
         }
     }
     
+    func tripFfdoLegs(trip: BITrip, doubleSpacing: Bool) -> String {
+        let textForTrip = NSMutableString()
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale(identifier: "en_US")
+        calendar.timeZone = TimeZone(identifier: "US/Central")!
+        let df = DateFormatter()
+        df.timeZone = TimeZone(identifier: "US/Central")
+        var dateComps = calendar.dateComponents([.year, .month, .day], from: trip.startDate!)
+
+        df.dateFormat = "MM/dd/yyyy"
+
+        let tf = DateFormatter()
+        tf.timeZone = TimeZone(identifier: "US/Central")
+        tf.dateFormat = "HHmm"
+        var legFlight: String
+        var departDate: Date
+        var arriveDate: Date
+        let tripOrderedDays = trip.info!.orderedDays()
+        for dayInfo in tripOrderedDays {
+            let dayOrderedLegs = dayInfo.orderedLegs
+            for legInfo in dayOrderedLegs {
+                legFlight = legInfo.flight!
+                dateComps.minute = legInfo.departMinutes?.intValue ?? 0
+                departDate = calendar.date(from: dateComps) ?? Date()
+                dateComps.minute = legInfo.arriveMinutes?.intValue ?? 0
+                arriveDate = calendar.date(from: dateComps) ?? Date()
+                var legFlightFormatted = String(format: "%@", legFlight)
+                if legFlightFormatted.count == 3 {
+                    legFlightFormatted = "0\(legFlightFormatted)"
+                }else if legFlightFormatted.count == 2 {
+                    legFlightFormatted = "00\(legFlightFormatted)"
+                }else if legFlightFormatted.count == 1 {
+                    legFlightFormatted = "000\(legFlightFormatted)"
+                }
+
+                if doubleSpacing {
+                    textForTrip.append(String(format: "%@  %@  %@  %@  %@  %@\n", df.string(from: departDate), legFlightFormatted, legInfo.departCity!, tf.string(from: departDate), legInfo.arriveCity!, tf.string(from: arriveDate)))
+                } else {
+                    textForTrip.append(String(format: "%@ %@ %@ %@ %@ %@\n", df.string(from: departDate), legFlightFormatted, legInfo.departCity!, tf.string(from: departDate), legInfo.arriveCity!, tf.string(from: arriveDate)))
+                }
+            }
+        }
+        return textForTrip as String
+    }
     
+    func calendarTripText() -> String {
+        // Generate text description for the trip for use in a calendar view, considering FA bid
+        return textForTrip(self, isFA: (line?.bidPeriod?.isFABid())!)
+    }
     
 }

@@ -343,9 +343,8 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                     dismissFn()
                         break
                     case 2://Retrieve/Show Awards
-                        let textFile = self.bidPeriod?.textFile(withName: BIAwardsTextFileName)
+                    let textFile = self.bidPeriod?.awardString
                         if textFile != nil {
-                            
                             NotificationCenter.default.post(name: NSNotification.Name(KCBOpenAwardData), object: self)
                             dismissFn()
                         } else {

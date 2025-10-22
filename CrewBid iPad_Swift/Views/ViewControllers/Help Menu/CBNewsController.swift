@@ -7,7 +7,7 @@ class CBNewsController: BaseViewController, WKNavigationDelegate,WKUIDelegate {
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var btnDone: UIButton!
-
+    var isFromBidVC: Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()
         self.webView.navigationDelegate = self
@@ -18,9 +18,10 @@ class CBNewsController: BaseViewController, WKNavigationDelegate,WKUIDelegate {
     @IBAction func btnDoneAction(_ sender: Any) {
         CBGlobalMethods.shared.hideActivityIndicator()
         self.dismiss(animated: true) {
-            NotificationCenter.default.post(name: NSNotification.Name("DidDismissLatestNews"), object: nil)
+            if self.isFromBidVC{
+                NotificationCenter.default.post(name: NSNotification.Name("DidDismissLatestNews"), object: nil)
+            }
         }
-        
     }
     
     @IBAction func btnBackAction(_ sender: Any) {

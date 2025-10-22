@@ -38,6 +38,9 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let str = self.bidPeriod?.awardString, str.contains("ERROR"){
+            print("")
+        }
         textView.clipsToBounds = true
         textView.layer.cornerRadius = 5
         textAppending()
@@ -140,7 +143,14 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
                 self.dismiss(animated: true, completion: nil)
             } else {
                 // Fallback: if it was pushed in a navigation controller
-                self.navigationController?.popViewController(animated: true)
+//                self.navigationController?.popViewController(animated: true)
+                let transition = CATransition()
+                transition.duration = 0.4
+                transition.type = .fade
+                transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+
+                self.navigationController?.view.layer.add(transition, forKey: kCATransition)
+                self.navigationController?.popViewController(animated: false)
             }
         
         if self.bidPeriod?.isHistoric?.boolValue ?? false{

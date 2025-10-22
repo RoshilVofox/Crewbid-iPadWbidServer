@@ -25,7 +25,7 @@ enum credentialVCType{
 }
 class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAdaptivePresentationControllerDelegate, ServiceConnectionDelegate {
     func responseError(_ errMsg: String) {
-        print("responseError")
+        print("responseError:\(errMsg)")
     }
     
     func serviceResponse(_ arrResponse: [Any]) {
@@ -94,17 +94,17 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     }
                     let formattedUserID = self.txtUserID.text ?? ""
                     let password = self.txtPassword.text ?? ""
-                    if !UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
-                        if self.bidAlreadyExists() {
-                            self.showAlertForExistingBid {
-                                self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
-                            }
-                        } else {
-                            self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
-                        }
-                    }else{
+//                    if !UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
+//                        if self.bidAlreadyExists() {
+//                            self.showAlertForExistingBid {
+//                                self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
+//                            }
+//                        } else {
+//                            self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
+//                        }
+//                    }else{
                         self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
-                    }
+//                    }
                 } else {
                     if let account = KeychainHelper.retrieveUsername(forService: "CWAUserAccountDetails"){
                         KeychainHelper.delete(account: account, service: "CWAUserAccountDetails")
@@ -155,7 +155,6 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     }
     
     func showUserAccountView(){
-        print("Show user account screen")
         let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "userAccountViewController") as! userAccountViewController
         vc.isfrom = self
 //        vc.btnBack.setImage(UIImage(named: "NewBid-navbar-ncelbutton"), for: .normal)
@@ -166,12 +165,12 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         self.present(vc, animated: true)
     }
     
-    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        if presentationController.presentedViewController is userAccountViewController {
-            // After user account is dismissed, authenticate again and continue flow
-            self.checkAuthentication(message: "Authenticating...")
-        }
-    }
+//    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+//        if presentationController.presentedViewController is userAccountViewController {
+//            // After user account is dismissed, authenticate again and continue flow
+//            self.checkAuthentication(message: "Authenticating...")
+//        }
+//    }
     
     func getVacationFilenames(){ //need to hanlde the call for this fucntion in the go button
         if app.connectedToInternet(){
@@ -420,8 +419,10 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }
     
     @objc func closeCredentilaPage() {
+        DispatchQueue.main.async {
             self.navigationController?.popViewController(animated: true)
         }
+    }
     
     @objc func showProgressView() {
         let progressVC = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBProgressVC") as! CBProgressVC
@@ -497,7 +498,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
            
             let errorString = error.localizedDescriptionString.lowercased()
             print("Error:\(errorString)")
-            if errorString.contains("login failed") || errorString.contains("security purposes"){
+            if errorString.contains("login failed") || errorString.contains("security purposes") || errorString.contains("invalid account"){
                 if let account = KeychainHelper.retrieveUsername(forService: "SaveLoginDetails") {
                     KeychainHelper.delete(account: account, service: "SaveLoginDetails")
                 }
@@ -520,11 +521,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                 }
             }
         }
-        //-----------------------
-        
-        
-        
-        
+
         NotificationCenter.default.addObserver(self, selector: #selector(dismissVC), name: NSNotification.Name(rawValue: "dismissLoginView"), object: nil)
     }
 
@@ -561,8 +558,9 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     self.downloadHistoricBidFile(bidFileName: bidFileName)
                 }
             
-        }else if AppState.shared.isMockData{//MARK:  Mock Bid Data
-            
+        }
+        else if AppState.shared.isMockData{
+            //MARK:  Mock Bid Data
             print("Bid: Mock data")
             
         }
@@ -583,8 +581,8 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             self.allbidDownloadViewModel.downladAllDomicileBid(bases: initialbases, tableViewData: tableViewData)
         }
         
-        else{//MARK:  New Bid Data
-            
+        else{
+            //MARK:  New Bid Data
             print("Bid: New bid")
             bidDownloadViewModel.fetchNewBidData(sessionKey: sessionKey, fileName: bidFileName) { result in
                 DispatchQueue.main.async {
@@ -652,7 +650,8 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         let empNum = bidPeriod?.crewIdentifier?.stringValue
         CBGlobalMethods.shared.secretKey = sessionKey
-        awardsViewModel?.retrieveAwardFile(){ result in
+        print("Session key: \(sessionKey)")
+        awardsViewModel?.retrieveAwardFile(sessionKey: sessionKey){ result in
             DispatchQueue.main.async{
                 self.dismiss(animated: false) {
                     if self.awardsViewModel?.bidPeriod.awardString != nil {
@@ -773,7 +772,13 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         else if type == .submitBid {
             self.submitBidAction()
         }else{
-            self.loginValidation()
+            if self.bidAlreadyExists(){
+                self.showAlertForExistingBid {
+                    self.loginValidation()
+                }
+            }else{
+                self.loginValidation()
+            }
         }
     }
     func loginValidation(){
@@ -881,23 +886,48 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     
 
     private func bidAlreadyExists() -> Bool {
-        var status = false
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
-        let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: self.context)
-        fetchRequest.entity = entity
-        var array:[NSPredicate] = []
-        array.append(NSPredicate(format: "base == %@", self.dataSource.base))
-        array.append(NSPredicate(format: "round == %d", self.dataSource.round))
-        array.append(NSPredicate(format: "month == %d", self.dataSource.month))
-        array.append(NSPredicate(format: "positionType == %d", self.dataSource.position.rawValue))
-        array.append(NSPredicate(format: "year == %d", self.dataSource.year))
-        
-        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
-        let list = try! self.context.fetch(fetchRequest) as! [BIBidPeriod]
-        if list.count > 0 {
-            status = true
-        }
-        return status
+//        var status = false
+//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+//        let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: self.context)
+//        fetchRequest.entity = entity
+//        var array:[NSPredicate] = []
+//        array.append(NSPredicate(format: "base == %@", self.dataSource.base))
+//        array.append(NSPredicate(format: "round == %d", self.dataSource.round))
+//        array.append(NSPredicate(format: "month == %d", self.dataSource.month))
+//        array.append(NSPredicate(format: "positionType == %d", self.dataSource.position.rawValue))
+//        array.append(NSPredicate(format: "year == %d", self.dataSource.year))
+//        
+//        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
+//        let list = try! self.context.fetch(fetchRequest) as! [BIBidPeriod]
+//        if list.count > 0 {
+//            status = true
+//        }
+//        return status
+//        do {
+//                let fetchRequest = NSFetchRequest<BIBidPeriod>(entityName: "BidPeriod")
+//                var predicates: [NSPredicate] = []
+//                predicates.append(NSPredicate(format: "base == %@", self.dataSource.base))
+//                predicates.append(NSPredicate(format: "round == %d", self.dataSource.round))
+//                predicates.append(NSPredicate(format: "month == %d", self.dataSource.month))
+//                predicates.append(NSPredicate(format: "positionType == %d", self.dataSource.position.rawValue))
+//                predicates.append(NSPredicate(format: "year == %d", self.dataSource.year))
+//                
+//                fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+//                let list = try self.context.fetch(fetchRequest)
+//                if list.count > 0 {
+//                    return true
+//                }
+//            } catch {
+//                print("Core Data fetch failed: \(error)")
+//            }
+        let downloadDir = BIBidInfo().downloadDirectory()
+
+        // Check if the directory exists
+        var isDir: ObjCBool = false
+        let exists = FileManager.default.fileExists(atPath: downloadDir.path, isDirectory: &isDir)
+
+        // Return true only if it exists and is a directory
+        return exists && isDir.boolValue
     }
     
     private func showAlertForExistingBid(onRetry: @escaping () -> Void) {
@@ -1013,15 +1043,18 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     print("Failed to fetch bid periods: \(error)")
                     self.bidPeriodList = []
                 }
-//        CBUserAccountDetail.shared.saveUserInfo()
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let docVC = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
-        docVC.modalTransitionStyle = .crossDissolve
-        if let homeNav = UIApplication.shared.windows.first?.rootViewController as? UINavigationController {
+        guard let homeNav = UIApplication.shared.windows.first?.rootViewController as? UINavigationController else { return }
             self.dismiss(animated: false) {
-                homeNav.pushViewController(docVC, animated: true)
+                let transition = CATransition()
+                transition.duration = 0.4
+                transition.type = .fade
+                transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                homeNav.view.layer.add(transition, forKey: kCATransition)
+                homeNav.pushViewController(docVC, animated: false)
             }
-        }
+        
     }
     
 //    MARK: Retrieve Awards Action

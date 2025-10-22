@@ -93,6 +93,8 @@ class BIBidInfoReader{
     var pilotLines:[Int:Any] = [:]
     var seniorityPositionDetails:[String:Any] = [:]
     var arrOverNightCities:[String] = []
+    var readError:Error?
+    
     init() {
             guard
                 dataSource.year != 0,
@@ -261,6 +263,12 @@ class BIBidInfoReader{
                         
                     case .failure(let error):
                         print("Error fetching seniority list: \(error)")
+                        
+                        if (error as NSError).code == NSURLErrorTimedOut{
+                            let objEvent = CBOfflineEvents()
+                            let month = self.bidPeriod!.month
+                            objEvent.sendOfflineDataForTimeOut(url: EndPoint.shared.GetAllSeniorityListFormatFromDB, month: month)
+                        }
                         self.isNetworkNotAvailable = true
                         completion(false)
                     }
@@ -369,11 +377,11 @@ class BIBidInfoReader{
                     }
                 }
             }
+        let moc = self.dataSource.managedObjectContext
         if success{
             self.calculateWorkBlockDetails()
             let isQATest = UserDefaults.standard.string(forKey: "isQATest")
             self.bidPeriod?.isQAdata = isQATest
-            let moc = self.dataSource.managedObjectContext
             if moc.hasChanges {
                 do{
                     try moc.save()
@@ -383,7 +391,14 @@ class BIBidInfoReader{
                 }
             }
         }
-        
+        if !success {
+            if let bidPeriod = self.bidPeriod {
+                moc.delete(bidPeriod)
+                try? moc.save()
+            }
+            let downloadDirectory = BIBidInfo().downloadDirectory()
+            try? FileManager.default.removeItem(at: downloadDirectory)
+        }
         return success
     }
     
@@ -2736,7 +2751,10 @@ class BIBidInfoReader{
             do{
                 try context.save()
             }catch{
-                print("Error saving context in addDefaultFilterRules(): \(error.localizedDescription)")
+                let errorReason = String(format: "%@ unable to save managed object context after adding default filter rules.", BIBidInfo().dataFilenameBase())
+                self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: errorReason)
+                NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+//                print("Error saving context in addDefaultFilterRules(): \(error.localizedDescription)")
                 success = false
             }
         }
@@ -2787,7 +2805,7 @@ class BIBidInfoReader{
         self.bidPeriod?.positionType = self.dataSource.position.rawValue as NSNumber
         self.bidPeriod?.round = self.dataSource.round as NSNumber
         self.bidPeriod?.appVersion = CBUtils.AppVersion()
-        
+        self.bidPeriod?.created = Date()
         let secretEnabled = UserDefaults.standard.string(forKey: "isHistoricSecretVDSwitchEnabled")
         if secretEnabled == "YES"{
             self.bidPeriod?.crewIdentifier = Int(UserDefaults.standard.string(forKey: "SecretVDuserName")!) as? NSNumber
@@ -2811,12 +2829,16 @@ class BIBidInfoReader{
         var success = true
         let moc = dataSource.managedObjectContext
         moc.undoManager = nil
-        let tripsDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.tripFileName)
+        let downloadDirectory = BIBidInfo().downloadDirectory()
+        let tripsDataFileURL = downloadDirectory.appendingPathComponent(self.tripFileName)
         if !FileManager.default.fileExists(atPath: tripsDataFileURL.path){
+            self.readError = BIBidInfoError.error(for: .tripsDataFileNotFound)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
             return false}
         do{
             let tripsData = try NSString(contentsOf: tripsDataFileURL, encoding: String.Encoding.utf8.rawValue)
             
+            var errorReason = ""
             var counter = 0
             let recordLength = 80
             let recordTypeCharIndex = 4
@@ -2843,7 +2865,9 @@ class BIBidInfoReader{
                     return
                 }
                 if recordLength != info.length{
-                    //handle error
+                    errorReason = String(format: "%@ TRIPS file line %zd has %zu characters, expected %zu", BIBidInfo().dataFilenameBase(), counter, info.length, recordLength)
+                    self.readError = BIBidInfoError.error(for: .tripsDataMalformed, underlyingReason: errorReason)
+                    NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                     stop.pointee = true
                     success = false
                     return
@@ -2858,8 +2882,10 @@ class BIBidInfoReader{
                             do{
                                 try moc.save()
                             }catch{
-                                //handle error
-                                print("Error saving context in readTrips(): \(error.localizedDescription)")
+                                errorReason = String(format: "Unable to save managed object context while reading %@ trips at counter %zd.", BIBidInfo().dataFilenameBase(), counter)
+                                self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: errorReason)
+                                NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+//                                print("Error saving context in readTrips(): \(error.localizedDescription)")
                                 success = false
                                 stop.pointee = true
                                 return
@@ -2869,7 +2895,9 @@ class BIBidInfoReader{
                     tripInfo = BITripInfo(context: moc)
                     //set trip info properties for record 1
                     if !self.setPropertiesForTripInfoRecord1(tripInfo: tripInfo!, record1: info){
-                        //handle error
+                        errorReason = String(format: "%@ trips file failed to set properties for trip info at counter %zd.", BIBidInfo().dataFilenameBase(), counter)
+                        self.readError = BIBidInfoError.error(for: .tripsDataMalformed, underlyingReason: errorReason)
+                        NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                         success = false
                         stop.pointee = true
                         return
@@ -2883,7 +2911,9 @@ class BIBidInfoReader{
                     // Day overnight cities and pay.
                 case "2":
                     if !self.readDaysInfoTripsInfoRecord2(tripInfo: tripInfo!, record2: info){
-                        //handle error
+                        errorReason = String(format: "%@ trips file failed to read days info for trip info %@.", BIBidInfo().dataFilenameBase(),(tripInfo?.number)!)
+                        self.readError = BIBidInfoError.error(for: .tripsDataMalformed, underlyingReason: errorReason)
+                        NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                         success = false
                         stop.pointee = true
                         return
@@ -2901,7 +2931,9 @@ class BIBidInfoReader{
                         var range = Range(briefHoursRange, in: info)!
                         digits = String(info[range])
                         if !self.isDigitString(digits, trimWhitespace: false){
-                            //handle error
+                            errorReason = String(format: "%@ trips file failed to read brief hours for trip info %@.",BIBidInfo().dataFilenameBase(), (tripInfo?.number)!)
+                            self.readError = BIBidInfoError.error(for: .tripsDataMalformed, underlyingReason: errorReason)
+                            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                             success = false
                             stop.pointee = true
                             return
@@ -2910,7 +2942,9 @@ class BIBidInfoReader{
                         range = Range(briefMinutesRange, in: info)!
                         digits = String(info[range])
                         if !self.isDigitString(digits, trimWhitespace: false){
-                            //handle error
+                            errorReason = String(format: "%@ trips file failed to read brief minutes for trip info %@.",BIBidInfo().dataFilenameBase(), (tripInfo?.number)!)
+                            self.readError = BIBidInfoError.error(for: .tripsDataMalformed, underlyingReason: errorReason)
+                            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                             success = false
                             stop.pointee = true
                             return
@@ -2922,7 +2956,9 @@ class BIBidInfoReader{
                         range = Range(debriefHoursRange, in: info)!
                         digits = String(info[range])
                         if !self.isDigitString(digits, trimWhitespace: false){
-                            //handle error
+                            errorReason = String(format: "%@ trips file failed to read debrief hours for trip info %@.",BIBidInfo().dataFilenameBase(), (tripInfo?.number)!)
+                            self.readError = BIBidInfoError.error(for: .tripsDataMalformed, underlyingReason: errorReason)
+                            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                             success = false
                             stop.pointee = true
                             return
@@ -2931,6 +2967,9 @@ class BIBidInfoReader{
                         range = Range(debriefMinutesRange, in: info)!
                         digits = String(info[range])
                         if !self.isDigitString(digits, trimWhitespace: false){
+                            errorReason = String(format: "%@ trips file failed to read debrief minutes for trip info %@.",BIBidInfo().dataFilenameBase(), (tripInfo?.number)!)
+                            self.readError = BIBidInfoError.error(for: .tripsDataMalformed, underlyingReason: errorReason)
+                            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                             success = false
                             stop.pointee = true
                             return
@@ -2979,7 +3018,9 @@ class BIBidInfoReader{
                             range = Range(record6CountRange, in: info)!
                             digits = String(info[range])
                             if !self.isDigitString(digits, trimWhitespace: false){
-                                //handle error
+                                errorReason = String(format: "%@ trips file failed to read record 6 count for trip info %@.",BIBidInfo().dataFilenameBase(), (tripInfo?.number)!)
+                                self.readError = BIBidInfoError.error(for: .tripsDataMalformed, underlyingReason: errorReason)
+                                NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                                 success = false
                                 stop.pointee = true
                                 return
@@ -2998,7 +3039,9 @@ class BIBidInfoReader{
                         // If this is the last record6, read legs info
                         if record6.length/legInfoRange.length == record6Count{
                             if !self.readLegsInfoForTripInfo(tripInfo: tripInfo!, record5: record5, record6: record6){
-                                //handle error
+                                errorReason = String(format: "%@ trips file failed to read legs info for trip info %@.",BIBidInfo().dataFilenameBase(), (tripInfo?.number)!)
+                                self.readError = BIBidInfoError.error(for: .tripsDataMalformed, underlyingReason: errorReason)
+                                NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                                 success = false
                                 stop.pointee = true
                                 return
@@ -3007,7 +3050,9 @@ class BIBidInfoReader{
                     
                     break
                 default:
-                    //handle error
+                    errorReason = String(format: "%@ trips file trips file has unknown record type (%c) at counter %zd",BIBidInfo().dataFilenameBase(), info.character(at: recordTypeCharIndex) as! CVarArg, counter)
+                    self.readError = BIBidInfoError.error(for: .tripsDataMalformed, underlyingReason: errorReason)
+                    NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                     success = false
                     stop.pointee = true
                     return
@@ -3018,18 +3063,19 @@ class BIBidInfoReader{
                 do{
                     try moc.save()
                 }catch{
-                    print("Error saving file: \(error)")
+                    self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed)
+                    NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                     success = false
                 }
-            }else{
-                //handle error
-                success = false
             }
+            
             if success{
                 self.trips = trips
             }
         }catch{
-            print("Error reading file: \(error)")
+            self.readError = BIBidInfoError.error(for: .tripsDataFileUnreadable, underlyingReason: error.localizedDescription)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+//            print("Error reading file: \(error)")
             success = false
         }
         
@@ -3042,10 +3088,13 @@ class BIBidInfoReader{
         let moc = dataSource.managedObjectContext
         let linesDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.lineFileName)
         if !FileManager.default.fileExists(atPath: linesDataFileURL.path){
+            self.readError = BIBidInfoError.error(for: .linesDataFileNotFound)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
             return false}
         do{
             let linesData = try NSString(contentsOf: linesDataFileURL, encoding: String.Encoding.utf8.rawValue)
             
+            var errorReason = ""
             var counter = 0
             let numberRange = NSRange(location: 0, length: 6)
             let typeCharIndex = 6
@@ -3084,8 +3133,9 @@ class BIBidInfoReader{
                             do{
                                 try moc.save()
                             }catch{
-                                //handle error
-                                print("Error saving context in readLines(): \(error)")
+                                errorReason = String(format: "Unable to save managed object context while reading %@ lines at counter %zd.", BIBidInfo().dataFilenameBase(), counter)
+                                self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: errorReason)
+                                NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                             }
                         }
                     }
@@ -3093,7 +3143,9 @@ class BIBidInfoReader{
                     if isContinuedLine{
                         //add trips to current line
                         if !self.readTripsForLine(line: line!, record: info){
-                            //handle error
+                            errorReason = String(format: "%@ lines file failed to read continued trips for line number %@.", BIBidInfo().dataFilenameBase(), (line?.number)!)
+                            self.readError = BIBidInfoError.error(for: .linesDataMalformed, underlyingReason: errorReason)
+                            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                             success = false
                             stop.pointee = true
                             return
@@ -3106,7 +3158,8 @@ class BIBidInfoReader{
                         
                         digits = (info as NSString).substring(with: numberRange)
                         if !self.isDigitString(digits, trimWhitespace: true){
-                            //handle error
+                            self.readError = BIBidInfoError.error(for: .linesDataMalformed)
+                            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                             success = false
                             stop.pointee = true
                             return
@@ -3142,7 +3195,9 @@ class BIBidInfoReader{
                             line?.type = BILineType.MixedLine.rawValue as NSNumber
                             break
                         default:
-                            //handle error
+                            errorReason = String(format: "%@ lines file failed to read type for line number %zd.", BIBidInfo().dataFilenameBase(), (line?.number)!)
+                            self.readError = BIBidInfoError.error(for: .linesDataMalformed, underlyingReason: errorReason)
+                            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                             success = false
                             stop.pointee = true
                             return
@@ -3210,7 +3265,9 @@ class BIBidInfoReader{
                         //Pay
                         digits = (info as NSString).substring(with: payIntegerRange)
                         if !self.isDigitString(digits, trimWhitespace: false){
-                            //handle error
+                            errorReason = String(format: "%@ lines file failed to read pay for line number %zd.", BIBidInfo().dataFilenameBase(), (line?.number)!)
+                            self.readError = BIBidInfoError.error(for: .linesDataMalformed, underlyingReason: errorReason)
+                            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                             success = false
                             stop.pointee = true
                             return
@@ -3218,7 +3275,9 @@ class BIBidInfoReader{
                         pay = digits.floatValue
                         digits = (info as NSString).substring(with: payFractionRange)
                         if !self.isDigitString(digits, trimWhitespace: false){
-                            //handle error
+                            errorReason = String(format: "%@ lines file failed to read pay for line number %zd.", BIBidInfo().dataFilenameBase(), (line?.number)!)
+                            self.readError = BIBidInfoError.error(for: .linesDataMalformed, underlyingReason: errorReason)
+                            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                             success = false
                             stop.pointee = true
                             return
@@ -3235,7 +3294,9 @@ class BIBidInfoReader{
                         digits = (info as NSString).substring(with: blockHoursRange)
     
                         if !self.isDigitString(digits, trimWhitespace: true){
-                            //handle error
+                            errorReason = String(format: "%@ lines file failed to read block hours for line number %zd.", BIBidInfo().dataFilenameBase(), (line?.number)!)
+                            self.readError = BIBidInfoError.error(for: .linesDataMalformed, underlyingReason: errorReason)
+                            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                             success = false
                             stop.pointee = true
                             return
@@ -3243,7 +3304,9 @@ class BIBidInfoReader{
                         blockMinutes = (digits as NSString).integerValue * 60
                         digits = (info as NSString).substring(with: blockMinutesRange)
                         if !self.isDigitString(digits, trimWhitespace: true){
-                            //handle error
+                            errorReason = String(format: "%@ lines file failed to read block minutes for line number %zd.", BIBidInfo().dataFilenameBase(), (line?.number)!)
+                            self.readError = BIBidInfoError.error(for: .linesDataMalformed, underlyingReason: errorReason)
+                            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                             success = false
                             stop.pointee = true
                             return
@@ -3256,7 +3319,9 @@ class BIBidInfoReader{
                         
                         //Read Trips
                         if !self.readTripsForLine(line: line!, record: info){
-                            //handle error
+                            errorReason = String(format: "%@ lines file failed to read trips for line number %zd.", BIBidInfo().dataFilenameBase(), (line?.number)!)
+                            self.readError = BIBidInfoError.error(for: .linesDataMalformed, underlyingReason: errorReason)
+                            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                             success = false
                             stop.pointee = true
                             return
@@ -3277,12 +3342,15 @@ class BIBidInfoReader{
                 do{
                     try moc.save()
                 }catch{
-                    print("Error saving to context: \(error)")
-                    //handle error
+                    errorReason = String(format: "%@ unable to save managed object context after reading trips and lines files.", BIBidInfo().dataFilenameBase())
+                    self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed)
+                    NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                     success =  false
                 }
             }
         }catch{
+            self.readError = BIBidInfoError.error(for: .linesDataFileUnreadable, underlyingReason: error.localizedDescription)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
             print("Error reading file: \(error)")
             success = false
         }
@@ -3298,11 +3366,14 @@ class BIBidInfoReader{
         moc.undoManager = nil
         let tripsDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.tripFileName)
         if !FileManager.default.fileExists(atPath: tripsDataFileURL.path){
-            return false}
+            self.readError = BIBidInfoError.error(for: .tripsDataFileNotFound)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+            return false
+        }
         do {
             let tripsData = try NSString(contentsOf: tripsDataFileURL, encoding: String.Encoding.utf8.rawValue)
 
-            
+            var errorReason: String = ""
             var counter = 0
             var tripInfo:BITripInfo?
             var lineRange = NSRange(location: 0, length: 0)
@@ -3336,7 +3407,9 @@ class BIBidInfoReader{
             var continueProcessing: Bool = true
             
             if moc.persistentStoreCoordinator?.persistentStores.count == 0{
-                //handle error
+                errorReason = "No persistent stores available."
+                self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: errorReason)
+                NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                 success = false
                 continueProcessing = false
                 return false
@@ -3349,10 +3422,9 @@ class BIBidInfoReader{
                             do {
                                 try moc.save()
                             } catch {
-                                print("Error saving context: \(error.localizedDescription)")
-                                if let nserror = error as NSError? {
-                                    print("Core Data Error: \(nserror), \(nserror.userInfo)")
-                                }
+                                errorReason = String(format: "Unable to save managed object context while reading %@ trips at counter %zd.", BIBidInfo().dataFilenameBase())
+                                self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: errorReason)
+                                NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                                 success = false
                                 continueProcessing = false
                                 return false
@@ -3557,6 +3629,8 @@ class BIBidInfoReader{
         let moc = dataSource.managedObjectContext
         let linesDataFileURL = BIBidInfo().downloadDirectory().appendingPathComponent(self.lineFileName)
         if !FileManager.default.fileExists(atPath: linesDataFileURL.path){
+            self.readError = BIBidInfoError.error(for: .linesDataFileNotFound)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
             return false}
         do{
             let linesData = try NSString(contentsOf: linesDataFileURL, encoding: String.Encoding.utf8.rawValue)
@@ -3620,6 +3694,7 @@ class BIBidInfoReader{
             lineRange.length = Int(contentsEnd - lineStart)
             var lineFile:NSString = linesData.substring(with: lineRange) as NSString
             
+            var errorReason:String = ""
             var counter = 0
             var line:BILine?
             var moreLinesToRead = true
@@ -3635,7 +3710,9 @@ class BIBidInfoReader{
                                 try moc.save()
                             }catch{
                                 print("Error saving context: \(error.localizedDescription)")
-                                //handle error
+                                errorReason = String(format:"Unable to save managed object context while reading %@ lines at counter %zd.", BIBidInfo().dataFilenameBase())
+                                self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: errorReason)
+                                NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                                 success = false
                                 return false
                             }
@@ -3647,7 +3724,9 @@ class BIBidInfoReader{
                     
                     digits = lineFile.substring(with: numberRange) as String
                     if !self.isDigitString(digits, trimWhitespace: true){
-                        //handle error
+                        errorReason = String(format: "%@ lines file failed to read line number at counter %zd.", BIBidInfo().dataFilenameBase(), counter)
+                        self.readError = BIBidInfoError.error(for: .linesDataMalformed, underlyingReason: errorReason)
+                        NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                         success = false
                         return false
                     }
@@ -3670,7 +3749,9 @@ class BIBidInfoReader{
                     //Pay
                     digits = lineFile.substring(with: payRange)
                     if !self.isDigitString(digits, trimWhitespace: false){
-                        //handle error
+                        errorReason = String(format: "%@ lines file failed to read pay for line number %@.", BIBidInfo().dataFilenameBase(), (line?.number)!)
+                        self.readError = BIBidInfoError.error(for: .linesDataMalformed, underlyingReason: errorReason)
+                        NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                         success = false
                         return false
                     }
@@ -3682,14 +3763,18 @@ class BIBidInfoReader{
                     //Block minutes
                     digits = lineFile.substring(with: blockHoursRange)
                     if !self.isDigitString(digits, trimWhitespace: true){
-                        //handle error
+                        errorReason = String(format: "%@ lines file failed to read block minutes for line number %@.", BIBidInfo().dataFilenameBase(), (line?.number)!)
+                        self.readError = BIBidInfoError.error(for: .linesDataMalformed, underlyingReason: errorReason)
+                        NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                         success = false
                         return false
                     }
                     blockMinutes = (digits as NSString).integerValue * 60
                     digits = lineFile.substring(with: blockMinutesRange)
                     if !self.isDigitString(digits, trimWhitespace: true){
-                        //handle error
+                        errorReason = String(format: "%@ lines file failed to read block minutes for line number %@.", BIBidInfo().dataFilenameBase(), (line?.number)!)
+                        self.readError = BIBidInfoError.error(for: .linesDataMalformed, underlyingReason: errorReason)
+                        NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                         success = false
                         return false
                     }
@@ -3704,7 +3789,9 @@ class BIBidInfoReader{
                     
                     //Read trips
                     if !self.readTripsForLine(line: line!, record: lineFile, isReserve: false){
-                        //handle error
+                        errorReason = String(format: "%@ lines file failed to read trips for line number %@.", BIBidInfo().dataFilenameBase(), (line?.number)!)
+                        self.readError = BIBidInfoError.error(for: .linesDataMalformed, underlyingReason: errorReason)
+                        NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                         success = false
                         return false
                     }
@@ -3712,7 +3799,9 @@ class BIBidInfoReader{
                     line?.type = BILineType.ReserveLine.name() as NSNumber
                     //Read trips
                     if !self.readTripsForLine(line: line!, record: lineFile, isReserve: true){
-                        //handle error
+                        errorReason = String(format: "%@ lines file failed to read trips for line number %@.", BIBidInfo().dataFilenameBase(), (line?.number)!)
+                        self.readError = BIBidInfoError.error(for: .linesDataMalformed, underlyingReason: errorReason)
+                        NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                         success = false
                         return false
                     }
@@ -3742,9 +3831,9 @@ class BIBidInfoReader{
             for case let line as BILine in objResults{
                 for case let trip as BITrip in line.orderedTrips{
                     let tripOrderedDays = (trip.info?.orderedDays())!
-                    for case let dayInfo as BIDayInfo in tripOrderedDays{
+                    for dayInfo in tripOrderedDays{
                         let dayOrderedLegs = dayInfo.orderedLegs
-                        for case let legInfo as BILegInfo in dayOrderedLegs{
+                        for legInfo in dayOrderedLegs{
                             let arriveCity = (legInfo.arriveCity)!
                             let isIntlCity = self.intlCities[arriveCity]
                             if isIntlCity != nil{
@@ -3786,14 +3875,17 @@ class BIBidInfoReader{
                 do{
                     try moc.save()
                 }catch{
-                    //handle error
-                    print("Error saving line: \(error.localizedDescription)")
+                    errorReason = String(format: "%@ unable to save managed object context after reading trips and lines files.", BIBidInfo().dataFilenameBase())
+                    self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: errorReason)
+                    NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                     success = false
                 }
             }
             self.saveToDictionary()
         }catch{
-            print("Error reading line file: \(error.localizedDescription)")
+            self.readError = BIBidInfoError.error(for: .linesDataFileUnreadable)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+//            print("Error reading line file: \(error.localizedDescription)")
             success = false
         }
         return success
@@ -5009,11 +5101,16 @@ class BIBidInfoReader{
         var success = true
         // Open lines text file
         // Lines text
+        var errorReason = ""
         let directoryURL = BIBidInfo.shared.downloadDirectory()
         let textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.linesTextFilename())
-        let fileInfo = try! String(contentsOf: textFileURL, encoding: .utf8)
+        do{
+
+        let fileInfo = try String(contentsOf: textFileURL, encoding: .utf8)
         if fileInfo.isEmpty && !AppState.shared.isMockData{
-            //handle error
+            errorReason = String(format: "Unable to read %@ for %@ becausethe file is empty", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase())
+            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
             success = false
         }
         // A dictionary to hold the second round trips that are created.
@@ -5043,16 +5140,28 @@ class BIBidInfoReader{
             }
             self.initDerivedPropertiesForLine(line: line!, isReprocessing: false)
         }
+        }catch{
+            errorReason = String(format:"Unable to read %@ for %@ because: %@", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase(), error.localizedDescription)
+            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+        }
+            
         return success
     }
     
     private func readTripLegsPay() -> Bool{
         var success = true
+        var errorReason = ""
         let fileURL = BIBidInfo.shared.downloadDirectory().appendingPathComponent(BIBidInfo.shared.tripsTextFilename())
-        let tripsText = try! String(contentsOf: fileURL, encoding: .utf8)
+        do{
+            
+        
+        let tripsText = try String(contentsOf: fileURL, encoding: .utf8)
         
         if tripsText.isEmpty{
-            //handle error
+            errorReason = String(format:"Unable to read %@ for %@ because the file is empty", fileURL.lastPathComponent, BIBidInfo().dataFilenameBase())
+            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
             return false
         }
 
@@ -5105,11 +5214,19 @@ class BIBidInfoReader{
             }// End day loop
             count += 1
         }
+        }catch{
+            errorReason = String(format:"Unable to read %@ for %@ because: %@", fileURL.lastPathComponent, BIBidInfo().dataFilenameBase(), error.localizedDescription)
+            self.readError = BIBidInfoError.error(for: .tripsTextFileNotFound, underlyingReason: errorReason)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+            return false
+        }
         if dataSource.managedObjectContext.hasChanges {
             do{
                 try dataSource.managedObjectContext.save()
             }catch{
-                //Handle error
+                errorReason = String(format: "%@ unable to save managed object context after reading trips legs pay.", BIBidInfo().dataFilenameBase())
+                self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: errorReason)
+                NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                 success = false
             }
         }
@@ -6554,7 +6671,7 @@ class BIBidInfoReader{
     
     private func readTextFiles() -> Bool{
         let directoryURL = BIBidInfo.shared.downloadDirectory()
-        
+        var errorReason = ""
         //Cover Letter
         var textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.coverLetterFileName())
         var text = ""
@@ -6574,7 +6691,10 @@ class BIBidInfoReader{
                 }
             }
         }catch{
-            print("Error reading text file: \(error.localizedDescription)")
+//            print("Error reading text file: \(error.localizedDescription)")
+            errorReason = String(format: "Unable to read %@ for %@ because: %@", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase(), error.localizedDescription)
+            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
         }
         if !text.isEmpty{
             self.bidPeriod?.addTextFile(withText: text, name: BICoverLetterTextFileName)
@@ -6587,54 +6707,72 @@ class BIBidInfoReader{
         
         //Seniority List
         textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.seniorityListFileName())
-        text = try! String(contentsOf: textFileURL, encoding: .utf8)
-        if text.isEmpty{
-            text = try! String(contentsOf: textFileURL, encoding: .windowsCP1252)
-        }
+        
+        do{
+            text = try String(contentsOf: textFileURL, encoding: .utf8)
+            if text.isEmpty{
+                text = try String(contentsOf: textFileURL, encoding: .windowsCP1252)
+            }
+        
+        
         if !text.isEmpty{
             self.bidPeriod?.addTextFile(withText: text, name: BISeniorityListTextFileName)
         }else{
-            //handle error
-            print("Unable to read Seniority")
+            let errorReason = String(format: "Unable to read %@ for %@ because the file is empty", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase())
+            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+//            print("Unable to read Seniority")
             return false
         }
         
         //Lines text
         textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.linesTextFilename())
-        text = try! String(contentsOf: textFileURL, encoding: .utf8)
+        text = try String(contentsOf: textFileURL, encoding: .utf8)
         if !text.isEmpty{
             self.bidPeriod?.addTextFile(withText: text, name: BILinesTextFileName)
         }else{
-            //handle error
+            let errorReason = String(format: "Unable to read %@ for %@ because the file is empty", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase())
+            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
             return false
         }
         
         //Trips Text
         textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.tripsTextFilename())
-        text = try! String(contentsOf: textFileURL, encoding: .utf8)
+        text = try String(contentsOf: textFileURL, encoding: .utf8)
         if !text.isEmpty{
             self.bidPeriod?.addTextFile(withText: text, name: BITripsTextFileName)
         }else{
-            //handle error
+            let errorReason = String(format: "Unable to read %@ for %@ because the file is empty", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase())
+            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
             return false
         }
         
         //FA Memo text
         if self.isFABid(){
             textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.faMemoTextFilename())
-            text = try! String(contentsOf: textFileURL, encoding: .ascii)
+            text = try String(contentsOf: textFileURL, encoding: .ascii)
             if !text.isEmpty{
                 self.bidPeriod?.addTextFile(withText: text, name: BIFaMemoTextFileName)
             }
         }
-        
+        }catch{
+            let errorReason = String(format: "Unable to read %@ for %@ because: %@", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase(), error.localizedDescription)
+            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+            return false
+        }
         //Save context
         let moc = dataSource.managedObjectContext
         if moc.hasChanges {
             do{
                 try moc.save()
             }catch{
-                print("Error saving context: \(error)")
+//                print("Error saving context: \(error)")
+                let errorReason = String(format: "%@ unable to save managed object context after reading text files.",BIBidInfo().dataFilenameBase())
+                self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: errorReason)
+                NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                 return false
             }
         }

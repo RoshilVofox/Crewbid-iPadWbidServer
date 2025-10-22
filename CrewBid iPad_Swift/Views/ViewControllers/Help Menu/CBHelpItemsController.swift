@@ -4,6 +4,8 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
     
     @IBOutlet weak var menuTitle: UILabel!
     var helpMenuItems: [HelpMenuItem] = []
+    
+    
     struct HelpMenuItem {
         let imageName:String?
         let itemLabel:String?
@@ -26,6 +28,7 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
     @objc func openLatestNews(){
         let storyboard : UIStoryboard = UIStoryboard(name: "HelpMenu", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBNewsController") as! CBNewsController
+        vc.isFromBidVC = true
         self.navigationController?.pushViewController(vc, animated: true)
     }
     

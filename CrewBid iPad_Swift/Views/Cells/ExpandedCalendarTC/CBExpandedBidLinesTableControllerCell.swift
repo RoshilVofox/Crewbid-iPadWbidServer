@@ -94,7 +94,7 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
         flagImage.frame = frame!
         flagImage.tag = 112
         userFlagControl.addSubview(flagImage)
-        userFlagControl.makeCornorRound()
+        userFlagControl.makeCornerRound()
     }
     
     func setupUI() {
@@ -955,6 +955,13 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
                 if (bidPeriod?.swaptimizerStatus?.intValue == Int(CBSwaptimizerStatus.enabled.rawValue) || bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue) {
                     button2.isUserInteractionEnabled = true
                     button2.isOpaque = false
+                    let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+                    longPressGesture.minimumPressDuration = 0.5
+                    longPressGesture.cancelsTouchesInView = false
+                        //longPressGesture.numberOfTapsRequired = 0;
+                    button2.addGestureRecognizer(longPressGesture)
+                    longPressGesture.delegate = self
+                    vacayGestureRecognizers.add(longPressGesture)
                 }
             }
         }
@@ -1062,6 +1069,12 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
                     if (bidPeriod?.swaptimizerStatus?.intValue == Int(CBSwaptimizerStatus.enabled.rawValue) || bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue) {
                         button2.isUserInteractionEnabled = true
                         button2.isOpaque = false
+                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+                        longPressGesture.minimumPressDuration = 0.5
+                        longPressGesture.cancelsTouchesInView = false
+                        button2.addGestureRecognizer(longPressGesture)
+                        longPressGesture.delegate = self
+                        vacayGestureRecognizers.add(longPressGesture)
                     }
                     tripLength -= buttonLength
                     index += buttonLength
@@ -1083,6 +1096,12 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
                             if (bidPeriod?.swaptimizerStatus?.intValue == Int(CBSwaptimizerStatus.enabled.rawValue) || bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue) {
                                 otherButton2.isUserInteractionEnabled = true
                                 otherButton2.isOpaque = false
+                                let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+                                longPressGesture.minimumPressDuration = 0.5
+                                longPressGesture.cancelsTouchesInView = false
+                                otherButton2.addGestureRecognizer(longPressGesture)
+                                longPressGesture.delegate = self
+                                vacayGestureRecognizers.add(longPressGesture)
                             }
                         }
                         tripLength -= buttonLength
@@ -1111,6 +1130,12 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
                     if (bidPeriod?.swaptimizerStatus?.intValue == Int(CBSwaptimizerStatus.enabled.rawValue) || bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue) {
                         button2.isUserInteractionEnabled = true
                         button2.isOpaque = false
+                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+                        longPressGesture.minimumPressDuration = 0.5
+                        longPressGesture.cancelsTouchesInView = false
+                        button2.addGestureRecognizer(longPressGesture)
+                        longPressGesture.delegate = self
+                        vacayGestureRecognizers.add(longPressGesture)
                     }
                 }
             }
@@ -1127,6 +1152,51 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
         tripButtonActionBlock!(tripButton)
     }
    
+    @objc func showSWAPtimizerTripOptionsPopover(_ gesture: UILongPressGestureRecognizer) {
+        
+    }
+    
+    override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if (bidPeriod?.containsVacay!.boolValue)! && (self.bidPeriod?.swaptimizerStatus?.intValue == Int(CBSwaptimizerStatus.enabled.rawValue) || self.bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue) {
+            if vacayGestureRecognizers.contains(gestureRecognizer) {
+                var touchInsideVacayButton = false
+                let count = vacationButtons?.count
+                
+                for i in 0 ..< count! {
+                    var vButton: Any!
+                    vButton = vacationButtons![i]
+                    if let vButton = vButton as? UIImageView {
+                        if vButton.frame.contains(touch.location(in: self.collectionView)) {
+                            touchInsideVacayButton = true
+                        }
+                    }
+                }
+                let FVcount = fvVacationButtons?.count
+                for i in 0 ..< FVcount! {
+                    var vButton: Any!
+                    vButton = fvVacationButtons![i]
+                    if let vButton = vButton as? UIImageView {
+                        if vButton.frame.contains(touch.location(in: self.collectionView)) {
+                            touchInsideVacayButton = true
+                        }
+                    }
+                }
+                if touchInsideVacayButton {
+                    
+                    let count = self.tripButtons?.count
+                    for i in 0 ..< count! {
+                        if let tripButton = self.tripButtons![i] as? CBTripButton {
+                            if tripButton.frame.contains(touch.location(in: self.collectionView)) {
+                                self.tripButtonAction(tripButton)
+                                return false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true
+    }
 }
 
 extension CBExpandedBidLinesTableControllerCell:UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{

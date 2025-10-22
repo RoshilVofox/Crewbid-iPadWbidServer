@@ -111,11 +111,13 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
             nav.pushViewController(vc, animated: false)
             targetVC = vc
         }
-        UIView.transition(with: nav.view,duration: 0.85,options: [.transitionFlipFromLeft],animations: nil)
-        
-        DispatchQueue.main.async {
-            if let lines = lines {
-                targetVC?.insertLines(lines, faBidAllPositions: allPositions)
+//        UIView.transition(with: nav.view,duration: 0.7,options: [.transitionFlipFromLeft],animations: nil)
+        UIView.transition(with: nav.view, duration: 0.75, options: [.transitionFlipFromLeft], animations: nil) { _ in
+            DispatchQueue.main.async {
+                if let lines = lines {
+                    targetVC?.loadViewIfNeeded()
+                    targetVC?.insertLines(lines, faBidAllPositions: allPositions)
+                }
             }
         }
     }

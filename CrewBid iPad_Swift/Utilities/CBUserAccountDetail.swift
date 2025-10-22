@@ -88,7 +88,6 @@ import FirebaseCrashlytics
     
 
      func saveUserInfo() {
-         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
          var dicUserDetails: [String: Any] = [:]
          
          dicUserDetails["CellPhone"] = cellPhone

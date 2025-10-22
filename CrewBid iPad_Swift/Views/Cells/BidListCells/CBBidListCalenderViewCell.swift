@@ -1276,7 +1276,12 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                     if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                         button2.isUserInteractionEnabled = true
                         button2.isOpaque = false
-                        
+                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+                        longPressGesture.minimumPressDuration = 0.5
+                        longPressGesture.cancelsTouchesInView = false
+                        button2.addGestureRecognizer(longPressGesture)
+                        longPressGesture.delegate = self
+                        vacayGestureRecognizers.add(longPressGesture)
                     }
                     tripLength -= buttonLength
                     index += buttonLength
@@ -1299,6 +1304,12 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                             if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                                 otherButton2.isUserInteractionEnabled = true
                                 otherButton2.isOpaque = false
+                                let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+                                longPressGesture.minimumPressDuration = 0.5
+                                longPressGesture.cancelsTouchesInView = false
+                                otherButton2.addGestureRecognizer(longPressGesture)
+                                longPressGesture.delegate = self
+                                vacayGestureRecognizers.add(longPressGesture)
                             }
                         }
                     tripLength -= buttonLength
@@ -1324,6 +1335,13 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                     if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                         button2.isUserInteractionEnabled = true
                         button2.isOpaque = false
+                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+                        longPressGesture.minimumPressDuration = 0.5
+                        longPressGesture.cancelsTouchesInView = false
+                        //longPressGesture.numberOfTapsRequired = 0;
+                        button2.addGestureRecognizer(longPressGesture)
+                        longPressGesture.delegate = self
+                        vacayGestureRecognizers.add(longPressGesture)
                     }
                 }
             }
@@ -1420,6 +1438,12 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                     if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                         button2.isUserInteractionEnabled = true
                         button2.isOpaque = false
+                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+                        longPressGesture.minimumPressDuration = 0.5
+                        longPressGesture.cancelsTouchesInView = false
+                        button2.addGestureRecognizer(longPressGesture)
+                        longPressGesture.delegate = self
+                        vacayGestureRecognizers.add(longPressGesture)
                     }
                     tripLength -= buttonLength
                     index += buttonLength
@@ -1439,6 +1463,12 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                                 if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                                     otherButton2.isUserInteractionEnabled = true
                                     otherButton2.isOpaque = false
+                                    let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+                                    longPressGesture.minimumPressDuration = 0.5
+                                    longPressGesture.cancelsTouchesInView = false
+                                    otherButton2.addGestureRecognizer(longPressGesture)
+                                    longPressGesture.delegate = self
+                                    vacayGestureRecognizers.add(longPressGesture)
                                 }
                             }
                             tripLength -= buttonLength
@@ -1464,88 +1494,157 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                     if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                         button2.isUserInteractionEnabled = true
                         button2.isOpaque = false
+                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+                        longPressGesture.minimumPressDuration = 0.5
+                        longPressGesture.cancelsTouchesInView = false
+                        button2.addGestureRecognizer(longPressGesture)
+                        longPressGesture.delegate = self
+                        vacayGestureRecognizers.add(longPressGesture)
                     }
                 }
             }
         }
-        if (self.bidPeriod.myCalEnabled?.boolValue == true) && self.bidPeriod.isNeedToShowMyCal() && (self.line?.bidOrder == 0) {
-            var vacayButtonFrame = CGRect(x: 0, y: 0, width: itemSize.width, height: itemSize.height)
-            var buttonImage:UIImage? = nil
-            var index = self.calendarData!.indexForDateGMT(date: (self.bidPeriod.myCalStartDate)!)
-            let length = self.calculateLengthBetween(startDate: (self.bidPeriod.myCalStartDate)!, endDate: (self.bidPeriod.myCalEndDate)!)
-            var tripLength = 0
-            if index < 0 {
-                tripLength = length.intValue + index
-            }else if index > (daysInCalendar - 1){
-                tripLength = 0
-            }else{
-                tripLength = length.intValue
-            }
-            let column = index % 7
-            var buttonLength = 0
-         
-            
-            // If vacation pill will go across two rows in calendar, create both buttons.
-            if column + tripLength > 7 {
-                buttonLength = 7 - column
-                vacayButtonFrame.size.width = CGFloat(buttonLength) * itemSize.width
-                buttonImage = UIImage(named: "TripButton-rounded-left-red2_iOS7")?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
-                vacayButtonFrame.size.width = min(CGFloat(tripLength), 7) * itemSize.width
-                let button2 = UIImageView(frame: vacayButtonFrame)
-                button2.image = buttonImage
-                fvVacationButtons?.replaceObject(at: index, with: button2)
-                button2.alpha = 0.5
-                self.calendarCollectionView.addSubview(button2)
-                
-                if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
-                    button2.isUserInteractionEnabled = true
-                    button2.isOpaque = false
-                }
-                tripLength -= buttonLength
-                index += buttonLength
-                while tripLength > 0 {
-                    buttonLength = tripLength > 7 ? 7 :tripLength
-                    if index < daysInCalendar {
-                        vacayButtonFrame.size.width = min(CGFloat(buttonLength), 7) * itemSize.width
-                        
-                        if tripLength > 7{
-                            vacayButtonFrame.size.width += 15
-                        }
-                        buttonImage = UIImage(named: "TripButton-rounded-right-red2_iOS7")?.resizableImage(withCapInsets: rightRoundedInsets, resizingMode: .stretch)
-                        let otherButton2 = UIImageView(frame: vacayButtonFrame)
-                        otherButton2.image = buttonImage
-                        fvVacationButtons?.replaceObject(at: index, with: otherButton2)
-                        otherButton2.alpha = 0.5
-                        self.calendarCollectionView.addSubview(otherButton2)
-                        if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
-                            otherButton2.isUserInteractionEnabled = true
-                            otherButton2.isOpaque = false
-                        }
-                    }
-                    tripLength -= buttonLength
-                    index += buttonLength
-                }
-            }
-            else{// Vacation in one row only of the calendar.
-                buttonImage = UIImage(named: "TripButton-rounded-both-red2_iOS7")?.resizableImage(withCapInsets: bothRoundedInsets, resizingMode: .stretch)
-                vacayButtonFrame.size.width = CGFloat(tripLength) * itemSize.width
-                let button2 = UIImageView(frame: vacayButtonFrame)
-                button2.image = buttonImage
-                fvVacationButtons?.replaceObject(at: index, with: button2)
-                button2.alpha = 0.5
-                self.calendarCollectionView.addSubview(button2)
-                
-                if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
-                    button2.isUserInteractionEnabled = true
-                    button2.isOpaque = false
-                }
-            }
-        }
+//        if (self.bidPeriod.myCalEnabled?.boolValue == true) && self.bidPeriod.isNeedToShowMyCal() && (self.line?.bidOrder == 0) {
+//            var vacayButtonFrame = CGRect(x: 0, y: 0, width: itemSize.width, height: itemSize.height)
+//            var buttonImage:UIImage? = nil
+//            var index = self.calendarData!.indexForDateGMT(date: (self.bidPeriod.myCalStartDate)!)
+//            let length = self.calculateLengthBetween(startDate: (self.bidPeriod.myCalStartDate)!, endDate: (self.bidPeriod.myCalEndDate)!)
+//            var tripLength = 0
+//            if index < 0 {
+//                tripLength = length.intValue + index
+//            }else if index > (daysInCalendar - 1){
+//                tripLength = 0
+//            }else{
+//                tripLength = length.intValue
+//            }
+//            let column = index % 7
+//            var buttonLength = 0
+//         
+//            
+//            // If vacation pill will go across two rows in calendar, create both buttons.
+//            if column + tripLength > 7 {
+//                buttonLength = 7 - column
+//                vacayButtonFrame.size.width = CGFloat(buttonLength) * itemSize.width
+//                buttonImage = UIImage(named: "TripButton-rounded-left-red2_iOS7")?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
+//                vacayButtonFrame.size.width = min(CGFloat(tripLength), 7) * itemSize.width
+//                let button2 = UIImageView(frame: vacayButtonFrame)
+//                button2.image = buttonImage
+//                fvVacationButtons?.replaceObject(at: index, with: button2)
+//                button2.alpha = 0.5
+//                self.calendarCollectionView.addSubview(button2)
+//                
+//                if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
+//                    button2.isUserInteractionEnabled = true
+//                    button2.isOpaque = false
+//                    let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                    longPressGesture.minimumPressDuration = 0.5
+//                    longPressGesture.cancelsTouchesInView = false
+//                    button2.addGestureRecognizer(longPressGesture)
+//                    longPressGesture.delegate = self
+//                    vacayGestureRecognizers.add(longPressGesture)
+//                }
+//                tripLength -= buttonLength
+//                index += buttonLength
+//                while tripLength > 0 {
+//                    buttonLength = tripLength > 7 ? 7 :tripLength
+//                    if index < daysInCalendar {
+//                        vacayButtonFrame.size.width = min(CGFloat(buttonLength), 7) * itemSize.width
+//                        
+//                        if tripLength > 7{
+//                            vacayButtonFrame.size.width += 15
+//                        }
+//                        buttonImage = UIImage(named: "TripButton-rounded-right-red2_iOS7")?.resizableImage(withCapInsets: rightRoundedInsets, resizingMode: .stretch)
+//                        let otherButton2 = UIImageView(frame: vacayButtonFrame)
+//                        otherButton2.image = buttonImage
+//                        fvVacationButtons?.replaceObject(at: index, with: otherButton2)
+//                        otherButton2.alpha = 0.5
+//                        self.calendarCollectionView.addSubview(otherButton2)
+//                        if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
+//                            otherButton2.isUserInteractionEnabled = true
+//                            otherButton2.isOpaque = false
+//                            let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                            longPressGesture.minimumPressDuration = 0.5
+//                            longPressGesture.cancelsTouchesInView = false
+//                            button2.addGestureRecognizer(longPressGesture)
+//                            longPressGesture.delegate = self
+//                            vacayGestureRecognizers.add(longPressGesture)
+//                        }
+//                    }
+//                    tripLength -= buttonLength
+//                    index += buttonLength
+//                }
+//            }
+//            else{// Vacation in one row only of the calendar.
+//                buttonImage = UIImage(named: "TripButton-rounded-both-red2_iOS7")?.resizableImage(withCapInsets: bothRoundedInsets, resizingMode: .stretch)
+//                vacayButtonFrame.size.width = CGFloat(tripLength) * itemSize.width
+//                let button2 = UIImageView(frame: vacayButtonFrame)
+//                button2.image = buttonImage
+//                fvVacationButtons?.replaceObject(at: index, with: button2)
+//                button2.alpha = 0.5
+//                self.calendarCollectionView.addSubview(button2)
+//                
+//                if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
+//                    button2.isUserInteractionEnabled = true
+//                    button2.isOpaque = false
+//                    let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                    longPressGesture.minimumPressDuration = 0.5
+//                    longPressGesture.cancelsTouchesInView = false
+//                    button2.addGestureRecognizer(longPressGesture)
+//                    longPressGesture.delegate = self
+//                    vacayGestureRecognizers.add(longPressGesture)
+//                }
+//            }
+//        }
         self.calendarCollectionView.reloadData()
         self.calendarCollectionView.tripButtons = tripButtons
         self.calendarCollectionView.vacationButtons = vacationButtons
         self.calendarCollectionView.fvVacationButtons = fvVacationButtons
         self.calendarCollectionView.cfvVacationButtons = cfvVacationButtons
+    }
+    
+    @objc func showSWAPtimizerTripOptionsPopover(_ gesture: UILongPressGestureRecognizer) {
+        
+    }
+    
+    override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if bidPeriod.containsVacay!.boolValue && (self.bidPeriod.swaptimizerStatus?.intValue == Int(CBSwaptimizerStatus.enabled.rawValue) || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue) {
+            if vacayGestureRecognizers.contains(gestureRecognizer) {
+                var touchInsideVacayButton = false
+                let count = vacationButtons?.count
+                for i in 0 ..< count! {
+                    var vButton: Any!
+                    vButton = vacationButtons![i]
+                    if let vButton = vButton as? UIImageView {
+                        if vButton.frame.contains(touch.location(in: self.calendarCollectionView)) {
+                            touchInsideVacayButton = true
+                        }
+                    }
+                }
+                let FVcount = fvVacationButtons?.count
+                for i in 0 ..< FVcount! {
+                    var vButton: Any!
+                    vButton = fvVacationButtons![i]
+                    if let vButton = vButton as? UIImageView {
+                        if vButton.frame.contains(touch.location(in: self.calendarCollectionView)) {
+                            touchInsideVacayButton = true
+                        }
+                    }
+                }
+                if touchInsideVacayButton {
+                    // Check to make sure it wasn't a touch on one of the tripButtons inside the vacayButton
+                    let count = self.tripButtons?.count
+                    for i in 0 ..< count! {
+                        if let tripButton = self.tripButtons![i] as? CBTripButton {
+                            if tripButton.frame.contains(touch.location(in: self.calendarCollectionView)) {
+                                self.tripButtonAction(tripButton)
+                                return false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true
     }
     
     func calculateLengthBetween(startDate: Date, endDate: Date) -> NSNumber {

@@ -378,15 +378,18 @@ class BICalendarData {
     // Convert a date to a standardized format (setting hour to 12:00 PM)
 
     func dateForDate(date: Date?) -> Date? {
-        var comps: DateComponents? = nil
-        comps = Calendar.current.dateComponents([.day,.month,.year], from: date!)
-        let day = comps?.day ?? 0
-        let month = comps?.month ?? 0
-        comps?.day = day
-        comps?.month = month
-        comps?.hour = 12
-        let returnDate = Calendar(identifier: .gregorian).date(from: comps!)
-        return returnDate
+        guard let date = date else { return nil }
+         
+         // Use the same calendar and timezone as the Obj-C _calendar
+         var calendar = Calendar.current
+        calendar.timeZone = self.calendar!.timeZone  // assuming you have _calendar as a stored property
+         
+         var comps = calendar.dateComponents([.day, .month, .year], from: date)
+         comps.hour = 12
+         comps.minute = 0
+         comps.second = 0
+         
+         return calendar.date(from: comps)
     }
     
     // Create a date for a specific day of the month

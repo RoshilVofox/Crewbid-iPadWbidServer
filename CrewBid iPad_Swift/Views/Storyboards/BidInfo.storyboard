@@ -910,6 +910,7 @@
                     <connections>
                         <outlet property="backBtn" destination="Ol9-g8-BRg" id="DtN-Rv-lks"/>
                         <outlet property="descriptionTextView" destination="0HF-lW-0h4" id="4SO-i1-HQo"/>
+                        <outlet property="nextBtn" destination="Ruh-AA-Xe7" id="VTA-QI-e3H"/>
                         <outlet property="textEmpNum" destination="Vxs-fn-amG" id="ZjM-f0-QwS"/>
                         <outlet property="titleLabel" destination="p09-Ib-64s" id="3Y2-bE-DeC"/>
                     </connections>
@@ -1438,7 +1439,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="52W-dB-z6U" userLabel="Destructive Button">
-                                <rect key="frame" x="130" y="230" width="340" height="45"/>
+                                <rect key="frame" x="130" y="345" width="340" height="45"/>
                                 <color key="backgroundColor" red="0.87058823529999996" green="0.44705882349999998" blue="0.1019607843" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="hiu-o0-XIh"/>
@@ -1477,7 +1478,7 @@
                                 </constraints>
                             </view>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" text="Message Text" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="PQr-kv-4hT" userLabel="Message Text View">
-                                <rect key="frame" x="20" y="70" width="560" height="150"/>
+                                <rect key="frame" x="20" y="75" width="560" height="220"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="150" id="jed-SS-XwC"/>
                                 </constraints>
@@ -1486,7 +1487,7 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I6G-Tg-6hU" userLabel="Destructive Button">
-                                <rect key="frame" x="130" y="295" width="340" height="45"/>
+                                <rect key="frame" x="130" y="410" width="340" height="45"/>
                                 <color key="backgroundColor" red="0.3411764706" green="0.1333333333" blue="0.70196078429999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="Soj-ZF-jMb"/>
@@ -1509,15 +1510,16 @@
                         <viewLayoutGuide key="safeArea" id="nhk-ep-aIJ"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="52W-dB-z6U" firstAttribute="top" secondItem="PQr-kv-4hT" secondAttribute="bottom" constant="10" id="2VS-Y7-olj"/>
+                            <constraint firstItem="52W-dB-z6U" firstAttribute="top" relation="lessThanOrEqual" secondItem="PQr-kv-4hT" secondAttribute="bottom" constant="50" id="2VS-Y7-olj"/>
                             <constraint firstItem="8d6-Nu-o6f" firstAttribute="top" secondItem="8cx-ag-hov" secondAttribute="top" id="48s-9g-LnN"/>
                             <constraint firstItem="I6G-Tg-6hU" firstAttribute="width" secondItem="52W-dB-z6U" secondAttribute="width" id="4NB-l7-mEx"/>
                             <constraint firstItem="I6G-Tg-6hU" firstAttribute="top" secondItem="52W-dB-z6U" secondAttribute="bottom" constant="20" id="9bi-9A-JKu"/>
+                            <constraint firstItem="nhk-ep-aIJ" firstAttribute="bottom" secondItem="I6G-Tg-6hU" secondAttribute="bottom" constant="20" id="B8n-5Y-Rg3"/>
                             <constraint firstItem="nhk-ep-aIJ" firstAttribute="trailing" secondItem="PQr-kv-4hT" secondAttribute="trailing" constant="20" id="CLu-Qc-go7"/>
                             <constraint firstItem="8d6-Nu-o6f" firstAttribute="leading" secondItem="nhk-ep-aIJ" secondAttribute="leading" id="JX4-Jb-TZe"/>
                             <constraint firstItem="I6G-Tg-6hU" firstAttribute="height" secondItem="52W-dB-z6U" secondAttribute="height" id="NpK-fj-SRp"/>
                             <constraint firstItem="8d6-Nu-o6f" firstAttribute="trailing" secondItem="nhk-ep-aIJ" secondAttribute="trailing" id="SiP-lj-X7W"/>
-                            <constraint firstItem="PQr-kv-4hT" firstAttribute="top" secondItem="8d6-Nu-o6f" secondAttribute="bottom" constant="20" id="kxB-hv-uPY"/>
+                            <constraint firstItem="PQr-kv-4hT" firstAttribute="top" secondItem="8d6-Nu-o6f" secondAttribute="bottom" constant="25" id="kxB-hv-uPY"/>
                             <constraint firstItem="52W-dB-z6U" firstAttribute="centerX" secondItem="8cx-ag-hov" secondAttribute="centerX" id="s1j-ou-b4h"/>
                             <constraint firstItem="I6G-Tg-6hU" firstAttribute="centerX" secondItem="8cx-ag-hov" secondAttribute="centerX" id="unb-xh-c0y"/>
                             <constraint firstItem="PQr-kv-4hT" firstAttribute="leading" secondItem="nhk-ep-aIJ" secondAttribute="leading" constant="20" id="yC9-Bx-T92"/>
@@ -1709,16 +1711,16 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="secondarySystemBackgroundColor">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray3Color">
-            <color red="0.7803921568627451" green="0.7803921568627451" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.78039215689999997" green="0.78039215689999997" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
