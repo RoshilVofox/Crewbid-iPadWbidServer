@@ -2083,9 +2083,13 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                         // TODO: handle success logic here
                     case .failure(let error):
                         print("Failed to send vacation details with error:", error)
-                        // TODO: handle offline event fallback here
-                        if let monthValue = self.bidPeriod?.month {
-//                             objEvent.sendOfflineDataForTimeOut(saveURL.absoluteString, month: monthValue)
+                        if let nsError = error as NSError?, nsError.code == NSURLErrorTimedOut {
+                            let offlineEvent = CBOfflineEvents()
+                            if let monthValue = self.bidPeriod?.month {
+                                offlineEvent.sendOfflineDataForTimeOut(url: url, month: monthValue)
+                            } else {
+                                offlineEvent.sendOfflineDataForTimeOut(url: url, month: nil)
+                            }
                         }
                     }
                 }

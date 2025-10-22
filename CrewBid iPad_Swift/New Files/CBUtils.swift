@@ -1133,6 +1133,11 @@ class CBUtils{
             let session = URLSession(configuration: config)
             let task = session.dataTask(with: request) { data, response, error in
                 
+                if let error = error as NSError?, error.code == NSURLErrorTimedOut {
+                    let offlineEvent = CBOfflineEvents()
+                    offlineEvent.sendOfflineDataForTimeOut(url: url.absoluteString, month: nil)
+                }
+                
                 guard let data = data else {
                     completion(false)
                     return

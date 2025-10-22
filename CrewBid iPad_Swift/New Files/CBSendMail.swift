@@ -199,7 +199,7 @@ class CBSendMail{
             // handle request error
             if let error = error as NSError?, error.code == NSURLErrorTimedOut {
                 let objEvent = CBOfflineEvents()
-    //            objEvent.sendOfflineDataForTimeOut(url.absoluteString, month: nil)
+                objEvent.sendOfflineDataForTimeOut(url: url.absoluteString, month: nil)
             }
             
             guard let data = data, let httpResponse = response as? HTTPURLResponse else { return }

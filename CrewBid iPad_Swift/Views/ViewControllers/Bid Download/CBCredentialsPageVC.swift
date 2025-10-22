@@ -565,7 +565,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             
         }
         //MARK:  Bulk Data
-        if UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") == true {
+        else if UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") == true {
             let dictionary = GlobalBidInfo.shared.allDomicileDownloadDictionary
             let tableViewData: [String] = []
             let isBothSelected: Bool = (dictionary["both"] as? Bool)!
@@ -604,11 +604,13 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                 switch result {
                 case .success(let fileURL):
                     print("File unzipped at: \(fileURL)")
-                    NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
+                    NotificationCenter.default.post(name: Notification.Name("BidDownloaded"), object: nil)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                         BIBidInfoReader.shared.checkForSeniorityVacationAndReadBidInfo() { success in
                             if success {
                                 self.loginActions()
+                            }else {
+                                NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
                             }
                         }
                     }
@@ -622,7 +624,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     
     private func handleNewBidDownloadSuccess(fileURL: URL) {
         print("File unzipped at: \(fileURL)")
-        NotificationCenter.default.post(name: Notification.Name("DownloadingBid"), object: nil)
+        NotificationCenter.default.post(name: Notification.Name("BidDownloaded"), object: nil)
         
         guard !self.hasStartedBidProcessing else { return }
         self.hasStartedBidProcessing = true

@@ -215,9 +215,10 @@ class BIBidInfoReader{
         func finishParsingBid(success: Bool) {
             if success {
                 NotificationCenter.default.post(name: NSNotification.Name("ReloadCollectionView"), object: nil)
-                NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+//                NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+                NotificationCenter.default.post(name: Notification.Name("BidParsingCompleted"), object: nil)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
+//                    NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
                     NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
                     completion(true)
                 }
@@ -296,12 +297,14 @@ class BIBidInfoReader{
             success = self.readTripsFA()
             if success{
                 print("Done Reading Trips FA")
+                NotificationCenter.default.post(name: Notification.Name("ReadingTrips"), object: nil)
                 success = self.readLinesFA()
                 if success{
                     print("Done Reading Lines FA")
+                    NotificationCenter.default.post(name: Notification.Name("ReadingLines"), object: nil)
                 }
                 if success{
-                  success = self.addDefaultFilterRules(context:dataSource.managedObjectContext)
+                    success = self.addDefaultFilterRules(context:dataSource.managedObjectContext)
                 }
                 if success{
                     if AppState.shared.isHistoricBid{
@@ -309,12 +312,9 @@ class BIBidInfoReader{
                     }else{
                         print("Reading text files")
                         success = self.readTextFiles()
-                    }
+                        }
                 }
-                if success && self.isFirstRoundBid(){
-                    self.vacationScan()
-                }
-                if success && self.isSecondRoundBid(){
+                if success && (self.isFirstRoundBid() || self.isSecondRoundBid()){
                     self.vacationScan()
                 }
             }
@@ -323,9 +323,11 @@ class BIBidInfoReader{
             success = self.readTrips()
             if success{
                 print("Done Reading Trips")
+                NotificationCenter.default.post(name: Notification.Name("ReadingTrips"), object: nil)
                 success = self.readLines()
                 if success{
                     print("Done Reading Lines")
+                    NotificationCenter.default.post(name: Notification.Name("ReadingLines"), object: nil)
                 }
             }
                 if success && self.isSecondRoundBid(){
@@ -2858,6 +2860,12 @@ class BIBidInfoReader{
             let legInfoRange = NSRange(location: 5, length: 72)
             let record6CountRange = NSRange(location: 79, length: 1)
 
+            let totalTrips = Float(tripsData.components(separatedBy: .newlines)
+                .filter { $0.count == recordLength && $0.character(at: recordTypeCharIndex) == "1" }.count)
+            let progressStart: Float = 0.34
+            let progressRange: Float = 0.33
+            var lastProgressSent: Float = 0.34
+            
             var trips:[String:BITripInfo] = [:]
             tripsData.enumerateLines { (info, stop) in
                 if info.first == "*"{
@@ -2877,6 +2885,13 @@ class BIBidInfoReader{
                     // Trip number, AM or PM, length (number of calendar days), number
                     // of duty periods.
                 case "1": counter += 1
+                    
+                    let progress = progressStart + progressRange * Float(counter) / totalTrips
+                    if progress - lastProgressSent >= 0.005 {
+                        lastProgressSent = progress
+                        NotificationCenter.default.post(name: Notification.Name("UpdateProgress"), object: nil, userInfo: ["progress": progress])
+                    }
+                    
                     if counter%10 == 0{
                        if moc.hasChanges{
                             do{
@@ -2892,6 +2907,8 @@ class BIBidInfoReader{
                             }
                         }
                     }
+    
+                    
                     tripInfo = BITripInfo(context: moc)
                     //set trip info properties for record 1
                     if !self.setPropertiesForTripInfoRecord1(tripInfo: tripInfo!, record1: info){
@@ -3111,6 +3128,12 @@ class BIBidInfoReader{
             var digits:String = ""
             var pLines:[Int:BILine] = [:]
             
+            let totalLines = Float(linesData.components(separatedBy: .newlines).filter { !$0.isEmpty && $0.character(at: 0) != "*" }.count)
+            let progressStart: Float = 0.67
+            let progressRange: Float = 0.33
+            var lastProgressSent: Float = 0.67
+            
+            
             linesData.enumerateLines { (info, stop) in
                 if info.length > 80{
                     let c = info[info.index(info.startIndex, offsetBy: typetopsCharIndex)]
@@ -3138,6 +3161,12 @@ class BIBidInfoReader{
                                 NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                             }
                         }
+                    }
+                
+                    let progress = progressStart + progressRange * Float(counter) / totalLines
+                    if progress - lastProgressSent >= 0.005 { // 0.5% increment
+                        lastProgressSent = progress
+                        NotificationCenter.default.post(name: Notification.Name("UpdateProgress"),object: nil,userInfo: ["progress": progress])
                     }
                     
                     if isContinuedLine{
@@ -3406,6 +3435,12 @@ class BIBidInfoReader{
             var prevLeg:BILegInfo?
             var continueProcessing: Bool = true
             
+            let totalLength = Float(tripsData.length)
+            let progressStart: Float = 0.34
+            let progressRange: Float = 0.33
+            var lastProgressSent: Float = 0.34
+            
+            
             if moc.persistentStoreCoordinator?.persistentStores.count == 0{
                 errorReason = "No persistent stores available."
                 self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: errorReason)
@@ -3430,6 +3465,19 @@ class BIBidInfoReader{
                                 return false
                             }
                         }
+                    }
+                    let currentPosition = Float(contentsEnd)
+                    var progress = progressStart + (progressRange * (currentPosition / totalLength))
+                    
+                    // clamp to 0.75 maximum
+                    if progress > progressStart + progressRange {
+                        progress = progressStart + progressRange
+                    }
+                    
+                    // only post if progress increased meaningfully (0.5%)
+                    if progress - lastProgressSent >= 0.005 {
+                        lastProgressSent = progress
+                        NotificationCenter.default.post(name: Notification.Name("UpdateProgress"), object: nil, userInfo: ["progress": progress])
                     }
                     
                     if tripInfo != nil{
@@ -3687,6 +3735,10 @@ class BIBidInfoReader{
             var lineStart: UInt = 0
             var lineEnd: UInt = 0
             var contentsEnd: UInt = 0
+            let totalLength = Float(linesData.length)
+            let progressStart: Float = 0.67
+            let progressRange: Float = 0.33
+            var lastProgressSent: Float = 0.67
             
             let fileLength = linesData.length
             linesData.getLineStart(&lineStart, end: &lineEnd, contentsEnd: &contentsEnd, for: lineRange)
@@ -3718,6 +3770,21 @@ class BIBidInfoReader{
                             }
                         }
                     }
+                    
+                    let currentPosition = Float(contentsEnd)
+                    var progress = progressStart + (progressRange * (currentPosition / totalLength))
+                    
+                    // clamp to 0.75 maximum
+                    if progress > progressStart + progressRange {
+                        progress = progressStart + progressRange
+                    }
+                    
+                    // only post if progress increased meaningfully (0.5%)
+                    if progress - lastProgressSent >= 0.005 {
+                        lastProgressSent = progress
+                        NotificationCenter.default.post(name: Notification.Name("UpdateProgress"), object: nil, userInfo: ["progress": progress])
+                    }
+                    
                     if (line != nil){
                         self.initDerivedPropertiesForLine(line: line!, isReprocessing: false)
                     }
@@ -6669,113 +6736,171 @@ class BIBidInfoReader{
         }
     }
     
-    private func readTextFiles() -> Bool{
+//    private func readTextFiles() -> Bool{
+//        let directoryURL = BIBidInfo.shared.downloadDirectory()
+//        var errorReason = ""
+//        //Cover Letter
+//        var textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.coverLetterFileName())
+//        var text = ""
+//        do{
+//            let data = try Data(NSData(contentsOf: textFileURL))
+//            if self.isFABid(){
+//                if let asciitext = String(data: data, encoding: .ascii){
+//                    text = asciitext
+//                }else if let cp1252text = String(data: data, encoding: .windowsCP1252){
+//                    text = cp1252text
+//                }
+//            }else{
+//                if let utf8text = String(data: data, encoding: .utf8){
+//                    text = utf8text
+//                }else if let cp1252text = String(data: data, encoding: .windowsCP1252){
+//                    text = cp1252text
+//                }
+//            }
+//        }catch{
+////            print("Error reading text file: \(error.localizedDescription)")
+//            errorReason = String(format: "Unable to read %@ for %@ because: %@", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase(), error.localizedDescription)
+//            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
+//            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+//        }
+//        if !text.isEmpty{
+//            self.bidPeriod?.addTextFile(withText: text, name: BICoverLetterTextFileName)
+//        }else{
+//            if AppState.shared.isMockData{
+//                return true
+//            }
+//            return false
+//        }
+//        
+//        //Seniority List
+//        textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.seniorityListFileName())
+//        
+//        do{
+//            text = try String(contentsOf: textFileURL, encoding: .utf8)
+//            if text.isEmpty{
+//                text = try String(contentsOf: textFileURL, encoding: .windowsCP1252)
+//            }
+//        
+//        
+//        if !text.isEmpty{
+//            self.bidPeriod?.addTextFile(withText: text, name: BISeniorityListTextFileName)
+//        }else{
+//            let errorReason = String(format: "Unable to read %@ for %@ because the file is empty", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase())
+//            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
+//            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+////            print("Unable to read Seniority")
+//            return false
+//        }
+//        
+//        //Lines text
+//        textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.linesTextFilename())
+//        text = try String(contentsOf: textFileURL, encoding: .utf8)
+//        if !text.isEmpty{
+//            self.bidPeriod?.addTextFile(withText: text, name: BILinesTextFileName)
+//        }else{
+//            let errorReason = String(format: "Unable to read %@ for %@ because the file is empty", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase())
+//            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
+//            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+//            return false
+//        }
+//        
+//        //Trips Text
+//        textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.tripsTextFilename())
+//        text = try String(contentsOf: textFileURL, encoding: .utf8)
+//        if !text.isEmpty{
+//            self.bidPeriod?.addTextFile(withText: text, name: BITripsTextFileName)
+//        }else{
+//            let errorReason = String(format: "Unable to read %@ for %@ because the file is empty", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase())
+//            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
+//            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+//            return false
+//        }
+//        
+//        //FA Memo text
+//        if self.isFABid(){
+//            textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.faMemoTextFilename())
+//            text = try String(contentsOf: textFileURL, encoding: .ascii)
+//            if !text.isEmpty{
+//                self.bidPeriod?.addTextFile(withText: text, name: BIFaMemoTextFileName)
+//            }
+//        }
+//        }catch{
+//            let errorReason = String(format: "Unable to read %@ for %@ because: %@", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase(), error.localizedDescription)
+//            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
+//            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+//            return false
+//        }
+//        //Save context
+//        let moc = dataSource.managedObjectContext
+//        if moc.hasChanges {
+//            do{
+//                try moc.save()
+//            }catch{
+////                print("Error saving context: \(error)")
+//                let errorReason = String(format: "%@ unable to save managed object context after reading text files.",BIBidInfo().dataFilenameBase())
+//                self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: errorReason)
+//                NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+//                return false
+//            }
+//        }
+//        return true
+//    }
+    
+    private func readTextFiles() -> Bool {
         let directoryURL = BIBidInfo.shared.downloadDirectory()
         var errorReason = ""
-        //Cover Letter
-        var textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.coverLetterFileName())
-        var text = ""
-        do{
-            let data = try Data(NSData(contentsOf: textFileURL))
-            if self.isFABid(){
-                if let asciitext = String(data: data, encoding: .ascii){
-                    text = asciitext
-                }else if let cp1252text = String(data: data, encoding: .windowsCP1252){
-                    text = cp1252text
-                }
-            }else{
-                if let utf8text = String(data: data, encoding: .utf8){
-                    text = utf8text
-                }else if let cp1252text = String(data: data, encoding: .windowsCP1252){
-                    text = cp1252text
-                }
-            }
-        }catch{
-//            print("Error reading text file: \(error.localizedDescription)")
-            errorReason = String(format: "Unable to read %@ for %@ because: %@", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase(), error.localizedDescription)
-            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
-            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
-        }
-        if !text.isEmpty{
-            self.bidPeriod?.addTextFile(withText: text, name: BICoverLetterTextFileName)
-        }else{
-            if AppState.shared.isMockData{
-                return true
-            }
-            return false
-        }
-        
-        //Seniority List
-        textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.seniorityListFileName())
-        
-        do{
-            text = try String(contentsOf: textFileURL, encoding: .utf8)
-            if text.isEmpty{
-                text = try String(contentsOf: textFileURL, encoding: .windowsCP1252)
-            }
-        
-        
-        if !text.isEmpty{
-            self.bidPeriod?.addTextFile(withText: text, name: BISeniorityListTextFileName)
-        }else{
-            let errorReason = String(format: "Unable to read %@ for %@ because the file is empty", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase())
-            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
-            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
-//            print("Unable to read Seniority")
-            return false
-        }
-        
-        //Lines text
-        textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.linesTextFilename())
-        text = try String(contentsOf: textFileURL, encoding: .utf8)
-        if !text.isEmpty{
-            self.bidPeriod?.addTextFile(withText: text, name: BILinesTextFileName)
-        }else{
-            let errorReason = String(format: "Unable to read %@ for %@ because the file is empty", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase())
-            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
-            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
-            return false
-        }
-        
-        //Trips Text
-        textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.tripsTextFilename())
-        text = try String(contentsOf: textFileURL, encoding: .utf8)
-        if !text.isEmpty{
-            self.bidPeriod?.addTextFile(withText: text, name: BITripsTextFileName)
-        }else{
-            let errorReason = String(format: "Unable to read %@ for %@ because the file is empty", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase())
-            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
-            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
-            return false
-        }
-        
-        //FA Memo text
-        if self.isFABid(){
-            textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.faMemoTextFilename())
-            text = try String(contentsOf: textFileURL, encoding: .ascii)
-            if !text.isEmpty{
-                self.bidPeriod?.addTextFile(withText: text, name: BIFaMemoTextFileName)
-            }
-        }
-        }catch{
-            let errorReason = String(format: "Unable to read %@ for %@ because: %@", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase(), error.localizedDescription)
-            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
-            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
-            return false
-        }
-        //Save context
         let moc = dataSource.managedObjectContext
+        
+        // Files to read in order
+        var filesToRead: [(fileName: String, textFileName: String)] = [
+            (BIBidInfo.shared.coverLetterFileName(), BICoverLetterTextFileName),
+            (BIBidInfo.shared.seniorityListFileName(), BISeniorityListTextFileName),
+            (BIBidInfo.shared.linesTextFilename(), BILinesTextFileName),
+            (BIBidInfo.shared.tripsTextFilename(), BITripsTextFileName)
+        ]
+        
+        // FA Memo only for FA bid
+        if self.isFABid() {
+            filesToRead.append((BIBidInfo.shared.faMemoTextFilename(), BIFaMemoTextFileName))
+        }
+        
+        for (fileName, textFileName) in filesToRead {
+            let fileURL = directoryURL.appendingPathComponent(fileName)
+            var text = ""
+            do {
+                let data = try Data(NSData(contentsOf: fileURL))
+                if self.isFABid() && fileName == BIBidInfo.shared.coverLetterFileName() {
+                    text = String(data: data, encoding: .ascii) ?? String(data: data, encoding: .windowsCP1252) ?? ""
+                } else {
+                    text = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .windowsCP1252) ?? ""
+                }
+            } catch {
+                errorReason = "Unable to read \(fileURL.lastPathComponent) because: \(error.localizedDescription)"
+                self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
+                NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+                return false
+            }
+            
+            if !text.isEmpty {
+                self.bidPeriod?.addTextFile(withText: text, name: textFileName)
+            } else {
+                if AppState.shared.isMockData { continue }
+                return false
+            }
+        }
+        
+        // Save context after all files
         if moc.hasChanges {
-            do{
+            do {
                 try moc.save()
-            }catch{
-//                print("Error saving context: \(error)")
-                let errorReason = String(format: "%@ unable to save managed object context after reading text files.",BIBidInfo().dataFilenameBase())
+            } catch {
+                errorReason = "\(BIBidInfo().dataFilenameBase()) unable to save managed object context after reading text files."
                 self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: errorReason)
                 NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
                 return false
             }
         }
+        
         return true
     }
     
