@@ -1356,7 +1356,8 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                             pRule.variables = variables
                         }
                         else {
-                            self.calculateCommuteMannualfilter(pRule: pRule)
+                            
+                            self.calculateCommuteMannualfilter(variables: pRule.variables!)
                         }
                     }
                     else if pRule.category?.intValue == BIFilterRuleCategory.BIOvernightCitiesBulkRuleCategory.rawValue {
@@ -1399,6 +1400,8 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                         }
                         try? self.context.save()
                         let thirdCellValue = preset.commutabilityFilterDetails!["thirdCellValue"] as? NSNumber
+                        let secondCellValue = preset.commutabilityFilterDetails!["secondCellValue"] as? NSNumber
+                        let value = preset.commutabilityFilterDetails!["value"] as? NSNumber
                         let city = preset.commutabilityFilterDetails!["city"] as? String
                         let checkInTime = preset.commutabilityFilterDetails!["checkInTime"] as? NSNumber
                         let connectTime = preset.commutabilityFilterDetails!["connectTime"] as? NSNumber
@@ -1427,6 +1430,8 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                         commutInfoVC.isNonStop = isNonStop
                         commutInfoVC.commuteCityFromSync = city
                         commutInfoVC.thirdCellValue = thirdCellValue!
+                        commutInfoVC.secondCellValue = secondCellValue ?? 0
+                        commutInfoVC.value = value ?? 0
                         commutInfoVC.calculateCommuteLineProperties()
                         NotificationCenter.default.post(name: NSNotification.Name("refreshWorkBlock"), object: self)
                         try? self.context.save()
@@ -1635,7 +1640,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                                 }
                             }
                             sort.keyPath = "commutabilityOverall"
-                            self.calculateCommuteMannualSort(pRule: pSort)
+                            self.calculateCommuteMannualSort(pRule: pSort.variables!)
                         }
                     }
                     else if sort.category?.intValue == BILineSortCategory.BIDaysOffLineSortCategory.rawValue {
@@ -1678,6 +1683,8 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                         }
                         try? self.context.save()
                         let thirdCellValue = preset.commutabilitySortDetails!["thirdCellValue"] as? NSNumber
+                        let secondCellValue = preset.commutabilitySortDetails!["secondCellValue"] as? NSNumber
+                        let value = preset.commutabilitySortDetails!["value"] as? NSNumber
                         let city = preset.commutabilitySortDetails!["city"] as? String
                         let checkInTime = preset.commutabilitySortDetails!["checkInTime"] as? NSNumber
                         let connectTime = preset.commutabilitySortDetails!["connectTime"] as? NSNumber
@@ -1705,6 +1712,8 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                         commutInfoVC.commutabilityType = CommutabilityType.sort
                         commutInfoVC.isNonStop = isNonStop
                         commutInfoVC.commuteCityFromSync = city
+                        commutInfoVC.secondCellValue = secondCellValue ?? 0
+                        commutInfoVC.value = value ?? 0
                         commutInfoVC.thirdCellValue = thirdCellValue!
                         commutInfoVC.calculateCommuteLineProperties()
                         NotificationCenter.default.post(name: NSNotification.Name("refreshWorkBlock"), object: self)
@@ -1839,14 +1848,9 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
         return String(format: "%02d:%02d", hours, mins)
     }
     
-    func calculateCommuteMannualfilter(pRule: CBPresetFilterRule) {
-        if setCommuteTimeForDaysForManualFilter(pRule: pRule) {
+    func calculateCommuteMannualfilter(variables: [String: Any]) {
+        if setCommuteTimeForDaysForManualFilter(variables: variables) {
             let obj = CBCommutingCellHelper()
-            
-            guard let variables = pRule.variables else {
-                print("⚠️ No variables found in pRule")
-                return
-            }
             
             // Helper to safely extract string
             func stringValue(for key: String, from dict: [String: Any]) -> String {
@@ -1892,14 +1896,11 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
     }
     
-    func calculateCommuteMannualSort(pRule: CBPresetLineSort) {
+    func calculateCommuteMannualSort(pRule: [String: Any]) {
         if setCommuteTimeForDaysForManualSort(pRule: pRule) {
             let obj = CBCommutingCellHelper()
             
-            guard let variables = pRule.variables else {
-                print("⚠️ No variables found in pRule")
-                return
-            }
+            let variables = pRule
             
             // Helper to safely extract string
             func stringValue(for key: String, from dict: [String: Any]) -> String {
@@ -1946,7 +1947,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
     }
     
 
-    func setCommuteTimeForDaysForManualFilter(pRule: CBPresetFilterRule) -> Bool {
+    func setCommuteTimeForDaysForManualFilter(variables: [String: Any]) -> Bool {
         let result = CBGlobalMethods.shared.selectedBidPeriod!.commuteTime?.allObjects
         for basket in result! {
             self.context.delete(basket as! NSManagedObject)
@@ -1989,7 +1990,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
             objcommuteTime?.latestDeparture = minDate as Date?
             let dayName = dateFormatterForDayname.string(from: tempStartDate!)
             
-            let variables = pRule.variables! as NSDictionary
+            let variables = variables as NSDictionary
             var depMonThurs1 : String = (variables["MON_THURS_DEPART"] as? Int ?? -1) == -1 ? "" : "\(variables["MON_THURS_DEPART"] as! Int)"
             var returnMonThurs1 : String = (variables["MON_THURS_RETURN"] as? Int ?? 3000) == 3000 ? "" : "\(variables["MON_THURS_RETURN"] as! Int)"
             var depFriday1 : String = (variables["FRI_DEPART"] as? Int ?? -1) == -1 ? "" : "\(variables["FRI_DEPART"] as! Int)"
@@ -2071,7 +2072,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
         return false
     }
     
-    func setCommuteTimeForDaysForManualSort(pRule: CBPresetLineSort) -> Bool {
+    func setCommuteTimeForDaysForManualSort(pRule: [String: Any]) -> Bool {
         let context = self.bidPeriod?.managedObjectContext
         let result = CBGlobalMethods.shared.selectedBidPeriod!.commuteTime?.allObjects
         for basket in result! {
@@ -2116,7 +2117,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
             ObjcommuteTime?.latestDeparture = minDate as Date?
             let dayName = dateFormatterForDayname.string(from: TempStartDate!)
             
-            let variables = pRule.variables! as NSDictionary
+            let variables = pRule as NSDictionary
             var depMonThurs1 : String = (variables["MON_THURS_DEPART"] as? Int ?? -1) == -1 ? "" : "\(variables["MON_THURS_DEPART"] as! Int)"
             var returnMonThurs1 : String = (variables["MON_THURS_RETURN"] as? Int ?? 3000) == 3000 ? "" : "\(variables["MON_THURS_RETURN"] as! Int)"
             var depFriday1 : String = (variables["FRI_DEPART"] as? Int ?? -1) == -1 ? "" : "\(variables["FRI_DEPART"] as! Int)"

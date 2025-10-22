@@ -34,9 +34,9 @@ class BILinesManager: NSObject {
     var lineTypeSort: NSSortDescriptor
     var lineNumberSort: NSSortDescriptor
 
-    override init() {
-        fatalError("Use init(managedObjectContext:) instead.")
-    }
+//    override init() {
+//        fatalError("Use init(managedObjectContext:) instead.")
+//    }
 
     init?(managedObjectContext context: NSManagedObjectContext?) {
         guard let context = context else {

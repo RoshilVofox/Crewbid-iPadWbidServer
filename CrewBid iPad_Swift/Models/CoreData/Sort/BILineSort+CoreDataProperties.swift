@@ -326,6 +326,21 @@ extension BILineSort : Identifiable, NSFetchedResultsControllerDelegate {
             self.variables = pSort.variables as NSDictionary?
         }
     }
+    
+    static func configureMonthDayFilter(_ indices: NSMutableArray) -> [String: Any] {
+        var variables: [String: Any] = ["DAYS_OFF_MONTH_BITS": UInt64(0)]
+
+        for case let index as NSNumber in indices {
+            var monthBits = variables["DAYS_OFF_MONTH_BITS"] as? UInt64 ?? 0
+            let mask: UInt64 = 1 << UInt64(index.intValue)
+            monthBits |= mask
+            variables["DAYS_OFF_MONTH_BITS"] = monthBits
+        }
+
+        return variables
+    }
+
+
 }
 
 var temX: String = String()

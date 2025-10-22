@@ -674,3 +674,18 @@ extension UIColor {
         }
     }
 }
+
+enum UserSyncType: Int {
+    case presetLocal
+    case presetServer
+    case stateLocal
+    case stateServer
+    case stateTakeServerAndPresetKeepLocal
+    case stateTakeServerAndPresetTakeServer
+    case stateKeepLocalAndPresetKeepLocal
+    case stateKeepLocalAndPresetTakeServer
+    case presetConversion
+    case stateConversion
+}
+
+

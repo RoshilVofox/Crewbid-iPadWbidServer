@@ -307,6 +307,7 @@ class CBDownloadAlldomicileViewController: UIViewController {
         UserDefaults.standard.set(txtUserID.text!, forKey: kCBDefaultEmployeeNumberKey)
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
+        vc.selectedRound = btnFirstRound.isSelected ? 1 : 2
         self.navigationController?.pushViewController(vc, animated: true)
     }
     

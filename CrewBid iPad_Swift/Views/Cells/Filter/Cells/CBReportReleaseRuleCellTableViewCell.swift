@@ -802,6 +802,357 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
         self.multiplReportReleaseDates()
     }
     
+    func calculationFromSync(reportValue: String, releaseValue: String, isLast: NSNumber, isNoMid: NSNumber, isCalendar: NSNumber, isSelectedAll: NSNumber, isFirst: NSNumber, selectedDates: NSMutableArray, completionHandler: @escaping (Bool) -> Void) {
+        if isSelectedAll == 1 {
+            self.multiplReportReleaseAllDaysFromSync(reportValue: reportValue, releaseValue: releaseValue, isLast: isLast, isNoMid: isNoMid, isCalendar: isCalendar, isSelectedAll: isSelectedAll, isFirst: isFirst, selectedDates: selectedDates, completionHandler: completionHandler)
+        }
+        else if isCalendar == 1 {
+            self.multiplReportReleaseDatesFromSync(reportValue: reportValue, releaseValue: releaseValue, isLast: isLast, isNoMid: isNoMid, isCalendar: isCalendar, isSelectedAll: isSelectedAll, isFirst: isFirst, selectedDates: selectedDates, completionHandler: completionHandler)
+        }
+        else if isFirst == 1 || isLast == 1 || isNoMid == 1 {
+            let selectedDates1 = NSMutableArray()
+            for i in 0  ..< calendarData!.calendarDays.count {
+                var strDay = ""
+                var index = i
+                var viewTag = index + 500
+                let day = self.calendarData!.calendarDays[i] as! BICalendarDay
+                
+                if (day.text == "31" && self.bidPeriod?.month?.intValue == 2 && self.bidPeriod?.positionType?.intValue == BICrewPositionType.FlightAttendant.rawValue) {
+                    day.isPreviousMonth = false
+                }
+                if (day.text == "4" && self.bidPeriod?.month?.intValue == 2 && self.bidPeriod?.positionType?.intValue == BICrewPositionType.FlightAttendant.rawValue) {
+                    day.isNextMonth = false
+                }
+                
+                if (day.isNextMonth && (day.text == "1" || day.text == "2" || day.text == "3")) {
+                    day.isNextMonth = false
+                }
+                if day.isNextMonth || day.isPreviousMonth {
+                    continue
+                }
+                else {
+                    self.addRedBubble(viewTag: viewTag, index: index)
+                    self.configureMonthDayFilter(index: index, addDay: true)
+                    if !day.isCurrentMonth {
+                        if bidPeriod!.month!.intValue == 12 {
+                            let month = 1
+                            let year = bidPeriod!.year!.intValue + 1
+                            strDay = "\(day.text)-\(month)-\(year)"
+                        } else {
+                            strDay = "\(day.text)-\(bidPeriod!.month!.intValue + 1)-\(bidPeriod!.year!)"
+                        }
+                    }
+                    else {
+                        strDay = "\(day.text)-\(bidPeriod!.month!.intValue)-\(bidPeriod!.year!)"
+                    }
+                    selectedDates.add(strDay)
+                }
+            }
+            var variables = filterRule?.variables as? [String: Any]
+            variables![BIFilterRuleSelectedDaysVariablesKey] = selectedDates1
+            filterRule?.variables = variables as NSDictionary?
+            try? self.context?.save()
+            self.multiplReportReleaseFromSync(reportValue: reportValue, releaseValue: releaseValue, isLast: isLast, isNoMid: isNoMid, isCalendar: isCalendar, isSelectedAll: isSelectedAll, isFirst: isFirst, selectedDates: selectedDates, completionHandler: completionHandler)
+        }
+        
+    }
+    
+    func multiplReportReleaseAllDaysFromSync(reportValue: String, releaseValue: String, isLast: NSNumber, isNoMid: NSNumber, isCalendar: NSNumber, isSelectedAll: NSNumber, isFirst: NSNumber, selectedDates: NSMutableArray, completionHandler: @escaping (Bool) -> Void) {
+        var reportReleaseInformation = CBReportReleaseCollectionViewController()
+        reportReleaseInformation.calendarData = self.calendarData
+        reportReleaseInformation.filterRule = self.filterRule
+        reportReleaseInformation.bidPeriod = self.bidPeriod
+        reportReleaseInformation.arrDatesSelected = NSMutableArray()
+        reportReleaseInformation.allDaysOptionButton()
+        
+        self.multiplReportReleaseDatesFromSync(reportValue: reportValue, releaseValue: releaseValue, isLast: isLast, isNoMid: isNoMid, isCalendar: isCalendar, isSelectedAll: isSelectedAll, isFirst: isFirst, selectedDates: selectedDates, completionHandler: completionHandler)
+    }
+    
+    func multiplReportReleaseDatesFromSync(reportValue: String, releaseValue: String, isLast: NSNumber, isNoMid: NSNumber, isCalendar: NSNumber, isSelectedAll: NSNumber, isFirst: NSNumber, selectedDates: NSMutableArray, completionHandler: @escaping (Bool) -> Void) {
+        for case let line as BILine in self.bidPeriod!.lines! {
+            line.rlsGreaterThanEntered = NSNumber(value: false)
+            line.rptLessThanentered = NSNumber(value: false)
+        }
+        let variables = NSMutableDictionary(dictionary: filterRule!.variables!)
+        variables.setValue(self.txtReport.text, forKey: "reportValue")
+        variables.setValue(self.txtRelease.text, forKey: "releaseValue")
+        self.filterRule?.variables = variables
+        let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "category == 37")
+        let fetchedObjects = try? context?.fetch(fetchRequest) ?? []
+        if fetchedObjects!.count == 0 {
+            
+        }
+        reportReleaseArray = NSMutableArray()
+        for i in 0..<fetchedObjects!.count {
+            if (fetchedObjects![i]).value(forKey: "variables") != nil {
+                let variables = (fetchedObjects![i]).value(forKey: "variables") as? NSDictionary
+                if variables?.value(forKey: "SELECTED_DATES") != nil {
+                    let selectedDates = variables?.value(forKey: "SELECTED_DATES") as? NSArray
+                    for j in 0..<selectedDates!.count {
+                        var dict1 = [String: Any]()
+                        dict1["date"] = selectedDates![j]
+                        if variables?.object(forKey: "releaseValue") != nil {
+                            dict1["releaseValue"] = variables?.object(forKey: "releaseValue")
+                        }
+                        if variables?.object(forKey: "reportValue") != nil {
+                            dict1["reportValue"] = variables?.object(forKey: "reportValue")
+                        }
+                        self.reportReleaseArray!.add(dict1)
+                    }
+                }
+            }
+        }
+//        calculate report release
+        self.showActivityIndicator(color: CBColor.orange)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            var report = ""
+            var release = ""
+            for i in self.reportReleaseArray! {
+                for case let line as BILine in self.bidPeriod!.lines! {
+                    autoreleasepool {
+                        if line.rptLessThanentered!.boolValue == false && line.rlsGreaterThanEntered!.boolValue == false {
+                            for case let trip as BITrip in line.orderedTrips{
+                                daysLoop: for day in trip.orderedDays {
+                                    if (day.displayType!.intValue == BIDayDisplayType.fullPay.rawValue || day.displayType!.intValue == BIDayDisplayType.partialPay.rawValue || day.displayType!.intValue == BIDayDisplayType.noPay.rawValue) {
+                                    }
+                                    else {
+                                        let dateString = "\((i as! NSDictionary).value(forKey: "date") ?? "") 12:53:58 +0000"
+                                        let dateFormatter = DateFormatter()
+                                        dateFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss Z"
+                                        let dateFromString = dateFormatter.date(from: dateString)
+
+                                        let isSame = self.compareDates(firstDate: day.date!, secondDate: dateFromString!, trip: trip)
+
+                                        // check for report release available
+                                        report = self.reportTimeForDay(day: day, trip: trip, line: line)
+                                        release = self.releaseTimeForDay(day: day, trip: trip, line: line)
+                                        if isSame {
+                                            let releaseValue : String? = self.filterRule!.variables!.value(forKey: "releaseValue") as? String
+                                            let reportValue : String? = self.filterRule!.variables!.value(forKey: "reportValue") as? String
+                                            
+                                            if (reportValue != nil && reportValue != "") {
+                                                report = String(format: "%04d", day.info!.reportTime!.intValue)
+                                                if self.compareReportTimeEnteredBasith(report, reportEntered: reportValue!) {
+                                                    line.rptLessThanentered = NSNumber(value: true)
+                                                }
+                                            }
+                                            
+                                            if (releaseValue != nil && releaseValue != ""){
+                                                release = String(format: "%04d", day.info!.releaseTime!.intValue)
+                                                if self.compareReleaseTimeEnteredBasith(release, releaseEntered: releaseValue!) {
+                                                    line.rlsGreaterThanEntered = NSNumber(value: true)
+                                                }
+                                            }
+                                            
+                                            if (line.rptLessThanentered == NSNumber(value: true)) && (line.rlsGreaterThanEntered == NSNumber(value: true)) {
+                                                break daysLoop
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            try? self.context?.save()
+                        }
+                    }
+                }
+                
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
+                NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+                self.hideActivityIndicator()
+                self.calendarCollectionView.reloadData()
+            }
+            completionHandler(true)
+        }
+    }
+    
+    func multiplReportReleaseFromSync(reportValue: String, releaseValue: String, isLast: NSNumber, isNoMid: NSNumber, isCalendar: NSNumber, isSelectedAll: NSNumber, isFirst: NSNumber, selectedDates: NSMutableArray, completionHandler: @escaping (Bool) -> Void) {
+        let reportReleaseInformation = CBReportReleaseCollectionViewController()
+        reportReleaseInformation.calendarData = calendarData
+        reportReleaseInformation.bidPeriod = self.bidPeriod
+        reportReleaseInformation.filterRule = filterRule
+        reportReleaseInformation.arrDatesSelected = NSMutableArray()
+        for case let line as BILine in self.bidPeriod!.lines!{
+            line.rlsGreaterThanEntered = false
+            line.rptLessThanentered = false
+        }
+        let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "category == 37")
+        let fetchedObjects = try? self.context?.fetch(fetchRequest)
+        reportReleaseArray = NSMutableArray()
+        for i in 0..<fetchedObjects!.count {
+            if (fetchedObjects![i]).value(forKey: "variables") != nil {
+                let variables = (fetchedObjects![i]).value(forKey: "variables") as? NSDictionary
+                if variables?.value(forKey: "SELECTED_DATES") != nil {
+                    let selectedDates = variables?.value(forKey: "SELECTED_DATES") as? NSArray
+                    for j in 0..<selectedDates!.count {
+                        var dict1 = [String: Any]()
+                        dict1["date"] = selectedDates![j]
+                        if variables?.object(forKey: "releaseValue") != nil {
+                            if (isLast == 1) {
+                                dict1["releaseValue"] = variables?.object(forKey: "releaseValue")
+                            }
+                            else {
+                                dict1["releaseValue"] = ""
+                            }
+                        }
+                        if variables?.object(forKey: "reportValue") != nil {
+                            if (isFirst == 1) {
+                                dict1["reportValue"] = variables?.object(forKey: "reportValue")
+                            }
+                            else {
+                                dict1["reportValue"] = ""
+                            }
+                        }
+                        self.reportReleaseArray!.add(dict1)
+                    }
+                }
+            }
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            var report = ""
+            var release = ""
+            var reportValue = ""
+            var releaseValue = ""
+            if (self.reportReleaseArray?.count == 0) {
+                reportValue = ""
+                reportValue = ""
+            }
+            else {
+                reportValue = ((self.reportReleaseArray![0]) as AnyObject).value(forKey: "reportValue") as! String
+                releaseValue = ((self.reportReleaseArray![0]) as AnyObject).value(forKey: "releaseValue") as! String
+            }
+            for case let line as BILine in self.bidPeriod!.lines! {
+                autoreleasepool {
+                    let variables = NSMutableDictionary(dictionary: self.filterRule!.variables!)
+                    variables.setValue(0, forKey: "isSelectedAll")
+                    if (isFirst == 1) {
+                        variables.setValue(1, forKey: "isFirst")
+                    }
+                    else {
+                        variables.setValue(0, forKey: "isFirst")
+                    }
+                    if (isLast == 1) {
+                        variables.setValue(1, forKey: "isLast")
+                    }
+                    else {
+                        variables.setValue(0, forKey: "isLast")
+                    }
+                    
+                    if line.rptLessThanentered?.boolValue == false && line.rlsGreaterThanEntered?.boolValue == false {
+                        if (self.noMidButton.isSelected) {
+                            variables.setValue(1, forKey: "isNoMid")
+                            for case let workBlock as WorkBlockList in line.orderedWorkBlocks {
+                                for case let day as BIDay in workBlock.orderedDays {
+                                    if day.displayType?.intValue == BIDayDisplayType.fullPay.rawValue || day.displayType?.intValue == BIDayDisplayType.partialPay.rawValue || day.displayType?.intValue == BIDayDisplayType.noPay.rawValue {
+                                    }
+                                    else {
+                                        let dateFormatter = DateFormatter()
+                                        dateFormatter.dateFormat = "d-M-yyyy"
+                                        dateFormatter.timeZone = TimeZone(identifier: "UTC")
+
+                                        var dateStringReport = dateFormatter.string(from: workBlock.startDateTime!)
+                                        var dateStringRelease = dateFormatter.string(from: workBlock.endDateOnly!)
+                                        // Append the time string to each date string
+                                        dateStringReport.append(" 12:53:58 +0000")
+                                        dateStringRelease.append(" 12:53:58 +0000")
+
+                                        dateFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss Z"
+                                        let dateFromStringReport: Date = dateFormatter.date(from: dateStringReport)!
+                                        let dateFromStringRelease: Date = dateFormatter.date(from: dateStringRelease)!
+                                        
+                                        let isSameForReport = self.compareDates(firstDate: day.date!, secondDate: dateFromStringReport, trip: nil)
+                                        let isSameForRelaese = self.compareDates(firstDate: day.date!, secondDate: dateFromStringRelease, trip: nil)
+                                        
+                                        report = self.reportTimeForDay(day: day, trip: day.trip, line: line)
+                                        release = self.releaseTimeForDay(day: day, trip: day.trip, line: line)
+                                        
+                                        if isSameForReport {
+                                            if !(reportValue == "") {
+                                                let isLesser = self.compareReportTimeEntered(report: report, reportEntered: reportValue)
+                                                if isLesser {
+                                                    line.rptLessThanentered = NSNumber(value: true)
+                                                }
+                                            }
+                                        }
+                                        if isSameForRelaese {
+                                            if !(releaseValue == "") {
+                                                let isGreater = self.compareReleaseTimeEntered(release: release, releaseEntered: releaseValue)
+                                                if isGreater {
+                                                    line.rlsGreaterThanEntered = NSNumber(value: true)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
+                        else {
+                            variables.setValue(0, forKey: "isNoMid")
+                            for case let trip as BITrip in line.orderedTrips {
+                                for day in trip.orderedDays {
+                                    if day.displayType?.intValue == BIDayDisplayType.fullPay.rawValue || day.displayType?.intValue == BIDayDisplayType.partialPay.rawValue || day.displayType?.intValue == BIDayDisplayType.noPay.rawValue {
+                                    }
+                                    else {
+                                        let dateFormatter = DateFormatter()
+                                        dateFormatter.dateFormat = "d-M-yyyy"
+//                                        dateFormatter.timeZone = TimeZone(identifier: "UTC")
+                                        
+                                        var dateStringReport = dateFormatter.string(from: trip.startDate!)
+                                        var dateStringRelease = dateFormatter.string(from: trip.endDate!)
+                                        // Append the time string to each date string
+                                        dateStringReport.append(" 12:53:58 +0000")
+                                        dateStringRelease.append(" 12:53:58 +0000")
+                                        
+                                        dateFormatter.dateFormat = "dd-MM-yyyy HH:mm:ss Z"
+                                        let dateFromStringReport: Date = dateFormatter.date(from: dateStringReport)!
+                                        let dateFromStringRelease: Date = dateFormatter.date(from: dateStringRelease)!
+                                        
+                                        let isSameForReport = self.compareDates(firstDate: day.date!, secondDate: dateFromStringReport, trip: trip)
+                                        let isSameForRelaese = self.compareDates(firstDate: day.date!, secondDate: dateFromStringRelease, trip: trip)
+                                        
+                                        report = self.reportTimeForDay(day: day, trip: trip, line: line)
+                                        release = self.releaseTimeForDay(day: day, trip: trip, line: line)
+                                        
+                                        if isSameForReport {
+                                            if !(reportValue == "") {
+                                                let isLesser = self.compareReportTimeEntered(report: report, reportEntered: reportValue)
+                                                if isLesser {
+                                                    line.rptLessThanentered = NSNumber(value: true)
+                                                }
+                                            }
+                                        }
+                                        if isSameForRelaese {
+                                            if !(releaseValue == "") {
+                                                let isGreater = self.compareReleaseTimeEntered(release: release, releaseEntered: releaseValue)
+                                                if isGreater {
+                                                    line.rlsGreaterThanEntered = NSNumber(value: true)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        self.filterRule?.variables = variables
+                        try? self.context!.save()
+                    }
+                }
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
+                NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+                self.hideActivityIndicator()
+                self.calendarCollectionView.reloadData()
+            }
+            completionHandler(true)
+        }
+    }
+
+    
 //    MARK: - Collection View Data Source
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
