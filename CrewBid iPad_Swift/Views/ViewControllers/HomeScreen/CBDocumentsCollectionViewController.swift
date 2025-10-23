@@ -188,10 +188,10 @@ class CBDocumentsCollectionViewController: BaseViewController {
                                   print(" Failed to delete file: \(error.localizedDescription)")
                               }
                           }
-                        
-                        self.dataSource.managedObjectContext.delete(obj)
+                        let context = CoreDataManager.shared.persistentContainer.viewContext
+                        context.delete(obj)
                         do {
-                            try self.dataSource.managedObjectContext.save()
+                            try context.save()
                         } catch {
                             print("Error", error.localizedDescription)
                         }
@@ -346,7 +346,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
         DispatchQueue.main.async {
             
             self.updateTitle()
-            let context = self.dataSource.managedObjectContext
+            let context = CoreDataManager.shared.persistentContainer.viewContext
             
 //            let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
 //            let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: context)
@@ -614,13 +614,10 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
                 guard let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as? CBBidDocumentController else {
-//                    cell.activityIndicator.stopAnimating()
                     cell.isUserInteractionEnabled = true
                     return
                     }
 
-//                vc.modalTransitionStyle = .crossDissolve
-//                vc.modalPresentationStyle = .fullScreen
                 let bidPeriod = self.bidPeriodList[indexPath.item]
                 vc.bidPeriod = bidPeriod
                 self.dataSource.year = bidPeriod.year?.intValue ?? 0

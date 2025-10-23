@@ -21,6 +21,7 @@ class CoreDataManager{
             }
             container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
             container.viewContext.automaticallyMergesChangesFromParent = true
+            container.viewContext.undoManager = UndoManager()
         })
         return container
     }()
@@ -43,7 +44,10 @@ class CoreDataManager{
     }
     
     func newBackgroundContext() -> NSManagedObjectContext {
-        return persistentContainer.newBackgroundContext()
+        let contxt = persistentContainer.newBackgroundContext()
+        contxt.undoManager = UndoManager()
+        return contxt
+        
     }
     
     func saveData(){

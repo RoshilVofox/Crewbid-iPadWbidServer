@@ -172,6 +172,30 @@ class BIBidFileDownloadViewModel {
 //        }
 //    }
     
+    
+    var downloadProgress: Float = 0
+    var downloadTimer: Timer?
+    let downloadTarget: Float = 0.17
+    let downloadDuration: TimeInterval = 3
+    
+    func startFakeDownloadProgress() {
+        downloadProgress = 0
+        downloadTimer?.invalidate()
+        
+        let interval: TimeInterval = 0.05
+        let increment = Float(interval / downloadDuration) * downloadTarget
+        
+        downloadTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] timer in
+            guard let self = self else { return }
+            self.downloadProgress += increment
+            if self.downloadProgress >= self.downloadTarget {
+                self.downloadProgress = self.downloadTarget
+                timer.invalidate()
+            }
+            NotificationCenter.default.post(name: Notification.Name("UpdateProgress"), object: nil, userInfo: ["progress": self.downloadProgress])
+        }
+    }
+    
     func fetchNewBidData(sessionKey: String, fileName: String, completion: @escaping (Result<URL, Error>) -> Void) {
         let filesToDownload = BIBidInfo.shared.bidDataFiles() ?? []
         var fileIterator = filesToDownload.makeIterator()
@@ -185,6 +209,9 @@ class BIBidFileDownloadViewModel {
             }
 
             downloadFile(sessionKey: sessionKey, filename: nextFile) { result in
+                self.downloadTimer?.invalidate()
+                self.downloadProgress = self.downloadTarget
+                NotificationCenter.default.post(name: Notification.Name("UpdateProgress"), object: nil, userInfo: ["progress": self.downloadProgress])
                 switch result {
                 case .success(let tempURL):
                     let destinationDir = BIBidInfo.shared.downloadDirectory()

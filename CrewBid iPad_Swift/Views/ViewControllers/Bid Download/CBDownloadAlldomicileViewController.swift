@@ -348,7 +348,7 @@ class CBDownloadAlldomicileViewController: UIViewController {
         }
         print(arrBase)
         self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "deleting...")
-        let context = self.dataSource.managedObjectContext
+        let context = CoreDataManager.shared.managedObjectContext
         let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
         
                 do {
