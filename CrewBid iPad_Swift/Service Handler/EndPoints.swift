@@ -16,7 +16,7 @@ class EndPoint {
     
     var thirdpartyURL: String {
         let isQATest = UserDefaults.standard.string(forKey: "isQATest")
-        if isQATest == "YES" {
+        if isQATest == "1" {
             return "https://www27.swalifeqa.com/webbid3pty/ThirdParty"
         } else {
             return "https://www27.swalife.com/webbid3pty/ThirdParty"

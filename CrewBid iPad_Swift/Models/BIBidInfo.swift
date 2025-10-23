@@ -103,7 +103,7 @@ class BIBidInfo:NSObject{
             month = app.mockDataMonth!
             year = app.mockDataYear!
         }
-        if let isQATest = UserDefaults.standard.string(forKey: "isQATest"), isQATest == "YES" {
+        if let isQATest = UserDefaults.standard.string(forKey: "isQATest"), isQATest == "1" {
             if let testMonthStr = UserDefaults.standard.string(forKey: "QATestMonth"),
                let testYearStr = UserDefaults.standard.string(forKey: "QATestYear"),
                let testMonth = Int(testMonthStr),
@@ -137,6 +137,11 @@ class BIBidInfo:NSObject{
         let position = dataSource.position.character
         let base = dataSource.base
         let round = isFirstRoundBid() ? "D" : "B"
+        let isQATest = UserDefaults.standard.string(forKey: "isQATest")
+        if isQATest == "1" {
+            let qaMonth = UserDefaults.standard.string(forKey: "QATestMonth") ?? "0"
+            dataSource.month = Int(qaMonth)!
+        }
         let monthValue = dataSource.month
         // Convert to uppercase hex string
         let monthHex = String(format: "%lX", monthValue)
