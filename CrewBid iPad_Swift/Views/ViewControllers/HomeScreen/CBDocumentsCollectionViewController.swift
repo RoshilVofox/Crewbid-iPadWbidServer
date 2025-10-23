@@ -37,6 +37,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
             self.showQuickTutorialForFirstTime()
         }
         NotificationCenter.default.addObserver(self, selector: #selector(refreshBidPeriods), name: NSNotification.Name(ReloadCollectionView), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateTitle), name: NSNotification.Name("updateTitle"), object: nil)
         refreshBidPeriods()
         isUpdateAvailable()
     }
@@ -327,10 +328,9 @@ class CBDocumentsCollectionViewController: BaseViewController {
         }
     }
     
-    @objc func refreshBidPeriods() {
-        DispatchQueue.main.async {
+    @objc func updateTitle(){
             var qaString = ""
-            if UserDefaults.standard.bool(forKey: "IsQAEnabled") == true {
+            if UserDefaults.standard.string(forKey: "isQATest") == "1" {
                 qaString = " (QA Mode)"
             }
             
@@ -340,7 +340,12 @@ class CBDocumentsCollectionViewController: BaseViewController {
             } else {
                 self.lblHome.text = "Home (\(version))" + qaString
             }
-
+    }
+    
+    @objc func refreshBidPeriods() {
+        DispatchQueue.main.async {
+            
+            self.updateTitle()
             let context = self.dataSource.managedObjectContext
             
 //            let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
