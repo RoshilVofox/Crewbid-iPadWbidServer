@@ -78,7 +78,16 @@ class AwardsViewModel {
             return
         }
 
-        APIService.shared.fetchDownload(
+//        APIService.shared.fetchDownload(
+//            urlString: EndPoint.shared.thirdpartyURL,
+//            httpMethod: .POST,
+//            body: bodyData,
+//            headers: nil,
+//            timeout: 300
+//        ) { result in
+//            completion(result.mapError { $0 as Error })
+//        }
+        DownloadManager.shared.fetch(
             urlString: EndPoint.shared.thirdpartyURL,
             httpMethod: .POST,
             body: bodyData,

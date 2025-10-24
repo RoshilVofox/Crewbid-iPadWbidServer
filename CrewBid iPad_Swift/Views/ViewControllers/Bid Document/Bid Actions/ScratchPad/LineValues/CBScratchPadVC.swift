@@ -77,9 +77,9 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
 //        calculateAMPMFromSync()
         //For setting undo in bidlist
         self.arrayLinesDetails = self.bidPeriod?.lastTrashedDetails ?? NSMutableArray()
-        if self.bidPeriod!.managedObjectContext!.undoManager == nil {
-            self.bidPeriod!.managedObjectContext!.undoManager = UndoManager()
-        }
+//        if self.bidPeriod!.managedObjectContext!.undoManager == nil {
+//            self.bidPeriod!.managedObjectContext!.undoManager = UndoManager()
+//        }
         
         NotificationCenter.default.addObserver(
             self,

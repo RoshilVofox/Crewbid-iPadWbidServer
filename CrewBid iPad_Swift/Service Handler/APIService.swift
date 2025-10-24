@@ -333,3 +333,77 @@ class APIService {
             }.resume()
         }
 }
+
+class DownloadManager: NSObject, URLSessionDataDelegate {
+    static let shared = DownloadManager()
+    private var completionHandler: ((Result<URL, Errors>) -> Void)?
+    private var tempFileURL: URL?
+    var downloadedData = Data()
+    
+    var totalProgress: Float = 0
+    var totalBytesDownloaded: Float = 0
+    let maxProgress: Float = 0.40
+    let estimatedTotalBytes: Float = 4_00_000
+    
+    func fetch(
+        urlString: String,
+        httpMethod: HTTPMethod = .POST,
+        body: Data? = nil,
+        headers: [String: String]? = nil,
+        timeout: TimeInterval = 300,
+        completion: @escaping (Result<URL, Errors>) -> Void
+    ) {
+        guard let url = URL(string: urlString) else {
+            completion(.failure(.invalidURL))
+            return
+        }
+
+        self.completionHandler = completion
+
+        var request = URLRequest(url: url)
+        request.httpMethod = httpMethod.rawValue
+        request.httpBody = body
+        headers?.forEach { request.setValue($0.value, forHTTPHeaderField: $0.key) }
+
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = timeout
+        config.timeoutIntervalForResource = timeout
+
+        let session = URLSession(configuration: config, delegate: self, delegateQueue: nil)
+        let task = session.dataTask(with: request)
+        task.resume()
+    }
+
+    // MARK: - URLSessionDataDelegate
+
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        downloadedData.append(data)
+        totalBytesDownloaded += Float(data.count)
+
+        let progress = min(totalBytesDownloaded / estimatedTotalBytes * maxProgress, maxProgress)
+        totalProgress = progress
+        NotificationCenter.default.post(
+               name: Notification.Name("UpdateProgress"),
+               object: nil,
+               userInfo: ["progress": totalProgress]
+           )
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        if let error = error {
+            completionHandler?(.failure(.other(error)))
+            return
+        }
+
+        let data = downloadedData
+
+        // Save to temporary file
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        do {
+            try data.write(to: tempURL)
+            completionHandler?(.success(tempURL))
+        } catch {
+            completionHandler?(.failure(.other(error)))
+        }
+    }
+}

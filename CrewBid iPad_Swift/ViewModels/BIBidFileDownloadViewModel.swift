@@ -47,56 +47,115 @@ class BIBidFileDownloadViewModel {
                 return
             }
 
-            APIService.shared.fetch(
+//            APIService.shared.fetch(
+//                urlString: urlString,
+//                method: .POST,
+//                body: body,
+//                headers: ["Content-Length": String(body.count)],
+//                parse: { data in
+//                    guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+//                        throw Errors.decodingError
+//                    }
+//                    return json
+//                },
+//                completion: { (result: Result<[String: Any], Errors>) in
+//                    switch result {
+//                    case .success(let jsonData):
+//                        guard let dataBytes = jsonData["Data"] as? [Int] else {
+//                            completion(.failure(Errors.noData))
+//                            return
+//                        }
+//                        
+//                        let fileData = Data(dataBytes.map { UInt8($0) })
+//                        
+//                        do {
+//                            let directoryURL = BIBidInfo.shared.downloadDirectory()
+//                            let dataWriteURL = directoryURL.appendingPathComponent(filename)
+//                            
+//                            try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+//                            try fileData.write(to: dataWriteURL, options: [])
+//                            
+//                            if filename.lowercased().hasSuffix(".737") {
+//                                let unzipSuccess = SSZipArchive.unzipFile(
+//                                    atPath: dataWriteURL.path,
+//                                    toDestination: directoryURL.path
+//                                )
+//                                if unzipSuccess {
+//                                    completion(.success(directoryURL))
+//                                } else {
+//                                    completion(.failure(Errors.unzipFailed))
+//                                }
+//                            } else {
+//                                completion(.success(directoryURL))
+//                            }
+//                        } catch {
+//                            completion(.failure(error))
+//                        }
+//                        
+//                    case .failure(let error):
+//                        completion(.failure(error))
+//                    }
+//                }
+//            )
+            DownloadManager.shared.fetch(
                 urlString: urlString,
-                method: .POST,
+                httpMethod: .POST,
                 body: body,
                 headers: ["Content-Length": String(body.count)],
-                parse: { data in
-                    guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-                        throw Errors.decodingError
-                    }
-                    return json
-                },
-                completion: { (result: Result<[String: Any], Errors>) in
-                    switch result {
-                    case .success(let jsonData):
-                        guard let dataBytes = jsonData["Data"] as? [Int] else {
+                timeout: 300
+            ) { result in
+                switch result {
+                case .success(let tempFileURL):
+                    do {
+                        // Read the downloaded file as Data
+                        let fileData = try Data(contentsOf: tempFileURL)
+                        
+                        // Deserialize JSON
+                        guard let json = try JSONSerialization.jsonObject(with: fileData) as? [String: Any] else {
+                            completion(.failure(Errors.decodingError))
+                            return
+                        }
+                        
+                        // Extract the "Data" bytes
+                        guard let dataBytes = json["Data"] as? [Int] else {
                             completion(.failure(Errors.noData))
                             return
                         }
                         
-                        let fileData = Data(dataBytes.map { UInt8($0) })
+                        let finalFileData = Data(dataBytes.map { UInt8($0) })
+                        let directoryURL = BIBidInfo.shared.downloadDirectory()
+                        let dataWriteURL = directoryURL.appendingPathComponent(filename)
                         
-                        do {
-                            let directoryURL = BIBidInfo.shared.downloadDirectory()
-                            let dataWriteURL = directoryURL.appendingPathComponent(filename)
+                        // Ensure directory exists
+                        try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+                        
+                        // Write the file
+                        try finalFileData.write(to: dataWriteURL, options: [])
+                        
+                        // Optional unzip
+                        if filename.lowercased().hasSuffix(".737") {
+                            let unzipSuccess = SSZipArchive.unzipFile(
+                                atPath: dataWriteURL.path,
+                                toDestination: directoryURL.path
+                            )
                             
-                            try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
-                            try fileData.write(to: dataWriteURL, options: [])
-                            
-                            if filename.lowercased().hasSuffix(".737") {
-                                let unzipSuccess = SSZipArchive.unzipFile(
-                                    atPath: dataWriteURL.path,
-                                    toDestination: directoryURL.path
-                                )
-                                if unzipSuccess {
-                                    completion(.success(directoryURL))
-                                } else {
-                                    completion(.failure(Errors.unzipFailed))
-                                }
-                            } else {
+                            if unzipSuccess {
                                 completion(.success(directoryURL))
+                            } else {
+                                completion(.failure(Errors.unzipFailed))
                             }
-                        } catch {
-                            completion(.failure(error))
+                        } else {
+                            completion(.success(directoryURL))
                         }
                         
-                    case .failure(let error):
+                    } catch {
                         completion(.failure(error))
                     }
+                    
+                case .failure(let error):
+                    completion(.failure(error))
                 }
-            )
+            }
         }
 
         if round == 1 && GlobalBidInfo.shared.position == .FlightAttendant {
@@ -173,34 +232,10 @@ class BIBidFileDownloadViewModel {
 //    }
     
     
-    var downloadProgress: Float = 0
-    var downloadTimer: Timer?
-    let downloadTarget: Float = 0.17
-    let downloadDuration: TimeInterval = 3
-    
-    func startFakeDownloadProgress() {
-        downloadProgress = 0
-        downloadTimer?.invalidate()
-        
-        let interval: TimeInterval = 0.05
-        let increment = Float(interval / downloadDuration) * downloadTarget
-        
-        downloadTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { [weak self] timer in
-            guard let self = self else { return }
-            self.downloadProgress += increment
-            if self.downloadProgress >= self.downloadTarget {
-                self.downloadProgress = self.downloadTarget
-                timer.invalidate()
-            }
-            NotificationCenter.default.post(name: Notification.Name("UpdateProgress"), object: nil, userInfo: ["progress": self.downloadProgress])
-        }
-    }
-    
     func fetchNewBidData(sessionKey: String, fileName: String, completion: @escaping (Result<URL, Error>) -> Void) {
         let filesToDownload = BIBidInfo.shared.bidDataFiles() ?? []
         var fileIterator = filesToDownload.makeIterator()
         let dataSource = GlobalBidInfo.shared
-
         func downloadNext() {
             guard let nextFile = fileIterator.next() else {
                 performPostDownloadTasks()
@@ -209,9 +244,6 @@ class BIBidFileDownloadViewModel {
             }
 
             downloadFile(sessionKey: sessionKey, filename: nextFile) { result in
-                self.downloadTimer?.invalidate()
-                self.downloadProgress = self.downloadTarget
-                NotificationCenter.default.post(name: Notification.Name("UpdateProgress"), object: nil, userInfo: ["progress": self.downloadProgress])
                 switch result {
                 case .success(let tempURL):
                     let destinationDir = BIBidInfo.shared.downloadDirectory()
@@ -255,13 +287,19 @@ class BIBidFileDownloadViewModel {
         func downloadFile(sessionKey: String, filename: String, completion: @escaping (Result<URL, Error>) -> Void) {
             let isTxt = (filename as NSString).pathExtension.uppercased() == "TXT"
             let requestType = isTxt ? "TXTPACKET" : "ZIPPACKET"
-//            let key = self.stringByAddingPercentEscapes(to: sessionKey)!
             let bodyString = "REQUEST=\(requestType)&CREDENTIALS=\(sessionKey)&NAME=\(filename)"
             guard let bodyData = bodyString.data(using: .utf8) else {
                 completion(.failure(Errors.noData))
                 return
             }
-            APIService.shared.fetchDownload(
+//            APIService.shared.fetchDownload(
+//                urlString: EndPoint.shared.thirdpartyURL,
+//                httpMethod: .POST,
+//                body: bodyData,
+//                headers: nil,
+//                timeout: 1800
+//            ) {completion($0.mapError { $0 as Error })}
+            DownloadManager.shared.fetch(
                 urlString: EndPoint.shared.thirdpartyURL,
                 httpMethod: .POST,
                 body: bodyData,

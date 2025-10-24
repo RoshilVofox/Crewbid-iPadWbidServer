@@ -15,7 +15,6 @@ var kSnowflakeTag: Int = 1040
 class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBidListCalenderViewCellDelegate,StartOverDelegate, CBBidLineMenuControllerDelegate  {
 
     
-    
     @IBOutlet weak var btnNormalView: UIButton!
     @IBOutlet weak var btnCalendarView: UIButton!
     @IBOutlet weak var btnExpandedView: UIButton!
@@ -84,7 +83,6 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         lblBidLineCount.isUserInteractionEnabled = true
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(labelTapped))
         lblBidLineCount.addGestureRecognizer(tapGestureRecognizer)
-        
     }
     
 
@@ -113,11 +111,6 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     
     func setupVariables(){
         bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
-    
-        if bidPeriod.managedObjectContext?.undoManager == nil {
-              bidPeriod.managedObjectContext?.undoManager = UndoManager()
-              bidPeriod.managedObjectContext?.undoManager?.levelsOfUndo = 10 // Set appropriate limit
-          }
         // Check if an insertion point exists, otherwise create one
         if bidPeriod.insertionPoints?.allObjects.count ?? 0 > 0 {
             insertionPoint = bidPeriod.insertionPoints!.allObjects[0] as? BIInsertionPoint
@@ -1572,6 +1565,10 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
 //    }
     
     @objc func updateBidList(_ notification: Notification? = nil) {
+        
+        let context = bidPeriod.managedObjectContext!
+        context.undoManager?.disableUndoRegistration()
+        
         var isTableviewReload = true
         var notificationFromTripTextView = false
 
@@ -1612,7 +1609,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
 
         // Assign to property
         self.linesArray = newLines
-
+        context.undoManager?.enableUndoRegistration()
         // Update UI on main thread
         DispatchQueue.main.async {
             if self.tableViewNormalView != nil, isTableviewReload {
@@ -1625,6 +1622,33 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
             self.updateBidListHeader() // ← Extract header/label update into helper
             try? self.bidPeriod.managedObjectContext?.save()
         }
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(undoStackChanged(_:)),
+            name: .NSUndoManagerDidUndoChange,
+            object: context.undoManager
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(undoStackChanged(_:)),
+            name: .NSUndoManagerDidRedoChange,
+            object: context.undoManager
+        )
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(undoStackChanged(_:)),
+            name: .NSUndoManagerWillCloseUndoGroup,
+            object: context.undoManager
+        )
+    }
+    
+    @objc func undoStackChanged(_ notification: Notification) {
+        guard let undoManager = notification.object as? UndoManager else { return }
+        print("Undo stack changed! canUndo: \(undoManager.canUndo)")
+        print("Current undo action name: \(undoManager.undoActionName)")
     }
     func updateBidListHeader() {
         // Update ASort button color
@@ -1854,10 +1878,12 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
 //    }
     
     
+    
     //latest
     func insertLines(_ lines: [BILine], faBidAllPositions: Bool = false) {
         guard !lines.isEmpty else { return }
         guard let context = bidPeriod.managedObjectContext else { return }
+        guard let undoManager = context.undoManager else { return }
         // Update current bid period state
         CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
         CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = true
@@ -1868,7 +1894,11 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         if 0 == lines.count {
             return
         }
-        context.undoManager?.beginUndoGrouping()
+        undoManager.beginUndoGrouping()
+        defer {
+                undoManager.setActionName("Insert Line\(lines.count > 1 ? "s" : "")")
+                undoManager.endUndoGrouping()
+            }
         var insertionRowLine: BILine? = nil
         var insertingDirectlyBelowMarker: Bool = insertionIndex < linesArray.count
         if insertingDirectlyBelowMarker {
@@ -1929,8 +1959,10 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         UserDefaults.standard.set(true, forKey: "isShouldScrollToInsertionIndex")
 
         // Core Data undo will handle undo/redo automatically
-        context.undoManager?.setActionName("Insert Line\(lines.count > 1 ? "s" : "")")
-        context.undoManager?.endUndoGrouping()
+//        context.undoManager?.setActionName("Insert Line\(lines.count > 1 ? "s" : "")")
+//        context.undoManager?.endUndoGrouping()
+        undoManager.disableUndoRegistration()
+        defer { undoManager.enableUndoRegistration() }
         // Notify UI
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
         NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: nil)

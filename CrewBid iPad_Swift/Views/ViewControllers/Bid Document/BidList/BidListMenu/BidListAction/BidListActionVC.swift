@@ -22,9 +22,8 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
         super.viewDidLoad()
         self.tableView.layer.cornerRadius = 5
         bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
-        // Do any additional setup after loading the view.
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return bidListActionArray.count
     }
@@ -61,14 +60,25 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
                 cell.lblTitle.alpha = 0.5
             }
         }else if indexPath.row == 3 {
-            if (bidPeriod.managedObjectContext!.undoManager?.canUndo)! && !(bidPeriod.managedObjectContext!.undoManager?.undoActionName == "") {
-                cell.lblTitle.text = bidPeriod.managedObjectContext!.undoManager?.undoMenuItemTitle
-                cell.isUserInteractionEnabled = true
-                cell.lblTitle.alpha = 1.0
-            } else {
-                cell.isUserInteractionEnabled = false
-                cell.lblTitle.alpha = 0.5
-            }
+//            if (bidPeriod.managedObjectContext!.undoManager?.canUndo)! || !(bidPeriod.managedObjectContext!.undoManager?.undoActionName == "") {
+//                cell.lblTitle.text = bidPeriod.managedObjectContext!.undoManager?.undoMenuItemTitle
+//                cell.isUserInteractionEnabled = true
+//                cell.lblTitle.alpha = 1.0
+//            } else {
+//                cell.isUserInteractionEnabled = false
+//                cell.lblTitle.alpha = 0.5
+//            }
+            guard let undoManager = bidPeriod.managedObjectContext?.undoManager else { return cell }
+
+                // Always show the last valid undo title if available
+                let undoTitle = undoManager.undoActionName.isEmpty ? "Undo" : undoManager.undoMenuItemTitle
+
+                cell.lblTitle.text = undoTitle
+
+                // Enable if undo is possible or if the action name was recently set
+                let canUndo = undoManager.canUndo || !undoManager.undoActionName.isEmpty
+                cell.isUserInteractionEnabled = canUndo
+                cell.lblTitle.alpha = canUndo ? 1.0 : 0.5
         } else if indexPath.row == 4 {
             cell.isUserInteractionEnabled = false
             cell.lblTitle.alpha = 0.5

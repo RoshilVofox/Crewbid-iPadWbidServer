@@ -97,7 +97,6 @@ class CBBiddataDownloadVC: BaseViewController {
             AppData.shared.Round = self.selectedRound!
             AppData.shared.postion = self.selectedPosition!
             let emp = UserDefaults.standard.string(forKey: kCBDefaultEmployeeNumberKey)!
-            print("Base:\(self.selectedDomicile!) Position:\(self.selectedPosition!) Rnd:\(self.selectedRound!) EmpNo:\(self.empNum ?? emp) Month:\(self.month!) Year:\(self.year!)")
             GlobalBidInfo.shared.base = self.selectedDomicile!
             if let positionCode = self.selectedPosition, let position = BICrewPositionType(from: positionCode){
                 GlobalBidInfo.shared.position = position
@@ -110,11 +109,14 @@ class CBBiddataDownloadVC: BaseViewController {
                 let qaYear = UserDefaults.standard.string(forKey: "QATestYear") ?? "0"
                 GlobalBidInfo.shared.month = Int(qaMonth)!
                 GlobalBidInfo.shared.year = Int(qaYear)!
+                print("Base:\(self.selectedDomicile!) Position:\(self.selectedPosition!) Rnd:\(self.selectedRound!) EmpNo:\(self.empNum ?? emp) Month:\(qaMonth) Year:\(qaYear)")
             }
             else {
                 GlobalBidInfo.shared.month = self.month!
                 GlobalBidInfo.shared.year = self.year!
+                print("Base:\(self.selectedDomicile!) Position:\(self.selectedPosition!) Rnd:\(self.selectedRound!) EmpNo:\(self.empNum ?? emp) Month:\(self.month!) Year:\(self.year!)")
             }
+            
             
 //=======================================
             AppState.shared.mockDataMonth = self.month

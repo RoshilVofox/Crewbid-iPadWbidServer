@@ -91,35 +91,71 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
         guard let nav = self.navigationController else { return }
         let lines = notification.userInfo?["lines"] as? [BILine]
         let allPositions = notification.userInfo?["faBidAllPositions"] as? Bool ?? false
-        
-        if let topVC = nav.topViewController as? CBBidListVC {
-            DispatchQueue.main.async {
+        // Determine target VC
+            let targetVC: CBBidListVC
+            if let topVC = nav.topViewController as? CBBidListVC {
+                // Already on bid list
+                targetVC = topVC
                 if let lines = lines {
-                    topVC.insertLines(lines, faBidAllPositions: allPositions)
+                    targetVC.insertLines(lines, faBidAllPositions: allPositions)
                 }
-            }
-            return
-        }
-        var targetVC: CBBidListVC?
-        
-        if let existingVC = nav.viewControllers.first(where: { $0 is CBBidListVC }) as? CBBidListVC {
-            nav.popToViewController(existingVC, animated: false)
-            targetVC = existingVC
-        } else {
-            let vc = UIStoryboard(name: "BidDocument", bundle: nil)
-                .instantiateViewController(withIdentifier: "CBBidListVC") as! CBBidListVC
-            nav.pushViewController(vc, animated: false)
-            targetVC = vc
-        }
-//        UIView.transition(with: nav.view,duration: 0.7,options: [.transitionFlipFromLeft],animations: nil)
-        UIView.transition(with: nav.view, duration: 0.75, options: [.transitionFlipFromLeft], animations: nil) { _ in
-            DispatchQueue.main.async {
-                if let lines = lines {
-                    targetVC?.loadViewIfNeeded()
-                    targetVC?.insertLines(lines, faBidAllPositions: allPositions)
+                return
+            } else if let existingVC = nav.viewControllers.first(where: { $0 is CBBidListVC }) as? CBBidListVC {
+                targetVC = existingVC
+                // Pop to existing VC with transition
+                CATransaction.begin()
+                CATransaction.setCompletionBlock {
+                    if let lines = lines {
+                        targetVC.loadViewIfNeeded()
+                        targetVC.insertLines(lines, faBidAllPositions: allPositions)
+                    }
                 }
+                nav.popToViewController(existingVC, animated: false)
+                UIView.transition(with: nav.view, duration: 0.75, options: [.transitionFlipFromLeft], animations: nil)
+                CATransaction.commit()
+            } else {
+                // Instantiate new VC
+                let vc = UIStoryboard(name: "BidDocument", bundle: nil)
+                    .instantiateViewController(withIdentifier: "CBBidListVC") as! CBBidListVC
+                targetVC = vc
+                CATransaction.begin()
+                CATransaction.setCompletionBlock {
+                    if let lines = lines {
+                        targetVC.loadViewIfNeeded()
+                        targetVC.insertLines(lines, faBidAllPositions: allPositions)
+                    }
+                }
+                nav.pushViewController(vc, animated: false)
+                UIView.transition(with: nav.view, duration: 0.75, options: [.transitionFlipFromLeft], animations: nil)
+                CATransaction.commit()
             }
-        }
+//        if let topVC = nav.topViewController as? CBBidListVC {
+//            DispatchQueue.main.async {
+//                if let lines = lines {
+//                    topVC.insertLines(lines, faBidAllPositions: allPositions)
+//                }
+//            }
+//            return
+//        }
+//        var targetVC: CBBidListVC?
+//        
+//        if let existingVC = nav.viewControllers.first(where: { $0 is CBBidListVC }) as? CBBidListVC {
+//            nav.popToViewController(existingVC, animated: false)
+//            targetVC = existingVC
+//        } else {
+//            let vc = UIStoryboard(name: "BidDocument", bundle: nil)
+//                .instantiateViewController(withIdentifier: "CBBidListVC") as! CBBidListVC
+//            nav.pushViewController(vc, animated: false)
+//            targetVC = vc
+//        }
+//        UIView.transition(with: nav.view, duration: 0.75, options: [.transitionFlipFromLeft], animations: nil) { _ in
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+//                if let lines = lines, let targetVC = targetVC {
+//                    targetVC.loadViewIfNeeded()
+//                    targetVC.insertLines(lines, faBidAllPositions: allPositions)
+//                }
+//            }
+//        }
     }
     
 //    func fetchFromFilterAndUpdateCategory() {

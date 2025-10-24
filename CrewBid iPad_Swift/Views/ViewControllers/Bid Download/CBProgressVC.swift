@@ -98,7 +98,6 @@ class CBProgressVC: UIViewController {
                 self.indicator3.color = .white
                 self.indicator2.stopAnimating()
                 self.indicator3.startAnimating()
-                self.rectProgress.updateProgress(to: 0.34, animated: true)
             }
         }else if name == "ReadingTrips"{
             DispatchQueue.main.async {
@@ -141,7 +140,6 @@ class CBProgressVC: UIViewController {
                 self.indicator4.isHidden = true
                 self.indicator5.isHidden = true
                 self.indicator5.stopAnimating()
-                self.rectProgress.updateProgress(to: 1.0, animated: true)
             }
         }
         else if name == "CloseProgressView"{

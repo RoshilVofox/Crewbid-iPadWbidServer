@@ -39,7 +39,6 @@ class GlobalBidInfo: BIBidInfoDataSource {
     var credentialEmployeeNumber: String = ""
     private init() {
         self.managedObjectContext = CoreDataManager.shared.newBackgroundContext()
-        self.managedObjectContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
     }
 }
 
