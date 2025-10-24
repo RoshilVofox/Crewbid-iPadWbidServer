@@ -175,14 +175,15 @@ class APIService {
 //MARK: Download manager with progress
 class DownloadManager: NSObject, URLSessionDataDelegate {
     static let shared = DownloadManager()
-    private var completionHandler: ((Result<URL, Errors>) -> Void)?
-    private var tempFileURL: URL?
-    var downloadedData = Data()
     
     var totalProgress: Float = 0
     var totalBytesDownloaded: Float = 0
     let maxProgress: Float = 0.40
     let estimatedTotalBytes: Float = 4_00_000
+    
+    private var completionHandler: ((Result<URL, Errors>) -> Void)?
+    private var tempFileURL: URL?
+    var downloadedData = Data()
     
     func fetch(
         urlString: String,
