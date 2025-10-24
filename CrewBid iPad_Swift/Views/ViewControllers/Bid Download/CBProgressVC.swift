@@ -140,6 +140,7 @@ class CBProgressVC: UIViewController {
                 self.indicator4.isHidden = true
                 self.indicator5.isHidden = true
                 self.indicator5.stopAnimating()
+                self.rectProgress.updateProgress(to: 1.0, animated: true)
             }
         }
         else if name == "CloseProgressView"{
