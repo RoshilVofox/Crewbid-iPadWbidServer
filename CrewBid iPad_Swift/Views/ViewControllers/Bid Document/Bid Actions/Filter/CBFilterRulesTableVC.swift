@@ -88,62 +88,25 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     }
     
     @objc func flipToBidList(_ notification: Notification){
-        guard let nav = self.navigationController else { return }
-        let lines = notification.userInfo?["lines"] as? [BILine]
-        let allPositions = notification.userInfo?["faBidAllPositions"] as? Bool ?? false
-        
-        if let topVC = nav.topViewController as? CBBidListVC {
-            DispatchQueue.main.async {
-                if let lines = lines {
-                    topVC.insertLines(lines, faBidAllPositions: allPositions)
+        var isNeedtoPush : Bool = true
+        if let viewControllers = self.navigationController?.viewControllers  {
+            for controller in viewControllers {
+                if controller is CBBidListVC {
+                    isNeedtoPush = false
                 }
             }
-            return
         }
-        var targetVC: CBBidListVC?
-        
-        if let existingVC = nav.viewControllers.first(where: { $0 is CBBidListVC }) as? CBBidListVC {
-            nav.popToViewController(existingVC, animated: false)
-            targetVC = existingVC
-        } else {
-            let vc = UIStoryboard(name: "BidDocument", bundle: nil)
-                .instantiateViewController(withIdentifier: "CBBidListVC") as! CBBidListVC
-            nav.pushViewController(vc, animated: false)
-            targetVC = vc
-        }
-//        UIView.transition(with: nav.view,duration: 0.7,options: [.transitionFlipFromLeft],animations: nil)
-        UIView.transition(with: nav.view, duration: 0.75, options: [.transitionFlipFromLeft], animations: nil) { _ in
-            DispatchQueue.main.async {
-                if let lines = lines {
-                    targetVC?.loadViewIfNeeded()
-                    targetVC?.insertLines(lines, faBidAllPositions: allPositions)
-                }
-            }
+            let presentingViewController = self.presentingViewController
+            self.dismiss(animated: false, completion: {
+                presentingViewController?.dismiss(animated: false, completion: {})
+            })
+        if isNeedtoPush {
+            let vc = UIStoryboard.init(name: "BidDocument", bundle: Bundle.main).instantiateViewController(withIdentifier: "CBBidListVC") as! CBBidListVC
+            self.navigationController?.pushViewController(vc, animated: false)
+            UIView.transition(from: self.view, to: vc.view, duration: 0.85, options: [.transitionFlipFromLeft])
         }
     }
     
-//    func fetchFromFilterAndUpdateCategory() {
-//        let moc = bidPeriod?.managedObjectContext
-//        let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
-//        fetchRequest.sortDescriptors = [
-//            NSSortDescriptor(key: "category", ascending: true),
-//            NSSortDescriptor(key: "type", ascending: true)
-//        ]
-//        let predicate = NSPredicate(format: "(category == 4) && (type != 0)")
-//        
-//        fetchRequest.predicate = predicate
-//        do {
-//            let objectsArray = try moc!.fetch(fetchRequest)
-//            for object in objectsArray {
-//                object.setValue(5, forKey: "category")
-//                // Update other values if needed
-//            }
-//            try moc!.save()
-//        } catch {
-//            print("Error during fetch or save: \(error)")
-//        }
-//
-//    }
     
     func reloadRuleCell() {
         bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
@@ -189,22 +152,22 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     }
     
     @IBAction func btnBidsAction(_ sender: Any) {
-//        let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
-//        let vc = storyboard.instantiateViewController(withIdentifier: "CBBidListVC") as! CBBidListVC
-//        self.navigationController?.pushViewController(vc, animated: false)
-//        UIView.transition(from: self.view, to: vc.view, duration: 0.65, options: [.transitionFlipFromLeft])
-        guard let nav = self.navigationController else { return }
-        if let topVC = nav.topViewController, topVC is CBBidListVC {
-            return
-        }
-        if let existingVC = nav.viewControllers.first(where: { $0 is CBBidListVC }) {
-            nav.popToViewController(existingVC, animated: false)
-            UIView.transition(with: nav.view,duration: 0.65,options: [.transitionFlipFromLeft],animations: nil)
-            return
-        }
-        let vc = UIStoryboard(name: "BidDocument", bundle: nil).instantiateViewController(withIdentifier: "CBBidListVC") as! CBBidListVC
-        nav.pushViewController(vc, animated: false)
-        UIView.transition(with: nav.view,duration: 0.65,options: [.transitionFlipFromLeft],animations: nil)
+        let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBBidListVC") as! CBBidListVC
+        self.navigationController?.pushViewController(vc, animated: false)
+        UIView.transition(from: self.view, to: vc.view, duration: 0.85, options: [.transitionFlipFromLeft])
+//        guard let nav = self.navigationController else { return }
+//        if let topVC = nav.topViewController, topVC is CBBidListVC {
+//            return
+//        }
+//        if let existingVC = nav.viewControllers.first(where: { $0 is CBBidListVC }) {
+//            nav.popToViewController(existingVC, animated: false)
+//            UIView.transition(with: nav.view,duration: 0.65,options: [.transitionFlipFromLeft],animations: nil)
+//            return
+//        }
+//        let vc = UIStoryboard(name: "BidDocument", bundle: nil).instantiateViewController(withIdentifier: "CBBidListVC") as! CBBidListVC
+//        nav.pushViewController(vc, animated: false)
+//        UIView.transition(with: nav.view,duration: 0.65,options: [.transitionFlipFromLeft],animations: nil)
     }
     
     @IBAction func btnAddAction(_ sender: UIButton) {

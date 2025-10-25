@@ -8,7 +8,6 @@
 import Foundation
 import CoreData
 
-let kCBCrewBidDocumentExtension = "crewbiddoc"
 
 protocol BIBidInfoDataSource {
     var userid: String { get set }
@@ -39,8 +38,7 @@ class GlobalBidInfo: BIBidInfoDataSource {
     var alertCount = 0
     var credentialEmployeeNumber: String = ""
     private init() {
-        self.managedObjectContext = CoreDataManager.shared.persistentContainer.newBackgroundContext()
-        self.managedObjectContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        self.managedObjectContext = CoreDataManager.shared.newBackgroundContext()
     }
 }
 

@@ -372,7 +372,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     var bidPeriod: BIBidPeriod?
     let loginViewModel = CBLoginViewModel()
     let bidDownloadViewModel = BIBidFileDownloadViewModel()
-    let context = CoreDataManager.shared.managedObjectContext
+    let context = CoreDataManager.shared.persistentContainer.viewContext
     let dataSource = GlobalBidInfo.shared
     var bidPeriodList:[BIBidPeriod] = []
     private var hasStartedBidProcessing = false
@@ -1035,7 +1035,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
 //    MARK: login action
     func loginActions(){
         print("called login")
-        let context = self.dataSource.managedObjectContext
+        let context = CoreDataManager.shared.persistentContainer.viewContext
                 let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
                 do {
                     // Fetch bid periods and reverse to show newest first

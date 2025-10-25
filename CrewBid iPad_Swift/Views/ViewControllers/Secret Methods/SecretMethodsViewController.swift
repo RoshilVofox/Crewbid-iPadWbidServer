@@ -52,6 +52,7 @@ class SecretMethodsViewController: UIViewController {
                alertinQASegment()
            } else if selectedIndex == 1 {
                UserDefaults.standard.setValue(false, forKey: "isQATest")
+               NotificationCenter.default.post(name: NSNotification.Name("updateTitle"), object: nil)
            }
     }
     
@@ -86,6 +87,7 @@ class SecretMethodsViewController: UIViewController {
                 UserDefaults.standard.setValue(qaMonth, forKey: "QATestMonth")
                 UserDefaults.standard.setValue(qaYear, forKey: "QATestYear")
                 UserDefaults.standard.setValue(true, forKey: "isQATest")
+                NotificationCenter.default.post(name: NSNotification.Name("updateTitle"), object: nil)
                 print("Saved QA Month: \(qaMonth), QA Year: \(qaYear)")
             } else {
                 // Re-present the same alert with an error message
@@ -102,6 +104,7 @@ class SecretMethodsViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
             self.qaTestSegment.selectedSegmentIndex = 1
             UserDefaults.standard.setValue(false, forKey: "isQATest")
+            NotificationCenter.default.post(name: NSNotification.Name("updateTitle"), object: nil)
         })
 
         self.present(alert, animated: true)

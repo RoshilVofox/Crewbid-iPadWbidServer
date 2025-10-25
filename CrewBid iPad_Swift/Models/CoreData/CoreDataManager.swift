@@ -43,7 +43,11 @@ class CoreDataManager{
     }
     
     func newBackgroundContext() -> NSManagedObjectContext {
-        return persistentContainer.newBackgroundContext()
+        let context = persistentContainer.newBackgroundContext()
+        context.undoManager = nil
+        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        return context
+        
     }
     
     func saveData(){

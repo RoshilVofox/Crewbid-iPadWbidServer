@@ -37,6 +37,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
             self.showQuickTutorialForFirstTime()
         }
         NotificationCenter.default.addObserver(self, selector: #selector(refreshBidPeriods), name: NSNotification.Name(ReloadCollectionView), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateTitle), name: NSNotification.Name("updateTitle"), object: nil)
         refreshBidPeriods()
         isUpdateAvailable()
     }
@@ -187,10 +188,10 @@ class CBDocumentsCollectionViewController: BaseViewController {
                                   print(" Failed to delete file: \(error.localizedDescription)")
                               }
                           }
-                        
-                        self.dataSource.managedObjectContext.delete(obj)
+                        let context = CoreDataManager.shared.persistentContainer.viewContext
+                        context.delete(obj)
                         do {
-                            try self.dataSource.managedObjectContext.save()
+                            try context.save()
                         } catch {
                             print("Error", error.localizedDescription)
                         }
@@ -327,10 +328,9 @@ class CBDocumentsCollectionViewController: BaseViewController {
         }
     }
     
-    @objc func refreshBidPeriods() {
-        DispatchQueue.main.async {
+    @objc func updateTitle(){
             var qaString = ""
-            if UserDefaults.standard.bool(forKey: "IsQAEnabled") == true {
+            if UserDefaults.standard.string(forKey: "isQATest") == "1" {
                 qaString = " (QA Mode)"
             }
             
@@ -340,8 +340,13 @@ class CBDocumentsCollectionViewController: BaseViewController {
             } else {
                 self.lblHome.text = "Home (\(version))" + qaString
             }
-
-            let context = self.dataSource.managedObjectContext
+    }
+    
+    @objc func refreshBidPeriods() {
+        DispatchQueue.main.async {
+            
+            self.updateTitle()
+            let context = CoreDataManager.shared.persistentContainer.viewContext
             
 //            let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
 //            let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: context)
@@ -609,13 +614,10 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
                 guard let vc = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as? CBBidDocumentController else {
-//                    cell.activityIndicator.stopAnimating()
                     cell.isUserInteractionEnabled = true
                     return
                     }
 
-//                vc.modalTransitionStyle = .crossDissolve
-//                vc.modalPresentationStyle = .fullScreen
                 let bidPeriod = self.bidPeriodList[indexPath.item]
                 vc.bidPeriod = bidPeriod
                 self.dataSource.year = bidPeriod.year?.intValue ?? 0

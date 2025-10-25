@@ -2210,7 +2210,7 @@ class CBJSONSyncParsing: NSObject {
             "rigDPM": "rigDPM",
             "rigTHR": "rigTHR",
             "TripTfp": "TripTfp",
-            "HoliRig": "HoliRig", // Added by Raja on 05 Apr 2025
+            "HoliRig": "HoliRig",
             "vaNE": "vaNE",
             "vpCu+vaNe": "vpCuPlusVaNe",
             "Days Off": "Off",
@@ -2324,7 +2324,7 @@ class CBJSONSyncParsing: NSObject {
             "rigDPM": "rigDPM",
             "rigTHR": "rigTHR",
             "TripTfp": "TripTfp",
-            "HoliRig": "HoliRig", // Added by Raja on 05 Apr 2025
+            "HoliRig": "HoliRig",
             "eTrips": "ETOPS Trips",
             "reserveDays": "Days of Reserve",
             "Chngs": "Aircraft Changes",

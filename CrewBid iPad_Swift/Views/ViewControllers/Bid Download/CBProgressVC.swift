@@ -98,7 +98,6 @@ class CBProgressVC: UIViewController {
                 self.indicator3.color = .white
                 self.indicator2.stopAnimating()
                 self.indicator3.startAnimating()
-                self.rectProgress.updateProgress(to: 0.34, animated: true)
             }
         }else if name == "ReadingTrips"{
             DispatchQueue.main.async {
@@ -112,7 +111,6 @@ class CBProgressVC: UIViewController {
                 self.indicator4.color = .white
                 self.indicator3.stopAnimating()
                 self.indicator4.startAnimating()
-//                self.rectProgress.updateProgress(to: 0.5, animated: true)
             }
         }else if name == "UpdateProgress" {
             if let progress = notification.userInfo?["progress"] as? Float {
@@ -131,7 +129,6 @@ class CBProgressVC: UIViewController {
                 self.indicator5.isHidden = false
                 self.indicator4.stopAnimating()
                 self.indicator5.startAnimating()
-//                self.rectProgress.updateProgress(to: 0.75, animated: true)
             }
         }else if name == "BidParsingCompleted"{
             DispatchQueue.main.async {

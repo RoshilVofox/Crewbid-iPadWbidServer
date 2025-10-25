@@ -159,7 +159,7 @@ class CBCityComparisonRuleCell: CBComparisonRuleCell, UITextFieldDelegate {
         refreshViewController.popOverType = PopoverViewType.cityPopUp
         refreshViewController.bidPeriod = self.bidPeriod!
         refreshViewController.selectedValue = cityTextField.text ?? ""
-        //Edited by Kripa to resolve the crash issue on 11 Dec
+
         var arrayCities = cityMenuItems()
         arrayCities.remove("")
         guard arrayCities.count > 0 else  {

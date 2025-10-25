@@ -867,7 +867,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 }
             }
         }
-        try! self.bidPeriod?.managedObjectContext?.save()
+        try? self.bidPeriod?.managedObjectContext?.save()
     }
     //MARK: need to check this alert fn
     func showSeniorityAlert(text: String){

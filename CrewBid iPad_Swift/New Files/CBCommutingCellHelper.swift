@@ -216,7 +216,7 @@ class CBCommutingCellHelper: NSObject {
                                 line.commutableBacks = (line.commutableBacks!.doubleValue  +  1) as NSNumber
                                 isCommuteBackEnd = true
                             }
-                            //Added by Akarsh one more condition to fix commute back issue
+
                             else if calendar.component(.hour, from: datePlusMinute) == 0 && calendar.component(.minute, from: datePlusMinute) == 0{
                                 line.commutableBacks = (line.commutableBacks!.doubleValue  +  1) as NSNumber
                                 isCommuteBackEnd = true

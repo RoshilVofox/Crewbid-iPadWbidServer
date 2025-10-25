@@ -2862,9 +2862,9 @@ class BIBidInfoReader{
 
             let totalTrips = Float(tripsData.components(separatedBy: .newlines)
                 .filter { $0.count == recordLength && $0.character(at: recordTypeCharIndex) == "1" }.count)
-            let progressStart: Float = 0.34
-            let progressRange: Float = 0.33
-            var lastProgressSent: Float = 0.34
+            let progressStart: Float = 0.40
+            let progressRange: Float = 0.30
+            var lastProgressSent: Float = 0.40
             
             var trips:[String:BITripInfo] = [:]
             tripsData.enumerateLines { (info, stop) in
@@ -3129,9 +3129,9 @@ class BIBidInfoReader{
             var pLines:[Int:BILine] = [:]
             
             let totalLines = Float(linesData.components(separatedBy: .newlines).filter { !$0.isEmpty && $0.character(at: 0) != "*" }.count)
-            let progressStart: Float = 0.67
-            let progressRange: Float = 0.33
-            var lastProgressSent: Float = 0.67
+            let progressStart: Float = 0.70
+            let progressRange: Float = 0.30
+            var lastProgressSent: Float = 0.70
             
             
             linesData.enumerateLines { (info, stop) in
@@ -3436,9 +3436,9 @@ class BIBidInfoReader{
             var continueProcessing: Bool = true
             
             let totalLength = Float(tripsData.length)
-            let progressStart: Float = 0.34
-            let progressRange: Float = 0.33
-            var lastProgressSent: Float = 0.34
+            let progressStart: Float = 0.40
+            let progressRange: Float = 0.30
+            var lastProgressSent: Float = 0.40
             
             
             if moc.persistentStoreCoordinator?.persistentStores.count == 0{
@@ -3736,9 +3736,9 @@ class BIBidInfoReader{
             var lineEnd: UInt = 0
             var contentsEnd: UInt = 0
             let totalLength = Float(linesData.length)
-            let progressStart: Float = 0.67
-            let progressRange: Float = 0.33
-            var lastProgressSent: Float = 0.67
+            let progressStart: Float = 0.70
+            let progressRange: Float = 0.30
+            var lastProgressSent: Float = 0.70
             
             let fileLength = linesData.length
             linesData.getLineStart(&lineStart, end: &lineEnd, contentsEnd: &contentsEnd, for: lineRange)
