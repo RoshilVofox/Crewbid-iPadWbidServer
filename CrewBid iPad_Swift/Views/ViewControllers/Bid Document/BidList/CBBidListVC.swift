@@ -1778,13 +1778,10 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         updateTitle()
         self.tableViewNormalView.reloadData()
         
-        if let nav = self.navigationController, let viewDismiss = nav.view {
-            UIView.transition(with: viewDismiss,
-                              duration: 0.75,
-                              options: [.transitionFlipFromLeft, .curveEaseInOut],
-                              animations: nil) { _ in
-                nav.popViewController(animated: false)
-            }
+        if let view = self.navigationController?.view {
+            UIView.transition(with: view, duration: 0.75, options: [.transitionFlipFromLeft, .curveEaseInOut], animations: {
+                self.navigationController?.popViewController(animated: false)
+            }, completion: nil)
         }
         
         UserDefaults.standard.set(false, forKey: "isSelectedCalanderView")
