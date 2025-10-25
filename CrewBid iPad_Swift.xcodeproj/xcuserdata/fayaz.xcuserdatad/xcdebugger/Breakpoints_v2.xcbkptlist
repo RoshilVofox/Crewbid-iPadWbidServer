@@ -2222,8 +2222,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "644"
-            endingLineNumber = "644"
+            startingLineNumber = "645"
+            endingLineNumber = "645"
             landmarkName = "tableView(_:numberOfRowsInSection:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2446,8 +2446,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "845"
-            endingLineNumber = "845"
+            startingLineNumber = "846"
+            endingLineNumber = "846"
             landmarkName = "configureCell(_:line:row:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -2462,8 +2462,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "845"
-            endingLineNumber = "845"
+            startingLineNumber = "846"
+            endingLineNumber = "846"
             landmarkName = "configureCell(_:line:row:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -3510,8 +3510,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "567"
             endingLineNumber = "567"
-            landmarkName = "trashRefreshButton(_:)"
-            landmarkType = "7">
+            landmarkName = "CBScratchPadVC"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -7508,10 +7508,10 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBScratchPadVC.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "634"
-            endingLineNumber = "634"
-            landmarkName = "btnMoveAllToBidListAction(_:)"
-            landmarkType = "7">
+            startingLineNumber = "635"
+            endingLineNumber = "635"
+            landmarkName = "CBScratchPadVC"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -7910,8 +7910,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "461"
             endingLineNumber = "461"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "ScrollToInsertion()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -7926,8 +7926,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "450"
             endingLineNumber = "450"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "lineValuesToDisplayChanged(notification:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -7942,8 +7942,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "468"
             endingLineNumber = "468"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "freezeTopLines(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -7958,8 +7958,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "517"
             endingLineNumber = "517"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "unfreezeTopLines(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -7974,8 +7974,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "540"
             endingLineNumber = "540"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "moveInsertionIndex(to:above:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -7990,8 +7990,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "597"
             endingLineNumber = "597"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "moveInsertionIndex(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8006,8 +8006,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "664"
             endingLineNumber = "664"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "addReserveMRTline(indexpath:isReserve:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8022,8 +8022,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "731"
             endingLineNumber = "731"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "removeReserveMRTline(indexpath:isReserve:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8038,8 +8038,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "744"
             endingLineNumber = "744"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "cellDidSelect(notification:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8054,8 +8054,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "775"
             endingLineNumber = "775"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "cellDidDeselect(notification:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8070,8 +8070,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "807"
             endingLineNumber = "807"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "removeASortUI()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8086,8 +8086,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "820"
             endingLineNumber = "820"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "setPreviousBidOrder()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8102,8 +8102,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "830"
             endingLineNumber = "830"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "addMarker(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8118,8 +8118,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "853"
             endingLineNumber = "853"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "editMarker(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8134,8 +8134,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "868"
             endingLineNumber = "868"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "deleteMarker(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8150,8 +8150,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "891"
             endingLineNumber = "891"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "returnLine(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8166,8 +8166,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "898"
             endingLineNumber = "898"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "deleteLine(at:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8182,8 +8182,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "952"
             endingLineNumber = "952"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "ScrollToBottom()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8198,8 +8198,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "960"
             endingLineNumber = "960"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "ScrollToLine(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8214,7 +8214,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1052"
             endingLineNumber = "1052"
-            landmarkName = "ScrollToLine(_:)"
+            landmarkName = "reserveScrollForFA(indexofFAReserve:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -8230,8 +8230,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1058"
             endingLineNumber = "1058"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "updateTitle()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8262,8 +8262,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1259"
             endingLineNumber = "1259"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "scrollToInsertionIndex()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8278,8 +8278,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1357"
             endingLineNumber = "1357"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "getSortDescriptorsForBidList()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8294,8 +8294,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1422"
             endingLineNumber = "1422"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "markerTitleForMultipleInsert()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8310,8 +8310,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1681"
             endingLineNumber = "1681"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "manageViewSelection()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8326,8 +8326,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "339"
             endingLineNumber = "339"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "insertionIndexUpdate()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

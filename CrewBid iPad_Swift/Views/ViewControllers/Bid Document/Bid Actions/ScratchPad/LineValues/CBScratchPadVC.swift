@@ -630,6 +630,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         let bidListVC = CBBidListVC()
         bidListVC.setupVariables()
         bidListVC.insertLines(self.lines)
+        NotificationCenter.default.post(name: NSNotification.Name("flipToBidList"), object: nil)
     }
     
 }
