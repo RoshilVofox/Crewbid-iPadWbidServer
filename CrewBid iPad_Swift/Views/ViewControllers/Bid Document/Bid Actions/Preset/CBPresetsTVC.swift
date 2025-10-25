@@ -82,22 +82,22 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
     }
     
     @IBAction func btnBidsAction(_ sender: Any) {
-//        let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
-//        let vc = storyboard.instantiateViewController(withIdentifier: "CBBidListVC") as! CBBidListVC
-//        self.navigationController?.pushViewController(vc, animated: false)
-//        UIView.transition(from: self.view, to: vc.view, duration: 0.65, options: [.transitionFlipFromLeft])
-        guard let nav = self.navigationController else { return }
-        if let topVC = nav.topViewController, topVC is CBBidListVC {
-            return
-        }
-        if let existingVC = nav.viewControllers.first(where: { $0 is CBBidListVC }) {
-            nav.popToViewController(existingVC, animated: false)
-            UIView.transition(with: nav.view,duration: 0.65,options: [.transitionFlipFromLeft],animations: nil)
-            return
-        }
-        let vc = UIStoryboard(name: "BidDocument", bundle: nil).instantiateViewController(withIdentifier: "CBBidListVC") as! CBBidListVC
-        nav.pushViewController(vc, animated: false)
-        UIView.transition(with: nav.view,duration: 0.65,options: [.transitionFlipFromLeft],animations: nil)
+        let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBBidListVC") as! CBBidListVC
+        self.navigationController?.pushViewController(vc, animated: false)
+        UIView.transition(from: self.view, to: vc.view, duration: 0.85, options: [.transitionFlipFromLeft])
+//        guard let nav = self.navigationController else { return }
+//        if let topVC = nav.topViewController, topVC is CBBidListVC {
+//            return
+//        }
+//        if let existingVC = nav.viewControllers.first(where: { $0 is CBBidListVC }) {
+//            nav.popToViewController(existingVC, animated: false)
+//            UIView.transition(with: nav.view,duration: 0.65,options: [.transitionFlipFromLeft],animations: nil)
+//            return
+//        }
+//        let vc = UIStoryboard(name: "BidDocument", bundle: nil).instantiateViewController(withIdentifier: "CBBidListVC") as! CBBidListVC
+//        nav.pushViewController(vc, animated: false)
+//        UIView.transition(with: nav.view,duration: 0.65,options: [.transitionFlipFromLeft],animations: nil)
     }
     
     

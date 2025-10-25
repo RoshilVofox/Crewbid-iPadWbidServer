@@ -88,10 +88,9 @@ class CBBorderToggleButton: UIButton {
         let textColor = self.isSelected ? .black : CBColor.buttonLightTextColor
         setTitleColor(textColor, for: .normal)
         setTitleColor(textColor, for: .selected)
-       // titleLabel?.textColor = self.isSelected ? .black : CBColor.buttonLightTextColor()
-        //Kripa Uncommented the below code on 14 nov for fixing a dark mode issue
+
         titleLabel?.textColor = self.isSelected ? UIColor(named: "preset_label") : CBColor.buttonLightTextColor
-        //backgroundColor = UIColor.white
+
         backgroundColor = UIColor(named: "contentBgColor")
         alpha = self.isSelected ? 1.0 : 0.5
     }

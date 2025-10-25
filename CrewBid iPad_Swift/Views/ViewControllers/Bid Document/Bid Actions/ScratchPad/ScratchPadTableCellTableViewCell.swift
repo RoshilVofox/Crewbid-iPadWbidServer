@@ -1579,14 +1579,9 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     }
     
     @IBAction func moveLinesToBidListAction(_ sender: Any) {
-        guard let button = sender as? UIButton else { return }
-        button.isEnabled = false
         let sView = sender as! UIView
         let notification = Notification(name: Notification.Name(rawValue: CBLineTableCellBidLineNotification), object: self.moveBidListButton.globalFrame!, userInfo: ["LineNum": line!.number!.intValue, "Lines": availableFaLines, CBLineTableCellButtonViewKey: sView])
         NotificationCenter.default.post(notification)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            button.isEnabled = true
-        }
     }
 
 }

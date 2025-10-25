@@ -685,7 +685,6 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
                             var tempInt = 1
                             
                             for tempProduct in products {
-                                // changed by basith on 23-aug-2023 to fix issue where all products were visible if currency differed
                                 if tempProduct.productIdentifier == kCBMonthlyMaxSubscriptionIdentifier {
                                     tempNumbers.append(tempInt)
                                     self.products?.append(tempProduct)

@@ -21,7 +21,6 @@ class CoreDataManager{
             }
             container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
             container.viewContext.automaticallyMergesChangesFromParent = true
-            container.viewContext.undoManager = UndoManager()
         })
         return container
     }()
