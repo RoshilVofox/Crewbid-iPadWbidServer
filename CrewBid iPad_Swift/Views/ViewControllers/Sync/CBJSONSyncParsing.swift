@@ -21,6 +21,7 @@ class CBJSONSyncParsing: NSObject {
     let app = UIApplication.shared.delegate as! AppDelegate
     let context = CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!
     let objdatabuilder = ODataBuilder()
+    var syncContainsVacation = false
     
     func initcalendarData() {
         calendarData = calendarData?.initWithBidPeriod(bidPeriod: bidPeriod!)
@@ -72,7 +73,6 @@ class CBJSONSyncParsing: NSObject {
                 print("❌ Failed to save preset/state")
             }
         }
-//        unfinished 196
     }
     
     func getJsonForPresetSync() -> String {
@@ -177,8 +177,8 @@ class CBJSONSyncParsing: NSObject {
         
     }
     
-    func getMenuFilterListDictFromLocalForSync(from resultsFilter: [Any]?, isState: Bool, resultsPresetFilter preset: CBPreset) -> [String: Any] {
-        let resultsPresetFilter = preset.filterRules
+    func getMenuFilterListDictFromLocalForSync(from resultsFilter: [Any]?, isState: Bool, resultsPresetFilter preset: CBPreset?) -> [String: Any] {
+        let resultsPresetFilter = preset?.filterRules
         var currentTitle = ""
         var filerList = NSMutableArray()
         var tempDict = [String: Any]()
@@ -4364,6 +4364,773 @@ class CBJSONSyncParsing: NSObject {
     }
     
     func savePresets(presetArray: NSMutableArray) {
+        var jsonArray: [Any] = []
+        var plistData: Data? = nil
+        let order = UIDevice.current.systemVersion.compare("16.0.0", options: .numeric)
         
+        if order == .orderedSame || order == .orderedDescending {
+            for case let preset as CBPreset in presetArray{
+                var jsonDict = [String: Any]()
+                var lineSorts: NSMutableArray = []
+                var filterRules: NSMutableArray = []
+                
+                for filter in preset.filterRules {
+                    var filtDict = [String: Any]()
+                    filtDict["category"] = filter.category
+                    filtDict["type"] = filter.category
+                    filtDict["keyPath"] = filter.category
+                    filtDict["abbreviation"] = filter.category
+                    filtDict["comparison"] = filter.category
+                    filtDict["variables"] = filter.category
+                    filterRules.add(filtDict)
+                }
+                
+                for sort in preset.lineSorts {
+                    var sortDict: [String: Any] = [:]
+                    sortDict["category"] = sort.category
+                    sortDict["type"] = sort.type
+                    sortDict["keyPath"] = sort.keyPath
+                    sortDict["abbreviation"] = sort.abbreviation
+                    sortDict["ascending"] = sort.ascending
+                    sortDict["isMutable"] = sort.isMutable
+                    sortDict["city"] = sort.city
+                    sortDict["expression"] = sort.expression
+                    sortDict["order"] = sort.order
+                    sortDict["lineSortKeyMap"] = sort.lineSortKeyMap
+                    sortDict["variables"] = sort.variables
+                    sortDict["name"] = sort.name
+                    sortDict["arrayVariables"] = sort.arrayVariables
+                    sortDict["isBidListSort"] = sort.isBidListSort
+                    lineSorts.add(sortDict)
+                }
+                jsonDict["lineSorts"] = lineSorts
+                jsonDict["filterRules"] = filterRules
+                jsonDict["name"] = preset.name
+                jsonDict["month"] = self.bidPeriod!.month!.intValue
+                jsonDict["year"] = self.bidPeriod!.year!.intValue
+                jsonDict["position"] = self.bidPeriod!.positionType
+                jsonDict["appVersion"] = self.bidPeriod!.appVersion
+                jsonDict["lineValues"] = preset.lineValues
+                jsonDict["selected"] = preset.selected
+                jsonDict["presetIdentifier"] = preset.presetIdentifier
+                jsonDict["overnight"] = preset.overnight
+                jsonDict["commutabilityFilterDetails"] = preset.commutabilityFilterDetails
+                jsonDict["commutabilitySortDetails"] = preset.commutabilitySortDetails
+                jsonArray.append(jsonDict)
+            }
+            do {
+                plistData = try NSKeyedArchiver.archivedData(withRootObject: jsonArray,
+                                                             requiringSecureCoding: false)
+            } catch {
+                print("Archiving error: \(error)")
+            }
+        }
+        else {
+           do {
+               plistData = try NSKeyedArchiver.archivedData(withRootObject: presetArray,
+                                                            requiringSecureCoding: false)
+           } catch {
+               print("Archiving error: \(error)")
+           }
+       }
+        if let plistData = plistData {
+            let filePath = CBPresetsTVC().presetsDocumentFilePathWithBidPeriod(bidPeriod: self.bidPeriod!)
+            let fileURL = URL(fileURLWithPath: filePath)
+            
+            do {
+                try plistData.write(to: fileURL, options: .atomic)
+                print("Presets saved at: \(fileURL.path)")
+            } catch {
+                print("Failed to save presets: \(error)")
+            }
+        }
+        NotificationCenter.default.post(name: NSNotification.Name("presetSynched"), object: nil)
+        
+    }
+    
+    func stateKeepLocal() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM/dd/yyyy hh:mm: a"
+        let now = Date()
+        let startDate = now.timeIntervalSince1970 * 1000
+        let dateStartedString = String(format: "/Date(%.0f+0800)/", startDate)
+        var dictDetails = [String: Any]()
+        var presetVersionNumber = 0
+        dictDetails["EmployeeNumber"] = app.ObjUserAccount?.employeeNumber
+        dictDetails["StateFileName"] = self.bidFilenameForState()
+        dictDetails["PreSetFileName"] = NSNull()
+        dictDetails["Year"] = self.bidPeriod!.year!
+        dictDetails["StateVersionNumber"] = self.bidPeriod?.stateSyncVersion?.intValue
+        dictDetails["StateContent"] = self.getJsonDictForStateSync()
+        dictDetails["StateLastUpdatedTime"] = dateStartedString
+        dictDetails["PresetVersionNumber"] = 0
+        dictDetails["PresetContent"] = NSNull()
+        dictDetails["PreSetLastUpdatedTime"] = dateStartedString
+        objdatabuilder.saveCrewBidStateAndPresetToServer(dictDetails: dictDetails) { response in
+            if let response = response {
+                self.bidPeriod?.isStateFileModifiedToSync = false
+                let responseDict = response[0]
+                if responseDict["IsStateSuccess"] != nil {
+                    let isPresetSynced = responseDict["IsStateSuccess"] as? NSNumber
+                    if isPresetSynced?.boolValue == true {
+                        self.bidPeriod?.currentDateTime = Date()
+                        try? self.context.save()
+                        AlertService.showAlertForTopVC(title: "Synched!", message: "You have successfully synched your CrewBid State to server.")
+                    }
+                    else {
+                        AlertService.showAlertForTopVC(title: "", message:"CrewBid State synch was not success!")
+                    }
+                }
+                else {
+                    AlertService.showAlertForTopVC(title: "Error!", message: "Something went wrong!")
+                }
+//                print("✅ Server response:", response)
+            } else {
+                AlertService.showAlertForTopVC(title: "Error!", message: "Something went wrong!")
+                print("❌ Failed to save preset/state")
+            }
+        }
+    }
+    
+    
+    func bidFilenameForState() -> String {
+        var bidRoundChar = "M"
+        if self.bidPeriod!.isSecondRoundBid() {
+            bidRoundChar = "W"
+        }
+        var dateString = "\(bidPeriod!.year!)"
+        let twoDigitDate = String(dateString.suffix(2))
+        let positionInt = self.bidPeriod!.positionType!.intValue
+        let position = BICrewPositionType(rawValue: positionInt)
+        let positionShortString = CBUtils.shortName(for: position!)
+        let bidDataFilename = String(format: "CB%@%@%02ld%@%c", self.bidPeriod!.base!, positionShortString, self.bidPeriod!.month!.intValue, twoDigitDate, bidRoundChar)
+        return bidDataFilename
+    }
+    
+    func getJsonDictForStateSync() -> String {
+        let jsonString = [String: Any]()
+        let quickFilterDict = self.getQuickFilterDictFromLocalDB()
+        let filterDict = self.getMenuFilterDictFromLocalDB()
+        let sortDict = self.getMenuSortsDictFromLocalDB()
+        let trashedLinesDict = self.getTrashedLinesDictFromLocalDB()
+        let flaggedLinesDict = self.getFlaggedLinesDictFromLocalDB()
+        let bidlistDetails = self.getBidListLinesDictFromLocalDB()
+        let aSortDetails = self.getASortDetailsFromLocalDB()
+        let platformDetails = self.getPlatForm()
+        let vacationButtons = self.getMenubarButtons()
+        let vacationDetails = self.getVactionDetails()
+        let faEOMDatesDetails = self.getFaEOMDates()
+        let insertLineBetween = self.getInsertLineBetween()
+        let bidListSortDict = self.getBidListSortsDictFromLocalDB()
+        let myCalDetails = self.getMyCalDetails()
+        let ampmTime: [String: Any] = ["AMPMtime": NSNumber(value: Int(UserDefaults.standard.string(forKey: KCBCustomizedHerbValue) ?? "") ?? 0)]
+        let buddyBidders = [
+            "buddyBidder1": self.getbuddyBidder1(),
+            "buddyBidder2": self.getbuddyBidder2()
+        ]
+        let mergedDict = self.mergeDictionaries([quickFilterDict, filterDict, sortDict, trashedLinesDict, flaggedLinesDict, bidlistDetails, aSortDetails, vacationButtons, vacationDetails, faEOMDatesDetails, platformDetails, ampmTime, insertLineBetween, bidListSortDict, buddyBidders, myCalDetails])
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: mergedDict, options: .fragmentsAllowed)
+            let jsonString = String(data: jsonData, encoding: .utf8)
+            return jsonString ?? ""
+        } catch {
+            print("Error serializing JSON: \(error)")
+            return ""
+        }
+
+    }
+    
+    func getQuickFilterDictFromLocalDB() -> [String: Any] {
+        var LstQuickFiletDict = [String: Any]()
+        let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "category", ascending: true), NSSortDescriptor(key: "type", ascending: true)]
+        let resulFilter = try! self.context.fetch(fetchRequest)
+        LstQuickFiletDict = self.getQuickFilterListDictFromLocal(from: resulFilter, isState: true, resultsFilterPreset: nil)
+        return LstQuickFiletDict
+    }
+    
+    func getMenuFilterDictFromLocalDB() -> [String: Any] {
+        var LstFiltDict = [String: Any]()
+        let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "category", ascending: true), NSSortDescriptor(key: "type", ascending: true)]
+        let resulFilter = try! self.context.fetch(fetchRequest)
+        LstFiltDict = self.getMenuFilterListDictFromLocalForSync(from: resulFilter, isState: true, resultsPresetFilter: nil)
+        return LstFiltDict
+    }
+    
+    func getMenuSortsDictFromLocalDB() -> [String: Any] {
+        var lstSortDict = [String: Any]()
+        let fetchRequest: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+        fetchRequest.predicate = NSPredicate(format: "isBidListSort != %@", NSNumber(value: true))
+
+        let resulSort = try! self.context.fetch(fetchRequest)
+        lstSortDict = self.getMenuSortListDictFromLocalForSync(resultsSort: resulSort, isState: true, resultsPresetSort: nil, isConversion: false)
+        return lstSortDict
+    }
+    
+    func getTrashedLinesDictFromLocalDB() -> [String: Any] {
+        let trashedLinesArray = self.bidPeriod!.lastTrashedDetails
+        let trashDictionary: [String: Any] = ["trashedLines": trashedLinesArray?.mutableCopy() ?? []]
+        return trashDictionary
+    }
+    
+    func getFlaggedLinesDictFromLocalDB() -> [String: Any] {
+        var flaggedDetails = [String: Any]()
+        let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "number", ascending: true)]
+        do {
+            let results = try self.context.fetch(fetchRequest)
+            let flasgDictArray = NSMutableArray()
+            for line in results {
+                var flaggedDict = [String: Any]()
+                flaggedDict = [
+                    "LineNum" : line.number!,
+                    "FlagColor" : line.userFlagType,
+                    "FAPosition" : line.faPositionString
+                ]
+                flasgDictArray.add(flaggedDict)
+            }
+            flaggedDetails["flagDetails"] = flasgDictArray
+        }
+        catch {
+            print("\(error.localizedDescription)")
+        }
+        return flaggedDetails
+    }
+    
+    func getBidListLinesDictFromLocalDB() -> [String: Any] {
+        var bidListDict = [String: Any]()
+        let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "bidOrder > 0")
+        do {
+            let results = try self.context.fetch(fetchRequest)
+            var dictArray = NSMutableArray()
+            for bidLine in results {
+                var bidLineDict = [String: Any]()
+                bidLineDict["LineNum"] = bidLine.number!
+                if self.bidPeriod!.isFABid() {
+                    if self.bidPeriod!.isFirstRoundBid() {
+                        if bidLine.faBidLineReserve?.boolValue == true {
+                            bidLineDict["FAPosition"] = "R"
+                            bidLineDict["LineNum"] = 0
+                        }
+                        else if bidLine.faBidLineMrt?.boolValue == true {
+                            bidLineDict["FAPosition"] = "M"
+                            bidLineDict["LineNum"] = 0
+                        }
+                        else {
+                            bidLineDict["FAPosition"] = bidLine.faPositionString
+                        }
+                    }
+                    else {
+                        bidLineDict["FAPosition"] = bidLine.faPositionString
+                    }
+                }
+                else {
+                    bidLineDict["FAPosition"] = ""
+                }
+                bidLineDict["BidOrder"] = bidLine.bidOrder
+                bidLineDict["PreviousBidOrder"] = bidLine.previousBidOrder
+                bidLineDict["IsFreeze"] = bidLine.isFrozen
+                if bidLine.markerTitle != nil {
+                    bidLineDict["MarkerText"] = bidLine.markerTitle
+                }
+                dictArray.add(bidLineDict)
+            }
+            bidListDict["BidListDetails"] = dictArray
+        }
+        catch {
+            print("\(error.localizedDescription)")
+        }
+        return bidListDict
+    }
+    
+    func getASortDetailsFromLocalDB() -> [String: Any] {
+        var aSortsConditions: [String: Any] = [:]
+        aSortsConditions["IsSortBySubmit"] = bidPeriod?.isSortBySubmitOn?.boolValue
+        aSortsConditions["IsSortByAward"] = bidPeriod?.isAwardSortOn?.boolValue
+            return aSortsConditions
+    }
+    
+    func getMenubarButtons() -> [String: Any] {
+        var btnDetails: [String: Any] = [:]
+        
+        btnDetails["vacationButton"] = bidPeriod?.isWbidMaxOn?.intValue
+        btnDetails["eomButton"] = bidPeriod?.isEomOn?.intValue
+        btnDetails["swaptimizerButton"] = bidPeriod?.isSwaptimizerOn?.intValue
+
+        if bidPeriod?.isFABid() == true {
+            btnDetails["vacationButton"] = bidPeriod?.isFAVacationOn?.intValue
+        }
+
+        return ["MenubarButtons": btnDetails]
+    }
+    
+    func getVactionDetails() -> [String: Any] {
+        var vacDetails: [[String: Any]] = []
+
+        if let vacations = bidPeriod?.vacations {
+            for case let vacay as BIVacation in vacations {
+                var obj: [String: Any] = [:]
+                obj["startDate"] = self.getDateString(vacay.startDate)
+                obj["endDate"] = self.getDateString(vacay.endDate)
+                obj["type"] = vacay.vacationType
+                vacDetails.append(obj)
+            }
+        }
+
+        return ["Vacation": vacDetails]
+    }
+
+    func getDateString(_ date: Date?) -> String {
+        guard let date = date else { return "" }
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let dateString = formatter.string(from: date)
+        
+        // Convert back to Date (same as Objective-C logic)
+        guard let parsedDate = formatter.date(from: dateString) else { return "" }
+        
+        formatter.dateFormat = "MM/dd/yyyy"
+        let finalString = formatter.string(from: parsedDate)
+        
+        return finalString
+    }
+    
+    func getFaEOMDates() -> [String: Any] {
+        var eOMSelectedDateDict = [String: Any]()
+        if self.bidPeriod!.vacations != nil {
+            for case let vacay as BIVacation in self.bidPeriod!.vacations! {
+                eOMSelectedDateDict["EOMSelectedDate"] = self.bidPeriod!.faEomSelectedDate
+                return eOMSelectedDateDict
+            }
+        }
+        return eOMSelectedDateDict
+    }
+    
+    func getPlatForm() -> [String: Any] {
+        var platFormDict = [String: Any]()
+        platFormDict["Platform"] = "iPad"
+        return platFormDict
+    }
+    
+    func getInsertLineBetween() -> [String: Any] {
+        var insertIndex: NSNumber = 0
+        var isInsertLineAbove: NSNumber = 0
+        var insertionPoint: BIInsertionPoint? = nil
+        let fetchRequest: NSFetchRequest<BIInsertionPoint> = BIInsertionPoint.fetchRequest()
+        fetchRequest.fetchLimit = 1
+        let results = try? self.context.fetch(fetchRequest)
+        if results?.count ?? 0 > 0 {
+            insertionPoint = results![0]
+            insertIndex = insertionPoint!.index ?? 0
+            isInsertLineAbove = insertionPoint!.above ?? 0
+        }
+        var dict1 = [String: Any]()
+        dict1["insertIndex"] = insertIndex
+        if isInsertLineAbove.boolValue {
+            dict1["isInsertLineAbove"] = true
+        }
+        else {
+            dict1["isInsertLineAbove"] = false
+        }
+        let dict: [String: Any] = ["InsertLineBetween": dict1]
+        return dict
+    }
+    
+    func getBidListSortsDictFromLocalDB() -> [String: Any] {
+        var lstSortDict = [String: Any]()
+        let fetchRequest: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+        fetchRequest.predicate = NSPredicate(format: "isBidListSort == %@", NSNumber(value: true))
+
+        let resulSort = try! self.context.fetch(fetchRequest)
+        lstSortDict = self.getMenuSortListDictFromLocalForSync(resultsSort: resulSort, isState: true, resultsPresetSort: nil, isConversion: false)
+        let biDlistSortDict: [String: Any] = ["lstSorts" :lstSortDict]
+        let bidLstSorts: [String: Any] = ["bidLstSorts": biDlistSortDict]
+        return bidLstSorts
+    }
+    
+    func getMyCalDetails() -> [String: Any] {
+        var myCalDetails: [String: Any] = [:]
+        myCalDetails["myCalEnabled"] = Int(self.bidPeriod!.myCalEnabled!.intValue)
+        myCalDetails["myCalStartDate"] = getDateStringGMT(self.bidPeriod!.myCalStartDate!)
+        myCalDetails["myCalEndDate"] = getDateStringGMT(self.bidPeriod!.myCalEndDate!)
+        
+        return ["myCalDetails": myCalDetails]
+    }
+
+    func getDateStringGMT(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(abbreviation: "GMT")
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        
+        let myString = formatter.string(from: date)
+        let yourDate = formatter.date(from: myString)
+        
+        formatter.dateFormat = "MM/dd/yyyy"
+        let myStringAfd = formatter.string(from: yourDate ?? date)
+        
+        return myStringAfd
+    }
+    
+    func getbuddyBidder1() -> String {
+        if self.bidPeriod!.buddyBidder1 == nil {
+            return ""
+        }
+        return self.bidPeriod!.buddyBidder1!
+    }
+    
+    func getbuddyBidder2() -> String {
+        if self.bidPeriod!.buddyBidder2 == nil {
+            return ""
+        }
+        return self.bidPeriod!.buddyBidder2!
+    }
+
+    func stateTakeServerWithCompletion(completion: @escaping ([[String: Any]]?) -> Void) {
+        var dictDetails: [String: Any] = [:]
+        dictDetails["Employeeumber"] = app.ObjUserAccount?.employeeNumber
+        dictDetails["StateName"] = self.bidFilenameForState()
+        dictDetails["PresetFileName"] = NSNull()
+        dictDetails["Year"] = bidPeriod!.year
+        dictDetails["FileType"] = 0
+        ODataBuilder().getCrewBidStateAndPresetFromServer(dictDetails: dictDetails) { result in
+            if let result = result {
+                let responseDict = result[0]
+                let IsOldState = responseDict["IsOldState"] as? NSNumber
+                if IsOldState?.boolValue == true {
+                    completion(result)
+                    return
+                }
+                if responseDict["StateContent"] != nil {
+                    let contentString = responseDict["StateContent"] as? String
+                    let contentDict = self.convertStringToDictionary(contentString!)
+                    DispatchQueue.main.async {
+                        let contentDictFirst = contentDict![0]
+                        self.setMyCalToLocalDB(details: contentDictFirst)
+                        self.setTrashLineAndDetailsToLocalDB(details: contentDictFirst)
+                        self.setQuickFilterToLocalDB(details: contentDictFirst)
+                        self.setFlaggedLineAndDetailsToLocalDB(details: contentDictFirst)
+                        self.setFilterToLocalDB(details: contentDictFirst)
+                        self.setSortToLocalDB(details: contentDictFirst)
+                        self.setBidListDetailsToLocalDB(details: contentDictFirst)
+                        self.setInsertionIndexToLocalDB(details: contentDictFirst)
+                        self.setASortConditions(details: contentDictFirst)
+                        self.setFaEOMDates(details: contentDictFirst)
+                        self.setVacationButtonsLocalDB(details: contentDictFirst)
+                        self.bidPeriod!.isStateFileModifiedToSync = NSNumber(booleanLiteral: false)
+                        self.bidPeriod!.stateSyncVersion = NSNumber(value: ((self.arrayDictRecived?.first?["StateVersionNumber"] as? Int) ?? 0))
+                        
+                    }
+                    DispatchQueue.main.async {
+                        if !self.syncContainsVacation {
+                            AlertService.showAlertForTopVC(title: "Synced!", message: "State sync was successful!")
+                        }
+                    }
+                }
+                else {
+                    AlertService.showAlertForTopVC(title: "Error!", message: "Content from server is NULL")
+                }
+            }
+            else {
+                AlertService.showAlertForTopVC(title: "Error!", message: "Something went wrong")
+            }
+        }
+    }
+    
+    func setMyCalToLocalDB(details: [String: Any]) {
+        let myCalDetails = details["myCalDetails"] as? [String: Any]
+        let myCalEnabled = myCalDetails?["myCalEnabled"] as? NSNumber
+        let myCalStartDate = myCalDetails?["myCalStartDate"] as? String
+        let myCalEndDate = myCalDetails?["myCalEndDate"] as? String
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MM/dd/yyyy"
+        dateFormatter.timeZone = TimeZone(abbreviation: "GMT")
+        
+        let date1 = dateFormatter.date(from: myCalStartDate!)
+        let date2 = dateFormatter.date(from: myCalEndDate!)
+        
+        bidPeriod!.myCalEnabled = myCalEnabled
+        bidPeriod!.myCalStartDate = date1
+        bidPeriod!.myCalEndDate = date2
+    }
+    
+    func setTrashLineAndDetailsToLocalDB(details: [String: Any]) {
+        if details["trashedLines"] != nil {
+            if self.bidPeriod!.isFABid() {
+                let trashedLinesArray = details["trashedLines"] as? NSMutableArray
+                self.bidPeriod!.lastTrashedDetails = trashedLinesArray
+                let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
+                let allLines = try? self.lineManger?.managedObjectContext.fetch(fetchRequest)
+                for line in allLines ?? [] {
+                    line.isTrashed = NSNumber(booleanLiteral: false)
+                    let faLineNumber = "\(String(describing: line.number?.stringValue))\(line.faPositionString)"
+                    for trashedLineNum in trashedLinesArray ?? [] {
+                        let trashedArray = (trashedLineNum as? String)?.components(separatedBy: ",")
+                        if trashedArray!.contains(faLineNumber) {
+                            line.isTrashed = NSNumber(booleanLiteral: true)
+                        }
+                    }
+                }
+            }
+            else {
+                let trashedLinesArray = details["trashedLines"] as? NSMutableArray
+                self.bidPeriod!.lastTrashedDetails = trashedLinesArray
+                let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
+                let allLines = try? self.lineManger?.managedObjectContext.fetch(fetchRequest)
+                for line in allLines ?? [] {
+                    if trashedLinesArray!.contains(line.number!.stringValue) {
+                        line.isTrashed = NSNumber(booleanLiteral: true)
+                    }
+                    else {
+                        line.isTrashed = NSNumber(booleanLiteral: false)
+                    }
+                }
+            }
+            try? lineManger?.managedObjectContext.save()
+        }
+        else {
+            return
+        }
+    }
+    
+    func setFlaggedLineAndDetailsToLocalDB(details: [String: Any]) {
+        for case let line as BILine in self.bidPeriod!.lines ?? [] {
+            line.userFlagType = 0
+        }
+        if details["flagDetails"] != nil {
+            let flaggedLinesArray = details["flagDetails"] as? NSMutableArray
+            var flaggedLineNumbers = NSMutableArray()
+            for case let dict as [String: Any] in flaggedLinesArray! {
+                if dict["LineNum"] != nil {
+                    flaggedLineNumbers.add(dict["LineNum"]!)
+                }
+            }
+            let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "number IN %@", flaggedLineNumbers)
+            let linesForFlag = try? self.lineManger?.managedObjectContext.fetch(fetchRequest)
+            for case let flaggedLine as [String: Any] in flaggedLinesArray! {
+                for line in linesForFlag ?? [] {
+                    if self.bidPeriod?.isFABid() == false {
+                        let lineNum = (flaggedLine["LineNum"] as? NSNumber)?.intValue
+                        if line.number?.intValue == lineNum {
+                            line.userFlagType = flaggedLine["FlagColor"] as? NSNumber
+                        }
+                    }
+                    else {
+//                        for FA
+                        let lineNum = (flaggedLine["LineNum"] as? NSNumber)?.intValue
+                        let pos = flaggedLine["FAPosition"] as? String
+                        var faPos = 0
+                        if pos == "A" {
+                            faPos = 1
+                        }
+                        else if pos == "B" {
+                            faPos = 2
+                        }
+                        else if pos == "C" {
+                            faPos = 3
+                        }
+                        else if pos == "D" {
+                            faPos = 4
+                        }
+                        else if pos == "M" {
+                            faPos = 5
+                        }
+                        else {
+                            faPos = 6
+                        }
+                        
+                        if (line.number?.intValue == lineNum && line.faPosition?.intValue == faPos) {
+                            line.userFlagType = flaggedLine["FlagColor"] as? NSNumber
+                        }
+                    }
+                }
+            }
+            try? self.lineManger?.managedObjectContext.save()
+        }
+        else {
+            return
+        }
+    }
+    
+    func setBidListDetailsToLocalDB(details: [String: Any]) {
+        if details["BidListDetails"] == nil {
+            return
+        }
+        let bidListDetails = details["BidListDetails"] as? NSMutableArray
+        let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
+        let allLines = try? self.lineManger?.managedObjectContext.fetch(fetchRequest)
+        if allLines?.count ?? 0 > 0 {
+            var reserveDetails = [String: Any]()
+            var mrtDetails = [String: Any]()
+            for line in allLines! {
+                line.isFrozen = 0
+                line.frozenOrder = NSNumber(booleanLiteral: false)
+                line.previousBidOrder = 0
+                line.markerTitle = nil
+                if line.faBidLineMrt?.boolValue == true {
+                    self.lineManger?.managedObjectContext.delete(line)
+                    self.bidPeriod?.faMrtLineExists = false
+                    try? self.lineManger?.managedObjectContext.save()
+                    continue
+                }
+                if line.faBidLineReserve?.boolValue == true {
+                    self.lineManger?.managedObjectContext.delete(line)
+                    self.bidPeriod?.faReserveLineExists = false
+                    try? self.lineManger?.managedObjectContext.save()
+                    continue
+                }
+                for case let bidListDetail as [String: Any] in bidListDetails! {
+                    if self.bidPeriod!.isFABid() {
+                        if self.bidPeriod!.isFirstRoundBid() && bidListDetail["FAPosition"] as? String == "M" {
+                            mrtDetails = bidListDetail
+                            continue
+                        }
+                        else if self.bidPeriod!.isFirstRoundBid() && bidListDetail["FAPosition"] as? String == "R" {
+                            reserveDetails = bidListDetail
+                            continue
+                        }
+                        if line.number?.intValue == (bidListDetail["LineNum"] as? NSNumber)?.intValue {
+                            if line.faPositionString == (bidListDetail["FAPosition"] as? NSNumber)?.stringValue {
+                                if bidListDetail["IsFreeze"] != nil {
+                                    line.isFrozen = NSNumber(value: (bidListDetail["IsFreeze"] as? Bool ?? false))
+                                }
+                                if bidListDetail["MarkerText"] != nil {
+                                    line.markerTitle = (bidListDetail["MarkerText"] as? NSNumber)?.stringValue
+                                }
+                                line.bidOrder = NSNumber(value: (bidListDetail["BidOrder"] as? Int ?? 0))
+                                line.previousBidOrder = NSNumber(value: (bidListDetail["PreviousBidOrder"] as? Int ?? 0))
+                            }
+                        }
+                    }
+                    else {
+                        if line.number?.intValue == (bidListDetail["LineNum"] as? NSNumber)?.intValue {
+                            if bidListDetail["IsFreeze"] != nil {
+                                line.isFrozen = NSNumber(value: (bidListDetail["IsFreeze"] as? Bool ?? false))
+                            }
+                            if bidListDetail["MarkerText"] != nil {
+                                line.markerTitle = (bidListDetail["MarkerText"] as? NSNumber)?.stringValue
+                            }
+                            line.bidOrder = NSNumber(value: (bidListDetail["BidOrder"] as? Int ?? 0))
+                            line.previousBidOrder = NSNumber(value: (bidListDetail["PreviousBidOrder"] as? Int ?? 0))
+                        }
+                    }
+                }
+            }
+            // Insert reserve or MRT lines in bidlist
+            if self.bidPeriod!.isFABid() && self.bidPeriod!.isFirstRoundBid() {
+                if mrtDetails.count > 0 {
+                    let mRTLine = BILine(context: self.lineManger!.managedObjectContext)
+                    mRTLine.faBidLineMrt = NSNumber(booleanLiteral: true)
+                    mRTLine.number = 10000
+                    mRTLine.faNumber = "10000NA"
+                    mRTLine.bidPeriod = self.bidPeriod
+                    self.bidPeriod?.faMrtLineExists = NSNumber(booleanLiteral: true)
+                    mRTLine.bidOrder = NSNumber(value: (mrtDetails["BidOrder"] as? Int ?? 0))
+                    mRTLine.previousBidOrder = NSNumber(value: (mrtDetails["PreviousBidOrder"] as? Int ?? 0))
+                    try? self.lineManger?.managedObjectContext.save()
+                }
+                if reserveDetails.count > 0 {
+                    let reserveLine = BILine(context: self.lineManger!.managedObjectContext)
+                    reserveLine.faBidLineMrt = NSNumber(booleanLiteral: true)
+                    reserveLine.number = 10001
+                    reserveLine.faNumber = "10001NA"
+                    reserveLine.bidPeriod = self.bidPeriod
+                    self.bidPeriod?.faMrtLineExists = NSNumber(booleanLiteral: true)
+                    reserveLine.bidOrder = NSNumber(value: (reserveDetails["BidOrder"] as? Int ?? 0))
+                    reserveLine.previousBidOrder = NSNumber(value: (reserveDetails["PreviousBidOrder"] as? Int ?? 0))
+                    try? self.lineManger?.managedObjectContext.save()
+                }
+            }
+        }
+        try? self.lineManger?.managedObjectContext.save()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+        }
+    }
+    
+    func setInsertionIndexToLocalDB(details: [String: Any]) {
+        let bidListDetails = details["BidListDetails"] as? NSMutableArray
+        let insertLineBetween = details["InsertLineBetween"] as? [String: Any]
+        if insertLineBetween != nil && bidListDetails != nil {
+            let insertIndex = NSNumber(value: (insertLineBetween!["insertIndex"] as? Int)!)
+            let isInsertLineAbove = NSNumber(value: (insertLineBetween!["isInsertLineAbove"] as? Bool ?? false))
+
+            if bidListDetails!.count > insertIndex.intValue {
+                let fetchRequest: NSFetchRequest<BIInsertionPoint> = BIInsertionPoint.fetchRequest()
+                let results = try? self.context.fetch(fetchRequest)
+                for point in results ?? [] {
+                    self.context.delete(point)
+                }
+                let objinsertion = BIInsertionPoint(context: self.context)
+                objinsertion.above = isInsertLineAbove
+                objinsertion.index = insertIndex
+                try? self.context.save()
+                NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+            }
+        }
+    }
+    
+    func setASortConditions(details: [String: Any]) {
+        if details["IsSortByAward"] != nil && details["IsSortBySubmit"] != nil {
+            let userInfo = [
+                "AwardSortisOn": NSNumber(value: details["IsSortByAward"] as? Bool ?? false),
+                "SubmitSortisOn": NSNumber(value: details["IsSortBySubmit"] as? Bool ?? false)
+            ]
+        }
+        else {
+            return
+        }
+    }
+
+    func setFaEOMDates(details: [String: Any]) {
+        if details["EOMSelectedDate"] != nil {
+            self.bidPeriod!.faEomSelectedDate = details["EOMSelectedDate"] as? NSNumber
+            self.bidPeriod?.vacationType = "FAVacationEomOnly"
+        }
+        else {
+            return
+        }
+    }
+    
+    func setVacationButtonsLocalDB(details: [String: Any]) {
+        if details["MenubarButtons"] != nil {
+            self.bidPeriod?.isSwaptimizerOn = NSNumber(booleanLiteral: false)
+            self.bidPeriod?.isEomOn = NSNumber(booleanLiteral: false)
+            self.bidPeriod?.isWbidMaxOn = NSNumber(booleanLiteral: false)
+            self.bidPeriod?.isFAVacationOn = NSNumber(booleanLiteral: false)
+            let menubarButton = details["MenubarButtons"] as? [String: Any]
+            
+            if menubarButton?["swaptimizerButton"] != nil {
+                syncContainsVacation = true
+                self.bidPeriod!.isSwaptimizerOn = menubarButton?["swaptimizerButton"] as? NSNumber
+            }
+            if menubarButton?["eomButton"] != nil {
+                syncContainsVacation = true
+                self.bidPeriod!.isEomOn = menubarButton?["eomButton"] as? NSNumber
+            }
+            if menubarButton?["vacationButton"] != nil {
+                syncContainsVacation = true
+                self.bidPeriod!.isWbidMaxOn = menubarButton?["vacationButton"] as? NSNumber
+                if bidPeriod!.isFABid() {
+                    self.bidPeriod!.isFAVacationOn = menubarButton?["vacationButton"] as? NSNumber
+                }
+            }
+            let vacations = details["Vacation"] as? NSMutableArray
+            if vacations?.count ?? 0 > 0 {
+                let vacation = vacations?[0] as? [String: Any]
+                self.bidPeriod!.vacationType = vacation!["type"] as? String
+            }
+            try? self.lineManger?.managedObjectContext.save()
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+        }
+        else {
+            return
+        }
     }
 }
