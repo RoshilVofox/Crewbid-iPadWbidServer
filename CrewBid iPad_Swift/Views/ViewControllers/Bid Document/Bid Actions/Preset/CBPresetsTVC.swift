@@ -33,6 +33,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
         NotificationCenter.default.addObserver(self, selector: #selector(updateBidListCount), name: NSNotification.Name("updateBidListCount"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updatePresets(_:)), name: NSNotification.Name("refreshLines"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(deselectPresetsNotification), name: NSNotification.Name(CBLineValuesToDisplayDidChangeNotification), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(setPrestsNotification), name: NSNotification.Name("presetSynched"), object: nil)
 //        NotificationCenter.default.addObserver(self, selector: #selector(deselectPresetsNotification), name: NSNotification.Name("refreshLines"), object: nil)
         NotificationCenter.default.removeObserver(kCBPresetSyncReload)
         CBGlobalMethods.shared.isSortAvailable = false
@@ -64,6 +65,9 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
         DispatchQueue.main.async {
             self.btnBidListCount.setTitle("\(linesArray.count)", for: .normal)
         }
+    }
+    @objc func setPrestsNotification() {
+        self.setPrests()
     }
     
     @IBAction func btnFilterAction(_ sender: Any) {

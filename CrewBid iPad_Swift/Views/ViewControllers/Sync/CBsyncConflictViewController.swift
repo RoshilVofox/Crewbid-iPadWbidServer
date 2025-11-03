@@ -1,6 +1,7 @@
 
 
 import UIKit
+import CoreData
 
 class CBsyncConflictViewController: UIViewController {
     
@@ -26,6 +27,8 @@ class CBsyncConflictViewController: UIViewController {
     var linesManager: BILinesManager?
     var objdatabuilder = ODataBuilder()
     var objCoredataSync = CBCoreDataSync()
+    var syncType: UserSyncType?
+    let context = CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!
     
     override func viewDidLoad() {
         
@@ -179,12 +182,42 @@ class CBsyncConflictViewController: UIViewController {
             if presetSegment.selectedSegmentIndex == 0 && viewState.isHidden == true {
                 self.checkPresetIsEmpty()
                 jsonSyncVC.syncType = .presetLocal
+                syncType = .presetLocal
                 jsonSyncVC.presetKeepLocal()
             }
             else if presetSegment.selectedSegmentIndex == 1 && viewState.isHidden == true {
                 jsonSyncVC.syncType = .presetServer
-//                unfinished 655
+                syncType = .presetServer
+                jsonSyncVC.presetTakeServer() { response in
+                    DispatchQueue.main.async {
+                        self.saveSyncDataToLocalFromResponse(response ?? []) { success in
+                            if success{
+                                jsonSyncVC.presetKeepLocal()
+                            }
+                        }
+                    }
+                }
+                
             }
+            else if stateSegment.selectedSegmentIndex == 0 && viewPreset.isHidden == true {
+                syncType = .stateLocal
+                jsonSyncVC.syncType = .stateLocal
+                jsonSyncVC.stateKeepLocal()
+            }
+            else if stateSegment.selectedSegmentIndex == 1 && viewPreset.isHidden == true {
+                syncType = .stateServer
+                jsonSyncVC.syncType = .stateServer
+                jsonSyncVC.stateTakeServerWithCompletion() {response in
+                    DispatchQueue.main.async {
+                        self.saveSyncDataToLocalFromResponse(response ?? []) { success in
+                            if success {
+                                jsonSyncVC.stateKeepLocal()
+                            }
+                        }
+                    }
+                }
+            }
+//            unfinished 686
         }
         else {
             DispatchQueue.main.async {
@@ -246,4 +279,138 @@ class CBsyncConflictViewController: UIViewController {
         return Date(timeIntervalSince1970: seconds)
     }
 
+    func saveSyncDataToLocalFromResponse(_ arrResponse: [[String: Any]], completionHandler: @escaping (Bool) -> Void) {
+        guard let app = UIApplication.shared.delegate as? AppDelegate else {
+            completionHandler(false)
+            return
+        }
+
+        if syncType == .stateServer {
+            if let dataBytes = arrResponse.first?["OldStateContent"] as? [Any] {
+//                saveStateFilesToDirectory(dataBytes)
+            }
+            bidPeriod?.isStateFileModifiedToSync = false
+
+        } else if syncType == .presetServer {
+            if let dataBytes = arrResponse.first?["OldPresetContent"] as? [Any] {
+                savePresetFileToDirectory(dataBytes)
+            }
+        }
+
+        DispatchQueue.main.async {
+            completionHandler(true)
+        }
+    }
+
+//    func saveStateFilesToDirectory(_ dataBytes: [Any]) {
+//        guard !dataBytes.isEmpty else {
+//            return
+//        }
+//
+//        let count = dataBytes.count
+//        var bytes = [UInt8](repeating: 0, count: count)
+//
+//        for (index, element) in dataBytes.enumerated() {
+//            if let str = element as? String, let byte = UInt8(str) {
+//                bytes[index] = byte
+//            }
+//        }
+//
+//        let tempData = Data(bytes)
+//
+//        guard let stateDirectoryURL = CBCoreDataSync.syncDocumentDirectory(),
+//              let stateFilename = CBCoreDataSync.syncFilename(withBidPeriod: bidPeriod)
+//        else {
+//            return
+//        }
+//
+//        let dataWriteURL = stateDirectoryURL.appendingPathComponent(stateFilename)
+//        let fileManager = FileManager.default
+//
+//        do {
+//            if fileManager.fileExists(atPath: dataWriteURL.path) {
+//                print("File exists — removing old file")
+//                try fileManager.removeItem(at: dataWriteURL)
+//            }
+//
+//            try tempData.write(to: dataWriteURL)
+//            print("State file write success")
+//
+//            objCoredataSync.fetchStatePlistForSync { completedFetching in
+//                if completedFetching {
+//                    self.syncSuccessAlertDisplay()
+//                } else {
+//                    CBGlobalMethods.shared.hideCustomActivityIndicator()
+//                    self.dismiss(animated: true, completion: nil)
+//                }
+//            }
+//
+//        } catch {
+//            print("Error writing state file: \(error)")
+//        }
+//    }
+
+    func savePresetFileToDirectory(_ dataBytes: [Any]) {
+        // Validate input
+        guard !dataBytes.isEmpty else { return }
+
+        // Convert string bytes to UInt8 array
+        var bytes = [UInt8](repeating: 0, count: dataBytes.count)
+        for (index, element) in dataBytes.enumerated() {
+            if let str = element as? String, let byte = UInt8(str) {
+                bytes[index] = byte
+            }
+        }
+
+        let tempData = Data(bytes)
+
+        // Get destination URL
+        let presetsDirectoryURL = CBPresetsTVC().presetsDocumentDirectory()
+        let presetsFilename = CBPresetsTVC().presetsFilenameWithBidPeriod(bidPeriod: bidPeriod!)
+        let dataWriteURL = presetsDirectoryURL!.appendingPathComponent(presetsFilename)
+        let fileManager = FileManager.default
+        
+        do {
+            // Remove old file if exists
+            if fileManager.fileExists(atPath: dataWriteURL.path) {
+                print("File exists — removing old preset file")
+                try fileManager.removeItem(at: dataWriteURL)
+            }
+
+            // Write new data
+            try tempData.write(to: dataWriteURL)
+            print("Preset file write success")
+
+            // Update user defaults
+            UserDefaults.standard.set(false, forKey: kCBIsPresetModified)
+
+            // Notify success
+            syncSuccessAlertDisplay()
+
+        } catch {
+            print("Error writing preset file: \(error)")
+        }
+    }
+    
+    func syncSuccessAlertDisplay() {
+        self.refreshLines()
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+        self.bidPeriod?.isStateFileModifiedToSync = false
+        UserDefaults.standard.set(false, forKey: kCBIsPresetModified)
+        if (syncType == .presetServer || syncType == .stateKeepLocalAndPresetTakeServer || syncType == .stateTakeServerAndPresetTakeServer || syncType == .presetConversion) {
+            perform(#selector(presetsTableRefresh), with: nil, afterDelay: 0.5)
+        }
+    }
+
+    func refreshLines() {
+       let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "bidOrder", ascending: true)]
+        fetchRequest.predicate = NSPredicate(format: "bidOrder > 0")
+        let result = try? self.context.fetch(fetchRequest)
+        self.bidPeriod?.bidListLineCount = result?.count as NSNumber? ?? 0
+    }
+    
+    @objc func presetsTableRefresh() {
+        NotificationCenter.default.post(name: NSNotification.Name(kCBPresetSyncReload), object: self)
+    }
 }
