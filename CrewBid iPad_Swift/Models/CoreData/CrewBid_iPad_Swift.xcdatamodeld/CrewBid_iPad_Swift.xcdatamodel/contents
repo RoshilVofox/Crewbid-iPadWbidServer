@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="25A362" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="AwardDetails" representedClassName="AwardDetails" syncable="YES" codeGenerationType="class">
+    <entity name="AwardDetails" representedClassName="AwardDetails" syncable="YES">
+        <attribute name="empName" optional="YES" attributeType="String"/>
         <attribute name="empNum" optional="YES" attributeType="String"/>
         <attribute name="lineNum" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="position" optional="YES" attributeType="String"/>
         <attribute name="seqNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="type" optional="YES" attributeType="String"/>
         <relationship name="bidPeriod" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="awardDetails" inverseEntity="BidPeriod"/>
     </entity>
     <entity name="BidPeriod" representedClassName="BIBidPeriod" syncable="YES">
@@ -391,7 +392,7 @@
         <attribute name="nightsInMid" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="nonConusLegsCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="numAircraftChanges" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
-        <attribute name="number" attributeType="Integer 16" minValueString="1" usesScalarValueType="NO"/>
+        <attribute name="number" optional="YES" attributeType="Integer 16" minValueString="1" usesScalarValueType="NO"/>
         <attribute name="numDays" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="numLegs" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="numTrips" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>

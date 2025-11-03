@@ -36,7 +36,8 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     var selectedCellIndexPath = NSMutableArray()
     var awardEmpNumArray:NSMutableArray?
     var awardLineNum:String?
-    //A-Sort
+    let reachability : Reachability = try! Reachability()
+    let serviceObj = ServiceConnection()
     var isAwardSort = false
     var isSubmitSort = false
     var insertionPoint:BIInsertionPoint?
@@ -766,7 +767,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
                 selectedCellIndexPaths.add(indexPath!)
             }
         }
-        print("selectedCellIndexPaths \(selectedCellIndexPaths)")
+//        print("selectedCellIndexPaths \(selectedCellIndexPaths)")
 
     }
     
@@ -776,7 +777,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         let dict = notification.object as! NSDictionary
         let object = dict["object"]
         let indexPath = dict["indexPath"] as? IndexPath
-        print("selectedCellIndexPaths \(selectedCellIndexPaths)")
+//        print("selectedCellIndexPaths \(selectedCellIndexPaths)")
         if (object as! UITableViewCell).classForCoder.description() == "CrewBid_iPad_Swift.CBBidlineViewTableViewCell" {
             let cell = notification.object as? CBBidlineViewTableViewCell
             if let aCell = cell {
@@ -800,7 +801,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
                 selectedCellIndexPaths.removeObject(at: index)
             }
         }
-        print("selectedCellIndexPaths \(selectedCellIndexPaths)")
+//        print("selectedCellIndexPaths \(selectedCellIndexPaths)")
 
     }
     
@@ -1651,6 +1652,9 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         let sortOptionVC = UIStoryboard(name: "BidDocument", bundle: nil).instantiateViewController(withIdentifier: "CBBidListSortOptions") as! CBBidListSortOptions
         sortOptionVC.yAxis = btnASort.globalFrame!.minY
         sortOptionVC.xAxis = btnASort.globalFrame!.minX
+        sortOptionVC.isAwardSortSelected = isAwardSort
+        sortOptionVC.isSubmitOredrSortSelected = isSubmitSort
+        sortOptionVC.Delegate = self
         self.addChild(sortOptionVC)
         self.view.addSubview(sortOptionVC.view)
         sortOptionVC.view.frame = self.view.bounds
@@ -2755,5 +2759,546 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
             }
         }
     }
+    
+}
+
+
+extension CBBidListVC: CBSortOptionDelegate{
+
+    
+    func didTappedAwardSort(isOn: Bool) {
+        // Check if the bid list is empty
+
+        let numberOfRows = self.tableViewNormalView.numberOfRows(inSection: 0)
+        if isOn {
+            if numberOfRows == 0 {
+                DispatchQueue.main.async {
+                    AlertService.showAlertForTopVC(title: "Sorry!!", message: "Bid list is empty!")
+                }
+                return
+            }
+            // Update button background color
+
+            btnASort.backgroundColor = CBColor.cbGreenColor
+            // Check if award details are available or fetch them
+
+            if self.bidPeriod.awardDetails?.allObjects.count == 0 {
+                self.apiForGetAwardDetails { [self] (success) in
+                    print(success)
+                    if success {
+                        self.bidPeriod.isAwardSortOn = Yes
+                        self.bidPeriod.isSortBySubmitOn = No
+                        self.isAwardSort = true
+                        self.isSubmitSort = false
+                    } else {
+                        if !self.isSubmitSort && !self.isAwardSort {
+                            DispatchQueue.main.async {
+                                self.btnASort.backgroundColor = CBColor.cbOrangeColor
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Show sorting indicator and update sorting flags
+                DispatchQueue.main.async {
+                    self.view.showActivityIndicator(message: "Sorting...")
+                }
+                self.bidPeriod.isAwardSortOn = Yes
+                self.bidPeriod.isSortBySubmitOn = No
+                self.isAwardSort = true
+                self.isSubmitSort = false
+                self.saveToCoreData()
+                self.perform(#selector(loadBidLine), with: nil, afterDelay: 0.1)
+            }
+        } else {
+            // Turn off award sorting
+
+            self.bidPeriod.isAwardSortOn = No
+            self.isAwardSort = false
+            DispatchQueue.main.async { [self] in
+                self.btnASort.backgroundColor = CBColor.cbOrangeColor
+            }
+            if !isSubmitSort {
+                // Restore previous bid order
+
+                setPreviousBidOrder()
+            }
+            self.saveToCoreData()
+            self.perform(#selector(loadBidLine), with: nil, afterDelay: 0.1)
+        }
+        self.updateBidList()
+    }
+    
+    private func saveToCoreData() {
+        do {
+            try self.bidPeriod.managedObjectContext?.save()
+        } catch {
+            print(error)
+        }
+    }
+    
+    private func apiForGetAwardDetails(success:  @escaping ((Bool) -> Void)) {
+        self.view.showActivityIndicator(color: CBColor.cbGreenColor, message: "Downloading...")
+        
+            let userPosition: String
+        switch bidPeriod.positionType?.intValue {
+            case 0: userPosition = "CP"
+            case 1: userPosition = "FO"
+            case 2: userPosition = "FA"
+            default: userPosition = ""
+            }
+            
+            // Prepare request body
+            let dicData: [String: Any] = [
+                "Year": bidPeriod.year ?? "",
+                "Month": bidPeriod.month ?? "",
+                "Round": bidPeriod.round ?? "",
+                "Domicile": bidPeriod.base ?? "",
+                "Position": userPosition
+            ]
+            
+            guard let jsonData = try? JSONSerialization.data(withJSONObject: dicData) else {
+                self.view.hideActivityIndicator()
+                success(false)
+                return
+            }
+        
+            let urlString = EndPoint.shared.getmonthlyAwardData
+            
+        APIService.shared.fetch(urlString: urlString, method: .POST, body: jsonData, headers: ["Content-Type": "application/x-www-form-urlencoded"], parse: { data in
+                // Parse JSON
+                guard let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers) as? [String: Any] else {
+                    throw Errors.decodingError
+                }
+                return json
+            }) { result in
+                DispatchQueue.main.async {
+                    self.view.hideActivityIndicator()
+                }
+                
+                switch result {
+                case .success(let json):
+                    print(json)
+                    
+                    guard let awardArray = json["BidAwards"], !(awardArray is NSNull) else {
+                        DispatchQueue.main.async {
+                            AlertService.showAlertForTopVC(title: "Sorry!", message: "No award data found")
+                            success(false)
+                        }
+                        return
+                    }
+                    // Optionally log first award details
+                    if self.bidPeriod.awardDetails?.allObjects.count ?? 0 > 0,
+                       let firstAward = self.bidPeriod.awardDetails?.allObjects[0] as? AwardDetails {
+                        print(firstAward.empNum ?? "")
+                    }
+                    
+                    // Save data in background
+                    DispatchQueue.global(qos: .background).async {
+                        self.saveData(json)
+                        success(true)
+                    }
+                    
+//                    DispatchQueue.main.async {
+//                        
+//                    }
+                    
+                case .failure(let error):
+                    // Handle errors
+                    if case .timeout = error {
+                        let objEvent = CBOfflineEvents()
+                        if let monthValue = self.bidPeriod.month {
+                            objEvent.sendOfflineDataForTimeOut(url: urlString, month: monthValue)
+                        }
+                    }
+                    DispatchQueue.main.async {
+                        AlertService.showAlertForTopVC(title: "Sorry!", message: "No award data found")
+                        self.view.hideActivityIndicator()
+                        success(false)
+                    }
+                }
+            }
+    }
+    
+    
+    func saveData(_ json: [String: Any]) {
+        DispatchQueue.main.async {
+            guard let awardPosition = json["Position"] as? String,
+                  let awardArray = json["BidAwards"] as? [[String: Any]],
+                  let context = self.bidPeriod.managedObjectContext else { return }
+            
+            let awardEntity = NSEntityDescription.entity(forEntityName: "AwardDetails", in: context)!
+            do{
+                try self.bidPeriod.managedObjectContext?.save()
+            }catch{
+                print("Error in saving in saveData: \(error)")
+            }
+            let bidPeriod = self.bidPeriod
+            for awardDict in awardArray {
+                autoreleasepool {
+                    
+                    let awardDetail = AwardDetails(entity: awardEntity, insertInto: context)
+                    
+                    if let empNum = awardDict["EmpNum"] {
+                        let empNUMString = "\(empNum)"
+                        awardDetail.empNum = empNUMString
+                        
+                        if bidPeriod!.swaptimizerIdentifier?.stringValue == empNUMString {
+                            self.awardedLineNum = awardDict["LineNum"] as? String
+                        }
+                    }
+                    
+                    awardDetail.lineNum = awardDict["LineNum"] as! Int16
+                    awardDetail.seqNumber = awardDict["SeqNumber"] as! Int16 
+                    
+                    if awardPosition == "FA" {
+                        if let pos = awardDict["Position"], !(pos is NSNull) {
+                            awardDetail.position = pos as? String
+                        } else {
+                            awardDetail.position = ""
+                        }
+                    }
+                    
+                    awardDetail.bidPeriod = bidPeriod
+                    do {
+                        try context.save()
+                    } catch {
+                        print("Failed to save saveData: \(error)")
+                    }
+                }
+            }
+            
+            // Refresh UI after saving
+            DispatchQueue.main.async {
+                self.loadBidLine()
+                self.tableViewNormalView.reloadData()
+            }
+        }
+    }
+    
+    @objc private func loadBidLine() {
+        self.updateTitle()
+        
+        if self.selectedCellIndexPaths.count > 0 {
+            self.selectedCellIndexPaths.removeAllObjects()
+        }
+        
+        var userPosition: String!
+        if self.bidPeriod.positionType!.intValue == 0 {
+            userPosition = "CP"
+        }
+        if self.bidPeriod.positionType!.intValue == 1 {
+            userPosition = "FO"
+        }
+        if self.bidPeriod.positionType!.intValue == 2 {
+            userPosition = "FA"
+        }
+        
+        //MARK: SUBMIT SORT
+        if isSubmitSort {
+            let linesString = self.bidPeriod.submittedBid ?? ""
+            if linesString.length == 0 {
+                DispatchQueue.main.async {
+                    CBGlobalMethods.shared.hideCustomActivityIndicator()
+                }
+                self.getSubmitted()
+                return
+            }
+            CBGlobalMethods.shared.showActivityIndicator(bgColor: .purple)
+//            // setting the boolen into core data and to a global vriable.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.bidPeriod.isAwardSortOn = No
+                self.bidPeriod.isSortBySubmitOn = Yes
+                self.isAwardSort = false
+                self.isSubmitSort = true
+                // submitted line numbers string to array
+                let lines = linesString.components(separatedBy: ",")
+
+                for line in self.bidPeriod.orderedLines() {
+                    line.submitSortOrder = 9999
+                }
+                var orderInt = 1
+                for i in 0 ..< lines.count {
+                    let line = lines[i]
+                    let lineId = line
+                    let faPosition = lineId.substring(from: lineId.length - 1)
+                    let lineNumInt = Int(line) ?? 0
+
+                    if self.bidPeriod.isFABid() {
+                        for line in self.bidPeriod.getLineWithLineNumberAndFAPos(number: lineNumInt, position: faPosition) {
+                            line.submitSortOrder = orderInt.asNSNumber
+                            orderInt = orderInt + 1
+                        }
+                    }else {
+                        for line in self.bidPeriod.getLineWithLineNumber(number: lineNumInt) {
+                            line.submitSortOrder = orderInt.asNSNumber
+                            line.previousBidOrder = line.bidOrder
+                            orderInt = orderInt + 1
+                            print(i, lineNumInt)
+                        }
+                    }
+                }
+
+                if self.bidPeriod.faReserveLineExists!.boolValue || self.bidPeriod.faMrtLineExists!.boolValue {
+                    for i in 0 ..< (self.linesArray.count) {
+                        let line = self.linesArray[i]
+                        let lineNumber = line.number?.stringValue
+                        if lineNumber == "1000" {
+                            if line.faBidLineReserve?.boolValue ?? false {
+                                self.bidPeriod.managedObjectContext?.delete(line)
+                            }
+                            if line.faBidLineMrt?.boolValue ?? false {
+                                self.bidPeriod.managedObjectContext?.delete(line)
+                            }
+                        }
+                    }
+                }
+                
+                CBGlobalMethods.shared.hideActivityIndicator()
+                self.updateBidList()
+            }
+        }
+        //MARK: AWARD SORT
+        else if isAwardSort {
+            if self.bidPeriod.awardDetails == nil || self.bidPeriod.awardDetails?.allObjects.count == 0 {
+                return
+            }
+            let array = self.bidPeriod.awardDetails?.allObjects as! [AwardDetails]
+            var awardSequenceNumArray = [NSNumber]()
+            var bidUserId = CBUserAccountDetail.shared.employeeNumber
+            if self.bidPeriod.crewIdentifier?.stringValue != nil{
+                bidUserId = self.bidPeriod.crewIdentifier!.stringValue
+            }
+            for obj in array {
+                let awardLineNumber = obj.lineNum
+                let awardEmpNum = obj.empNum
+                let seqNum = obj.seqNumber
+                awardSequenceNumArray.append(seqNum as NSNumber)
+                if awardEmpNum == bidUserId {
+                    self.awardedLineNum = "\(awardLineNumber)"
+                    if self.bidPeriod.isFABid() {
+                        self.awardedLineNum = "\(awardLineNumber)" + obj.position!
+                    }
+                }
+            }
+            if self.bidPeriod.faReserveLineExists!.boolValue || self.bidPeriod.faMrtLineExists!.boolValue {
+                for i in 0 ..< (self.linesArray.count) {
+                    let line = self.linesArray[i]
+                    let lineNumber = line.number?.stringValue
+                    if lineNumber == "1000" {
+                        if line.faBidLineReserve?.boolValue ?? false {
+                            self.bidPeriod.managedObjectContext?.delete(line)
+                        }
+                        if line.faBidLineMrt?.boolValue ?? false {
+                            self.bidPeriod.managedObjectContext?.delete(line)
+                        }
+                    }
+                }
+            }
+            
+            
+            var bidListLineNumArray = [String]()
+            var awardLineNumArray = [String]()
+            for i in 0 ..< array.count {
+                var awardLineNumber = String(array[i].lineNum)
+                if userPosition == "FA" {
+                    let awardLineType = array[i].position
+                    awardLineNumber = "\(awardLineNumber)\(awardLineType!)"
+                }
+                awardLineNumArray.append(awardLineNumber)
+            }
+            // Removing duplicate line numbers in any from awards from server.
+            var nonDuplicateAwards = [AwardDetails]()
+            var checkArray = [String]()
+            for award in array {
+                //Extract the part of the dictionary that you want to be unique:
+                if userPosition == "FA" {
+                    let lineNum = "\(award.lineNum)\(award.position!)"
+                    if checkArray.contains(lineNum) {
+                        continue
+                    }
+                    checkArray.append(lineNum)
+                    nonDuplicateAwards.append(award)
+                } else {
+                    let lineNum = String(award.lineNum)
+                    if checkArray.contains(lineNum) {
+                        continue
+                    }
+                    checkArray.append(lineNum)
+                    nonDuplicateAwards.append(award)
+                }
+            }
+            let orderedSet = NSOrderedSet(array: awardLineNumArray)
+            let awardLineNumArrayNonDuplicate = orderedSet.array as! [String]
+            for line in linesArray {
+                var lineNumber = line.number?.stringValue ?? ""
+                let isFirstRound = self.bidPeriod.isFirstRoundBid()
+                if userPosition == "FA" && isFirstRound {
+                    var faPosition = ""
+                    faPosition = line.faPositionString
+                    let awardLineType = faPosition
+                    lineNumber = "\(lineNumber)\(awardLineType)"
+                }
+                bidListLineNumArray.append(lineNumber)
+            }
+            
+            let lines = (CBGlobalMethods.shared.selectedBidPeriod!.lines!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "bidOrder", ascending: true)])
+            var results : [BILine] = []
+            
+            
+            let bidListLineNumArray1 = NSMutableArray(array: bidListLineNumArray)
+            bidListLineNumArray1.removeObjects(in: awardLineNumArrayNonDuplicate)
+            let bidListLineNumArrayInt = bidListLineNumArray1.value(forKey: "intValue")
+            if userPosition ==  "FA" {
+                let pred1 = NSPredicate(format: "bidOrder > 0")
+                let pred2 = NSPredicate(format: "faNumber IN %@", bidListLineNumArray1 as CVarArg)
+                let subPredicates = [pred1, pred2]
+                results = (lines as NSArray).filtered(using: NSCompoundPredicate(andPredicateWithSubpredicates: subPredicates)) as! [BILine]
+            } else {
+                results = (lines as NSArray).filtered(using:  NSPredicate(format: "(bidOrder > 0) AND (number IN %@)", bidListLineNumArrayInt as! CVarArg)) as! [BILine]
+            }
+                for award in nonDuplicateAwards {
+                    let awardLineNumber = String(award.lineNum)
+                    let awardType = award.position
+                    for line in linesArray {
+                        let lineNumber = line.number?.stringValue ?? ""
+                        if awardLineNumber == lineNumber {
+                            if userPosition == "FA" {
+                                var faPosition = ""
+                                faPosition = line.faPositionString
+                                if awardType == "" {
+                                    faPosition = ""
+                                }
+                                if awardType == faPosition {
+                                    line.previousBidOrder = line.bidOrder
+                                    line.bidOrder = award.seqNumber as NSNumber
+                                }
+                            } else {
+                                line.previousBidOrder = line.bidOrder
+                                line.bidOrder = award.seqNumber as NSNumber
+                            }
+                        }
+                    }
+                }
+                
+                for i in 0 ..< results.count {
+                    let extraLine = results[i]
+                    extraLine.previousBidOrder = extraLine.bidOrder
+                    let extraLinesBidOrderStarting = ((self.linesArray.count) - (results.count - 1))
+                    extraLine.bidOrder = NSNumber(integerLiteral: extraLinesBidOrderStarting + i)
+                }
+            
+            DispatchQueue.main.async {
+                self.view.hideActivityIndicator()
+                self.updateBidList()
+            }
+            
+        }
+    }
+    
+    func getSubmitted(){
+        let app = UIApplication.shared.delegate as! AppDelegate
+        var dict:[String: Any] = [:]
+        
+        dict["Year"] = self.bidPeriod.year
+        dict["Month"] = self.bidPeriod.month
+        dict["Round"] = self.bidPeriod.round
+        dict["Domicile"] = self.bidPeriod.base
+        dict["Position"] = CBUtils.shortName(for: BICrewPositionType(rawValue: self.bidPeriod.positionType!.intValue)!)
+        dict["EmpNum"] = app.ObjUserAccount?.employeeNumber
+        if app.objNetworkType == .free{
+            let objEvents = CBOfflineEvents()
+            objEvents.addOfflineEvent(dict)
+            return
+        }
+        let urlString = EndPoint.shared.getbidSubmittedData
+        let jsonData = try! JSONSerialization.data(withJSONObject: dict, options: [])
+        let jsonString = String(data: jsonData, encoding: .utf8)
+        let bodyData = jsonString?.data(using: .utf8)
+        var temp = false
+        APIService.shared.fetch(
+            urlString: urlString,
+            method: .POST,
+            body: bodyData,
+            headers: nil,
+            parse: { data in
+                // Parse and validate JSON response
+                let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
+                guard let jsonDict = jsonObject as? [String: Any] else {
+                    throw Errors.decodingError
+                }
+                return jsonDict
+            },
+            completion: { result in
+                switch result {
+                case .success(let jsonDict):
+                    let submittedBids = jsonDict
+                    let submittedString = String(format: "%@", submittedBids["SubmittedResult"] as! CVarArg)
+                    if submittedString != "<null>"{
+                        self.bidPeriod.submittedBid = String(format: "%@", submittedBids["SubmittedResult"] as! CVarArg)
+                        temp = true
+                    }
+                    if !temp{
+                        DispatchQueue.main.async {
+                            let msg = "We have no record of a Submitted Bid.  You can login to SwaLife and go see all of your submitted bids.\n\nPilots:  My Work => Flight Ops => Our Business => Bid Info => BidInfo => Search Bids \n\nFlight Attendants:  My Work => Inflight => Bidding => BidInfo => BidInfo => Search Bids"
+                            AlertService.showAlertForTopVC(title: "Sorry!", message: msg, actions: [(title: "OK", style: .default, handler: {_ in
+                                self.btnASort.backgroundColor = CBColor.cbOrangeColor
+                                self.isSubmitSort = false
+                                if self.bidPeriod.isAwardSortOn?.boolValue == true{
+                                    self.btnASort.backgroundColor = CBColor.cbGreenColor
+                                }
+                            })])
+                        }
+                    }else{
+                        DispatchQueue.main.async {
+                            self.loadBidLine()
+                            self.tableViewNormalView.reloadData()
+                        }
+                    }
+                    
+                case .failure(let error):
+                    switch error {
+                    case .timeout:
+                        if let monthValue = self.bidPeriod.month {
+                            let objEvent = CBOfflineEvents()
+                            objEvent.sendOfflineDataForTimeOut(url: urlString, month: monthValue)
+                        }
+                    default:
+                        print("Request failed: \(error)")
+                    }
+                }
+            }
+        )
+        
+    }
+    
+    
+    func didTappedSubmitSort(isOn: Bool) {
+        if isOn {
+            // Enable submit sorting
+
+            DispatchQueue.main.async { [self] in
+                self.btnASort.backgroundColor = CBColor.cbGreenColor
+            }
+            self.isSubmitSort = true
+            self.perform(#selector(loadBidLine), with: nil, afterDelay: 0.1)
+        } else {
+            // Disable submit sorting
+
+            self.bidPeriod.isSortBySubmitOn = No
+            self.isSubmitSort = false
+            DispatchQueue.main.async { [self] in
+                self.btnASort.backgroundColor = CBColor.cbOrangeColor
+            }
+            if !isAwardSort {
+                // Update bid list if award sorting is also off
+
+                updateBidList()
+            }
+            self.saveToCoreData()
+            self.perform(#selector(loadBidLine), with: nil, afterDelay: 0.1)
+        }
+    }
+    
     
 }

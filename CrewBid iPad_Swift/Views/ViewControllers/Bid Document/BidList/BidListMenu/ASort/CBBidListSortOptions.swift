@@ -7,10 +7,10 @@
 
 import UIKit
 
-//protocol CBSortOptionDelegate {
-//    func didTappedAwardSort(isOn: Bool)
-//    func didTappedSubmitSort(isOn: Bool)
-//}
+protocol CBSortOptionDelegate {
+    func didTappedAwardSort(isOn: Bool)
+    func didTappedSubmitSort(isOn: Bool)
+}
 
 class CBBidListSortOptions: UIViewController {
     
@@ -23,13 +23,30 @@ class CBBidListSortOptions: UIViewController {
     
     var yAxis: CGFloat!
     var xAxis: CGFloat!
-    
-    //    var Delegate: CBSortOptionDelegate?
-    
+    var isAwardSortSelected: Bool = false
+    var isSubmitOredrSortSelected: Bool = false
+    var Delegate: CBSortOptionDelegate?
+    let highlightedColor = UIColor(red: 244/255, green: 162/255, blue: 62/255, alpha: 1.0)
+    let lightGrayColor = UIColor(rgb: 0xEBEBF0)
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupUI()
+        if isAwardSortSelected {
+            awardSortButton.isChecked = true
+            awardSortButton.backgroundColor = highlightedColor
+            awardSortButton.setTitleColor(.black, for: .normal)
+        } else {
+            awardSortButton.isChecked = false
+            awardSortButton.backgroundColor = lightGrayColor
+        }
+        if isSubmitOredrSortSelected {
+            submitSortButton.isChecked = true
+            submitSortButton.backgroundColor = highlightedColor
+            submitSortButton.setTitleColor(.black, for: .normal)
+        } else {
+            submitSortButton.isChecked = false
+            submitSortButton.backgroundColor = lightGrayColor
+        }
     }
     
     func setupUI() {
@@ -50,4 +67,39 @@ class CBBidListSortOptions: UIViewController {
         self.removeFromParent()
         self.view.isHidden = true
     }
+    
+    @IBAction func awardSortBtnAction(_ sender: Any) {
+        self.removeFromParent()
+        self.view.isHidden = true
+        awardSortButton.isChecked = !awardSortButton.isChecked
+        submitSortButton.isChecked = false
+        // Notify the delegate about the sorting action.
+
+        if self.isAwardSortSelected {
+            self.Delegate?.didTappedAwardSort(isOn: false)
+        } else {
+            if self.isSubmitOredrSortSelected {
+                self.isSubmitOredrSortSelected = false
+            }
+            self.Delegate?.didTappedAwardSort(isOn: true)
+        }
+    }
+    
+    @IBAction func submitSortBtnAction(_ sender: Any) {
+        self.removeFromParent()
+        self.view.isHidden = true
+        submitSortButton.isChecked = !submitSortButton.isChecked
+        awardSortButton.isChecked = false
+        // Notify the delegate about the sorting action.
+
+        if self.isSubmitOredrSortSelected {
+            self.Delegate?.didTappedSubmitSort(isOn: false)
+        } else {
+            if self.isAwardSortSelected {
+                self.isAwardSortSelected = false
+            }
+            self.Delegate?.didTappedSubmitSort(isOn: true)
+        }
+    }
+    
 }

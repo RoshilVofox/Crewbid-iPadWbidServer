@@ -93,10 +93,6 @@ extension CBHelpVideosController: UICollectionViewDataSource, UICollectionViewDe
             </html>
             """
         videoCell.webView.loadHTMLString(html, baseURL: nil)
-        //        let videoURL = String(format: "https://www.youtube.com/embed/%@", videoIDs[index])
-        //        print(videoURL)
-        //        let request = URLRequest(url: URL(string: videoURL)!)
-        //        videoCell.webView.load(request)
         return videoCell
     }
     

@@ -1041,6 +1041,8 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     // Fetch bid periods and reverse to show newest first
                     self.bidPeriodList = try context.fetch(fetchRequest).reversed()
                     CBGlobalMethods.shared.selectedBidPeriod = bidPeriodList[0]
+                    let a = bidPeriodList[0]
+                    print(a.month!)
                 } catch {
                     print("Failed to fetch bid periods: \(error)")
                     self.bidPeriodList = []

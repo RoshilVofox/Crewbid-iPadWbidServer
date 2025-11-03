@@ -99,7 +99,7 @@ class CBExpandedBidLinesTableController: BaseViewController {
                 if awardEmpNum == bidUserId {
                     self.awardedLineNum = awardLineNumber
                     if self.bidPeriod.isFABid() {
-                        self.awardedLineNum = awardLineNumber + obj.type!
+                        self.awardedLineNum = awardLineNumber + obj.position!
                     }
                 } else {
                     print("ALERT!!!")
