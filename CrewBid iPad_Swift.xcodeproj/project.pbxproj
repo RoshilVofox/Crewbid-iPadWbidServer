@@ -375,6 +375,8 @@
 		F4C5D6642DC9E25500D86BD2 /* FBEncryptorAES.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6632DC9E25500D86BD2 /* FBEncryptorAES.m */; };
 		F4C5D6652DC9E25500D86BD2 /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6622DC9E25500D86BD2 /* NSData+Base64.m */; };
 		F4C5D66A2DC9EBC200D86BD2 /* NSData+AES.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C5D6692DC9EBC200D86BD2 /* NSData+AES.m */; };
+		F4C656B82EACD3440002F1D0 /* AwardDetails+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C656B72EACD3440002F1D0 /* AwardDetails+CoreDataProperties.swift */; };
+		F4C656B92EACD3440002F1D0 /* AwardDetails+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C656B62EACD3440002F1D0 /* AwardDetails+CoreDataClass.swift */; };
 		F4C6F9362DCB72940092C00C /* CBUserAccountDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C6F9352DCB72940092C00C /* CBUserAccountDetail.swift */; };
 		F4C6F93A2DCB78770092C00C /* SimplePing.m in Sources */ = {isa = PBXBuildFile; fileRef = F4C6F9392DCB78770092C00C /* SimplePing.m */; };
 		F4CAAF892E70469E0094ADB6 /* SoapWebServiceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4CAAF882E70469E0094ADB6 /* SoapWebServiceController.swift */; };
@@ -774,6 +776,8 @@
 		F4C5D6632DC9E25500D86BD2 /* FBEncryptorAES.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FBEncryptorAES.m; sourceTree = "<group>"; };
 		F4C5D6682DC9EBC200D86BD2 /* NSData+AES.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSData+AES.h"; sourceTree = "<group>"; };
 		F4C5D6692DC9EBC200D86BD2 /* NSData+AES.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSData+AES.m"; sourceTree = "<group>"; };
+		F4C656B62EACD3440002F1D0 /* AwardDetails+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AwardDetails+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F4C656B72EACD3440002F1D0 /* AwardDetails+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AwardDetails+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F4C6F9322DCB45440092C00C /* SimplePing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimplePing.h; sourceTree = "<group>"; };
 		F4C6F9352DCB72940092C00C /* CBUserAccountDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUserAccountDetail.swift; sourceTree = "<group>"; };
 		F4C6F9392DCB78770092C00C /* SimplePing.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SimplePing.m; sourceTree = "<group>"; };
@@ -1912,6 +1916,8 @@
 		F4CF5A1F2D891A3800A351DB = {
 			isa = PBXGroup;
 			children = (
+				F4C656B62EACD3440002F1D0 /* AwardDetails+CoreDataClass.swift */,
+				F4C656B72EACD3440002F1D0 /* AwardDetails+CoreDataProperties.swift */,
 				F4B8B6CD2E471F440031229E /* BIInsertionPoint+CoreDataClass.swift */,
 				F4B8B6CE2E471F440031229E /* BIInsertionPoint+CoreDataProperties.swift */,
 				8BEADE892DC4A4DB00B3BDF2 /* Frameworks */,
@@ -2313,6 +2319,8 @@
 				F4400BDA2DD9E5D60066C7E0 /* CBLoginViewModel.swift in Sources */,
 				F4C352D52E94C4D10033A1E5 /* CBDifferentAccountDetailsVC.swift in Sources */,
 				F41EBF862DC4DB20001413DE /* CBBidListCalenderViewCell.swift in Sources */,
+				F4C656B82EACD3440002F1D0 /* AwardDetails+CoreDataProperties.swift in Sources */,
+				F4C656B92EACD3440002F1D0 /* AwardDetails+CoreDataClass.swift in Sources */,
 				F41EBF872DC4DB20001413DE /* InnerCollectionViewCell.swift in Sources */,
 				F4BAEFE62E055F1000109A1B /* ODataBuilder.swift in Sources */,
 				F41EBF882DC4DB20001413DE /* CBBidListSortOptions.swift in Sources */,

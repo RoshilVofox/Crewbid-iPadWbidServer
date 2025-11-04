@@ -1160,4 +1160,36 @@ extension BIBidPeriod : Identifiable {
         return self.sortedBidReceiptByCreatedAt().first
     }
     
+    // Function to get lines with a specific line number and FA position
+
+    func getLineWithLineNumberAndFAPos(number : Int, position : String) -> [BILine] {
+        let lines = (self.lines!.allObjects as NSArray) as! [BILine]
+        var positionNumber : NSNumber = 0
+        if position == "A" {
+            positionNumber = 1
+        }else if position == "B" {
+            positionNumber = 2
+        }else if position == "C" {
+            positionNumber = 3
+        }else if position == "D" {
+            positionNumber = 4
+        }else if position == "M" {
+            positionNumber = 5
+        }else if position == "NA" {
+            positionNumber = 6
+        }
+        let pre1 = NSPredicate(format: "faPosition == %@", positionNumber)
+        let pre2 = NSPredicate(format: "number == \(NSNumber(value: number))")
+        let lineList = (lines as NSArray).filtered(using:  NSCompoundPredicate(andPredicateWithSubpredicates: [pre1, pre2])) as! [BILine]
+        return lineList
+    }
+    
+    // Function to get lines with a specific line number
+
+    func getLineWithLineNumber(number : Int) -> [BILine] {
+        let lines = (self.lines!.allObjects as NSArray) as! [BILine]
+        let lineList = (lines as NSArray).filtered(using:  NSPredicate(format: "number == \(NSNumber(value: number))")) as! [BILine]
+        return lineList
+    }
+    
 }

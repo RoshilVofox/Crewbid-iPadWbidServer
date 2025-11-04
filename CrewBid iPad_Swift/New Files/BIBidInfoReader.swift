@@ -1319,7 +1319,7 @@ class BIBidInfoReader{
         var previousTripEndDateOnly:Date!
         var startDateTime:Date!
         var startDateTakeOffTime:Date!
-        
+        guard let moc = self.bidPeriod?.managedObjectContext else { return }
         //Iterate Lines
         for case let line as BILine in self.bidPeriod!.lines!{
             self.removeExistingWorkBlock(line)
@@ -1388,7 +1388,7 @@ class BIBidInfoReader{
                     arrFetchedTrip.append(trip)
                     if tripCount == trips.count-1 {
                         //Set WorkBlock Details
-                        let workBlock1 = WorkBlockList(context: self.dataSource.managedObjectContext)
+                        let workBlock1 = WorkBlockList(context: moc)
                         workBlock1.backToBackCount = back2backTripBlock as NSNumber
                         workBlock1.startDateTime = startDateTime
                         workBlock1.startDateTakeOffTime = startDateTakeOffTime
@@ -1420,7 +1420,7 @@ class BIBidInfoReader{
                             }
                         }
                         for day in workBlockDays {
-                            let dayObj = BIDay(context: self.dataSource.managedObjectContext)
+                            let dayObj = BIDay(context: moc)
                             dayObj.date = day.date
                             dayObj.info = day.info
                             dayObj.workBlock = workBlock1
@@ -1454,7 +1454,7 @@ class BIBidInfoReader{
                     arrFetchedTrip.append(trip)
                     if tripCount == trips.count-1 {
                         //Set WorkBlock Details
-                        let workBlock2 = WorkBlockList(context: self.dataSource.managedObjectContext)
+                        let workBlock2 = WorkBlockList(context: moc)
                         workBlock2.startDateTime = startDateTime
                         workBlock2.startDateTakeOffTime = startDateTakeOffTime
                         workBlock2.startDay = self.getDay(from: startDateTime!)
@@ -1484,7 +1484,7 @@ class BIBidInfoReader{
                         }
                         
                         for  day in workBlockDays {
-                            let dayObj = BIDay(context: self.dataSource.managedObjectContext)
+                            let dayObj = BIDay(context: moc)
                             dayObj.date = day.date
                             dayObj.info = day.info
                             dayObj.workBlock = workBlock2
@@ -1513,7 +1513,7 @@ class BIBidInfoReader{
                     }
                 }else{
                     //Set WorkBlock Details
-                    let workBlock3 = WorkBlockList(context: self.dataSource.managedObjectContext)
+                    let workBlock3 = WorkBlockList(context: moc)
                     workBlock3.backToBackCount = back2backTripBlock as NSNumber
                     workBlock3.startDateTime = startDateTime
                     workBlock3.startDateTakeOffTime = startDateTakeOffTime
@@ -1542,7 +1542,7 @@ class BIBidInfoReader{
                         }
                     }
                     for day in workBlockDays {
-                        let dayObj = BIDay(context: self.dataSource.managedObjectContext)
+                        let dayObj = BIDay(context: moc)
                         dayObj.date = day.date
                         dayObj.info = day.info
                         dayObj.workBlock = workBlock3
@@ -1571,7 +1571,7 @@ class BIBidInfoReader{
                     
                     if tripCount == trips.count-1 && tripIndex >= 0 {
                         //Set WorkBlock Details
-                        let workBlock4 = WorkBlockList(context: self.dataSource.managedObjectContext)
+                        let workBlock4 = WorkBlockList(context: moc)
                         workBlock4.backToBackCount = back2backTripBlock as NSNumber
                         workBlock4.startDateTime = tripStartDate
                         workBlock4.startDateTakeOffTime = tripStartDateTakeOff
@@ -1601,7 +1601,7 @@ class BIBidInfoReader{
                         }
                         
                         for day in workBlockDays {
-                            let dayObj = BIDay(context: self.dataSource.managedObjectContext)
+                            let dayObj = BIDay(context: moc)
                             dayObj.date = day.date
                             dayObj.info = day.info
                             dayObj.workBlock = workBlock4
@@ -1632,10 +1632,10 @@ class BIBidInfoReader{
             line.workBlockCount = line.workBlocks!.count as NSNumber
             self.calculateNewProperties(line: line)
         }
-        let context = self.dataSource.managedObjectContext
-        if context.hasChanges{
+//        let context = self.dataSource.managedObjectContext
+        if moc.hasChanges{
             do{
-                try context.save()
+                try moc.save()
             }catch{
                 print("Error in saving context: \(error.localizedDescription)")
             }
@@ -1811,7 +1811,7 @@ class BIBidInfoReader{
         var previousTripEndDateOnly:Date!
         var startDateTime:Date!
         var startDateTakeOffTime:Date!
-        
+        guard let moc = self.bidPeriod?.managedObjectContext else { return }
         //Iterate Lines
         let bidLinesFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Line")
         bidLinesFetch.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
@@ -1891,7 +1891,7 @@ class BIBidInfoReader{
                                 arrFetchedTrip.append(trip)
                                 if tripCount == trips.count-1 {
                                     //Set WorkBlock Details
-                                    let workBlock1 = WorkBlockList(context: self.dataSource.managedObjectContext)
+                                    let workBlock1 = WorkBlockList(context: moc)
                                     workBlock1.backToBackCount = back2backTripBlock as NSNumber
                                     workBlock1.startDateTime = startDateTime
                                     workBlock1.startDateTakeOffTime = startDateTakeOffTime
@@ -1907,7 +1907,7 @@ class BIBidInfoReader{
                                     
                                     let workBlockDays = (prevTrip!.days!.allObjects) + (trip.days!.allObjects)
                                     for case let day as BIDay in workBlockDays {
-                                        let dayObj = BIDay(context: self.dataSource.managedObjectContext)
+                                        let dayObj = BIDay(context: moc)
                                         dayObj.date = day.date
                                         dayObj.info = day.info
                                         dayObj.workBlock = workBlock1
@@ -1938,7 +1938,7 @@ class BIBidInfoReader{
                                 arrFetchedTrip.append(trip)
                                 
                                 if tripCount == trips.count - 1 {
-                                    let workBlock2 = WorkBlockList(context: self.dataSource.managedObjectContext)
+                                    let workBlock2 = WorkBlockList(context: moc)
                                     workBlock2.backToBackCount = back2backTripBlock as NSNumber
                                     workBlock2.startDateTime = startDateTime
                                     workBlock2.startDateTakeOffTime = startDateTakeOffTime
@@ -1964,7 +1964,7 @@ class BIBidInfoReader{
                                     }
                                     
                                     for case let day as BIDay in workBlockDays{
-                                        let dayObj = BIDay(context: self.dataSource.managedObjectContext)
+                                        let dayObj = BIDay(context: moc)
                                         dayObj.date = day.date
                                         dayObj.info = day.info
                                         dayObj.workBlock = workBlock2
@@ -1995,7 +1995,7 @@ class BIBidInfoReader{
                                 }
                             }else{
                                 //Set WorkBlock Details
-                                let workBlock3 = WorkBlockList(context: self.dataSource.managedObjectContext)
+                                let workBlock3 = WorkBlockList(context: moc)
 
                                 workBlock3.backToBackCount = back2backTripBlock as NSNumber
                                 workBlock3.startDateTime = startDateTime
@@ -2034,7 +2034,7 @@ class BIBidInfoReader{
                                 
                                 for case let day as BIDay in workBlockDays {
                                     
-                                    let dayObj = BIDay(context: self.dataSource.managedObjectContext)
+                                    let dayObj = BIDay(context: moc)
                                     
                                     dayObj.date = day.date
                                     dayObj.info = day.info
@@ -2064,7 +2064,7 @@ class BIBidInfoReader{
                                 
                                 if tripCount == trips.count - 1 && tripIndex >= 0 {
                                     //Set WorkBlock Details
-                                    let workBlock4 = WorkBlockList(context: self.dataSource.managedObjectContext)
+                                    let workBlock4 = WorkBlockList(context: moc)
                                     
                                     workBlock4.backToBackCount = back2backTripBlock as NSNumber
                                     workBlock4.startDateTime = tripStartDate
@@ -2079,7 +2079,7 @@ class BIBidInfoReader{
                                     
                                     let workBlockDays = trip.days!.allObjects
                                     for case let day as BIDay in workBlockDays{
-                                        let dayObj = BIDay(context: self.dataSource.managedObjectContext)
+                                        let dayObj = BIDay(context: moc)
                                         dayObj.date = day.date
                                         dayObj.info = day.info
                                         dayObj.workBlock = workBlock4
@@ -3800,8 +3800,8 @@ class BIBidInfoReader{
                     
                     //Create Line
                     line = BILine(context: moc)
-                    let moc = line!.managedObjectContext!
-                    let bidPeriod = try moc.existingObject(with: self.bidPeriod!.objectID) as? BIBidPeriod
+                    let moc1 = line!.managedObjectContext!
+                    let bidPeriod = try moc1.existingObject(with: self.bidPeriod!.objectID) as? BIBidPeriod
                     
                     line?.bidPeriod = bidPeriod
                     
