@@ -17,7 +17,7 @@ class CBJSONSyncParsing: NSObject {
     var syncType: UserSyncType?
     var lineManger: BILinesManager?
     var arrayDictRecived: [[String: Any]]?
-    var syncPreset: PresetSync?
+    var syncPreset: PresetSync? = nil
     let app = UIApplication.shared.delegate as! AppDelegate
     let context = CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!
     let objdatabuilder = ODataBuilder()
@@ -49,16 +49,22 @@ class CBJSONSyncParsing: NSObject {
         dictDetails["PreSetVersionNumber"] = NSNumber(value: presetVersionNumber)
         dictDetails["PreSetStateContent"] = self.getJsonForPresetSync()
         dictDetails["PreSetLastUpdatedTime"] = dateStartedString
-        objdatabuilder.saveCrewBidStateAndPresetToServer(dictDetails: dictDetails) { response in
+        objdatabuilder.saveCrewBidStateAndPresetToServer(dictDetails: dictDetails) { result in
             CBGlobalMethods.shared.hideCustomActivityIndicator()
-            if let response = response {
+            switch result {
+            case .success(let response):
                 let responseDict = response[0]
                 if responseDict["IsPresetSuccess"] != nil {
                     let isPresetSynced = responseDict["IsPresetSuccess"] as? NSNumber
                     if isPresetSynced?.boolValue == true {
                         self.bidPeriod?.currentDateTime = Date()
                         try? self.context.save()
-                        AlertService.showAlertForTopVC(title: "Synched!", message: "You have successfully synched your Presets to server.")
+                        DispatchQueue.main.async {
+                            let topVc = UIApplication.topVC()
+                            topVc.dismiss(animated: true) {
+                                AlertService.showAlertForTopVC(title: "Synched!", message: "You have successfully synched your Presets to server.")
+                            }
+                        }
                     }
                     else {
                         AlertService.showAlertForTopVC(title: "", message:"Preset synch was not success!")
@@ -68,9 +74,9 @@ class CBJSONSyncParsing: NSObject {
                     AlertService.showAlertForTopVC(title: "Error!", message: "Something went wrong!")
                 }
 //                print("✅ Server response:", response)
-            } else {
-                AlertService.showAlertForTopVC(title: "Error!", message: "Something went wrong!")
-                print("❌ Failed to save preset/state")
+            case .failure(let error):
+                AlertService.showAlertForTopVC(title: "Error!", message: error.localizedDescription)
+                print("❌ Failed to sync preset to server. Please try again later.")
             }
         }
     }
@@ -2448,7 +2454,8 @@ class CBJSONSyncParsing: NSObject {
         
         return result
     }
-
+    
+// MARK: Preset Take from server
     func presetTakeServer(completion: @escaping ([[String: Any]]?) -> Void) {
         var dictDetails: [String: Any] = [:]
         dictDetails["Employeeumber"] = app.ObjUserAccount?.employeeNumber
@@ -2458,11 +2465,12 @@ class CBJSONSyncParsing: NSObject {
             dictDetails["FileType"] = 1
 
         objdatabuilder.getCrewBidStateAndPresetFromServer(dictDetails: dictDetails) { result in
-            if let result = result {
-                let responseDict = result[0]
+            switch result {
+            case .success(let resultd):
+                let responseDict = resultd[0]
                 let isOldPreset = responseDict["IsOldPreset"] as? NSNumber
                 if isOldPreset?.boolValue == true {
-                    completion(result)
+                    completion(resultd)
                     return
                 }
                 if responseDict["PreSetStateContent"] != nil {
@@ -2472,15 +2480,17 @@ class CBJSONSyncParsing: NSObject {
                         self.setPresetToLocalDB(details: contentDictArray!)
                     }
                     DispatchQueue.main.async {
-                        AlertService.showAlertForTopVC(title: "Synced!", message: "Preset sync was successful!")
+                        let topVc = UIApplication.topVC()
+                        topVc.dismiss(animated: true) {
+                            AlertService.showAlertForTopVC(title: "Synced!", message: "Preset sync was successful!")
+                        }
                     }
                 }
                 else {
                     AlertService.showAlertForTopVC(title: "Error!", message: "Preset from server is NULL")
                 }
-            }
-            else {
-                AlertService.showAlertForTopVC(title: "Error!", message: "Something went wrong")
+            case .failure(let error):
+                AlertService.showAlertForTopVC(title: "Error!", message: error.localizedDescription)
             }
         }
     }
@@ -4448,6 +4458,7 @@ class CBJSONSyncParsing: NSObject {
         
     }
     
+    // MARK: state keep local
     func stateKeepLocal() {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMM/dd/yyyy hh:mm: a"
@@ -4466,8 +4477,9 @@ class CBJSONSyncParsing: NSObject {
         dictDetails["PresetVersionNumber"] = 0
         dictDetails["PresetContent"] = NSNull()
         dictDetails["PreSetLastUpdatedTime"] = dateStartedString
-        objdatabuilder.saveCrewBidStateAndPresetToServer(dictDetails: dictDetails) { response in
-            if let response = response {
+        objdatabuilder.saveCrewBidStateAndPresetToServer(dictDetails: dictDetails) { result in
+            switch result {
+            case .success(let response):
                 self.bidPeriod?.isStateFileModifiedToSync = false
                 let responseDict = response[0]
                 if responseDict["IsStateSuccess"] != nil {
@@ -4475,7 +4487,12 @@ class CBJSONSyncParsing: NSObject {
                     if isPresetSynced?.boolValue == true {
                         self.bidPeriod?.currentDateTime = Date()
                         try? self.context.save()
-                        AlertService.showAlertForTopVC(title: "Synched!", message: "You have successfully synched your CrewBid State to server.")
+                        DispatchQueue.main.async {
+                            let topVc = UIApplication.topVC()
+                            topVc.dismiss(animated: true) {
+                                AlertService.showAlertForTopVC(title: "Synched!", message: "You have successfully synched your CrewBid State to server.")
+                            }
+                        }
                     }
                     else {
                         AlertService.showAlertForTopVC(title: "", message:"CrewBid State synch was not success!")
@@ -4485,9 +4502,9 @@ class CBJSONSyncParsing: NSObject {
                     AlertService.showAlertForTopVC(title: "Error!", message: "Something went wrong!")
                 }
 //                print("✅ Server response:", response)
-            } else {
-                AlertService.showAlertForTopVC(title: "Error!", message: "Something went wrong!")
-                print("❌ Failed to save preset/state")
+            case .failure(let error):
+                AlertService.showAlertForTopVC(title: "Error!", message: error.localizedDescription)
+                print("❌ Failed to save state to server")
             }
         }
     }
@@ -4790,6 +4807,7 @@ class CBJSONSyncParsing: NSObject {
         return self.bidPeriod!.buddyBidder2!
     }
 
+    // MARK: state take from server
     func stateTakeServerWithCompletion(completion: @escaping ([[String: Any]]?) -> Void) {
         var dictDetails: [String: Any] = [:]
         dictDetails["Employeeumber"] = app.ObjUserAccount?.employeeNumber
@@ -4798,11 +4816,12 @@ class CBJSONSyncParsing: NSObject {
         dictDetails["Year"] = bidPeriod!.year
         dictDetails["FileType"] = 0
         ODataBuilder().getCrewBidStateAndPresetFromServer(dictDetails: dictDetails) { result in
-            if let result = result {
-                let responseDict = result[0]
+            switch result {
+            case .success(let resultd):
+                let responseDict = resultd[0]
                 let IsOldState = responseDict["IsOldState"] as? NSNumber
                 if IsOldState?.boolValue == true {
-                    completion(result)
+                    completion(resultd)
                     return
                 }
                 if responseDict["StateContent"] != nil {
@@ -4826,7 +4845,12 @@ class CBJSONSyncParsing: NSObject {
                         
                     }
                     DispatchQueue.main.async {
-                        if !self.syncContainsVacation {
+                        let topVc = UIApplication.topVC()
+                        topVc.dismiss(animated: true) {
+                            if !self.syncContainsVacation {
+                                AlertService.showAlertForTopVC(title: "Synced!", message: "State sync was successful!")
+                            }
+                            self.syncContainsVacation = false
                             AlertService.showAlertForTopVC(title: "Synced!", message: "State sync was successful!")
                         }
                     }
@@ -4834,9 +4858,8 @@ class CBJSONSyncParsing: NSObject {
                 else {
                     AlertService.showAlertForTopVC(title: "Error!", message: "Content from server is NULL")
                 }
-            }
-            else {
-                AlertService.showAlertForTopVC(title: "Error!", message: "Something went wrong")
+            case .failure(let error):
+                AlertService.showAlertForTopVC(title: "Error!", message: error.localizedDescription)
             }
         }
     }
@@ -5131,6 +5154,308 @@ class CBJSONSyncParsing: NSObject {
         }
         else {
             return
+        }
+    }
+    
+    // MARK: Both Keep local
+    func bothKeepLocal() {
+        self.saveBothToServerWithCompletion() { result in
+            switch result {
+            case .success(let response):
+                self.bidPeriod?.isStateFileModifiedToSync = false
+                try? self.lineManger?.managedObjectContext.save()
+                let responseDict = response[0]
+                let isPresetSynced = responseDict["IsPresetSuccess"] as? NSNumber
+                let isStateSynched = responseDict["IsStateSuccess"] as? NSNumber
+                DispatchQueue.main.async {
+                    let arr = CBPresetsTVC().openPresetsFromFileWithBidPeriod(bidPeriod: self.bidPeriod!)
+
+                    if arr.count == 0 {
+                        UIApplication.topVC().dismiss(animated: true, completion: nil)
+                    }
+                    let topVC = UIApplication.topVC()
+                    if topVC is UIAlertController {
+                        topVC.dismiss(animated: true, completion: nil)
+                    }
+                }
+                if isStateSynched?.boolValue == true && isPresetSynced?.boolValue == true {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        let topVC = UIApplication.topVC()
+                        topVC.dismiss(animated: true) { 
+                            AlertService.showAlertForTopVC(title: "Synched!", message: "You have successfully synched your Presets and CrewBid State to server.")
+                        }
+                    }
+                }
+                else if isStateSynched?.boolValue == true && isPresetSynced?.boolValue != true {
+                    DispatchQueue.main.async {
+                        let topVC = UIApplication.topVC()
+                        AlertService.showAlertForTopVC(title: "Synched!", message: "You have successfully synched your CrewBid State to server, but Prestes were not synched, please try again for Preset synch.")
+                    }
+                }
+                else if isStateSynched?.boolValue != true && isPresetSynced?.boolValue == true {
+                    DispatchQueue.main.async {
+                        let topVC = UIApplication.topVC()
+                        AlertService.showAlertForTopVC(title: "Synched!", message: "You have successfully synched your Presets to server, but CrewBid State was not synched, please try again for CrewBid State synch.")
+                    }
+                }
+                else {
+                    DispatchQueue.main.async {
+                        let topVC = UIApplication.topVC()
+                        AlertService.showAlertForTopVC(title: "Warning!", message: "Both is not working, please try state and preset seperately")
+                    }
+                }
+            case .failure(let error):
+                AlertService.showAlertForTopVC(title: "Error", message: error.localizedDescription)
+            }
+        }
+    }
+    
+    func saveBothToServerWithCompletion(completion: @escaping (Result<[[String: Any]], Error>) -> Void) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM/dd/yyyy hh:mm: a"
+        let now = Date()
+        let startDate = now.timeIntervalSince1970 * 1000
+        let dateStartedString = String(format: "/Date(%.0f+0800)/", startDate)
+        var dictDetails = [String: Any]()
+        var presetVersionNumber = 0
+        if self.syncPreset != nil {
+            presetVersionNumber = self.syncPreset!.presetSyncVersion!.intValue
+        }
+        dictDetails["EmployeeNumber"] = app.ObjUserAccount?.employeeNumber
+        dictDetails["StateFileName"] = self.bidFilenameForState()
+        dictDetails["PreSetFileName"] = app.ObjUserAccount?.employeeNumber
+        dictDetails["Year"] = self.bidPeriod!.year!
+        dictDetails["VersionNumber"] = 0
+        dictDetails["StateContent"] = self.getJsonDictForStateSync()
+        dictDetails["LastUpdatedTime"] = dateStartedString
+        dictDetails["PresetVersionNumber"] = NSNumber(value: presetVersionNumber)
+        dictDetails["PreSetStateContent"] = getJsonForPresetSync()
+        dictDetails["PreSetLastUpdatedTime"] = dateStartedString
+        objdatabuilder.saveCrewBidStateAndPresetToServer(dictDetails: dictDetails) { response in}
+    }
+    
+    
+    // MARK: state keep local preset take server
+    func stateKeepLocal_PresetTakeServer() {
+        var dictDetails = [String: Any]()
+        dictDetails["EmployeeNumber"] = app.ObjUserAccount?.employeeNumber
+        dictDetails["StateFileName"] = self.bidFilenameForState()
+        dictDetails["PreSetFileName"] = app.ObjUserAccount?.employeeNumber
+        dictDetails["Year"] = self.bidPeriod!.year!
+        dictDetails["FileType"] = 1
+        objdatabuilder.getCrewBidStateAndPresetFromServer(dictDetails: dictDetails) { result in
+            switch result {
+            case .success(let response):
+                let responseDict = response[0]
+                if responseDict["PreSetStateContent"] != nil {
+                    let contentString = responseDict["PreSetStateContent"] as? String
+                    let contentDictArray = self.convertStringToDictionary(contentString!)
+                    DispatchQueue.main.async {
+                        self.setPresetToLocalDB(details: contentDictArray!)
+                        self.saveBothToServerWithCompletion() { serverResult in
+                            switch serverResult {
+                            case .success(let data):
+                                let respDict = data[0]
+                                let isStateSynched = respDict["IsStateSuccess"] as? NSNumber
+                                if isStateSynched?.boolValue == true {
+                                    DispatchQueue.main.async {
+                                        let topVC = UIApplication.topVC()
+                                        topVC.dismiss(animated: true) {
+                                            AlertService.showAlertForTopVC(title: "Synched!", message: "You have successfully synched your CrewBid State to server and Preset from server.")
+                                        }
+                                    }
+                                }
+                            case .failure(let error1):
+                                AlertService.showAlertForTopVC(title: "Error", message: error1.localizedDescription)
+                            }
+                        }
+                    }
+                }
+                else {
+                    AlertService.showAlertForTopVC(title: "Error!", message: "Preset from server is NULL")
+                }
+            case .failure(let error):
+                AlertService.showAlertForTopVC(title: "Error", message: error.localizedDescription)
+            }
+        }
+    }
+    
+    func saveStateToServerForBoth(completion: @escaping (Result<[[String: Any]], Error>) -> Void) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM/dd/yyyy hh:mm: a"
+        let now = Date()
+        let startDate = now.timeIntervalSince1970 * 1000
+        let dateStartedString = String(format: "/Date(%.0f+0800)/", startDate)
+        var dictDetails = [String: Any]()
+        dictDetails["EmployeeNumber"] = app.ObjUserAccount?.employeeNumber
+        dictDetails["StateFileName"] = self.bidFilenameForState()
+        dictDetails["PreSetFileName"] = NSNull()
+        dictDetails["Year"] = self.bidPeriod!.year!
+        dictDetails["StateVersionNumber"] = self.bidPeriod?.stateSyncVersion
+        dictDetails["StateContent"] = self.getJsonDictForStateSync()
+        dictDetails["StateLastUpdatedTime"] = dateStartedString
+        dictDetails["PresetVersionNumber"] = 0
+        dictDetails["PresetContent"] = NSNull()
+        dictDetails["PreSetLastUpdatedTime"] = dateStartedString
+        objdatabuilder.saveCrewBidStateAndPresetToServer(dictDetails: dictDetails) { response in}
+    }
+
+    func stateTakeServer_PresetKeepLocal() {
+        var dictDetails = [String: Any]()
+        dictDetails["EmployeeNumber"] = app.ObjUserAccount?.employeeNumber
+        dictDetails["StateName"] = self.bidFilenameForState()
+        dictDetails["PreSetFileName"] = app.ObjUserAccount?.employeeNumber
+        dictDetails["Year"] = self.bidPeriod!.year!
+        dictDetails["FileType"] = 0
+        objdatabuilder.getCrewBidStateAndPresetFromServer(dictDetails: dictDetails) { result in
+            switch result {
+            case .success(let response):
+                let responseDict = response[0]
+                if responseDict["StateContent"] != nil {
+                    let contentString = responseDict["StateContent"] as! String
+                    let contentDictArray = self.convertStringToDictionary(contentString)
+                    DispatchQueue.main.async {
+                        let first = contentDictArray![0]
+                        self.setMyCalToLocalDB(details: first)
+                        self.setTrashLineAndDetailsToLocalDB(details: first)
+                        self.setQuickFilterToLocalDB(details: first)
+                        self.setFlaggedLineAndDetailsToLocalDB(details: first)
+                        self.setFilterToLocalDB(details: first)
+                        self.setSortToLocalDB(details: first)
+                        self.setBidListDetailsToLocalDB(details: first)
+                        self.setASortConditions(details: first)
+                        self.setInsertionIndexToLocalDB(details: first)
+                        self.setFaEOMDates(details: first)
+                        self.setVacationButtonsLocalDB(details: first)
+                        if self.arrayDictRecived?[0]["StateVersionNumber"] as? Int != nil {
+                            self.bidPeriod!.stateSyncVersion = NSNumber(value: Int((self.arrayDictRecived![0]["StateVersionNumber"] as? Int)!))
+                        }
+                        self.bidPeriod!.isStateFileModifiedToSync = NSNumber(booleanLiteral: false)
+                        
+                        self.savePresetToServerForBoth() { result in
+                            switch result {
+                            case .success(let response):
+                                let respDict = response[0]
+                                if respDict["IsPresetSuccess"] != nil {
+                                    let isPresetSynched = respDict["IsPresetSuccess"] as? NSNumber
+                                    if isPresetSynched?.boolValue == true {
+                                        DispatchQueue.main.async {
+                                            let topVC = UIApplication.topVC()
+                                            topVC.dismiss(animated: true) {
+                                                AlertService.showAlertForTopVC(title: "Synched!", message: "You have successfully synched your Presets to server.")
+                                            }
+                                        }
+                                    }
+                                    else {
+                                        DispatchQueue.main.async {
+                                            let topVC = UIApplication.topVC()
+                                            topVC.dismiss(animated: true) {
+                                                AlertService.showAlertForTopVC(title: "", message: "Preset synch was not success!")
+                                            }
+                                        }
+                                    }
+                                }
+                                else {
+                                    DispatchQueue.main.async {
+                                        let topVC = UIApplication.topVC()
+                                        topVC.dismiss(animated: true) {
+                                            AlertService.showAlertForTopVC(title: "Error", message: "Something went wrong!")
+                                        }
+                                    }
+                                }
+                            case .failure(let error):
+                                AlertService.showAlertForTopVC(title: "Error!", message: error.localizedDescription)
+                            }
+                        }
+                    }
+                }
+            case .failure(let error):
+                AlertService.showAlertForTopVC(title: "Error!", message: error.localizedDescription)
+            }
+        }
+    }
+    
+    func savePresetToServerForBoth(completion: @escaping (Result<[[String: Any]], Error>) -> Void) {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM/dd/yyyy hh:mm: a"
+        let now = Date()
+        let startDate = now.timeIntervalSince1970 * 1000
+        let dateStartedString = String(format: "/Date(%.0f+0800)/", startDate)
+        var dictDetails = [String: Any]()
+        var presetVersionNumber = 0
+        if self.syncPreset != nil {
+            presetVersionNumber = (self.syncPreset?.presetSyncVersion!.intValue)!
+        }
+        dictDetails["EmployeeNumber"] = app.ObjUserAccount?.employeeNumber
+        dictDetails["StateFileName"] = NSNull()
+        dictDetails["PreSetFileName"] = app.ObjUserAccount?.employeeNumber
+        dictDetails["Year"] = self.bidPeriod!.year!
+        dictDetails["VersionNumber"] = 0
+        dictDetails["StateContent"] = NSNull()
+        dictDetails["LastUpdatedTime"] = dateStartedString
+        dictDetails["PreSetVersionNumber"] = NSNumber(value: presetVersionNumber)
+        dictDetails["PreSetStateContent"] = self.getJsonForPresetSync()
+        dictDetails["PreSetLastUpdatedTime"] = dateStartedString
+        objdatabuilder.saveCrewBidStateAndPresetToServer(dictDetails: dictDetails) { response in}
+    }
+    
+    func bothTakeServer() {
+        var dictDetails = [String: Any]()
+        dictDetails["EmployeeNumber"] = app.ObjUserAccount?.employeeNumber
+        dictDetails["StateName"] = self.bidFilenameForState()
+        dictDetails["PreSetFileName"] = app.ObjUserAccount?.employeeNumber
+        dictDetails["Year"] = self.bidPeriod!.year!
+        dictDetails["FileType"] = 0
+        objdatabuilder.getCrewBidStateAndPresetFromServer(dictDetails: dictDetails) { result in
+            switch result {
+            case .success(let response):
+                let responseDict = response[0]
+                if responseDict["StateContent"] != nil {
+                    let contentString = responseDict["StateContent"] as? String
+                    let contentDictArray = self.convertStringToDictionary(contentString!)
+                    let first = contentDictArray![0]
+                    DispatchQueue.main.async {
+                        self.setMyCalToLocalDB(details: first)
+                        self.setTrashLineAndDetailsToLocalDB(details: first)
+                        self.setQuickFilterToLocalDB(details: first)
+                        self.setFlaggedLineAndDetailsToLocalDB(details: first)
+                        self.setFilterToLocalDB(details: first)
+                        self.setSortToLocalDB(details: first)
+                        self.setBidListDetailsToLocalDB(details: first)
+                        self.setASortConditions(details: first)
+                        self.setInsertionIndexToLocalDB(details: first)
+                        self.setFaEOMDates(details: first)
+                        self.setVacationButtonsLocalDB(details: first)
+                        if self.arrayDictRecived?[0]["StateVersionNumber"] as? Int != nil {
+                            self.bidPeriod!.stateSyncVersion = NSNumber(value: Int((self.arrayDictRecived![0]["StateVersionNumber"] as? Int)!))
+                        }
+                        self.bidPeriod!.isStateFileModifiedToSync = NSNumber(booleanLiteral: false)
+                    }
+                }
+                if responseDict["PreSetStateContent"] != nil {
+                    let contentString = responseDict["PreSetStateContent"] as? String
+                    let contentDictArray = self.convertStringToDictionary(contentString!)
+                    DispatchQueue.main.async {
+                        self.setPresetToLocalDB(details: contentDictArray!)
+                        DispatchQueue.main.async {
+                            let topVC = UIApplication.topVC()
+                            topVC.dismiss(animated: true) {
+                                AlertService.showAlertForTopVC(title: "Synched!", message: "You have successfully synched your Presets and CrewBid State from server.")
+                            }
+                        }
+                    }
+                }
+                else {
+                    DispatchQueue.main.async {
+                        let topVC = UIApplication.topVC()
+                        topVC.dismiss(animated: true) {
+                            AlertService.showAlertForTopVC(title: "Error!", message: "Preset from server is NULL")
+                        }
+                    }
+                }
+            case .failure(let error):
+                AlertService.showAlertForTopVC(title: "Error!", message: error.localizedDescription)
+            }
         }
     }
 }

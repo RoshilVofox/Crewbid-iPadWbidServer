@@ -783,6 +783,16 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
         self.variables = pRule.variables as NSDictionary?
     }
     
+    func loadFilterSync(pRule: CBSyncFilter) {
+        self.abbreviation = pRule.abbreviation
+        self.category = pRule.category
+        self.type = pRule.type
+        self.name = pRule.name
+        self.keyPath = pRule.keyPath
+        self.comparison = pRule.comparison
+        self.variables = pRule.variables as NSDictionary?
+    }
+    
     static func configureMonthDayFilter(_ indices: NSMutableArray) -> [String: Any] {
         var monthBits: UInt64 = 0
 

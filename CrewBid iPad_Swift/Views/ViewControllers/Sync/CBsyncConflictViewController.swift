@@ -217,7 +217,28 @@ class CBsyncConflictViewController: UIViewController {
                     }
                 }
             }
-//            unfinished 686
+            else if stateSegment.selectedSegmentIndex == 0 && presetSegment.selectedSegmentIndex == 0 {
+                self.checkPresetIsEmpty()
+                syncType = .stateKeepLocalAndPresetKeepLocal
+                jsonSyncVC.syncType = syncType
+                jsonSyncVC.bothKeepLocal()
+            }
+            else if stateSegment.selectedSegmentIndex == 0 && presetSegment.selectedSegmentIndex == 1 {
+                syncType = .stateKeepLocalAndPresetTakeServer
+                jsonSyncVC.syncType = syncType
+                jsonSyncVC.stateKeepLocal_PresetTakeServer()
+            }
+            else if stateSegment.selectedSegmentIndex == 1 && presetSegment.selectedSegmentIndex == 0 {
+                self.checkPresetIsEmpty()
+                syncType = .stateTakeServerAndPresetKeepLocal
+                jsonSyncVC.syncType = syncType
+                jsonSyncVC.stateTakeServer_PresetKeepLocal()
+            }
+            else if stateSegment.selectedSegmentIndex == 1 && presetSegment.selectedSegmentIndex == 1 {
+                syncType = .stateTakeServerAndPresetTakeServer
+                jsonSyncVC.syncType = syncType
+                jsonSyncVC.bothTakeServer()
+            }
         }
         else {
             DispatchQueue.main.async {
@@ -287,7 +308,7 @@ class CBsyncConflictViewController: UIViewController {
 
         if syncType == .stateServer {
             if let dataBytes = arrResponse.first?["OldStateContent"] as? [Any] {
-//                saveStateFilesToDirectory(dataBytes)
+                saveStateFilesToDirectory(dataBytes)
             }
             bidPeriod?.isStateFileModifiedToSync = false
 
@@ -302,53 +323,53 @@ class CBsyncConflictViewController: UIViewController {
         }
     }
 
-//    func saveStateFilesToDirectory(_ dataBytes: [Any]) {
-//        guard !dataBytes.isEmpty else {
-//            return
-//        }
-//
-//        let count = dataBytes.count
-//        var bytes = [UInt8](repeating: 0, count: count)
-//
-//        for (index, element) in dataBytes.enumerated() {
-//            if let str = element as? String, let byte = UInt8(str) {
-//                bytes[index] = byte
-//            }
-//        }
-//
-//        let tempData = Data(bytes)
-//
-//        guard let stateDirectoryURL = CBCoreDataSync.syncDocumentDirectory(),
-//              let stateFilename = CBCoreDataSync.syncFilename(withBidPeriod: bidPeriod)
-//        else {
-//            return
-//        }
-//
-//        let dataWriteURL = stateDirectoryURL.appendingPathComponent(stateFilename)
-//        let fileManager = FileManager.default
-//
-//        do {
-//            if fileManager.fileExists(atPath: dataWriteURL.path) {
-//                print("File exists — removing old file")
-//                try fileManager.removeItem(at: dataWriteURL)
-//            }
-//
-//            try tempData.write(to: dataWriteURL)
-//            print("State file write success")
-//
-//            objCoredataSync.fetchStatePlistForSync { completedFetching in
-//                if completedFetching {
-//                    self.syncSuccessAlertDisplay()
-//                } else {
-//                    CBGlobalMethods.shared.hideCustomActivityIndicator()
-//                    self.dismiss(animated: true, completion: nil)
-//                }
-//            }
-//
-//        } catch {
-//            print("Error writing state file: \(error)")
-//        }
-//    }
+    func saveStateFilesToDirectory(_ dataBytes: [Any]) {
+        guard !dataBytes.isEmpty else {
+            return
+        }
+
+        let count = dataBytes.count
+        var bytes = [UInt8](repeating: 0, count: count)
+
+        for (index, element) in dataBytes.enumerated() {
+            if let str = element as? String, let byte = UInt8(str) {
+                bytes[index] = byte
+            }
+        }
+
+        let tempData = Data(bytes)
+
+        guard let stateDirectoryURL = CBCoreDataSync.syncDocumentDirectory(),
+              let stateFilename = CBCoreDataSync.syncFilename(withBidPeriod: bidPeriod!)
+        else {
+            return
+        }
+
+        let dataWriteURL = stateDirectoryURL.appendingPathComponent(stateFilename)
+        let fileManager = FileManager.default
+
+        do {
+            if fileManager.fileExists(atPath: dataWriteURL.path) {
+                print("File exists — removing old file")
+                try fileManager.removeItem(at: dataWriteURL)
+            }
+
+            try tempData.write(to: dataWriteURL)
+            print("State file write success")
+
+            objCoredataSync.fetchStatePlistForSync { completedFetching in
+                if completedFetching {
+                    self.syncSuccessAlertDisplay()
+                } else {
+                    CBGlobalMethods.shared.hideCustomActivityIndicator()
+                    self.dismiss(animated: true, completion: nil)
+                }
+            }
+
+        } catch {
+            print("Error writing state file: \(error)")
+        }
+    }
 
     func savePresetFileToDirectory(_ dataBytes: [Any]) {
         // Validate input

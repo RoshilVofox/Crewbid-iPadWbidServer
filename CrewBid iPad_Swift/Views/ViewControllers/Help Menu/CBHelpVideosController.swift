@@ -72,33 +72,70 @@ extension CBHelpVideosController: UICollectionViewDataSource, UICollectionViewDe
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let videoCell = collectionView.dequeueReusableCell(withReuseIdentifier: "videoCell", for: indexPath) as! VideoCollectionViewCell
+        
         let index = indexPath.item
         videoCell.videoTitleLbl.text = videoTitles[index]
+        let videoId = videoIDs[index]
+        
+        // --- Responsive YouTube embed HTML ---
         let html = """
-            <!DOCTYPE html>
-            <html>
-            <head>
-            <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0">
-            <style>
-                body, html { margin: 0; padding: 0; height: 100%; background-color: black; }
-                iframe { width: 100%; height: 100%; border: none; }
-            </style>
-            </head>
-            <body>
-            <iframe src="https://www.youtube.com/embed/\(videoIDs[index])?playsinline=1&rel=0&showinfo=0"
-                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+                background-color: black;
+                height: 100%;
+                width: 100%;
+            }
+            .video-container {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                background-color: black;
+            }
+            .video-container iframe {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border: none;
+            }
+        </style>
+        </head>
+        <body>
+            <div class="video-container">
+                <iframe
+                    src="https://www.youtube-nocookie.com/embed/\(videoId)?playsinline=1&rel=0&showinfo=0&modestbranding=1"
+                    title="YouTube video player"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowfullscreen>
-            </iframe>
-            </body>
-            </html>
-            """
-        videoCell.webView.loadHTMLString(html, baseURL: nil)
-        //        let videoURL = String(format: "https://www.youtube.com/embed/%@", videoIDs[index])
-        //        print(videoURL)
-        //        let request = URLRequest(url: URL(string: videoURL)!)
-        //        videoCell.webView.load(request)
+                </iframe>
+            </div>
+        </body>
+        </html>
+        """
+
+        // --- WebView configuration ---
+        videoCell.webView.scrollView.isScrollEnabled = false
+        videoCell.webView.backgroundColor = .black
+        videoCell.webView.isOpaque = false
+        videoCell.webView.configuration.allowsInlineMediaPlayback = true
+        videoCell.webView.configuration.mediaTypesRequiringUserActionForPlayback = []
+
+        // --- Load HTML safely ---
+        // Use a neutral HTTPS base URL (YouTube requires HTTPS origin for iframe sandbox)
+        let baseURL = URL(string: "https://youtube.com")!
+        videoCell.webView.loadHTMLString(html, baseURL: baseURL)
+        
         return videoCell
     }
+
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 300.0, height: 260)

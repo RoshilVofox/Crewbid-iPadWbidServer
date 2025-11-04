@@ -317,15 +317,19 @@ class ODataBuilder {
         }.resume()
     }
     
-    func saveCrewBidStateAndPresetToServer(dictDetails: [String: Any], completion: @escaping ([[String: Any]]?) -> Void) {
+    func saveCrewBidStateAndPresetToServer(dictDetails: [String: Any], completion: @escaping (Result<[[String: Any]], Error>) -> Void) {
         var urlString = "SaveCBAppStateAndPresetToServer"
         let app = UIApplication.shared.delegate as! AppDelegate
 
         // Check internet connection
         guard app.connectedToInternet() else {
-            AlertService.showAlertForTopVC(title: "Network Not Available",
-                                           message: "Please check your internet connection")
-            completion(nil)
+            AlertService.showAlertForTopVC(
+                title: "Network Not Available",
+                message: "Please check your internet connection"
+            )
+            completion(.failure(NSError(domain: "NetworkError", code: -1009, userInfo: [
+                NSLocalizedDescriptionKey: "No internet connection."
+            ])))
             return
         }
 
@@ -333,7 +337,9 @@ class ODataBuilder {
         guard let data = try? JSONSerialization.data(withJSONObject: dictDetails, options: []),
               let jsonString = String(data: data, encoding: .utf8) else {
             print("❌ Failed to encode request body")
-            completion(nil)
+            completion(.failure(NSError(domain: "EncodingError", code: -1, userInfo: [
+                NSLocalizedDescriptionKey: "Failed to encode request body."
+            ])))
             return
         }
 
@@ -341,7 +347,9 @@ class ODataBuilder {
         urlString = baseURL + urlString
         guard let url = URL(string: urlString) else {
             print("❌ Invalid URL")
-            completion(nil)
+            completion(.failure(NSError(domain: "URLError", code: -2, userInfo: [
+                NSLocalizedDescriptionKey: "Invalid URL."
+            ])))
             return
         }
 
@@ -349,7 +357,9 @@ class ODataBuilder {
         app.sc?.checkCrewBidServiceAccessibility { isAccessible in
             guard isAccessible else {
                 print("⚠️ CrewBid service not accessible")
-                completion(nil)
+                completion(.failure(NSError(domain: "ServiceUnavailable", code: -3, userInfo: [
+                    NSLocalizedDescriptionKey: "CrewBid service is not accessible."
+                ])))
                 return
             }
 
@@ -365,13 +375,15 @@ class ODataBuilder {
             URLSession.shared.dataTask(with: request) { data, response, error in
                 if let error = error {
                     print("❌ Request error:", error.localizedDescription)
-                    completion(nil)
+                    completion(.failure(error))
                     return
                 }
 
                 guard let httpResponse = response as? HTTPURLResponse else {
                     print("❌ Invalid response")
-                    completion(nil)
+                    completion(.failure(NSError(domain: "ResponseError", code: -4, userInfo: [
+                        NSLocalizedDescriptionKey: "Invalid server response."
+                    ])))
                     return
                 }
 
@@ -379,38 +391,47 @@ class ODataBuilder {
 
                 guard let data = data else {
                     print("❌ No response data")
-                    completion(nil)
+                    completion(.failure(NSError(domain: "DataError", code: -5, userInfo: [
+                        NSLocalizedDescriptionKey: "No response data received."
+                    ])))
                     return
                 }
 
                 do {
                     if let jsonArray = try JSONSerialization.jsonObject(with: data) as? [[String: Any]] {
                         print("✅ Parsed Array Response")
-                        completion(jsonArray)
+                        completion(.success(jsonArray))
                     } else if let jsonDict = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
                         print("✅ Parsed Dictionary Response")
-                        completion([jsonDict]) // wrap single dict in array
+                        completion(.success([jsonDict])) // wrap dict in array
                     } else {
                         print("⚠️ Unexpected JSON format")
-                        completion(nil)
+                        completion(.failure(NSError(domain: "JSONError", code: -6, userInfo: [
+                            NSLocalizedDescriptionKey: "Unexpected JSON format."
+                        ])))
                     }
                 } catch {
                     print("❌ JSON parsing error:", error.localizedDescription)
-                    completion(nil)
+                    completion(.failure(error))
                 }
             }.resume()
         }
     }
+
     
-    func getCrewBidStateAndPresetFromServer(dictDetails: [String: Any], completion: @escaping ([[String: Any]]?) -> Void) {
+    func getCrewBidStateAndPresetFromServer(dictDetails: [String: Any], completion: @escaping (Result<[[String: Any]], Error>) -> Void) {
         var urlString = "GetCBAppStateAndPresetFromServer"
         let app = UIApplication.shared.delegate as! AppDelegate
 
         // Check internet connection
         guard app.connectedToInternet() else {
-            AlertService.showAlertForTopVC(title: "Network Not Available",
-                                           message: "Please check your internet connection")
-            completion(nil)
+            AlertService.showAlertForTopVC(
+                title: "Network Not Available",
+                message: "Please check your internet connection"
+            )
+            completion(.failure(NSError(domain: "NetworkError", code: -1009, userInfo: [
+                NSLocalizedDescriptionKey: "No internet connection."
+            ])))
             return
         }
 
@@ -418,7 +439,9 @@ class ODataBuilder {
         guard let data = try? JSONSerialization.data(withJSONObject: dictDetails, options: []),
               let jsonString = String(data: data, encoding: .utf8) else {
             print("❌ Failed to encode request body")
-            completion(nil)
+            completion(.failure(NSError(domain: "EncodingError", code: -1, userInfo: [
+                NSLocalizedDescriptionKey: "Failed to encode request body."
+            ])))
             return
         }
 
@@ -426,7 +449,9 @@ class ODataBuilder {
         urlString = baseURL + urlString
         guard let url = URL(string: urlString) else {
             print("❌ Invalid URL")
-            completion(nil)
+            completion(.failure(NSError(domain: "URLError", code: -2, userInfo: [
+                NSLocalizedDescriptionKey: "Invalid URL."
+            ])))
             return
         }
 
@@ -434,7 +459,9 @@ class ODataBuilder {
         app.sc?.checkCrewBidServiceAccessibility { isAccessible in
             guard isAccessible else {
                 print("⚠️ CrewBid service not accessible")
-                completion(nil)
+                completion(.failure(NSError(domain: "ServiceUnavailable", code: -3, userInfo: [
+                    NSLocalizedDescriptionKey: "CrewBid service is not accessible."
+                ])))
                 return
             }
 
@@ -450,13 +477,15 @@ class ODataBuilder {
             URLSession.shared.dataTask(with: request) { data, response, error in
                 if let error = error {
                     print("❌ Request error:", error.localizedDescription)
-                    completion(nil)
+                    completion(.failure(error))
                     return
                 }
 
                 guard let httpResponse = response as? HTTPURLResponse else {
                     print("❌ Invalid response")
-                    completion(nil)
+                    completion(.failure(NSError(domain: "ResponseError", code: -4, userInfo: [
+                        NSLocalizedDescriptionKey: "Invalid server response."
+                    ])))
                     return
                 }
 
@@ -464,27 +493,32 @@ class ODataBuilder {
 
                 guard let data = data else {
                     print("❌ No response data")
-                    completion(nil)
+                    completion(.failure(NSError(domain: "DataError", code: -5, userInfo: [
+                        NSLocalizedDescriptionKey: "No response data received."
+                    ])))
                     return
                 }
 
                 do {
                     if let jsonArray = try JSONSerialization.jsonObject(with: data) as? [[String: Any]] {
                         print("✅ Parsed Array Response")
-                        completion(jsonArray)
+                        completion(.success(jsonArray))
                     } else if let jsonDict = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
                         print("✅ Parsed Dictionary Response")
-                        completion([jsonDict]) // wrap single dict in array
+                        completion(.success([jsonDict])) // wrap dict in array
                     } else {
                         print("⚠️ Unexpected JSON format")
-                        completion(nil)
+                        completion(.failure(NSError(domain: "JSONError", code: -6, userInfo: [
+                            NSLocalizedDescriptionKey: "Unexpected JSON format."
+                        ])))
                     }
                 } catch {
                     print("❌ JSON parsing error:", error.localizedDescription)
-                    completion(nil)
+                    completion(.failure(error))
                 }
             }.resume()
         }
     }
+
 
 }

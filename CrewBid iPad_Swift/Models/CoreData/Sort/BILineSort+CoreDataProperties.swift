@@ -327,6 +327,21 @@ extension BILineSort : Identifiable, NSFetchedResultsControllerDelegate {
         }
     }
     
+    func loadSyncSort(pSort: CBSyncSort) {
+        self.category = pSort.category
+        self.type = pSort.type
+        self.name = pSort.name
+        self.keyPath = pSort.keyPath
+        self.ascending = pSort.ascending
+        self.isMutable = pSort.isMutable
+        self.expression = pSort.expression
+        self.order = pSort.order
+        self.abbreviation = pSort.abbreviation
+        if pSort.variables != nil {
+            self.variables = pSort.variables as NSDictionary?
+        }
+    }
+    
     static func configureMonthDayFilter(_ indices: NSMutableArray) -> [String: Any] {
         var variables: [String: Any] = ["DAYS_OFF_MONTH_BITS": UInt64(0)]
 
