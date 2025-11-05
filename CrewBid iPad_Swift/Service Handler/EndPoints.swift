@@ -51,5 +51,8 @@ class EndPoint {
     var getFirstRoundPaperBidVacationsAndUsers = "\(baseURL)GetFirstRoundPaperBidVacationsAndUsers"
     var addSubmittedRawDataToServer = "\(baseURL)AddSubmittedRawDataToServer"
     var VPSPing = "\(baseURL)VPSPing"
+    var saveCBAppStateAndPresetToServer = "\(baseURL)SaveCBAppStateAndPresetToServer"
+    var getCBServerStateandPresetVersionNumber = "\(baseURL)GetCBServerStateandPresetVersionNumber"
+    var getCBAppStateAndPresetFromServer = "\(baseURL)GetCBAppStateAndPresetFromServer"
 }
 

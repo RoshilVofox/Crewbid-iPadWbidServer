@@ -246,8 +246,6 @@ class ODataBuilder {
     
     func getSyncVersionNumber(dictDetails: [String: Any],
                               completion: @escaping (_ result: [[String: Any]]?) -> Void) {
-        
-        var urlString = "GetCBServerStateandPresetVersionNumber"
         let app = UIApplication.shared.delegate as! AppDelegate
         
         guard app.connectedToInternet() else {
@@ -263,9 +261,7 @@ class ODataBuilder {
             completion(nil)
             return
         }
-        
-        urlString = baseURL + urlString
-        guard let url = URL(string: urlString) else {
+        guard let url = URL(string: EndPoint.shared.getCBServerStateandPresetVersionNumber) else {
             print("❌ Invalid URL")
             completion(nil)
             return
@@ -318,7 +314,6 @@ class ODataBuilder {
     }
     
     func saveCrewBidStateAndPresetToServer(dictDetails: [String: Any], completion: @escaping (Result<[[String: Any]], Error>) -> Void) {
-        var urlString = "SaveCBAppStateAndPresetToServer"
         let app = UIApplication.shared.delegate as! AppDelegate
 
         // Check internet connection
@@ -343,9 +338,8 @@ class ODataBuilder {
             return
         }
 
-        // Create full URL
-        urlString = baseURL + urlString
-        guard let url = URL(string: urlString) else {
+        // Check full URL
+        guard let url = URL(string: EndPoint.shared.saveCBAppStateAndPresetToServer) else {
             print("❌ Invalid URL")
             completion(.failure(NSError(domain: "URLError", code: -2, userInfo: [
                 NSLocalizedDescriptionKey: "Invalid URL."
@@ -420,7 +414,6 @@ class ODataBuilder {
 
     
     func getCrewBidStateAndPresetFromServer(dictDetails: [String: Any], completion: @escaping (Result<[[String: Any]], Error>) -> Void) {
-        var urlString = "GetCBAppStateAndPresetFromServer"
         let app = UIApplication.shared.delegate as! AppDelegate
 
         // Check internet connection
@@ -445,9 +438,8 @@ class ODataBuilder {
             return
         }
 
-        // Create full URL
-        urlString = baseURL + urlString
-        guard let url = URL(string: urlString) else {
+        // Check full URL
+        guard let url = URL(string: EndPoint.shared.getCBAppStateAndPresetFromServer) else {
             print("❌ Invalid URL")
             completion(.failure(NSError(domain: "URLError", code: -2, userInfo: [
                 NSLocalizedDescriptionKey: "Invalid URL."
