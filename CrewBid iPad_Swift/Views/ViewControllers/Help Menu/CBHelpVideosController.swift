@@ -74,29 +74,22 @@ extension CBHelpVideosController: UICollectionViewDataSource, UICollectionViewDe
         let videoCell = collectionView.dequeueReusableCell(withReuseIdentifier: "videoCell", for: indexPath) as! VideoCollectionViewCell
         let index = indexPath.item
         videoCell.videoTitleLbl.text = videoTitles[index]
-        let html = """
-            <!DOCTYPE html>
-            <html>
-            <head>
-            <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0">
-            <style>
-                body, html { margin: 0; padding: 0; height: 100%; background-color: black; }
-                iframe { width: 100%; height: 100%; border: none; }
-            </style>
-            </head>
-            <body>
-            <iframe src="https://www.youtube.com/embed/\(videoIDs[index])?playsinline=1&rel=0&showinfo=0"
-                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen>
-            </iframe>
-            </body>
-            </html>
-            """
-        videoCell.webView.loadHTMLString(html, baseURL: nil)
         return videoCell
+    }
+    
+//    MARK: UICollectioViewDelegate
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard let videoCell = cell as? VideoCollectionViewCell else { return }
+        let videoID = videoIDs[indexPath.item]
+        videoCell.loadVideo(videoID: videoID)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        (cell as? VideoCollectionViewCell)?.webView?.stopLoading()
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 300.0, height: 260)
     }
 }
+
