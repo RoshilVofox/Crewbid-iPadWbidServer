@@ -1441,7 +1441,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                         try? self.context.save()
                     }
                     else if pRule.category?.intValue == BIFilterRuleCategory.BIReportReleaseFilterCategory.rawValue {
-                        if rule.variables!["selectedOption"] != nil {
+                        if rule.variables!["selectedOption"] == nil {
                             let variables = rule.variables
                             let dict2 = variables
                             var reportValue = ""
@@ -1452,9 +1452,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                             var isFirst = 0
                             var isAllDays = 0
                             var isSelectedAll = 0
-                            let selectedDates = NSMutableArray()
-                            var selectedIndices = NSMutableArray()
-                            selectedIndices = (dict2!["selectedIndex"] as? NSMutableArray)!
+                            var selectedDates = NSMutableArray()
                             if dict2!["reportValue"] != nil {
                                 reportValue = (dict2!["reportValue"] as? String)!
                             }
@@ -1470,16 +1468,11 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                             if dict2!["isNoMid"] != nil {
                                 isNoMid = ((dict2!["isNoMid"] as? Int)!)
                             }
-                            if dict2!["selectedOption"] != nil {
-                                let tmp = dict2!["selectedOption"] as? Int
-                                if tmp == 0 {
-                                    isSelectedAll = 1
-                                    isAllDays = 1
-                                }
-                                else if tmp == 2 {
-                                    isCalendar = 1
-                                }
+                            if dict2!["isSelectedAll"] != nil {
+                                isSelectedAll = ((dict2!["isSelectedAll"] as? Int)!)
                             }
+                            
+                            
                             
                             var tempDict = [String: Any]()
                             tempDict["isAllDays"] = isAllDays
@@ -1492,46 +1485,20 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                             tempDict["reportValue"] = reportValue
                             
                             var MONTH_BITS = NSNumber(value: 0)
-                            for i in 0 ..< selectedIndices.count {
-                                var strDay: [String] = []
-                                let indexValue = selectedIndices[i] as! Int
-                                let nsi = indexValue
-                                var mask: UInt64 = 0
-                                var monthBits: UInt64 = 0
-                                let one: UInt64 = 1
-                                if MONTH_BITS != 0 {
-                                    monthBits = MONTH_BITS.uint64Value
-                                }
-                                mask = one << UInt64(nsi)
-                                monthBits |= mask
-                                MONTH_BITS = NSNumber(value: monthBits)
-                                
-                                let day = self.calendarData.calendarDays[i] as? BICalendarDay
-                                if !(day!.isCurrentMonth) {
-                                    if self.bidPeriod?.month?.intValue == 12 {
-                                        let month = NSNumber(value: 1)
-                                        let year = self.bidPeriod!.year!
-                                        strDay.append(String(i))
-                                        strDay.append(String(describing: month))
-                                        strDay.append(String(describing: year))
-                                    }
-                                    else {
-                                        strDay.append(day!.text)
-                                        strDay.append(String(self.bidPeriod!.month!.intValue + 1))
-                                        strDay.append(String(describing: self.bidPeriod!.year!))
-                                    }
-                                }
-                                else {
-                                    strDay.append(day!.text)
-                                    strDay.append(String(self.bidPeriod!.month!.intValue))
-                                    strDay.append(String(describing: self.bidPeriod!.year!))
-                                }
-                                selectedDates.add(strDay.joined(separator: "-"))
+                            if let dates = dict2?["SELECTED_DATES"] as? NSMutableArray, dates.count > 0 {
+                                tempDict["SELECTED_DATES"] = dates
+                                selectedDates = dates
                             }
-                            tempDict["SELECTED_DATES"] = selectedDates
-                            tempDict["MONTH_BITS"] = MONTH_BITS
+                            if let mBits = dict2?["MONTH_BITS"] as? NSNumber, mBits.intValue > 0 {
+                                tempDict["MONTH_BITS"] = mBits
+                                MONTH_BITS = mBits
+                            }
+//                            tempDict["MONTH_BITS"] = MONTH_BITS
                             rule.variables = tempDict as NSDictionary
                             try? self.context.save()
+                            if (selectedDates.count > 0 || isFirst == 1 || isLast == 1 || isNoMid == 1) {
+                                self.calculationFromPreset(reportValue: reportValue, releaseValue: releaseValue, isLast: isLast as NSNumber, isNoMid: isNoMid as NSNumber, isCalendar: isCalendar as NSNumber, isSelectedAll: isSelectedAll as NSNumber, isFirst: isFirst as NSNumber, selectedDates: selectedDates, rule: rule)
+                            }
                         }
                     }
                     if rule.ruleHighlightsTrips() {
@@ -2332,6 +2299,28 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
         hours = (hours * 60) + mins
         let modifiedDate = currentDate.addingTimeInterval(TimeInterval(hours * 60))
         return modifiedDate
+    }
+    
+    func calculationFromPreset(reportValue: String, releaseValue: String, isLast: NSNumber, isNoMid: NSNumber, isCalendar: NSNumber, isSelectedAll: NSNumber, isFirst: NSNumber, selectedDates: NSMutableArray, rule: BIFilterRule) {
+        let reportReleaseVC = CBReportReleaseRuleCellTableViewCell()
+        CBGlobalMethods.shared.showCustomActivityIndicator(message: "Calculating Report Release..", bgcolor: .purple, height: 100)
+        reportReleaseVC.bidPeriod = bidPeriod
+        reportReleaseVC.filterRule = rule
+        reportReleaseVC.calendarData = calendarData
+        reportReleaseVC.calculationFromSync(reportValue: reportValue, releaseValue: releaseValue, isLast: isLast, isNoMid: isNoMid, isCalendar: isCalendar, isSelectedAll: isSelectedAll, isFirst: isFirst, selectedDates: selectedDates) { success in
+            if !success {
+                DispatchQueue.main.async {
+                    CBGlobalMethods.shared.hideCustomActivityIndicator()
+                }
+                AlertService.showAlertForTopVC(title: "Alert", message: "Report release calculation failed")
+            }
+            if success {
+                DispatchQueue.main.async {
+                    CBGlobalMethods.shared.hideCustomActivityIndicator()
+                    NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+                }
+            }
+        }
     }
     
 }

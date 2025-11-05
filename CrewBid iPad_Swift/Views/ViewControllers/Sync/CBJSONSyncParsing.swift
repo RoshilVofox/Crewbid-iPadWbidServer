@@ -3627,46 +3627,23 @@ class CBJSONSyncParsing: NSObject {
                 var isFirst: NSNumber = 0
                 var isAllDays: NSNumber = 0
                 var selectedDates = NSMutableArray()
-                var selectedIndices = NSMutableArray()
-                selectedIndices = dict2?["selectedIndex"] as? NSMutableArray ?? []
-                if dict2?["reportValue"] != nil {
-                    reportValue = (dict2?["reportValue"] as? String)!
+                if dict2!["reportValue"] != nil {
+                    reportValue = (dict2!["reportValue"] as? String)!
                 }
-                if dict2?["releaseValue"] != nil {
-                    releaseValue = (dict2?["releaseValue"] as? String)!
+                if dict2!["releaseValue"] != nil {
+                    releaseValue = (dict2!["releaseValue"] as? String)!
                 }
-                if dict2?["isFirst"] != nil {
-                    if (dict2?["isFirst"] as? NSNumber)?.boolValue == true {
-                        isFirst = 1
-                    }
-                    else {
-                        isFirst = 0
-                    }
+                if dict2!["isFirst"] != nil {
+                    isFirst = ((dict2!["isFirst"] as? NSNumber)!)
                 }
-                if dict2?["isNoMid"] != nil {
-                    if (dict2?["isNoMid"] as? NSNumber)?.boolValue == true {
-                        isNoMid = 1
-                    }
-                    else {
-                        isNoMid = 0
-                    }
+                if dict2!["isLast"] != nil {
+                    isLast = ((dict2!["isLast"] as? NSNumber)!)
                 }
-                if dict2?["isLast"] != nil {
-                    if (dict2?["isLast"] as? NSNumber)?.boolValue == true {
-                        isLast = 1
-                    }
-                    else {
-                        isLast = 0
-                    }
+                if dict2!["isNoMid"] != nil {
+                    isNoMid = ((dict2!["isNoMid"] as? NSNumber)!)
                 }
-                if dict2?["selectedOption"] != nil {
-                    let tmp = (dict2?["selectedOption"] as? NSNumber)?.intValue
-                    if tmp == 0 {
-                        isSelectedAll = 1
-                    }
-                    else if tmp == 2 {
-                        isCalendar = 1
-                    }
+                if dict2!["isSelectedAll"] != nil {
+                    isSelectedAll = ((dict2!["isSelectedAll"] as? NSNumber)!)
                 }
                 
                 var tempDict: [String: Any] = [:]
@@ -3679,7 +3656,7 @@ class CBJSONSyncParsing: NSObject {
                 tempDict["isSelectedAll"] = isSelectedAll
                 tempDict["releaseValue"] = releaseValue
                 tempDict["reportValue"] = reportValue
-
+                
                 let filterRule = BIFilterRule(context: self.context)
                 filterRule.bidPeriod = bidPeriod
                 filterRule.abbreviation = "RptRls"
@@ -3690,46 +3667,13 @@ class CBJSONSyncParsing: NSObject {
                 filterRule.keyPath = reportReleaseValueDict["KeyPath"] as? String
                 
                 var MONTH_BITS: NSNumber = 0
-
-                for index in 0..<selectedIndices.count {
-                    var strDay: [Any] = []
-                    let indexValue = (selectedIndices[index] as? Int) ?? 0
-                    let nsi = Int(indexValue)
-                    
-                    var mask: UInt64 = 0
-                    var monthBits: UInt64 = 0
-                    let one: UInt64 = 1
-                    
-                    if MONTH_BITS != 0 {
-                        monthBits = MONTH_BITS.uint64Value
-                    }
-                    
-                    mask = one << UInt64(nsi)
-                    monthBits |= mask
-                    
-                    MONTH_BITS = NSNumber(value: monthBits)
-                    
-                    let day = calendarData?.calendarDays[indexValue] as? BICalendarDay
-                    if (!day!.isCurrentMonth) {
-                        if bidPeriod?.month?.intValue == 12 {
-                            let month: NSNumber = 1
-                            let year: NSNumber = (bidPeriod?.year?.intValue ?? 0) + 1 as NSNumber
-                            strDay.append((index as? NSNumber)?.stringValue)
-                            strDay.append(month)
-                            strDay.append(year)
-                        }
-                        else {
-                            strDay.append(day!.text)
-                            strDay.append(String(self.bidPeriod!.month!.intValue + 1))
-                            strDay.append(String(self.bidPeriod!.year!.intValue))
-                        }
-                    }
-                    else {
-                        strDay.append(day!.text)
-                        strDay.append(String(self.bidPeriod!.month!.intValue))
-                        strDay.append(String(self.bidPeriod!.year!.intValue))
-                    }
-                    selectedDates.add((strDay as? [String] ?? []).joined(separator: "-"))
+                if let dates = dict2?["SELECTED_DATES"] as? NSMutableArray, dates.count > 0 {
+                    tempDict["SELECTED_DATES"] = dates
+                    selectedDates = dates
+                }
+                if let mBits = dict2?["MONTH_BITS"] as? NSNumber, mBits.intValue > 0 {
+                    tempDict["MONTH_BITS"] = mBits
+                    MONTH_BITS = mBits
                 }
                 tempDict["SELECTED_DATES"] = selectedDates
                 tempDict["MONTH_BITS"] = MONTH_BITS
@@ -3740,9 +3684,11 @@ class CBJSONSyncParsing: NSObject {
                 reportReleaseVC.bidPeriod = bidPeriod
                 reportReleaseVC.filterRule = filterRule
                 reportReleaseVC.calendarData = calendarData
-                reportReleaseVC.calculationFromSync(reportValue: reportValue, releaseValue: releaseValue, isLast: isLast, isNoMid: isNoMid, isCalendar: isCalendar, isSelectedAll: isSelectedAll, isFirst: isFirst, selectedDates: selectedDates) { success in
-                    if !success {
-                        AlertService.showAlertForTopVC(title: "Alert", message: "Report release calculation failed")
+                if (selectedDates.count > 0 || isFirst.intValue == 1 || isLast.intValue == 1 || isNoMid.intValue == 1) {
+                    reportReleaseVC.calculationFromSync(reportValue: reportValue, releaseValue: releaseValue, isLast: isLast, isNoMid: isNoMid, isCalendar: isCalendar, isSelectedAll: isSelectedAll, isFirst: isFirst, selectedDates: selectedDates) { success in
+                        if !success {
+                            AlertService.showAlertForTopVC(title: "Alert", message: "Report release calculation failed")
+                        }
                     }
                 }
             }
