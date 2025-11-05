@@ -55,5 +55,8 @@ class EndPoint {
     var saveCrashedPresetToServer = "\(baseURL)SaveCrashedPresetToServer"
     var getCrashedCBPresetFromServer = "\(baseURL)GetCrashedCBPresetFromServer"
     var saveConvertedPresetToServer = "\(baseURL)SaveConvertedPresetToServer"
+    var getCBServerStateandPresetVersionNumber = "\(baseURL)GetCBServerStateandPresetVersionNumber"
+    var saveCBAppStateAndPresetToServer = "\(baseURL)SaveCBAppStateAndPresetToServer"
+    var getCBAppStateAndPresetFromServer = "\(baseURL)GetCBAppStateAndPresetFromServer"
 }
 

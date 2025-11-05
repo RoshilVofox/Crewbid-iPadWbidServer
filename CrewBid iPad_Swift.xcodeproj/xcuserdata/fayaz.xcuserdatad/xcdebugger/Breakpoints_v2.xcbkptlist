@@ -5110,7 +5110,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "774"
             endingLineNumber = "774"
-            landmarkName = "firstTimeBidOpen()"
+            landmarkName = "setupUI()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5350,7 +5350,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1240"
             endingLineNumber = "1240"
-            landmarkName = "btnSyncAction(_:)"
+            landmarkName = "removeVacationsForSync()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
