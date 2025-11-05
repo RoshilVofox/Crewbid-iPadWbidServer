@@ -60,7 +60,7 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
                 cell.lblTitle.alpha = 0.5
             }
         }else if indexPath.row == 3 {
-            if (bidPeriod.managedObjectContext!.undoManager?.canUndo)! && !(bidPeriod.managedObjectContext!.undoManager?.undoActionName == "") {
+            if (bidPeriod.managedObjectContext!.undoManager?.canUndo)! || !(bidPeriod.managedObjectContext!.undoManager?.undoActionName == "") {
                 cell.lblTitle.text = bidPeriod.managedObjectContext!.undoManager?.undoMenuItemTitle
                 cell.isUserInteractionEnabled = true
                 cell.lblTitle.alpha = 1.0

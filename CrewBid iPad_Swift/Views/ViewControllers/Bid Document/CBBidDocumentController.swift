@@ -39,7 +39,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     var rightNavController:UINavigationController!
     var bidsTableNavController:UINavigationController!
     var dataSource = GlobalBidInfo.shared
-    var bdPrd = 1
     var calendarData:BICalendarData = BICalendarData()
     var managedObjectContext: NSManagedObjectContext {
         return CoreDataManager.shared.persistentContainer.viewContext
@@ -93,7 +92,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 //        self.bidLinesController.bidPeriod = self.bidPeriod!
         setupUI()
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutViewForSwitch), name: NSNotification.Name("SyncSwitchStateAction"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(showCommutablilityFilterView), name: Notification.Name("ShowCommutabilityFilterView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(ShowCommutablilitySortView), name: Notification.Name("ShowCommutabilitySortView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(tapWBidMaxBtn), name: Notification.Name("TapWBidMaxBtn"), object: nil)
@@ -111,6 +109,136 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         NotificationCenter.default.addObserver(self, selector: #selector(self.checkLinesAvailableInBidList), name: NSNotification.Name(rawValue: "checkLinesAvailableInBidList"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openTripFetchInTextView), name: NSNotification.Name("openTripFetchInTextView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openLineFetchInTextView), name: NSNotification.Name("openLineFetchInTextView"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(syncButtonVisibilityChnaged), name: NSNotification.Name("SyncButtonVisibilityChange"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.restoreLastBidWithEmployeeID(_:)), name: NSNotification.Name(rawValue: "RestoreLastBidNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(openLineImporter), name: NSNotification.Name(KCBOpenLineImporter), object: nil)
+        if UserDefaults.standard.bool(forKey: KCBIsSyncEnabled) {
+            self.btnSync.isHidden = false
+        } else {
+            self.btnSync.isHidden = true
+        }
+    }
+    
+    
+    @objc func syncButtonVisibilityChnaged(){
+        if self.btnSync.isHidden{
+            self.btnSync.isHidden = false
+        }else{
+            self.btnSync.isHidden = true
+        }
+    }
+    
+    @objc func openLineImporter(){
+        
+    }
+    
+    @objc func restoreLastBidWithEmployeeID(_ notification: Notification) {
+        guard let employeeID = notification.userInfo?["employeeID"] as? String else {
+               print("Invalid notification format or missing employeeID")
+               return
+           }
+        self.view.showActivityIndicator(message: "Fetching Data...")
+        var dict = [String:Any]()
+        dict["Year"] = self.bidPeriod?.year
+        dict["Month"] = self.bidPeriod?.month
+        dict["Round"] = self.bidPeriod?.round
+        dict["Domicile"] = self.bidPeriod?.base
+        dict["Position"] = CBUtils.shortName(for: BICrewPositionType(rawValue: self.bidPeriod!.positionType!.intValue)!)
+        dict["EmpNum"] = employeeID
+//        dict["EmpNum"] = "10994"    //DEN FA rnd 1
+        let urlString = EndPoint.shared.getbidSubmittedData
+        let jsonData = (try? JSONSerialization.data(withJSONObject: dict))!
+        let jsonString = String(data: jsonData, encoding: .utf8)
+        let bodyData = jsonString?.data(using: .utf8)
+        
+        APIService.shared.fetch(
+            urlString: urlString,
+            method: .POST,
+            body: bodyData,
+            parse: { data in
+                let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
+                guard let jsonDict = jsonObject as? [String: Any] else {
+                    throw Errors.decodingError
+                }
+                return jsonDict
+            },
+            completion: { result in
+                switch result{
+                case .success(let jsonDict):
+                    let submittedBids = jsonDict
+                    var temp = false
+                    let submittedString = String(format: "%@", submittedBids["SubmittedResult"] as! CVarArg)
+                    DispatchQueue.main.async {
+                        if submittedString != "<null>"{
+                            self.view.hideActivityIndicator()
+                            self.resetAndRestoreLastBid(submitString: submittedString)
+                            temp = true
+                        }
+                        if !temp{
+                            AlertService.showAlertForTopVC(title: "Crewbid", message: "We have no record of a Submitted Bid.  You can login to SwaLife and go see all of your submitted bids.\n\nPilots:  My Work=> Flight Ops => Our Business => Bid Info => BidInfo => Search Bids \n\nFlight Attendants:  My Work =Inflight => Bidding => BidInfo => BidInfo => Search Bids")
+                        }else{
+                            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+                            DispatchQueue.main.asyncAfter(deadline: .now()+1){
+                                AlertService.showAlertForTopVC(title: "Crewbid", message: "Your last bid details has been loaded")
+                            }
+                        }
+                    }
+                case .failure(let error):
+                    if case .other(let underlyingError) = error, (underlyingError as NSError).code == NSURLErrorTimedOut{
+                        let objEvent = CBOfflineEvents()
+                        let monthValue = self.bidPeriod?.month
+                        objEvent.sendOfflineDataForTimeOut(url: urlString, month: monthValue!)
+                    }
+                }
+            })
+    }
+    
+    func resetAndRestoreLastBid(submitString:String){
+        let lines = submitString.components(separatedBy: ",")
+        var insertVariable = 0
+        for line in self.bidPeriod!.orderedLines(){
+            line.isFrozen = 0
+            line.frozenOrder = false
+            line.bidOrder = 0
+            line.previousBidOrder = 0
+            line.isTrashed = 0
+        }
+        
+        var filteredResult:[BILine] = []
+        
+        for i in 0..<lines.count{
+            let lineID = lines[i]
+            if self.bidPeriod!.isFABid() && self.bidPeriod!.isFirstRoundBid(){
+                let faPosition = String(lineID.suffix(1))
+                let lineNumInt = Int(lineID.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()) ?? 0
+                filteredResult = self.bidPeriod!.getLineWithLineNumberAndFAPos(number: lineNumInt, position: faPosition)
+            }else{
+                let lineNumInt = Int(lineID) ?? 0
+                filteredResult = self.bidPeriod!.getLineWithLineNumber(number: lineNumInt)
+            }
+            for line in filteredResult{
+                line.bidOrder = (i + 1) as NSNumber
+                line.previousBidOrder = (i + 1) as NSNumber
+                insertVariable += 1
+            }
+        }
+        var insertionPoint: BIInsertionPoint?
+        
+        if bidPeriod?.insertionPoints?.allObjects.count ?? 0 > 0 {
+            insertionPoint = bidPeriod?.insertionPoints!.allObjects[0] as? BIInsertionPoint
+        }else{
+            let entity = NSEntityDescription.entity(forEntityName: "InsertionPoint", in: bidPeriod!.managedObjectContext!)
+            insertionPoint = BIInsertionPoint(entity: entity!, insertInto: bidPeriod?.managedObjectContext!)
+            insertionPoint?.bidPeriod = self.bidPeriod
+            insertionPoint?.index = 0
+            insertionPoint?.above = false
+            try? bidPeriod?.managedObjectContext?.save()
+        }
+        
+        let newInsert = insertVariable - 1
+        insertionPoint?.index = NSNumber(value: newInsert)
+        NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: self, userInfo: nil)
+        
     }
     
     @objc func openCoverLetter(notification: Notification) {
@@ -404,7 +532,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         NotificationCenter.default.removeObserver("SortBidListAction")
-        NotificationCenter.default.removeObserver("SyncSwitchStateAction")
         NotificationCenter.default.removeObserver("ShowCommutabilityFilterView")
     }
     
@@ -974,16 +1101,40 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     
     
     @IBAction func btnHomeAction(_ sender: UIButton) {
-        if let navigationController = self.navigationController {
-//            navigationController.popToRootViewController(animated: true)
-            let transition = CATransition()
-            transition.duration = 0.4
-            transition.type = .fade
-            transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-            navigationController.view.layer.add(transition, forKey: kCATransition)
-            navigationController.popToRootViewController(animated: false)
-        } else {
-            self.dismiss(animated: true)
+        
+        if UserDefaults.standard.bool(forKey: KCBIsSyncEnabled){
+            AlertService.showAlertForTopVC(title: "Smart Sync", message: "Do you want to sync local changes with server?", actions: [(title: "YES", style: .default, handler: { _ in
+                let vc = UIStoryboard(name: "Sync", bundle: nil).instantiateViewController(withIdentifier: "CBSyncInfoViewController") as! CBSyncInfoViewController
+                vc.bidPeriod = self.bidPeriod
+                vc.preferredContentSize = CGSize(width: 768, height: 900)
+
+                let navController = UINavigationController(rootViewController: vc)
+                navController.modalPresentationStyle = .formSheet // or .fullScreen if needed
+                self.present(navController, animated: true)
+
+            }),(title: "NO", style:.cancel, handler: {_ in
+                if let navigationController = self.navigationController {
+                    let transition = CATransition()
+                    transition.duration = 0.4
+                    transition.type = .fade
+                    transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                    navigationController.view.layer.add(transition, forKey: kCATransition)
+                    navigationController.popToRootViewController(animated: false)
+                } else {
+                    self.dismiss(animated: true)
+                }
+            })])
+        }else{
+            if let navigationController = self.navigationController {
+                let transition = CATransition()
+                transition.duration = 0.4
+                transition.type = .fade
+                transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+                navigationController.view.layer.add(transition, forKey: kCATransition)
+                navigationController.popToRootViewController(animated: false)
+            } else {
+                self.dismiss(animated: true)
+            }
         }
     }
     
@@ -1011,7 +1162,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let storyboard : UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedSettingsVC") as! EmbeddedSettingsVC
         vc.bidPeriod = bidPeriod
-        vc.bdPrd = bdPrd
         vc.preferredContentSize = CGSize(width: 300, height: 210)
         vc.modalPresentationStyle = .custom
         let frame = CGRect(x: 15, y: 35, width: 0, height: 0)
@@ -1057,14 +1207,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         }
     }
     
-    @objc func setupLayoutViewForSwitch() {
-        if AppData.shared.isSyncOn {
-            btnSync.isHidden = false
-        }
-        else {
-            btnSync.isHidden = true
-        }
-    }
     
     @objc func ShowCommutablilitySortView() {
             let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)

@@ -75,7 +75,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         AppState.shared.isHistoricBid = false
         let dom = UserDefaults.standard.string(forKey: "Domain")
         if dom?.isEmpty ?? true {
-            Domain = "http://www.wbidmax.com:8000/WBidDataDwonloadAuthService.svc/"
+            Domain = baseURL
         }
         else{ Domain = dom}
         var isSouthWestWifi = UserDefaults.standard.string(forKey: "isSouthWestWifi")

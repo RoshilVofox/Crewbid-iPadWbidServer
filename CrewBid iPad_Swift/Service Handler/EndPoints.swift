@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 
-let baseURL = "http://www.wbidmax.com:8000/WBidDataDwonloadAuthService.svc/"
+let baseURL = "https://www.auth.wbidmax.com/WBidDataDwonloadAuthService.svc/Rest/"
 
 class EndPoint {
     static let shared = EndPoint()
@@ -22,9 +22,10 @@ class EndPoint {
             return "https://www27.swalife.com/webbid3pty/ThirdParty"
         }
     }
-    var faListWB4Json = "http://www.wbidmax.com/downloads/swa/falistwb4.json"
-    var crewBidUpdate = "http://www.wbidmax.com/downloads/CrewBid/CrewBidUpdate.dat"
-    var flightdataJSON = "http://www.wbidmax.com/downloads/swa/FlightDataJson.zip"
+    var faListWB4Json = "https://www.wbidmax.com/downloads/swa/falistwb4.json"
+    var crewBidUpdate = "https://www.wbidmax.com/downloads/CrewBid/CrewBidUpdate.dat"
+    var flightdataJSON = "https://www.wbidmax.com/downloads/swa/FlightDataJson.zip"
+    var latestNews = "https://www.wbidmax.com/downloads/CrewBid/LatestNews.pdf"
     var flightDataChange = "\(baseURL)GetVacationDifferenceData"
     var soap = "\(baseURL)soap"
     var CAPData = "\(baseURL)GetCAPData"
@@ -51,5 +52,8 @@ class EndPoint {
     var getFirstRoundPaperBidVacationsAndUsers = "\(baseURL)GetFirstRoundPaperBidVacationsAndUsers"
     var addSubmittedRawDataToServer = "\(baseURL)AddSubmittedRawDataToServer"
     var VPSPing = "\(baseURL)VPSPing"
+    var saveCrashedPresetToServer = "\(baseURL)SaveCrashedPresetToServer"
+    var getCrashedCBPresetFromServer = "\(baseURL)GetCrashedCBPresetFromServer"
+    var saveConvertedPresetToServer = "\(baseURL)SaveConvertedPresetToServer"
 }
 

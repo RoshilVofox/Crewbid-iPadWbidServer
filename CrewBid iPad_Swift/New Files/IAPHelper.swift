@@ -380,7 +380,7 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
     }
     
     func isVPSConnected() -> Bool {
-        guard let url = URL(string: "http://www.wbidmax.com:8000/WBidDataDwonloadAuthService.svc/VPSPing"),
+        guard let url = URL(string: EndPoint.shared.VPSPing),
               let data = try? Data(contentsOf: url) else {
             return false
         }

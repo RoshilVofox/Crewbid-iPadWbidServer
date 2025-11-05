@@ -74,7 +74,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         btnTrash.addGestureRecognizer(refreshTapGesture)
         refreshTapGesture.delaysTouchesBegan = true
         notificationObserver()
-//        calculateAMPMFromSync()
+        calculateAMPMFromSync()
         //For setting undo in bidlist
         self.arrayLinesDetails = self.bidPeriod?.lastTrashedDetails ?? NSMutableArray()
         if self.bidPeriod!.managedObjectContext!.undoManager == nil {
@@ -165,6 +165,8 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         NotificationCenter.default.addObserver(self, selector: #selector(undoTrashLast), name: NSNotification.Name("undoTrashLast"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(trashAll), name: NSNotification.Name("trashAll"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(recoverAllTrashed), name: NSNotification.Name("recoverAllTrashed"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(calculateAMPMFromSync), name: NSNotification.Name("amPmValueChanged"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(calculateAMPMFromButton), name: NSNotification.Name("amPmValueChangedFromButton"), object: nil)
     }
     
     
@@ -505,7 +507,159 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
     }
     
     
+    @objc func calculateAMPMFromSync(){
+        let herbTime = Int(UserDefaults.standard.string(forKey: KCBCustomizedHerbValue) ?? "1200")
+        self.recalculateAmPmWith(herbTime: herbTime ?? 1200)
+    }
     
+    func recalculateAmPmWith(herbTime: Int){
+        if herbTime != CBGlobalMethods.shared.selectedBidPeriod?.currentAmPmHerb?.intValue{
+            for line in CBGlobalMethods.shared.selectedBidPeriod!.orderedLines(){
+                for trip in line.orderedTripObjects(){
+                    let tripInfo = trip.info!
+                    
+                    if trip.isReserve{
+                        if tripInfo.departTime!.intValue < 800 {
+                            tripInfo.amPM = NSNumber(integerLiteral: BIAMPMTripType.AMTrip.rawValue)
+                        }else{
+                            tripInfo.amPM = NSNumber(integerLiteral: BIAMPMTripType.PMTrip.rawValue)
+                        }
+                    }else{
+                        var tripReportTime = NSNumber()
+                        if UserDefaults.standard.bool(forKey: "IsSelectedReporTimeForTripButton") {
+                            tripReportTime = tripInfo.reportTime()
+                            if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.localTime.rawValue {
+                                tripReportTime = self.getLocalTimeWithHerb(tripReportTime, forBase: line.bidPeriod?.base ?? "") ?? 0
+                            }
+                            if tripReportTime.intValue < herbTime {
+                            tripInfo.amPM = NSNumber(integerLiteral: BIAMPMTripType.AMTrip.rawValue)
+                            }else{
+                            tripInfo.amPM = NSNumber(integerLiteral: BIAMPMTripType.PMTrip.rawValue)
+                            }
+                        }else{
+                            var tripDepartTime = NSNumber()
+                            tripDepartTime = tripInfo.departTime ?? 0
+                            if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.localTime.rawValue{
+                                tripDepartTime = self.getLocalTimeWithHerb(tripDepartTime, forBase: line.bidPeriod?.base ?? "") ?? 0
+                            }
+                            if (tripDepartTime.intValue < herbTime){
+                                
+                                tripInfo.amPM = NSNumber(integerLiteral: BIAMPMTripType.AMTrip.rawValue)
+                            } else {
+                                tripInfo.amPM = NSNumber(integerLiteral: BIAMPMTripType.PMTrip.rawValue)
+                            }
+                        }
+                    }
+                }
+                self.setLineAm_Pm_Mix(line: line)
+            }
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
+            CBGlobalMethods.shared.selectedBidPeriod?.currentAmPmHerb = NSNumber(integerLiteral: herbTime)
+            do{
+                try CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext?.save()
+            }catch{
+                print("Error saving in recalculateAmPmWith : %@", error.localizedDescription)
+            }
+        }
+    }
+    
+    func setLineAm_Pm_Mix(line: BILine){
+        let amExpression = NSExpression(format: "SUBQUERY(trips, $TRIP, $TRIP.info.amPM == 1).@count")
+        let amTripsCount = amExpression.expressionValue(with: line, context: nil) as! NSNumber
+        
+        let pmExpression = NSExpression(format: "SUBQUERY(trips, $TRIP, $TRIP.info.amPM == 2).@count")
+        let pmTripsCount = pmExpression.expressionValue(with: line, context: nil) as! NSNumber
+        
+        if line.trips?.count == 0 {
+            line.amPM = NSNumber(integerLiteral: BILineAMPM.BlankAMPMLine.rawValue)
+        }else if line.isRedEyeLine == true{
+            line.amPM = NSNumber(integerLiteral: BILineAMPM.RedEyeAMPMLine.rawValue)
+        }else{
+            if line.trips?.count == amTripsCount.intValue{
+                line.amPM = NSNumber(integerLiteral: BILineAMPM.AMLine.rawValue)
+            }else if line.trips?.count == pmTripsCount.intValue{
+                line.amPM = NSNumber(integerLiteral: BILineAMPM.PMLine.rawValue)
+            }else{
+                line.amPM = NSNumber(integerLiteral: BILineAMPM.MixedAMPMLine.rawValue)
+            }
+        }
+        
+    }
+    
+    func getLocalTimeWithHerb(_ oldValue: NSNumber, forBase base: String) -> NSNumber?{
+        let hours = Int(truncating: oldValue) / 100
+        let mins = Int(truncating: oldValue) - hours * 100
+        let minsTemp = (hours * 60) + mins
+        var newValue = NSNumber()
+        if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.localTime.rawValue {
+            let departFormatter = DateFormatter()
+            departFormatter.dateFormat = "HHmm"
+            departFormatter.timeZone = CBUtils.timeZone(forAirportCode: base)
+            
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.locale = Locale(identifier: "en_US")
+            calendar.timeZone = TimeZone(identifier: "US/Central")!
+            
+            var dateComps = calendar.dateComponents([.year, .month, .day], from: Date())
+            dateComps.minute =  minsTemp
+            let departDate = calendar.date(from: dateComps)
+            newValue = NSNumber(value: Int(departFormatter.string(from: departDate!)) ?? 0)
+        }
+        
+        return newValue
+    }
+    
+    @objc func calculateAMPMFromButton(){
+        let herbTime = Int(UserDefaults.standard.string(forKey: KCBCustomizedHerbValue) ?? "1200")
+        self.recalculateAmPmFromButtonAction(herbTime: herbTime ?? 1200)
+    }
+    
+    func recalculateAmPmFromButtonAction(herbTime: Int){
+        for line in CBGlobalMethods.shared.selectedBidPeriod!.orderedLines(){
+            for trip in line.orderedTripObjects(){
+                let tripInfo = trip.info!
+                if trip.isReserve == true {
+                    if tripInfo.departTime!.intValue < 800 {
+                        tripInfo.amPM = NSNumber(integerLiteral: BIAMPMTripType.AMTrip.rawValue)
+                    }else{
+                        tripInfo.amPM = NSNumber(integerLiteral: BIAMPMTripType.PMTrip.rawValue)
+                    }
+                }else{
+                    var tripReportTime = NSNumber()
+                    if UserDefaults.standard.bool(forKey: "IsSelectedReporTimeForTripButton"){
+                        tripReportTime = tripInfo.reportTime()
+                        if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.localTime.rawValue {
+                            tripReportTime = self.getLocalTimeWithHerb(tripReportTime, forBase: line.bidPeriod?.base ?? "") ?? 0
+                        }
+                        if tripReportTime.intValue < herbTime {
+                            tripInfo.amPM = NSNumber(integerLiteral: BIAMPMTripType.AMTrip.rawValue)
+                        }else{
+                            tripInfo.amPM = NSNumber(integerLiteral: BIAMPMTripType.PMTrip.rawValue)
+                        }
+                    }else{
+                        var tripDepartTime = NSNumber()
+                        tripDepartTime = tripInfo.departTime ?? 0
+                        if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.localTime.rawValue {
+                            tripDepartTime = self.getLocalTimeWithHerb(tripDepartTime, forBase: line.bidPeriod?.base ?? "") ?? 0
+                        }
+                        if tripDepartTime.intValue < herbTime {
+                            tripInfo.amPM = NSNumber(integerLiteral: BIAMPMTripType.AMTrip.rawValue)
+                        }else{
+                            tripInfo.amPM = NSNumber(integerLiteral: BIAMPMTripType.PMTrip.rawValue)
+                        }
+                    }
+                }
+            }
+            self.setLineAm_Pm_Mix(line: line)
+        }
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
+        
+        do{
+            try CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext?.save()
+        }catch{
+            print("Error saving in recalculateAmPmFromButtonAction: %@",error.localizedDescription)
+        }
+    }
     
     func fetchTrashedLinesCount(){
         var tempLines:[BILine] = []

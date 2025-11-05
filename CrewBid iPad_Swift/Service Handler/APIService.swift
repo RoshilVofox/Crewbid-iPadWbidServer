@@ -197,7 +197,7 @@ class DownloadManager: NSObject, URLSessionDataDelegate {
             completion(.failure(.invalidURL))
             return
         }
-
+        self.downloadedData = Data()
         self.completionHandler = completion
 
         var request = URLRequest(url: url)
