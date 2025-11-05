@@ -96,6 +96,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         NotificationCenter.default.addObserver(self, selector: #selector(ShowCommutablilitySortView), name: Notification.Name("ShowCommutabilitySortView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(tapWBidMaxBtn), name: Notification.Name("TapWBidMaxBtn"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateLocalHerbSwitchUI), name: NSNotification.Name("updateLocalHerbSwitchUI"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(removeVacationsForSync), name: NSNotification.Name("RemoveVacationsForSync"), object: nil)
         
         firstTimeBidOpen()
         NotificationCenter.default.addObserver(self, selector: #selector(didDismissLatestNews), name: NSNotification.Name("DidDismissLatestNews"), object: nil)
@@ -1234,6 +1235,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 print("commuteInformation presented successfully")
             }
         }
+    }
+    
+    @objc func removeVacationsForSync() {
+        isVacationsRemoved = true
+        self.removeCurrentVacation()
     }
     
     @IBAction func btnSyncAction(_ sender: Any) {

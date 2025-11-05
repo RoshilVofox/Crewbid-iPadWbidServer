@@ -79,6 +79,9 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
     }
     
     @IBAction func deleteCellRow(_ sender: Any) {
+        CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
+        CBGlobalMethods.shared.selectedBidPeriod!.isStateFileModifiedToSync = false
+        CBGlobalMethods.shared.selectedBidPeriod!.currentDateTime = Date()
         for case let line as BILine in self.bidPeriod!.lines! {
             line.rlsGreaterThanEntered = NSNumber(value: false)
             line.rptLessThanentered = NSNumber(value: false)
@@ -476,6 +479,7 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                 line.rlsGreaterThanEntered = NSNumber(value: false)
                 line.rptLessThanentered = NSNumber(value: false)
             }
+            CBGlobalMethods.shared.selectedBidPeriod?.loadedPresetIdentifier = nil
         }
         NotificationCenter.default.removeObserver(self, name: Notification.Name("ReloadReportCollectionView"), object: nil)
     }
@@ -537,6 +541,8 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
 //        calculate report release
         self.showActivityIndicator(color: CBColor.orange)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+//            let variables = NSMutableDictionary(dictionary: self.filterRule!.variables!)
+//            variables[""]
             var report = ""
             var release = ""
             for i in self.reportReleaseArray! {
@@ -831,7 +837,7 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                     continue
                 }
                 else {
-                    self.addRedBubble(viewTag: viewTag, index: index)
+//                    self.addRedBubble(viewTag: viewTag, index: index)
                     self.configureMonthDayFilter(index: index, addDay: true)
                     if !day.isCurrentMonth {
                         if bidPeriod!.month!.intValue == 12 {
@@ -845,14 +851,14 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                     else {
                         strDay = "\(day.text)-\(bidPeriod!.month!.intValue)-\(bidPeriod!.year!)"
                     }
-                    selectedDates.add(strDay)
+                    selectedDates1.add(strDay)
                 }
             }
             var variables = filterRule?.variables as? [String: Any]
             variables![BIFilterRuleSelectedDaysVariablesKey] = selectedDates1
             filterRule?.variables = variables as NSDictionary?
             try? self.context?.save()
-            self.multiplReportReleaseFromSync(reportValue: reportValue, releaseValue: releaseValue, isLast: isLast, isNoMid: isNoMid, isCalendar: isCalendar, isSelectedAll: isSelectedAll, isFirst: isFirst, selectedDates: selectedDates, completionHandler: completionHandler)
+            self.multiplReportReleaseFromSync(reportValue: reportValue, releaseValue: releaseValue, isLast: isLast, isNoMid: isNoMid, isCalendar: isCalendar, isSelectedAll: isSelectedAll, isFirst: isFirst, selectedDates: selectedDates1, completionHandler: completionHandler)
         }
         
     }
@@ -874,8 +880,8 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
             line.rptLessThanentered = NSNumber(value: false)
         }
         let variables = NSMutableDictionary(dictionary: filterRule!.variables!)
-        variables.setValue(self.txtReport.text, forKey: "reportValue")
-        variables.setValue(self.txtRelease.text, forKey: "releaseValue")
+        variables.setValue(reportValue, forKey: "reportValue")
+        variables.setValue(releaseValue, forKey: "releaseValue")
         self.filterRule?.variables = variables
         let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "category == 37")
@@ -961,7 +967,7 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
                 NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
                 self.hideActivityIndicator()
-                self.calendarCollectionView.reloadData()
+//                self.calendarCollectionView.reloadData()
             }
             completionHandler(true)
         }
@@ -1042,7 +1048,7 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                     }
                     
                     if line.rptLessThanentered?.boolValue == false && line.rlsGreaterThanEntered?.boolValue == false {
-                        if (self.noMidButton.isSelected) {
+                        if (isNoMid.intValue == 1) {
                             variables.setValue(1, forKey: "isNoMid")
                             for case let workBlock as WorkBlockList in line.orderedWorkBlocks {
                                 for case let day as BIDay in workBlock.orderedDays {
@@ -1146,7 +1152,7 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
                 NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
                 self.hideActivityIndicator()
-                self.calendarCollectionView.reloadData()
+//                self.calendarCollectionView.reloadData()
             }
             completionHandler(true)
         }

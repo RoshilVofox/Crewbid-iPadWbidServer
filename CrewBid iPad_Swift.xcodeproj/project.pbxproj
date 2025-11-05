@@ -18,6 +18,10 @@
 		357E313F2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357E313E2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift */; };
 		357F66402E5829E3000273BE /* CBCommutability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357F663F2E5829E3000273BE /* CBCommutability.swift */; };
 		357F66422E589626000273BE /* CBRouteDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357F66412E589626000273BE /* CBRouteDomain.swift */; };
+		358AF7772EB7207D00A42011 /* CBSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358AF7762EB7207D00A42011 /* CBSync.swift */; };
+		358AF77A2EB7236000A42011 /* CBSyncFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358AF7792EB7236000A42011 /* CBSyncFilter.swift */; };
+		358AF77C2EB7273E00A42011 /* CBSyncSort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358AF77B2EB7273E00A42011 /* CBSyncSort.swift */; };
+		358AF7B72EB779A700A42011 /* CBSyncLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358AF7B62EB779A700A42011 /* CBSyncLines.swift */; };
 		358DC4E32E59BD34005F3D9A /* CBMonthToMonthPdfVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 358DC4E22E59BD34005F3D9A /* CBMonthToMonthPdfVC.swift */; };
 		35A420FA2E828B7800D6C951 /* BulkDownloadStatusCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A420F92E828B7700D6C951 /* BulkDownloadStatusCell.swift */; };
 		35A420FC2E828BDC00D6C951 /* BIAllDomicileDownloadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A420FB2E828BD800D6C951 /* BIAllDomicileDownloadViewModel.swift */; };
@@ -409,6 +413,10 @@
 		357E313E2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMonthToMonthAlertVC.swift; sourceTree = "<group>"; };
 		357F663F2E5829E3000273BE /* CBCommutability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCommutability.swift; sourceTree = "<group>"; };
 		357F66412E589626000273BE /* CBRouteDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBRouteDomain.swift; sourceTree = "<group>"; };
+		358AF7762EB7207D00A42011 /* CBSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSync.swift; sourceTree = "<group>"; };
+		358AF7792EB7236000A42011 /* CBSyncFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSyncFilter.swift; sourceTree = "<group>"; };
+		358AF77B2EB7273E00A42011 /* CBSyncSort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSyncSort.swift; sourceTree = "<group>"; };
+		358AF7B62EB779A700A42011 /* CBSyncLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSyncLines.swift; sourceTree = "<group>"; };
 		358DC4E22E59BD34005F3D9A /* CBMonthToMonthPdfVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMonthToMonthPdfVC.swift; sourceTree = "<group>"; };
 		35A420F92E828B7700D6C951 /* BulkDownloadStatusCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulkDownloadStatusCell.swift; sourceTree = "<group>"; };
 		35A420FB2E828BD800D6C951 /* BIAllDomicileDownloadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIAllDomicileDownloadViewModel.swift; sourceTree = "<group>"; };
@@ -1539,6 +1547,10 @@
 				F41EBE8A2DC4DB20001413DE /* CBSyncInfoViewController.swift */,
 				350D2CD12E9E76BC002E7FE5 /* CBCoreDataSync.swift */,
 				350D2CD32E9E77F6002E7FE5 /* CBJSONSyncParsing.swift */,
+				358AF7762EB7207D00A42011 /* CBSync.swift */,
+				358AF7792EB7236000A42011 /* CBSyncFilter.swift */,
+				358AF77B2EB7273E00A42011 /* CBSyncSort.swift */,
+				358AF7B62EB779A700A42011 /* CBSyncLines.swift */,
 			);
 			path = Sync;
 			sourceTree = "<group>";
@@ -2172,6 +2184,7 @@
 				F4371C582DF1531100391303 /* BIBidFileDownloadViewModel.swift in Sources */,
 				F41EBF1E2DC4DB20001413DE /* BILeg+CoreDataProperties.swift in Sources */,
 				F41EBF1F2DC4DB20001413DE /* BILegInfo+CoreDataClass.swift in Sources */,
+				358AF77C2EB7273E00A42011 /* CBSyncSort.swift in Sources */,
 				350B8B3F2DDEDBFF005D5E76 /* CBVacationDownloader.swift in Sources */,
 				F41EBF202DC4DB20001413DE /* BILegInfo+CoreDataProperties.swift in Sources */,
 				F41EBF212DC4DB20001413DE /* BILine+CoreDataClass.swift in Sources */,
@@ -2204,6 +2217,7 @@
 				F41EBF3F2DC4DB20001413DE /* CBToggleButton.swift in Sources */,
 				F41EBF402DC4DB20001413DE /* CBTripButton.swift in Sources */,
 				F41EBF412DC4DB20001413DE /* Constants.swift in Sources */,
+				358AF7B72EB779A700A42011 /* CBSyncLines.swift in Sources */,
 				F41EBF422DC4DB20001413DE /* CustomKeyboard.swift in Sources */,
 				F41EBF432DC4DB20001413DE /* CustomUIClass.swift in Sources */,
 				F41EBF442DC4DB20001413DE /* Extensions.swift in Sources */,
@@ -2213,6 +2227,7 @@
 				F41EBF472DC4DB20001413DE /* CBBidActionTableCell.swift in Sources */,
 				F481E96F2DD0906C00DED8FE /* BIBidInfo.swift in Sources */,
 				F41EBF482DC4DB20001413DE /* CBCommuteDiffVCTableCell.swift in Sources */,
+				358AF77A2EB7236000A42011 /* CBSyncFilter.swift in Sources */,
 				F41EBF492DC4DB20001413DE /* CBFlightDataChangeVCTableCell.swift in Sources */,
 				F41EBF4A2DC4DB20001413DE /* ShowCAPTableViewCell.swift in Sources */,
 				F4E659F82E656C5200E78B2A /* CBSendMail.swift in Sources */,
@@ -2252,6 +2267,7 @@
 				8BA705FC2DCB5BB90090EA71 /* ArrivalDepartureTimeCell.swift in Sources */,
 				F41EBF622DC4DB20001413DE /* CBLineTypeRuleCell.swift in Sources */,
 				F41EBF632DC4DB20001413DE /* CBOvernightBulkRuleCell.swift in Sources */,
+				358AF7772EB7207D00A42011 /* CBSync.swift in Sources */,
 				F41EBF642DC4DB20001413DE /* CBPositionRuleCell.swift in Sources */,
 				F41EBF652DC4DB20001413DE /* CBReportReleaseRuleCellTableViewCell.swift in Sources */,
 				F481E9752DD0B26D00DED8FE /* BIBidInfoError.swift in Sources */,

@@ -132,7 +132,7 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
         catch {
             print("Failed to perform filter rule fetch: \(error.localizedDescription)")
         }
-        let fetchedObjects = try! moc!.fetch(fetchRequest)
+//        let fetchedObjects = try! moc!.fetch(fetchRequest)
         DispatchQueue.main.async {
             self.objFilterTableView.reloadData()
         }
