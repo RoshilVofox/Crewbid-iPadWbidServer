@@ -95,6 +95,7 @@ class CBCoreDataSync: NSObject {
         // FILTERS FETCH
         let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "category", ascending: true), NSSortDescriptor(key: "type", ascending: true)]
+        fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
         let result = try? self.managedObjectContext!.fetch(fetchRequest)
         for data in result ?? [] {
             self.managedObjectContext!.delete(data)
@@ -103,6 +104,7 @@ class CBCoreDataSync: NSObject {
         // SORT FETCH
         let sortFetchRequest: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
         sortFetchRequest.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+        sortFetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
         let sortResult = try? self.managedObjectContext!.fetch(sortFetchRequest)
         for data in sortResult ?? [] {
             self.managedObjectContext!.delete(data)
@@ -509,6 +511,7 @@ class CBCoreDataSync: NSObject {
     func importInsertionPoints(details: NSMutableArray) {
         //Delete Insertion entity details
         let fetchRequest: NSFetchRequest<BIInsertionPoint> = BIInsertionPoint.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
         let results = try? self.managedObjectContext!.fetch(fetchRequest)
         for point in results ?? [] {
             self.managedObjectContext!.delete(point)
@@ -518,6 +521,7 @@ class CBCoreDataSync: NSObject {
         let first = details[0] as? [String: Any]
         if first?.count ?? 0 > 0 {
             let objinsertion = BIInsertionPoint(context: self.managedObjectContext!)
+            objinsertion.bidPeriod = self.bidPeriod
             objinsertion.above = first!["above"] as? NSNumber
             objinsertion.index = first!["index"] as? NSNumber
         }

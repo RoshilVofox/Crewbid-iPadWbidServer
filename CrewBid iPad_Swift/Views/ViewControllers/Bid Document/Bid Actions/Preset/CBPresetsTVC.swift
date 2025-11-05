@@ -1031,7 +1031,9 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
             let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: "category", ascending: true), NSSortDescriptor(key: "type", ascending: true)]
             var filterResults = try? self.context.fetch(fetchRequest)
-            fetchRequest.predicate = NSPredicate(format: "category == 33")
+            let predicate1 = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+            let predicate2 = NSPredicate(format: "category == 33")
+            fetchRequest.predicate = NSCompoundPredicate(type: .and, subpredicates: [predicate1, predicate2])
             let arrFilterCommute = try? self.context.fetch(fetchRequest)
             if (arrFilterCommute?.count) ?? 0 > 0 {
                 //                checking commute filter
@@ -1061,7 +1063,9 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
             let fetchSort: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
             fetchSort.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
             let sortResult = try? self.context.fetch(fetchSort)
-            fetchSort.predicate = NSPredicate(format: "category == 9")
+            let predicate3 = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+            let predicate4 = NSPredicate(format: "category == 9")
+            fetchSort.predicate = NSCompoundPredicate(type: .and, subpredicates: [predicate3, predicate4])
             let arrSortCommute = try? self.context.fetch(fetchSort)
             if (arrSortCommute?.count) ?? 0 > 0 {
                 let commutabiltyFetch: NSFetchRequest<Commutability> = Commutability.fetchRequest()
@@ -1078,8 +1082,8 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                 }
                 else {
                     // FILTER FETCH used the same code from the above
-                    for filter in arrFilterCommute! {
-                        self.context.delete(filter)
+                    for sort in arrSortCommute! {
+                        self.context.delete(sort)
                     }
                     NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
                 }
@@ -1233,6 +1237,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                 // FILTERS FETCH
                 let filterFetch: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
                 filterFetch.sortDescriptors = [NSSortDescriptor(key: "category", ascending: true), NSSortDescriptor(key: "type", ascending: true)]
+                filterFetch.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
                 let results = try? self.context.fetch(filterFetch)
                 for filter in results  ?? [] {
                     self.context.delete(filter)
@@ -1240,6 +1245,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                 // SORT FETCH
                 let sortFetch: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
                 sortFetch.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+                sortFetch.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
                 let sortResults = try? self.context.fetch(sortFetch)
                 for sort in sortResults ?? [] {
                     if (sort.lineSortKeyMap != nil) {

@@ -3042,6 +3042,7 @@ class CBJSONSyncParsing: NSObject {
 
     func setQuickFilterToLocalDB(details: [String: Any]) {
         let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
         let result  = try? self.context.fetch(fetchRequest)
         if details["buddyBidder1"] != nil {
             let buddyBidder1 = (details["buddyBidder1"] as? NSNumber)?.stringValue
@@ -3355,6 +3356,7 @@ class CBJSONSyncParsing: NSObject {
 
     func setFilterToLocalDB(details: [String: Any]) {
         let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
         let result  = try? self.context.fetch(fetchRequest)
         
         if result?.count ?? 0 > 0 {
@@ -3716,6 +3718,7 @@ class CBJSONSyncParsing: NSObject {
 
     func setSortToLocalDB(details: [String: Any]) {
         let fetchRequest: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
         let result = try? self.context.fetch(fetchRequest)
         if result?.count ?? 0 > 0 {
             for object in result ?? [] {
@@ -5032,11 +5035,13 @@ class CBJSONSyncParsing: NSObject {
 
             if bidListDetails!.count > insertIndex.intValue {
                 let fetchRequest: NSFetchRequest<BIInsertionPoint> = BIInsertionPoint.fetchRequest()
+                fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
                 let results = try? self.context.fetch(fetchRequest)
                 for point in results ?? [] {
                     self.context.delete(point)
                 }
                 let objinsertion = BIInsertionPoint(context: self.context)
+                objinsertion.bidPeriod = self.bidPeriod
                 objinsertion.above = isInsertLineAbove
                 objinsertion.index = insertIndex
                 try? self.context.save()
