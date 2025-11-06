@@ -4572,7 +4572,7 @@ class BIBidInfoReader{
         if minimumOvernightMinutes == minimumOvernightMinsPlaceholder{
             minimumOvernightMinutes = 0
         }
-        // Calculate the blockOfDaysOff and add OIBs due to back to back trips
+        // Calculate the 5 and add OIBs due to back to back trips
         var blockOfDaysOff = 0
         let undroppedTrips = line.trips?.filtered(using: NSPredicate(format: "vacationOverlapType == 0"))
         
