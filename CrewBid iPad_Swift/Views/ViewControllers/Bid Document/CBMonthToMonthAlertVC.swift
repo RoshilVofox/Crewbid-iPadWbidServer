@@ -41,7 +41,7 @@ class CBMonthToMonthAlertVC: UIViewController {
         monthToMonthPdf.titles = ""
         monthToMonthPdf.modalPresentationStyle = .overFullScreen
         monthToMonthPdf.modalTransitionStyle = .crossDissolve
-        monthToMonthPdf.urlString = "http://www.wbidmax.com/downloads/swa/The Limitations and Opportunity of a Month-to-Month Vacation.pdf"
+        monthToMonthPdf.urlString = "https://www.wbidmax.com/downloads/swa/The Limitations and Opportunity of a Month-to-Month Vacation.pdf"
         self.present(monthToMonthPdf, animated: true, completion: nil)
     }
     
@@ -51,7 +51,7 @@ class CBMonthToMonthAlertVC: UIViewController {
         monthToMonthPdf.titles = ""
         monthToMonthPdf.modalPresentationStyle = .overFullScreen
         monthToMonthPdf.modalTransitionStyle = .crossDissolve
-        monthToMonthPdf.urlString = "http://www.wbidmax.com/downloads/swa/Who Wants 65 tfp for one week of Vacation.pdf"
+        monthToMonthPdf.urlString = "https://www.wbidmax.com/downloads/swa/Who Wants 65 tfp for one week of Vacation.pdf"
         self.present(monthToMonthPdf, animated: true, completion: nil)
     }
 

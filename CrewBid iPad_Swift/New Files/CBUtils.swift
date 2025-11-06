@@ -322,39 +322,39 @@ class CBUtils{
         return success
     }
     
-    static func fetchLatestNews(_ crewBidVersionController: CrewBidUpdateData, scanner: Scanner, fileContent:String) {
-        //1. Scan to the latest news position
-        _ = scanner.scanUpToString("LatestNews")
-        //2. define number character set
-        let numCharSet = CharacterSet(charactersIn: "0123456789")
-        //3. Scan up to number and capture the number set
-        scanner.currentIndex = fileContent.index(scanner.currentIndex, offsetBy: 11)
-        let versionNumber = scanner.scanCharacters(from: numCharSet)
-        //4. Check if local version is  null to avoid the crash
-        if crewBidVersionController.latestNews == nil {
-            crewBidVersionController.latestNews = ""
-        }
-        //5. Check any version change is occured
-        if (crewBidVersionController.latestNews != versionNumber as String?) {
-            //6. Download the latest news from VPS directory
-            self.checkForNewsWithCompletionHandler(isDownloaded: { (responce: Bool) -> Void in
-                if responce {
-                    //7. Update the latest news version number to local core data
-                    let versionStr = versionNumber! as String
-                    crewBidVersionController.latestNews = versionStr
-                    DispatchQueue.main.async {
-                        if GlobalBidInfo.shared.managedObjectContext.hasChanges {
-                            do {
-                                try GlobalBidInfo.shared.managedObjectContext.save()
-                            } catch {
-                                print(error)
-                            }
-                        }
-                    }
-                }
-            })
-        }
-    }
+//    static func fetchLatestNews(_ crewBidVersionController: CrewBidUpdateData, scanner: Scanner, fileContent:String) {
+//        //1. Scan to the latest news position
+//        _ = scanner.scanUpToString("LatestNews")
+//        //2. define number character set
+//        let numCharSet = CharacterSet(charactersIn: "0123456789")
+//        //3. Scan up to number and capture the number set
+//        scanner.currentIndex = fileContent.index(scanner.currentIndex, offsetBy: 11)
+//        let versionNumber = scanner.scanCharacters(from: numCharSet)
+//        //4. Check if local version is  null to avoid the crash
+//        if crewBidVersionController.latestNews == nil {
+//            crewBidVersionController.latestNews = ""
+//        }
+//        //5. Check any version change is occured
+//        if (crewBidVersionController.latestNews != versionNumber as String?) {
+//            //6. Download the latest news from VPS directory
+//            self.checkForNewsWithCompletionHandler(isDownloaded: { (responce: Bool) -> Void in
+//                if responce {
+//                    //7. Update the latest news version number to local core data
+//                    let versionStr = versionNumber! as String
+//                    crewBidVersionController.latestNews = versionStr
+//                    DispatchQueue.main.async {
+//                        if GlobalBidInfo.shared.managedObjectContext.hasChanges {
+//                            do {
+//                                try GlobalBidInfo.shared.managedObjectContext.save()
+//                            } catch {
+//                                print(error)
+//                            }
+//                        }
+//                    }
+//                }
+//            })
+//        }
+//    }
     static func fetchCityList(_ crewBidVersionController: CrewBidUpdateData, fileContent: String)-> Bool {
         
         var isCompleted:Bool = false
@@ -560,10 +560,6 @@ class CBUtils{
             print("Invalid destination URL")
             return
         }
-//        if fileManager.fileExists(atPath: destinationURL.path) {
-//            print("LatestNews.pdf already exists at: \(destinationURL.path)")
-//            return
-//        }
         let reachability: Reachability = try! Reachability()
             
         if !reachability.isReachable {
@@ -571,87 +567,102 @@ class CBUtils{
             return
         }
         
-        let stringURL = "http://www.wbidmax.com/downloads/CrewBid/LatestNews.pdf"
-        guard let url = URL(string: stringURL) else {
-            print("Invalid URL")
-            return
-        }
-        
-        let task = URLSession.shared.downloadTask(with: url) { tempLocalUrl, response, error in
-            if let error = error {
-                print("Error downloading file: \(error.localizedDescription)")
-                return
-            }
-            guard let tempLocalUrl = tempLocalUrl else {
-                print("No file URL found")
-                return
-            }
-            do {
-                if fileManager.fileExists(atPath: destinationURL.path) {
-                    try fileManager.removeItem(at: destinationURL)
+        let stringURL = EndPoint.shared.latestNews
+        APIService.shared.fetchDownload(urlString: stringURL, completion: { result in
+            switch result{
+            case .success(let tempURL):
+                do {
+                    if fileManager.fileExists(atPath: destinationURL.path) {
+                        try fileManager.removeItem(at: destinationURL)
+                    }
+                    try fileManager.moveItem(at: tempURL, to: destinationURL)
+                } catch {
+                    print("Error saving latest news: \(error.localizedDescription)")
                 }
-                try fileManager.moveItem(at: tempLocalUrl, to: destinationURL)
-            } catch {
-                print("Error saving latest news: \(error.localizedDescription)")
+
+            case .failure(let error):
+                print("Error downloading file: \(error.localizedDescription)")
             }
-        }
-        task.resume()
+        })
+        //        guard let url = URL(string: stringURL) else {
+        //            print("Invalid URL")
+        //            return
+        //        }
+//        let task = URLSession.shared.downloadTask(with: url) { tempLocalUrl, response, error in
+//            if let error = error {
+//                print("Error downloading file: \(error.localizedDescription)")
+//                return
+//            }
+//            guard let tempLocalUrl = tempLocalUrl else {
+//                print("No file URL found")
+//                return
+//            }
+//            do {
+//                if fileManager.fileExists(atPath: destinationURL.path) {
+//                    try fileManager.removeItem(at: destinationURL)
+//                }
+//                try fileManager.moveItem(at: tempLocalUrl, to: destinationURL)
+//            } catch {
+//                print("Error saving latest news: \(error.localizedDescription)")
+//            }
+//        }
+//        task.resume()
     }
     
-    static func checkForNewsWithCompletionHandler(isDownloaded: @escaping (Bool) -> Void) {
-        let reachability: Reachability = try! Reachability()
-        
-        if !reachability.isReachable {
-            NotificationCenter.default.post(name: Notification.Name("NetWorkError"), object: nil)
-            isDownloaded(false)
-            return
-        }
-        let stringURL: String = "http://www.wbidmax.com/downloads/CrewBid/LatestNews.pdf"
-        guard let url = URL(string: stringURL) else {
-            print("Invalid URL")
-            isDownloaded(false)
-            return
-        }
-        
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                print("Error fetching news: \(error)")
-                isDownloaded(false)
-                return
-            }
-            
-            guard let urlData = data else {
-                print("No data received")
-                isDownloaded(false)
-                return
-            }
-            
-            let pdfFilePath: String = self.getLatestNewsFilePath()
-            guard let urlPath = URL(string: pdfFilePath) else {
-                print("Invalid file path")
-                isDownloaded(false)
-                return
-            }
-            
-            do {
-                try urlData.write(to: urlPath, options: .atomic)
-                let filePath = urlPath.path
-                let fileManager = FileManager.default
-                
-                if fileManager.fileExists(atPath: filePath) {
-                    print("FILE AVAILABLE")
-                    isDownloaded(true)
-                } else {
-                    print("FILE NOT AVAILABLE")
-                    isDownloaded(false)
-                }
-            } catch {
-                print("Error saving file: \(error)")
-                isDownloaded(false)
-            }
-        }
-        task.resume()
-    }
+//    static func checkForNewsWithCompletionHandler(isDownloaded: @escaping (Bool) -> Void) {
+//        let reachability: Reachability = try! Reachability()
+//        
+//        if !reachability.isReachable {
+//            NotificationCenter.default.post(name: Notification.Name("NetWorkError"), object: nil)
+//            isDownloaded(false)
+//            return
+//        }
+//        let stringURL: String = "http://www.wbidmax.com/downloads/CrewBid/LatestNews.pdf"
+//        guard let url = URL(string: stringURL) else {
+//            print("Invalid URL")
+//            isDownloaded(false)
+//            return
+//        }
+//        
+//        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+//            if let error = error {
+//                print("Error fetching news: \(error)")
+//                isDownloaded(false)
+//                return
+//            }
+//            
+//            guard let urlData = data else {
+//                print("No data received")
+//                isDownloaded(false)
+//                return
+//            }
+//            
+//            let pdfFilePath: String = self.getLatestNewsFilePath()
+//            guard let urlPath = URL(string: pdfFilePath) else {
+//                print("Invalid file path")
+//                isDownloaded(false)
+//                return
+//            }
+//            
+//            do {
+//                try urlData.write(to: urlPath, options: .atomic)
+//                let filePath = urlPath.path
+//                let fileManager = FileManager.default
+//                
+//                if fileManager.fileExists(atPath: filePath) {
+//                    print("FILE AVAILABLE")
+//                    isDownloaded(true)
+//                } else {
+//                    print("FILE NOT AVAILABLE")
+//                    isDownloaded(false)
+//                }
+//            } catch {
+//                print("Error saving file: \(error)")
+//                isDownloaded(false)
+//            }
+//        }
+//        task.resume()
+//    }
     
     static func getLatestNewsFilePath() -> String {
         let paths: [Any] = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)

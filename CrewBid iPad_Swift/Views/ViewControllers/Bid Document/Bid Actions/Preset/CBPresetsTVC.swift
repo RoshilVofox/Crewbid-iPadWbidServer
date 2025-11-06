@@ -293,7 +293,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
         let resArr = bytes.map { NSNumber(value: $0) }
         dicInfo["PresetContent"] = resArr
         
-        guard let url = URL(string: "http://www.wbidmax.com:8000/WBidDataDwonloadAuthService.svc/SaveCrashedPresetToServer") else {
+        guard let url = URL(string: EndPoint.shared.saveCrashedPresetToServer) else {
             return
         }
         
@@ -470,7 +470,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
         dicInfo["EmployeeNumber"] = app.ObjUserAccount?.employeeNumber
         dicInfo["PresetFileName"] = "\(String(describing: app.ObjUserAccount?.employeeNumber)).json"
         
-        guard let url = URL(string: "http://www.wbidmax.com:8000/WBidDataDwonloadAuthService.svc/GetCrashedCBPresetFromServer") else { return }
+        guard let url = URL(string: EndPoint.shared.getCrashedCBPresetFromServer) else { return }
         
         var urlRequest = URLRequest(url: url)
         do {
@@ -702,7 +702,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
     }
     
     func getSecretCrewbidPresetFileLOOP(with dict: [String: Any], completion presetCompletionHandler: @escaping (Bool) -> Void) {
-        guard let url = URL(string: "http://www.wbidmax.com:8000/WBidDataDwonloadAuthService.svc/GetCrashedCBPresetFromServer") else {
+        guard let url = URL(string: EndPoint.shared.getCrashedCBPresetFromServer) else {
             presetCompletionHandler(false)
             return
         }
@@ -781,7 +781,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
         
         dicInfo["PresetContent"] = data
         
-        guard let url = URL(string: "http://www.wbidmax.com:8000/WBidDataDwonloadAuthService.svc/SaveConvertedPresetToServer") else {
+        guard let url = URL(string: EndPoint.shared.saveConvertedPresetToServer) else {
             presetCompletionHandler(false)
             return
         }

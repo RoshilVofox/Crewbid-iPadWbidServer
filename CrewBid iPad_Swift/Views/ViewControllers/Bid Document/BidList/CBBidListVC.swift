@@ -24,7 +24,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     @IBOutlet weak var lblBidLineCount: UILabel!
     @IBOutlet weak var scrollToButton: UIButton!
     var managedObjectContext:NSManagedObjectContext?
-    var bidPeriod : BIBidPeriod!
+    var bidPeriod: BIBidPeriod!
     var count = 0
     var bidListCalenderDays = [Any]()
     var bidListCalendarData = BICalendarData()
@@ -68,6 +68,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.updateTitle()
+        self.sortButtonColorChange()
         NotificationCenter.default.addObserver(self, selector: #selector(self.returnLine(_:)), name: NSNotification.Name(rawValue: "CBReturnLinesNotification"), object: nil)
     }
     override func viewWillDisappear(_ animated: Bool) {
@@ -77,7 +78,6 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupVariables()
         setupUI()
         self.view.clipsToBounds = true
         self.view.layer.cornerRadius = 5
@@ -127,7 +127,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     }
     
     func setupUI(){
-//        bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
+        bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
         if bidPeriod.isSortBySubmitOn?.boolValue ?? false {
             self.isSubmitSort = true
             self.btnASort.backgroundColor = CBColor.cbGreenColor
@@ -136,7 +136,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         bidListCalenderDays = bidListCalendarData.calendarDays as! [Any]
         lineValuesKey = CBLineValuesMenuController.lineValuesKey(for: bidPeriod)
         lineValuesToDisplay = UserDefaults.standard.value(forKey: lineValuesKey) as! [AnyHashable]
-        
+        setupVariables()
         manageViewSelection()
         btnNormalView.layer.borderWidth = 1
         btnNormalView.layer.borderColor = UIColor.lightGray.cgColor
@@ -175,7 +175,28 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         self.isSubmitSort = (self.bidPeriod.isSortBySubmitOn ?? 0).boolValue
         self.isAwardSort = (self.bidPeriod.isAwardSortOn ?? 0).boolValue
         if isAwardSort{
-//            loadAwardDetails()
+            loadAwardDetails()
+        }
+    }
+    
+    
+    func loadAwardDetails(){
+        
+    }
+    
+    func sortButtonColorChange(){
+        if self.bidPeriod.isBidListSortOn?.boolValue ?? false{
+            if self.bidPeriod.getOrderedBidListSorts().count > 0 {
+                self.bidPeriod.isSortBySubmitOn = false
+                self.bidPeriod.isAwardSortOn = false
+            }
+        }
+        self.isSubmitSort = (self.bidPeriod.isSortBySubmitOn ?? 0).boolValue
+        self.isAwardSort = (self.bidPeriod.isAwardSortOn ?? 0).boolValue
+        if isAwardSort || isSubmitSort{
+            btnASort.backgroundColor = CBColor.cbGreenColor
+        }else{
+            btnASort.backgroundColor = CBColor.cbOrangeColor
         }
     }
     
@@ -1095,15 +1116,13 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
 
     //MARK: original
     @objc func updateBidList(_ notification: Notification? = nil) {
-        let context = bidPeriod.managedObjectContext!
-
+        guard let context = bidPeriod.managedObjectContext else { return }
+        
         var isTableviewReload = true
         var notifictionFromTripTextView = false
-        if let notification = notification {
-            if notification.object is CBTripTextViewController {
-                isTableviewReload = true
-                notifictionFromTripTextView = true
-            }
+        if let notification = notification, notification.object is CBTripTextViewController {
+            isTableviewReload = true
+            notifictionFromTripTextView = true
         }
         self.linesArray.removeAll()
         
@@ -1126,9 +1145,6 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
                 tmp = tmp + 1
                 line.bidOrder = NSNumber(integerLiteral: tmp)
                 line.previousBidOrder = NSNumber(integerLiteral: tmp)
-            }
-            if context.hasChanges{
-                try? context.save()
             }
         }
         else{
@@ -1154,26 +1170,158 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
                     self.btnASort.backgroundColor = CBColor.cbOrangeColor
                 }
             }
-            
-        if let tableView = self.tableViewNormalView {
-            self.updateBidListTitle()
-            
-            if isTableviewReload{
-                if UserDefaults.standard.bool(forKey: "isSelectedCalanderView") {
-                    tableView.reloadData()
-                    self.scrollToInsertionIndex()
-                } else {
-                    tableView.reloadData()
-                    if !notifictionFromTripTextView {
+
+        DispatchQueue.main.async {
+            if let tableView = self.tableViewNormalView {
+                self.updateBidListTitle()
+                if isTableviewReload{
+                    if UserDefaults.standard.bool(forKey: "isSelectedCalanderView") {
+                        tableView.reloadData()
                         self.scrollToInsertionIndex()
+                    } else {
+                        tableView.reloadData()
+                        if !notifictionFromTripTextView {
+                            self.scrollToInsertionIndex()
+                        }
                     }
                 }
             }
-            if context.hasChanges{
-                try? context.save()
-            }
         }
+//        if context.hasChanges{
+//            try? context.save()
+//        }
     }
+    
+    func logUndoState(_ undoManager: UndoManager?) {
+        guard let undoManager = undoManager else { return }
+        print("canUndo:", undoManager.canUndo, "actionName:", undoManager.undoActionName)
+    }
+    
+//    @objc func updateBidList(_ notification: Notification? = nil) {
+//        
+//        var isTableviewReload = true
+//        var notifictionFromTripTextView = false
+//        
+//        if let notification = notification {
+//            if let object = notification.object as? CBTripTextViewController {
+//                isTableviewReload = true
+//                notifictionFromTripTextView = true
+//            } else {
+//              
+//            }
+//        } else {
+//            
+//        }
+//        
+//        // Clear the linesArray and selectedCellIndexPaths
+//
+//        self.linesArray.removeAll()
+//
+//        // Populate linesArray with BILine objects
+//
+//        for case let line as BILine in CBGlobalMethods.shared.selectedBidPeriod!.lines! {
+//            linesArray.append(line)
+//        }
+//        // Apply a filter to linesArray to exclude lines with bidOrder <= 0
+//
+//        var array : [NSPredicate] = []
+//        array.append(NSPredicate(format: "bidOrder > %@", NSNumber(integerLiteral: 0)))
+//        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
+//        self.linesArray = (linesArray as NSArray).filtered(using: predicate) as! [BILine]
+//        
+//        // Sort linesArray based on certain criteria
+//        let sort = NSSortDescriptor(key: "bidOrder", ascending: true)
+//        if bidPeriod.isBidListSortOn?.boolValue ?? false{
+//            let lineSorts = getSortDescriptorsForBidList()
+//
+//            self.linesArray = (linesArray as NSArray).sortedArray(using: lineSorts ) as! [BILine]
+//            var tmp : Int = 0
+//            for case let line in  self.linesArray {
+//                tmp = tmp + 1
+//                line.bidOrder = NSNumber(integerLiteral: tmp)
+//                line.previousBidOrder = NSNumber(integerLiteral: tmp)
+//            }
+//            try? bidPeriod.managedObjectContext?.save()
+//        }
+//        else{
+//            self.linesArray = (linesArray as NSArray).sortedArray(using: [sort]) as! [BILine]
+//        }
+//        // Apply SubmitSort if needed
+//
+//        if isSubmitSort {
+//            self.linesArray = (linesArray as NSArray).sortedArray(using: [NSSortDescriptor(key: "submitSortOrder", ascending: true)]) as! [BILine]
+//        }
+//        // Update UI elements with the current bid list information
+//
+//        DispatchQueue.main.async {
+//            if self.bidPeriod.isBidListSortOn?.boolValue ?? false{
+//                if  self.bidPeriod.getOrderedBidListSorts().count > 0{
+//                    self.bidPeriod.isSortBySubmitOn = false
+//                    self.bidPeriod.isAwardSortOn = false
+//                }
+//            }
+//            self.isSubmitSort = (self.bidPeriod.isSortBySubmitOn ?? 0).boolValue
+//            self.isAwardSort = (self.bidPeriod.isAwardSortOn ?? 0).boolValue
+//            // Update UI elements based on ASort criteria
+//
+//            if self.btnASort != nil {
+//                if self.isAwardSort || self.isSubmitSort{
+//                    self.btnASort.backgroundColor = CBColor.cbGreenColor
+//                }else{
+//                    self.btnASort.backgroundColor = CBColor.cbOrangeColor
+//                }
+//            }
+//            // Update the label showing the number of lines in the bid list
+//
+//            if self.tableViewNormalView != nil {
+//                let totalLines = CBGlobalMethods.shared.selectedBidPeriod!.lines!
+//                let allLines = self.linesArray
+//                let bidListTotal: Int = (allLines.count)
+//                let etopsCount = ((self.linesArray) as NSArray).value(forKey: "isETOPS")
+//                let etopsReserveCount = ((self.linesArray) as NSArray).value(forKey: "isETOPSRES")
+//                let etopsCountNumber = NSCountedSet(array: etopsCount as! [Any])
+//                let etopsReserveCountNumber = NSCountedSet(array: etopsReserveCount as! [Any])
+//                var title = "\(totalLines.count) Lines - Bid List - \(bidListTotal)"
+//                if (etopsCountNumber.count(for: 1) != 0) || (etopsReserveCountNumber.count(for: 1) != 0) {
+//                    let eCount = etopsCountNumber.count(for: 1) + etopsReserveCountNumber.count(for: 1)
+//                    title = "\(totalLines.count) Lines - Bid List - \(bidListTotal) - \(eCount) ETOPS"
+//                }
+//                //modified the code given below on 18/01/2024 by Kripa to fix a crash
+//                if let seniority: Int = self.bidPeriod.seniorityNumber as? Int{
+//                    let seniorityNumberString : String = String(seniority)
+//                    if self.bidPeriod.seniorityNumber != 0 {
+//                        let isEffSenSelected = UserDefaults.standard.bool(forKey: "IsEffSenSelected")
+//                        if isEffSenSelected {
+//                            let paperBidCount = self.bidPeriod.paperBidCount?.intValue ?? 0
+//                            let paperCountAvoidedSeniorityListPosition = seniority - paperBidCount
+//                            title.append(" - EffSen #\(paperCountAvoidedSeniorityListPosition)")
+//                        } else{
+//                            title += " - Sen #\(seniorityNumberString)"
+//                        }
+//                    }
+//                }
+//                self.lblBidLineCount.text = title
+//                
+//                // This condition added by Raja on 03/01/2024
+//                // to fix the Trip data UI issue in Normal bid list view when tap Herb / Local time button.
+//                if isTableviewReload{
+//                    if UserDefaults.standard.bool(forKey: "isSelectedCalanderView") {
+//                        self.tableViewNormalView.reloadData()
+//                        self.scrollToInsertionIndex()
+//                    } else {
+//                        if notifictionFromTripTextView == false {
+//                            self.tableViewNormalView.reloadData()
+//                            self.scrollToInsertionIndex()
+//                        }
+//                    }
+//                }
+//              
+//                try? self.bidPeriod.managedObjectContext?.save()
+//            }
+//        }
+//    }
+
+    
     
     private func updateBidListTitle(){
         let totalLines = CBGlobalMethods.shared.selectedBidPeriod!.lines!
@@ -1349,7 +1497,9 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         // Core Data undo will handle undo/redo automatically
         undoManager.setActionName("Insert Line\(lines.count > 1 ? "s" : "")")
         undoManager.endUndoGrouping()
-
+        context.processPendingChanges()
+        
+        
         // Notify UI
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
         NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: nil)
@@ -1663,7 +1813,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     @IBAction func btnExpandedViewAction(_ sender: Any) {
         let storyboard : UIStoryboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBExpandedBidLinesTableController") as! CBExpandedBidLinesTableController
-        vc.bidPeriod = self.bidPeriod!
+        vc.bidPeriod = self.bidPeriod
         vc.modalPresentationStyle = .fullScreen
         self.present(vc, animated: true)
     }
@@ -2943,7 +3093,7 @@ extension CBBidListVC: CBSortOptionDelegate{
                         let empNUMString = "\(empNum)"
                         awardDetail.empNum = empNUMString
                         
-                        if bidPeriod!.swaptimizerIdentifier?.stringValue == empNUMString {
+                        if bidPeriod?.swaptimizerIdentifier?.stringValue == empNUMString {
                             self.awardedLineNum = awardDict["LineNum"] as? String
                         }
                     }
@@ -3019,10 +3169,10 @@ extension CBBidListVC: CBSortOptionDelegate{
                 }
                 var orderInt = 1
                 for i in 0 ..< lines.count {
-                    let line = lines[i]
+                    let line:NSString = lines[i] as NSString
                     let lineId = line
                     let faPosition = lineId.substring(from: lineId.length - 1)
-                    let lineNumInt = Int(line) ?? 0
+                    let lineNumInt = line.integerValue
 
                     if self.bidPeriod.isFABid() {
                         for line in self.bidPeriod.getLineWithLineNumberAndFAPos(number: lineNumInt, position: faPosition) {
@@ -3276,7 +3426,6 @@ extension CBBidListVC: CBSortOptionDelegate{
     func didTappedSubmitSort(isOn: Bool) {
         if isOn {
             // Enable submit sorting
-
             DispatchQueue.main.async { [self] in
                 self.btnASort.backgroundColor = CBColor.cbGreenColor
             }
@@ -3291,8 +3440,6 @@ extension CBBidListVC: CBSortOptionDelegate{
                 self.btnASort.backgroundColor = CBColor.cbOrangeColor
             }
             if !isAwardSort {
-                // Update bid list if award sorting is also off
-
                 updateBidList()
             }
             self.saveToCoreData()

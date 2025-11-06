@@ -51,12 +51,14 @@ class AwardsViewModel {
             case .success(let fileURL):
                 do {
                     let fileContents = try String(contentsOf: fileURL, encoding: .utf8)
-                    self.bidPeriod.awardString = fileContents
                     if fileContents.contains("ERROR"){
-                        print("")
+                        NotificationCenter.default.post(name: NSNotification.Name("BidAwardReadError"), object: fileContents)
+                        completion(false)
+                    }else{
+                        self.bidPeriod.awardString = fileContents
+                        try self.bidPeriod.managedObjectContext?.save()
+                        completion(true)
                     }
-                    try self.bidPeriod.managedObjectContext?.save()
-                    completion(true)
                 } catch {
                     print("Failed to read award file: \(error.localizedDescription)")
                     completion(false)
@@ -78,16 +80,7 @@ class AwardsViewModel {
             return
         }
 
-//        APIService.shared.fetchDownload(
-//            urlString: EndPoint.shared.thirdpartyURL,
-//            httpMethod: .POST,
-//            body: bodyData,
-//            headers: nil,
-//            timeout: 300
-//        ) { result in
-//            completion(result.mapError { $0 as Error })
-//        }
-        DownloadManager.shared.fetch(
+        APIService.shared.fetchDownload(
             urlString: EndPoint.shared.thirdpartyURL,
             httpMethod: .POST,
             body: bodyData,
@@ -96,6 +89,15 @@ class AwardsViewModel {
         ) { result in
             completion(result.mapError { $0 as Error })
         }
+//        DownloadManager.shared.fetch(
+//            urlString: EndPoint.shared.thirdpartyURL,
+//            httpMethod: .POST,
+//            body: bodyData,
+//            headers: nil,
+//            timeout: 300
+//        ) { result in
+//            completion(result.mapError { $0 as Error })
+//        }
     }
     
 

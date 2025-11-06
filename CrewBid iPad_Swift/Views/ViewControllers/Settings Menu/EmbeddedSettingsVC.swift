@@ -10,11 +10,10 @@ import UIKit
 class EmbeddedSettingsVC: BaseViewController,KUIPopOverUsable {
 
     var contentSize: CGSize {
-        return CGSize(width: 300, height: self.bdPrd == 0 ? 376 : 500)
+        return CGSize(width: 300, height: self.bidPeriod == nil ? 376 : 500)
     }
     
     var bidPeriod: BIBidPeriod?
-    var bdPrd:Int!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,7 +24,7 @@ class EmbeddedSettingsVC: BaseViewController,KUIPopOverUsable {
         let navVC = segue.destination as? UINavigationController
         let vc = navVC?.viewControllers.first as! SettingsViewController
         vc.bidPeriod = bidPeriod
-        vc.bdPrd = bdPrd
+
     }
 
 

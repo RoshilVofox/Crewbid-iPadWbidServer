@@ -51,20 +51,26 @@ class AlertService{
     }
     
     
-    static func getAttributedMessage(from text: String, highlight: String) -> NSMutableAttributedString {
+    static func getAttributedMessage(from text: String, highlight: String? = nil) -> NSMutableAttributedString {
         let messageFont = UIFont.systemFont(ofSize: 20)
         let boldFont = UIFont.boldSystemFont(ofSize: 24)
+        
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
-        let fullRange = NSRange(location: 0, length: (text as NSString).length)
-        let boldRange = (text as NSString).range(of: highlight)
+        
         let attributedString = NSMutableAttributedString(string: text)
+        let fullRange = NSRange(location: 0, length: (text as NSString).length)
+        
         attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: fullRange)
         attributedString.addAttribute(.font, value: messageFont, range: fullRange)
-
-        if boldRange.location != NSNotFound {
-            attributedString.addAttribute(.font, value: boldFont, range: boldRange)
+        
+        if let highlight = highlight, !highlight.isEmpty {
+            let boldRange = (text as NSString).range(of: highlight)
+            if boldRange.location != NSNotFound {
+                attributedString.addAttribute(.font, value: boldFont, range: boldRange)
+            }
         }
+        
         return attributedString
     }
     

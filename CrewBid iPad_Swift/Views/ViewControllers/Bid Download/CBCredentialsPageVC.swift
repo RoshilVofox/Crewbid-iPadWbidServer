@@ -412,6 +412,8 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         if !UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
             NotificationCenter.default.addObserver(self, selector: #selector(showProgressView), name: Notification.Name("ShowProgressView"), object: nil)
         }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(showBidAwardReadError(notification:)), name: NSNotification.Name("BidAwardReadError"), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -646,34 +648,38 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     }
     
     
-    
+    //MARK: Award retrieval
     func handleAwardRetrieval(sessionKey: String){
-        print("Award retrieval")
         let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         let empNum = bidPeriod?.crewIdentifier?.stringValue
         CBGlobalMethods.shared.secretKey = sessionKey
-        print("Session key: \(sessionKey)")
         awardsViewModel?.retrieveAwardFile(sessionKey: sessionKey){ result in
-            DispatchQueue.main.async{
-                self.dismiss(animated: false) {
-                    if self.awardsViewModel?.bidPeriod.awardString != nil {
-                        var emp = ""
-                        if (CBGlobalMethods.shared.awardLertSecretEmpNum?.length ?? 0 > 0) {
-                            emp = CBGlobalMethods.shared.awardLertSecretEmpNum!;
-                        } else {
-                            emp = empNum!
+            if result{
+                DispatchQueue.main.async{
+                    self.dismiss(animated: false) {
+                        if self.awardsViewModel?.bidPeriod.awardString != nil {
+                            var emp = ""
+                            if (CBGlobalMethods.shared.awardLertSecretEmpNum?.length ?? 0 > 0) {
+                                emp = CBGlobalMethods.shared.awardLertSecretEmpNum!;
+                            } else {
+                                emp = empNum!
+                            }
+                            self.awardsViewModel?.getAwardAlertFromServer(empNum: emp) { finished in
+                                CBGlobalMethods.shared.awardLertSecretEmpNum = nil;
+                             }
                         }
-                        self.awardsViewModel?.getAwardAlertFromServer(empNum: emp) { finished in
-                            print("success")
-                            CBGlobalMethods.shared.awardLertSecretEmpNum = nil;
-                            
-                        }
-                        NotificationCenter.default.post(name: Notification.Name("AwrdFileRetrieved"), object: nil)
                     }
                 }
             }
-            
-            
+        }
+    }
+    
+    @objc func showBidAwardReadError(notification: NSNotification){
+        let str1 = AlertService.getAttributedMessage(from: notification.object as! String)
+        let str2 = AlertService.getAttributedMessage(from: "\n\nPlease make sure that bid awards are available at this time.")
+        str1.append(str2)
+        DispatchQueue.main.async{
+            AlertService.showDBAlert(title: "Awards Retrieval Failed",attributedMessage: str1, from: self)
         }
     }
     

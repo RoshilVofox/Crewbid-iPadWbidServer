@@ -1072,6 +1072,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
             if column + tripLength > 7 {
                 buttonLength = 7 - column
                 vacayButtonFrame.size.width = CGFloat(buttonLength) * itemSize.width
+                vacayButtonFrame.size.height = buttonHeight
                 buttonImage = UIImage(named: "TripButton-rounded-left-red2_iOS7")?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
                 vacayButtonFrame.size.width = min(CGFloat(tripLength), 7) * itemSize.width
                 let button2 = UIImageView(frame: vacayButtonFrame)
@@ -1124,6 +1125,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
             else{// Vacation in one row only of the calendar.
                 buttonImage = UIImage(named: "TripButton-rounded-both-red2_iOS7")?.resizableImage(withCapInsets: bothRoundedInsets, resizingMode: .stretch)
                 vacayButtonFrame.size.width = CGFloat(tripLength) * itemSize.width
+                vacayButtonFrame.size.height = buttonHeight
                 let button2 = UIImageView(frame: vacayButtonFrame)
                 button2.image = buttonImage
                 fvVacationButtons?.replaceObject(at: index, with: button2)
