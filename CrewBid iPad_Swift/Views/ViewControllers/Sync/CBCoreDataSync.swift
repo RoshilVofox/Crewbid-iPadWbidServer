@@ -548,7 +548,9 @@ class CBCoreDataSync: NSObject {
             self.bidPeriod?.isOverNightBulkApplied = "YES"
             let dictAllValues = details[0] as? [String: Any]
             let noArray = (dictAllValues!.filter { $0.value as? String == "1" }.map { $0.key } as? NSArray)!
+            let yesArray = (dictAllValues!.filter { $0.value as? String == "2" }.map { $0.key } as? NSArray)!
             CBUtils.overnightBulkRedApply(noArray: noArray)
+            CBUtils.overnightBulkGreenApply(yesArray: yesArray)
             NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
         }
     }

@@ -77,6 +77,9 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
             else {
                 arrOverNightCitiesList = bidPeriod?.overNightCities as? [String]
             }
+            if dictCityStatus?.count == 0 {
+                self.dictCityStatus = filterRule?.variables as? [String: Any]
+            }
             arrCitiesList?.remove("")
             if let cities = arrCitiesList as? [AnyHashable],
                let overnightCities = arrOverNightCitiesList {
@@ -84,11 +87,12 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
                 let intersection = Set(cities).intersection(Set(overnightCities))
                 arrIntersected =  NSMutableArray(array: Array(intersection))
             }
-//            self.collectionView.reloadData()
+            self.collectionView.reloadData()
         }
         catch {
             print("error fetching overnightBulk: \(error.localizedDescription)")
         }
+//        self.collectionView.reloadData()
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -210,10 +214,13 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
         
         let dict = NSDictionary(dictionary: dictCityStatus!)
         objOvernight?.citystatus = dict
+        filterRule?.variables = dict
         try? context?.save()
         let noArray = (dictCityStatus!.filter { $0.value as? String == "1" }.map { $0.key } as? NSArray)!
+        let yesArray = (dictCityStatus!.filter { $0.value as? String == "2" }.map { $0.key } as? NSArray)!
 
         CBUtils.overnightBulkRedApply(noArray: noArray)
+        CBUtils.overnightBulkGreenApply(yesArray: yesArray)
         reloadContent()
         CBGlobalMethods.shared.hideActivityIndicator()
     }

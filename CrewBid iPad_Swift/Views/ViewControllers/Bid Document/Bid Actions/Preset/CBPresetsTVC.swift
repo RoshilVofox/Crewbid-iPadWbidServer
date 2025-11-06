@@ -1719,8 +1719,11 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                         
                         // Filter keys where value == "1"
                         let noArray = cityStatus.filter { $0.value == "1" }.map { $0.key }
+                        // Filter keys where value == "2"
+                        let yesArray = cityStatus.filter { $0.value == "2" }.map { $0.key }
                         
                         CBUtils.overnightBulkRedApply(noArray: noArray as NSArray)
+                        CBUtils.overnightBulkGreenApply(yesArray: yesArray as NSArray)
                         
                     } else {
                         // No objects or cityStatus is nil

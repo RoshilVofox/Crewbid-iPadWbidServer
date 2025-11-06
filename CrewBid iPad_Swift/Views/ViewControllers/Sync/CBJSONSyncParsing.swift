@@ -201,7 +201,7 @@ class CBJSONSyncParsing: NSObject {
                 if filter.abbreviation != nil {
                     // resetting all the old abbriveation to new
                     let filterName = filter.name!
-                    let requiredAbbreviation = filterNameAbbreviation()[filterName]
+                    let requiredAbbreviation = filter.abbreviation
                     if requiredAbbreviation != filter.abbreviation {
                         if "v\(requiredAbbreviation ?? "")" == filter.abbreviation {
                             print("Emp completed Abbreviation converted from (Filter0: \(filterName)) \(String(describing: filter.abbreviation)) to v\(requiredAbbreviation ?? "")")
@@ -229,7 +229,7 @@ class CBJSONSyncParsing: NSObject {
                     }
                     dict["Abbreviation"] = filter.abbreviation
                     dict["category"] = filter.category
-                    dict["Type"] = filter.category?.stringValue
+                    dict["Type"] = filter.type?.stringValue
                     dict["Name"] = filter.name
                     dict["KeyPath"] = filter.keyPath
                     dict["Comparison"] = filter.comparison
@@ -411,15 +411,10 @@ class CBJSONSyncParsing: NSObject {
                         var array = NSMutableArray()
                         if fetchedObjects?.count ?? 0 > 0 {
                             let first = fetchedObjects![0]
-                            if let cityStatusValueArray = first.value(forKey: "citystatus") as? NSMutableArray, cityStatusValueArray.count > 0 {
-                                array = cityStatusValueArray
-                                dictAllValues = (cityStatusValueArray[0] as? [String: Any])!
-                            }
-                            else if let citystatusValue = first.value(forKey: "citystatus"), !(citystatusValue is NSNull) {
-                                dictAllValues = (citystatusValue as? [String: Any])!
-                            }
+                            dictAllValues = filter.variables as? [String : Any] ?? [:]
                         }
                         noArray = dictAllValues.keys.filter { dictAllValues[$0] as? String == "1" }
+                        noArray.removeAll { $0 as? String == "VALUE" }
                         yesArray = dictAllValues.keys.filter { dictAllValues[$0] as? String == "2" }
                         variables = [
                             "OverNightYes": yesArray,
@@ -485,13 +480,13 @@ class CBJSONSyncParsing: NSObject {
         }
         else {
             var i = -1
-            for case let filter as CBPresetFilterRule in resultsFilter ?? [] {
+            for case let filter as CBPresetFilterRule in resultsPresetFilter ?? [] {
                 i = i + 1
 
                 if filter.abbreviation != nil {
                     // resetting all the old abbriveation to new
                     let filterName = filter.name!
-                    let requiredAbbreviation = filterNameAbbreviation()[filterName]
+                    let requiredAbbreviation = filter.abbreviation
                     if requiredAbbreviation != filter.abbreviation {
                         if "v\(requiredAbbreviation ?? "")" == filter.abbreviation {
                             print("Emp completed Abbreviation converted from (Filter0: \(filterName)) \(String(describing: filter.abbreviation)) to v\(requiredAbbreviation ?? "")")
@@ -519,7 +514,7 @@ class CBJSONSyncParsing: NSObject {
                     }
                     dict["Abbreviation"] = filter.abbreviation
                     dict["category"] = filter.category
-                    dict["Type"] = filter.category?.stringValue
+                    dict["Type"] = filter.type?.stringValue
                     dict["Name"] = filter.name
                     dict["KeyPath"] = filter.keyPath
                     dict["Comparison"] = filter.comparison
@@ -700,16 +695,10 @@ class CBJSONSyncParsing: NSObject {
                         var dictAllValues = [String: Any]()
                         var array = NSMutableArray()
                         if fetchedObjects?.count ?? 0 > 0 {
-                            let first = fetchedObjects![0]
-                            if let cityStatusValueArray = first.value(forKey: "citystatus") as? NSMutableArray, cityStatusValueArray.count > 0 {
-                                array = cityStatusValueArray
-                                dictAllValues = (cityStatusValueArray[0] as? [String: Any])!
-                            }
-                            else if let citystatusValue = first.value(forKey: "citystatus"), !(citystatusValue is NSNull) {
-                                dictAllValues = (citystatusValue as? [String: Any])!
-                            }
+                            dictAllValues = filter.variables ?? [:]
                         }
                         noArray = dictAllValues.keys.filter { dictAllValues[$0] as? String == "1" }
+                        noArray.removeAll { $0 as? String == "VALUE" }
                         yesArray = dictAllValues.keys.filter { dictAllValues[$0] as? String == "2" }
                         variables = [
                             "OverNightYes": yesArray,
@@ -3577,6 +3566,7 @@ class CBJSONSyncParsing: NSObject {
                         }
                         filterRule.variables = variables as NSDictionary
                         CBUtils.overnightBulkRedApply(noArray: overNightNoCities ?? [])
+                        CBUtils.overnightBulkGreenApply(yesArray: overNightYesCities ?? [])
                     }
 //                    days of month
                     else if (filterRule.abbreviation == "WantDays" || filterRule.abbreviation == "MonthDays" || filterRule.abbreviation == "TripStarts" || filterRule.abbreviation == "TripEnds") {
@@ -4391,11 +4381,11 @@ class CBJSONSyncParsing: NSObject {
                 for filter in preset.filterRules {
                     var filtDict = [String: Any]()
                     filtDict["category"] = filter.category
-                    filtDict["type"] = filter.category
-                    filtDict["keyPath"] = filter.category
-                    filtDict["abbreviation"] = filter.category
-                    filtDict["comparison"] = filter.category
-                    filtDict["variables"] = filter.category
+                    filtDict["type"] = filter.type
+                    filtDict["keyPath"] = filter.keyPath
+                    filtDict["abbreviation"] = filter.abbreviation
+                    filtDict["comparison"] = filter.comparison
+                    filtDict["variables"] = filter.variables
                     filterRules.add(filtDict)
                 }
                 
@@ -5465,3 +5455,5 @@ class CBJSONSyncParsing: NSObject {
         }
     }
 }
+
+

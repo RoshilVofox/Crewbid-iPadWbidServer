@@ -1560,6 +1560,28 @@ class CBUtils{
         try? CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!.save()
     }
     
+    static func overnightBulkGreenApply(yesArray: NSArray) {
+        if yesArray.count == 0 {
+            return
+        }
+        let lineFechRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
+        lineFechRequest.predicate = NSPredicate(format: "type != 4")
+        lineFechRequest.sortDescriptors = [NSSortDescriptor(key: "bidOrder", ascending: true)]
+        let results = try? CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!.fetch(lineFechRequest)
+        for line in results! {
+            var isContainCity = false
+            for case let day as BIDay in line.days! {
+                if yesArray.contains(day.info?.city) {
+                    isContainCity = true
+                }
+            }
+            if !isContainCity {
+                line.isOvernightFiltered = 1
+            }
+        }
+        try? CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!.save()
+    }
+    
     static func highlightTripsOverNightBulk() {
         let tripsFetch: NSFetchRequest<BITrip> = BITrip.fetchRequest()
         let subPrepicates = NSMutableArray()
@@ -1588,12 +1610,14 @@ class CBUtils{
         var dictAllValues = [String: Any]()
         var array = NSMutableArray()
         if let results = results, results.count > 0 {
-            if let cityStatusValueArray = results[0].value(forKey: "citystatus") as? NSMutableArray, cityStatusValueArray.count > 0 {
-                array = cityStatusValueArray
-                dictAllValues = (cityStatusValueArray[0] as? [String: Any])!
-            }
-            else if let citystatusValue = results[0].value(forKey: "citystatus"), !(citystatusValue is NSNull) {
-                dictAllValues = (citystatusValue as? [String: Any])!
+            let filterFetch: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+            let predicate1 = NSPredicate(format: "bidPeriod == %@", CBGlobalMethods.shared.selectedBidPeriod!)
+            let predicate2 = NSPredicate(format: "category == 34")
+            filterFetch.predicate = NSCompoundPredicate(type: .and, subpredicates: [predicate1, predicate2])
+            let filterResult = try? CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!.fetch(filterFetch)
+            if filterResult?.count ?? 0 > 0 {
+                let vb = filterResult?[0].variables
+                dictAllValues = vb as? [String: Any] ?? [:]
             }
             let noArray = dictAllValues.keys.filter { dictAllValues[$0] as? String == "1" }
             let yesArray = dictAllValues.keys.filter { dictAllValues[$0] as? String == "2" }
@@ -1626,8 +1650,10 @@ class CBUtils{
                 if array.count > 0 {
                     if dictAllValues.count > 0 {
                         let noArray = (dictAllValues.filter { $0.value as? String == "1" }.map { $0.key } as? NSArray)!
+                        let yesArray = (dictAllValues.filter { $0.value as? String == "2" }.map { $0.key } as? NSArray)!
                         
                         self.overnightBulkRedApply(noArray: noArray)
+                        self.overnightBulkGreenApply(yesArray: yesArray)
                         CBOvernightBulkRuleCell().reloadContent()
                     }
                 }
