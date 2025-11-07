@@ -934,13 +934,16 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
                 
                 if index < 0 {
                     // Vacation starts before the visible calendar days, so show the rounded right image
-                    buttonImage = UIImage(named: "TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
+//                    buttonImage = UIImage(named: "TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
+                    buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.right))?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
                 }
                 else if (index + tripLength - 1) > (daysInCalendar - 1) {
                     // Vacay ends after the visible calendar days, so show the rounded left image
-                    buttonImage = UIImage(named: "TripButton-rounded-left-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
+//                    buttonImage = UIImage(named: "TripButton-rounded-left-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
+                    buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.left))?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
                 } else {
-                    buttonImage = UIImage(named: "TripButton-rounded-both-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
+//                    buttonImage = UIImage(named: "TripButton-rounded-both-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
+                    buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.both))?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
                 }
                 //vacayButtonFrame.size.width = CGFloat(tripLength) * (cellWidth - 1)
                 let vacBtnFrameWidth = CGFloat(tripLength) * (cellWidth + interItemSpacing)

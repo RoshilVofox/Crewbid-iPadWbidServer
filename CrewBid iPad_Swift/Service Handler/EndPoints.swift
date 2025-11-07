@@ -58,5 +58,6 @@ class EndPoint {
     var getCBServerStateandPresetVersionNumber = "\(baseURL)GetCBServerStateandPresetVersionNumber"
     var saveCBAppStateAndPresetToServer = "\(baseURL)SaveCBAppStateAndPresetToServer"
     var getCBAppStateAndPresetFromServer = "\(baseURL)GetCBAppStateAndPresetFromServer"
+    var getCAPData = "\(baseURL)GetCAPData"
 }
 

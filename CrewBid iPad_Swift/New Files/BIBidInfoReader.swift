@@ -104,7 +104,6 @@ class BIBidInfoReader{
                 dataSource.round != 0,
                 !dataSource.employeeNumber.isEmpty
             else {
-                print("Invalid GlobalBidInfo data")
                 return
             }
         }

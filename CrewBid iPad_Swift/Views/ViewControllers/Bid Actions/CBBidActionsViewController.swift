@@ -41,8 +41,8 @@ class CBBidActionsViewController: BaseViewController, KUIPopOverUsable {
     let fileArrayFA = ["Cover Letter","Seniority List","Lines Text","Trips Text","FA Memo"]
     let fileArrayPilot = ["Cover Letter","Seniority List","Lines Text","Trips Text"]
     
-    let vacPilotArray = ["Keep Pulled Trips In Filters/Sorts","Check For","Re-Download WBidMax Vac File","Re-Download Swaptimizer Vac File"]
-    let vacationFAArray = ["Keep Pulled Trips In Filters/Sorts"]
+    let vacPilotArray = ["Keep Pulled Trips In Filters/Sorts", "Hide Vacation in Scratchpad",/*"Check For",*/"Re-Download WBidMax Vac File","Re-Download Swaptimizer Vac File"]
+    let vacationFAArray = ["Keep Pulled Trips In Filters/Sorts", "Hide Vacation in Scratchpad"]
     
     var bidActionTypeSelected : BidActionType = .BidActions
     var optionalEmployees = NSMutableArray ()
@@ -73,7 +73,44 @@ class CBBidActionsViewController: BaseViewController, KUIPopOverUsable {
             self.preferredContentSize = size
         }
     }
-
+    @IBAction func switchAction(_ sender: UISwitch) {
+        dismissFn()
+        switch sender.tag{
+        case 0:
+            let currentValue = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
+            if sender.isOn != currentValue{
+                UserDefaults.standard.set(sender.isOn, forKey: kCBIncludeDroppedTripsInProcessingKey)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                NotificationCenter.default.post(name: NSNotification.Name("reprocessAfterChangedIncludeDroppedTrips"), object: self)
+            }
+        case 1:
+            let currentValue = UserDefaults.standard.bool(forKey: kCBHideVacationKey)
+            if sender.isOn != currentValue{
+                UserDefaults.standard.set(sender.isOn, forKey: kCBHideVacationKey)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                NotificationCenter.default.post(name: NSNotification.Name("HideVacationScratchpad"), object: self)
+            }
+        default: break
+        }
+        
+    }
+    
+    @IBAction func vacationCheckAction(_ sender: UISegmentedControl) {
+        dismissFn()
+        if sender.selectedSegmentIndex == 0{
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                NotificationCenter.default.post(name: NSNotification.Name("SwaptimizerAction"), object: self)
+            }
+        }else{
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                NotificationCenter.default.post(name: NSNotification.Name("WbidAction"), object: self)
+            }
+        }
+        
+        
+    }
     @objc func saveStateToUserDefaults() {
         var stateValues = [AnyHashable : Any](minimumCapacity: 1)
         if self.bidPeriod?.lastBidDate != nil {
@@ -159,6 +196,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
         case .ShowFile:
             lblActionTitle.text = "Show File"
             btnBidAction.isHidden = false
+            btnBidAction.setTitle("Bid Actions", for: .normal)
             if !((bidPeriod?.isFABid())!) {
                 cell.lblTitle.text = fileArrayPilot[indexPath.row]
                 cell.imgNext.isHidden = true
@@ -186,15 +224,18 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                 }
             }
             btnBidAction.isHidden = false
+            btnBidAction.setTitle("Bid Actions", for: .normal)
             cell.imgNext.isHidden = true
             
         case .Vacation:
             lblActionTitle.text = "Vacation"
             btnBidAction.isHidden = false
+            btnBidAction.setTitle("Bid Actions", for: .normal)
             if !((bidPeriod?.isFABid())!) {
                 switch indexPath.row {
-                case 0:
+                case 0,1:
                     let switchTableViewCell = tableView.dequeueReusableCell(withIdentifier: "SwitchTableViewCell") as! SwitchTableViewCell
+                    switchTableViewCell.selectionStyle = .none
                     switchTableViewCell.lblTitle.text = vacPilotArray[indexPath.row]
                     if (bidPeriod?.swaptimizerStatus?.intValue == Int(CBSwaptimizerStatus.enabled.rawValue) || bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue) {
                         switchTableViewCell.isUserInteractionEnabled = true
@@ -203,21 +244,35 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                         switchTableViewCell.isUserInteractionEnabled = false
                         switchTableViewCell.lblTitle.textColor = .lightGray
                     }
+                    if indexPath.row == 0{
+                        switchTableViewCell.switch.isOn = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
+                        switchTableViewCell.switch.tag = 0
+                    }else if indexPath.row == 1{
+                        switchTableViewCell.switch.isOn = UserDefaults.standard.bool(forKey: kCBHideVacationKey)
+                        switchTableViewCell.switch.tag = 1
+                    }
                     return switchTableViewCell
-                case 1:
-                    let segmentedTableViewCell = tableView.dequeueReusableCell(withIdentifier: "SegmentedTableViewCell") as! SegmentedTableViewCell
-                    segmentedTableViewCell.lblTitle.text = vacPilotArray[indexPath.row]
-                    return segmentedTableViewCell
+//                case 2:
+//                    let segmentedTableViewCell = tableView.dequeueReusableCell(withIdentifier: "SegmentedTableViewCell") as! SegmentedTableViewCell
+//                    segmentedTableViewCell.lblTitle.text = vacPilotArray[indexPath.row]
+//                    return segmentedTableViewCell
                 default:
-                    break;
+                    break
                 }
                 cell.lblTitle.text = vacPilotArray[indexPath.row]
                 cell.imgNext.isHidden = true
             } else {
                 switch indexPath.row {
-                case 0:
+                case 0,1:
                     let switchTableViewCell = tableView.dequeueReusableCell(withIdentifier: "SwitchTableViewCell") as! SwitchTableViewCell
                     switchTableViewCell.lblTitle.text = vacationFAArray[indexPath.row]
+                    if indexPath.row == 0{
+                        switchTableViewCell.switch.isOn = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
+                        switchTableViewCell.switch.tag = 0
+                    }else if indexPath.row == 1{
+                        switchTableViewCell.switch.isOn = UserDefaults.standard.bool(forKey: kCBHideVacationKey)
+                        switchTableViewCell.switch.tag = 1
+                    }
                     return switchTableViewCell
                 default:
                     break;
@@ -232,6 +287,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                 cell.isUserInteractionEnabled = false
             }
         }
+        cell.selectionStyle = .none
         return cell
     }
     

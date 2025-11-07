@@ -66,7 +66,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         lblScratchpadLineCount.addGestureRecognizer(tap)
         
         //To make lblTrashLineCount a circle
-        lblTrashLineCount.layer.cornerRadius = lblTrashLineCount.frame.width/2
+        lblTrashLineCount.layer.cornerRadius = lblTrashLineCount.frame.height/2
         lblTrashLineCount.layer.masksToBounds = true
         
         //Tap gesture for refresh button.
@@ -167,8 +167,13 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         NotificationCenter.default.addObserver(self, selector: #selector(recoverAllTrashed), name: NSNotification.Name("recoverAllTrashed"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(calculateAMPMFromSync), name: NSNotification.Name("amPmValueChanged"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(calculateAMPMFromButton), name: NSNotification.Name("amPmValueChangedFromButton"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(hideVacationInScratchpad), name: NSNotification.Name("HideVacationScratchpad"), object: nil)
+
     }
     
+    @objc func hideVacationInScratchpad(){
+        self.updateLines()
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

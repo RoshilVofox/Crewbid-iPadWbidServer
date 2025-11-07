@@ -172,7 +172,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         if (UserDefaults.standard.object(forKey: kCBIncludeDroppedTripsInProcessingKey) == nil){
             UserDefaults.standard.set(true, forKey: kCBIncludeDroppedTripsInProcessingKey)
         }
-        if (UserDefaults.standard.object(forKey: kCBHideVacationKey) == nil){
+        if (UserDefaults.standard.bool(forKey: kCBHideVacationKey) == true){
             UserDefaults.standard.set(false, forKey: kCBHideVacationKey)
         }
         self.showDeviceUptimeAlert()

@@ -17,9 +17,11 @@ extension UIView {
         MBProgressHUD.hide(for: self, animated: true)
     }
     
-    func updateActivityIndicator(message: String) {
+    func updateActivityIndicator(color: UIColor? = CBColor.cbPurpleColor, message: String) {
         DispatchQueue.main.async {
             MBProgressHUD.forView(self)?.label.text = message
+            let newcolor = color?.withAlphaComponent(0.6)
+            MBProgressHUD.forView(self)?.bezelView.color = newcolor
         }
     }
 }

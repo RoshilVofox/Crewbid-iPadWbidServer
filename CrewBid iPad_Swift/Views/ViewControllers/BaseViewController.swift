@@ -26,7 +26,7 @@ class BaseViewController: UIViewController {
     }
     func dismissFn() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.dismiss(animated: false, completion: nil)
+            self.dismiss(animated: true, completion: nil)
         }
     }
     

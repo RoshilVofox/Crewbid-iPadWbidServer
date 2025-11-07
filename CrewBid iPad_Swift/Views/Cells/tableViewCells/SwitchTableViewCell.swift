@@ -13,7 +13,11 @@ class SwitchTableViewCell: UITableViewCell {
     @IBOutlet weak var lblTitle: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+//        if UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey){
+//            self.switch.isOn = true
+//        }else{
+//            self.switch.isOn = false
+//        }  
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

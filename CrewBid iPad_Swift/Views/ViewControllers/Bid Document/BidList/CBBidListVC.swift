@@ -1187,9 +1187,9 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
                 }
             }
         }
-//        if context.hasChanges{
-//            try? context.save()
-//        }
+        if context.hasChanges{
+            try? context.save()
+        }
     }
     
     func logUndoState(_ undoManager: UndoManager?) {
