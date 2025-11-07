@@ -161,6 +161,7 @@ class CBJSONSyncParsing: NSObject {
                 let position = BICrewPositionType(rawValue: preset.position!.intValue)!
                 presetDict["position"] = CBUtils.shortName(for: position)
                 presetDict["year"] = preset.year
+                presetDict["presetName"] = preset.name
                 presetDict["presetIdentifier"] = preset.presetIdentifier
                 if preset.presetIdentifier == self.bidPeriod?.loadedPresetIdentifier {
                     presetDict["selected"] = 1
@@ -200,7 +201,7 @@ class CBJSONSyncParsing: NSObject {
                 if filter.abbreviation != nil {
                     // resetting all the old abbriveation to new
                     let filterName = filter.name!
-                    let requiredAbbreviation = filterNameAbbreviation()[filterName]
+                    let requiredAbbreviation = filter.abbreviation
                     if requiredAbbreviation != filter.abbreviation {
                         if "v\(requiredAbbreviation ?? "")" == filter.abbreviation {
                             print("Emp completed Abbreviation converted from (Filter0: \(filterName)) \(String(describing: filter.abbreviation)) to v\(requiredAbbreviation ?? "")")
@@ -228,7 +229,7 @@ class CBJSONSyncParsing: NSObject {
                     }
                     dict["Abbreviation"] = filter.abbreviation
                     dict["category"] = filter.category
-                    dict["Type"] = filter.category?.stringValue
+                    dict["Type"] = filter.type?.stringValue
                     dict["Name"] = filter.name
                     dict["KeyPath"] = filter.keyPath
                     dict["Comparison"] = filter.comparison
@@ -410,15 +411,10 @@ class CBJSONSyncParsing: NSObject {
                         var array = NSMutableArray()
                         if fetchedObjects?.count ?? 0 > 0 {
                             let first = fetchedObjects![0]
-                            if let cityStatusValueArray = first.value(forKey: "citystatus") as? NSMutableArray, cityStatusValueArray.count > 0 {
-                                array = cityStatusValueArray
-                                dictAllValues = (cityStatusValueArray[0] as? [String: Any])!
-                            }
-                            else if let citystatusValue = first.value(forKey: "citystatus"), !(citystatusValue is NSNull) {
-                                dictAllValues = (citystatusValue as? [String: Any])!
-                            }
+                            dictAllValues = filter.variables as? [String : Any] ?? [:]
                         }
                         noArray = dictAllValues.keys.filter { dictAllValues[$0] as? String == "1" }
+                        noArray.removeAll { $0 as? String == "VALUE" }
                         yesArray = dictAllValues.keys.filter { dictAllValues[$0] as? String == "2" }
                         variables = [
                             "OverNightYes": yesArray,
@@ -484,13 +480,13 @@ class CBJSONSyncParsing: NSObject {
         }
         else {
             var i = -1
-            for case let filter as CBPresetFilterRule in resultsFilter ?? [] {
+            for case let filter as CBPresetFilterRule in resultsPresetFilter ?? [] {
                 i = i + 1
 
                 if filter.abbreviation != nil {
                     // resetting all the old abbriveation to new
                     let filterName = filter.name!
-                    let requiredAbbreviation = filterNameAbbreviation()[filterName]
+                    let requiredAbbreviation = filter.abbreviation
                     if requiredAbbreviation != filter.abbreviation {
                         if "v\(requiredAbbreviation ?? "")" == filter.abbreviation {
                             print("Emp completed Abbreviation converted from (Filter0: \(filterName)) \(String(describing: filter.abbreviation)) to v\(requiredAbbreviation ?? "")")
@@ -518,7 +514,7 @@ class CBJSONSyncParsing: NSObject {
                     }
                     dict["Abbreviation"] = filter.abbreviation
                     dict["category"] = filter.category
-                    dict["Type"] = filter.category?.stringValue
+                    dict["Type"] = filter.type?.stringValue
                     dict["Name"] = filter.name
                     dict["KeyPath"] = filter.keyPath
                     dict["Comparison"] = filter.comparison
@@ -699,16 +695,10 @@ class CBJSONSyncParsing: NSObject {
                         var dictAllValues = [String: Any]()
                         var array = NSMutableArray()
                         if fetchedObjects?.count ?? 0 > 0 {
-                            let first = fetchedObjects![0]
-                            if let cityStatusValueArray = first.value(forKey: "citystatus") as? NSMutableArray, cityStatusValueArray.count > 0 {
-                                array = cityStatusValueArray
-                                dictAllValues = (cityStatusValueArray[0] as? [String: Any])!
-                            }
-                            else if let citystatusValue = first.value(forKey: "citystatus"), !(citystatusValue is NSNull) {
-                                dictAllValues = (citystatusValue as? [String: Any])!
-                            }
+                            dictAllValues = filter.variables ?? [:]
                         }
                         noArray = dictAllValues.keys.filter { dictAllValues[$0] as? String == "1" }
+                        noArray.removeAll { $0 as? String == "VALUE" }
                         yesArray = dictAllValues.keys.filter { dictAllValues[$0] as? String == "2" }
                         variables = [
                             "OverNightYes": yesArray,
@@ -783,9 +773,17 @@ class CBJSONSyncParsing: NSObject {
             for case let filter as BIFilterRule in resultsFilters! {
                 if filter.abbreviation == nil {
                     let category = filter.category?.intValue
-                    let type = filter.type?.intValue
+//                    let type = filter.type?.intValue
                     if category == BIFilterRuleCategory.BITypeFilterRuleCategory.rawValue {
-                        if let set = filter.variables?["SET"] as? Set<AnyHashable> {
+                        if (filter.variables?["SET"]) != nil {
+                            var set: Set<Int> = NSSet() as! Set<Int>
+                            let value = filter.variables!["SET"]
+                            if let isSet = value as? NSSet {
+                                set = isSet as! Set<Int>
+                            }
+                            else if let array = value as? [Any] {
+                                set = NSSet(array: array) as! Set<Int>
+                            }
                             let valArray = Array(set)
                             if self.bidPeriod!.isEtopsLinesContainsInBid?.boolValue == true {
                                 //ETOPS
@@ -843,48 +841,11 @@ class CBJSONSyncParsing: NSObject {
                                     dict["reserve"] = true
                                 }
                             }
-                        }
                         else {
-                            //Non ETOPS
-                            if let set = filter.variables?["SET"] as? Set<AnyHashable> {
-                                let valArray = Array(set)
-                                if self.bidPeriod!.isSecondRoundBid() {
-                                    if self.bidPeriod!.isFABid() {
-                                        // FA 2nd
-                                        if valArray.contains(BILineType.HardConUS.rawValue) {
-                                            dict["conUs"] = false
-                                        }
-                                        else {
-                                            dict["conUs"] = true
-                                        }
-                                        if valArray.contains(BILineType.HardNonConUS.rawValue) {
-                                            dict["nonConUs"] = false
-                                        }
-                                        else {
-                                            dict["nonConUs"] = true
-                                        }
-                                    }
-                                    else {
-                                        // CP 2nd
-                                        dict["conUs"] = false
-                                        dict["nonConUs"] = false
-                                        dict["blank"] = false
-                                        if valArray.contains(BILineType.HardLine.rawValue) {
-                                            dict["hard"] = false
-                                        }
-                                        else {
-                                            dict["hard"] = true
-                                        }
-                                        if valArray.contains(BILineType.MixedLine.rawValue) {
-                                            dict["mixed"] = false
-                                        }
-                                        else {
-                                            dict["mixed"] = true
-                                        }
-                                    }
-                                }
-                                else {
-                                    //                                    first round both
+                        //Non ETOPS
+                            if self.bidPeriod!.isSecondRoundBid() {
+                                if self.bidPeriod!.isFABid() {
+                                    // FA 2nd
                                     if valArray.contains(BILineType.HardConUS.rawValue) {
                                         dict["conUs"] = false
                                     }
@@ -897,24 +858,55 @@ class CBJSONSyncParsing: NSObject {
                                     else {
                                         dict["nonConUs"] = true
                                     }
-                                    if valArray.contains(BILineType.BlankLine.rawValue) {
-                                        dict["blank"] = false
-                                    }
-                                    else {
-                                        dict["blank"] = true
-                                    }
-                                }
-                                //                                Both
-                                if valArray.contains(BILineType.ReserveLine.rawValue) {
-                                    dict["reserve"] = false
                                 }
                                 else {
-                                    dict["reserve"] = true
+                                    // CP 2nd
+                                    dict["conUs"] = false
+                                    dict["nonConUs"] = false
+                                    dict["blank"] = false
+                                    if valArray.contains(BILineType.HardLine.rawValue) {
+                                        dict["hard"] = false
+                                    }
+                                    else {
+                                        dict["hard"] = true
+                                    }
+                                    if valArray.contains(BILineType.MixedLine.rawValue) {
+                                        dict["mixed"] = false
+                                    }
+                                    else {
+                                        dict["mixed"] = true
+                                    }
                                 }
                             }
+                            else {
+                                //                                    first round both
+                                if valArray.contains(BILineType.HardConUS.rawValue) {
+                                    dict["conUs"] = false
+                                }
+                                else {
+                                    dict["conUs"] = true
+                                }
+                                if valArray.contains(BILineType.HardNonConUS.rawValue) {
+                                    dict["nonConUs"] = false
+                                }
+                                else {
+                                    dict["nonConUs"] = true
+                                }
+                                if valArray.contains(BILineType.BlankLine.rawValue) {
+                                    dict["blank"] = false
+                                }
+                                else {
+                                    dict["blank"] = true
+                                }
+                            }
+                            //                                Both
+                            if valArray.contains(BILineType.ReserveLine.rawValue) {
+                                dict["reserve"] = false
+                            }
+                            else {
+                                dict["reserve"] = true
+                            }
                         }
-                        if let set = filter.variables?["SET"] as? Set<AnyHashable> {
-                            let valArray = Array(set)
                             if valArray.contains(BILineType.BILineTypeLoDo.rawValue) {
                                 dict["LODO"] = false
                             }
@@ -922,10 +914,19 @@ class CBJSONSyncParsing: NSObject {
                                 dict["LODO"] = true
                             }
                         }
+                        
                     }
                     else if category == BIFilterRuleCategory.BIFaReserveFilterRuleCategory.rawValue {
                         if self.bidPeriod!.isFABid() && self.bidPeriod!.isSecondRoundBid() {
-                            if let set = filter.variables?["SET"] as? Set<AnyHashable> {
+                            if (filter.variables?["SET"]) != nil {
+                                var set: Set<Int> = NSSet() as! Set<Int>
+                                let value = filter.variables!["SET"]
+                                if let isSet = value as? NSSet {
+                                    set = isSet as! Set<Int>
+                                }
+                                else if let array = value as? [Any] {
+                                    set = NSSet(array: array) as! Set<Int>
+                                }
                                 let valArray = Array(set)
                                 if bidPeriod!.isFABid() {
                                     if valArray.contains(BIFaReserveLineType.SnrAMres.rawValue) {
@@ -987,7 +988,15 @@ class CBJSONSyncParsing: NSObject {
                         }
                     }
                     else if category == BIFilterRuleCategory.BIAmPmFilterRuleCategory.rawValue {
-                        if let set = filter.variables?["SET"] as? Set<AnyHashable> {
+                        if (filter.variables?["SET"]) != nil {
+                            var set: Set<Int> = NSSet() as! Set<Int>
+                            let value = filter.variables!["SET"]
+                            if let isSet = value as? NSSet {
+                                set = isSet as! Set<Int>
+                            }
+                            else if let array = value as? [Any] {
+                                set = NSSet(array: array) as! Set<Int>
+                            }
                             let valArray = Array(set)
                             if valArray.contains(BILineAMPM.AMLine.rawValue) {
                                 dict["amLines"] = false
@@ -1016,7 +1025,15 @@ class CBJSONSyncParsing: NSObject {
                         }
                     }
                     else if category == BIFilterRuleCategory.BIPositionFilterRuleCategory.rawValue {
-                        if let set = filter.variables?["SET"] as? Set<AnyHashable> {
+                        if (filter.variables?["SET"]) != nil {
+                            var set: Set<Int> = NSSet() as! Set<Int>
+                            let value = filter.variables!["SET"]
+                            if let isSet = value as? NSSet {
+                                set = isSet as! Set<Int>
+                            }
+                            else if let array = value as? [Any] {
+                                set = NSSet(array: array) as! Set<Int>
+                            }
                             let valArray = Array(set)
                             if valArray.contains(BIFaPosition.FaPositionA.rawValue) {
                                 dict["posA"] = false
@@ -1105,12 +1122,19 @@ class CBJSONSyncParsing: NSObject {
             }
         }
         else {
-            for case let filter as CBPresetFilterRule in resultsFilters ?? [] {
+            for case let filter as CBPresetFilterRule in resultsPresetFilters ?? [] {
                 if filter.abbreviation == nil {
                     let category = filter.category?.intValue
-                    let type = filter.type?.intValue
                     if category == BIFilterRuleCategory.BITypeFilterRuleCategory.rawValue {
-                        if let set = filter.variables?["SET"] as? Set<AnyHashable> {
+                        if (filter.variables?["SET"]) != nil {
+                            var set: Set<Int> = NSSet() as! Set<Int>
+                            let value = filter.variables!["SET"]
+                            if let isSet = value as? NSSet {
+                                set = isSet as! Set<Int>
+                            }
+                            else if let array = value as? [Any] {
+                                set = NSSet(array: array) as! Set<Int>
+                            }
                             let valArray = Array(set)
                             if self.bidPeriod!.isEtopsLinesContainsInBid?.boolValue == true {
                                 //ETOPS
@@ -1168,14 +1192,46 @@ class CBJSONSyncParsing: NSObject {
                                     dict["reserve"] = true
                                 }
                             }
-                        }
-                        else {
-                            //Non ETOPS
-                            if let set = filter.variables?["SET"] as? Set<AnyHashable> {
-                                let valArray = Array(set)
-                                if self.bidPeriod!.isSecondRoundBid() {
-                                    if self.bidPeriod!.isFABid() {
-                                        // FA 2nd
+                            else {
+                                //Non ETOPS
+                                    let valArray = Array(set)
+                                    if self.bidPeriod!.isSecondRoundBid() {
+                                        if self.bidPeriod!.isFABid() {
+                                            // FA 2nd
+                                            if valArray.contains(BILineType.HardConUS.rawValue) {
+                                                dict["conUs"] = false
+                                            }
+                                            else {
+                                                dict["conUs"] = true
+                                            }
+                                            if valArray.contains(BILineType.HardNonConUS.rawValue) {
+                                                dict["nonConUs"] = false
+                                            }
+                                            else {
+                                                dict["nonConUs"] = true
+                                            }
+                                        }
+                                        else {
+                                            // CP 2nd
+                                            dict["conUs"] = false
+                                            dict["nonConUs"] = false
+                                            dict["blank"] = false
+                                            if valArray.contains(BILineType.HardLine.rawValue) {
+                                                dict["hard"] = false
+                                            }
+                                            else {
+                                                dict["hard"] = true
+                                            }
+                                            if valArray.contains(BILineType.MixedLine.rawValue) {
+                                                dict["mixed"] = false
+                                            }
+                                            else {
+                                                dict["mixed"] = true
+                                            }
+                                        }
+                                    }
+                                    else {
+                                        //                                    first round both
                                         if valArray.contains(BILineType.HardConUS.rawValue) {
                                             dict["conUs"] = false
                                         }
@@ -1188,58 +1244,21 @@ class CBJSONSyncParsing: NSObject {
                                         else {
                                             dict["nonConUs"] = true
                                         }
-                                    }
-                                    else {
-                                        // CP 2nd
-                                        dict["conUs"] = false
-                                        dict["nonConUs"] = false
-                                        dict["blank"] = false
-                                        if valArray.contains(BILineType.HardLine.rawValue) {
-                                            dict["hard"] = false
+                                        if valArray.contains(BILineType.BlankLine.rawValue) {
+                                            dict["blank"] = false
                                         }
                                         else {
-                                            dict["hard"] = true
-                                        }
-                                        if valArray.contains(BILineType.MixedLine.rawValue) {
-                                            dict["mixed"] = false
-                                        }
-                                        else {
-                                            dict["mixed"] = true
+                                            dict["blank"] = true
                                         }
                                     }
-                                }
-                                else {
-                                    //                                    first round both
-                                    if valArray.contains(BILineType.HardConUS.rawValue) {
-                                        dict["conUs"] = false
+                                    //                                Both
+                                    if valArray.contains(BILineType.ReserveLine.rawValue) {
+                                        dict["reserve"] = false
                                     }
                                     else {
-                                        dict["conUs"] = true
-                                    }
-                                    if valArray.contains(BILineType.HardNonConUS.rawValue) {
-                                        dict["nonConUs"] = false
-                                    }
-                                    else {
-                                        dict["nonConUs"] = true
-                                    }
-                                    if valArray.contains(BILineType.BlankLine.rawValue) {
-                                        dict["blank"] = false
-                                    }
-                                    else {
-                                        dict["blank"] = true
+                                        dict["reserve"] = true
                                     }
                                 }
-                                //                                Both
-                                if valArray.contains(BILineType.ReserveLine.rawValue) {
-                                    dict["reserve"] = false
-                                }
-                                else {
-                                    dict["reserve"] = true
-                                }
-                            }
-                        }
-                        if let set = filter.variables?["SET"] as? Set<AnyHashable> {
-                            let valArray = Array(set)
                             if valArray.contains(BILineType.BILineTypeLoDo.rawValue) {
                                 dict["LODO"] = false
                             }
@@ -1247,10 +1266,19 @@ class CBJSONSyncParsing: NSObject {
                                 dict["LODO"] = true
                             }
                         }
+                        
                     }
                     else if category == BIFilterRuleCategory.BIFaReserveFilterRuleCategory.rawValue {
                         if self.bidPeriod!.isFABid() && self.bidPeriod!.isSecondRoundBid() {
-                            if let set = filter.variables?["SET"] as? Set<AnyHashable> {
+                            if (filter.variables?["SET"]) != nil {
+                                var set: Set<Int> = NSSet() as! Set<Int>
+                                let value = filter.variables!["SET"]
+                                if let isSet = value as? NSSet {
+                                    set = isSet as! Set<Int>
+                                }
+                                else if let array = value as? [Any] {
+                                    set = NSSet(array: array) as! Set<Int>
+                                }
                                 let valArray = Array(set)
                                 if bidPeriod!.isFABid() {
                                     if valArray.contains(BIFaReserveLineType.SnrAMres.rawValue) {
@@ -1312,7 +1340,15 @@ class CBJSONSyncParsing: NSObject {
                         }
                     }
                     else if category == BIFilterRuleCategory.BIAmPmFilterRuleCategory.rawValue {
-                        if let set = filter.variables?["SET"] as? Set<AnyHashable> {
+                        if (filter.variables?["SET"]) != nil {
+                            var set: Set<Int> = NSSet() as! Set<Int>
+                            let value = filter.variables!["SET"]
+                            if let isSet = value as? NSSet {
+                                set = isSet as! Set<Int>
+                            }
+                            else if let array = value as? [Any] {
+                                set = NSSet(array: array) as! Set<Int>
+                            }
                             let valArray = Array(set)
                             if valArray.contains(BILineAMPM.AMLine.rawValue) {
                                 dict["amLines"] = false
@@ -1341,7 +1377,15 @@ class CBJSONSyncParsing: NSObject {
                         }
                     }
                     else if category == BIFilterRuleCategory.BIPositionFilterRuleCategory.rawValue {
-                        if let set = filter.variables?["SET"] as? Set<AnyHashable> {
+                        if (filter.variables?["SET"]) != nil {
+                            var set: Set<Int> = NSSet() as! Set<Int>
+                            let value = filter.variables!["SET"]
+                            if let isSet = value as? NSSet {
+                                set = isSet as! Set<Int>
+                            }
+                            else if let array = value as? [Any] {
+                                set = NSSet(array: array) as! Set<Int>
+                            }
                             let valArray = Array(set)
                             if valArray.contains(BIFaPosition.FaPositionA.rawValue) {
                                 dict["posA"] = false
@@ -3522,6 +3566,7 @@ class CBJSONSyncParsing: NSObject {
                         }
                         filterRule.variables = variables as NSDictionary
                         CBUtils.overnightBulkRedApply(noArray: overNightNoCities ?? [])
+                        CBUtils.overnightBulkGreenApply(yesArray: overNightYesCities ?? [])
                     }
 //                    days of month
                     else if (filterRule.abbreviation == "WantDays" || filterRule.abbreviation == "MonthDays" || filterRule.abbreviation == "TripStarts" || filterRule.abbreviation == "TripEnds") {
@@ -4336,11 +4381,11 @@ class CBJSONSyncParsing: NSObject {
                 for filter in preset.filterRules {
                     var filtDict = [String: Any]()
                     filtDict["category"] = filter.category
-                    filtDict["type"] = filter.category
-                    filtDict["keyPath"] = filter.category
-                    filtDict["abbreviation"] = filter.category
-                    filtDict["comparison"] = filter.category
-                    filtDict["variables"] = filter.category
+                    filtDict["type"] = filter.type
+                    filtDict["keyPath"] = filter.keyPath
+                    filtDict["abbreviation"] = filter.abbreviation
+                    filtDict["comparison"] = filter.comparison
+                    filtDict["variables"] = filter.variables
                     filterRules.add(filtDict)
                 }
                 
@@ -5410,3 +5455,5 @@ class CBJSONSyncParsing: NSObject {
         }
     }
 }
+
+
