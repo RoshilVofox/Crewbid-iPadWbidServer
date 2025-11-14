@@ -563,6 +563,7 @@ class RefreshController: UIViewController, UITableViewDataSource, UITableViewDel
                 self.Delegate?.didSelected(itemName: arrCellParameters.object(at: indexPath.row) as! String)
                 self.dismissPopover(animated: true)
             }
+            self.dismissPopover(animated: true)
         }
         else if popOverType == PopoverViewType.valuesButton {
             // Do nothing if selected value is the same as the filter rule's

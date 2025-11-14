@@ -24,7 +24,7 @@ class CBJSONSyncParsing: NSObject {
     var syncContainsVacation = false
     
     func initcalendarData() {
-        calendarData = calendarData?.initWithBidPeriod(bidPeriod: bidPeriod!)
+        calendarData = BICalendarData().initWithBidPeriod(bidPeriod: bidPeriod!)
     }
     
 //    MARK: presetKeepLocal
@@ -118,7 +118,7 @@ class CBJSONSyncParsing: NSObject {
                             sortObj.city = sort["city"] as? String
                             sortObj.expression = sort["expression"] as? String
                             sortObj.order = sort["order"] as? NSNumber
-                            sortObj.lineSortKeyMap = sort["lineSortKeyMap"] as? [String: Any]
+                            sortObj.lineSortKeyMap = sort["lineSortKeyMap"] as? BILineSortKeyMap
                             sortObj.variables = sort["variables"] as? [String: Any]
                             sortObj.arrayVariables = sort["arrayVariables"] as? NSMutableArray
                             linesSorts.append(sortObj)
@@ -148,7 +148,9 @@ class CBJSONSyncParsing: NSObject {
             
             let fetchRequest: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
             fetchRequest.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
-            fetchRequest.predicate = NSPredicate(format: "isBidListSort != %@", NSNumber(value: true))
+            let predicate1 = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+            let predicate2 = NSPredicate(format: "isBidListSort != %@", NSNumber(value: true))
+            fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
             let resultsSort = try! self.context.fetch(fetchRequest)
             for case let preset as CBPreset in presetsArray {
                 let menuFilters = self.getMenuFilterListDictFromLocalForSync(from: nil, isState: false, resultsPresetFilter: preset)
@@ -228,16 +230,24 @@ class CBJSONSyncParsing: NSObject {
                         filter.comparison = NSNumber(value: ComparisonType.atLeast.rawValue)
                     }
                     dict["Abbreviation"] = filter.abbreviation
-                    dict["category"] = filter.category
-                    dict["Type"] = filter.type?.stringValue
+                    dict["Category"] = filter.category
+                    dict["Type"] = filter.type
                     dict["Name"] = filter.name
                     dict["KeyPath"] = filter.keyPath
                     dict["Comparison"] = filter.comparison
                     var variables = filter.variables as? [String: Any]
                     if filter.abbreviation == "Flags" {
-                        if let tempSet = variables?["SET"] as? Set<AnyHashable> {
-                            let variables = Array(tempSet)
-                            dict["Variable"] = variables
+                        if variables?["SET"] != nil {
+                            var set: Set<AnyHashable> = NSSet() as! Set<AnyHashable>
+                            let value = variables!["SET"]
+                            if let isSet = value as? NSSet {
+                                set = isSet as! Set<AnyHashable>
+                            }
+                            else if let array = value as? [Any] {
+                                set = NSSet(array: array) as! Set<AnyHashable>
+                            }
+                            let array = Array(set)
+                            dict["Variable"] = array
                         }
                     }
                     else if filter.abbreviation == "Report-Release" {
@@ -250,6 +260,7 @@ class CBJSONSyncParsing: NSObject {
                         var selectedIndices: [Int] = []
 
                         if let monthBitsValue = filter.variables?["MONTH_BITS"] as? UInt64 {
+                            variables!["MONTH_BITS"] = filter.variables?["MONTH_BITS"]
                             for index in 0..<calendarData!.calendarDays.count {
                                 let one: UInt64 = 1
                                 let mask = one << UInt64(index)
@@ -350,14 +361,14 @@ class CBJSONSyncParsing: NSObject {
                             rangeEnd = 10
                         }
                         
-                        var monThuesDept = dict2["MON_THURS_DEPART"] as? String
-                        var monThuesRet = dict2["MON_THURS_RETURN"] as? String
-                        var friDept = dict2["FRI_DEPART"] as? String
-                        var friRet = dict2["FRI_RETURN"] as? String
-                        var satDept = dict2["SAT_DEPART"] as? String
-                        var satRet = dict2["SAT_RETURN"] as? String
-                        var sunDept = dict2["SUN_DEPART"] as? String
-                        var sunRet = dict2["SUN_RETURN"] as? String
+                        var monThuesDept =  String(describing:dict2["MON_THURS_DEPART"] ?? "-1")
+                        var monThuesRet =  String(describing:dict2["MON_THURS_RETURN"] ?? "3000")
+                        var friDept =  String(describing:dict2["FRI_DEPART"] ?? "-1")
+                        var friRet =  String(describing:dict2["FRI_RETURN"] ?? "3000")
+                        var satDept =  String(describing:dict2["SAT_DEPART"] ?? "-1")
+                        var satRet =  String(describing:dict2["SAT_RETURN"] ?? "3000")
+                        var sunDept =  String(describing:dict2["SUN_DEPART"] ?? "-1")
+                        var sunRet =  String(describing:dict2["SUN_RETURN"] ?? "3000")
                         
                         if monThuesDept == "-1" {
                             monThuesDept = ""
@@ -388,14 +399,14 @@ class CBJSONSyncParsing: NSObject {
                         variables = [
                             "RANGEEND": "\(rangeEnd)",
                             "RANGESTART": "\(rangeStart)",
-                            "MON_THURS_DEPART": monThuesDept!,
-                            "MON_THURS_RETURN": monThuesRet!,
-                            "FRI_DEPART": friDept!,
-                            "FRI_RETURN": friRet!,
-                            "SAT_DEPART": satDept!,
-                            "SAT_RETURN": satRet!,
-                            "SUN_DEPART": sunDept!,
-                            "SUN_RETURN": sunRet!,
+                            "MON_THURS_DEPART": monThuesDept,
+                            "MON_THURS_RETURN": monThuesRet,
+                            "FRI_DEPART": friDept,
+                            "FRI_RETURN": friRet,
+                            "SAT_DEPART": satDept,
+                            "SAT_RETURN": satRet,
+                            "SUN_DEPART": sunDept,
+                            "SUN_RETURN": sunRet,
                             "VALUE": "\(value)",
                             "NoMidCheckState": NSNumber(value: noMidCheckState)
                         ]
@@ -438,9 +449,17 @@ class CBJSONSyncParsing: NSObject {
                     }
                     else if currentTitle == "Regional Overnight Cities" {
                         let dict2 = variables!
-                        if let tempSet = variables?["SET"] as? Set<AnyHashable> {
+                        if variables?["SET"] != nil {
+                            var set: Set<AnyHashable> = NSSet() as! Set<AnyHashable>
+                            let value = variables!["SET"]
+                            if let isSet = value as? NSSet {
+                                set = isSet as! Set<AnyHashable>
+                            }
+                            else if let array = value as? [Any] {
+                                set = NSSet(array: array) as! Set<AnyHashable>
+                            }
                             let variablesDict: [String: Any] = [
-                                "CITY": Array(tempSet),
+                                "CITY": Array(set),
                                 "RANGEEND": dict2["RANGEEND"] as Any,
                                 "RANGESTART": dict2["RANGESTART"] as Any,
                                 "VALUE": dict2["VALUE"] as Any
@@ -513,28 +532,37 @@ class CBJSONSyncParsing: NSObject {
                         filter.comparison = NSNumber(value: ComparisonType.atLeast.rawValue)
                     }
                     dict["Abbreviation"] = filter.abbreviation
-                    dict["category"] = filter.category
-                    dict["Type"] = filter.type?.stringValue
+                    dict["Category"] = filter.category
+                    dict["Type"] = filter.type
                     dict["Name"] = filter.name
                     dict["KeyPath"] = filter.keyPath
                     dict["Comparison"] = filter.comparison
-                    var variables = filter.variables as? [String: Any]
+                    var variables = filter.variables
                     if filter.abbreviation == "Flags" {
-                        if let tempSet = variables?["SET"] as? Set<AnyHashable> {
-                            let variables = Array(tempSet)
-                            dict["Variable"] = variables
+                        if variables?["SET"] != nil {
+                            var set: Set<Int> = NSSet() as! Set<Int>
+                            let value = variables!["SET"]
+                            if let isSet = value as? NSSet {
+                                set = isSet as! Set<Int>
+                            }
+                            else if let array = value as? [Any] {
+                                set = NSSet(array: array) as! Set<Int>
+                            }
+                            let array = Array(set)
+                            dict["Variable"] = array
                         }
                     }
                     else if filter.abbreviation == "Report-Release" {
                         dict["Abbreviation"] = "Report-Release"
                         variables = [String: Any]()
-                        let varb = (filter.variables as? [String: Any])!
+                        let varb = (filter.variables)!
                         var dict2 = [String: Any]()
                         dict2 = varb
                         
                         var selectedIndices: [Int] = []
 
                         if let monthBitsValue = filter.variables?["MONTH_BITS"] as? UInt64 {
+                            variables!["MONTH_BITS"] = filter.variables?["MONTH_BITS"]
                             for index in 0..<calendarData!.calendarDays.count {
                                 let one: UInt64 = 1
                                 let mask = one << UInt64(index)
@@ -577,43 +605,67 @@ class CBJSONSyncParsing: NSObject {
                         dict["Variable"] = variables
                     }
                     else if filter.abbreviation == "CmAuto" {
-                        var dict2 = [String: Any]()
-                        dict2 = variables!
-                        variables = [
-                            "commuteCity": "ABQ",
-                            "selectedConnectTime": "00:30",
-                            "nonStop": 0,
-                            "selectedTakeOffPadTimeValues": "01:00",
-                            "selectedBackToBasePadTimeValues": "00:10",
-                            "nMid": 1,
-                            "cmtFrBaOv": 3,
-                            "cmtGreaterOrLesser": 1,
-                            "cmtPercentage": 100
-                        ]
-                        
-                        let fetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
-                        fetchRequest.predicate = NSPredicate(format: "commutableType == 0")
-                        let fetchedObjects = try? self.lineManger?.managedObjectContext.fetch(fetchRequest)
-                        var objCommutability: Commutability?
-                        if fetchedObjects?.count ?? 0 > 0 {
-                            objCommutability = fetchedObjects![0]
-                            if objCommutability!.isNonStop == nil {
-                                objCommutability?.isNonStop = 0
-                            }
-                            var isNonStop = 0
-                            if objCommutability!.isNonStop!.boolValue == true {
-                                isNonStop = 1
-                            }
+                        var isNonStop = 0 as NSNumber
+                        if ((preset?.commutabilityFilterDetails?["isNonStop"]) != nil) {
+                            isNonStop = (preset!.commutabilityFilterDetails!["isNonStop"] as? NSNumber)!
+                        }
+                        if preset?.commutabilityFilterDetails == nil {
                             variables = [
-                                "commuteCity": objCommutability?.city as Any,
-                                "selectedConnectTime": self.getHours(from: objCommutability!.connectTime!),
+                                "commuteCity": "ABQ",
+                                "selectedConnectTime": "00:30",
+                                "nonStop": 0,
+                                "selectedTakeOffPadTimeValues": "01:00",
+                                "selectedBackToBasePadTimeValues": "00:10",
+                                "nMid": 1,
+                                "cmtFrBaOv": 3,
+                                "cmtGreaterOrLesser": 1,
+                                "cmtPercentage": 100
+                            ]
+                        }
+                        else
+                        {
+                            if preset?.commutabilityFilterDetails?["city"] == nil {
+                                preset?.commutabilityFilterDetails?["city"] = "ABQ"
+                            }
+
+                            if preset?.commutabilityFilterDetails?["connectTime"] == nil {
+                                preset?.commutabilityFilterDetails?["connectTime"] = 30
+                            }
+
+                            if preset?.commutabilityFilterDetails?["checkInTime"] == nil {
+                                preset?.commutabilityFilterDetails?["checkInTime"] = 120
+                            }
+
+                            if preset?.commutabilityFilterDetails?["baseTime"] == nil {
+                                preset?.commutabilityFilterDetails?["baseTime"] = 0
+                            }
+
+                            if preset?.commutabilityFilterDetails?["secondCellValue"] == nil {
+                                preset?.commutabilityFilterDetails?["secondCellValue"] = 1
+                            }
+
+                            if preset?.commutabilityFilterDetails?["thirdCellValue"] == nil {
+                                preset?.commutabilityFilterDetails?["thirdCellValue"] = 3
+                            }
+
+                            if preset?.commutabilityFilterDetails?["type"] == nil {
+                                preset?.commutabilityFilterDetails?["type"] = 1
+                            }
+
+                            if preset?.commutabilityFilterDetails?["value"] == nil {
+                                preset?.commutabilityFilterDetails?["value"] = 100
+                            }
+
+                            variables = [
+                                "commuteCity": preset!.commutabilityFilterDetails!["city"],
+                                "selectedConnectTime": self.getHours(from: preset!.commutabilityFilterDetails!["connectTime"] as! NSNumber),
                                 "nonStop": isNonStop,
-                                "selectedTakeOffPadTimeValues": self.getHours(from: objCommutability!.checkInTime!),
-                                "selectedBackToBasePadTimeValues": self.getHours(from: objCommutability!.baseTime!),
-                                "nMid" : objCommutability!.secondCellValue?.stringValue,
-                                "cmtFrBaOv" : objCommutability!.thirdCellValue?.stringValue,
-                                "cmtGreaterOrLesser" : objCommutability!.type?.stringValue,
-                                "cmtPercentage" : objCommutability!.value?.stringValue
+                                "selectedTakeOffPadTimeValues": self.getHours(from: preset!.commutabilityFilterDetails!["checkInTime"] as! NSNumber),
+                                "selectedBackToBasePadTimeValues": self.getHours(from: preset!.commutabilityFilterDetails!["baseTime"] as! NSNumber),
+                                "nMid": preset!.commutabilityFilterDetails!["secondCellValue"],
+                                "cmtFrBaOv": preset!.commutabilityFilterDetails!["thirdCellValue"],
+                                "cmtGreaterOrLesser": preset!.commutabilityFilterDetails!["type"],
+                                "cmtPercentage": preset!.commutabilityFilterDetails!["value"],
                             ]
                         }
                         dict["Variable"] = variables
@@ -635,14 +687,15 @@ class CBJSONSyncParsing: NSObject {
                             rangeEnd = 10
                         }
                         
-                        var monThuesDept = dict2["MON_THURS_DEPART"] as? String
-                        var monThuesRet = dict2["MON_THURS_RETURN"] as? String
-                        var friDept = dict2["FRI_DEPART"] as? String
-                        var friRet = dict2["FRI_RETURN"] as? String
-                        var satDept = dict2["SAT_DEPART"] as? String
-                        var satRet = dict2["SAT_RETURN"] as? String
-                        var sunDept = dict2["SUN_DEPART"] as? String
-                        var sunRet = dict2["SUN_RETURN"] as? String
+                        var monThuesDept =  String(describing:dict2["MON_THURS_DEPART"] ?? "-1")
+                        var monThuesRet =  String(describing:dict2["MON_THURS_RETURN"] ?? "3000")
+                        var friDept =  String(describing:dict2["FRI_DEPART"] ?? "-1")
+                        var friRet =  String(describing:dict2["FRI_RETURN"] ?? "3000")
+                        var satDept =  String(describing:dict2["SAT_DEPART"] ?? "-1")
+                        var satRet =  String(describing:dict2["SAT_RETURN"] ?? "3000")
+                        var sunDept =  String(describing:dict2["SUN_DEPART"] ?? "-1")
+                        var sunRet =  String(describing:dict2["SUN_RETURN"] ?? "3000")
+                        
                         
                         if monThuesDept == "-1" {
                             monThuesDept = ""
@@ -673,14 +726,14 @@ class CBJSONSyncParsing: NSObject {
                         variables = [
                             "RANGEEND": "\(rangeEnd)",
                             "RANGESTART": "\(rangeStart)",
-                            "MON_THURS_DEPART": monThuesDept!,
-                            "MON_THURS_RETURN": monThuesRet!,
-                            "FRI_DEPART": friDept!,
-                            "FRI_RETURN": friRet!,
-                            "SAT_DEPART": satDept!,
-                            "SAT_RETURN": satRet!,
-                            "SUN_DEPART": sunDept!,
-                            "SUN_RETURN": sunRet!,
+                            "MON_THURS_DEPART": monThuesDept,
+                            "MON_THURS_RETURN": monThuesRet,
+                            "FRI_DEPART": friDept,
+                            "FRI_RETURN": friRet,
+                            "SAT_DEPART": satDept,
+                            "SAT_RETURN": satRet,
+                            "SUN_DEPART": sunDept,
+                            "SUN_RETURN": sunRet,
                             "VALUE": "\(value)",
                             "NoMidCheckState": NSNumber(value: noMidCheckState)
                         ]
@@ -722,9 +775,20 @@ class CBJSONSyncParsing: NSObject {
                     }
                     else if currentTitle == "Regional Overnight Cities" {
                         let dict2 = variables!
-                        if let tempSet = variables?["SET"] as? Set<AnyHashable> {
+                        
+                        
+                        
+                        if variables?["SET"] != nil {
+                            var set: Set<AnyHashable> = NSSet() as! Set<AnyHashable>
+                            let value = variables!["SET"]
+                            if let isSet = value as? NSSet {
+                                set = isSet as! Set<AnyHashable>
+                            }
+                            else if let array = value as? [Any] {
+                                set = NSSet(array: array) as! Set<AnyHashable>
+                            }
                             let variablesDict: [String: Any] = [
-                                "CITY": Array(tempSet),
+                                "CITY": Array(set),
                                 "RANGEEND": dict2["RANGEEND"] as Any,
                                 "RANGESTART": dict2["RANGESTART"] as Any,
                                 "VALUE": dict2["VALUE"] as Any
@@ -1511,22 +1575,22 @@ class CBJSONSyncParsing: NSObject {
                 
                 // resetting all the old abbriveation to new
                 let sortName = sort.name!
-                var requiredAbbreviation = self.sortNameAbbreviation()[sortName]
-                if requiredAbbreviation != sort.abbreviation {
-                    if "v\(String(describing: requiredAbbreviation))" == sort.abbreviation {
-                        print("Emp completed Abbreviation converted from (Sort0: \(sortName)) \(sort.abbreviation ?? "") to v\(String(describing: requiredAbbreviation))")
-                        sort.abbreviation = "v\(String(describing: requiredAbbreviation))"
-                    } else {
-                        if sort.abbreviation == "vBlk" {
-                            requiredAbbreviation = "vBlk"
-                        }
-                        if sort.abbreviation == "v$/day" {
-                            requiredAbbreviation = "v$/day"
-                        }
-                        print("Emp completed Abbreviation converted from (Sort1: \(sortName)) \(sort.abbreviation ?? "") to \(String(describing: requiredAbbreviation))")
-                        sort.abbreviation = requiredAbbreviation
-                    }
-                }
+                var requiredAbbreviation = sort.abbreviation
+//                if requiredAbbreviation != sort.abbreviation {
+//                    if "v\(String(describing: requiredAbbreviation))" == sort.abbreviation {
+//                        print("Emp completed Abbreviation converted from (Sort0: \(sortName)) \(sort.abbreviation ?? "") to v\(String(describing: requiredAbbreviation))")
+//                        sort.abbreviation = "v\(String(describing: requiredAbbreviation))"
+//                    } else {
+//                        if sort.abbreviation == "vBlk" {
+//                            requiredAbbreviation = "vBlk"
+//                        }
+//                        if sort.abbreviation == "v$/day" {
+//                            requiredAbbreviation = "v$/day"
+//                        }
+//                        print("Emp completed Abbreviation converted from (Sort1: \(sortName)) \(sort.abbreviation ?? "") to \(String(describing: requiredAbbreviation))")
+//                        sort.abbreviation = requiredAbbreviation
+//                    }
+//                }
 
                 currentTitle = self.sortTitleDict()[sort.abbreviation!]!
                 var dict = [String: Any]()
@@ -1606,14 +1670,14 @@ class CBJSONSyncParsing: NSObject {
                     var dict2 = variables!
                     let noMidCheckState = (dict2["NoMidCheckState"] as? NSNumber)?.boolValue ?? false
                     
-                    var monThuesDept = dict2["MON_THURS_DEPART"] as? String
-                    var monThuesRet = dict2["MON_THURS_RETURN"] as? String
-                    var friDept = dict2["FRI_DEPART"] as? String
-                    var friRet = dict2["FRI_RETURN"] as? String
-                    var satDept = dict2["SAT_DEPART"] as? String
-                    var satRet = dict2["SAT_RETURN"] as? String
-                    var sunDept = dict2["SUN_DEPART"] as? String
-                    var sunRet = dict2["SUN_RETURN"] as? String
+                    var monThuesDept =  String(describing:dict2["MON_THURS_DEPART"] ?? "-1")
+                    var monThuesRet =  String(describing:dict2["MON_THURS_RETURN"] ?? "3000")
+                    var friDept =  String(describing:dict2["FRI_DEPART"] ?? "-1")
+                    var friRet =  String(describing:dict2["FRI_RETURN"] ?? "3000")
+                    var satDept =  String(describing:dict2["SAT_DEPART"] ?? "-1")
+                    var satRet =  String(describing:dict2["SAT_RETURN"] ?? "3000")
+                    var sunDept =  String(describing:dict2["SUN_DEPART"] ?? "-1")
+                    var sunRet =  String(describing:dict2["SUN_RETURN"] ?? "3000")
                     
                     if monThuesDept == "-1" {
                         monThuesDept = ""
@@ -1642,14 +1706,14 @@ class CBJSONSyncParsing: NSObject {
                     }
                     
                     variables = [
-                        "MON_THURS_DEPART": monThuesDept!,
-                        "MON_THURS_RETURN": monThuesRet!,
-                        "FRI_DEPART": friDept!,
-                        "FRI_RETURN": friRet!,
-                        "SAT_DEPART": satDept!,
-                        "SAT_RETURN": satRet!,
-                        "SUN_DEPART": sunDept!,
-                        "SUN_RETURN": sunRet!,
+                        "MON_THURS_DEPART": monThuesDept,
+                        "MON_THURS_RETURN": monThuesRet,
+                        "FRI_DEPART": friDept,
+                        "FRI_RETURN": friRet,
+                        "SAT_DEPART": satDept,
+                        "SAT_RETURN": satRet,
+                        "SUN_DEPART": sunDept,
+                        "SUN_RETURN": sunRet,
                         "NoMidCheckState": NSNumber(value: noMidCheckState)
                     ]
                     dict["Variable"] = variables
@@ -1675,7 +1739,7 @@ class CBJSONSyncParsing: NSObject {
                     var muteDict = dict
                     if muteDict["title"] as! String == currentTitle {
                         flag = true
-                        let array = muteDict["Listfilter"] as? [Any]
+                        let array = muteDict["ListSort"] as? [Any]
                         var mutArray = array
                         mutArray?.append(listSortArray[0])
                         muteDict["ListSort"] = mutArray
@@ -1686,7 +1750,7 @@ class CBJSONSyncParsing: NSObject {
                 
                 if !flag {
                     listSortDict["title"] = self.sortTitleDict()[sort.abbreviation!]
-                    listSortDict["Listfilter"] = listSortArray.mutableCopy()
+                    listSortDict["ListSort"] = listSortArray.mutableCopy()
                     sortsList.add(listSortDict)
                 }
                 listSortArray.removeAllObjects()
@@ -1695,7 +1759,7 @@ class CBJSONSyncParsing: NSObject {
         //        MARK: Not isState
         else {
             var i = -1
-            for case let sort as CBPresetLineSort in resultsSort {
+            for case let sort as CBPresetLineSort in resultsPresetSort ?? [] {
                 i += 1
                 if sort.abbreviation == nil {
                     if(sort.name == "Overnight City") {
@@ -1720,22 +1784,7 @@ class CBJSONSyncParsing: NSObject {
                 
                 // resetting all the old abbriveation to new
                 let sortName = sort.name!
-                var requiredAbbreviation = self.sortNameAbbreviation()[sortName]
-                if requiredAbbreviation != sort.abbreviation {
-                    if "v\(String(describing: requiredAbbreviation))" == sort.abbreviation {
-                        print("Emp completed Abbreviation converted from (Sort0: \(sortName)) \(sort.abbreviation ?? "") to v\(String(describing: requiredAbbreviation))")
-                        sort.abbreviation = "v\(String(describing: requiredAbbreviation))"
-                    } else {
-                        if sort.abbreviation == "vBlk" {
-                            requiredAbbreviation = "vBlk"
-                        }
-                        if sort.abbreviation == "v$/day" {
-                            requiredAbbreviation = "v$/day"
-                        }
-                        print("Emp completed Abbreviation converted from (Sort1: \(sortName)) \(sort.abbreviation ?? "") to \(String(describing: requiredAbbreviation))")
-                        sort.abbreviation = requiredAbbreviation
-                    }
-                }
+                var requiredAbbreviation = sort.abbreviation
 
                 currentTitle = self.sortTitleDict()[sort.abbreviation!]!
                 var dict = [String: Any]()
@@ -1855,14 +1904,15 @@ class CBJSONSyncParsing: NSObject {
                     var dict2 = variables!
                     let noMidCheckState = (dict2["NoMidCheckState"] as? NSNumber)?.boolValue ?? false
                     
-                    var monThuesDept = dict2["MON_THURS_DEPART"] as? String
-                    var monThuesRet = dict2["MON_THURS_RETURN"] as? String
-                    var friDept = dict2["FRI_DEPART"] as? String
-                    var friRet = dict2["FRI_RETURN"] as? String
-                    var satDept = dict2["SAT_DEPART"] as? String
-                    var satRet = dict2["SAT_RETURN"] as? String
-                    var sunDept = dict2["SUN_DEPART"] as? String
-                    var sunRet = dict2["SUN_RETURN"] as? String
+                    
+                    var monThuesDept =  String(describing:dict2["MON_THURS_DEPART"] ?? "-1")
+                    var monThuesRet =  String(describing:dict2["MON_THURS_RETURN"] ?? "3000")
+                    var friDept =  String(describing:dict2["FRI_DEPART"] ?? "-1")
+                    var friRet =  String(describing:dict2["FRI_RETURN"] ?? "3000")
+                    var satDept =  String(describing:dict2["SAT_DEPART"] ?? "-1")
+                    var satRet =  String(describing:dict2["SAT_RETURN"] ?? "3000")
+                    var sunDept =  String(describing:dict2["SUN_DEPART"] ?? "-1")
+                    var sunRet =  String(describing:dict2["SUN_RETURN"] ?? "3000")
                     
                     if monThuesDept == "-1" {
                         monThuesDept = ""
@@ -1891,14 +1941,14 @@ class CBJSONSyncParsing: NSObject {
                     }
                     
                     variables = [
-                        "MON_THURS_DEPART": monThuesDept!,
-                        "MON_THURS_RETURN": monThuesRet!,
-                        "FRI_DEPART": friDept!,
-                        "FRI_RETURN": friRet!,
-                        "SAT_DEPART": satDept!,
-                        "SAT_RETURN": satRet!,
-                        "SUN_DEPART": sunDept!,
-                        "SUN_RETURN": sunRet!,
+                        "MON_THURS_DEPART": monThuesDept,
+                        "MON_THURS_RETURN": monThuesRet,
+                        "FRI_DEPART": friDept,
+                        "FRI_RETURN": friRet,
+                        "SAT_DEPART": satDept,
+                        "SAT_RETURN": satRet,
+                        "SUN_DEPART": sunDept,
+                        "SUN_RETURN": sunRet,
                         "NoMidCheckState": NSNumber(value: noMidCheckState)
                     ]
                     dict["Variable"] = variables
@@ -1924,7 +1974,7 @@ class CBJSONSyncParsing: NSObject {
                     var muteDict = dict
                     if muteDict["title"] as! String == currentTitle {
                         flag = true
-                        let array = muteDict["Listfilter"] as? [Any]
+                        let array = muteDict["ListSort"] as? [Any]
                         var mutArray = array
                         mutArray?.append(listSortArray[0])
                         muteDict["ListSort"] = mutArray
@@ -1935,7 +1985,7 @@ class CBJSONSyncParsing: NSObject {
                 
                 if !flag {
                     listSortDict["title"] = self.sortTitleDict()[sort.abbreviation!]
-                    listSortDict["Listfilter"] = listSortArray.mutableCopy()
+                    listSortDict["ListSort"] = listSortArray.mutableCopy()
                     sortsList.add(listSortDict)
                 }
                 listSortArray.removeAllObjects()
@@ -2564,7 +2614,7 @@ class CBJSONSyncParsing: NSObject {
             var filterSorts = presetDict["filterSortState"] as? [String: Any]
             let presetSorts = self.getPresetSortObjects(details: filterSorts!, syncPreset: synchedPreset)
             var presetQuickFilters = self.getPresetQuickFilterObjects(from: filterSorts!)
-            let presetMenuFilters = self.getPresetFilterObjects(from: filterSorts!)
+            let presetMenuFilters = self.getPresetFilterObjects(from: filterSorts!, syncPreset: synchedPreset)
             presetQuickFilters.addObjects(from: presetMenuFilters as! [Any])
             let lineValuesKey = CBLineValuesMenuController.lineValuesKeyForBidPeriod(bidPeriod: self.bidPeriod!)
             let lineValues = UserDefaults.standard.array(forKey: lineValuesKey)
@@ -2593,9 +2643,9 @@ class CBJSONSyncParsing: NSObject {
     
     func getPresetSortObjects(details: [String: Any], syncPreset: CBPreset) -> NSMutableArray {
         let lineSorts = NSMutableArray()
-        let lstSorts = details["lstSorts"] as? NSMutableArray
-        for case let sortDict as [String: Any] in lstSorts ?? [] {
-            let subSorts = sortDict["ListSort"] as? NSMutableArray
+        let lstSorts = details["lstSorts"] as? [[String: Any]]
+        for case let sortDict in lstSorts ?? [] {
+            let subSorts = sortDict["ListSort"] as? [[String: Any]]
             
             // saveing each filters from the json to coredata.
             for case let subSort as [String: Any] in subSorts ?? [] {
@@ -2610,8 +2660,8 @@ class CBJSONSyncParsing: NSObject {
                 }
                 
                 if subSort["ArrayVariables"] != nil {
-                    let dct = subSort["ArrayVariables"] as? NSMutableArray
-                    lineSort.arrayVariables = dct
+                    let dct = subSort["ArrayVariables"] as? [Any] ?? []
+                    lineSort.arrayVariables = NSMutableArray(array: dct)
                     if (lineSort.abbreviation == "OffSort" || lineSort.abbreviation == "WorkSort" || lineSort.abbreviation == "TripStartSort") {
                         lineSort.variables = BILineSort.configureMonthDayFilter(lineSort.arrayVariables!)
                     }
@@ -2692,6 +2742,17 @@ class CBJSONSyncParsing: NSObject {
                         commutabilitySortDetails["isNonStop"] = 0
                     }
                     
+                    if variable?["cmtFrBaOv"] as? String != nil {
+                        commutabilitySortDetails["thirdCellValue"] = variable?["cmtFrBaOv"]
+                    }
+                    else {
+                        var thirdCellValue = variable?["cmtFrBaOv"] as? NSNumber
+                        if thirdCellValue == nil {
+                            thirdCellValue = 3
+                        }
+                        commutabilitySortDetails["thirdCellValue"] = thirdCellValue
+                    }
+                    
                     syncPreset.commutabilitySortDetails = NSMutableDictionary(dictionary: commutabilitySortDetails)
                 }
                 if lineSort.abbreviation == "flag" {
@@ -2731,7 +2792,7 @@ class CBJSONSyncParsing: NSObject {
                     }
                 }
                 lineSort.order = NSNumber(value: (subSort["Order"] as? Int)!)
-                lineSort.name = subSort["name"] as? String
+                lineSort.name = subSort["Name"] as? String
                 lineSort.keyPath = subSort["KeyPath"] as? String
                 let ascending = subSort["Ascending"] as? Bool ?? false
                 lineSort.ascending = NSNumber(booleanLiteral: ascending)
@@ -2758,13 +2819,13 @@ class CBJSONSyncParsing: NSObject {
     
     func getPresetQuickFilterObjects(from details: [String: Any]) -> NSMutableArray {
         let presetFilterRules = NSMutableArray()
-        let lstQuickFiltersArray = details["lstQuickFilters"] as? NSMutableArray
+        let lstQuickFiltersArray = details["lstQuickFilters"] as? [[String: Any]]
         var lstQuickFilters = [String: Any]()
-        if lstQuickFilters.count == 0 {
+        if lstQuickFiltersArray?.count ?? 0 == 0 {
             lstQuickFilters = self.getQuickFilterDefaultDict()
         }
         else {
-            lstQuickFilters = lstQuickFiltersArray![0] as? [String: Any] ?? [:]
+            lstQuickFilters = lstQuickFiltersArray![0]
         }
         var set = Set<Int>()
         var filterRule = CBPresetFilterRule()
@@ -2997,6 +3058,8 @@ class CBJSONSyncParsing: NSObject {
         presetFilterRules.add(filterRule)
         
         filterRule = CBPresetFilterRule()
+        filterRule.category = 5
+        filterRule.type = 0
         var dictMutable = [String: Any]()
         if let turns = lstQuickFilters["turns"] as? NSNumber, !turns.boolValue {
             dictMutable["TURNS_ON"] = 1
@@ -3035,24 +3098,32 @@ class CBJSONSyncParsing: NSObject {
         return presetFilterRules
     }
     
-    func getPresetFilterObjects(from details: [String: Any]) -> NSMutableArray {
+    func getPresetFilterObjects(from details: [String: Any], syncPreset: CBPreset) -> NSMutableArray {
         var presetFilterRules = NSMutableArray()
-        let lstFilters = details["lstFilters"] as? NSMutableArray
-        for case let filterDict as [String: Any] in lstFilters ?? [] {
-            let subFilters = filterDict["Listfilter"] as? NSMutableArray
+        let lstFilters = details["lstFilters"] as? [[String: Any]]
+        for case let filterDict in lstFilters ?? [] {
+            let subFilters = filterDict["Listfilter"] as? [[String: Any]]
             // saving each filters from the json to coredata
-            for case let subFilter as [String: Any] in subFilters ?? [] {
+            for case let subFilter in subFilters ?? [] {
                 var filterRule = CBPresetFilterRule()
                 filterRule.abbreviation = subFilter["Abbreviation"] as? String
                 filterRule.category = NSNumber(value: (subFilter["Category"] as? Int)!)
-                filterRule.type = NSNumber(value: (subFilter["Type"] as? Int)!)
+                if subFilter["Type"] != nil {
+                    filterRule.type = NSNumber(value: (subFilter["Type"] as? Int)!)
+                }
+                if subFilter["Name"] != nil {
+                    filterRule.name = subFilter["Name"] as? String
+                }
                 filterRule.keyPath = subFilter["KeyPath"] as? String
                 let currentTile = self.filterTitleDict()[filterRule.abbreviation!]
                 let varb = subFilter["Variable"] as? [String: Any]
                 
                 if (subFilter["Abbreviation"] as? String == "WantDays" || subFilter["Abbreviation"] as? String == "MonthDays" || subFilter["Abbreviation"] as? String == "TripStarts" || subFilter["Abbreviation"] as? String == "TripEnds") {
-                    let variab = (subFilter["Variable"] as? NSMutableArray)!
-                    filterRule.variables = BIFilterRule.configureMonthDayFilter(variab)
+                    if let array = subFilter["Variable"] as? [Any] {
+                        let variab = NSMutableArray(array: array)
+                        filterRule.variables = BIFilterRule.configureMonthDayFilter(variab)
+                    }
+                    
                 }
                 else if currentTile == "Regional Overnight Cities" {
                     let variable = subFilter["Variable"] as? [String: Any]
@@ -3069,6 +3140,94 @@ class CBJSONSyncParsing: NSObject {
                 else if subFilter["Abbreviation"] as? String == "Flags" {
                     let set = NSSet(array: (subFilter["Variable"] as? [Any])!)
                     filterRule.variables = ["SET": set]
+                }
+                else if filterRule.abbreviation == "CmAuto" {
+                    var commutabilityfilterDetails = [String: Any]()
+                    let variable  = subFilter["Variable"] as? [String: Any]
+                    commutabilityfilterDetails["city"] = variable?["commuteCity"]
+                    
+                    if variable!["selectedTakeOffPadTimeValues"] as? String != nil {
+                        let checkInTime = (variable!["selectedTakeOffPadTimeValues"] as? String)!
+                        commutabilityfilterDetails["checkInTime"] = self.getMinutes(from: checkInTime)
+                    }
+                    else {
+                        let checkInTime = variable!["selectedTakeOffPadTimeValues"] as? NSNumber
+                        commutabilityfilterDetails["checkInTime"] = self.getMinutes(from: checkInTime!.stringValue)
+                    }
+                    
+                    if variable!["cmtFrBaOv"] as? String != nil {
+                        commutabilityfilterDetails["cmtFrBaOv"] = variable?["thirdCellValue"]
+                    }
+                    else {
+                        let thirdCellValue = variable!["cmtFrBaOv"] as? NSNumber
+                        commutabilityfilterDetails["cmtFrBaOv"] = thirdCellValue?.stringValue
+                    }
+                    if variable!["selectedBackToBasePadTimeValues"] as? String != nil {
+                        let baseTime = (variable!["selectedBackToBasePadTimeValues"] as? String)!
+                        commutabilityfilterDetails["baseTime"] = self.getMinutes(from: baseTime)
+                    }
+                    else {
+                        let baseTime = variable!["selectedBackToBasePadTimeValues"] as? NSNumber
+                        commutabilityfilterDetails["baseTime"] = self.getMinutes(from: baseTime!.stringValue)
+                    }
+                    if variable!["cmtGreaterOrLesser"] as? String != nil {
+                        commutabilityfilterDetails["type"] = variable?["cmtGreaterOrLesser"]
+                    }
+                    else {
+                        var type = variable?["cmtGreaterOrLesser"] as? NSNumber
+                        if type == nil {
+                            type = 1
+                        }
+                        commutabilityfilterDetails["type"] = type
+                    }
+                    if variable!["selectedConnectTime"] as? String != nil {
+                        let connectTime = (variable!["selectedConnectTime"] as? String)!
+                        commutabilityfilterDetails["connectTime"] = self.getMinutes(from: connectTime)
+                    }
+                    else {
+                        let connectTime = variable!["selectedConnectTime"] as? NSNumber
+                        commutabilityfilterDetails["connectTime"] = self.getMinutes(from: connectTime!.stringValue)
+                    }
+                    if variable!["cmtPercentage"] as? String != nil {
+                        commutabilityfilterDetails["value"] = variable?["cmtPercentage"]
+                    }
+                    else {
+                        var value = variable?["cmtPercentage"] as? NSNumber
+                        if value == nil {
+                            value = 100
+                        }
+                        commutabilityfilterDetails["value"] = value
+                    }
+                    if variable!["nMid"] as? String != nil {
+                        commutabilityfilterDetails["secondCellValue"] = variable?["nMid"]
+                    }
+                    else {
+                        var secondCellValue = variable?["nMid"] as? NSNumber
+                        if secondCellValue == nil {
+                            secondCellValue = 1
+                        }
+                        commutabilityfilterDetails["secondCellValue"] = secondCellValue
+                    }
+                    commutabilityfilterDetails["weight"] = 0
+                    if variable?["nonStop"] != nil {
+                        commutabilityfilterDetails["isNonStop"] = variable?["nonStop"]
+                    }
+                    else {
+                        commutabilityfilterDetails["isNonStop"] = 0
+                    }
+                    
+                    if variable?["cmtFrBaOv"] as? String != nil {
+                        commutabilityfilterDetails["thirdCellValue"] = variable?["cmtFrBaOv"]
+                    }
+                    else {
+                        var thirdCellValue = variable?["cmtFrBaOv"] as? NSNumber
+                        if thirdCellValue == nil {
+                            thirdCellValue = 3
+                        }
+                        commutabilityfilterDetails["thirdCellValue"] = thirdCellValue
+                    }
+                    filterRule.variables = variable
+                    syncPreset.commutabilityFilterDetails = NSMutableDictionary(dictionary: commutabilityfilterDetails)
                 }
                 else {
                     var dict2 = varb
@@ -4383,6 +4542,7 @@ class CBJSONSyncParsing: NSObject {
                     filtDict["category"] = filter.category
                     filtDict["type"] = filter.type
                     filtDict["keyPath"] = filter.keyPath
+                    filtDict["name"] = filter.name
                     filtDict["abbreviation"] = filter.abbreviation
                     filtDict["comparison"] = filter.comparison
                     filtDict["variables"] = filter.variables
@@ -4555,6 +4715,7 @@ class CBJSONSyncParsing: NSObject {
         var LstQuickFiletDict = [String: Any]()
         let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "category", ascending: true), NSSortDescriptor(key: "type", ascending: true)]
+        fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
         let resulFilter = try! self.context.fetch(fetchRequest)
         LstQuickFiletDict = self.getQuickFilterListDictFromLocal(from: resulFilter, isState: true, resultsFilterPreset: nil)
         return LstQuickFiletDict
@@ -4564,6 +4725,7 @@ class CBJSONSyncParsing: NSObject {
         var LstFiltDict = [String: Any]()
         let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "category", ascending: true), NSSortDescriptor(key: "type", ascending: true)]
+        fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
         let resulFilter = try! self.context.fetch(fetchRequest)
         LstFiltDict = self.getMenuFilterListDictFromLocalForSync(from: resulFilter, isState: true, resultsPresetFilter: nil)
         return LstFiltDict
@@ -4573,7 +4735,9 @@ class CBJSONSyncParsing: NSObject {
         var lstSortDict = [String: Any]()
         let fetchRequest: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
-        fetchRequest.predicate = NSPredicate(format: "isBidListSort != %@", NSNumber(value: true))
+        let predicate1 = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+        let predicate2 = NSPredicate(format: "isBidListSort != %@", NSNumber(value: true))
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
 
         let resulSort = try! self.context.fetch(fetchRequest)
         lstSortDict = self.getMenuSortListDictFromLocalForSync(resultsSort: resulSort, isState: true, resultsPresetSort: nil, isConversion: false)
@@ -4596,7 +4760,7 @@ class CBJSONSyncParsing: NSObject {
             for line in results {
                 var flaggedDict = [String: Any]()
                 flaggedDict = [
-                    "LineNum" : line.number!,
+                    "LineNum" : line.number,
                     "FlagColor" : line.userFlagType,
                     "FAPosition" : line.faPositionString
                 ]
@@ -4755,7 +4919,9 @@ class CBJSONSyncParsing: NSObject {
         var lstSortDict = [String: Any]()
         let fetchRequest: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
-        fetchRequest.predicate = NSPredicate(format: "isBidListSort == %@", NSNumber(value: true))
+        let predicate2 = NSPredicate(format: "isBidListSort == %@", NSNumber(value: true))
+        let predicate1 = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
 
         let resulSort = try! self.context.fetch(fetchRequest)
         lstSortDict = self.getMenuSortListDictFromLocalForSync(resultsSort: resulSort, isState: true, resultsPresetSort: nil, isConversion: false)
@@ -4766,9 +4932,13 @@ class CBJSONSyncParsing: NSObject {
     
     func getMyCalDetails() -> [String: Any] {
         var myCalDetails: [String: Any] = [:]
-        myCalDetails["myCalEnabled"] = Int(self.bidPeriod!.myCalEnabled!.intValue)
-        myCalDetails["myCalStartDate"] = getDateStringGMT(self.bidPeriod!.myCalStartDate!)
-        myCalDetails["myCalEndDate"] = getDateStringGMT(self.bidPeriod!.myCalEndDate!)
+        myCalDetails["myCalEnabled"] = Int(self.bidPeriod!.myCalEnabled?.intValue ?? 0)
+        if self.bidPeriod?.myCalStartDate != nil {
+            myCalDetails["myCalStartDate"] = getDateStringGMT(self.bidPeriod!.myCalStartDate!)
+        }
+        if self.bidPeriod?.myCalEndDate != nil {
+            myCalDetails["myCalEndDate"] = getDateStringGMT(self.bidPeriod!.myCalEndDate!)
+        }
         
         return ["myCalDetails": myCalDetails]
     }

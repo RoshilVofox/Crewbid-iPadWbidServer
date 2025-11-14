@@ -1111,6 +1111,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 
                 let navController = UINavigationController(rootViewController: vc)
                 navController.modalPresentationStyle = .formSheet // or .fullScreen if needed
+                navController.isModalInPresentation = true
                 self.present(navController, animated: true)
 
             }),(title: "NO", style:.cancel, handler: {_ in
@@ -1210,16 +1211,17 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     
     
     @objc func ShowCommutablilitySortView() {
-            let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
-            let commuteInformation = storyboard.instantiateViewController(withIdentifier: "CommuteInformation") as! CBCommuteInfoViewController
-            commuteInformation.bidPeriod = self.bidPeriod
-            commuteInformation.commutabilityType = CommutabilityType.sort
-            commuteInformation.preferredContentSize = CGSize(width: 320, height: 320)
-            DispatchQueue.main.async {
-                self.present(commuteInformation, animated: true) {
-                }
+        let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
+        let commuteInformation = storyboard.instantiateViewController(withIdentifier: "CommuteInformation") as! CBCommuteInfoViewController
+        commuteInformation.bidPeriod = self.bidPeriod
+        commuteInformation.commutabilityType = CommutabilityType.sort
+        commuteInformation.isModalInPresentation = true
+        commuteInformation.preferredContentSize = CGSize(width: 320, height: 320)
+        DispatchQueue.main.async {
+            self.present(commuteInformation, animated: true) {
             }
         }
+    }
     
     
     @objc func showCommutablilityFilterView() {
@@ -1227,6 +1229,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let commuteInformation = storyboard.instantiateViewController(withIdentifier: "CommuteInformation") as! CBCommuteInfoViewController
         commuteInformation.bidPeriod = self.bidPeriod
+        commuteInformation.isModalInPresentation = true
         commuteInformation.commutabilityType = CommutabilityType.filter
         commuteInformation.preferredContentSize = CGSize(width: 320, height: 320)
 //        print("Presenting from topVC: \(topVC!)")
@@ -1251,6 +1254,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 
         let navController = UINavigationController(rootViewController: vc)
         navController.modalPresentationStyle = .formSheet // or .fullScreen if needed
+        navController.isModalInPresentation = true
         present(navController, animated: true)
 
     }

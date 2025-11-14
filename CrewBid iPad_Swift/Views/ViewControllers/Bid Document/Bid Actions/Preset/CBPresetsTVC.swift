@@ -360,7 +360,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                         sortObj.city = sort["city"] as? String
                         sortObj.expression = sort["expression"] as? String
                         sortObj.order = sort["order"] as? NSNumber
-                        sortObj.lineSortKeyMap = sort["lineSortKeyMap"] as? [String: Any]
+                        sortObj.lineSortKeyMap = sort["lineSortKeyMap"] as? BILineSortKeyMap
                         sortObj.variables = sort["variables"] as? [String: Any]
                         sortObj.arrayVariables = sort["arrayVariables"] as? NSMutableArray
                         linesSorts.append(sortObj)
@@ -1091,12 +1091,15 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
             //            line Values
             let lineValuesKey = CBLineValuesMenuController.lineValuesKeyForBidPeriod(bidPeriod: bidPeriod!)
             let fetchRequest1: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+            fetchRequest1.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
             fetchRequest1.sortDescriptors = [NSSortDescriptor(key: "category", ascending: true), NSSortDescriptor(key: "type", ascending: true)]
             var filterResults1 = try? self.context.fetch(fetchRequest1)
             let fetchSort1: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
             fetchSort1.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+            fetchSort1.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
             let sortResult1 = try? self.context.fetch(fetchSort1)
             let lineValues = UserDefaults.standard.value(forKey: lineValuesKey) as? [Any] ?? []
+//           MARK: setting filter rules , sort and line valuees to preset
             let newPreset = CBPreset(rules: filterResults1!, sorts: sortResult1!, lineValues: lineValues, name: "")
             newPreset.month = bidPeriod!.month
             newPreset.year = bidPeriod!.year
@@ -1200,7 +1203,6 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
             tableView.beginUpdates()
             tableView.insertRows(at: [ip], with: .automatic)
             tableView.endUpdates()
-            
         }
         //If user selected any other row, load that preset
         else {
@@ -1447,64 +1449,62 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                         try? self.context.save()
                     }
                     else if pRule.category?.intValue == BIFilterRuleCategory.BIReportReleaseFilterCategory.rawValue {
-                        if rule.variables!["selectedOption"] == nil {
-                            let variables = rule.variables
-                            let dict2 = variables
-                            var reportValue = ""
-                            var releaseValue = ""
-                            var isLast = 0
-                            var isNoMid = 0
-                            var isCalendar = 0
-                            var isFirst = 0
-                            var isAllDays = 0
-                            var isSelectedAll = 0
-                            var selectedDates = NSMutableArray()
-                            if dict2!["reportValue"] != nil {
-                                reportValue = (dict2!["reportValue"] as? String)!
-                            }
-                            if dict2!["releaseValue"] != nil {
-                                releaseValue = (dict2!["releaseValue"] as? String)!
-                            }
-                            if dict2!["isFirst"] != nil {
-                                isFirst = ((dict2!["isFirst"] as? Int)!)
-                            }
-                            if dict2!["isLast"] != nil {
-                                isLast = ((dict2!["isLast"] as? Int)!)
-                            }
-                            if dict2!["isNoMid"] != nil {
-                                isNoMid = ((dict2!["isNoMid"] as? Int)!)
-                            }
-                            if dict2!["isSelectedAll"] != nil {
-                                isSelectedAll = ((dict2!["isSelectedAll"] as? Int)!)
-                            }
-                            
-                            
-                            
-                            var tempDict = [String: Any]()
-                            tempDict["isAllDays"] = isAllDays
-                            tempDict["isCalendar"] = isCalendar
-                            tempDict["isFirst"] = isFirst
-                            tempDict["isLast"] = isLast
-                            tempDict["isNoMid"] = isNoMid
-                            tempDict["isSelectedAll"] = isSelectedAll
-                            tempDict["releaseValue"] = releaseValue
-                            tempDict["reportValue"] = reportValue
-                            
-                            var MONTH_BITS = NSNumber(value: 0)
-                            if let dates = dict2?["SELECTED_DATES"] as? NSMutableArray, dates.count > 0 {
-                                tempDict["SELECTED_DATES"] = dates
-                                selectedDates = dates
-                            }
-                            if let mBits = dict2?["MONTH_BITS"] as? NSNumber, mBits.intValue > 0 {
-                                tempDict["MONTH_BITS"] = mBits
-                                MONTH_BITS = mBits
-                            }
-//                            tempDict["MONTH_BITS"] = MONTH_BITS
-                            rule.variables = tempDict as NSDictionary
-                            try? self.context.save()
-                            if (selectedDates.count > 0 || isFirst == 1 || isLast == 1 || isNoMid == 1) {
-                                self.calculationFromPreset(reportValue: reportValue, releaseValue: releaseValue, isLast: isLast as NSNumber, isNoMid: isNoMid as NSNumber, isCalendar: isCalendar as NSNumber, isSelectedAll: isSelectedAll as NSNumber, isFirst: isFirst as NSNumber, selectedDates: selectedDates, rule: rule)
-                            }
+                        let variables = rule.variables
+                        let dict2 = variables
+                        var reportValue = ""
+                        var releaseValue = ""
+                        var isLast = 0
+                        var isNoMid = 0
+                        var isCalendar = 0
+                        var isFirst = 0
+                        var isAllDays = 0
+                        var isSelectedAll = 0
+                        var selectedDates = NSMutableArray()
+                        if dict2!["reportValue"] != nil {
+                            reportValue = (dict2!["reportValue"] as? String)!
+                        }
+                        if dict2!["releaseValue"] != nil {
+                            releaseValue = (dict2!["releaseValue"] as? String)!
+                        }
+                        if dict2!["isFirst"] != nil {
+                            isFirst = ((dict2!["isFirst"] as? Int)!)
+                        }
+                        if dict2!["isLast"] != nil {
+                            isLast = ((dict2!["isLast"] as? Int)!)
+                        }
+                        if dict2!["isNoMid"] != nil {
+                            isNoMid = ((dict2!["isNoMid"] as? Int)!)
+                        }
+                        if dict2!["isSelectedAll"] != nil {
+                            isSelectedAll = ((dict2!["isSelectedAll"] as? Int)!)
+                        }
+                        
+                        
+                        
+                        var tempDict = [String: Any]()
+                        tempDict["isAllDays"] = isAllDays
+                        tempDict["isCalendar"] = isCalendar
+                        tempDict["isFirst"] = isFirst
+                        tempDict["isLast"] = isLast
+                        tempDict["isNoMid"] = isNoMid
+                        tempDict["isSelectedAll"] = isSelectedAll
+                        tempDict["releaseValue"] = releaseValue
+                        tempDict["reportValue"] = reportValue
+                        
+                        var MONTH_BITS = NSNumber(value: 0)
+                        if let dates = dict2?["SELECTED_DATES"] as? NSMutableArray, dates.count > 0 {
+                            tempDict["SELECTED_DATES"] = dates
+                            selectedDates = dates
+                        }
+                        if let mBits = dict2?["MONTH_BITS"] as? NSNumber, mBits.intValue > 0 {
+                            tempDict["MONTH_BITS"] = mBits
+                            MONTH_BITS = mBits
+                        }
+                        //                            tempDict["MONTH_BITS"] = MONTH_BITS
+                        rule.variables = tempDict as NSDictionary
+                        try? self.context.save()
+                        if (selectedDates.count > 0 || isFirst == 1 || isLast == 1 || isNoMid == 1) {
+                            self.calculationFromPreset(reportValue: reportValue, releaseValue: releaseValue, isLast: isLast as NSNumber, isNoMid: isNoMid as NSNumber, isCalendar: isCalendar as NSNumber, isSelectedAll: isSelectedAll as NSNumber, isFirst: isFirst as NSNumber, selectedDates: selectedDates, rule: rule)
                         }
                     }
                     if rule.ruleHighlightsTrips() {
@@ -1972,13 +1972,37 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
             
             let variables = variables as NSDictionary
             var depMonThurs1 : String = (variables["MON_THURS_DEPART"] as? Int ?? -1) == -1 ? "" : "\(variables["MON_THURS_DEPART"] as! Int)"
+            if variables["MON_THURS_DEPART"] as? Int == nil {
+                depMonThurs1 = String(describing: variables["MON_THURS_DEPART"] ?? "")
+            }
             var returnMonThurs1 : String = (variables["MON_THURS_RETURN"] as? Int ?? 3000) == 3000 ? "" : "\(variables["MON_THURS_RETURN"] as! Int)"
+            if variables["MON_THURS_RETURN"] as? Int == nil {
+                returnMonThurs1 = String(describing: variables["MON_THURS_RETURN"] ?? "")
+            }
             var depFriday1 : String = (variables["FRI_DEPART"] as? Int ?? -1) == -1 ? "" : "\(variables["FRI_DEPART"] as! Int)"
+            if variables["FRI_DEPART"] as? Int == nil {
+                depFriday1 = String(describing: variables["FRI_DEPART"] ?? "")
+            }
             var returnFriday1 : String = (variables["FRI_RETURN"] as? Int ?? 3000) == 3000 ? "" : "\(variables["FRI_RETURN"] as! Int)"
+            if variables["FRI_RETURN"] as? Int == nil {
+                returnFriday1 = String(describing: variables["FRI_RETURN"] ?? "")
+            }
             var depSat1 : String = (variables["SAT_DEPART"] as? Int ?? -1) == -1 ? "" : "\(variables["SAT_DEPART"] as! Int)"
+            if variables["SAT_DEPART"] as? Int == nil {
+                depSat1 = String(describing: variables["SAT_DEPART"] ?? "")
+            }
             var returnSat1 : String = (variables["SAT_RETURN"] as? Int ?? 3000) == 3000 ? "" : "\(variables["SAT_RETURN"] as! Int)"
+            if variables["SAT_RETURN"] as? Int == nil {
+                returnSat1 = String(describing: variables["SAT_RETURN"] ?? "")
+            }
             var depSun1 : String = (variables["SUN_DEPART"] as? Int ?? -1) == -1 ? "" : "\(variables["SUN_DEPART"] as! Int)"
+            if variables["SUN_DEPART"] as? Int == nil {
+                depSun1 = String(describing: variables["SUN_DEPART"] ?? "")
+            }
             var returnSun1 : String = (variables["SUN_RETURN"] as? Int ?? 3000) == 3000 ? "" : "\(variables["SUN_RETURN"] as! Int)"
+            if variables["SUN_RETURN"] as? Int == nil {
+                returnSun1 = String(describing: variables["SUN_RETURN"] ?? "")
+            }
             
             depMonThurs1 = self.getCompleteTime(timeString: depMonThurs1)
             returnMonThurs1 = self.getCompleteTime(timeString: returnMonThurs1)

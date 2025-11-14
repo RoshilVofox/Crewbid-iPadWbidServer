@@ -335,7 +335,12 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
             var tempArray : [String] = []
             for line in self.lines {
                 line.isTrashed = NSNumber(booleanLiteral: true)
-                tempArray.append(line.number!.stringValue)
+                if bidPeriod!.isFABid() {
+                    tempArray.append("\(String(describing: line.number!.stringValue))\(line.faPositionString)")
+                }
+                else {
+                    tempArray.append(line.number!.stringValue)
+                }
             }
             let temp : NSMutableArray = self.bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
             temp.add(tempArray)
@@ -352,9 +357,19 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
                 var isItemRemoved = false
                 for item in myArray {
                     for case let line as BILine in CBGlobalMethods.shared.selectedBidPeriod!.lines! {
-                        if line.number?.stringValue == item {
-                            line.isTrashed = NSNumber(booleanLiteral: false)
-                            isItemRemoved = true
+                        if bidPeriod?.isFABid() == true {
+                            let pos = item.last
+                            let number = item
+                            if line.number?.stringValue == number.trimmingCharacters(in: CharacterSet.letters) {
+                                line.isTrashed = NSNumber(booleanLiteral: false)
+                                isItemRemoved = true
+                            }
+                        }
+                        else {
+                            if line.number?.stringValue == item {
+                                line.isTrashed = NSNumber(booleanLiteral: false)
+                                isItemRemoved = true
+                            }
                         }
                     }
                 }
@@ -404,9 +419,23 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
             line.isTrashed = NSNumber(value: true)
         }
 
+        let lineNumbersFa = sectionLines[sectionIndex].compactMap { line in
+            let faPos = line.faPositionString
+            if let number = line.number?.stringValue{
+                return "\(number)\(faPos)"
+            }
+            return nil
+        }
+
+        
         let lineNumbers = sectionLines[sectionIndex].compactMap { $0.number?.stringValue }
         let temp: NSMutableArray = bidPeriod?.lastTrashedDetails as? NSMutableArray ?? NSMutableArray()
-        temp.add(lineNumbers)
+        if bidPeriod!.isFABid() {
+            temp.add(lineNumbersFa)
+        }
+        else {
+            temp.add(lineNumbers)
+        }
         bidPeriod?.lastTrashedDetails = temp.mutableCopy() as? NSArray
 
         try? bidPeriod?.managedObjectContext?.save()

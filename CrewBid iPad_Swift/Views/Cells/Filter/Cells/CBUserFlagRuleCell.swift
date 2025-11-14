@@ -158,7 +158,13 @@ class CBUserFlagRuleCell: UITableViewCell {
         
         var filterRule: BIFilterRule  {
             get {
-                let variables = _filterRule!.variables?["SET"] as! NSSet
+                var variables: NSSet = NSSet()
+                if let setter = _filterRule?.variables?["SET"] as? [Any] {
+                    variables = NSSet(array: setter)
+                }
+                else {
+                    variables = _filterRule?.variables?["SET"] as! NSSet
+                }
                 let arrVariables = NSMutableArray(array:variables.allObjects)
                 userFlagControlNoColor?.isSelected = arrVariables.contains(CBUserFlagType.none.rawValue)
                 userFlagControlYellow?.isSelected = arrVariables.contains(CBUserFlagType.yellow.rawValue)
@@ -176,7 +182,13 @@ class CBUserFlagRuleCell: UITableViewCell {
                 if _filterRule != newValue {
                     _filterRule = newValue
                 }
-                let variables = newValue.variables?["SET"] as! NSSet
+                var variables: NSSet = NSSet()
+                if let setter = newValue.variables?["SET"] as? [Any] {
+                    variables = NSSet(array: setter)
+                }
+                else {
+                    variables = newValue.variables?["SET"] as! NSSet
+                }
                 let arrVariables = NSMutableArray(array:variables.allObjects)
                 userFlagControlNoColor?.isSelected = arrVariables.contains(0)
                 userFlagControlYellow?.isSelected = arrVariables.contains(4)
@@ -233,7 +245,13 @@ class CBUserFlagRuleCell: UITableViewCell {
     
         override func layoutSubviews() {
             backView.backgroundColor = bacViewColor
-            let variables = _filterRule!.variables?["SET"] as! NSSet
+            var variables: NSSet = NSSet()
+            if let setter = _filterRule?.variables?["SET"] as? [Any] {
+                variables = NSSet(array: setter)
+            }
+            else {
+                variables = _filterRule?.variables?["SET"] as! NSSet
+            }
             userFlagControlNoColor?.alpha = CGFloat(variables.contains(CBUserFlagType.none.rawValue) ? 1.0 : kUserFlagTransparentAlphaValue)
             userFlagControlYellow?.alpha = CGFloat(variables.contains(CBUserFlagType.yellow.rawValue) ? 1.0 : kUserFlagTransparentAlphaValue)
             userFlagControlOrange?.alpha = CGFloat(variables.contains(CBUserFlagType.orange.rawValue) ? 1.0 : kUserFlagTransparentAlphaValue)

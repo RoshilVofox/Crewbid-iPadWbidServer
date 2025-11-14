@@ -22,7 +22,7 @@ class CBPresetLineSort: NSObject, NSCoding {
     var order: NSNumber?
     var abbreviation: String?
     var variables: [String: Any]?
-    var lineSortKeyMap: [String: Any]?
+    var lineSortKeyMap: BILineSortKeyMap?
     var isBidListSort: NSNumber?
     var arrayVariables: NSMutableArray?
 
@@ -42,6 +42,9 @@ class CBPresetLineSort: NSObject, NSCoding {
         self.order = sort.order
         self.abbreviation = sort.abbreviation
         self.isBidListSort = sort.isBidListSort
+        self.variables = sort.variables as? [String : Any]
+        self.arrayVariables = sort.arrayVariables as? NSMutableArray
+        self.lineSortKeyMap = sort.lineSortKeyMap
 
         if let cat = sort.category?.intValue,
            let typ = sort.type?.intValue,

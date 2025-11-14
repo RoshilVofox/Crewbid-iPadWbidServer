@@ -252,6 +252,7 @@ class CBsyncConflictViewController: UIViewController {
         let presetTVC = CBPresetsTVC()
         let arr = presetTVC.openPresetsFromFileWithBidPeriod(bidPeriod: self.bidPeriod!)
         if arr.count == 0 {
+            CBGlobalMethods.shared.hideCustomActivityIndicator()
             AlertService.showAlertForTopVC(title: "Crewbid", message: "You have NO Presets to Sync")
             return
         }

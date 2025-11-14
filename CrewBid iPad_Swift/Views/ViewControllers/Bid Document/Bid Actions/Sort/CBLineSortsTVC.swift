@@ -75,6 +75,7 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
             self.btnBids.isHidden = true
             btnSortTheBidlist.backgroundColor = .systemGreen
             btnSortTheScratchpad.backgroundColor = .systemRed
+            self.bidPeriod?.isBidListSortOn = 1
             
         }
         else {
@@ -84,6 +85,7 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
             self.btnBids.isHidden = false
             btnSortTheBidlist.backgroundColor = .systemRed
             btnSortTheScratchpad.backgroundColor = .systemGreen
+            self.bidPeriod?.isBidListSortOn = 0
             
         }
     }
@@ -130,7 +132,7 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
         sortMenuController.navigationController?.navigationBar.backgroundColor = .lightGray
         sortMenuController.menuItems = BILineSort.lineSortCategories(for: CBGlobalMethods.shared.selectedBidPeriod!) as NSArray
         sortMenuController.arrowDirection = .right
-        if bidPeriod?.isBidListSortOn == true {
+        if bidPeriod?.isBidListSortOn?.boolValue == true {
             sortMenuController.arrowDirection = .left
         }
         let navigationController = UINavigationController(rootViewController: sortMenuController)
