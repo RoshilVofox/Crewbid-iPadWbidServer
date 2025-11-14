@@ -22,4 +22,6 @@ class SegmentedTableViewCell: UITableViewCell {
         // Configure the view for the selected state
     }
 
+    @IBAction func vacationCheckAction(_ sender: Any) {
+    }
 }

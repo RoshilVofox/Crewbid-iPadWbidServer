@@ -741,7 +741,8 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                 // If vacation pill will go across two rows in calendar, create both buttons.
                 if column+tripLength > 7 {
                     buttonLength = 7 - column
-                    buttonImage = UIImage(named: "TripButton-rounded-left-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
+//                    buttonImage = UIImage(named: "TripButton-rounded-left-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
+                    buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.left))?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
                     vacayButtonFrame.size.width = min(CGFloat(tripLength), 7) * WidthSize
                     let button2 = UIImageView(frame: vacayButtonFrame)
                     button2.image = buttonImage
@@ -769,7 +770,8 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                             if tripLength > 7{
                                 vacayButtonFrame.size.width += 15
                             }
-                            buttonImage = UIImage(named:"TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
+//                            buttonImage = UIImage(named:"TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
+                            buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.right))?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
                             let otherButton2 = UIImageView(frame: vacayButtonFrame)
                             otherButton2.image = buttonImage
                             vacationButtons?.replaceObject(at: index, with: otherButton2)
@@ -793,12 +795,15 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                 }
                 else{// Vacation in one row only of the calendar.
                     if index < 0 {// Vacation starts before the visible calendar days, so show the rounded right image
-                        buttonImage = UIImage(named: "TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
+//                        buttonImage = UIImage(named: "TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
+                        buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.right))?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
                     }else if (index+tripLength-1) > (daysInCalendar-1){
                         // Vacay ends after the visible calendar days, so show the rounded left image
-                        buttonImage = UIImage(named: "TripButton-rounded-left-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
+//                        buttonImage = UIImage(named: "TripButton-rounded-left-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
+                        buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.left))?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
                     }else{
-                        buttonImage = UIImage(named: "TripButton-rounded-both-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
+//                        buttonImage = UIImage(named: "TripButton-rounded-both-yellow_iOS7")?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
+                        buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.both))?.resizableImage(withCapInsets: insets, resizingMode: .stretch)
                     }
                     vacayButtonFrame.size.width = CGFloat(tripLength) * WidthSize
                     let button2 = UIImageView(frame: vacayButtonFrame)

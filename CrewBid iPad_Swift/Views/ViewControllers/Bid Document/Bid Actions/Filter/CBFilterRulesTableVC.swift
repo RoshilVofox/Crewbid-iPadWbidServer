@@ -56,6 +56,7 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
         NotificationCenter.default.addObserver(self, selector: #selector(updateFilters), name: NSNotification.Name("refreshLines"), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("flipToBidList"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(flipToBidList), name: NSNotification.Name("flipToBidList"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadFilterTable), name: NSNotification.Name("ReloadFilterTable"), object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -66,6 +67,10 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     func setupUI(){
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
         updateBidListCount()
+    }
+    
+    @objc func reloadFilterTable(){
+        self.objFilterTableView.reloadData()
     }
     
     @objc func updateFilters(){

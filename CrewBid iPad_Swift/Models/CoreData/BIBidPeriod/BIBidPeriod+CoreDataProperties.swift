@@ -346,6 +346,12 @@ extension BIBidPeriod {
     
 }
 
+enum VacButtonShape {
+    case left
+    case right
+    case both
+}
+
 extension BIBidPeriod : Identifiable {
     
     func isFABid() -> Bool {
@@ -376,6 +382,48 @@ extension BIBidPeriod : Identifiable {
         let filtered = textFiles?.filtered(using: predicate)
         return filtered?.first as? BITextFile
     }
+    
+    func getVacationImage(_ shape: VacButtonShape) -> String{
+        if (self.swaptimizerStatus?.intValue ?? 0) < 1 {
+            if shape == .left{
+                return "TripButton-rounded-left-yellow_iOS7"
+            }else if shape == .right{
+                return "TripButton-rounded-right-yellow_iOS7"
+            }else{
+                return "TripButton-rounded-both-yellow_iOS7"
+            }
+        }
+        if shape == .left{
+            if self.vacationType == "CREWBID"{
+                return "TripButton-rounded-left-yellow_iOS7"
+            }else{
+                if self.isFABid(){
+                    return "TripButton-rounded-left-yellow_iOS7"
+                }
+                return "TripButton-rounded-left-green_iOS7"
+            }
+        }else if shape == .right{
+            if self.vacationType == "CREWBID"{
+                return "TripButton-rounded-right-yellow_iOS7"
+            }else{
+                if self.isFABid(){
+                    return "TripButton-rounded-right-yellow_iOS7"
+                }
+                return "TripButton-rounded-right-green_iOS7"
+            }
+        }else{
+            if self.vacationType == "CREWBID"{
+                return "TripButton-rounded-both-yellow_iOS7"
+            }else{
+                if self.isFABid(){
+                    return "TripButton-rounded-both-yellow_iOS7"
+                }
+                return "TripButton-rounded-both-green_iOS7"
+            }
+        }
+    }
+    
+    
     func isWBidmaxOverlapWithEom() -> Bool {
         var isNextMonth = false
         var savedVacationObject: NSManagedObject? = nil

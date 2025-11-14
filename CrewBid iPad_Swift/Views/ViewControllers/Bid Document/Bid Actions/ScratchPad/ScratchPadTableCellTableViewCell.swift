@@ -216,7 +216,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         var buttonImage: UIImage? = nil
         var button: CBTripButton? = nil
         let userdefaults = UserDefaults.standard
-        
+        let hideVacation = userdefaults.bool(forKey: kCBHideVacationKey)
         let daysInCalendar: Int = self.calendarData!.calendarDays.count
         let trips = self.line!.trips as! Set<AnyHashable>
         for case let trip as BITrip in trips {
@@ -225,7 +225,6 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                (self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue ||
                 self.bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue),
                let overlapType = trip.vacationOverlapType?.intValue, overlapType > 0 {
-                
                 // Only apply filtering logic if this trip overlaps with vacation
                 if tripOption == .dropAll {
                     continue
@@ -504,7 +503,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                 }else{
                     redEyePayLabel = nil
                 }
-                if (self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue) && trip.vacationOverlapType!.intValue > 0 && day.displayType!.intValue != BIDayDisplayType.normal.rawValue{
+                if (self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue) && trip.vacationOverlapType!.intValue > 0 && day.displayType!.intValue != BIDayDisplayType.normal.rawValue && !hideVacation{
                     if day.displayType?.intValue == BIDayDisplayType.fullPay.rawValue{
                         if CBUtils.isClawBack(line: self.line!, day: day, bidPeriod: self.bidPeriod!){
                             label.text = "CB"
@@ -702,7 +701,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                         timeLabel.backgroundColor = .clear
                         labelButton.addSubview(timeLabel)
                         
-                        if day.displayType?.intValue == BIDayDisplayType.normal.rawValue{
+                        if day.displayType?.intValue == BIDayDisplayType.normal.rawValue || hideVacation{
                             var xValue:CGFloat = 0.0
                             xValue = label.frame.origin.x + itemSize.width - 13
                             let weekDayInt = CBUtils.weekDay(from: trip.startDate!)
@@ -755,7 +754,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                         }
                     }
                 }
-                let hideVacation = userdefaults.bool(forKey: kCBHideVacationKey)
+                
                 if self.bidPeriod!.isFABid() && !hideVacation && (day.displayType?.intValue != BIDayDisplayType.normal.rawValue) {
                     if day.displayType?.intValue == BIDayDisplayType.fullPay.rawValue {
                         if CBUtils.isClawBack(line: self.line!, day: day, bidPeriod: self.bidPeriod!) {
@@ -789,7 +788,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         }
         vacationButtons?.removeAllObjects()
         vacationButtons?.addObjects(from: calendarData!.calendarDays as! [Any])
-        if self.bidPeriod!.containsVacay?.boolValue == true {
+        if self.bidPeriod!.containsVacay?.boolValue == true && !hideVacation {
             var vacayButtonFrame = CGRect(x: 0, y: 0, width: itemSize.width, height: itemSize.height)
             var buttonImage:UIImage? = nil
             let vacations = self.bidPeriod!.vacations
@@ -811,7 +810,9 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                 if column+tripLength > 7 {
                     buttonLength = 7 - column
 //                    vacayButtonFrame.size.width = CGFloat(buttonLength) * itemSize.width
-                    buttonImage = UIImage(named: "TripButton-rounded-left-yellow_iOS7")?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
+//                    buttonImage = UIImage(named: "TripButton-rounded-left-yellow_iOS7")?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
+                    buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.left))?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
+                    
                     vacayButtonFrame.size.height = buttonHeight
                     vacayButtonFrame.size.width = min(CGFloat(tripLength), 7) * itemSize.width
                     let button2 = UIImageView(frame: vacayButtonFrame)
@@ -841,7 +842,8 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                                 vacayButtonFrame.size.width += 15
                             }
                             vacayButtonFrame.size.height = buttonHeight
-                            buttonImage = UIImage(named:"TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: rightRoundedInsets, resizingMode: .stretch)
+//                            buttonImage = UIImage(named:"TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: rightRoundedInsets, resizingMode: .stretch)
+                            buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.right))?.resizableImage(withCapInsets: rightRoundedInsets, resizingMode: .stretch)
                             let otherButton2 = UIImageView(frame: vacayButtonFrame)
                             otherButton2.image = buttonImage
                             vacationButtons?.replaceObject(at: index, with: otherButton2)
@@ -865,12 +867,15 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                 }
                 else{// Vacation in one row only of the calendar.
                     if index < 0 {// Vacation starts before the visible calendar days, so show the rounded right image
-                        buttonImage = UIImage(named: "TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: rightRoundedInsets, resizingMode: .stretch)
+//                        buttonImage = UIImage(named: "TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: rightRoundedInsets, resizingMode: .stretch)
+                        buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.right))?.resizableImage(withCapInsets: rightRoundedInsets, resizingMode: .stretch)
                     }else if (index+tripLength-1) > (daysInCalendar-1){
                         // Vacay ends after the visible calendar days, so show the rounded left image
-                        buttonImage = UIImage(named: "TripButton-rounded-left-yellow_iOS7")?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
+//                        buttonImage = UIImage(named: "TripButton-rounded-left-yellow_iOS7")?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
+                        buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.left))?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
                     }else{
-                        buttonImage = UIImage(named: "TripButton-rounded-both-yellow_iOS7")?.resizableImage(withCapInsets: bothRoundedInsets, resizingMode: .stretch)
+//                        buttonImage = UIImage(named: "TripButton-rounded-both-yellow_iOS7")?.resizableImage(withCapInsets: bothRoundedInsets, resizingMode: .stretch)
+                        buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.both))?.resizableImage(withCapInsets: bothRoundedInsets, resizingMode: .stretch)
                     }
                     vacayButtonFrame.size.width = CGFloat(tripLength) * itemSize.width
                     vacayButtonFrame.size.height = buttonHeight

@@ -1031,6 +1031,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 DispatchQueue.main.async {
                     switch result {
                     case .success(let json):
+                        //MARK: need to handle the alerts if there is no account
                         if let pilotInfo = json["PilotInfo"] as? [String: Any],
                            pilotInfo["HasAccount"] as? Int == 1 {
                             print("Able to download crewbid vacation from API")

@@ -568,45 +568,29 @@ class CBUtils{
         }
         
         let stringURL = EndPoint.shared.latestNews
-        APIService.shared.fetchDownload(urlString: stringURL, completion: { result in
-            switch result{
+        
+        APIService.shared.fetchDownload(urlString: stringURL, httpMethod: .GET) { result in
+            switch result {
             case .success(let tempURL):
                 do {
+                    let fileManager = FileManager.default
+                    
+                    // Remove existing file if it exists
                     if fileManager.fileExists(atPath: destinationURL.path) {
                         try fileManager.removeItem(at: destinationURL)
                     }
+                    
+                    // Move downloaded temp file to final location
                     try fileManager.moveItem(at: tempURL, to: destinationURL)
+                    
                 } catch {
                     print("Error saving latest news: \(error.localizedDescription)")
                 }
 
             case .failure(let error):
-                print("Error downloading file: \(error.localizedDescription)")
+                print("Download failed with error: \(error.localizedDescription)")
             }
-        })
-        //        guard let url = URL(string: stringURL) else {
-        //            print("Invalid URL")
-        //            return
-        //        }
-//        let task = URLSession.shared.downloadTask(with: url) { tempLocalUrl, response, error in
-//            if let error = error {
-//                print("Error downloading file: \(error.localizedDescription)")
-//                return
-//            }
-//            guard let tempLocalUrl = tempLocalUrl else {
-//                print("No file URL found")
-//                return
-//            }
-//            do {
-//                if fileManager.fileExists(atPath: destinationURL.path) {
-//                    try fileManager.removeItem(at: destinationURL)
-//                }
-//                try fileManager.moveItem(at: tempLocalUrl, to: destinationURL)
-//            } catch {
-//                print("Error saving latest news: \(error.localizedDescription)")
-//            }
-//        }
-//        task.resume()
+        }
     }
     
 //    static func checkForNewsWithCompletionHandler(isDownloaded: @escaping (Bool) -> Void) {
@@ -991,7 +975,7 @@ class CBUtils{
                     completion(false)
                 }
             }else{
-                print("Error while downloading a file. Error description: %@", error!.localizedDescription)
+                print("Error while downloading a file. Error description:", error!.localizedDescription)
                 completion(false)
             }
         }.resume()

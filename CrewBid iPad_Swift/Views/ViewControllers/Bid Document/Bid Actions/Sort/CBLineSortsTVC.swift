@@ -32,6 +32,7 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
         updateLines()
         NotificationCenter.default.addObserver(self, selector: #selector(updateBidListCount), name: NSNotification.Name("updateBidListCount"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.setupLayoutView), name: NSNotification.Name("SortBidListAction"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadSortTable), name: NSNotification.Name("ReloadSortTable"), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -44,6 +45,11 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
         NotificationCenter.default.removeObserver("SortBidListAction")
         NotificationCenter.default.post(name: NSNotification.Name("SortViewWillDisappear"), object: self)
     }
+    
+    @objc func reloadSortTable(){
+        self.tableView.reloadData()
+    }
+    
     
     @objc func updateBidListCount(){
         var linesArray : [BILine] = []

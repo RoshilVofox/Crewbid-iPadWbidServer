@@ -1264,7 +1264,8 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                 if column+tripLength > 7 {
                     buttonLength = 7 - column
 //                    vacayButtonFrame.size.width = CGFloat(buttonLength) * itemSize.width
-                    buttonImage = UIImage(named: "TripButton-rounded-left-yellow_iOS7")?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
+//                    buttonImage = UIImage(named: "TripButton-rounded-left-yellow_iOS7")?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
+                    buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.left))?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
                     vacayButtonFrame.size.height = buttonHeight
                     vacayButtonFrame.size.width = min(CGFloat(tripLength), 7) * itemSize.width
                     let button2 = UIImageView(frame: vacayButtonFrame)
@@ -1294,7 +1295,8 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                                 vacayButtonFrame.size.width += 15
                             }
                             vacayButtonFrame.size.height = buttonHeight
-                            buttonImage = UIImage(named:"TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: rightRoundedInsets, resizingMode: .stretch)
+//                            buttonImage = UIImage(named:"TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: rightRoundedInsets, resizingMode: .stretch)
+                            buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.right))?.resizableImage(withCapInsets: rightRoundedInsets, resizingMode: .stretch)
                             let otherButton2 = UIImageView(frame: vacayButtonFrame)
                             otherButton2.image = buttonImage
                             vacationButtons?.replaceObject(at: index, with: otherButton2)
@@ -1318,12 +1320,15 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                 }
                 else{// Vacation in one row only of the calendar.
                     if index < 0 {// Vacation starts before the visible calendar days, so show the rounded right image
-                        buttonImage = UIImage(named: "TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: rightRoundedInsets, resizingMode: .stretch)
+//                        buttonImage = UIImage(named: "TripButton-rounded-right-yellow_iOS7")?.resizableImage(withCapInsets: rightRoundedInsets, resizingMode: .stretch)
+                        buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.right))?.resizableImage(withCapInsets: rightRoundedInsets, resizingMode: .stretch)
                     }else if (index+tripLength-1) > (daysInCalendar-1){
                         // Vacay ends after the visible calendar days, so show the rounded left image
-                        buttonImage = UIImage(named: "TripButton-rounded-left-yellow_iOS7")?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
+//                        buttonImage = UIImage(named: "TripButton-rounded-left-yellow_iOS7")?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
+                        buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.left))?.resizableImage(withCapInsets: leftRoundedInsets, resizingMode: .stretch)
                     }else{
-                        buttonImage = UIImage(named: "TripButton-rounded-both-yellow_iOS7")?.resizableImage(withCapInsets: bothRoundedInsets, resizingMode: .stretch)
+//                        buttonImage = UIImage(named: "TripButton-rounded-both-yellow_iOS7")?.resizableImage(withCapInsets: bothRoundedInsets, resizingMode: .stretch)
+                        buttonImage = UIImage(named: self.bidPeriod!.getVacationImage(.both))?.resizableImage(withCapInsets: bothRoundedInsets, resizingMode: .stretch)
                     }
                     vacayButtonFrame.size.width = CGFloat(tripLength) * itemSize.width
                     vacayButtonFrame.size.height = buttonHeight
