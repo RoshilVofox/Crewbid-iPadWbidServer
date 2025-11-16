@@ -110,6 +110,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
     
     
     @objc func updatePresets(_ notification: Notification) {
+        updateBidListCount()
         if let sender = notification.object as? UIViewController, sender === self {
                 // 👇 Ignore notification posted by self
                 return

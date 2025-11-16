@@ -311,6 +311,7 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
 //    MARK: refresh line notification
     @objc func updateLines() {
         reloadRuleCell()
+        updateBidListCount()
     }
 }
 extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{

@@ -1630,6 +1630,7 @@ class CBJSONSyncParsing: NSObject {
                         }
                     }
                     dict["ArrayVariables"] = variablesArray
+                    dict["Variable"] = variables
                     
                     if sort.abbreviation == "WorkSort" {
                         dict["Ascending"] = false
@@ -2603,6 +2604,23 @@ class CBJSONSyncParsing: NSObject {
             return nil
         }
     }
+    
+    func convertStringToDictionaryNotArray(_ string: String) -> [String: Any]? {
+        guard let data = string.data(using: .utf8) else { return nil }
+        
+        do {
+            if let jsonDict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                return jsonDict
+            } else {
+                print("⚠️ JSON is not a dictionary")
+                return nil
+            }
+        } catch {
+            print("❌ JSON parsing error: \(error.localizedDescription)")
+            return nil
+        }
+    }
+
 
     func setPresetToLocalDB(details: [[String: Any]]) {
         let presetsArray = NSMutableArray()
@@ -3275,8 +3293,8 @@ class CBJSONSyncParsing: NSObject {
         if details["lstQuickFilters"] == nil {
             return
         }
-        let lstQuickFiltersArray = details["lstQuickFiltersArray"] as? NSMutableArray
-        if lstQuickFiltersArray?.count == 0 {
+        let lstQuickFiltersArray = details["lstQuickFilters"] as? [Any]
+        if lstQuickFiltersArray?.count == 0 || lstQuickFiltersArray == nil {
             let biReader = BIBidInfoReader()
             biReader.bidPeriod = self.bidPeriod
             biReader.addDefaultFilterRules(context: self.context)
@@ -3581,9 +3599,9 @@ class CBJSONSyncParsing: NSObject {
         if details["lstFilters"] == nil {
             return
         }
-        let lstFilters =  details["lstFilters"] as? NSMutableArray
-        for case let filterDict as [String: Any] in lstFilters! {
-            let subfilters = details["Listfilter"] as? NSMutableArray
+        let lstFilters =  details["lstFilters"] as? [Any]
+        for case let filterDict as [String: Any] in lstFilters ?? [] {
+            let subfilters = filterDict["Listfilter"] as? [Any]
             // saveing each filters from the json to coredata.
             
             var commuteValueDict = [String: Any]()
@@ -3701,8 +3719,8 @@ class CBJSONSyncParsing: NSObject {
                     else if filterRule.abbreviation == "OCB" {
                         var variables = [String: Any]()
                         var variable = subfilter["Variable"] as? [String: Any]
-                        let overNightYesCities = variable?["OverNightYes"] as? NSMutableArray
-                        let overNightNoCities = variable?["OverNightNo"] as? NSMutableArray
+                        let overNightYesCities = variable?["OverNightYes"] as? [Any]
+                        let overNightNoCities = variable?["OverNightNo"] as? [Any]
                         
                         for case let overNightYesCity as String in overNightYesCities ?? [] {
                             variables[overNightYesCity] = 2
@@ -3724,12 +3742,18 @@ class CBJSONSyncParsing: NSObject {
                             try? self.context.save()
                         }
                         filterRule.variables = variables as NSDictionary
-                        CBUtils.overnightBulkRedApply(noArray: overNightNoCities ?? [])
-                        CBUtils.overnightBulkGreenApply(yesArray: overNightYesCities ?? [])
+                        CBUtils.overnightBulkRedApply(noArray: NSArray(array:  overNightNoCities ?? []))
+                        CBUtils.overnightBulkGreenApply(yesArray: NSArray(array: overNightYesCities ?? []))
                     }
 //                    days of month
                     else if (filterRule.abbreviation == "WantDays" || filterRule.abbreviation == "MonthDays" || filterRule.abbreviation == "TripStarts" || filterRule.abbreviation == "TripEnds") {
-                        filterRule.variables = BIFilterRule.configureMonthDayFilter((subfilter["Variable"] as? NSMutableArray)!) as NSDictionary
+                        if subfilter["Variable"] as? NSMutableArray != nil {
+                            filterRule.variables = BIFilterRule.configureMonthDayFilter((subfilter["Variable"] as? NSMutableArray)!) as NSDictionary
+                        }
+                        else {
+                            let variableArray = subfilter["Variable"] as? [Any]
+                            filterRule.variables = BIFilterRule.configureMonthDayFilter(NSMutableArray(array: variableArray ?? [])) as NSDictionary
+                        }
                     }
 //                    Regional overnightCities
                     else if currentTitle == "Regional Overnight Cities" {
@@ -3737,10 +3761,11 @@ class CBJSONSyncParsing: NSObject {
                         let variable = subfilter["Variable"] as? [String: Any]
                         let set = NSSet(array: [variable?["CITY"] as? [Any]] ?? [])
                         variables = [
-                            "SET": set,
+                            "SET": variable?["CITY"] as? [Any],
                             "RANGEEND": variable?["RANGEEND"],
-                            "RANGEEND": variable?["RANGEEND"],
-                            "VALUE": NSNumber(value: (variable?["VALUE"] as? Int)!)
+                            "RANGESTART": variable?["RANGESTART"],
+                            "VALUE": NSNumber(value: (variable?["VALUE"] as? Int)!),
+                            "CITY": ""
                         ]
                         filterRule.variables = variables as NSDictionary
                     }
@@ -3814,10 +3839,10 @@ class CBJSONSyncParsing: NSObject {
                 commutInfoVC.commutabilityType = CommutabilityType.filter
                 commutInfoVC.isNonStop = isNonStop
                 commutInfoVC.commuteCityFromSync = commuteCity
-                commutInfoVC.value = NSNumber(value: (dict2?["cmtPercentage"] as? Int)!)
-                commutInfoVC.secondCellValue = NSNumber(value: (dict2?["nMid"] as? Int)!)
-                commutInfoVC.thirdCellValue = NSNumber(value: (dict2?["cmtFrBaOv"] as? Int)!)
-                commutInfoVC.type = NSNumber(value: (dict2?["cmtGreaterOrLesser"] as? Int)!)
+                commutInfoVC.value = NSNumber(value: (Int(dict2?["cmtPercentage"] as! String))!)
+                commutInfoVC.secondCellValue = NSNumber(value: (Int(dict2?["nMid"] as! String))!)
+                commutInfoVC.thirdCellValue = NSNumber(value: (Int(dict2?["cmtFrBaOv"] as! String))!)
+                commutInfoVC.type = NSNumber(value: (Int(dict2?["cmtGreaterOrLesser"] as! String))!)
                 commutInfoVC.calculateCommuteLineProperties()
             }
 //            reportRelease
@@ -4032,12 +4057,12 @@ class CBJSONSyncParsing: NSObject {
                 UserDefaults.standard.set(noMidCheckState, forKey: kCBDefaultsCommutingNoMidKey)
             }
         }
-        let lstSorts = details["lstSorts"] as? NSMutableArray
+        let lstSorts = details["lstSorts"] as? [Any]
         for case let sortDict as [String: Any] in lstSorts ?? [] {
             if sortDict["ListSort"] == nil {
                 return
             }
-            let subsorts = sortDict["ListSort"] as? NSMutableArray
+            let subsorts = sortDict["ListSort"] as? [Any]
             // saveing each sorts from the json to coredata.
             var lineSortAutoComute = [String: Any]()
             for case let subsort as [String: Any] in subsorts ?? [] {
@@ -4057,6 +4082,9 @@ class CBJSONSyncParsing: NSObject {
                     if subsort["ArrayVariables"] != nil {
                         let tmp = subsort["ArrayVariables"] as? NSMutableArray
                         lineSort.arrayVariables = tmp
+                    }
+                    if subsort["Variable"] != nil {
+                        lineSort.variables = subsort["Variable"] as? NSDictionary
                     }
                     lineSort.order = NSNumber(value: (subsort["Order"] as? Int)!)
                     lineSort.name = subsort["Name"] as? String
@@ -4081,7 +4109,7 @@ class CBJSONSyncParsing: NSObject {
                     
                     let ascending = subsort["Ascending"] as? Bool
                     lineSort.ascending = NSNumber(booleanLiteral: ascending!)
-                    lineSort.isMutable = NSNumber(value: (subsort["IsMutable"] as? Int)!)
+                    lineSort.isMutable = NSNumber(value: (subsort["isMutable"] as? Int)!)
                     
                     if subsort["City"] != nil {
                         lineSort.city = subsort["City"] as? String
@@ -4089,7 +4117,11 @@ class CBJSONSyncParsing: NSObject {
                     }
                     else if lineSort.abbreviation == "flag" {
                         var variable = [String: Any]()
-                        let arrayVariables = lineSort.arrayVariables as? NSMutableArray
+                        if subsort["ArrayVariables"] != nil {
+                            let tmp = subsort["ArrayVariables"] as! [Any]
+                            lineSort.arrayVariables = NSArray(array: tmp)
+                        }
+                        let arrayVariables = lineSort.arrayVariables
                         for i in 0..<arrayVariables!.count {
                             let val = arrayVariables![i] as? NSNumber
                             if val == 0 {
@@ -4147,6 +4179,7 @@ class CBJSONSyncParsing: NSObject {
                         }
                         lineSort.arrayVariables = userFlags
                         let lineFetch: NSFetchRequest<BILine> = BILine.fetchRequest()
+                        lineFetch.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
                         lineFetch.sortDescriptors = [NSSortDescriptor(key: "number", ascending: true)]
                         let lineresult = try? self.context.fetch(lineFetch)
                         for line in lineresult ?? [] {
@@ -4163,7 +4196,7 @@ class CBJSONSyncParsing: NSObject {
                         try? self.context.save()
                     }
                     else if (lineSort.abbreviation == "OffSort" || lineSort.abbreviation == "WorkSort" || lineSort.abbreviation == "TripStartSort") {
-                        lineSort.variables = BILineSort.configureMonthDayFilter((subsort["ArrayVariables"] as? NSMutableArray)!) as NSDictionary
+                        lineSort.variables = BILineSort.configureMonthDayFilter(NSMutableArray(array: subsort["ArrayVariables"] as! [Any])) as NSDictionary
                     }
                     else if lineSort.abbreviation == "Commute" {
                         let varb = subsort["Variable"] as? [String: Any]
@@ -4249,7 +4282,7 @@ class CBJSONSyncParsing: NSObject {
                     }
                     else if currentTitle == "Regional Overnight Cities" {
                         let variable = subsort["Variable"] as? [String: Any]
-                        let setArray = variable!["City"] as? [Any]
+                        let setArray = variable!["CITY"] as? [Any]
                         let set = NSSet(array: setArray!)
                         lineSort.variables = ["SET": set]
                     }
@@ -4753,6 +4786,7 @@ class CBJSONSyncParsing: NSObject {
     func getFlaggedLinesDictFromLocalDB() -> [String: Any] {
         var flaggedDetails = [String: Any]()
         let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "number", ascending: true)]
         do {
             let results = try self.context.fetch(fetchRequest)
@@ -4777,7 +4811,9 @@ class CBJSONSyncParsing: NSObject {
     func getBidListLinesDictFromLocalDB() -> [String: Any] {
         var bidListDict = [String: Any]()
         let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "bidOrder > 0")
+        let predicate1 = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+        let predicate2 = NSPredicate(format: "bidOrder > 0")
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
         do {
             let results = try self.context.fetch(fetchRequest)
             var dictArray = NSMutableArray()
@@ -4988,22 +5024,22 @@ class CBJSONSyncParsing: NSObject {
                     completion(resultd)
                     return
                 }
-                if responseDict["StateContent"] != nil {
-                    let contentString = responseDict["StateContent"] as? String
-                    let contentDict = self.convertStringToDictionary(contentString!)
+                if let contentString = responseDict["StateContent"] as? String,
+                   !contentString.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                   let contentDict = self.convertStringToDictionaryNotArray(contentString),
+                   !contentDict.isEmpty {
                     DispatchQueue.main.async {
-                        let contentDictFirst = contentDict![0]
-                        self.setMyCalToLocalDB(details: contentDictFirst)
-                        self.setTrashLineAndDetailsToLocalDB(details: contentDictFirst)
-                        self.setQuickFilterToLocalDB(details: contentDictFirst)
-                        self.setFlaggedLineAndDetailsToLocalDB(details: contentDictFirst)
-                        self.setFilterToLocalDB(details: contentDictFirst)
-                        self.setSortToLocalDB(details: contentDictFirst)
-                        self.setBidListDetailsToLocalDB(details: contentDictFirst)
-                        self.setInsertionIndexToLocalDB(details: contentDictFirst)
-                        self.setASortConditions(details: contentDictFirst)
-                        self.setFaEOMDates(details: contentDictFirst)
-                        self.setVacationButtonsLocalDB(details: contentDictFirst)
+                        self.setMyCalToLocalDB(details: contentDict)
+                        self.setTrashLineAndDetailsToLocalDB(details: contentDict)
+                        self.setQuickFilterToLocalDB(details: contentDict)
+                        self.setFlaggedLineAndDetailsToLocalDB(details: contentDict)
+                        self.setFilterToLocalDB(details: contentDict)
+                        self.setSortToLocalDB(details: contentDict)
+                        self.setBidListDetailsToLocalDB(details: contentDict)
+                        self.setInsertionIndexToLocalDB(details: contentDict)
+                        self.setASortConditions(details: contentDict)
+                        self.setFaEOMDates(details: contentDict)
+                        self.setVacationButtonsLocalDB(details: contentDict)
                         self.bidPeriod!.isStateFileModifiedToSync = NSNumber(booleanLiteral: false)
                         self.bidPeriod!.stateSyncVersion = NSNumber(value: ((self.arrayDictRecived?.first?["StateVersionNumber"] as? Int) ?? 0))
                         
@@ -5037,45 +5073,71 @@ class CBJSONSyncParsing: NSObject {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM/dd/yyyy"
         dateFormatter.timeZone = TimeZone(abbreviation: "GMT")
-        
-        let date1 = dateFormatter.date(from: myCalStartDate!)
-        let date2 = dateFormatter.date(from: myCalEndDate!)
-        
+        if myCalEnabled?.intValue != 0 {
+            let date1 = dateFormatter.date(from: myCalStartDate!)
+            let date2 = dateFormatter.date(from: myCalEndDate!)
+            bidPeriod!.myCalStartDate = date1
+            bidPeriod!.myCalEndDate = date2
+        }
+        else {
+            bidPeriod!.myCalStartDate = nil
+            bidPeriod!.myCalEndDate = nil
+        }
         bidPeriod!.myCalEnabled = myCalEnabled
-        bidPeriod!.myCalStartDate = date1
-        bidPeriod!.myCalEndDate = date2
     }
     
     func setTrashLineAndDetailsToLocalDB(details: [String: Any]) {
         if details["trashedLines"] != nil {
             if self.bidPeriod!.isFABid() {
-                let trashedLinesArray = details["trashedLines"] as? NSMutableArray
-                self.bidPeriod!.lastTrashedDetails = trashedLinesArray
+                let trashedLinesArray = details["trashedLines"] as? [Any]
+                self.bidPeriod!.lastTrashedDetails = NSArray(array: trashedLinesArray ?? [])
                 let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
+                fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
                 let allLines = try? self.lineManger?.managedObjectContext.fetch(fetchRequest)
                 for line in allLines ?? [] {
-                    line.isTrashed = NSNumber(booleanLiteral: false)
-                    let faLineNumber = "\(String(describing: line.number?.stringValue))\(line.faPositionString)"
-                    for trashedLineNum in trashedLinesArray ?? [] {
-                        let trashedArray = (trashedLineNum as? String)?.components(separatedBy: ",")
-                        if trashedArray!.contains(faLineNumber) {
-                            line.isTrashed = NSNumber(booleanLiteral: true)
+                    // build the value you want to check
+                    let faLineNumber = "\(line.number?.stringValue ?? "")\(line.faPositionString ?? "")"
+
+                    // flatten trashedLinesArray -> [String]
+                    let flattened: [String] = (trashedLinesArray as? [Any])?.flatMap { element -> [String] in
+                        // each element is itself an array (NSArray)
+                        if let inner = element as? [Any] {
+                            return inner.compactMap { item in
+                                let s = String(describing: item)
+                                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                                return s.isEmpty ? nil : s
+                            }
+                        } else {
+                            // safety: single value
+                            let s = String(describing: element)
+                                .trimmingCharacters(in: .whitespacesAndNewlines)
+                            return s.isEmpty ? [] : [s]
                         }
-                    }
+                    } ?? []
+
+                    // now check membership
+                    let isTrashed = flattened.contains(faLineNumber)
+                    line.isTrashed = NSNumber(value: isTrashed)
                 }
             }
             else {
-                let trashedLinesArray = details["trashedLines"] as? NSMutableArray
-                self.bidPeriod!.lastTrashedDetails = trashedLinesArray
+                let trashedLinesArray = details["trashedLines"] as? [Any]
+                self.bidPeriod!.lastTrashedDetails = NSArray(array: trashedLinesArray ?? [])
                 let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
+                fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
                 let allLines = try? self.lineManger?.managedObjectContext.fetch(fetchRequest)
                 for line in allLines ?? [] {
-                    if trashedLinesArray!.contains(line.number!.stringValue) {
-                        line.isTrashed = NSNumber(booleanLiteral: true)
-                    }
-                    else {
-                        line.isTrashed = NSNumber(booleanLiteral: false)
-                    }
+                    // Convert array items to clean strings
+                    let cleanedItems = trashedLinesArray?.compactMap { item -> String? in
+                        let str = String(describing: item)
+                            .trimmingCharacters(in: CharacterSet(charactersIn: "() \n\t "))
+                        return str.isEmpty ? nil : str
+                    } ?? []
+
+                    // Check if line number is in the array
+                    let isTrashed = cleanedItems.contains(line.number?.stringValue ?? "")
+
+                    line.isTrashed = NSNumber(value: isTrashed)
                 }
             }
             try? lineManger?.managedObjectContext.save()
@@ -5090,7 +5152,7 @@ class CBJSONSyncParsing: NSObject {
             line.userFlagType = 0
         }
         if details["flagDetails"] != nil {
-            let flaggedLinesArray = details["flagDetails"] as? NSMutableArray
+            let flaggedLinesArray = details["flagDetails"] as? [Any]
             var flaggedLineNumbers = NSMutableArray()
             for case let dict as [String: Any] in flaggedLinesArray! {
                 if dict["LineNum"] != nil {
@@ -5098,7 +5160,9 @@ class CBJSONSyncParsing: NSObject {
                 }
             }
             let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "number IN %@", flaggedLineNumbers)
+            let predicate1 = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+            let predicate2 = NSPredicate(format: "number IN %@", flaggedLineNumbers)
+            fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
             let linesForFlag = try? self.lineManger?.managedObjectContext.fetch(fetchRequest)
             for case let flaggedLine as [String: Any] in flaggedLinesArray! {
                 for line in linesForFlag ?? [] {
@@ -5149,8 +5213,9 @@ class CBJSONSyncParsing: NSObject {
         if details["BidListDetails"] == nil {
             return
         }
-        let bidListDetails = details["BidListDetails"] as? NSMutableArray
+        let bidListDetails = details["BidListDetails"] as? [Any]
         let fetchRequest: NSFetchRequest<BILine> = BILine.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
         let allLines = try? self.lineManger?.managedObjectContext.fetch(fetchRequest)
         if allLines?.count ?? 0 > 0 {
             var reserveDetails = [String: Any]()
@@ -5159,6 +5224,7 @@ class CBJSONSyncParsing: NSObject {
                 line.isFrozen = 0
                 line.frozenOrder = NSNumber(booleanLiteral: false)
                 line.previousBidOrder = 0
+                line.bidOrder = 0
                 line.markerTitle = nil
                 if line.faBidLineMrt?.boolValue == true {
                     self.lineManger?.managedObjectContext.delete(line)
@@ -5183,7 +5249,7 @@ class CBJSONSyncParsing: NSObject {
                             continue
                         }
                         if line.number?.intValue == (bidListDetail["LineNum"] as? NSNumber)?.intValue {
-                            if line.faPositionString == (bidListDetail["FAPosition"] as? NSNumber)?.stringValue {
+                            if line.faPositionString == String(describing: bidListDetail["FAPosition"] ?? "") {
                                 if bidListDetail["IsFreeze"] != nil {
                                     line.isFrozen = NSNumber(value: (bidListDetail["IsFreeze"] as? Bool ?? false))
                                 }
@@ -5242,7 +5308,7 @@ class CBJSONSyncParsing: NSObject {
     }
     
     func setInsertionIndexToLocalDB(details: [String: Any]) {
-        let bidListDetails = details["BidListDetails"] as? NSMutableArray
+        let bidListDetails = details["BidListDetails"] as? [Any]
         let insertLineBetween = details["InsertLineBetween"] as? [String: Any]
         if insertLineBetween != nil && bidListDetails != nil {
             let insertIndex = NSNumber(value: (insertLineBetween!["insertIndex"] as? Int)!)
@@ -5260,7 +5326,7 @@ class CBJSONSyncParsing: NSObject {
                 objinsertion.above = isInsertLineAbove
                 objinsertion.index = insertIndex
                 try? self.context.save()
-                NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+                NotificationCenter.default.post(name: NSNotification.Name("ReloadBidListView"), object: self)
             }
         }
     }
@@ -5310,13 +5376,13 @@ class CBJSONSyncParsing: NSObject {
                     self.bidPeriod!.isFAVacationOn = menubarButton?["vacationButton"] as? NSNumber
                 }
             }
-            let vacations = details["Vacation"] as? NSMutableArray
+            let vacations = details["Vacation"] as? [Any]
             if vacations?.count ?? 0 > 0 {
                 let vacation = vacations?[0] as? [String: Any]
                 self.bidPeriod!.vacationType = vacation!["type"] as? String
             }
             try? self.lineManger?.managedObjectContext.save()
-            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+            NotificationCenter.default.post(name: NSNotification.Name("VacationValueSynced"), object: self)
         }
         else {
             return

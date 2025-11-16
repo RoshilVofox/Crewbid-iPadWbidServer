@@ -70,6 +70,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         self.updateTitle()
         self.sortButtonColorChange()
         NotificationCenter.default.addObserver(self, selector: #selector(self.returnLine(_:)), name: NSNotification.Name(rawValue: "CBReturnLinesNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.reloadBidListView(_:)), name: NSNotification.Name(rawValue: "ReloadBidListView"), object: nil)
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -3447,5 +3448,24 @@ extension CBBidListVC: CBSortOptionDelegate{
         }
     }
     
+    @objc func reloadBidListView(_ note: Notification?) {
+        let insertPointFetch: NSFetchRequest<BIInsertionPoint> = BIInsertionPoint.fetchRequest()
+        insertPointFetch.predicate = NSPredicate(format: "bidPeriod == %@", CBGlobalMethods.shared.selectedBidPeriod!)
+        if bidPeriod == nil {
+            bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
+        }
+        let results = try? CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext?.fetch(insertPointFetch)
+        if results?.count ?? 0 > 0 {
+            self.insertionPoint = results?.first
+        }
+        else {
+            insertionPoint = BIInsertionPoint(context: CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!)
+            insertionPoint?.bidPeriod = self.bidPeriod
+            insertionPoint?.index = 0
+            insertionPoint?.above = false
+            try? bidPeriod.managedObjectContext?.save()
+        }
+        self.tableViewNormalView.reloadData()
+    }
     
 }

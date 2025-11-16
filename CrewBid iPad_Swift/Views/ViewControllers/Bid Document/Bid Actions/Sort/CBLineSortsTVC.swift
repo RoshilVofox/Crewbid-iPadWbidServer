@@ -186,6 +186,7 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
     }
     
     @objc func updateLines() {
+        updateBidListCount()
         bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         let moc = bidPeriod?.managedObjectContext
         let fetchRequest: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
