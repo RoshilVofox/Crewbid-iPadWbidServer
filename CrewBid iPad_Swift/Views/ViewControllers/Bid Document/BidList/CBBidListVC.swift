@@ -385,90 +385,216 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: nil)
     }
     
+//    @objc func moveSelectedLinesToInsertionIndex() {
+//        CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
+//        CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
+//        CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
+//        var selectedIndexPaths = NSMutableArray()
+//        selectedIndexPaths = selectedCellIndexPaths
+//        if selectedIndexPaths.count == 0 {
+//            return
+//        }
+//        let firstSelectedIndex = selectedIndexPaths[0] as? IndexPath
+//        let lastSelectedIndex: IndexPath? = selectedIndexPaths.lastObject as? IndexPath
+//        var firstRow: Int = firstSelectedIndex!.row
+//        var lastRow: Int? = lastSelectedIndex?.row
+//        for case let ip as IndexPath in selectedIndexPaths {
+//            if ip.row < firstRow {
+//                firstRow = ip.row
+//            }
+//            if ip.row > lastRow! {
+//                lastRow = ip.row
+//            }
+//        }
+//        
+//        var affectedRows = self.linesArray as [Any]
+//        (affectedRows as NSArray).sortedArray(using: [NSSortDescriptor(key: "bidOrder", ascending: true)])
+//        var movedLines = [AnyHashable]()
+//        let removedIndexes = NSMutableIndexSet()
+//        var insertionIndex: Int = self.insertAbove ? self.insertionIndex : self.insertionIndex + 1
+//        let countOfBidLines: Int = self.linesArray.count
+//        for case let indexPath as IndexPath in selectedIndexPaths {
+//            let row: Int = indexPath.row
+//            let line: BILine? = affectedRows[row] as? BILine
+//            if let aLine = line {
+//                movedLines.append(aLine)
+//            }
+//            removedIndexes.add(row)
+//            if ((line?.markerTitle) != nil) && row < countOfBidLines - 1 {
+//                let nextLine: BILine? = affectedRows[row + 1] as? BILine
+//                if nil == nextLine?.markerTitle {
+//                    nextLine?.markerTitle = line?.markerTitle
+//                }
+//            }
+//            line?.markerTitle = nil
+//            if insertAbove {
+//                let insertionPointLine: BILine? = affectedRows[insertionIndex] as? BILine
+//                if insertionPointLine?.markerTitle != nil {
+//                    line?.markerTitle = insertionPointLine?.markerTitle
+//                    insertionPointLine?.markerTitle = nil
+//                }
+//            }
+//            if insertionIndex >= 0 && insertionIndex < linesArray.count {
+//                let endLine = linesArray[insertionIndex]
+//                if (endLine.isFrozen != 0) {
+//                    line!.isFrozen = true
+//                }
+//            }
+//        }
+//        
+//        for deletionIndex in removedIndexes.reversed() { affectedRows.remove(at: deletionIndex) }
+//        let countOfLinesRemovedBelowInsertionIndex: Int = removedIndexes.countOfIndexes(in: NSRange(location: 0, length: insertionIndex))
+//        insertionIndex -= countOfLinesRemovedBelowInsertionIndex
+//        let insertedIndexes = NSIndexSet(indexesIn: NSRange(location: insertionIndex, length: selectedIndexPaths.count))
+//        for (objectIndex, insertionIndex) in insertedIndexes.enumerated() { affectedRows.insert((movedLines)[objectIndex], at: insertionIndex) }
+//        if self.insertionIndex < firstRow {
+//            firstRow = self.insertionIndex
+//        }
+//        if lastRow! < insertionIndex + selectedIndexPaths.count - 1 {
+//            lastRow = insertionIndex + selectedIndexPaths.count - 1
+//        }
+//  
+//        for i in firstRow...lastRow! {
+//            let line: BILine? = affectedRows[i] as? BILine
+//            line?.bidOrder = i + 1 as NSNumber
+//        }
+//        previousInsertionIndex = insertionIndex
+//        self.insertionIndex = self.insertionIndex + selectedIndexPaths.count - countOfLinesRemovedBelowInsertionIndex
+//        insertedIndexes.enumerate({(_ idx: Int, _ stop:UnsafeMutablePointer<ObjCBool>) -> Void in
+//            let idxPth = IndexPath(row: idx, section: 0)
+//            tableViewNormalView.selectRow(at: idxPth, animated: false, scrollPosition: .none)
+//        })
+//        selectedCellIndexPaths.removeAllObjects()
+//        bidPeriod.managedObjectContext?.undoManager?.setActionName("Move Selected Line\(selectedIndexPaths.count > 1 ? "s" : "")")
+//        UserDefaults.standard.setValue(true, forKey: "isShouldScrollToInsertionIndex")
+//        self.updateBidList()
+//    }
+    
     @objc func moveSelectedLinesToInsertionIndex() {
         CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
         CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
         CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
+
         var selectedIndexPaths = NSMutableArray()
         selectedIndexPaths = selectedCellIndexPaths
-        if selectedIndexPaths.count == 0 {
-            return
-        }
+
+        if selectedIndexPaths.count == 0 { return }
+
         let firstSelectedIndex = selectedIndexPaths[0] as? IndexPath
         let lastSelectedIndex: IndexPath? = selectedIndexPaths.lastObject as? IndexPath
         var firstRow: Int = firstSelectedIndex!.row
         var lastRow: Int? = lastSelectedIndex?.row
+
         for case let ip as IndexPath in selectedIndexPaths {
-            if ip.row < firstRow {
-                firstRow = ip.row
-            }
-            if ip.row > lastRow! {
-                lastRow = ip.row
-            }
+            if ip.row < firstRow { firstRow = ip.row }
+            if ip.row > lastRow! { lastRow = ip.row }
         }
-        
-        var affectedRows = self.linesArray as [Any]
-        (affectedRows as NSArray).sortedArray(using: [NSSortDescriptor(key: "bidOrder", ascending: true)])
-        var movedLines = [AnyHashable]()
+
+        // -------- FIX #1: Sort properly (use NSMutableArray for work) --------
+        let sorted = (self.linesArray as NSArray)
+            .sortedArray(using: [NSSortDescriptor(key: "bidOrder", ascending: true)])
+        let affectedRows = NSMutableArray(array: sorted)
+
+        // Use typed array for moved lines
+        var movedLines = [BILine]()
         let removedIndexes = NSMutableIndexSet()
+
         var insertionIndex: Int = self.insertAbove ? self.insertionIndex : self.insertionIndex + 1
         let countOfBidLines: Int = self.linesArray.count
+
+        // Collect moved lines + build removedIndexes
         for case let indexPath as IndexPath in selectedIndexPaths {
-            let row: Int = indexPath.row
-            let line: BILine? = affectedRows[row] as? BILine
+            let row = indexPath.row
+            let line = affectedRows[row] as? BILine
+
             if let aLine = line {
                 movedLines.append(aLine)
             }
+
             removedIndexes.add(row)
-            if ((line?.markerTitle) != nil) && row < countOfBidLines - 1 {
-                let nextLine: BILine? = affectedRows[row + 1] as? BILine
-                if nil == nextLine?.markerTitle {
-                    nextLine?.markerTitle = line?.markerTitle
+
+            if let title = line?.markerTitle, row < countOfBidLines - 1 {
+                let nextLine = affectedRows[row + 1] as? BILine
+                if nextLine?.markerTitle == nil {
+                    nextLine?.markerTitle = title
                 }
             }
+
             line?.markerTitle = nil
+
             if insertAbove {
-                let insertionPointLine: BILine? = affectedRows[insertionIndex] as? BILine
-                if insertionPointLine?.markerTitle != nil {
-                    line?.markerTitle = insertionPointLine?.markerTitle
-                    insertionPointLine?.markerTitle = nil
+                // guard insertionIndex is valid in affectedRows
+                if insertionIndex >= 0 && insertionIndex < affectedRows.count {
+                    let insertionPointLine = affectedRows[insertionIndex] as? BILine
+                    if insertionPointLine?.markerTitle != nil {
+                        line?.markerTitle = insertionPointLine?.markerTitle
+                        insertionPointLine?.markerTitle = nil
+                    }
                 }
             }
+
             if insertionIndex >= 0 && insertionIndex < linesArray.count {
                 let endLine = linesArray[insertionIndex]
                 if (endLine.isFrozen != 0) {
-                    line!.isFrozen = true
+                    line?.isFrozen = true
                 }
             }
         }
-        
-        for deletionIndex in removedIndexes.reversed() { affectedRows.remove(at: deletionIndex) }
-        let countOfLinesRemovedBelowInsertionIndex: Int = removedIndexes.countOfIndexes(in: NSRange(location: 0, length: insertionIndex))
+
+        // -------- FIX #2: Remove cleanly (reverse order) --------
+        for deletionIndex in removedIndexes.reversed() {
+            affectedRows.removeObject(at: deletionIndex)
+        }
+
+        // adjust insertionIndex after removal
+        let countOfLinesRemovedBelowInsertionIndex =
+            removedIndexes.countOfIndexes(in: NSRange(location: 0, length: insertionIndex))
         insertionIndex -= countOfLinesRemovedBelowInsertionIndex
-        let insertedIndexes = NSIndexSet(indexesIn: NSRange(location: insertionIndex, length: selectedIndexPaths.count))
-        for (objectIndex, insertionIndex) in insertedIndexes.enumerated() { affectedRows.insert((movedLines)[objectIndex], at: insertionIndex) }
+
+        // -------- FIX #3: Insert moved lines safely (no NSIndexSet enumeration bug) --------
+        for (i, obj) in movedLines.enumerated() {
+            affectedRows.insert(obj, at: insertionIndex + i)
+        }
+
+        // Adjust UI selection range
         if self.insertionIndex < firstRow {
             firstRow = self.insertionIndex
         }
+
         if lastRow! < insertionIndex + selectedIndexPaths.count - 1 {
             lastRow = insertionIndex + selectedIndexPaths.count - 1
         }
-  
-        for i in firstRow...lastRow! {
-            let line: BILine? = affectedRows[i] as? BILine
-            line?.bidOrder = i + 1 as NSNumber
+
+        // -------- FIX #4: Update bidOrder --------
+        if firstRow <= lastRow! {
+            for i in firstRow...lastRow! {
+                let line = affectedRows[i] as? BILine
+                line?.bidOrder = NSNumber(value: i + 1)
+            }
         }
+
         previousInsertionIndex = insertionIndex
         self.insertionIndex = self.insertionIndex + selectedIndexPaths.count - countOfLinesRemovedBelowInsertionIndex
-        insertedIndexes.enumerate({(_ idx: Int, _ stop:UnsafeMutablePointer<ObjCBool>) -> Void in
-            let idxPth = IndexPath(row: idx, section: 0)
-            tableViewNormalView.selectRow(at: idxPth, animated: false, scrollPosition: .none)
-        })
+
+        // Reselect inserted rows in table — select at insertionIndex..insertionIndex+movedLines.count-1
+        for i in 0..<movedLines.count {
+            let rowToSelect = insertionIndex + i
+            let idxPath = IndexPath(row: rowToSelect, section: 0)
+            tableViewNormalView.selectRow(at: idxPath, animated: false, scrollPosition: .none)
+        }
+
         selectedCellIndexPaths.removeAllObjects()
+
+        // -------- FIX #5: Update main data source (convert NSMutableArray -> [BILine]) --------
+        self.linesArray = affectedRows.compactMap { $0 as? BILine }
+
         bidPeriod.managedObjectContext?.undoManager?.setActionName("Move Selected Line\(selectedIndexPaths.count > 1 ? "s" : "")")
         UserDefaults.standard.setValue(true, forKey: "isShouldScrollToInsertionIndex")
+
         self.updateBidList()
     }
+
+
     
     @objc func lineValuesToDisplayChanged(notification: Notification) {
         if bidPeriod.isBidListSortOn?.boolValue == true {
@@ -680,6 +806,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             if let aPaths = reloadIndexPaths as? [IndexPath] {
                 self.tableViewNormalView.reloadRows(at: aPaths, with: .automatic)
+                self.tableViewNormalView.reloadData()
             }
         }
     }

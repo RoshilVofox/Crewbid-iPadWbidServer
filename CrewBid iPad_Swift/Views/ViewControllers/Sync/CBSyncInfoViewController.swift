@@ -103,7 +103,7 @@ class CBSyncInfoViewController: UIViewController {
         }
         else if fileType == 1 {
             checkedType = GRCheckButtonType.preset
-            dicDetails["PresetFileName"] = NSNull()
+            dicDetails["PresetFileName"] = NSNumber(value: Int(app.ObjUserAccount!.employeeNumber)!)
             dicDetails["StateName"] = NSNull()
         }
         else {
@@ -132,7 +132,7 @@ class CBSyncInfoViewController: UIViewController {
         let positionInt = self.bidPeriod!.positionType!.intValue
         let position = BICrewPositionType(rawValue: positionInt)
         let positionShortString = CBUtils.shortName(for: position!)
-        let bidDataFilename = String(format: "CB%@%@%02ld%@%c", self.bidPeriod!.base!, positionShortString, self.bidPeriod!.month!.intValue, twoDigitDate, bidRoundChar)
+        let bidDataFilename = String(format: "CB%@%@%02ld%@%@", self.bidPeriod!.base!, positionShortString, self.bidPeriod!.month!.intValue, twoDigitDate, bidRoundChar)
         return bidDataFilename
     }
     
