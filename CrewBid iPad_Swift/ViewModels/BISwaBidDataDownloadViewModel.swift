@@ -69,7 +69,6 @@ class BISwaBidDataDownloadViewModel{
         func run(_ work: (@escaping (Bool, Error?) -> Void) -> Void) {
             downloadGroup.enter()
             work { success, error in
-                self.updateDownloadProgress()
                 if !success {
                     capturedError = error
                 }
@@ -103,36 +102,8 @@ class BISwaBidDataDownloadViewModel{
         }
     }
     
-    private var completedDownloads = 0
-    private let totalDownloads = 5
-    private func updateDownloadProgress() {
-        completedDownloads += 1
-        let raw = Float(completedDownloads) / Float(totalDownloads)
-        let mapped = raw * 0.6        // DOWNLOAD = first 60%
-        
-        NotificationCenter.default.post(
-            name: Notification.Name("UpdateProgress"),
-            object: nil,
-            userInfo: ["progress": mapped]
-        )
-    }
-    
     
     //MARK: Seniority List
-//    private func downloadSwaSeniorityData() {
-//        self.swaBidDataDownload?.getSwaSeniorityList(){ result in
-//            switch result{
-//            case .success:
-//                self.saveSelectionsToUserDefaults()
-//                self.seniorityDownloaded = true
-//              self.readSwaBidData()
-//            case .failure(let error):
-//                self.onDownloadError?(error as NSError)
-//            }
-//
-//        }
-//    }
-
     private func downloadSwaSeniorityData(completion: @escaping (Bool, Error?) -> Void) {
 
         self.swaBidDataDownload?.getSwaSeniorityList { result in
@@ -150,19 +121,6 @@ class BISwaBidDataDownloadViewModel{
     
     
     //MARK: Cover Letter
-//    private func downloadSwaCoverLetter() {
-//        self.swaBidDataDownload?.getSwaCoverLetter(){ result in
-//            switch result{
-//            case .success():
-//                self.coverLetterDownloaded = true
-//              self.readSwaBidData()
-//            case .failure(let error):
-//                self.onDownloadError?(error as NSError)
-//            }
-//
-//        }
-//    }
-
     private func downloadSwaCoverLetter(completion: @escaping (Bool, Error?) -> Void) {
 
         self.swaBidDataDownload?.getSwaCoverLetter { result in
@@ -176,18 +134,6 @@ class BISwaBidDataDownloadViewModel{
     }
 
     //MARK: Line data
-//    private func downloadSwaLineData() {
-//        self.swaBidDataDownload?.downloadBidData(type: "lines"){ result in
-//            switch result{
-//            case .success():
-//                self.lineDataDownloaded = true
-//                self.readSwaBidData()
-//            case .failure(let error):
-//                self.onDownloadError?(error as NSError)
-//            }
-//        }
-//    }
-  
     private func downloadSwaLineData(completion: @escaping (Bool, Error?) -> Void) {
 
         self.swaBidDataDownload?.downloadBidData(type: "lines") { result in
@@ -201,18 +147,6 @@ class BISwaBidDataDownloadViewModel{
     }
     
     //MARK: Trip data
-//    private func downloadSwaTripsData() {
-//        self.swaBidDataDownload?.downloadBidData(type: "pairings"){ result in
-//            switch result{
-//            case .success():
-//                self.tripDataDownloaded = true
-//                self.readSwaBidData()
-//            case .failure(let error):
-//                self.onDownloadError?(error as NSError)
-//            }
-//        }
-//    }
-    
     private func downloadSwaTripsData(completion: @escaping (Bool, Error?) -> Void) {
 
         self.swaBidDataDownload?.downloadBidData(type: "pairings") { result in
@@ -226,18 +160,6 @@ class BISwaBidDataDownloadViewModel{
     }
     
     //MARK: Buddy list
-//    private func downloadSwaBuddyBids() {
-//        self.swaBidDataDownload?.getBuddyBids(user_id: self.userId!){ result in
-//            switch result{
-//            case .success():
-//                self.buddyBidDownloaded = true
-//                self.readSwaBidData()
-//            case .failure(let error):
-//                self.onDownloadError?(error as NSError)
-//            }
-//        }
-//    }
-
     private func downloadSwaBuddyBids(completion: @escaping (Bool, Error?) -> Void) {
 
         self.swaBidDataDownload?.getBuddyBids(user_id: self.userId!) { result in
