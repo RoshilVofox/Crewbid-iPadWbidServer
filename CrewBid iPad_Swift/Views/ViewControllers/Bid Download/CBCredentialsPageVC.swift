@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreData
+import WebKit
 
 protocol submissionGoActiondelegate{
     func goActionFromSubmitCertifyDelegate()
@@ -37,8 +38,23 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         if arrResponse.count > 0{
             switch webType {
             case .wbidUserCheck:
+                if webViewloaded{
+                    // Web login → ID comes from decoded token
+                    enteredEmpNo = userid?.replacingOccurrences(of: "e", with: "")
+                                         .replacingOccurrences(of: "x", with: "")
+                                         .trimmingCharacters(in: .symbols)
+                }else{
+                    // Old login → ID comes from textfield
+                    var empID = txtUserID.text ?? ""
+                    if empID.lowercased().hasPrefix("e") || empID.lowercased().hasPrefix("x") {
+                        empID = String(empID.dropFirst())
+                    }
+                    enteredEmpNo = empID
+                }
+                
+                
                 dicWBAuthorizationDetails = NSMutableDictionary(dictionary: userArray.first!, copyItems: true) as! [String : Any]
-                enteredEmpNo = self.userid?.replacingOccurrences(of: "e", with: "").replacingOccurrences(of: "x", with: "").trimmingCharacters(in: .symbols)
+//                enteredEmpNo = self.userid?.replacingOccurrences(of: "e", with: "").replacingOccurrences(of: "x", with: "").trimmingCharacters(in: .symbols)
                 historySecretEnabled = UserDefaults.standard.string(forKey: "isMaxSubScriptionOfEnteredUser")
                 
                 if historySecretEnabled == "YES"{
@@ -88,23 +104,25 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                 }
                 let hasLocalUserInfo = CBUtils.isLocalUserInformationAvailable()
                 if hasLocalUserInfo {
-                    var empID = self.txtUserID.text ?? ""
-                    if empID.lowercased().hasPrefix("e") || empID.lowercased().hasPrefix("x") {
-                        empID = String(empID.dropFirst())
+                    
+                    if webViewloaded{
+                        // WEBVIEW authentication path (no password!)
+                        let formattedUserID = userid ?? ""
+                        let empID = enteredEmpNo ?? ""
+
+                        self.startAuthentication(empID: empID,
+                                                 formattedUserID: formattedUserID,
+                                                 password: "")   // no password for web login
+                    }else{
+                        
+                        var empID = self.txtUserID.text ?? ""
+                        if empID.lowercased().hasPrefix("e") || empID.lowercased().hasPrefix("x") {
+                            empID = String(empID.dropFirst())
+                        }
+                        let formattedUserID = self.txtUserID.text ?? ""
+                        let password = self.txtPassword.text ?? ""
+                            self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
                     }
-                    let formattedUserID = self.txtUserID.text ?? ""
-                    let password = self.txtPassword.text ?? ""
-//                    if !UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
-//                        if self.bidAlreadyExists() {
-//                            self.showAlertForExistingBid {
-//                                self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
-//                            }
-//                        } else {
-//                            self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
-//                        }
-//                    }else{
-                        self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
-//                    }
                 } else {
                     if let account = KeychainHelper.retrieveUsername(forService: "CWAUserAccountDetails"){
                         KeychainHelper.delete(account: account, service: "CWAUserAccountDetails")
@@ -164,14 +182,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }
         self.present(vc, animated: true)
     }
-    
-//    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-//        if presentationController.presentedViewController is userAccountViewController {
-//            // After user account is dismissed, authenticate again and continue flow
-//            self.checkAuthentication(message: "Authenticating...")
-//        }
-//    }
-    
+
     func getVacationFilenames(){ //need to hanlde the call for this fucntion in the go button
         if app.connectedToInternet(){
             //show indicator
@@ -355,8 +366,11 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var backBtn: UIButton!
     @IBOutlet weak var lblQaMode: UILabel!
+    @IBOutlet weak var goBtn: UIButton!
+    @IBOutlet weak var webView: WKWebView!
     
-    let reachability = try? Reachability()
+    
+    let reachability = try! Reachability()
     var isHistoricBid : Bool = false
     var isNewBid:Bool = false
     var selectedRound:Int?
@@ -386,39 +400,57 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     var jobShare1:String?
     var jobShare2:String?
     
+    //for new API
+    var webViewloaded = false
+    var clientID: String = "p502838"
+    var redirectURI: String = ""
+    var authorizationEndpoint: String = ""
+    var tokenEndpoint: String = ""
+    var codeVerifier: String = ""
+    var env = ""
+    let webViewModel = BISwaBidDataDownloadViewModel()
+    let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+        return formatter
+    }()
+     
+    override func viewWillAppear(_ animated: Bool) {
+        
+        if self.selectedPosition == BICrewPositionType.FlightAttendant{
+            if app.connectedToInternet(){
+                self.view.showActivityIndicator(message: "Loading SWA Login...")
+            }else{
+                AlertService.showAlertForTopVC(title: "No Internet Connection", message: "An internet connection is required to Login. Please connect to the internet and try again.")
+            }
+        }
+        
+            NotificationCenter.default.addObserver(self, selector: #selector(closeCredentilaPage), name: Notification.Name("CloseCredentilaPage"), object: nil)
+        }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-
-        if let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod {
-            awardsViewModel = AwardsViewModel(bidPeriod: bidPeriod)
-        }
-        if type == .retrieveAwards {
-            backBtn.setImage(UIImage(named: "cc"), for: .normal)
+        
+        //for new API
+        if self.selectedPosition == BICrewPositionType.FlightAttendant{
+            self.setupSwaLogin()
         }else{
-            backBtn.setImage(UIImage(named: "arrowleftbutton"), for: .normal)
+            self.setupLegacyLogin()
         }
-        if CBUtils.isRunningOnSimulator(){
-            self.txtUserID.text = DevUserID
-            self.txtPassword.text = DevUserPassword
-        }else{
-            let service = "loginCredentials"
-            if let username = KeychainHelper.retrieveUsername(forService: service),
-            let password = KeychainHelper.retrieve(account: username, service: service) {
-                txtUserID.text = username
-                txtPassword.text = password
-            }
-        }
+        
         if !UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
             NotificationCenter.default.addObserver(self, selector: #selector(showProgressView), name: Notification.Name("ShowProgressView"), object: nil)
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(showBidAwardReadError(notification:)), name: NSNotification.Name("BidAwardReadError"), object: nil)
+        
+        
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-            NotificationCenter.default.addObserver(self, selector: #selector(closeCredentilaPage), name: Notification.Name("CloseCredentilaPage"), object: nil)
-        }
+
     
     @objc func closeCredentilaPage() {
         DispatchQueue.main.async {
@@ -454,24 +486,74 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }
     }
 
+    
+    func setupSwaLogin(){
+        var apiEnv = UserDefaults.standard.string(forKey: "SwaApiEnv")
+        if apiEnv == "Dev"{
+            env = "dev"
+            redirectURI = "com.crewbid-wbidmax://callback"
+        }else if apiEnv == "QA"{
+            env = "qa"
+            redirectURI = "https://crewbidapp.com/callback"
+        }else{
+            env = "prod"
+            redirectURI = "com.crewbid-wbidmax://callback"
+        }
+        authorizationEndpoint = "https://sso.fed.\(env).aws.swalife.com/as/authorization.oauth2"
+        tokenEndpoint = "https://sso.fed.\(env).aws.swalife.com/as/token.oauth2"
+        if app.connectedToInternet(){
+            self.startAuthFlow()
+        }
+    }
+    
+    func setupLegacyLogin(){
+        
+        if let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod {
+            awardsViewModel = AwardsViewModel(bidPeriod: bidPeriod)
+        }
+        if type == .retrieveAwards {
+            backBtn.setImage(UIImage(named: "cc"), for: .normal)
+        }else{
+            backBtn.setImage(UIImage(named: "arrowleftbutton"), for: .normal)
+        }
+        if CBUtils.isRunningOnSimulator(){
+            self.txtUserID.text = DevUserID
+            self.txtPassword.text = DevUserPassword
+        }else{
+            let service = "loginCredentials"
+            if let username = KeychainHelper.retrieveUsername(forService: service),
+            let password = KeychainHelper.retrieve(account: username, service: service) {
+                txtUserID.text = username
+                txtPassword.text = password
+            }
+        }
+
+    }
+    
     func setupUI(){
         setupTitle()
         checkEarlyBidding()
-        txtUserID.delegate = self
-        txtPassword.delegate = self
-        txtUserID.textContentType = .username
-        txtPassword.textContentType = .password
-        txtUserID.layer.borderWidth = 4
-        txtUserID.layer.borderColor = UIColor.gray.cgColor
-        txtPassword.layer.borderWidth = 4
-        txtPassword.layer.borderColor = UIColor.gray.cgColor
-        showPasswordBtn.setImage(UIImage(named: "showPwd")?.withRenderingMode(.alwaysTemplate), for: .normal)
-        showPasswordBtn.tintColor = .label
-        txtUserID.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtUserID.frame.height))
-        txtUserID.leftViewMode = .always
-        txtPassword.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtPassword.frame.height))
-        txtPassword.leftViewMode = .always
         
+        if selectedPosition == BICrewPositionType.FlightAttendant{
+            self.webView.isHidden = false
+            self.goBtn.isHidden = true
+        }else{
+            self.webView.isHidden = true
+            txtUserID.delegate = self
+            txtPassword.delegate = self
+            txtUserID.textContentType = .username
+            txtPassword.textContentType = .password
+            txtUserID.layer.borderWidth = 4
+            txtUserID.layer.borderColor = UIColor.gray.cgColor
+            txtPassword.layer.borderWidth = 4
+            txtPassword.layer.borderColor = UIColor.gray.cgColor
+            showPasswordBtn.setImage(UIImage(named: "showPwd")?.withRenderingMode(.alwaysTemplate), for: .normal)
+            showPasswordBtn.tintColor = .label
+            txtUserID.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtUserID.frame.height))
+            txtUserID.leftViewMode = .always
+            txtPassword.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtPassword.frame.height))
+            txtPassword.leftViewMode = .always
+        }
 
         //------viewmodel--------
         loginViewModel.onLoginSuccess = { sessionKey in
@@ -789,8 +871,9 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             }
         }
     }
+    
     func loginValidation(){
-        guard reachability?.isReachable == true else {
+        guard reachability.isReachable == true else {
             let alert = AlertService.showAlert(title: Warning, message: NetworkNotAvailable, actions: nil)
             self.present(alert, animated: true)
             return
@@ -838,18 +921,18 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         dictAuthenticationInfo["Version"] = appVersion
         dictAuthenticationInfo["Base"] = GlobalBidInfo.shared.base
         dictAuthenticationInfo["BidRound"] = GlobalBidInfo.shared.round
-        if AppState.shared.isHistoricBid{
-         dictAuthenticationInfo["RequestType"] = 5
-        }else{
-            dictAuthenticationInfo["RequestType"] = 0
-        }
         dictAuthenticationInfo["Month"] = CBUtils.shortMonthName(month: GlobalBidInfo.shared.month, uc: true)
         dictAuthenticationInfo["Postion"] = CBUtils.shortName(for: GlobalBidInfo.shared.position)
-        self.userid = self.txtUserID.text
         
-        let formattedEmpID = self.userid?.replacingOccurrences(of: "e", with: "").replacingOccurrences(of: "x", with: "").trimmingCharacters(in: .symbols)
+        // Historic / Current
+        dictAuthenticationInfo["RequestType"] = AppState.shared.isHistoricBid ? 5 : 0
         
-        dictAuthenticationInfo["EmployeeNumber"] = "\(formattedEmpID!)"
+//        self.userid = self.txtUserID.text
+        let empID = self.userid ?? self.txtUserID.text ?? ""
+        
+        let formattedEmpID = empID.replacingOccurrences(of: "e", with: "").replacingOccurrences(of: "x", with: "").trimmingCharacters(in: .symbols)
+        
+        dictAuthenticationInfo["EmployeeNumber"] = "\(formattedEmpID)"
         let historySecretEnabled = UserDefaults.standard.string(forKey: "isMaxSubScriptionOfEnteredUser")
         
         if historySecretEnabled == "YES"{
@@ -877,8 +960,15 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         AuthService.shared.checkAuthentication(empID: empID) { [weak self] authResult in
             guard let self = self else { return }
 
-            if authResult.isAuthorized, authResult.isSomehowSubscribed || formattedUserID == DevUserID {
-                self.loginViewModel.checkLogin(userID: formattedUserID, password: password)
+            if authResult.isAuthorized || authResult.isSomehowSubscribed || formattedUserID == DevUserID {
+                saveSelectionToUserDefaults()
+                if webViewloaded{
+                    self.startBidDownload()
+                }else{
+                    self.loginViewModel.checkLogin(userID: formattedUserID, password: password)
+                }
+                
+                
             } else {
                 self.view.hideActivityIndicator()
                 self.loginViewModel.onLoginFailure?(
@@ -892,42 +982,16 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }
     }
     
+    
+    private func saveSelectionToUserDefaults(){
+        UserDefaults.standard.set(GlobalBidInfo.shared.base, forKey: kCBCrewBaseDefaultKey)
+        UserDefaults.standard.set(GlobalBidInfo.shared.position.rawValue, forKey: kCBCrewPositionTypeDefaultKey)
+        UserDefaults.standard.set(GlobalBidInfo.shared.employeeNumber, forKey: kCBEmployeeNumberDefaultKey)
+        UserDefaults.standard.set(GlobalBidInfo.shared.round, forKey: kCBCrewRoundTypeDefaultKey)
+    }
+    
 
     private func bidAlreadyExists() -> Bool {
-//        var status = false
-//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
-//        let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: self.context)
-//        fetchRequest.entity = entity
-//        var array:[NSPredicate] = []
-//        array.append(NSPredicate(format: "base == %@", self.dataSource.base))
-//        array.append(NSPredicate(format: "round == %d", self.dataSource.round))
-//        array.append(NSPredicate(format: "month == %d", self.dataSource.month))
-//        array.append(NSPredicate(format: "positionType == %d", self.dataSource.position.rawValue))
-//        array.append(NSPredicate(format: "year == %d", self.dataSource.year))
-//        
-//        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
-//        let list = try! self.context.fetch(fetchRequest) as! [BIBidPeriod]
-//        if list.count > 0 {
-//            status = true
-//        }
-//        return status
-//        do {
-//                let fetchRequest = NSFetchRequest<BIBidPeriod>(entityName: "BidPeriod")
-//                var predicates: [NSPredicate] = []
-//                predicates.append(NSPredicate(format: "base == %@", self.dataSource.base))
-//                predicates.append(NSPredicate(format: "round == %d", self.dataSource.round))
-//                predicates.append(NSPredicate(format: "month == %d", self.dataSource.month))
-//                predicates.append(NSPredicate(format: "positionType == %d", self.dataSource.position.rawValue))
-//                predicates.append(NSPredicate(format: "year == %d", self.dataSource.year))
-//                
-//                fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
-//                let list = try self.context.fetch(fetchRequest)
-//                if list.count > 0 {
-//                    return true
-//                }
-//            } catch {
-//                print("Core Data fetch failed: \(error)")
-//            }
         let downloadDir = BIBidInfo().downloadDirectory()
 
         // Check if the directory exists
@@ -1047,8 +1111,6 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     // Fetch bid periods and reverse to show newest first
                     self.bidPeriodList = try context.fetch(fetchRequest).reversed()
                     CBGlobalMethods.shared.selectedBidPeriod = bidPeriodList[0]
-                    let a = bidPeriodList[0]
-                    print(a.month!)
                 } catch {
                     print("Failed to fetch bid periods: \(error)")
                     self.bidPeriodList = []
@@ -1173,7 +1235,8 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             self.view.updateActivityIndicator(message: "Importing User Information...")
             app.sc?.delegate = self
             webType = .importUserDetails
-            let formattedUserID = txtUserID.text!.replacingOccurrences(of: "e", with: "").replacingOccurrences(of: "x", with: "").trimmingCharacters(in: .symbols)
+            let userID = self.userid ?? self.txtUserID.text ?? ""
+            let formattedUserID = userID.replacingOccurrences(of: "e", with: "").replacingOccurrences(of: "x", with: "").trimmingCharacters(in: .symbols)
             objDataBuilder.checkUserExistOrNot(formattedUserID)
         }else{
             AlertService.showAlertForTopVC(title: "Network not available!", message: "Please check your internet connection", actions: nil)

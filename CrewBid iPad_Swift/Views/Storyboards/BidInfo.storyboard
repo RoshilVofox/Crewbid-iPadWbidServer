@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="ipad10_9rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -1044,11 +1044,20 @@
                                 <color key="textColor" name="E80B26"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <wkWebView hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fCH-RJ-nwO">
+                                <rect key="frame" x="0.0" y="60" width="600" height="440"/>
+                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <wkWebViewConfiguration key="configuration">
+                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                    <wkPreferences key="preferences"/>
+                                </wkWebViewConfiguration>
+                            </wkWebView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="uXe-E2-7PP"/>
                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="Ssa-XP-Hzc" firstAttribute="leading" secondItem="uXe-E2-7PP" secondAttribute="leading" id="2qN-Ky-Q0h"/>
+                            <constraint firstItem="fCH-RJ-nwO" firstAttribute="top" secondItem="yR0-cT-Kph" secondAttribute="bottom" id="9Uv-aD-1mk"/>
                             <constraint firstItem="3qo-fj-rVs" firstAttribute="leading" secondItem="uXe-E2-7PP" secondAttribute="leading" constant="60" id="AdK-BL-tSW"/>
                             <constraint firstItem="uXe-E2-7PP" firstAttribute="trailing" secondItem="18h-4z-Niv" secondAttribute="trailing" constant="60" id="D3H-g1-7LU"/>
                             <constraint firstItem="yR0-cT-Kph" firstAttribute="leading" secondItem="uXe-E2-7PP" secondAttribute="leading" id="Edw-g4-lE0"/>
@@ -1059,6 +1068,7 @@
                             <constraint firstItem="Ssa-XP-Hzc" firstAttribute="trailing" secondItem="uXe-E2-7PP" secondAttribute="trailing" id="Q7O-3t-fq6"/>
                             <constraint firstItem="OJY-Kj-9QL" firstAttribute="top" secondItem="3qo-fj-rVs" secondAttribute="bottom" constant="10" id="Rbb-07-fmk"/>
                             <constraint firstAttribute="bottom" secondItem="wcS-Al-rGz" secondAttribute="bottom" id="TdR-7k-FM8"/>
+                            <constraint firstItem="fCH-RJ-nwO" firstAttribute="trailing" secondItem="uXe-E2-7PP" secondAttribute="trailing" id="U1r-kj-9rx"/>
                             <constraint firstItem="K9p-a3-AkM" firstAttribute="centerX" secondItem="Q9Y-U8-HD5" secondAttribute="centerX" constant="1" id="W1b-sD-xF5"/>
                             <constraint firstItem="K9p-a3-AkM" firstAttribute="top" secondItem="yR0-cT-Kph" secondAttribute="bottom" constant="40" id="ayB-g0-vaR"/>
                             <constraint firstItem="3qo-fj-rVs" firstAttribute="top" secondItem="yR0-cT-Kph" secondAttribute="bottom" constant="70" id="c3k-CX-zbl"/>
@@ -1067,21 +1077,109 @@
                             <constraint firstItem="wcS-Al-rGz" firstAttribute="leading" secondItem="uXe-E2-7PP" secondAttribute="leading" id="k2v-UP-5k4"/>
                             <constraint firstItem="yR0-cT-Kph" firstAttribute="trailing" secondItem="uXe-E2-7PP" secondAttribute="trailing" id="p1a-nj-Ohy"/>
                             <constraint firstItem="uXe-E2-7PP" firstAttribute="trailing" secondItem="3qo-fj-rVs" secondAttribute="trailing" constant="60" id="qUZ-PP-ZUb"/>
+                            <constraint firstItem="wcS-Al-rGz" firstAttribute="top" secondItem="fCH-RJ-nwO" secondAttribute="bottom" id="u8m-H1-SKR"/>
+                            <constraint firstItem="fCH-RJ-nwO" firstAttribute="leading" secondItem="uXe-E2-7PP" secondAttribute="leading" id="wnq-15-jJU"/>
                         </constraints>
                     </view>
                     <size key="freeformSize" width="600" height="550"/>
                     <connections>
                         <outlet property="backBtn" destination="Oew-xb-wbe" id="mtU-bC-r21"/>
+                        <outlet property="goBtn" destination="fVd-Ti-TAq" id="Mjp-N9-w9J"/>
                         <outlet property="lblQaMode" destination="K9p-a3-AkM" id="4GZ-wP-TOj"/>
                         <outlet property="lblTitle" destination="Cq8-ER-JCF" id="BDx-it-tBd"/>
                         <outlet property="showPasswordBtn" destination="OJY-Kj-9QL" id="dvy-h5-xNC"/>
                         <outlet property="txtPassword" destination="18h-4z-Niv" id="Pu5-U0-BfS"/>
                         <outlet property="txtUserID" destination="3qo-fj-rVs" id="8cB-4P-lZA"/>
+                        <outlet property="webView" destination="fCH-RJ-nwO" id="Oes-My-msk"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1bf-Db-7ir" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1938" y="-184"/>
+            <point key="canvasLocation" x="1937.7966101694917" y="-184.39024390243901"/>
+        </scene>
+        <!--Web View Credential PageVC-->
+        <scene sceneID="WO8-C7-VP8">
+            <objects>
+                <viewController storyboardIdentifier="CBWebViewCredentialPageVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="CgQ-XX-Knp" customClass="CBWebViewCredentialPageVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="dAT-ZU-zeO">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="550"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jfh-mK-oHf">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fpc-MS-JFG">
+                                        <rect key="frame" x="10" y="5" width="50" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="50" id="3sF-gh-YsU"/>
+                                            <constraint firstAttribute="height" constant="50" id="9hb-MC-b6L"/>
+                                        </constraints>
+                                        <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="arrowleftbutton">
+                                            <color key="titleColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="backBtnAction:" destination="CgQ-XX-Knp" eventType="touchUpInside" id="Klf-nN-Dfo"/>
+                                        </connections>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New Bid Data" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vW3-PU-DcC">
+                                        <rect key="frame" x="247" y="20" width="106.5" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                        <color key="textColor" name="BlackLabelColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" name="TopViewColor"/>
+                                <constraints>
+                                    <constraint firstItem="vW3-PU-DcC" firstAttribute="centerX" secondItem="jfh-mK-oHf" secondAttribute="centerX" id="186-5z-yIw"/>
+                                    <constraint firstItem="fpc-MS-JFG" firstAttribute="centerY" secondItem="jfh-mK-oHf" secondAttribute="centerY" id="A6s-kL-l45"/>
+                                    <constraint firstAttribute="height" constant="60" id="Qvr-q6-ZPD"/>
+                                    <constraint firstItem="vW3-PU-DcC" firstAttribute="centerY" secondItem="jfh-mK-oHf" secondAttribute="centerY" id="Ud5-wG-c6j"/>
+                                    <constraint firstItem="fpc-MS-JFG" firstAttribute="leading" secondItem="jfh-mK-oHf" secondAttribute="leading" constant="10" id="dq1-Bf-fbi"/>
+                                </constraints>
+                            </view>
+                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3t1-fy-Ewz">
+                                <rect key="frame" x="0.0" y="60" width="600" height="440"/>
+                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <wkWebViewConfiguration key="configuration">
+                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                    <wkPreferences key="preferences"/>
+                                </wkWebViewConfiguration>
+                            </wkWebView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HQa-Ey-aj2">
+                                <rect key="frame" x="0.0" y="500" width="600" height="50"/>
+                                <color key="backgroundColor" name="TopViewColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="LSa-HF-VLh"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="sl6-pF-vdS"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="HQa-Ey-aj2" secondAttribute="bottom" id="0m0-ed-GgU"/>
+                            <constraint firstItem="HQa-Ey-aj2" firstAttribute="leading" secondItem="sl6-pF-vdS" secondAttribute="leading" id="AKw-ks-MM8"/>
+                            <constraint firstItem="3t1-fy-Ewz" firstAttribute="leading" secondItem="sl6-pF-vdS" secondAttribute="leading" id="L5c-nk-mxD"/>
+                            <constraint firstItem="3t1-fy-Ewz" firstAttribute="top" secondItem="jfh-mK-oHf" secondAttribute="bottom" id="Qid-Sq-TR1"/>
+                            <constraint firstItem="jfh-mK-oHf" firstAttribute="trailing" secondItem="sl6-pF-vdS" secondAttribute="trailing" id="Tb5-j3-yy7"/>
+                            <constraint firstItem="jfh-mK-oHf" firstAttribute="top" secondItem="dAT-ZU-zeO" secondAttribute="top" id="XHM-wE-04K"/>
+                            <constraint firstItem="3t1-fy-Ewz" firstAttribute="trailing" secondItem="sl6-pF-vdS" secondAttribute="trailing" id="dBB-bn-OO6"/>
+                            <constraint firstItem="jfh-mK-oHf" firstAttribute="leading" secondItem="sl6-pF-vdS" secondAttribute="leading" id="fW5-8w-uVf"/>
+                            <constraint firstItem="HQa-Ey-aj2" firstAttribute="top" secondItem="3t1-fy-Ewz" secondAttribute="bottom" id="rXl-0P-pn9"/>
+                            <constraint firstItem="HQa-Ey-aj2" firstAttribute="trailing" secondItem="sl6-pF-vdS" secondAttribute="trailing" id="y6I-Ek-flr"/>
+                        </constraints>
+                    </view>
+                    <size key="freeformSize" width="600" height="550"/>
+                    <connections>
+                        <outlet property="backBtn" destination="fpc-MS-JFG" id="O8y-cR-LVl"/>
+                        <outlet property="titleLbl" destination="vW3-PU-DcC" id="cHZ-bz-PQC"/>
+                        <outlet property="webView" destination="3t1-fy-Ewz" id="hIx-Ig-IQR"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="KaW-vZ-a2e" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2303.898305084746" y="-184.39024390243901"/>
         </scene>
         <!--Bid Data Type View Controller-->
         <scene sceneID="s0d-6b-0kx">

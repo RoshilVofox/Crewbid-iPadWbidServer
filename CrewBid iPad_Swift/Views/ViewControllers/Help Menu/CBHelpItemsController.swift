@@ -73,6 +73,7 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
                                 if value == "Vofox2013-1" {
                                     let storyBoard = UIStoryboard(name: "Secret", bundle: nil)
                                     if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "SecretMethodsViewController") as? SecretMethodsViewController{
+                                        helpMenuVC.isModalInPresentation = true
                                         //            helpMenuVC.modalPresentationStyle = .formSheet
                                         helpMenuVC.preferredContentSize = CGSize(width: 700, height: 600)
                                         self.present(helpMenuVC, animated: true)

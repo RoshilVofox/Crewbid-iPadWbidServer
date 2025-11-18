@@ -208,72 +208,73 @@ class BIBidInfoReader{
     func checkForSeniorityVacationAndReadBidInfo(completion: @escaping (Bool) -> Void) {
         self.isNetworkNotAvailable = false
         self.isSeniorityVacParsingFailed = false
-        
-        let app = UIApplication.shared.delegate as! AppDelegate
-        
-        func finishParsingBid(success: Bool) {
-            if success {
-                NotificationCenter.default.post(name: NSNotification.Name("ReloadCollectionView"), object: nil)
-//                NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
-                NotificationCenter.default.post(name: Notification.Name("BidParsingCompleted"), object: nil)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-//                    NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
-                    NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
-                    completion(true)
-                }
-            } else {
-                completion(false)
-            }
-        }
-        
-        guard app.connectedToInternet() else {
-            self.isNetworkNotAvailable = true
-            let success = self.readBidData()
-            finishParsingBid(success: success)
-            return
-        }
-        
-        if app.objNetworkType == .free {
-            self.isSeniorityVacParsingFailed = true
-            let success = self.readBidData()
-            finishParsingBid(success: success)
-        } else {
-            APIService.shared.fetch(
-                urlString: EndPoint.shared.GetAllSeniorityListFormatFromDB,
-                parse: { data in
-                    try JSONSerialization.jsonObject(with: data) as! [Any]
-                },
-                completion: { result in
-                    switch result {
-                    case .success(let responseArray):
-                        UserDefaults.standard.set(responseArray, forKey: KCBDefaultSeniorityListTableDBValues)
-                        
-                        let position = self.dataSource.position.shortName
-                        for item in responseArray {
-                            if let dict = item as? [String: Any],
-                               dict["Position"] as? String == position,
-                               dict["Round"] as? Int == self.dataSource.round {
-                                self.seniorityPositionDetails = dict
-                                break
-                            }
+        DispatchQueue.main.async {
+            if let app = UIApplication.shared.delegate as? AppDelegate{
+                func finishParsingBid(success: Bool) {
+                    if success {
+                        NotificationCenter.default.post(name: NSNotification.Name("ReloadCollectionView"), object: nil)
+        //                NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
+                        NotificationCenter.default.post(name: Notification.Name("BidParsingCompleted"), object: nil)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        //                    NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
+                            NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+                            completion(true)
                         }
-                        
-                        let success = self.readBidData()
-                        finishParsingBid(success: success)
-                        
-                    case .failure(let error):
-                        print("Error fetching seniority list: \(error)")
-                        
-                        if (error as NSError).code == NSURLErrorTimedOut{
-                            let objEvent = CBOfflineEvents()
-                            let month = self.bidPeriod!.month
-                            objEvent.sendOfflineDataForTimeOut(url: EndPoint.shared.GetAllSeniorityListFormatFromDB, month: month)
-                        }
-                        self.isNetworkNotAvailable = true
+                    } else {
                         completion(false)
                     }
                 }
-            )
+                
+                guard app.connectedToInternet() else {
+                    self.isNetworkNotAvailable = true
+                    let success = self.readBidData()
+                    finishParsingBid(success: success)
+                    return
+                }
+                
+                if app.objNetworkType == .free {
+                    self.isSeniorityVacParsingFailed = true
+                    let success = self.readBidData()
+                    finishParsingBid(success: success)
+                } else {
+                    APIService.shared.fetch(
+                        urlString: EndPoint.shared.GetAllSeniorityListFormatFromDB,
+                        parse: { data in
+                            try JSONSerialization.jsonObject(with: data) as! [Any]
+                        },
+                        completion: { result in
+                            switch result {
+                            case .success(let responseArray):
+                                UserDefaults.standard.set(responseArray, forKey: KCBDefaultSeniorityListTableDBValues)
+                                
+                                let position = self.dataSource.position.shortName
+                                for item in responseArray {
+                                    if let dict = item as? [String: Any],
+                                       dict["Position"] as? String == position,
+                                       dict["Round"] as? Int == self.dataSource.round {
+                                        self.seniorityPositionDetails = dict
+                                        break
+                                    }
+                                }
+                                
+                                let success = self.readBidData()
+                                finishParsingBid(success: success)
+                                
+                            case .failure(let error):
+                                print("Error fetching seniority list: \(error)")
+                                
+                                if (error as NSError).code == NSURLErrorTimedOut{
+                                    let objEvent = CBOfflineEvents()
+                                    let month = self.bidPeriod!.month
+                                    objEvent.sendOfflineDataForTimeOut(url: EndPoint.shared.GetAllSeniorityListFormatFromDB, month: month)
+                                }
+                                self.isNetworkNotAvailable = true
+                                completion(false)
+                            }
+                        }
+                    )
+                }
+            }
         }
     }
 
@@ -2562,7 +2563,7 @@ class BIBidInfoReader{
     }
     
 
-    
+    @discardableResult
     func addDefaultFilterRules(context: NSManagedObjectContext) -> Bool{
         var success = true
         // Filter rule to allow hard lines only (no reserve or blank lines).

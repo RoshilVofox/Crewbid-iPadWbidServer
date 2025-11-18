@@ -44,6 +44,7 @@
 		F40743542E9B934E0014E4B9 /* LatestNews.pdf in Resources */ = {isa = PBXBuildFile; fileRef = F40743532E9B934E0014E4B9 /* LatestNews.pdf */; };
 		F407B2A12DD9AE5B003E4042 /* EndPoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = F407B2A02DD9AE5B003E4042 /* EndPoints.swift */; };
 		F410AA6A2E4DE7D200101EAB /* AwardsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F410AA692E4DE7D200101EAB /* AwardsViewModel.swift */; };
+		F410AE502EBF000300B3CEE8 /* CBWebViewCredentialPageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F410AE4F2EBF000300B3CEE8 /* CBWebViewCredentialPageVC.swift */; };
 		F41475812DC8D8290064CD25 /* KeychainItemWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = F41475802DC8D8290064CD25 /* KeychainItemWrapper.m */; };
 		F41475842DC8E1980064CD25 /* AlertService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41475832DC8E1980064CD25 /* AlertService.swift */; };
 		F41EBE902DC4DB20001413DE /* ThirdPartyURL.plist in Resources */ = {isa = PBXBuildFile; fileRef = F41EBD5A2DC4DB20001413DE /* ThirdPartyURL.plist */; };
@@ -383,6 +384,10 @@
 		F4CAAF8D2E704DB40094ADB6 /* XMLDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = F4CAAF8C2E704DB40094ADB6 /* XMLDictionary.m */; };
 		F4CF5A8E2D892B9800A351DB /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = F4CF5A8D2D892B9800A351DB /* ZipArchive */; };
 		F4D572F52E5472A000757145 /* CBBidSubmissionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D572F42E5472A000757145 /* CBBidSubmissionViewModel.swift */; };
+		F4D5B5852EC8518F006B7E4B /* SeniorityList+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D5B5832EC8518F006B7E4B /* SeniorityList+CoreDataClass.swift */; };
+		F4D5B5862EC8518F006B7E4B /* SeniorityList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D5B5842EC8518F006B7E4B /* SeniorityList+CoreDataProperties.swift */; };
+		F4D690632EC6E25200B12223 /* CBCredentialsPageVC+WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D690622EC6E25200B12223 /* CBCredentialsPageVC+WebView.swift */; };
+		F4D690652EC72AFD00B12223 /* BISwaBidDataParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D690642EC72AFD00B12223 /* BISwaBidDataParsing.swift */; };
 		F4DA88132E5722D000ECC906 /* BISwaBidDataDownload.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DA88122E5722D000ECC906 /* BISwaBidDataDownload.swift */; };
 		F4DA88152E57231D00ECC906 /* BISwaBidDataDownloadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DA88142E57231D00ECC906 /* BISwaBidDataDownloadViewModel.swift */; };
 		F4DB59522E30B5080079930A /* BILinesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DB59512E30B5080079930A /* BILinesManager.swift */; };
@@ -438,6 +443,7 @@
 		F40743532E9B934E0014E4B9 /* LatestNews.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = LatestNews.pdf; sourceTree = "<group>"; };
 		F407B2A02DD9AE5B003E4042 /* EndPoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndPoints.swift; sourceTree = "<group>"; };
 		F410AA692E4DE7D200101EAB /* AwardsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwardsViewModel.swift; sourceTree = "<group>"; };
+		F410AE4F2EBF000300B3CEE8 /* CBWebViewCredentialPageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBWebViewCredentialPageVC.swift; sourceTree = "<group>"; };
 		F414757D2DC8D6520064CD25 /* CrewBid iPad_Swift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "CrewBid iPad_Swift.entitlements"; sourceTree = "<group>"; };
 		F414757F2DC8D8290064CD25 /* KeychainItemWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeychainItemWrapper.h; sourceTree = "<group>"; };
 		F41475802DC8D8290064CD25 /* KeychainItemWrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeychainItemWrapper.m; sourceTree = "<group>"; };
@@ -787,6 +793,10 @@
 		F4CAAF8C2E704DB40094ADB6 /* XMLDictionary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XMLDictionary.m; sourceTree = "<group>"; };
 		F4CF5A282D891A3800A351DB /* CrewBid iPad_Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CrewBid iPad_Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4D572F42E5472A000757145 /* CBBidSubmissionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBBidSubmissionViewModel.swift; sourceTree = "<group>"; };
+		F4D5B5832EC8518F006B7E4B /* SeniorityList+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SeniorityList+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F4D5B5842EC8518F006B7E4B /* SeniorityList+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SeniorityList+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		F4D690622EC6E25200B12223 /* CBCredentialsPageVC+WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CBCredentialsPageVC+WebView.swift"; sourceTree = "<group>"; };
+		F4D690642EC72AFD00B12223 /* BISwaBidDataParsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BISwaBidDataParsing.swift; sourceTree = "<group>"; };
 		F4DA88122E5722D000ECC906 /* BISwaBidDataDownload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BISwaBidDataDownload.swift; sourceTree = "<group>"; };
 		F4DA88142E57231D00ECC906 /* BISwaBidDataDownloadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BISwaBidDataDownloadViewModel.swift; sourceTree = "<group>"; };
 		F4DB59512E30B5080079930A /* BILinesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BILinesManager.swift; sourceTree = "<group>"; };
@@ -1413,6 +1423,8 @@
 				F41EBE592DC4DB20001413DE /* CBDownloadAlldomicileViewController.swift */,
 				F41EBE5A2DC4DB20001413DE /* CBNewBidVC.swift */,
 				F41EBE5B2DC4DB20001413DE /* CBProgressVC.swift */,
+				F410AE4F2EBF000300B3CEE8 /* CBWebViewCredentialPageVC.swift */,
+				F4D690622EC6E25200B12223 /* CBCredentialsPageVC+WebView.swift */,
 			);
 			path = "Bid Download";
 			sourceTree = "<group>";
@@ -1762,6 +1774,7 @@
 				F4FE7F4D2E66F0F600795CC7 /* IAPHelper.swift */,
 				F4DE35422E72A5C100777D47 /* CBUserInfo.swift */,
 				F4DE35442E72C1F800777D47 /* CBGlobal.swift */,
+				F4D690642EC72AFD00B12223 /* BISwaBidDataParsing.swift */,
 			);
 			path = "New Files";
 			sourceTree = "<group>";
@@ -1916,6 +1929,8 @@
 		F4CF5A1F2D891A3800A351DB = {
 			isa = PBXGroup;
 			children = (
+				F4D5B5832EC8518F006B7E4B /* SeniorityList+CoreDataClass.swift */,
+				F4D5B5842EC8518F006B7E4B /* SeniorityList+CoreDataProperties.swift */,
 				F4C656B62EACD3440002F1D0 /* AwardDetails+CoreDataClass.swift */,
 				F4C656B72EACD3440002F1D0 /* AwardDetails+CoreDataProperties.swift */,
 				F4B8B6CD2E471F440031229E /* BIInsertionPoint+CoreDataClass.swift */,
@@ -2176,6 +2191,7 @@
 				F4A472212DDDEDA900065720 /* CBExceedingTripCalculation.swift in Sources */,
 				350D2CD22E9E76BC002E7FE5 /* CBCoreDataSync.swift in Sources */,
 				F41EBF1D2DC4DB20001413DE /* BILeg+CoreDataClass.swift in Sources */,
+				F4D690632EC6E25200B12223 /* CBCredentialsPageVC+WebView.swift in Sources */,
 				8BAEE8092DCC73E3002EF328 /* MBProgressHUD.m in Sources */,
 				F4C5D6642DC9E25500D86BD2 /* FBEncryptorAES.m in Sources */,
 				F4C5D6652DC9E25500D86BD2 /* NSData+Base64.m in Sources */,
@@ -2250,6 +2266,8 @@
 				F41EBF542DC4DB20001413DE /* CBBidActionsViewController.swift in Sources */,
 				F41EBF552DC4DB20001413DE /* CBSpreadsheetImportController.swift in Sources */,
 				F41EBF562DC4DB20001413DE /* EmbeddedAwardEmpValidationVC.swift in Sources */,
+				F4D5B5852EC8518F006B7E4B /* SeniorityList+CoreDataClass.swift in Sources */,
+				F4D5B5862EC8518F006B7E4B /* SeniorityList+CoreDataProperties.swift in Sources */,
 				F41EBF572DC4DB20001413DE /* EmbeddedBidActionsVC.swift in Sources */,
 				F41EBF582DC4DB20001413DE /* EmbeddedCredentialVC.swift in Sources */,
 				F4C6F93A2DCB78770092C00C /* SimplePing.m in Sources */,
@@ -2309,6 +2327,7 @@
 				F41EBF7E2DC4DB20001413DE /* CBCommuteInfoViewController.swift in Sources */,
 				35428C292DEEE9F2009E7AC5 /* CBUserDefaults.swift in Sources */,
 				F41EBF7F2DC4DB20001413DE /* CBLineSortsTVC.swift in Sources */,
+				F4D690652EC72AFD00B12223 /* BISwaBidDataParsing.swift in Sources */,
 				F47FF7732E9D00CE0033D77D /* AwardCalendarCollectionViewVC.swift in Sources */,
 				F41EBF802DC4DB20001413DE /* CBMenuTableVC.swift in Sources */,
 				F41EBF812DC4DB20001413DE /* CBSortRulesMenuTableVC.swift in Sources */,
@@ -2361,6 +2380,7 @@
 				F41EBFA12DC4DB20001413DE /* CBCAPViewController.swift in Sources */,
 				F41EBFA22DC4DB20001413DE /* CBTextViewController.swift in Sources */,
 				F41EBFA32DC4DB20001413DE /* CBCommuteDiffVC.swift in Sources */,
+				F410AE502EBF000300B3CEE8 /* CBWebViewCredentialPageVC.swift in Sources */,
 				F41EBFA42DC4DB20001413DE /* CBFlighDataChangeVC.swift in Sources */,
 				353FC6912DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift in Sources */,
 				8BA705FE2DCB5BE20090EA71 /* CityPickerCell.swift in Sources */,

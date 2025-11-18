@@ -197,6 +197,11 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
             lblActionTitle.text = "Show File"
             btnBidAction.isHidden = false
             btnBidAction.setTitle("Bid Actions", for: .normal)
+            if self.bidPeriod?.textFile(withName: BICoverLetterTextFileName) == nil{
+                cell.selectionStyle = .none
+                cell.isUserInteractionEnabled = false
+                cell.lblTitle.textColor = .lightGrey
+            }
             if !((bidPeriod?.isFABid())!) {
                 cell.lblTitle.text = fileArrayPilot[indexPath.row]
                 cell.imgNext.isHidden = true

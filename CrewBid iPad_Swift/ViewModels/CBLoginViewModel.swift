@@ -52,7 +52,7 @@ class CBLoginViewModel{
             GlobalBidInfo.shared.allDomicileDownloadDictionary = dictionary
 
         }
-        saveSelectionToUserDefaults()
+        
         // 1. Get PreLogon Credential
         APIService.shared.fetch(
             urlString: EndPoint.shared.thirdpartyURL,
@@ -144,10 +144,5 @@ class CBLoginViewModel{
         return encodedString
     }
     
-    private func saveSelectionToUserDefaults(){
-        UserDefaults.standard.set(GlobalBidInfo.shared.base, forKey: kCBCrewBaseDefaultKey)
-        UserDefaults.standard.set(GlobalBidInfo.shared.position.rawValue, forKey: kCBCrewPositionTypeDefaultKey)
-        UserDefaults.standard.set(GlobalBidInfo.shared.employeeNumber, forKey: kCBEmployeeNumberDefaultKey)
-        UserDefaults.standard.set(GlobalBidInfo.shared.round, forKey: kCBCrewRoundTypeDefaultKey)
-    }
+
 }

@@ -33,7 +33,7 @@ extension BIDayInfo {
     @NSManaged public var previousDay: BIDayInfo?
     @NSManaged public var trip: BITripInfo?
     @NSManaged public var tripFirstDay: BITripInfo?
-
+    @NSManaged public var dutyPeriodNumber: NSNumber?
 }
 
 // MARK: Generated accessors for days

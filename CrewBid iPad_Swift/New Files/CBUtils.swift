@@ -1046,6 +1046,253 @@ class CBUtils{
             }
         }
     
+    static func writeJSONDictToFile(_ jsonDict: [String: Any], fileName: String) -> String? {
+            do {
+                // Convert dictionary to JSON data
+                let jsonData = try JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
+                
+                // Get the document directory path
+                guard let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+                    return "Failed to locate documents directory."
+                }
+                
+                let fileURL = documentsPath.appendingPathComponent(fileName)
+                
+                // Remove existing file if it exists
+                if FileManager.default.fileExists(atPath: fileURL.path) {
+                    do {
+                        try FileManager.default.removeItem(at: fileURL)
+                    } catch {
+                        return "Failed to remove existing file: \(error.localizedDescription)"
+                    }
+                }
+                
+                // Write JSON data to file
+                try jsonData.write(to: fileURL, options: .atomic)
+                
+                return nil // Success
+            } catch {
+                return "JSON Serialization or File Write Error: \(error.localizedDescription)"
+            }
+        }
+    
+    
+    static func readJSONString(fromFile fileName: String) -> [String: Any]? {
+        let documentDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+        let filePath = (documentDirectory as NSString).appendingPathComponent(fileName)
+        
+        guard let jsonData = try? Data(contentsOf: URL(fileURLWithPath: filePath)) else {
+            print("Failed to read file at: \(filePath)")
+            return nil
+        }
+
+        do {
+            let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: .mutableContainers)
+            return jsonObject as? [String: Any]
+        } catch {
+            print("JSON parse error:", error)
+            return nil
+        }
+    }
+    
+    static func readJSONStringFromFileForArray(_ fileName: String) -> [Any]? {
+        let fileManager = FileManager.default
+        
+        // Path to /Documents
+        guard let documentsPath = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            return nil
+        }
+        
+        let fileURL = documentsPath.appendingPathComponent(fileName)
+        
+        // Read file data
+        guard let data = try? Data(contentsOf: fileURL) else {
+            print("File not found: \(fileURL.path)")
+            return nil
+        }
+        
+        // Parse JSON
+        do {
+            let json = try JSONSerialization.jsonObject(with: data, options: .mutableContainers)
+            return json as? [Any]
+        } catch {
+            print("JSON parse error:", error)
+            return nil
+        }
+    }
+    
+    @discardableResult
+    static func deleteFile(withName fileName: String) -> Bool {
+        let fileManager = FileManager.default
+        
+        // Documents directory
+        guard let documentsPath = FileManager.default.urls(
+            for: .documentDirectory,
+            in: .userDomainMask
+        ).first else {
+            return false
+        }
+        
+        let fileURL = documentsPath.appendingPathComponent(fileName)
+        
+        // Check if the file exists
+        if fileManager.fileExists(atPath: fileURL.path) {
+            do {
+                try fileManager.removeItem(at: fileURL)
+                return true
+            } catch {
+                print("File deletion error:", error.localizedDescription)
+                return false
+            }
+        } else {
+            print("File not found:", fileURL.path)
+            return false
+        }
+    }
+    
+    
+    static func nsNumber(from value: Any?) -> NSNumber {
+        // nil or NSNull → return 0
+        guard let value = value, !(value is NSNull) else {
+            return 0
+        }
+
+        // NSNumber → return directly
+        if let number = value as? NSNumber {
+            return number
+        }
+
+        // String → convert to Double
+        if let string = value as? String {
+            return NSNumber(value: Double(string) ?? 0)
+        }
+
+        // BOOL → convert
+        if let boolValue = value as? Bool {
+            return NSNumber(value: boolValue)
+        }
+
+        return NSNumber(value: (value as AnyObject).boolValue)
+    }
+    
+    static func getTripPositionNumber(_ position: String) -> NSNumber {
+        switch position {
+        case "A":
+            return NSNumber(value: BIFaPosition.FaPositionA.rawValue)
+        case "B":
+            return NSNumber(value: BIFaPosition.FaPositionB.rawValue)
+        case "C":
+            return NSNumber(value: BIFaPosition.FaPositionC.rawValue)
+        case "D":
+            return NSNumber(value: BIFaPosition.FaPositionD.rawValue)
+        default:
+            return NSNumber(value: BIFaPosition.FaPositionNA.rawValue)
+        }
+    }
+    
+    class func convertToHerb(fromUTC utcDate: Date) -> Date? {
+        guard let centralTimeZone = TimeZone(identifier: "US/Central") else { return nil }
+
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = centralTimeZone
+
+        let components = calendar.dateComponents(in: centralTimeZone, from: utcDate)
+        return calendar.date(from: DateComponents(
+            year: components.year,
+            month: components.month,
+            day: components.day,
+            hour: components.hour,
+            minute: components.minute,
+            second: components.second
+        ))
+    }
+    
+    class func getMinutes(from date: Date) -> Int {
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone(identifier: "US/Central")!  // DST-aware
+
+        let components = calendar.dateComponents([.hour, .minute], from: date)
+
+        let hour = components.hour ?? 0
+        let minute = components.minute ?? 0
+
+        return (hour * 60) + minute
+    }
+    
+    
+    static func getTripPosition(_ position: BIFaPosition) -> String {
+        switch position {
+        case .FaPositionA:        return "A"
+        case .FaPositionB:        return "B"
+        case .FaPositionC:        return "C"
+        case .FaPositionD:        return "D"
+        case .FaPositionMultiple: return "M"
+        case .FaPositionNA:       return "NA"
+        }
+    }
+    
+    static func getDay(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(abbreviation: "GMT")
+        formatter.dateFormat = "EEEE"
+        return formatter.string(from: date)
+    }
+    
+    static func getDateOnly(from date: Date) -> NSNumber {
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(abbreviation: "GMT")
+        formatter.dateFormat = "dd"
+
+        let dayString = formatter.string(from: date)
+        let dayInt = Int(dayString) ?? 0
+        return NSNumber(value: dayInt)
+    }
+    
+    static func getEquipmentType(_ typeChar: String?) -> String {
+        guard let typeChar = typeChar else { return "" }
+
+        let types700 = ["73W", "73R", "7S7", "7R7", "700"]
+        let types800 = ["73H", "7S8", "738", "7R8", "800"]
+        let types8Max = ["7M8", "7U8", "7T8", "7V8"]
+
+        if types700.contains(typeChar) {
+            return "7"   // Equipment 700
+        } else if types800.contains(typeChar) {
+            return "8"   // Equipment 800
+        } else if types8Max.contains(typeChar) {
+            return "6"   // Equipment 8Max
+        } else {
+            return ""
+        }
+    }
+    
+    
+    static func convertMinsToHHMMFor24Hrs(_ totalMinutes: Int) -> Int {
+        let hours = totalMinutes / 60      // Total hours
+        let mins = totalMinutes % 60       // Remaining minutes
+        let result = hours * 100 + mins    // Convert to HHMM format
+        return result
+    }
+    
+    
+    static func date(bySettingHHMM hhmm: String, to baseDate: Date?) -> Date? {
+        guard let baseDate = baseDate, hhmm.count == 4 else { return nil }
+        
+        let hour = Int(hhmm.prefix(2)) ?? 0
+        let minute = Int(hhmm.suffix(2)) ?? 0
+        
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale.current
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        
+        // Extract Y/M/D components from base date
+        var comps = calendar.dateComponents([.year, .month, .day], from: baseDate)
+        comps.hour = hour
+        comps.minute = minute
+        
+        return calendar.date(from: comps)
+    }
+    
     class func readJSONStringFromFile() -> [String:Any]? {
         let filename = "falistwb4.json"
         let filePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).map(\.path)[0]
@@ -1592,7 +1839,7 @@ class CBUtils{
         let fetchRequest: NSFetchRequest<OvernightBulk> = OvernightBulk.fetchRequest()
         let results: [OvernightBulk]? = try? CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!.fetch(fetchRequest)
         var dictAllValues = [String: Any]()
-        var array = NSMutableArray()
+        let array = NSMutableArray()
         if let results = results, results.count > 0 {
             let filterFetch: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
             let predicate1 = NSPredicate(format: "bidPeriod == %@", CBGlobalMethods.shared.selectedBidPeriod!)
@@ -1649,9 +1896,19 @@ class CBUtils{
         }
         return overnightPredicate
     }
+    
+    
+    static func isSwaTypeOfFileDownload() -> Bool{
+        if ((AppState.shared.mockDataYear == 2025 && AppState.shared.mockDataMonth == 12) || AppState.shared.mockDataYear! > 2026){
+            return true
+        }
+        return false
+    }
+    
 }
 
 class JWTDecoder{
+    
     static func decode(jwtToken jwt: String) -> [String: Any]? {
             // Split the JWT into parts
             let segments = jwt.components(separatedBy: ".")

@@ -17,7 +17,7 @@ class BIAllDomicileDownloadViewModel {
     let isBothSelected: Bool? = (GlobalBidInfo.shared.allDomicileDownloadDictionary["both"] as? Bool)
     
     func downladAllDomicileBid(bases: [String], tableViewData: [String]) {
-        NotificationCenter.default.post(name: Notification.Name("CloseCredentilaPage"), object: nil)
+        NotificationCenter.default.post(name: Notification.Name("CloseCredentialPage"), object: nil)
         var bases = bases
         var tableViewData = tableViewData
         if bases.count > 0 {

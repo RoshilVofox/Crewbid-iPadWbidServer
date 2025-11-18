@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="25A362" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24411" systemVersion="25B78" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AwardDetails" representedClassName="AwardDetails" syncable="YES">
         <attribute name="empName" optional="YES" attributeType="String"/>
         <attribute name="empNum" optional="YES" attributeType="String"/>
@@ -14,6 +14,7 @@
         <attribute name="aWeekDays" optional="YES" attributeType="String"/>
         <attribute name="base" attributeType="String" minValueString="3" maxValueString="3" regularExpressionString="[A-Z]{3}"/>
         <attribute name="baseLine" optional="YES" attributeType="Transformable"/>
+        <attribute name="bidByEmpID" optional="YES" attributeType="String"/>
         <attribute name="bidLineNumbers" optional="YES" attributeType="Transformable"/>
         <attribute name="bidListLineCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="bidPackageErrorDisplayed" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
@@ -30,6 +31,7 @@
         <attribute name="containsMissingTripLines" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <attribute name="containsVacay" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="coverLetterDisplayed" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="coverLetterFileName" optional="YES" attributeType="String"/>
         <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="credentialEmployeenumber" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="crewBidSecretVacation" optional="YES" attributeType="Transformable"/>
@@ -82,6 +84,7 @@
         <attribute name="isSeniorityVacParsingFailed" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <attribute name="isSortBySubmitOn" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <attribute name="isStateFileModifiedToSync" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
+        <attribute name="isSwaAPI" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isSwaptimizerOn" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <attribute name="isVacationRemoved" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <attribute name="isWbidMaxOn" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
@@ -131,6 +134,7 @@
         <attribute name="year" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <relationship name="awardDetails" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AwardDetails" inverseName="bidPeriod" inverseEntity="AwardDetails"/>
         <relationship name="bidReceipts" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="BidReceipt" inverseName="bidPeriod" inverseEntity="BidReceipt"/>
+        <relationship name="buddyBid" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="BuddyBids" inverseName="bidPeriod" inverseEntity="BuddyBids"/>
         <relationship name="commuteTime" optional="YES" toMany="YES" deletionRule="No Action" destinationEntity="CommuteTime" inverseName="commutable" inverseEntity="CommuteTime"/>
         <relationship name="deadheadAtEndCities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DeadheadAtEndCity" inverseName="bidPeriod" inverseEntity="DeadheadAtEndCity"/>
         <relationship name="deadheadAtStartCities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DeadheadAtStartCity" inverseName="bidPeriod" inverseEntity="DeadheadAtStartCity"/>
@@ -139,6 +143,8 @@
         <relationship name="lines" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Line" inverseName="bidPeriod" inverseEntity="Line"/>
         <relationship name="lineSortKeyMaps" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LineSortKeyMap" inverseName="bidPeriod" inverseEntity="LineSortKeyMap"/>
         <relationship name="lineSorts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="LineSort" inverseName="bidPeriod" inverseEntity="LineSort"/>
+        <relationship name="metaData" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MetaData" inverseName="bidPeriod" inverseEntity="MetaData"/>
+        <relationship name="seniorityList" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SeniorityList" inverseName="bidPeriod" inverseEntity="SeniorityList"/>
         <relationship name="textFiles" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TextFile" inverseName="bidPeriod" inverseEntity="TextFile"/>
         <relationship name="vacationArrayFromServer" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="VacationArrayFromServer" inverseName="bidPeriod" inverseEntity="VacationArrayFromServer"/>
         <relationship name="vacations" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Vacation" inverseName="bidPeriod" inverseEntity="Vacation"/>
@@ -157,6 +163,10 @@
         <attribute name="text" optional="YES" attributeType="String"/>
         <attribute name="timeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="bidPeriod" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="bidReceipts" inverseEntity="BidPeriod"/>
+    </entity>
+    <entity name="BuddyBids" representedClassName="BuddyBids" syncable="YES" codeGenerationType="class">
+        <attribute name="buddyId" optional="YES" attributeType="String"/>
+        <relationship name="bidPeriod" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="buddyBid" inverseEntity="BidPeriod"/>
     </entity>
     <entity name="Commutability" representedClassName=".Commutability" syncable="YES" codeGenerationType="class">
         <attribute name="baseTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
@@ -210,6 +220,7 @@
         <attribute name="dayPayWithRig" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
         <attribute name="departTimeFirstLeg" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="dutyMinutes" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="dutyPeriodNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="isHolidayPaycalculated" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <attribute name="isOvernightBulkRed" optional="YES" attributeType="String"/>
         <attribute name="pay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
@@ -279,6 +290,7 @@
         <attribute name="isEtopsFlight" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <attribute name="isRedEyeFlight" optional="YES" attributeType="Boolean" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="lastLegOfTrip" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="legNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="pay" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
         <relationship name="day" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="DayInfo" inverseName="legs" inverseEntity="DayInfo"/>
         <relationship name="dayFirstLeg" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="DayInfo" inverseName="firstLeg" inverseEntity="DayInfo"/>
@@ -377,6 +389,7 @@
         <attribute name="isFA25thLineVacationCalculated" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <attribute name="isFA31thLineVacationCalculated" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <attribute name="isFrozen" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
+        <attribute name="isLODO" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isOvernightFiltered" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="isTrashed" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="latestArrivalTime" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
@@ -505,6 +518,17 @@
         <relationship name="bidPeriod" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="lineSortKeyMaps" inverseEntity="BidPeriod"/>
         <relationship name="lineSort" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LineSort" inverseName="lineSortKeyMap" inverseEntity="LineSort"/>
     </entity>
+    <entity name="MetaData" representedClassName="MetaData" syncable="YES" codeGenerationType="class">
+        <attribute name="abcdPositions" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="abcPositions" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="aPositions" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="bcPositions" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="bidPeriodBegin" optional="YES" attributeType="String"/>
+        <attribute name="bidPeriodEnd" optional="YES" attributeType="String"/>
+        <attribute name="dPositions" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="estimatedReserveLines" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="bidPeriod" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="metaData" inverseEntity="BidPeriod"/>
+    </entity>
     <entity name="OvernightBulk" representedClassName=".OvernightBulk" syncable="YES" codeGenerationType="class">
         <attribute name="citystatus" optional="YES" attributeType="Transformable"/>
     </entity>
@@ -513,6 +537,17 @@
         <attribute name="presetSyncVersion" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="presetUpdatedTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="type" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="SeniorityList" representedClassName="SeniorityList" syncable="YES">
+        <attribute name="base" optional="YES" attributeType="String"/>
+        <attribute name="baseSeniority" optional="YES" attributeType="Transformable"/>
+        <attribute name="companySeniority" optional="YES" attributeType="Transformable"/>
+        <attribute name="department" optional="YES" attributeType="String"/>
+        <attribute name="employeeId" optional="YES" attributeType="String"/>
+        <attribute name="legalName" optional="YES" attributeType="String"/>
+        <attribute name="lodoQualification" optional="YES" attributeType="String"/>
+        <attribute name="vacation" optional="YES" attributeType="String"/>
+        <relationship name="bidPeriod" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="seniorityList" inverseEntity="BidPeriod"/>
     </entity>
     <entity name="TextFile" representedClassName="BITextFile" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String"/>
@@ -572,6 +607,7 @@
         <attribute name="partialTrip" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <attribute name="passesThruBase" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="returnTime" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="tafbJson" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <relationship name="days" optional="YES" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="DayInfo" inverseName="trip" inverseEntity="DayInfo"/>
         <relationship name="firstDay" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="DayInfo" inverseName="tripFirstDay" inverseEntity="DayInfo"/>

@@ -9,6 +9,8 @@ import UIKit
 import CoreData
 
 class CBBiddataDownloadVC: BaseViewController {
+
+    
     
     // base
     @IBOutlet weak var btnATL: dataDownloadingButton!
@@ -89,11 +91,6 @@ class CBBiddataDownloadVC: BaseViewController {
             self.shakeView(view: self.viewYear)
         } else {
             
-//            if self.bidAlreadyExists(){
-//                self.showAlertForExistingBid {
-//                    print("")
-//                }
-//            }
             AppData.shared.Round = self.selectedRound!
             AppData.shared.postion = self.selectedPosition!
             let emp = UserDefaults.standard.string(forKey: kCBDefaultEmployeeNumberKey)!
@@ -117,24 +114,100 @@ class CBBiddataDownloadVC: BaseViewController {
                 print("Base:\(self.selectedDomicile!) Position:\(self.selectedPosition!) Rnd:\(self.selectedRound!) EmpNo:\(self.empNum ?? emp) Month:\(self.month!) Year:\(self.year!)")
             }
             
-            
-//=======================================
             AppState.shared.mockDataMonth = self.month
             AppState.shared.mockDataYear = self.year
-            let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
-            let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
-            vc.isNewBid = self.isNewBid
-            vc.isHistoricBid = self.isHistoricBid
-            vc.selectedDomicile = self.selectedDomicile
-            if let positionCode = self.selectedPosition, let position = BICrewPositionType(from: positionCode){
-                vc.selectedPosition = position
-            }
-            vc.selectedRound = self.selectedRound
-            vc.empNum = self.empNum
-            vc.month = self.month
-            vc.year = self.year
-            self.navigationController?.pushViewController(vc, animated: true)
+            
+            self.showCredentialPageCP()
+//            if selectedPosition == "FA"{
+//                self.showCredentialPageFA()
+//            }else{
+//                self.showCredentialPageCP()
+//            }
         }
+    }
+    
+//    func checkEarlyBiddingForFA(){
+//        let currentDate = Date()
+//        let units: Set<Calendar.Component> = [.hour, .day, .month, .year]
+//        var dc = Calendar.current.dateComponents(units, from: currentDate)
+//        dc.hour = 12
+//        dc.timeZone = TimeZone(identifier: "US/Central")!
+//        var dayString: String? = nil
+//        if selectedRound == 1 {
+//            if selectedPosition == "FA" {
+//                dc.day = 2
+//                dayString = "2nd"
+//            } else {
+//                dc.day = 4
+//                dayString = "4th"
+//            }
+//        } else {
+//            if selectedPosition == "FA" {
+//                dc.day = 11
+//                dayString = "11th"
+//            } else {
+//                dc.day = 17
+//                dayString = "17th"
+//            }
+//        }
+//        let bidReleaseDate: Date? = Calendar.current.date(from: dc)
+//        if bidReleaseDate?.compare(currentDate) == .orderedDescending {
+//            if !isHistoricBid{
+//                AlertService.showAlertForTopVC(title: "Early Bid Warning", message: "SWA guarantees that the lines will be released by noon Central Time on the \(dayString!).  Sometimes SWA releases the lines earlier. If SWA has not released the lines early, then attempting to download them now will result in a BID INFO UNAVAILABLE error.  So if you receive this error, try again later.", actions: [(title:"OK", style: .default, handler:{_ in
+//                    self.showCredentialPageFA()
+//                    CBGlobalMethods.shared.isFromCredentialPage = true
+//                    CBGlobalMethods.shared.isFromNewSubmission = false
+//                    CBGlobalMethods.shared.isFromAwards = false
+//                })])
+//            }else{
+//                self.showCredentialPageFA()
+//                CBGlobalMethods.shared.isFromCredentialPage = true
+//                CBGlobalMethods.shared.isFromNewSubmission = false
+//                CBGlobalMethods.shared.isFromAwards = false
+//            }
+//        }else{
+//            self.showCredentialPageFA()
+//            CBGlobalMethods.shared.isFromCredentialPage = true
+//            CBGlobalMethods.shared.isFromNewSubmission = false
+//            CBGlobalMethods.shared.isFromAwards = false
+//        }
+//    }
+    
+    func showCredentialPageFA(){
+        let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBWebViewCredentialPageVC") as! CBWebViewCredentialPageVC
+        vc.selectedRound = self.selectedRound
+        vc.isHistoricBid = self.isHistoricBid
+        vc.selectedDomicile = self.selectedDomicile
+        vc.empNum = self.empNum
+        vc.month = self.month
+        vc.year = self.year
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func didDismissWebView() {
+//        self.showProgressView()
+//        self.startBidInfoDownload()
+    }
+    
+    
+
+
+    
+    func showCredentialPageCP(){
+        let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
+        vc.isNewBid = self.isNewBid
+        vc.isHistoricBid = self.isHistoricBid
+        vc.selectedDomicile = self.selectedDomicile
+        if let positionCode = self.selectedPosition, let position = BICrewPositionType(from: positionCode){
+            vc.selectedPosition = position
+        }
+        vc.selectedRound = self.selectedRound
+        vc.empNum = self.empNum
+        vc.month = self.month
+        vc.year = self.year
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     
@@ -495,7 +568,7 @@ class CBBiddataDownloadVC: BaseViewController {
                     button.backgroundColor = UIColor.systemOrange
                 }
             }
-            let btnYearArray : [UIButton] = [btnBeforePrevious,btnPreviousYear,btnCurrentYear]
+//            let btnYearArray : [UIButton] = [btnBeforePrevious,btnPreviousYear,btnCurrentYear]
             //            for btn in btnYearArray  {
             //                if btn.titleLabel?.text == "\(year)" {
             //                    btn.backgroundColor = UIColor.systemOrange
@@ -543,20 +616,11 @@ class CBBiddataDownloadVC: BaseViewController {
         
         AppState.shared.mockDataMonth = month
         AppState.shared.mockDataYear = year
-        
-        // Navigate
-        let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
-        vc.isNewBid = self.isNewBid
-        vc.isHistoricBid = self.isHistoricBid
-        vc.selectedDomicile = selectedDomicile
-        if let position = BICrewPositionType(from: selectedPosition) {
-            vc.selectedPosition = position
-        }
-        vc.selectedRound = selectedRound
-        vc.empNum = self.empNum
-        vc.month = month
-        vc.year = year
-        self.navigationController?.pushViewController(vc, animated: true)
+        self.showCredentialPageCP()
+//        if selectedPosition == "FA"{
+//            self.showCredentialPageFA()
+//        }else{
+//            self.showCredentialPageCP()
+//        }
     }
 }

@@ -33,7 +33,7 @@ class BICalendarData {
     var weeksInMonth = 0
     var calendarDays : NSArray = NSArray()
     
-    static func createWithManagedObjectContext(_ context: NSManagedObjectContext) -> BICalendarData? {
+    static func initWithManagedObjectContext(_ context: NSManagedObjectContext) -> BICalendarData? {
         // Fetch request for BIBidPeriod
         let fetchRequest = NSFetchRequest<BIBidPeriod>(entityName: "BidPeriod")
         
