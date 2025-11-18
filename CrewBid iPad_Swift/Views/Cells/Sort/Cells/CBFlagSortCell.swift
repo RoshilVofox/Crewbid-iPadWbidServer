@@ -99,8 +99,9 @@ class CBFlagSortCell: UITableViewCell {
                     }
                 }
                 
-                self.lineSort?.arrayVariables = userFlags as NSArray
-                self.lineSort?.ascending = NSNumber(booleanLiteral: true)
+                self.lineSort!.arrayVariables = userFlags as NSArray
+                self.lineSort!.ascending = NSNumber(booleanLiteral: true)
+                try? self.context?.save()
             }
         }
         catch {

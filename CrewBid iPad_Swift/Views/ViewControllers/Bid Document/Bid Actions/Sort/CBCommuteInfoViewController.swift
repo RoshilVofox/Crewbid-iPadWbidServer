@@ -363,7 +363,7 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
             
             lineSort = BILineSort(context: context!)
             lineSort?.bidPeriod = self.bidPeriod
-            lineSort?.abbreviation = "cmAuto"
+            lineSort?.abbreviation = "CmAuto"
             lineSort?.category = 9
             lineSort?.type = 1
             lineSort?.name = "Commuting - Auto"

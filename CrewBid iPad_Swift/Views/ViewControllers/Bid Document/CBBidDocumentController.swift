@@ -97,6 +97,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         NotificationCenter.default.addObserver(self, selector: #selector(tapWBidMaxBtn), name: Notification.Name("TapWBidMaxBtn"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateLocalHerbSwitchUI), name: NSNotification.Name("updateLocalHerbSwitchUI"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(removeVacationsForSync), name: NSNotification.Name("RemoveVacationsForSync"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadVacationButton), name: NSNotification.Name("VacationValueSynced"), object: nil)
         
         firstTimeBidOpen()
         NotificationCenter.default.addObserver(self, selector: #selector(didDismissLatestNews), name: NSNotification.Name("DidDismissLatestNews"), object: nil)
@@ -940,6 +941,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 
                 let navController = UINavigationController(rootViewController: vc)
                 navController.modalPresentationStyle = .formSheet // or .fullScreen if needed
+                navController.isModalInPresentation = true
                 self.present(navController, animated: true)
 
             }),(title: "NO", style:.cancel, handler: {_ in
@@ -1039,16 +1041,17 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     
     
     @objc func ShowCommutablilitySortView() {
-            let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
-            let commuteInformation = storyboard.instantiateViewController(withIdentifier: "CommuteInformation") as! CBCommuteInfoViewController
-            commuteInformation.bidPeriod = self.bidPeriod
-            commuteInformation.commutabilityType = CommutabilityType.sort
-            commuteInformation.preferredContentSize = CGSize(width: 320, height: 320)
-            DispatchQueue.main.async {
-                self.present(commuteInformation, animated: true) {
-                }
+        let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
+        let commuteInformation = storyboard.instantiateViewController(withIdentifier: "CommuteInformation") as! CBCommuteInfoViewController
+        commuteInformation.bidPeriod = self.bidPeriod
+        commuteInformation.commutabilityType = CommutabilityType.sort
+        commuteInformation.isModalInPresentation = true
+        commuteInformation.preferredContentSize = CGSize(width: 320, height: 320)
+        DispatchQueue.main.async {
+            self.present(commuteInformation, animated: true) {
             }
         }
+    }
     
     
     @objc func showCommutablilityFilterView() {
@@ -1056,6 +1059,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let commuteInformation = storyboard.instantiateViewController(withIdentifier: "CommuteInformation") as! CBCommuteInfoViewController
         commuteInformation.bidPeriod = self.bidPeriod
+        commuteInformation.isModalInPresentation = true
         commuteInformation.commutabilityType = CommutabilityType.filter
         commuteInformation.preferredContentSize = CGSize(width: 320, height: 320)
 //        print("Presenting from topVC: \(topVC!)")
@@ -1080,6 +1084,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 
         let navController = UINavigationController(rootViewController: vc)
         navController.modalPresentationStyle = .formSheet // or .fullScreen if needed
+        navController.isModalInPresentation = true
         present(navController, animated: true)
 
     }
@@ -1241,6 +1246,23 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             }
         }
         return weekTypeDateDict
+    }
+    
+    @objc func reloadVacationButton() {
+        UserDefaults.standard.set(true, forKey: "isStateSync")
+        if self.bidPeriod!.isEomOn?.boolValue == true {
+            self.eomFromSync()
+        }
+        else if self.bidPeriod?.isSwaptimizerOn?.boolValue == true {
+            self.btnCrewBidVacationButtonAction(btnSwaptimizer)
+        }
+        else if self.bidPeriod?.isWbidMaxOn?.boolValue == true {
+            self.btnWbidMaxAction(btnWbidMax)
+        }
+        else if self.bidPeriod?.isFAVacationOn?.boolValue == true && self.bidPeriod!.isFABid() {
+            self.btnWbidMaxAction(btnWbidMax)
+        }
+        self.handleVacationData()
     }
     
     @objc func handleVacationData() {
@@ -3977,6 +3999,83 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @objc func tapWBidMaxBtn() {
         if bidPeriod?.isFABid() == false {
             wbidVacationButtonAction(btnWbidMax)
+        }
+    }
+    
+    func eomFromSync() {
+        let function = #function
+        let vDL = CBVacationDownloader()
+        vDL.bidPeriod = bidPeriod
+        vDL.calendarData = self.calendarData
+        btnEOM.isSelected = self.bidPeriod!.isEomOn?.boolValue ?? false
+        if self.bidPeriod!.isEomOn?.boolValue == true {
+            btnEOM.backgroundColor = UIColor(red: 35.0/255, green: 177.0/255, blue: 76.0/255, alpha: 1)
+            btnEOM.setTitleColor(.white, for: .selected)
+        }
+        else {
+            btnEOM.backgroundColor = .white
+            btnEOM.setTitleColor(.black, for: .normal)
+        }
+        if btnEOM.isSelected == true {
+            if btnSwaptimizer.isSelected == true {
+                self.bidPeriod?.userVacationWbidOrCrewBid = "CREWBIDF"
+                self.checkForSWAPtimizerFile()
+                return
+            }
+            else if btnSwaptimizer.isSelected == true && bidPeriod?.isFABid() == false {
+                self.bidPeriod?.userVacationWbidOrCrewBid = "WBIDF"
+                self.checkForSWAPtimizerFile()
+                return
+            }
+            else if btnSwaptimizer.isSelected == true && bidPeriod?.isFABid() == true {
+                self.bidPeriod?.userVacationWbidOrCrewBid = "FAVacationF"
+                self.checkForSWAPtimizerFile()
+                return
+            }
+            else if btnSwaptimizer.isSelected != true && bidPeriod?.isFABid() == true {
+                self.bidPeriod?.userVacationWbidOrCrewBid = "FAVacationEomOnly"
+                self.checkForSWAPtimizerFile()
+                return
+            }
+            else {
+                self.bidPeriod?.userVacationWbidOrCrewBid = "WBIDF"
+                self.checkForSWAPtimizerFile()
+                return
+            }
+        }
+        else {
+            if btnSwaptimizer.isSelected {
+                self.crewbid(vDL: vDL)
+                return
+            }
+            else if btnWbidMax.isSelected && bidPeriod?.isFABid() == false {
+                self.wbid(vDL: vDL)
+                return
+            }
+            else if btnWbidMax.isSelected && bidPeriod?.isFABid() == true {
+                if self.bidPeriod?.containsVacay?.boolValue == true {
+                    self.faVacation(vDL: vDL)
+                    return
+                }
+                else {
+                    btnEOM.isSelected = false
+                    self.bidPeriod?.isEomOn = false
+                    btnEOM.backgroundColor = .white
+                    btnEOM.setTitleColor(.black, for: .normal)
+                    eomSelectedIndex = self.bidPeriod?.faEomSelectedDate?.stringValue ?? "-1"
+                    self.enableFAVacationF()
+                }
+            }
+            else {
+                self.bidPeriod?.userVacationWbidOrCrewBid = ""
+                self.bidPeriod?.vacationType = ""
+                try? self.context?.save()
+                self.removeCurrentVacation()
+                self.bidPeriod?.isSwaptimizerOn = false
+                btnSwaptimizer.backgroundColor = .white
+                btnSwaptimizer.setTitleColor(.black, for: .normal)
+                NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+            }
         }
     }
 }

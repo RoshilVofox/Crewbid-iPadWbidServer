@@ -354,7 +354,7 @@ class BIBidFileDownloadViewModel {
     private func checkFlightData(){
         CBUtils.downloadFlightData(){ (result:Bool?) in
             if result == true{
-//                print("Flight Data downloaded successfully")
+                print("Flight Data downloaded successfully")
             }
         }
     }

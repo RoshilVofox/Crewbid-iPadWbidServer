@@ -947,7 +947,8 @@ class CBUtils{
         return 0
     }
     
-    class func downloadFlightData(completion: @escaping (Bool) -> Void) {
+    class func downloadFlightData
+    (completion: @escaping (Bool) -> Void) {
         guard let url = URL(string: EndPoint.shared.flightdataJSON) else {
                 print("Invalid URL.")
                 completion(false)

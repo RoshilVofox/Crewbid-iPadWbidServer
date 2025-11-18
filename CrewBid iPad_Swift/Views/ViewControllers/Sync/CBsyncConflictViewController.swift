@@ -130,8 +130,16 @@ class CBsyncConflictViewController: UIViewController {
         
         if let stateValue = arrayDictRecived["StateLastUpdate"] {
             if !(stateValue is NSNull) {
-                stateServerDateString = self.getLocalDateFrom(dateString: stateValue as! String, fromFormat: "yyyy-MM-dd'T'HH:mm:ss.SSS", toFormat: "MM/dd/yyyy")
-                stateServerTimeString = self.getLocalDateFrom(dateString: stateValue as! String, fromFormat: "yyyy-MM-dd'T'HH:mm:ss.SSS", toFormat: "hh:mm:ss a")
+                let serverDateTime = self.getDateFromJSON(stateValue as! String)
+                let dateFormatter = DateFormatter()
+                
+                dateFormatter.locale = Locale.current
+                dateFormatter.timeZone = TimeZone.current
+                dateFormatter.dateFormat = "MM/dd/yyyy"
+                stateServerDateString = dateFormatter.string(from: serverDateTime!)
+                dateFormatter.dateFormat = "hh:mm:ss a"
+                stateServerTimeString = dateFormatter.string(from: serverDateTime!)
+                
                 lblStateServerDate.text = stateServerDateString
                 lblStateServerTime.text = stateServerTimeString
             }
@@ -252,6 +260,7 @@ class CBsyncConflictViewController: UIViewController {
         let presetTVC = CBPresetsTVC()
         let arr = presetTVC.openPresetsFromFileWithBidPeriod(bidPeriod: self.bidPeriod!)
         if arr.count == 0 {
+            CBGlobalMethods.shared.hideCustomActivityIndicator()
             AlertService.showAlertForTopVC(title: "Crewbid", message: "You have NO Presets to Sync")
             return
         }

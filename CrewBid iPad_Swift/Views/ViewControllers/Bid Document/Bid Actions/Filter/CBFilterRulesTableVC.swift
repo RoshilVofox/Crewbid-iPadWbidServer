@@ -311,6 +311,7 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
 //    MARK: refresh line notification
     @objc func updateLines() {
         reloadRuleCell()
+        updateBidListCount()
     }
 }
 extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
@@ -505,7 +506,7 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
             let ruleCell = cell as? CBCommutingRuleCell
             ruleCell?.filterRule = rule!
            ruleCell?.bidPeriod = self.bidPeriod!
-            ruleCell?.calculateCommutingManualFilter()
+//            ruleCell?.calculateCommutingManualFilter()
         }//Flag filter page navigation
         else if BIFilterRuleCategory.BIUserFlagFilterRuleCategory.rawValue == rule?.category?.intValue {
             let ruleCell = cell as? CBUserFlagRuleCell
