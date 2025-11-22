@@ -203,6 +203,7 @@ class CBSyncInfoViewController: UIViewController {
             vc.bidPeriod = self.bidPeriod
             vc.fileType = self.fileType
             vc.linesManager = self.linesManager
+            vc.preferredContentSize = CGSize(width: 768, height: 900)
             
             self.navigationController?.pushViewController(vc, animated: true)
         }

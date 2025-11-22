@@ -1525,36 +1525,11 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                     sort.loadLineSort(pSort: pSort)
                     sort.bidPeriod = self.bidPeriod
                     if sort.category?.intValue == BILineSortCategory.BIFlagLineSortCategory.rawValue {
-                        if pSort.arrayVariables == nil {
-                            let variables = NSMutableArray()
-                            if pSort.variables!["NO_COLOR_FLAG"] != nil {
-                                variables.add(0)
-                            }
-                            if pSort.variables!["BLUE_COLOR_FLAG"] != nil {
-                                variables.add(1)
-                            }
-                            if pSort.variables!["GREEN_COLOR_FLAG"] != nil {
-                                variables.add(2)
-                            }
-                            if pSort.variables!["RED_COLOR_FLAG"] != nil {
-                                variables.add(3)
-                            }
-                            if pSort.variables!["YELLOW_COLOR_FLAG"] != nil {
-                                variables.add(4)
-                            }
-                            if pSort.variables!["ORANGE_COLOR_FLAG"] != nil {
-                                variables.add(5)
-                            }
-                            if pSort.variables!["ORANGE_COLOR_FLAG"] != nil {
-                                variables.add(6)
-                            }
-                            if pSort.variables!["PINK_COLOR_FLAG"] != nil {
-                                variables.add(7)
-                            }
-                            sort.arrayVariables = variables
+                        if pSort.variables == nil {
+                            sort.variables = [:]
                         }
                         else {
-                            sort.arrayVariables = pSort.arrayVariables
+                            sort.variables  = pSort.variables as NSDictionary?
                         }
                     }
                     else if sort.category?.intValue == BILineSortCategory.BIDeadheadsLineSortCategory.rawValue && (sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtEndSortType.rawValue || sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtBothSortType.rawValue || sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadAtStartSortType.rawValue) {

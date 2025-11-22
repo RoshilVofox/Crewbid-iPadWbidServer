@@ -57,7 +57,24 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
                     dictCityStatus = (cityStatusValueArray[0] as? [String: Any])!
                 }
                 else if let cityStatus = fetchedObjects.first?.value(forKey: "citystatus") as? [String: Any] {
-                    dictCityStatus = cityStatus  // [String: Any] is already mutable in Swift
+//                    when taking from state sync
+                    if (cityStatus["OverNightYes"] != nil) || (cityStatus["OverNightNo"] != nil) {
+                        if let yesList = cityStatus["OverNightYes"] as? [String] {
+                            for city in yesList {
+                                dictCityStatus?[city] = 1
+                            }
+                        }
+
+                        if let noList = cityStatus["OverNightNo"] as? [String] {
+                            for city in noList {
+                                dictCityStatus?[city] = 2
+                            }
+                        }
+                    }
+                    else {
+//                        normal
+                        dictCityStatus = cityStatus
+                    }// [String: Any] is already mutable in Swift
                 }
             }
             else {
@@ -120,6 +137,7 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
         for bulk in resuts! {
             context?.delete(bulk)
         }
+        try? self.context?.save()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
             NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
         }
@@ -141,10 +159,12 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
         }
         cell.lblCityName.text = arrCitiesList![indexPath.row] as? String
         if arrIntersected.contains(arrCitiesList![indexPath.row]) {
-            if dictCityStatus![arrCitiesList![indexPath.row] as! String] != nil {
-                let key = String(describing: arrCitiesList![indexPath.row])
-                let type1 = dictCityStatus![key] as? String ?? "0"
-                let type = Int(type1)
+            let key = String(describing: arrCitiesList![indexPath.row])
+            let value = String(describing: dictCityStatus![key] ?? "")
+            if value != "" {
+//                let key = String(describing: arrCitiesList![indexPath.row])
+//                let type1 = dictCityStatus![key] as? String ?? "0"
+                let type = Int(value)
                 switch type {
                 case ColorType.red.rawValue:
                     cell.lblCityName.backgroundColor = .red

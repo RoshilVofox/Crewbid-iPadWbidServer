@@ -1262,7 +1262,38 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         else if self.bidPeriod?.isFAVacationOn?.boolValue == true && self.bidPeriod!.isFABid() {
             self.btnWbidMaxAction(btnWbidMax)
         }
-        self.handleVacationData()
+        if !((self.bidPeriod!.isEomOn?.boolValue == true) || (self.bidPeriod?.isSwaptimizerOn?.boolValue == true) || (self.bidPeriod?.isWbidMaxOn?.boolValue == true) || (self.bidPeriod?.isFAVacationOn?.boolValue == true && self.bidPeriod!.isFABid())) {
+            self.bidPeriod?.userVacationWbidOrCrewBid = ""
+            self.bidPeriod?.vacationType = ""
+            let isEomButton = btnEOM.isSelected
+            if bidPeriod!.isFABid() {
+                if btnWbidMax.isSelected {
+                    self.faVacationButtonAction(btnTemp: self.btnWbidMax)
+                }
+                else if isEomButton {
+                    btnEOM.isSelected = true
+                    self.btnEOMAction(btnTemp: self.btnEOM)
+                }
+            }
+            else {
+                
+            btnEOM.isSelected = false
+                let btn = UIButton()
+                if btnWbidMax.isSelected {
+                    self.wbidVacationButtonAction(btn)
+                }
+                else if btnSwaptimizer.isSelected {
+                    btn.tag = 21
+                    self.wbidVacationButtonAction(btn)
+                }
+                else if isEomButton {
+                    btnEOM.isSelected = true
+                    self.btnEOMAction(btnTemp: self.btnEOM)
+                }
+            }
+            return
+        }
+//        self.handleVacationData()
     }
     
     @objc func handleVacationData() {
@@ -3975,8 +4006,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         else {
             if (self.bidPeriod!.onlyContainEOM == "NO") {
                 if (self.btnEOM.isSelected) {
-                    self.bidPeriod!.userVacationWbidOrCrewBid = "CREWBIDF"
-                    self.checkForSWAPtimizerFile()
+                    self.bidPeriod!.userVacationWbidOrCrewBid = "WBIDF"
+                    DispatchQueue.main.async {
+                        CBGlobalMethods.shared.hideActivityIndicator()
+                        AlertService.showAlertForTopVC(title: "SWAPtimizer Server Error", message: "Unable to find the pilot indicated. \n\nSWAPtimizer usually releases data the evening of the 4th or morning of the 5th. If you are seeing this error before data release, please try again after data has been released.")
+                    }
                 }
                 else {
                     self.wbidVacationButtonAction(sender)
@@ -3984,8 +4018,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             }
             else {
                 if (self.btnEOM.isSelected) {
-                    self.bidPeriod!.userVacationWbidOrCrewBid = "CREWBIDF"
-                    self.checkForSWAPtimizerFile()
+                    self.bidPeriod!.userVacationWbidOrCrewBid = "WBIDF"
+                    DispatchQueue.main.async {
+                        CBGlobalMethods.shared.hideActivityIndicator()
+                        AlertService.showAlertForTopVC(title: "SWAPtimizer Server Error", message: "Unable to find the pilot indicated. \n\nSWAPtimizer usually releases data the evening of the 4th or morning of the 5th. If you are seeing this error before data release, please try again after data has been released.")
+                    }
                 }
                 else {
                     alertShouldDisplay = true
