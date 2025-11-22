@@ -157,6 +157,12 @@ extension BIBidPeriod {
     @NSManaged public var insertionPoints: NSSet?
     @NSManaged public var awardString: String?
     @NSManaged public var created: Date?
+    @NSManaged public var seniorityList: NSSet?
+    @NSManaged public var metaData: NSSet?
+    @NSManaged public var coverLetterFileName: String?
+    @NSManaged public var buddyBid: NSSet?
+    @NSManaged public var bidByEmpID: String?
+    @NSManaged public var isSwaAPI: NSNumber?
 }
 
 // MARK: Generated accessors for awardDetails
@@ -345,6 +351,40 @@ extension BIBidPeriod {
     @NSManaged public func removeFromLineFilters(_ values: NSSet)
     
 }
+
+
+// MARK: Generated accessors for seniorityList
+extension BIBidPeriod {
+
+    @objc(addSeniorityListObject:)
+    @NSManaged public func addToSeniorityList(_ value: SeniorityList)
+
+    @objc(removeSeniorityListObject:)
+    @NSManaged public func removeFromSeniorityList(_ value: SeniorityList)
+
+    @objc(addSeniorityList:)
+    @NSManaged public func addToSeniorityList(_ values: NSSet)
+
+    @objc(removeSeniorityList:)
+    @NSManaged public func removeFromSeniorityList(_ values: NSSet)
+}
+
+extension BIBidPeriod {
+
+    @objc(addBuddyBidsObject:)
+    @NSManaged public func addToBuddyBids(_ value: BuddyBids)
+
+    @objc(removeBuddyBidsObject:)
+    @NSManaged public func removeFromBuddyBids(_ value: BuddyBids)
+
+    @objc(addBuddyBids:)
+    @NSManaged public func addToBuddyBids(_ values: NSSet)
+
+    @objc(removeBuddyBids:)
+    @NSManaged public func removeFromBuddyBids(_ values: NSSet)
+}
+
+
 
 enum VacButtonShape {
     case left

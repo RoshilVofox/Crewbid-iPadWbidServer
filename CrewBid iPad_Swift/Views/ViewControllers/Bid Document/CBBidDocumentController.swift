@@ -573,7 +573,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             }else{
                 
                 let textFile = self.bidPeriod?.textFile(withName: BICoverLetterTextFileName)
-                if textFile == nil && !AppState.shared.isHistoricBid {
+                if textFile == nil && !self.bidPeriod!.isHistoric!.boolValue {
                     // Looks like the text file never got loaded, perhaps there was a crash during processing, tell the user
                     // they need to redownload
                     AlertService.showAlertForTopVC(title: "Bid Package Error", message: "The bid package was not fully processed.  To try again: (1) delete the bid package, (2) close and reopen the app (by double-tapping the iPad's Home button and swiping CrewBid up), (3) downloading the bid package anew.")

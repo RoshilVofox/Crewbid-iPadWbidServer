@@ -83,7 +83,7 @@ class KeychainHelper {
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
         
-        var tokenDataRef: AnyObject?
+        var tokenDataRef: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &tokenDataRef)
         
         if status == errSecSuccess {

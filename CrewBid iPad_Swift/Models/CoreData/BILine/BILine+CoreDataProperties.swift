@@ -106,6 +106,7 @@ extension BILine {
     @NSManaged public var isFA25thLineVacationCalculated: NSNumber?
     @NSManaged public var isFA31thLineVacationCalculated: NSNumber?
     @NSManaged public var isFrozen: NSNumber?
+    @NSManaged public var isLODO: NSNumber?
     @NSManaged public var isOvernightFiltered: NSNumber?
     @NSManaged public var isTrashed: NSNumber?
     @NSManaged public var latestArrivalTime: NSNumber?

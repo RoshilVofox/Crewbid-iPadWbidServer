@@ -50,7 +50,9 @@ public final class CBGlobalMethods: NSObject {
     var bidder = ""
     var isMoveAllAction = false
     var isDeviceUptimeAlertDisplayed = false
-
+    var isFromNewSubmission = false
+    var isFromCredentialPage = false
+    var isFromAwards = false
     // Save the WBID expiration date to the Keychain
 
 //    func SaveWbidExpirationdate(date: String) {

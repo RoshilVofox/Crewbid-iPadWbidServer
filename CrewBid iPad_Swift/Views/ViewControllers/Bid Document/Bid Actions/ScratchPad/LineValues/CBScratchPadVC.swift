@@ -138,7 +138,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         }
         //For updating the scratchpad UI
         DispatchQueue.main.async {
-            self.lblScratchpadLineCount.text = "Scratchpad- \(self.lines.count) Lines"
+            self.lblScratchpadLineCount.text = "Scratchpad - \(self.lines.count) Lines"
             self.fetchTrashedLinesCount()
             if #available(iOS 26.0, *) {
                let currentOffset = self.scratchPadTableView.contentOffset

@@ -10,11 +10,25 @@ class SecretMethodsViewController: UIViewController {
     @IBOutlet weak var mockDataSegment: UISegmentedControl!
     @IBOutlet weak var secretVacationSegment: UISegmentedControl!
     @IBOutlet weak var secretAwsrdSegment: UISegmentedControl!
+    @IBOutlet weak var envSegment: UISegmentedControl!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
+        let env = UserDefaults.standard.string(forKey: "SwaApiEnv") ?? "Prod"
+        switch env {
+        case "Prod":
+            envSegment.selectedSegmentIndex = 0
+        case "QA":
+            envSegment.selectedSegmentIndex = 1
+        case "Dev":
+            envSegment.selectedSegmentIndex = 2
+        default:
+            envSegment.selectedSegmentIndex = 0
+        }
+        
+        
     }
     
     func setupUI() {
@@ -110,4 +124,21 @@ class SecretMethodsViewController: UIViewController {
         self.present(alert, animated: true)
     }
 
+    @IBAction func envChanged(_ sender: UISegmentedControl) {
+        let selectedIndex = sender.selectedSegmentIndex
+        let environment: String
+
+        switch selectedIndex {
+        case 0:
+            environment = "Prod"
+        case 1:
+            environment = "QA"
+        case 2:
+            environment = "Dev"
+        default:
+            environment = "Prod"
+        }
+
+        UserDefaults.standard.set(environment, forKey: "SwaApiEnv")
+    }
 }

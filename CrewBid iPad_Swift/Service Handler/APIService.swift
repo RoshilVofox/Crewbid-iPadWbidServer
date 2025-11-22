@@ -88,6 +88,7 @@ class APIService {
         method: HTTPMethod = .GET,
         body: Data? = nil,
         headers: [String: String]? = nil,
+        allowNon200Status: Bool = false,
         parse: @escaping (Data) throws -> T,
         completion: @escaping (Result<T, Errors>) -> Void
     ) {
@@ -110,11 +111,21 @@ class APIService {
                 completion(.failure(.other(error)))
                 return
             }
-            guard
-                let httpResponse = response as? HTTPURLResponse,
-                200..<300 ~= httpResponse.statusCode,
-                let data = data
-            else {
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                completion(.failure(.noData))
+                return
+            }
+            
+            if !allowNon200Status {
+                // Old behavior: Only accept 200–299
+                guard 200..<300 ~= httpResponse.statusCode else {
+                    completion(.failure(.noData))
+                    return
+                }
+            }
+
+            guard let data = data else {
                 completion(.failure(.noData))
                 return
             }

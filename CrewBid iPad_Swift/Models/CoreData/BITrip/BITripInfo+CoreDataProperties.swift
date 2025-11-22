@@ -48,7 +48,7 @@ extension BITripInfo {
     @NSManaged public var days: NSSet?
     @NSManaged public var firstDay: BIDayInfo?
     @NSManaged public var trips: NSSet?
-
+    @NSManaged public var startDate: Date?
 }
 
 // MARK: Generated accessors for days

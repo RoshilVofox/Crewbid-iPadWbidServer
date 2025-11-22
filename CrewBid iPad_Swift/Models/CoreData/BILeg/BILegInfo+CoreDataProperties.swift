@@ -35,7 +35,7 @@ extension BILegInfo {
     @NSManaged public var legs: NSSet?
     @NSManaged public var nextLeg: BILegInfo?
     @NSManaged public var previousLeg: BILegInfo?
-
+    @NSManaged public var legNumber: NSNumber?
 }
 
 // MARK: Generated accessors for legs

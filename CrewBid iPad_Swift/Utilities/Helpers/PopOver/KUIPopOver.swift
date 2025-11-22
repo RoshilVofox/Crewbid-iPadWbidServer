@@ -71,14 +71,34 @@ extension KUIPopOverUsable where Self: UIViewController {
     }
     
     private var rootViewController: UIViewController? {
+        // Get the active window scene
+        guard let windowScene = UIApplication.shared.connectedScenes
+                .compactMap({ $0 as? UIWindowScene })
+                .first(where: { $0.activationState == .foregroundActive }),
+              let keyWindow = windowScene.windows.first(where: { $0.isKeyWindow }),
+              var topController = keyWindow.rootViewController else {
+            return nil
+        }
+
+        // Optional: apply your shadow styling here
+        keyWindow.layer.shadowColor = UIColor.black.cgColor
+        keyWindow.layer.shadowOpacity = 1
+        keyWindow.layer.shadowOffset = .zero
+        keyWindow.layer.shadowRadius = 10
+
+        // Traverse through any presented view controllers
+        while let presented = topController.presentedViewController {
+            topController = presented
+        }
+
+        return topController
         
-        
-        let yourView = UIApplication.shared.keyWindow!
-        yourView.layer.shadowColor = UIColor.black.cgColor
-        yourView.layer.shadowOpacity = 1
-        yourView.layer.shadowOffset = .zero
-        yourView.layer.shadowRadius = 10
-        return UIApplication.shared.keyWindow?.rootViewController?.topPresentedViewController
+//        let yourView = UIApplication.shared.keyWindow!
+//        yourView.layer.shadowColor = UIColor.black.cgColor
+//        yourView.layer.shadowOpacity = 1
+//        yourView.layer.shadowOffset = .zero
+//        yourView.layer.shadowRadius = 10
+//        return UIApplication.shared.keyWindow?.rootViewController?.topPresentedViewController
     }
     
     private var popOverUsableNavigationController: KUIPopOverUsableNavigationController {

@@ -596,6 +596,8 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
 
 
     
+
+    
     @objc func lineValuesToDisplayChanged(notification: Notification) {
         if bidPeriod.isBidListSortOn?.boolValue == true {
             let lineSorts = getSortDescriptorsForBidList()

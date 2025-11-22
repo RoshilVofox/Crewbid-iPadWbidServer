@@ -60,6 +60,7 @@ enum BIFaReserveLineType : Int {
     case JnrAMres
     case JnrPMres
     case JnrLateRes
+    case ReadyRes
     
     func name () -> Int {
         switch self
@@ -70,7 +71,7 @@ enum BIFaReserveLineType : Int {
         case .JnrAMres: return 3
         case .JnrPMres: return 4
         case .JnrLateRes: return 5
-            
+        case .ReadyRes: return 6
         }
     }
 }
