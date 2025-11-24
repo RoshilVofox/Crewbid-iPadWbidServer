@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24411" systemVersion="25B78" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="25B78" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AwardDetails" representedClassName="AwardDetails" syncable="YES">
         <attribute name="empName" optional="YES" attributeType="String"/>
         <attribute name="empNum" optional="YES" attributeType="String"/>
@@ -468,6 +468,7 @@
         <attribute name="vLongestBlockofDaysOff" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="vPayPerBlock" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
         <attribute name="vPayPerDay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
+        <attribute name="vpCuPlusVaNe" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="vTotalPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
         <attribute name="vTpLPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
         <attribute name="vVacationPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>

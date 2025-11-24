@@ -2535,6 +2535,9 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     line.vAPne = lineData[vAPne] as? NSNumber
                     line.vAPbo = lineData[vAPbo] as? NSNumber
                     line.clawBack = lineData[clawBack] as? NSNumber
+                    let ane = line.vAne?.floatValue ?? 0
+                    let vacationPay = line.vVacationPay?.floatValue ?? 0
+                    line.vpCuPlusVaNe = NSNumber(value: ane + vacationPay)
                     
                     if (line.vTotalPay!.floatValue > 0 && line.vBlockTime!.intValue > 0) {
                         line.vPayPerBlock = (line.vTotalPay!.floatValue) / (line.vBlockTime?.floatValue)! as NSNumber
@@ -3314,6 +3317,9 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 line.vAPne = lineData[vAPne] as? NSNumber
                 line.vAPbo = lineData[vAPbo] as? NSNumber
                 line.clawBack = lineData[clawBack] as? NSNumber
+                let ane = line.vAne?.floatValue ?? 0
+                let vacationPay = line.vVacationPay?.floatValue ?? 0
+                line.vpCuPlusVaNe = NSNumber(value: ane + vacationPay)
                 
                 if (line.vTotalPay!.floatValue > 0 && line.vBlockTime!.intValue > 0) {
                     line.vPayPerBlock = (line.vTotalPay!.floatValue) / (line.vBlockTime?.floatValue)! as NSNumber

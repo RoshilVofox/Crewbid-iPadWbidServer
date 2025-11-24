@@ -142,6 +142,12 @@ class CBSortRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDa
                 cell.isHidden = true
             }
             else {
+                if self.bidPeriod?.isWbidMaxOn?.boolValue == true {
+                    SwaptimizerVacationImage = "WBidmax-logo"
+                }
+                else if self.bidPeriod?.isSwaptimizerOn?.boolValue == true {
+                    SwaptimizerVacationImage = "SwaptAlert" 
+                }
                 let swapImage = UIImage(named: SwaptimizerVacationImage)
                 if types.count > 0 {
                     if SwaptimizerVacationImage == "SwaptAlert" {

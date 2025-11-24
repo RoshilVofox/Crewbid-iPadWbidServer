@@ -283,6 +283,22 @@
 					<key>type</key>
 					<integer>16</integer>
 				</dict>
+				<dict>
+					<key>name</key>
+					<string>vpCu+vaNe</string>
+					<key>category</key>
+					<integer>5</integer>
+					<key>keyPath</key>
+					<string>vpCuPlusVaNe</string>
+					<key>ascending</key>
+					<false/>
+					<key>isMutable</key>
+					<true/>
+					<key>abbreviation</key>
+					<string>vpCuPlusVaNe</string>
+					<key>type</key>
+					<integer>17</integer>
+				</dict>
 			</array>
 		</dict>
 	</array>
