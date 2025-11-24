@@ -417,18 +417,18 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         return formatter
     }()
      
-    override func viewWillAppear(_ animated: Bool) {
-        
-        if self.selectedPosition == BICrewPositionType.FlightAttendant{
-            if app.connectedToInternet(){
-                self.view.showActivityIndicator(message: "Loading SWA Login...")
-            }else{
-                AlertService.showAlertForTopVC(title: "No Internet Connection", message: "An internet connection is required to Login. Please connect to the internet and try again.")
-            }
-        }
-        
-            NotificationCenter.default.addObserver(self, selector: #selector(closeCredentilaPage), name: Notification.Name("CloseCredentilaPage"), object: nil)
-        }
+//    override func viewWillAppear(_ animated: Bool) {
+//        
+//        if self.selectedPosition == BICrewPositionType.FlightAttendant{
+//            if app.connectedToInternet(){
+//                self.view.showActivityIndicator(message: "Loading SWA Login...")
+//            }else{
+//                AlertService.showAlertForTopVC(title: "No Internet Connection", message: "An internet connection is required to Login. Please connect to the internet and try again.")
+//            }
+//        }
+//        
+//            NotificationCenter.default.addObserver(self, selector: #selector(closeCredentilaPage), name: Notification.Name("CloseCredentilaPage"), object: nil)
+//        }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -436,8 +436,8 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         
         //for new API
         if self.selectedPosition == BICrewPositionType.FlightAttendant{
-            self.setupSwaLogin()
-        }else{
+//            self.setupSwaLogin()
+//        }else{
             self.setupLegacyLogin()
         }
         
@@ -534,10 +534,10 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         setupTitle()
         checkEarlyBidding()
         
-        if selectedPosition == BICrewPositionType.FlightAttendant{
-            self.webView.isHidden = false
-            self.goBtn.isHidden = true
-        }else{
+//        if selectedPosition == BICrewPositionType.FlightAttendant{
+//            self.webView.isHidden = false
+//            self.goBtn.isHidden = true
+//        }else{
             self.webView.isHidden = true
             txtUserID.delegate = self
             txtPassword.delegate = self
@@ -553,7 +553,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             txtUserID.leftViewMode = .always
             txtPassword.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtPassword.frame.height))
             txtPassword.leftViewMode = .always
-        }
+//        }
 
         //------viewmodel--------
         loginViewModel.onLoginSuccess = { sessionKey in
