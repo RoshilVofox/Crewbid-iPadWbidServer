@@ -2228,6 +2228,32 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
             reserveMrtView?.alpha = 0.0
         }
         
+        if line.isLODO?.boolValue == true {
+            cell.mLblLineNumber.text = cell.mLblLineNumber.text! + ("L")
+            let strTitle:NSString = cell.mLblLineNumber.text! as NSString
+            let tickRange: NSRange = strTitle.range(of: "L")
+            let normalRange = NSRange(location: 0, length: strTitle.length - 1)
+            let attributedString = NSMutableAttributedString(string: cell.mLblLineNumber.text!)
+            
+            if bidPeriod.isFABid() {
+                
+                attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: normalRange)
+                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: tickRange)
+                } else {
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: tickRange)
+                }
+            } else {
+                attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: tickRange)
+            }
+            //attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: tickRange)
+            attributedString.addAttribute(NSAttributedString.Key.font, value: UIFont.systemFont(ofSize: 10.0), range: tickRange)
+            cell.mLblLineNumber.attributedText = attributedString
+//            if (line.isFrozen != 0){
+//            cell.handlingFreezingCondition()
+//            }
+        }
+        
         //Set Etops line
         if line.isETOPS?.boolValue == true
         {
@@ -2692,6 +2718,22 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
         }
         
         cell.handlingFreezingCondition()
+        
+//        set Lodo
+        if line.isLODO?.boolValue == true {
+            cell.lineLabel.text = cell.lineLabel.text!
+            cell.etopsTypeLabel.isHidden = false
+            cell.etopsTypeLabel.text = "L"
+            if bidPeriod.isFABid() {
+                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    cell.etopsTypeLabel.textColor = .white
+                } else {
+                    cell.etopsTypeLabel.textColor = .red
+                }
+            } else {
+                cell.etopsTypeLabel.textColor = .red
+            }
+        }
         
         // Set Etops line
         cell.etopsTypeLabel.isHidden = true

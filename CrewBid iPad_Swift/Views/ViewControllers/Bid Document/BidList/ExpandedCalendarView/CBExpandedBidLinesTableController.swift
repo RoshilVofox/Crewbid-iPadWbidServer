@@ -355,6 +355,16 @@ class CBExpandedBidLinesTableController: BaseViewController {
             reserveMrtLabel?.alpha = 0.0
             reserveMrtView?.alpha = 0.0
         }
+//        set LODO
+        if line.isLODO?.boolValue == true {
+            cell.mLblLineNo.text = cell.mLblLineNo.text! + ("L")
+            let strTitle:NSString = cell.mLblLineNo.text! as NSString
+            let tickRange: NSRange = strTitle.range(of: "L")
+            let attributedString = NSMutableAttributedString(string: cell.mLblLineNo.text!)
+            attributedString.addAttribute(NSAttributedString.Key.font, value: UIFont.systemFont(ofSize: 14.0), range: tickRange)
+            attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: tickRange)
+            cell.mLblLineNo.attributedText = attributedString
+        }
         //Set Etops line
         if line.isETOPS?.boolValue == true {
             cell.mLblLineNo.text = cell.mLblLineNo.text! + ("e") + " "

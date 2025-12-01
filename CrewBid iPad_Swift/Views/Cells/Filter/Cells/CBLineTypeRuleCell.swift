@@ -17,6 +17,7 @@ class CBLineTypeRuleCell: UITableViewCell {
     @IBOutlet weak var blankLinesButton: CBBorderToggleButton!
     @IBOutlet weak var etopsButton: CBBorderToggleButton!
     @IBOutlet weak var etopsResButton: CBBorderToggleButton!
+    @IBOutlet weak var lodoButton: CBBorderToggleButton!
     
     weak var etopsfilterRule: BIFilterRule?
     weak var etopsResfilterRule: BIFilterRule?
@@ -38,6 +39,7 @@ class CBLineTypeRuleCell: UITableViewCell {
             }
         }
         else {
+            lodoButton.isHidden = true
             if bidPeriod.isFirstRoundBid() == true {
                 mixedLinesButton.isHidden = true
                 hardLinesButton.isHidden = true
@@ -386,6 +388,9 @@ class CBLineTypeRuleCell: UITableViewCell {
                     }
                 }
             }
+            if lodoButton.isSelected {
+                SET.add(BILineType.BILineTypeLoDo.rawValue)
+            }
         }
         let dict  = NSDictionary(object: SET, forKey: "SET" as NSCopying)
         filterRule.variables = dict
@@ -520,9 +525,11 @@ class CBLineTypeRuleCell: UITableViewCell {
                     if bidPeriod.isEtopsLinesContainsInBid?.boolValue == true {
                         nonConusButton.isSelected = arrVariables.contains(BILineType.NonEtopsNonConUS.rawValue)
                         conusButton.isSelected = arrVariables.contains(BILineType.NonEtopsConUS.rawValue)
+                        lodoButton.isSelected = arrVariables.contains(BILineType.BILineTypeLoDo.rawValue)
                     } else {
                         nonConusButton.isSelected = arrVariables.contains(BILineType.HardNonConUS.rawValue)
                         conusButton.isSelected = arrVariables.contains(BILineType.HardConUS.rawValue)
+                        lodoButton.isSelected = arrVariables.contains(BILineType.BILineTypeLoDo.rawValue)
                     }
                     let EtopsOn = Etopsvariables?.value(forKey: "ETOPS_ON") as? Bool ?? true
                     etopsButton.isSelected = EtopsOn
@@ -544,10 +551,12 @@ class CBLineTypeRuleCell: UITableViewCell {
                         reserveLinesButton.isSelected = arrVariables.contains(BILineType.NonEtopsReserve.rawValue)
                         nonConusButton.isSelected = arrVariables.contains(BILineType.NonEtopsNonConUS.rawValue)
                         conusButton.isSelected = arrVariables.contains(BILineType.NonEtopsConUS.rawValue)
+                        lodoButton.isSelected = arrVariables.contains(BILineType.BILineTypeLoDo.rawValue)
                     } else {
                         nonConusButton.isSelected = arrVariables.contains(BILineType.HardNonConUS.rawValue)
                         conusButton.isSelected = arrVariables.contains(BILineType.HardConUS.rawValue)
                         reserveLinesButton.isSelected = arrVariables.contains(BILineType.ReserveLine.rawValue)
+                        lodoButton.isSelected = arrVariables.contains(BILineType.BILineTypeLoDo.rawValue)
                     }
                     let EtopsOn = Etopsvariables?.value(forKey: "ETOPS_ON") as? Bool ?? true
                     etopsButton.isSelected = EtopsOn

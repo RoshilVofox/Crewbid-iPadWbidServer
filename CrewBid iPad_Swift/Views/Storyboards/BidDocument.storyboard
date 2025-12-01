@@ -1404,7 +1404,7 @@
                                                             <rect key="frame" x="5" y="10" width="642" height="36"/>
                                                             <subviews>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="27N-b2-85p" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="76" height="36"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="67" height="36"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
                                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1417,7 +1417,7 @@
                                                                     </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FNs-7D-6aY" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                    <rect key="frame" x="81" y="0.0" width="76" height="36"/>
+                                                                    <rect key="frame" x="72" y="0.0" width="67" height="36"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
                                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -1429,7 +1429,7 @@
                                                                     </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rXm-IT-lok" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                    <rect key="frame" x="162" y="0.0" width="76" height="36"/>
+                                                                    <rect key="frame" x="144" y="0.0" width="67" height="36"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
                                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -1441,7 +1441,7 @@
                                                                     </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IPa-nX-Beg" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                    <rect key="frame" x="243" y="0.0" width="76" height="36"/>
+                                                                    <rect key="frame" x="216" y="0.0" width="67" height="36"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
                                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -1453,7 +1453,7 @@
                                                                     </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SBk-3B-odY" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                    <rect key="frame" x="324" y="0.0" width="76" height="36"/>
+                                                                    <rect key="frame" x="288" y="0.0" width="67" height="36"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
                                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -1465,7 +1465,7 @@
                                                                     </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MnE-mK-XTR" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                    <rect key="frame" x="405" y="0.0" width="76" height="36"/>
+                                                                    <rect key="frame" x="360" y="0.0" width="67" height="36"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
                                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -1477,7 +1477,7 @@
                                                                     </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6xP-KI-mIA" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                    <rect key="frame" x="486" y="0.0" width="76" height="36"/>
+                                                                    <rect key="frame" x="432" y="0.0" width="67" height="36"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
                                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -1489,7 +1489,7 @@
                                                                     </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tHN-Pf-BeO" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                    <rect key="frame" x="566" y="0.0" width="76" height="36"/>
+                                                                    <rect key="frame" x="504" y="0.0" width="67" height="36"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
                                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -1499,6 +1499,15 @@
                                                                     <connections>
                                                                         <action selector="buttonAction:" destination="h7b-Zw-mlp" eventType="touchUpInside" id="JFT-be-Mph"/>
                                                                     </connections>
+                                                                </button>
+                                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5X3-Wf-fRX" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                                    <rect key="frame" x="575" y="0.0" width="67" height="36"/>
+                                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
+                                                                    <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                                    <state key="normal" title="LODO">
+                                                                        <color key="titleColor" systemColor="labelColor"/>
+                                                                    </state>
                                                                 </button>
                                                             </subviews>
                                                         </stackView>
@@ -1524,6 +1533,7 @@
                                             <outlet property="etopsButton" destination="6xP-KI-mIA" id="rh9-La-IaJ"/>
                                             <outlet property="etopsResButton" destination="tHN-Pf-BeO" id="sKU-tw-fBR"/>
                                             <outlet property="hardLinesButton" destination="27N-b2-85p" id="8ou-OE-Q97"/>
+                                            <outlet property="lodoButton" destination="5X3-Wf-fRX" id="q8W-h9-7VH"/>
                                             <outlet property="mixedLinesButton" destination="FNs-7D-6aY" id="Z7o-jK-0OS"/>
                                             <outlet property="nonConusButton" destination="IPa-nX-Beg" id="NAd-8o-d5X"/>
                                             <outlet property="reserveLinesButton" destination="SBk-3B-odY" id="0Ih-xr-UKo"/>

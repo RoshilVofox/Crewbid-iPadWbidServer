@@ -920,6 +920,17 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
             cell.refreshTripButtons(highlightFlag: true, calendarWidth: self.view.frame.size.width - 160)
         }
         
+//        set LODO
+        if line.isLODO?.boolValue == true {
+            cell.lineNumberLabel.text = cell.lineNumberLabel.text! + ("L")
+            let strTitle:NSString = cell.lineNumberLabel.text! as NSString
+            let tickRange: NSRange = strTitle.range(of: "L")
+            let attributedString = NSMutableAttributedString(string: cell.lineNumberLabel.text!)
+            attributedString.addAttribute(NSAttributedString.Key.font, value: UIFont.systemFont(ofSize: 14.0), range: tickRange)
+            attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: tickRange)
+            cell.lineNumberLabel.attributedText = attributedString
+        }
+        
         //Set Etops line
         if line.isETOPSRES?.boolValue == true {
             cell.lineNumberLabel.text = cell.lineNumberLabel.text! + ("Re")
