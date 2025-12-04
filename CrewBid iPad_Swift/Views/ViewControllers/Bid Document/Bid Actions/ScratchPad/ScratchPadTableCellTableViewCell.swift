@@ -21,6 +21,7 @@ var CBLineTableCellIndexPathKey = "CBLineTableCellIndexPathKey"
 var CBLinesTableBidLinesNotification = "CBLinesTableBidLinesNotification"
 var CBLinesTableBidLinesArrayKey = "CBLinesTableBidLinesArrayKey"
 
+
 typealias CBLineCellTripButtonActionBlock = (_ tripButton: CBTripButton) -> Void
 
 class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout, CBUserFlagTableControllerDelegate {
@@ -178,6 +179,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
     typealias CBLineCellTripButtonActionBlock = (_ tripButton: CBTripButton) -> Void
     weak var controllerDelegate: UIViewController?
     var fromScrachpadView:Bool?
+    var vacationDoubleTapActionBlock: ((_ view: UIView) -> Void)?
 
     func cellLayout(){
         let layout = UICollectionViewFlowLayout()
@@ -823,13 +825,16 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                     
                     if self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                         button2.isUserInteractionEnabled = true
+                        button2.clipsToBounds = true
                         button2.isOpaque = false
-                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                        longPressGesture.minimumPressDuration = 0.5
-                        longPressGesture.cancelsTouchesInView = false
-                        button2.addGestureRecognizer(longPressGesture)
-                        longPressGesture.delegate = self
-                        vacayGestureRecognizers.add(longPressGesture)
+                        button2.contentMode = .scaleToFill
+//                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                        longPressGesture.minimumPressDuration = 0.5
+//                        longPressGesture.cancelsTouchesInView = false
+//                        button2.addGestureRecognizer(longPressGesture)
+//                        longPressGesture.delegate = self
+//                        vacayGestureRecognizers.add(longPressGesture)
+                        addGestureRecognizersToVacationButton(button2)
                     }
                     tripLength -= buttonLength
                     index += buttonLength
@@ -852,13 +857,17 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                                 
                             if self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                                 otherButton2.isUserInteractionEnabled = true
+                                otherButton2.clipsToBounds = true
                                 otherButton2.isOpaque = false
-                                let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                                longPressGesture.minimumPressDuration = 0.5
-                                longPressGesture.cancelsTouchesInView = false
-                                otherButton2.addGestureRecognizer(longPressGesture)
-                                longPressGesture.delegate = self
-                                vacayGestureRecognizers.add(longPressGesture)
+                                otherButton2.contentMode = .scaleToFill
+
+//                                let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                                longPressGesture.minimumPressDuration = 0.5
+//                                longPressGesture.cancelsTouchesInView = false
+//                                otherButton2.addGestureRecognizer(longPressGesture)
+//                                longPressGesture.delegate = self
+//                                vacayGestureRecognizers.add(longPressGesture)
+                                addGestureRecognizersToVacationButton(otherButton2)
                             }
                         }
                     tripLength -= buttonLength
@@ -886,14 +895,18 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                     self.collectionView.addSubview(button2)
                     if self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                         button2.isUserInteractionEnabled = true
+                        button2.clipsToBounds = true
                         button2.isOpaque = false
-                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                        longPressGesture.minimumPressDuration = 0.5
-                        longPressGesture.cancelsTouchesInView = false
-                        //longPressGesture.numberOfTapsRequired = 0;
-                        button2.addGestureRecognizer(longPressGesture)
-                        longPressGesture.delegate = self
-                        vacayGestureRecognizers.add(longPressGesture)
+                        button2.contentMode = .scaleToFill
+
+//                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                        longPressGesture.minimumPressDuration = 0.5
+//                        longPressGesture.cancelsTouchesInView = false
+//                        //longPressGesture.numberOfTapsRequired = 0;
+//                        button2.addGestureRecognizer(longPressGesture)
+//                        longPressGesture.delegate = self
+//                        vacayGestureRecognizers.add(longPressGesture)
+                        addGestureRecognizersToVacationButton(button2)
                     }
                 }
             }
@@ -989,13 +1002,17 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                     self.collectionView.addSubview(button2)
                     if self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                         button2.isUserInteractionEnabled = true
+                        button2.clipsToBounds = true
                         button2.isOpaque = false
-                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                        longPressGesture.minimumPressDuration = 0.5
-                        longPressGesture.cancelsTouchesInView = false
-                        button2.addGestureRecognizer(longPressGesture)
-                        longPressGesture.delegate = self
-                        vacayGestureRecognizers.add(longPressGesture)
+                        button2.contentMode = .scaleToFill
+
+//                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                        longPressGesture.minimumPressDuration = 0.5
+//                        longPressGesture.cancelsTouchesInView = false
+//                        button2.addGestureRecognizer(longPressGesture)
+//                        longPressGesture.delegate = self
+//                        vacayGestureRecognizers.add(longPressGesture)
+                        addGestureRecognizersToVacationButton(button2)
                     }
                     tripLength -= buttonLength
                     index += buttonLength
@@ -1014,13 +1031,17 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                                 self.collectionView.addSubview(otherButton2)
                                 if self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                                     otherButton2.isUserInteractionEnabled = true
+                                    otherButton2.clipsToBounds = true
                                     otherButton2.isOpaque = false
-                                    let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                                    longPressGesture.minimumPressDuration = 0.5
-                                    longPressGesture.cancelsTouchesInView = false
-                                    otherButton2.addGestureRecognizer(longPressGesture)
-                                    longPressGesture.delegate = self
-                                    vacayGestureRecognizers.add(longPressGesture)
+                                    otherButton2.contentMode = .scaleToFill
+
+//                                    let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                                    longPressGesture.minimumPressDuration = 0.5
+//                                    longPressGesture.cancelsTouchesInView = false
+//                                    otherButton2.addGestureRecognizer(longPressGesture)
+//                                    longPressGesture.delegate = self
+//                                    vacayGestureRecognizers.add(longPressGesture)
+                                    addGestureRecognizersToVacationButton(otherButton2)
                                 }
                             }
                             tripLength -= buttonLength
@@ -1045,13 +1066,17 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                     self.collectionView.addSubview(button2)
                     if self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                         button2.isUserInteractionEnabled = true
+                        button2.clipsToBounds = true
                         button2.isOpaque = false
-                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                        longPressGesture.minimumPressDuration = 0.5
-                        longPressGesture.cancelsTouchesInView = false
-                        button2.addGestureRecognizer(longPressGesture)
-                        longPressGesture.delegate = self
-                        vacayGestureRecognizers.add(longPressGesture)
+                        button2.contentMode = .scaleToFill
+
+//                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                        longPressGesture.minimumPressDuration = 0.5
+//                        longPressGesture.cancelsTouchesInView = false
+//                        button2.addGestureRecognizer(longPressGesture)
+//                        longPressGesture.delegate = self
+//                        vacayGestureRecognizers.add(longPressGesture)
+                        addGestureRecognizersToVacationButton(button2)
                     }
                 }
             }
@@ -1088,13 +1113,17 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                 
                 if self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                     button2.isUserInteractionEnabled = true
+                    button2.clipsToBounds = true
                     button2.isOpaque = false
-                    let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                    longPressGesture.minimumPressDuration = 0.5
-                    longPressGesture.cancelsTouchesInView = false
-                    button2.addGestureRecognizer(longPressGesture)
-                    longPressGesture.delegate = self
-                    vacayGestureRecognizers.add(longPressGesture)
+                    button2.contentMode = .scaleToFill
+
+//                    let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                    longPressGesture.minimumPressDuration = 0.5
+//                    longPressGesture.cancelsTouchesInView = false
+//                    button2.addGestureRecognizer(longPressGesture)
+//                    longPressGesture.delegate = self
+//                    vacayGestureRecognizers.add(longPressGesture)
+                    addGestureRecognizersToVacationButton(button2)
                 }
                 tripLength -= buttonLength
                 index += buttonLength
@@ -1114,13 +1143,17 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                         self.collectionView.addSubview(otherButton2)
                         if self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                             otherButton2.isUserInteractionEnabled = true
+                            otherButton2.clipsToBounds = true
                             otherButton2.isOpaque = false
-                            let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                            longPressGesture.minimumPressDuration = 0.5
-                            longPressGesture.cancelsTouchesInView = false
-                            otherButton2.addGestureRecognizer(longPressGesture)
-                            longPressGesture.delegate = self
-                            vacayGestureRecognizers.add(longPressGesture)
+                            otherButton2.contentMode = .scaleToFill
+
+//                            let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                            longPressGesture.minimumPressDuration = 0.5
+//                            longPressGesture.cancelsTouchesInView = false
+//                            otherButton2.addGestureRecognizer(longPressGesture)
+//                            longPressGesture.delegate = self
+//                            vacayGestureRecognizers.add(longPressGesture)
+                            addGestureRecognizersToVacationButton(otherButton2)
                         }
                     }
                     tripLength -= buttonLength
@@ -1139,13 +1172,17 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                 
                 if self.bidPeriod?.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod?.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                     button2.isUserInteractionEnabled = true
+                    button2.clipsToBounds = true
                     button2.isOpaque = false
-                    let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                    longPressGesture.minimumPressDuration = 0.5
-                    longPressGesture.cancelsTouchesInView = false
-                    button2.addGestureRecognizer(longPressGesture)
-                    longPressGesture.delegate = self
-                    vacayGestureRecognizers.add(longPressGesture)
+                    button2.contentMode = .scaleToFill
+
+//                    let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                    longPressGesture.minimumPressDuration = 0.5
+//                    longPressGesture.cancelsTouchesInView = false
+//                    button2.addGestureRecognizer(longPressGesture)
+//                    longPressGesture.delegate = self
+//                    vacayGestureRecognizers.add(longPressGesture)
+                    addGestureRecognizersToVacationButton(button2)
                 }
             }
             
@@ -1155,6 +1192,19 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         self.collectionView.vacationButtons = vacationButtons
         self.collectionView.fvVacationButtons = fvVacationButtons
         self.collectionView.cfvVacationButtons = cfvVacationButtons
+    }
+    
+    func addGestureRecognizersToVacationButton(_ button: UIView) {
+        let doubleTap = UITapGestureRecognizer(target: self,
+                                               action: #selector(handleVacationDoubleTap(_:)))
+        doubleTap.numberOfTapsRequired = 2
+        doubleTap.delegate = self
+        button.addGestureRecognizer(doubleTap)
+        vacayGestureRecognizers.add(doubleTap)
+    }
+    @objc private func handleVacationDoubleTap(_ gesture: UITapGestureRecognizer) {
+        guard let tappedView = gesture.view else { return }
+            vacationDoubleTapActionBlock?(tappedView)
     }
 
     override func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {

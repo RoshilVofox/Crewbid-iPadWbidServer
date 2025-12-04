@@ -466,6 +466,10 @@
         <attribute name="vFrontVoPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
         <attribute name="vHolidayPay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
         <attribute name="vLongestBlockofDaysOff" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="vOBcu" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="vOBne" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="vOFcu" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="vOFne" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="vPayPerBlock" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
         <attribute name="vPayPerDay" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO"/>
         <attribute name="vpCuPlusVaNe" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>

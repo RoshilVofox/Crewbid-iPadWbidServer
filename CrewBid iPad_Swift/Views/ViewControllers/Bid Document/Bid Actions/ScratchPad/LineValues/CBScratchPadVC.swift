@@ -12,7 +12,7 @@ import CoreData
 protocol ScratchPadCellDelegate: AnyObject {
     func scratchPadCellRemoveLineRequest(_ cell: ScratchPadTableCellTableViewCell)
 }
-class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UIPopoverControllerDelegate, ScratchPadCellDelegate {
+class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UIPopoverControllerDelegate, ScratchPadCellDelegate, UIPopoverPresentationControllerDelegate {
     
     
 
@@ -865,6 +865,11 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
             DispatchQueue.main.async {
                 self.showTripTextPopover(for: tripButton)
             }        }
+        cell.vacationDoubleTapActionBlock = { tappedButton in
+                    DispatchQueue.main.async {
+                        self.showVacationPopover(for: tappedButton, line: line)
+                    }
+                }
         let setupCircles = true
         
         // set up the position circles if the bid is an FA bid
@@ -1050,6 +1055,34 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
             lineValueView?.alpha = 0.0
         }
     }
+    
+    //    vacation line value popover view
+        func showVacationPopover(for sourceView: UIView, line: BILine?) {
+            if bidPeriod?.userVacationWbidOrCrewBid == "CREWBID" || bidPeriod?.userVacationWbidOrCrewBid == "CREWBIDF" {
+                return
+            }
+            let storyboard = UIStoryboard(name: "FlightDataChange", bundle: nil)
+            guard let vc = storyboard.instantiateViewController(withIdentifier: "CBVacationDataVC") as? CBVacationDataVC else {
+                return
+            }
+
+            if let line = line {
+                vc.line = line
+            }
+            vc.bidPeriod = self.bidPeriod
+            vc.modalPresentationStyle = .popover
+            vc.preferredContentSize = CGSize(width: 320, height: 420)
+
+            if let popover = vc.popoverPresentationController {
+                popover.sourceView = sourceView
+                popover.sourceRect = sourceView.bounds
+                popover.permittedArrowDirections = [.up, .down]
+                popover.delegate = self
+            }
+
+            present(vc, animated: true)
+            
+        }
 }
 
 extension CBScratchPadVC: UITextFieldDelegate {

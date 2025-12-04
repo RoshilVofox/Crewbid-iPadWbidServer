@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsable, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
+class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsable, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UINavigationControllerDelegate, UIGestureRecognizerDelegate, UIPopoverPresentationControllerDelegate {
 
     
 
@@ -752,13 +752,17 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                     
                     if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                         button2.isUserInteractionEnabled = true
+                        button2.clipsToBounds = true
                         button2.isOpaque = false
-                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                        longPressGesture.minimumPressDuration = 0.5
-                        longPressGesture.cancelsTouchesInView = false
-                        button2.addGestureRecognizer(longPressGesture)
-                        longPressGesture.delegate = self
-                        vacayGestureRecognizers.add(longPressGesture)
+                        button2.contentMode = .scaleToFill
+
+//                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                        longPressGesture.minimumPressDuration = 0.5
+//                        longPressGesture.cancelsTouchesInView = false
+//                        button2.addGestureRecognizer(longPressGesture)
+//                        longPressGesture.delegate = self
+//                        vacayGestureRecognizers.add(longPressGesture)
+                        addGestureRecognizersToVacationButton(button2, line: line ?? BILine())
                     }
                     tripLength -= buttonLength
                     index += buttonLength
@@ -780,13 +784,17 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                                 
                             if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                                 otherButton2.isUserInteractionEnabled = true
+                                otherButton2.clipsToBounds = true
                                 otherButton2.isOpaque = false
-                                let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                                longPressGesture.minimumPressDuration = 0.5
-                                longPressGesture.cancelsTouchesInView = false
-                                otherButton2.addGestureRecognizer(longPressGesture)
-                                longPressGesture.delegate = self
-                                vacayGestureRecognizers.add(longPressGesture)
+                                otherButton2.contentMode = .scaleToFill
+
+//                                let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                                longPressGesture.minimumPressDuration = 0.5
+//                                longPressGesture.cancelsTouchesInView = false
+//                                otherButton2.addGestureRecognizer(longPressGesture)
+//                                longPressGesture.delegate = self
+//                                vacayGestureRecognizers.add(longPressGesture)
+                                addGestureRecognizersToVacationButton(otherButton2, line: line ?? BILine())
                             }
                         }
                     tripLength -= buttonLength
@@ -813,13 +821,17 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                     self.collectionView.addSubview(button2)
                     if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                         button2.isUserInteractionEnabled = true
+                        button2.clipsToBounds = true
                         button2.isOpaque = false
-                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                        longPressGesture.minimumPressDuration = 0.5
-                        longPressGesture.cancelsTouchesInView = false
-                        button2.addGestureRecognizer(longPressGesture)
-                        longPressGesture.delegate = self
-                        vacayGestureRecognizers.add(longPressGesture)
+                        button2.contentMode = .scaleToFill
+
+//                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                        longPressGesture.minimumPressDuration = 0.5
+//                        longPressGesture.cancelsTouchesInView = false
+//                        button2.addGestureRecognizer(longPressGesture)
+//                        longPressGesture.delegate = self
+//                        vacayGestureRecognizers.add(longPressGesture)
+                        addGestureRecognizersToVacationButton(button2, line: line ?? BILine())
                     }
                 }
             }
@@ -924,13 +936,17 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                     self.collectionView.addSubview(button2)
                     if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                         button2.isUserInteractionEnabled = true
+                        button2.clipsToBounds = true
                         button2.isOpaque = false
-                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                        longPressGesture.minimumPressDuration = 0.5
-                        longPressGesture.cancelsTouchesInView = false
-                        button2.addGestureRecognizer(longPressGesture)
-                        longPressGesture.delegate = self
-                        vacayGestureRecognizers.add(longPressGesture)
+                        button2.contentMode = .scaleToFill
+
+//                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                        longPressGesture.minimumPressDuration = 0.5
+//                        longPressGesture.cancelsTouchesInView = false
+//                        button2.addGestureRecognizer(longPressGesture)
+//                        longPressGesture.delegate = self
+//                        vacayGestureRecognizers.add(longPressGesture)
+                        addGestureRecognizersToVacationButton(button2, line: line ?? BILine())
                     }
                     tripLength -= buttonLength
                     index += buttonLength
@@ -949,13 +965,17 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                                 self.collectionView.addSubview(otherButton2)
                                 if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                                     otherButton2.isUserInteractionEnabled = true
+                                    otherButton2.clipsToBounds = true
                                     otherButton2.isOpaque = false
-                                    let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                                    longPressGesture.minimumPressDuration = 0.5
-                                    longPressGesture.cancelsTouchesInView = false
-                                    otherButton2.addGestureRecognizer(longPressGesture)
-                                    longPressGesture.delegate = self
-                                    vacayGestureRecognizers.add(longPressGesture)
+                                    otherButton2.contentMode = .scaleToFill
+
+//                                    let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                                    longPressGesture.minimumPressDuration = 0.5
+//                                    longPressGesture.cancelsTouchesInView = false
+//                                    otherButton2.addGestureRecognizer(longPressGesture)
+//                                    longPressGesture.delegate = self
+//                                    vacayGestureRecognizers.add(longPressGesture)
+                                    addGestureRecognizersToVacationButton(otherButton2, line: line ?? BILine())
                                 }
                             }
                             tripLength -= buttonLength
@@ -980,13 +1000,17 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                     self.collectionView.addSubview(button2)
                     if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                         button2.isUserInteractionEnabled = true
+                        button2.clipsToBounds = true
                         button2.isOpaque = false
-                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                        longPressGesture.minimumPressDuration = 0.5
-                        longPressGesture.cancelsTouchesInView = false
-                        button2.addGestureRecognizer(longPressGesture)
-                        longPressGesture.delegate = self
-                        vacayGestureRecognizers.add(longPressGesture)
+                        button2.contentMode = .scaleToFill
+
+//                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                        longPressGesture.minimumPressDuration = 0.5
+//                        longPressGesture.cancelsTouchesInView = false
+//                        button2.addGestureRecognizer(longPressGesture)
+//                        longPressGesture.delegate = self
+//                        vacayGestureRecognizers.add(longPressGesture)
+                        addGestureRecognizersToVacationButton(button2, line: line ?? BILine())
                     }
                 }
             }
@@ -997,6 +1021,22 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
         self.collectionView.fvVacationButtons = fvVacationButtons
         self.collectionView.cfvVacationButtons = cfvVacationButtons
     }
+    
+    func addGestureRecognizersToVacationButton(_ button: UIView, line: BILine) {
+            let doubleTap = VacationTapGestureRecognizer(target: self,
+                                                         action: #selector(handleVacationDoubleTap(_:)))
+            doubleTap.numberOfTapsRequired = 2
+            doubleTap.delegate = self
+            doubleTap.line = line
+            button.addGestureRecognizer(doubleTap)
+            vacayGestureRecognizers.add(doubleTap)
+        }
+
+        @objc private func handleVacationDoubleTap(_ gesture: VacationTapGestureRecognizer) {
+            guard let tappedView = gesture.view,
+                  let line = gesture.line else { return }
+            showVacationPopover(for: tappedView, line: line)
+        }
     
     @objc func showSWAPtimizerTripOptionsPopover(_ gesture: UILongPressGestureRecognizer) {
         
@@ -1028,6 +1068,34 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: 40, height: 40)
     }
+    
+    //    vacation line value popover view
+        func showVacationPopover(for sourceView: UIView, line: BILine?) {
+            if bidPeriod?.userVacationWbidOrCrewBid == "CREWBID" || bidPeriod?.userVacationWbidOrCrewBid == "CREWBIDF" {
+                return
+            }
+            let storyboard = UIStoryboard(name: "FlightDataChange", bundle: nil)
+            guard let vc = storyboard.instantiateViewController(withIdentifier: "CBVacationDataVC") as? CBVacationDataVC else {
+                return
+            }
+
+            if let line = line {
+                vc.line = line
+            }
+            vc.bidPeriod = self.bidPeriod
+            vc.modalPresentationStyle = .popover
+            vc.preferredContentSize = CGSize(width: 320, height: 420)
+
+            if let popover = vc.popoverPresentationController {
+                popover.sourceView = sourceView
+                popover.sourceRect = sourceView.bounds
+                popover.permittedArrowDirections = [.up, .down]
+                popover.delegate = self
+            }
+
+            present(vc, animated: true)
+            
+        }
 }
 
 extension UICollectionView {

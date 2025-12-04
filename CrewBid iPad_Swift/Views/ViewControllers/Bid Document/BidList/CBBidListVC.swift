@@ -12,7 +12,7 @@ var kReserveMrtViewTag: Int = 76
 var kReserveMrtLabelTag: Int = 333
 var kSnowflakeTag: Int = 1040
 
-class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBidListCalenderViewCellDelegate,StartOverDelegate, CBBidLineMenuControllerDelegate  {
+class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBidListCalenderViewCellDelegate,StartOverDelegate, CBBidLineMenuControllerDelegate, UIPopoverPresentationControllerDelegate  {
 
     
     @IBOutlet weak var btnNormalView: UIButton!
@@ -2548,6 +2548,11 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
                 self.showTripTextPopover(for: tripButton)
             }        }
         
+        cell.vacationDoubleTapActionBlock = { tappedButton in
+                    DispatchQueue.main.async {
+                        self.showVacationPopover(for: tappedButton, line: line)
+                    }
+                }
         return cell
     }
     
@@ -3638,5 +3643,33 @@ extension CBBidListVC: CBSortOptionDelegate{
         }
         self.tableViewNormalView.reloadData()
     }
+    
+    //    vacation line value popover view
+        func showVacationPopover(for sourceView: UIView, line: BILine?) {
+            if bidPeriod.userVacationWbidOrCrewBid == "CREWBID" || bidPeriod.userVacationWbidOrCrewBid == "CREWBIDF" {
+                return
+            }
+            let storyboard = UIStoryboard(name: "FlightDataChange", bundle: nil)
+            guard let vc = storyboard.instantiateViewController(withIdentifier: "CBVacationDataVC") as? CBVacationDataVC else {
+                return
+            }
+
+            if let line = line {
+                vc.line = line
+            }
+            vc.bidPeriod = self.bidPeriod
+            vc.modalPresentationStyle = .popover
+            vc.preferredContentSize = CGSize(width: 320, height: 420)
+
+            if let popover = vc.popoverPresentationController {
+                popover.sourceView = sourceView
+                popover.sourceRect = sourceView.bounds
+                popover.permittedArrowDirections = [.up, .down]
+                popover.delegate = self
+            }
+
+            present(vc, animated: true)
+            
+        }
     
 }
