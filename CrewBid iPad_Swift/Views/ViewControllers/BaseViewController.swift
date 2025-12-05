@@ -44,6 +44,7 @@ class BaseViewController: UIViewController {
     }
     
     func showQuickTutorialForFirstTime(){
+        UserDefaults.standard.set("1200", forKey: KCBCustomizedHerbValue)
         let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "quickTutorialViewController") as! quickTutorialViewController
         vc.preferredContentSize = CGSize(width: 764, height: 630)
         present(vc, animated: true)

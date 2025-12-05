@@ -212,6 +212,11 @@ extension BILine {
     @NSManaged public var vacationArrayFromServer: VacationArrayFromServer?
     @NSManaged public var workBlocks: NSSet?
     @NSManaged public var clawBack: NSNumber?
+    @NSManaged public var vpCuPlusVaNe: NSNumber?
+    @NSManaged public var vOBcu: NSNumber?
+    @NSManaged public var vOBne: NSNumber?
+    @NSManaged public var vOFcu: NSNumber?
+    @NSManaged public var vOFne: NSNumber?
 
     
 
@@ -525,6 +530,7 @@ extension BILine : Identifiable {
    case VacationPayBothBP       //14
    case VacationPayNextBP //15
    case VANe           //16
+    case VpcuPlusVane //17
 }
 @objc enum BIPassesThruBaseLineSortType : Int {
     case BIPassesThruBaseLineSortTypeMidTrip

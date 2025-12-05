@@ -2196,6 +2196,11 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         var vAPbp = ""
         var vAPne = ""
         
+        var vOFront = ""
+        var vOFNe = ""
+        var vOBack = ""
+        var vOBNe = ""
+        
         if vacationType == "WBID" || vacationType == "WBIDF" {
             lineName = "Line1";
             frontVO = "FrontVO";
@@ -2229,6 +2234,11 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             vAPbo = "VAPbo";
             vAPbp = "VAPbp";
             vAPne = "VAPne";
+            
+            vOFront = "VOFront";
+            vOFNe = "VOFNe";
+            vOBack = "VOBack";
+            vOBNe = "VOBNe";
             
         } else {
             
@@ -2534,7 +2544,16 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     line.vAPbp = lineData[vAPbp] as? NSNumber
                     line.vAPne = lineData[vAPne] as? NSNumber
                     line.vAPbo = lineData[vAPbo] as? NSNumber
+                    
+                    line.vOBcu = lineData[vOBack] as? NSNumber
+                    line.vOBne = lineData[vOBNe] as? NSNumber
+                    line.vOFcu = lineData[vOFront] as? NSNumber
+                    line.vOFne = lineData[vOFNe] as? NSNumber
+                    
                     line.clawBack = lineData[clawBack] as? NSNumber
+                    let ane = line.vAne?.floatValue ?? 0
+                    let vacationPay = line.vVacationPay?.floatValue ?? 0
+                    line.vpCuPlusVaNe = NSNumber(value: ane + vacationPay)
                     
                     if (line.vTotalPay!.floatValue > 0 && line.vBlockTime!.intValue > 0) {
                         line.vPayPerBlock = (line.vTotalPay!.floatValue) / (line.vBlockTime?.floatValue)! as NSNumber
@@ -2999,6 +3018,11 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         var vAPbo = ""
         var vAPbp = ""
         var vAPne = ""
+        
+        var vOFront = ""
+        var vOFNe = ""
+        var vOBack = ""
+        var vOBNe = ""
         var vacay: BIVacation?
 
         
@@ -3035,6 +3059,11 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             vAPbo = "VAPbo";
             vAPbp = "VAPbp";
             vAPne = "VAPne";
+            
+            vOFront = "VOFront";
+            vOFNe = "VOFNe";
+            vOBack = "VOBack";
+            vOBNe = "VOBNe";
             
         }
         let moc = self.bidPeriod?.managedObjectContext
@@ -3313,7 +3342,16 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 line.vAPbp = lineData[vAPbp] as? NSNumber
                 line.vAPne = lineData[vAPne] as? NSNumber
                 line.vAPbo = lineData[vAPbo] as? NSNumber
+                
+                line.vOBcu = lineData[vOBack] as? NSNumber
+                line.vOBne = lineData[vOBNe] as? NSNumber
+                line.vOFcu = lineData[vOFront] as? NSNumber
+                line.vOFne = lineData[vOFNe] as? NSNumber
+                
                 line.clawBack = lineData[clawBack] as? NSNumber
+                let ane = line.vAne?.floatValue ?? 0
+                let vacationPay = line.vVacationPay?.floatValue ?? 0
+                line.vpCuPlusVaNe = NSNumber(value: ane + vacationPay)
                 
                 if (line.vTotalPay!.floatValue > 0 && line.vBlockTime!.intValue > 0) {
                     line.vPayPerBlock = (line.vTotalPay!.floatValue) / (line.vBlockTime?.floatValue)! as NSNumber

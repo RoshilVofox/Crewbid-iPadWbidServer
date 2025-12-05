@@ -15,6 +15,7 @@
 		353FC68F2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */; };
 		353FC6912DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */; };
 		35428C292DEEE9F2009E7AC5 /* CBUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35428C282DEEE9F2009E7AC5 /* CBUserDefaults.swift */; };
+		354F38612EDEAFFD00973BF5 /* CBVacationDataVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F38602EDEAFFD00973BF5 /* CBVacationDataVC.swift */; };
 		357E313F2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357E313E2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift */; };
 		357F66402E5829E3000273BE /* CBCommutability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357F663F2E5829E3000273BE /* CBCommutability.swift */; };
 		357F66422E589626000273BE /* CBRouteDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357F66412E589626000273BE /* CBRouteDomain.swift */; };
@@ -415,6 +416,7 @@
 		353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
 		353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBConfirmSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
 		35428C282DEEE9F2009E7AC5 /* CBUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUserDefaults.swift; sourceTree = "<group>"; };
+		354F38602EDEAFFD00973BF5 /* CBVacationDataVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBVacationDataVC.swift; sourceTree = "<group>"; };
 		357E313E2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMonthToMonthAlertVC.swift; sourceTree = "<group>"; };
 		357F663F2E5829E3000273BE /* CBCommutability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCommutability.swift; sourceTree = "<group>"; };
 		357F66412E589626000273BE /* CBRouteDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBRouteDomain.swift; sourceTree = "<group>"; };
@@ -832,6 +834,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		354F385F2EDEAFD500973BF5 /* VacationData */ = {
+			isa = PBXGroup;
+			children = (
+				354F38602EDEAFFD00973BF5 /* CBVacationDataVC.swift */,
+			);
+			path = VacationData;
+			sourceTree = "<group>";
+		};
 		35F6C8AF2DD843590072BAD9 /* JobShare */ = {
 			isa = PBXGroup;
 			children = (
@@ -1782,6 +1792,7 @@
 		F494ECD82DC5C6B6007B178E /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				354F385F2EDEAFD500973BF5 /* VacationData */,
 				35F6C8AF2DD843590072BAD9 /* JobShare */,
 				8B5F03262DC8D979006A4E85 /* Brightness */,
 				F41EBDF32DC4DB20001413DE /* Awards */,
@@ -2205,6 +2216,7 @@
 				F41EBF202DC4DB20001413DE /* BILegInfo+CoreDataProperties.swift in Sources */,
 				F41EBF212DC4DB20001413DE /* BILine+CoreDataClass.swift in Sources */,
 				F41EBF222DC4DB20001413DE /* BILine+CoreDataProperties.swift in Sources */,
+				354F38612EDEAFFD00973BF5 /* CBVacationDataVC.swift in Sources */,
 				F41EBF252DC4DB20001413DE /* BITrip+CoreDataClass.swift in Sources */,
 				F41EBF262DC4DB20001413DE /* BITrip+CoreDataProperties.swift in Sources */,
 				F41EBF272DC4DB20001413DE /* BITripInfo+CoreDataClass.swift in Sources */,

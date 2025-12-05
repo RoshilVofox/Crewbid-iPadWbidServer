@@ -92,6 +92,8 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
     var cellType = CBBidLineTableCellType(rawValue: 0)
     private var kSelectionButtonTag: Int = 80
     var fromScrachpadView:Bool?
+    var vacationDoubleTapActionBlock: ((_ view: UIView) -> Void)?
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         markerTextField.delegate = self
@@ -1276,13 +1278,17 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                     
                     if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                         button2.isUserInteractionEnabled = true
+                        button2.clipsToBounds = true
                         button2.isOpaque = false
-                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                        longPressGesture.minimumPressDuration = 0.5
-                        longPressGesture.cancelsTouchesInView = false
-                        button2.addGestureRecognizer(longPressGesture)
-                        longPressGesture.delegate = self
-                        vacayGestureRecognizers.add(longPressGesture)
+                        button2.contentMode = .scaleToFill
+
+//                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                        longPressGesture.minimumPressDuration = 0.5
+//                        longPressGesture.cancelsTouchesInView = false
+//                        button2.addGestureRecognizer(longPressGesture)
+//                        longPressGesture.delegate = self
+//                        vacayGestureRecognizers.add(longPressGesture)
+                        addGestureRecognizersToVacationButton(button2)
                     }
                     tripLength -= buttonLength
                     index += buttonLength
@@ -1306,12 +1312,16 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                             if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                                 otherButton2.isUserInteractionEnabled = true
                                 otherButton2.isOpaque = false
-                                let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                                longPressGesture.minimumPressDuration = 0.5
-                                longPressGesture.cancelsTouchesInView = false
-                                otherButton2.addGestureRecognizer(longPressGesture)
-                                longPressGesture.delegate = self
-                                vacayGestureRecognizers.add(longPressGesture)
+                                otherButton2.clipsToBounds = true
+                                otherButton2.contentMode = .scaleToFill
+
+//                                let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                                longPressGesture.minimumPressDuration = 0.5
+//                                longPressGesture.cancelsTouchesInView = false
+//                                otherButton2.addGestureRecognizer(longPressGesture)
+//                                longPressGesture.delegate = self
+//                                vacayGestureRecognizers.add(longPressGesture)
+                                addGestureRecognizersToVacationButton(otherButton2)
                             }
                         }
                     tripLength -= buttonLength
@@ -1339,14 +1349,18 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                     self.calendarCollectionView.addSubview(button2)
                     if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                         button2.isUserInteractionEnabled = true
+                        button2.clipsToBounds = true
                         button2.isOpaque = false
-                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                        longPressGesture.minimumPressDuration = 0.5
-                        longPressGesture.cancelsTouchesInView = false
-                        //longPressGesture.numberOfTapsRequired = 0;
-                        button2.addGestureRecognizer(longPressGesture)
-                        longPressGesture.delegate = self
-                        vacayGestureRecognizers.add(longPressGesture)
+                        button2.contentMode = .scaleToFill
+
+//                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                        longPressGesture.minimumPressDuration = 0.5
+//                        longPressGesture.cancelsTouchesInView = false
+//                        //longPressGesture.numberOfTapsRequired = 0;
+//                        button2.addGestureRecognizer(longPressGesture)
+//                        longPressGesture.delegate = self
+//                        vacayGestureRecognizers.add(longPressGesture)
+                        addGestureRecognizersToVacationButton(button2)
                     }
                 }
             }
@@ -1442,13 +1456,17 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                     self.calendarCollectionView.addSubview(button2)
                     if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                         button2.isUserInteractionEnabled = true
+                        button2.clipsToBounds = true
                         button2.isOpaque = false
-                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                        longPressGesture.minimumPressDuration = 0.5
-                        longPressGesture.cancelsTouchesInView = false
-                        button2.addGestureRecognizer(longPressGesture)
-                        longPressGesture.delegate = self
-                        vacayGestureRecognizers.add(longPressGesture)
+                        button2.contentMode = .scaleToFill
+
+//                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                        longPressGesture.minimumPressDuration = 0.5
+//                        longPressGesture.cancelsTouchesInView = false
+//                        button2.addGestureRecognizer(longPressGesture)
+//                        longPressGesture.delegate = self
+//                        vacayGestureRecognizers.add(longPressGesture)
+                        addGestureRecognizersToVacationButton(button2)
                     }
                     tripLength -= buttonLength
                     index += buttonLength
@@ -1467,13 +1485,17 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                                 self.calendarCollectionView.addSubview(otherButton2)
                                 if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                                     otherButton2.isUserInteractionEnabled = true
+                                    otherButton2.clipsToBounds = true
                                     otherButton2.isOpaque = false
-                                    let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                                    longPressGesture.minimumPressDuration = 0.5
-                                    longPressGesture.cancelsTouchesInView = false
-                                    otherButton2.addGestureRecognizer(longPressGesture)
-                                    longPressGesture.delegate = self
-                                    vacayGestureRecognizers.add(longPressGesture)
+                                    otherButton2.contentMode = .scaleToFill
+
+//                                    let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                                    longPressGesture.minimumPressDuration = 0.5
+//                                    longPressGesture.cancelsTouchesInView = false
+//                                    otherButton2.addGestureRecognizer(longPressGesture)
+//                                    longPressGesture.delegate = self
+//                                    vacayGestureRecognizers.add(longPressGesture)
+                                    addGestureRecognizersToVacationButton(otherButton2)
                                 }
                             }
                             tripLength -= buttonLength
@@ -1498,13 +1520,17 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                     self.calendarCollectionView.addSubview(button2)
                     if self.bidPeriod.swaptimizerStatus?.intValue == CBSwaptimizerStatus.enabled.rawValue || self.bidPeriod.faVacationStatus?.intValue == BIFaVacationStatus.enabled.rawValue{
                         button2.isUserInteractionEnabled = true
+                        button2.clipsToBounds = true
                         button2.isOpaque = false
-                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
-                        longPressGesture.minimumPressDuration = 0.5
-                        longPressGesture.cancelsTouchesInView = false
-                        button2.addGestureRecognizer(longPressGesture)
-                        longPressGesture.delegate = self
-                        vacayGestureRecognizers.add(longPressGesture)
+                        button2.contentMode = .scaleToFill
+
+//                        let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(self.showSWAPtimizerTripOptionsPopover))
+//                        longPressGesture.minimumPressDuration = 0.5
+//                        longPressGesture.cancelsTouchesInView = false
+//                        button2.addGestureRecognizer(longPressGesture)
+//                        longPressGesture.delegate = self
+//                        vacayGestureRecognizers.add(longPressGesture)
+                        addGestureRecognizersToVacationButton(button2)
                     }
                 }
             }
@@ -1783,5 +1809,18 @@ extension CBBidListCalenderViewCell: UICollectionViewDelegate, UICollectionViewD
             cell.dayLabel.alpha = 0.5
         }
         return cell
+    }
+    
+    func addGestureRecognizersToVacationButton(_ button: UIView) {
+        let doubleTap = UITapGestureRecognizer(target: self,
+                                               action: #selector(handleVacationDoubleTap(_:)))
+        doubleTap.numberOfTapsRequired = 2
+        doubleTap.delegate = self
+        button.addGestureRecognizer(doubleTap)
+        vacayGestureRecognizers.add(doubleTap)
+    }
+    @objc private func handleVacationDoubleTap(_ gesture: UITapGestureRecognizer) {
+        guard let tappedView = gesture.view else { return }
+            vacationDoubleTapActionBlock?(tappedView)
     }
 }

@@ -113,6 +113,12 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
                 cell.isHidden = true
             }
             else {
+                if self.bidPeriod?.isWbidMaxOn?.boolValue == true {
+                    SwaptimizerVacationImage = "WBidmax-logo"
+                }
+                else if self.bidPeriod?.isSwaptimizerOn?.boolValue == true {
+                    SwaptimizerVacationImage = "SwaptAlert"
+                }
                 let swapImage = UIImage(named: SwaptimizerVacationImage)
                 
                 if let types = types, !types.isEmpty {

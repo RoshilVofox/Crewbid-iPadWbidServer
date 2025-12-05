@@ -4459,7 +4459,22 @@ class BIBidInfoReader{
                     dayInfo.firstLeg = dayInfo.orderedLegs.first
                 }
                 if dayCount == (trip.info?.orderedDays().count)! - 1{
-                    tripEndMonthBits |= one << (monthBitIndex + dayCount)
+//                    fix for Monthbits for RedEye Trips
+                    if trip.isRedEyeTrip {
+                        if !(trip.info?.calendarDaysCount?.intValue == trip.info?.orderedDays().count) {
+                            let missingDateIndex = CBUtils.findMissingIndex(inRedEyeTrip: trip)
+                            if missingDateIndex != -1 && missingDateIndex < (trip.info!.orderedDays().count + 1) {
+                                monthBits |= one << (monthBitIndex + dayCount + 1)
+                                tripEndMonthBits |= one << (monthBitIndex + dayCount + 1)
+                            }
+                        }
+                        else {
+                            tripEndMonthBits |= one << (monthBitIndex + dayCount)
+                        }
+                    }
+                    else {
+                        tripEndMonthBits |= one << (monthBitIndex + dayCount)
+                    }
                 }
                 // Max legs in a day
                 if dayNumLegs > maxLegsInADay{

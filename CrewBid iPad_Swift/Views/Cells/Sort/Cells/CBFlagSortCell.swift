@@ -40,73 +40,7 @@ class CBFlagSortCell: UITableViewCell {
         objFlagTableView.dataSource = self
         bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         
-        var fetchSort: NSFetchRequest <BILineSort> = BILineSort.fetchRequest()
-        fetchSort.sortDescriptors = [NSSortDescriptor(key: "category", ascending: true), NSSortDescriptor(key: "type", ascending: true)]
-        let predicate1 = NSPredicate(format: "category == 10")
-        let predicate2 = NSPredicate(format: "bidPeriod == %@", bidPeriod!)
-        let combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
-        fetchSort.predicate = combinedPredicate
         
-        var fetchLine: NSFetchRequest <BILine> = BILine.fetchRequest()
-        fetchLine.predicate = predicate2
-        fetchLine.sortDescriptors = [NSSortDescriptor(key: "number", ascending: true)]
-        
-        do {
-            sortRule = try context!.fetch(fetchSort)
-            lines = try context!.fetch(fetchLine)
-            if sortRule.count > 0 {
-                self.lineSort = sortRule[0]
-                let arrayVariables = self.lineSort?.arrayVariables as! [NSNumber]
-                userFlags = [Int]()
-                userFlagColors = [UIColor]()
-                
-                for variable in arrayVariables {
-                    switch variable.intValue {
-                    case 0:
-                        userFlags.append(CBUserFlagType.none.rawValue)
-                        userFlagColors.append(.clear)
-                        break
-                    case 1:
-                        userFlags.append(CBUserFlagType.blue.rawValue)
-                        userFlagColors.append(CBColor.faPosAColor)
-                        break
-                    case 2:
-                        userFlags.append(CBUserFlagType.green.rawValue)
-                        userFlagColors.append(CBColor.faPosBColor)
-                        break
-                    case 3:
-                        userFlags.append(CBUserFlagType.red.rawValue)
-                        userFlagColors.append(CBColor.faPosDColor)
-                        break
-                    case 4:
-                        userFlags.append(CBUserFlagType.yellow.rawValue)
-                        userFlagColors.append(CBColor.faPosCColor)
-                        break
-                    case 5:
-                        userFlags.append(CBUserFlagType.orange.rawValue)
-                        userFlagColors.append(.orange)
-                        break
-                    case 6:
-                        userFlags.append(CBUserFlagType.brown.rawValue)
-                        userFlagColors.append(CBColor.oldbrownColor)
-                        break
-                    case 7:
-                        userFlags.append(CBUserFlagType.pink.rawValue)
-                        userFlagColors.append(UIColor.systemPink.withAlphaComponent(0.8))
-                        break
-                    default:
-                        break
-                    }
-                }
-                
-                self.lineSort!.arrayVariables = userFlags as NSArray
-                self.lineSort!.ascending = NSNumber(booleanLiteral: true)
-                try? self.context?.save()
-            }
-        }
-        catch {
-            print("Error fetching data \(error.localizedDescription)")
-        }
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -187,63 +121,78 @@ class CBFlagSortCell: UITableViewCell {
     }
     
     func configureFlagSortCell() {
-        var sortRule = sortRule
-        var predicate = NSPredicate(format: "isBidListSort != \(NSNumber(value: true))")
-        if self.bidPeriod!.isBidListSortOn?.boolValue ?? false {
-            predicate = NSPredicate(format: "isBidListSort == \(NSNumber(value: true))")
-        }
-        let categoryPredicate = NSPredicate(format: "category == 10")
-        let combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, categoryPredicate])
-        sortRule = (sortRule as NSArray).filtered(using: combinedPredicate) as! [BILineSort]
+        let fetchSort: NSFetchRequest <BILineSort> = BILineSort.fetchRequest()
+        fetchSort.sortDescriptors = [NSSortDescriptor(key: "category", ascending: true), NSSortDescriptor(key: "type", ascending: true)]
+        let predicate1 = NSPredicate(format: "category == 10")
+        let predicate2 = NSPredicate(format: "bidPeriod == %@", bidPeriod!)
+        let combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
+        fetchSort.predicate = combinedPredicate
         
-        if sortRule.count > 0 {
-            self.lineSort = sortRule[0]
-            let arrayVariables = self.lineSort?.arrayVariables as! [NSNumber]
-            userFlags = [Int]()
-            userFlagColors = [UIColor]()
-            
-            for variable in arrayVariables {
-                switch variable.intValue {
-                case 0:
-                    userFlags.append(CBUserFlagType.none.rawValue)
-                    userFlagColors.append(.clear)
-                    break
-                case 1:
-                    userFlags.append(CBUserFlagType.blue.rawValue)
-                    userFlagColors.append(CBColor.faPosAColor)
-                    break
-                case 2:
-                    userFlags.append(CBUserFlagType.green.rawValue)
-                    userFlagColors.append(CBColor.faPosBColor)
-                    break
-                case 3:
-                    userFlags.append(CBUserFlagType.red.rawValue)
-                    userFlagColors.append(CBColor.faPosDColor)
-                    break
-                case 4:
-                    userFlags.append(CBUserFlagType.yellow.rawValue)
-                    userFlagColors.append(CBColor.faPosCColor)
-                    break
-                case 5:
-                    userFlags.append(CBUserFlagType.orange.rawValue)
-                    userFlagColors.append(.orange)
-                    break
-                case 6:
-                    userFlags.append(CBUserFlagType.brown.rawValue)
-                    userFlagColors.append(CBColor.oldbrownColor)
-                    break
-                case 7:
-                    userFlags.append(CBUserFlagType.pink.rawValue)
-                    userFlagColors.append(UIColor.systemPink.withAlphaComponent(0.8))
-                    break
-                default:
-                    break
+        let fetchLine: NSFetchRequest <BILine> = BILine.fetchRequest()
+        fetchLine.predicate = predicate2
+        fetchLine.sortDescriptors = [NSSortDescriptor(key: "number", ascending: true)]
+        
+        do {
+            sortRule = try context!.fetch(fetchSort)
+            lines = try context!.fetch(fetchLine)
+            if sortRule.count > 0 {
+                self.lineSort = sortRule[0]
+                var arrayVariables = self.lineSort?.arrayVariables as? [NSNumber]
+                if arrayVariables == nil {
+                    if let dict = self.lineSort?.variables as? [String: Any] {
+                        arrayVariables = dict.values.compactMap { $0 as? NSNumber }
+                    }
+                    self.lineSort?.arrayVariables = arrayVariables as NSArray?
                 }
+                userFlags = [Int]()
+                userFlagColors = [UIColor]()
+                
+                for variable in arrayVariables! {
+                    switch variable.intValue {
+                    case 0:
+                        userFlags.append(CBUserFlagType.none.rawValue)
+                        userFlagColors.append(.clear)
+                        break
+                    case 1:
+                        userFlags.append(CBUserFlagType.blue.rawValue)
+                        userFlagColors.append(CBColor.faPosAColor)
+                        break
+                    case 2:
+                        userFlags.append(CBUserFlagType.green.rawValue)
+                        userFlagColors.append(CBColor.faPosBColor)
+                        break
+                    case 3:
+                        userFlags.append(CBUserFlagType.red.rawValue)
+                        userFlagColors.append(CBColor.faPosDColor)
+                        break
+                    case 4:
+                        userFlags.append(CBUserFlagType.yellow.rawValue)
+                        userFlagColors.append(CBColor.faPosCColor)
+                        break
+                    case 5:
+                        userFlags.append(CBUserFlagType.orange.rawValue)
+                        userFlagColors.append(.orange)
+                        break
+                    case 6:
+                        userFlags.append(CBUserFlagType.brown.rawValue)
+                        userFlagColors.append(CBColor.oldbrownColor)
+                        break
+                    case 7:
+                        userFlags.append(CBUserFlagType.pink.rawValue)
+                        userFlagColors.append(UIColor.systemPink.withAlphaComponent(0.8))
+                        break
+                    default:
+                        break
+                    }
+                }
+                
+                self.lineSort!.arrayVariables = userFlags as NSArray
+                self.lineSort!.ascending = NSNumber(booleanLiteral: true)
+                try? self.context?.save()
             }
-            if lines.count > 0 {
-                resetFlagOrder()
-            }
-            self.objFlagTableView.reloadData()
+        }
+        catch {
+            print("Error fetching data \(error.localizedDescription)")
         }
     }
 
@@ -357,7 +306,8 @@ extension CBFlagSortCell: UITableViewDataSource, UITableViewDelegate {
         self.lineSort?.ascending = NSNumber(booleanLiteral: true)
         
         do {
-            try context?.save()
+//            try context?.save()
+            self.configureFlagSortCell()
         }
         catch {
             print("error saving flag while moving \(error.localizedDescription)")

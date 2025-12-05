@@ -11,7 +11,7 @@ import CoreData
 var kReserveMrtViewTagExpandedView: Int = 1006
 var kReserveMrtLabelTagExpandedView: Int = 5006
 
-class CBExpandedBidLinesTableController: BaseViewController {
+class CBExpandedBidLinesTableController: BaseViewController, UIPopoverPresentationControllerDelegate {
     
     @IBOutlet weak var btnClose: UIButton!
     @IBOutlet weak var btnShare: UIButton!
@@ -33,6 +33,7 @@ class CBExpandedBidLinesTableController: BaseViewController {
     var insertionPoint: BIInsertionPoint?
     var previousInsertionIndex: Int = 0
     private var _insertionIndex: Int?
+    
     
     var count = 0
     
@@ -148,6 +149,34 @@ class CBExpandedBidLinesTableController: BaseViewController {
         }
         updateBidList()
     }
+    
+    //    vacation line value popover view
+        func showVacationPopover(for sourceView: UIView, line: BILine?) {
+            if bidPeriod.userVacationWbidOrCrewBid == "CREWBID" || bidPeriod.userVacationWbidOrCrewBid == "CREWBIDF" {
+                return
+            }
+            let storyboard = UIStoryboard(name: "FlightDataChange", bundle: nil)
+            guard let vc = storyboard.instantiateViewController(withIdentifier: "CBVacationDataVC") as? CBVacationDataVC else {
+                return
+            }
+
+            if let line = line {
+                vc.line = line
+            }
+            vc.bidPeriod = self.bidPeriod
+            vc.modalPresentationStyle = .popover
+            vc.preferredContentSize = CGSize(width: 320, height: 420)
+
+            if let popover = vc.popoverPresentationController {
+                popover.sourceView = sourceView
+                popover.sourceRect = sourceView.bounds
+                popover.permittedArrowDirections = [.up, .down]
+                popover.delegate = self
+            }
+
+            present(vc, animated: true)
+            
+        }
     
     
     // Method called when line values to display change
@@ -354,6 +383,16 @@ class CBExpandedBidLinesTableController: BaseViewController {
             }
             reserveMrtLabel?.alpha = 0.0
             reserveMrtView?.alpha = 0.0
+        }
+//        set LODO
+        if line.isLODO?.boolValue == true {
+            cell.mLblLineNo.text = cell.mLblLineNo.text! + ("L")
+            let strTitle:NSString = cell.mLblLineNo.text! as NSString
+            let tickRange: NSRange = strTitle.range(of: "L")
+            let attributedString = NSMutableAttributedString(string: cell.mLblLineNo.text!)
+            attributedString.addAttribute(NSAttributedString.Key.font, value: UIFont.systemFont(ofSize: 14.0), range: tickRange)
+            attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: tickRange)
+            cell.mLblLineNo.attributedText = attributedString
         }
         //Set Etops line
         if line.isETOPS?.boolValue == true {
@@ -565,6 +604,12 @@ extension CBExpandedBidLinesTableController: UITableViewDelegate,UITableViewData
         cell.tripButtonActionBlock = {(_ tripButton: CBTripButton) -> Void in
             DispatchQueue.main.async {
                 self.showTripTextPopover(for: tripButton)
+            }
+        }
+        
+        cell.vacationDoubleTapActionBlock = { tappedButton in
+            DispatchQueue.main.async {
+                self.showVacationPopover(for: tappedButton, line: line)
             }
         }
         return cell

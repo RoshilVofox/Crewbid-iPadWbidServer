@@ -1404,7 +1404,7 @@
                                                             <rect key="frame" x="5" y="10" width="642" height="36"/>
                                                             <subviews>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="27N-b2-85p" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="76" height="36"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="67" height="36"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
                                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1417,7 +1417,7 @@
                                                                     </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FNs-7D-6aY" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                    <rect key="frame" x="81" y="0.0" width="76" height="36"/>
+                                                                    <rect key="frame" x="72" y="0.0" width="67" height="36"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
                                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -1429,7 +1429,7 @@
                                                                     </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rXm-IT-lok" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                    <rect key="frame" x="162" y="0.0" width="76" height="36"/>
+                                                                    <rect key="frame" x="144" y="0.0" width="67" height="36"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
                                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -1441,7 +1441,7 @@
                                                                     </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IPa-nX-Beg" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                    <rect key="frame" x="243" y="0.0" width="76" height="36"/>
+                                                                    <rect key="frame" x="216" y="0.0" width="67" height="36"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
                                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -1453,7 +1453,7 @@
                                                                     </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SBk-3B-odY" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                    <rect key="frame" x="324" y="0.0" width="76" height="36"/>
+                                                                    <rect key="frame" x="288" y="0.0" width="67" height="36"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
                                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -1465,7 +1465,7 @@
                                                                     </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MnE-mK-XTR" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                    <rect key="frame" x="405" y="0.0" width="76" height="36"/>
+                                                                    <rect key="frame" x="360" y="0.0" width="67" height="36"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
                                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -1477,7 +1477,7 @@
                                                                     </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6xP-KI-mIA" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                    <rect key="frame" x="486" y="0.0" width="76" height="36"/>
+                                                                    <rect key="frame" x="432" y="0.0" width="67" height="36"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
                                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -1489,7 +1489,7 @@
                                                                     </connections>
                                                                 </button>
                                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tHN-Pf-BeO" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                                    <rect key="frame" x="566" y="0.0" width="76" height="36"/>
+                                                                    <rect key="frame" x="504" y="0.0" width="67" height="36"/>
                                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
                                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
@@ -1499,6 +1499,15 @@
                                                                     <connections>
                                                                         <action selector="buttonAction:" destination="h7b-Zw-mlp" eventType="touchUpInside" id="JFT-be-Mph"/>
                                                                     </connections>
+                                                                </button>
+                                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5X3-Wf-fRX" customClass="CBBorderToggleButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                                    <rect key="frame" x="575" y="0.0" width="67" height="36"/>
+                                                                    <fontDescription key="fontDescription" type="boldSystem" pointSize="11"/>
+                                                                    <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                                    <state key="normal" title="LODO">
+                                                                        <color key="titleColor" systemColor="labelColor"/>
+                                                                    </state>
                                                                 </button>
                                                             </subviews>
                                                         </stackView>
@@ -1524,6 +1533,7 @@
                                             <outlet property="etopsButton" destination="6xP-KI-mIA" id="rh9-La-IaJ"/>
                                             <outlet property="etopsResButton" destination="tHN-Pf-BeO" id="sKU-tw-fBR"/>
                                             <outlet property="hardLinesButton" destination="27N-b2-85p" id="8ou-OE-Q97"/>
+                                            <outlet property="lodoButton" destination="5X3-Wf-fRX" id="q8W-h9-7VH"/>
                                             <outlet property="mixedLinesButton" destination="FNs-7D-6aY" id="Z7o-jK-0OS"/>
                                             <outlet property="nonConusButton" destination="IPa-nX-Beg" id="NAd-8o-d5X"/>
                                             <outlet property="reserveLinesButton" destination="SBk-3B-odY" id="0Ih-xr-UKo"/>
@@ -3075,6 +3085,122 @@
                                         <connections>
                                             <outlet property="backView" destination="N8d-3N-UQt" id="vyg-yD-ziJ"/>
                                         </connections>
+                                    </tableViewCell>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="PDORuleCell" rowHeight="66" id="3Dz-vs-CDz" userLabel="PDORuleCell" customClass="CBPDORuleCell" customModule="CrewBid_iPad" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="1871" width="652" height="66"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="3Dz-vs-CDz" id="xDV-dV-d21">
+                                            <rect key="frame" x="0.0" y="0.0" width="652" height="66"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view tag="51" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VKV-Qm-Xg5" userLabel="Background View">
+                                                    <rect key="frame" x="0.0" y="0.0" width="652" height="66"/>
+                                                    <subviews>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hec-Gc-9uh">
+                                                            <rect key="frame" x="378" y="18" width="80" height="30"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="30" id="A9o-om-8il"/>
+                                                                <constraint firstAttribute="width" constant="80" id="dpe-99-fAv"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                            <state key="normal" title="Any cities">
+                                                                <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                            </state>
+                                                        </button>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jyQ-Ev-D19">
+                                                            <rect key="frame" x="465" y="18" width="90" height="30"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="30" id="A16-Gm-h1u"/>
+                                                                <constraint firstAttribute="width" constant="90" id="Mti-Gn-CvE"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                            <state key="normal" title="at + after">
+                                                                <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                            </state>
+                                                        </button>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fgN-qb-gpf">
+                                                            <rect key="frame" x="562" y="18" width="70" height="30"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="70" id="3Ix-qn-ldr"/>
+                                                                <constraint firstAttribute="height" constant="30" id="SaK-6s-mDS"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                            <state key="normal" title="15:15">
+                                                                <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                            </state>
+                                                        </button>
+                                                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JY4-FY-y2D" userLabel="TitleButton">
+                                                            <rect key="frame" x="44" y="17" width="32.5" height="32"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                                            <state key="normal">
+                                                                <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                            </state>
+                                                        </button>
+                                                        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="248" text="PDO" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ggZ-wg-NGZ" userLabel="Title Label">
+                                                            <rect key="frame" x="44" y="17" width="32.5" height="32"/>
+                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                            <color key="textColor" name="preset_label"/>
+                                                            <color key="highlightedColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                        </label>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bXd-Ol-Gc1" userLabel="Delete Button">
+                                                            <rect key="frame" x="5" y="18.5" width="29" height="29"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="29" id="0dX-Zi-heh"/>
+                                                                <constraint firstAttribute="height" constant="29" id="lyr-fm-8d6"/>
+                                                            </constraints>
+                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                                            <state key="normal" image="cc">
+                                                                <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                            </state>
+                                                            <state key="highlighted">
+                                                                <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                            </state>
+                                                        </button>
+                                                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bdG-gA-0ea">
+                                                            <rect key="frame" x="291" y="18" width="80" height="30"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="80" id="ktw-Xh-CPu"/>
+                                                                <constraint firstAttribute="height" constant="30" id="qGt-qL-TNa"/>
+                                                            </constraints>
+                                                            <state key="normal" title="Any Day">
+                                                                <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                            </state>
+                                                        </button>
+                                                    </subviews>
+                                                    <constraints>
+                                                        <constraint firstItem="ggZ-wg-NGZ" firstAttribute="leading" secondItem="bXd-Ol-Gc1" secondAttribute="trailing" constant="10" id="44W-yQ-nNY"/>
+                                                        <constraint firstItem="jyQ-Ev-D19" firstAttribute="leading" secondItem="hec-Gc-9uh" secondAttribute="trailing" constant="7" id="6ES-rD-nmC"/>
+                                                        <constraint firstItem="JY4-FY-y2D" firstAttribute="leading" secondItem="ggZ-wg-NGZ" secondAttribute="leading" id="EHl-no-stv"/>
+                                                        <constraint firstAttribute="trailing" secondItem="fgN-qb-gpf" secondAttribute="trailing" constant="20" id="F60-ez-PSW"/>
+                                                        <constraint firstItem="fgN-qb-gpf" firstAttribute="centerY" secondItem="JY4-FY-y2D" secondAttribute="centerY" id="GdU-Lv-bdN"/>
+                                                        <constraint firstItem="hec-Gc-9uh" firstAttribute="centerY" secondItem="JY4-FY-y2D" secondAttribute="centerY" id="IIj-1w-Sdv"/>
+                                                        <constraint firstItem="bXd-Ol-Gc1" firstAttribute="centerY" secondItem="VKV-Qm-Xg5" secondAttribute="centerY" id="Kf8-Fx-giR"/>
+                                                        <constraint firstItem="fgN-qb-gpf" firstAttribute="leading" secondItem="jyQ-Ev-D19" secondAttribute="trailing" constant="7" id="Lo2-lY-UeB"/>
+                                                        <constraint firstItem="JY4-FY-y2D" firstAttribute="top" secondItem="ggZ-wg-NGZ" secondAttribute="top" id="M4v-Yi-HNZ"/>
+                                                        <constraint firstItem="JY4-FY-y2D" firstAttribute="trailing" secondItem="ggZ-wg-NGZ" secondAttribute="trailing" id="PkQ-xe-jof"/>
+                                                        <constraint firstItem="bXd-Ol-Gc1" firstAttribute="leading" secondItem="VKV-Qm-Xg5" secondAttribute="leading" constant="5" id="Qrk-Jp-EmR"/>
+                                                        <constraint firstItem="jyQ-Ev-D19" firstAttribute="centerY" secondItem="JY4-FY-y2D" secondAttribute="centerY" id="bgb-JN-7s7"/>
+                                                        <constraint firstItem="hec-Gc-9uh" firstAttribute="leading" secondItem="bdG-gA-0ea" secondAttribute="trailing" constant="7" id="inO-ee-hLF"/>
+                                                        <constraint firstItem="JY4-FY-y2D" firstAttribute="bottom" secondItem="ggZ-wg-NGZ" secondAttribute="bottom" id="tF7-bs-Bql"/>
+                                                        <constraint firstItem="ggZ-wg-NGZ" firstAttribute="centerY" secondItem="VKV-Qm-Xg5" secondAttribute="centerY" id="th9-te-cS5"/>
+                                                        <constraint firstItem="bdG-gA-0ea" firstAttribute="centerY" secondItem="JY4-FY-y2D" secondAttribute="centerY" id="wob-nC-kEi"/>
+                                                    </constraints>
+                                                </view>
+                                            </subviews>
+                                            <color key="backgroundColor" name="contentBgColor"/>
+                                            <constraints>
+                                                <constraint firstItem="VKV-Qm-Xg5" firstAttribute="leading" secondItem="xDV-dV-d21" secondAttribute="leading" id="0LM-ZQ-XO4"/>
+                                                <constraint firstItem="VKV-Qm-Xg5" firstAttribute="leading" secondItem="xDV-dV-d21" secondAttribute="leading" id="8Um-MS-ZDp"/>
+                                                <constraint firstAttribute="bottom" secondItem="VKV-Qm-Xg5" secondAttribute="bottom" id="8q5-fr-9Dk"/>
+                                                <constraint firstAttribute="trailing" secondItem="VKV-Qm-Xg5" secondAttribute="trailing" id="90P-XY-Hb6"/>
+                                                <constraint firstAttribute="bottom" secondItem="VKV-Qm-Xg5" secondAttribute="bottom" id="AZD-Oq-IgW"/>
+                                                <constraint firstItem="VKV-Qm-Xg5" firstAttribute="top" secondItem="xDV-dV-d21" secondAttribute="top" id="QGA-CU-R0L"/>
+                                                <constraint firstAttribute="trailing" secondItem="VKV-Qm-Xg5" secondAttribute="trailing" id="oUJ-s6-msf"/>
+                                                <constraint firstItem="VKV-Qm-Xg5" firstAttribute="top" secondItem="xDV-dV-d21" secondAttribute="top" id="tlM-fV-Twr"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" name="contentBgColor"/>
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
@@ -5072,7 +5198,7 @@
             <objects>
                 <viewController storyboardIdentifier="CBBidListSortOptions" useStoryboardIdentifierAsRestorationIdentifier="YES" id="5qd-YZ-YDL" customClass="CBBidListSortOptions" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dUy-3l-WsS">
-                        <rect key="frame" x="0.0" y="0.0" width="580" height="500"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view alpha="0.29999999999999999" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TKf-Sk-9Vu" userLabel="BgView">
@@ -7177,37 +7303,37 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="quaternarySystemFillColor">
-            <color red="0.45490196078431372" green="0.45490196078431372" blue="0.50196078431372548" alpha="0.080000000000000002" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.4549019608" green="0.4549019608" blue="0.50196078430000002" alpha="0.080000000000000002" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="secondarySystemBackgroundColor">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBlueColor">
-            <color red="0.0" green="0.53333333333333333" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray2Color">
-            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGreenColor">
-            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemOrangeColor">
-            <color red="1" green="0.55294117647058827" blue="0.15686274509803921" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.2196078431372549" blue="0.23529411764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemYellowColor">
             <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tertiaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29803921568627451" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29803921570000003" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tintColor">
-            <color red="0.0" green="0.53333333333333333" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
