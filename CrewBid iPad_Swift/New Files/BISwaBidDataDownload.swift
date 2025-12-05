@@ -459,6 +459,60 @@ class BISwaBidDataDownload{
         
     }
     
+    func getAwards(completion: @escaping (Result<[String:Any],Error>) -> Void){
+        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/line-awards?page=%%ld&size=\(self.pageSize)"
+        
+        self.fetchPaginatedData(urlTemplate: urlTemplate, keyPath:"IFLineBaseAuctionAwards"){ result in
+            switch result{
+            case .success(let resultDict):
+                completion(.success(resultDict))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    
+    func getMrtAwards(completion: @escaping (Result<[String:Any],Error>) -> Void){
+        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/mrt-awards?page=%%ld&size=\(self.pageSize)"
+        
+        self.fetchPaginatedData(urlTemplate: urlTemplate, keyPath:"IFLineBaseAuctionAwards"){ result in
+            switch result{
+            case .success(let resultDict):
+                completion(.success(resultDict))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func getJobShareAwards(completion: @escaping (Result<[String:Any],Error>) -> Void){
+        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/jobshare-awards?page=%%ld&size=\(self.pageSize)"
+        
+        self.fetchPaginatedData(urlTemplate: urlTemplate, keyPath:"IFLineBaseAuctionAwards"){ result in
+            switch result{
+            case .success(let resultDict):
+                completion(.success(resultDict))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func getReserveDataForAward(completion: @escaping (Result<[String:Any],Error>) -> Void){
+        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/reserve-awards?page=%%ld&size=\(self.pageSize)"
+        
+        self.fetchPaginatedData(urlTemplate: urlTemplate, keyPath:"IFLineBaseAuctionAwards"){ result in
+            switch result{
+            case .success(let resultDict):
+                completion(.success(resultDict))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    
     func fetchPaginatedData(
         urlTemplate: String,
         keyPath: String,

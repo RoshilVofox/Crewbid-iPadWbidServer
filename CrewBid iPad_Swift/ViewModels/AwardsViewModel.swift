@@ -10,6 +10,7 @@ import Foundation
 class AwardsViewModel {
     var bidPeriod:BIBidPeriod
     var EmpNum:String!
+    let swaDownload = BISwaBidDataDownload()
     init(bidPeriod: BIBidPeriod) {
         self.bidPeriod = bidPeriod
     }
@@ -65,18 +66,8 @@ class AwardsViewModel {
         ) { result in
             completion(result.mapError { $0 as Error })
         }
-//        DownloadManager.shared.fetch(
-//            urlString: EndPoint.shared.thirdpartyURL,
-//            httpMethod: .POST,
-//            body: bodyData,
-//            headers: nil,
-//            timeout: 300
-//        ) { result in
-//            completion(result.mapError { $0 as Error })
-//        }
     }
     
-
     
     
     func getAwardAlertFromServer(empNum: String, completion: @escaping (Bool) -> Void) {

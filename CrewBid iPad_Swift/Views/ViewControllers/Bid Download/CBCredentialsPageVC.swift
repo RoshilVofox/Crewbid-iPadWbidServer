@@ -417,7 +417,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     let webViewModel = BISwaBidDataDownloadViewModel()
     var bidDetails:[String:Any] = [:]
     var isForReauth: Bool = false
-//    weak var delegate1: CBCredentialsPageVCDelegate?
+    let swaBidDataDownload = BISwaBidDataDownload()
     
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -450,7 +450,9 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        
+        if let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod {
+            awardsViewModel = AwardsViewModel(bidPeriod: bidPeriod)
+        }
         //for new API
         if self.dataSource.position == BICrewPositionType.FlightAttendant{
             self.setupSwaLogin()
@@ -525,9 +527,6 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     
     func setupLegacyLogin(){
         
-        if let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod {
-            awardsViewModel = AwardsViewModel(bidPeriod: bidPeriod)
-        }
         if type == .retrieveAwards {
             backBtn.setImage(UIImage(named: "cc"), for: .normal)
         }else{
@@ -748,7 +747,19 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
     }
     
+    var lineAwardDetails:[String:Any] = [:]
+    var lineAwardDownloaded = false
     
+    var mrtAwardDetails:[String:Any] = [:]
+    var mrtAwardDownloaded = false
+    
+    var jobshareAwardDetails:[String:Any] = [:]
+    var jobShareAwardDownloaded = false
+    
+    var reserveAwardDetails:[String:Any] = [:]
+    var reserveAwardDownloaded = false
+    
+    var awardError:Error?
     //MARK: Award retrieval
     func handleAwardRetrieval(sessionKey: String? = nil){
         guard let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod else {
@@ -758,7 +769,11 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         let empNum = bidPeriod.crewIdentifier?.stringValue ?? ""
         
         //New API (FA)
-        if bidPeriod.isFABid() || bidPeriod.isSwaAPI?.boolValue == true { //MARK: &&
+        if bidPeriod.isFABid() && bidPeriod.isSwaAPI?.boolValue == true { //MARK: &&
+            DispatchQueue.main.async {
+                self.view.updateActivityIndicator(message: "Retrieving bid awards...")
+            }
+            self.retrieveAwardsForFA()
             
         }else{
             guard let sk = sessionKey, !sk.isEmpty else {
@@ -788,6 +803,121 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }
     }
     
+    func retrieveAwardsForFA(){
+        swaBidDataDownload?.getAwards(){ result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let responseDict):
+                    self.lineAwardDownloaded = true
+                    self.lineAwardDetails = responseDict
+                case .failure(let error):
+                    self.lineAwardDownloaded = true
+                    self.awardError = error
+                }
+                self.checkForAwardError()
+            }
+        }
+        
+        if !self.bidPeriod!.isSecondRoundBid(){
+            // MRT awards
+            swaBidDataDownload?.getMrtAwards(){ result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let responseDict):
+                        self.mrtAwardDownloaded = true
+                        self.mrtAwardDetails = responseDict
+                    case .failure(let error):
+                        self.mrtAwardDownloaded = true
+                        self.awardError = error
+                    }
+                    self.checkForAwardError()
+                }
+            }
+            // JobShare awards
+            swaBidDataDownload?.getJobShareAwards { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let responseDict):
+                        self.jobShareAwardDownloaded = true
+                        self.jobshareAwardDetails = responseDict
+                    case .failure(let error):
+                        self.jobShareAwardDownloaded = true
+                        self.awardError = error
+                    }
+                    self.checkForAwardError()
+                }
+            }
+            
+            // Reserve data
+            swaBidDataDownload?.getReserveDataForAward { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let responseDict):
+                        self.reserveAwardDownloaded = true
+                        self.reserveAwardDetails = responseDict
+                    case .failure(let error):
+                        self.reserveAwardDownloaded = true
+                        self.awardError = error
+                    }
+                    self.checkForAwardError()
+                }
+            }
+        }
+    }
+    
+    func checkForAwardError() {
+        // If not a second round, wait until all 4 downloads have finished
+        if !(bidPeriod?.isSecondRoundBid() ?? false) {
+            if !(reserveAwardDownloaded && mrtAwardDownloaded && lineAwardDownloaded && jobShareAwardDownloaded) {
+                return
+            }
+        }
+
+        // If there was an error, show an alert and then parse after user taps OK
+        if let error = self.awardError {
+            // Using your AlertService helper that accepts actions
+            let okAction = (title: "OK", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction) in
+                // continue to parsing / file creation
+                self.awardParsingAndTextFileCreation()
+            })
+
+            DispatchQueue.main.async {
+                AlertService.showAlertForTopVC(
+                    title: "Award Download Error",
+                    message: error.localizedDescription,
+                    actions: [okAction]
+                )
+            }
+        } else {
+            // No error → continue directly
+            self.awardParsingAndTextFileCreation()
+        }
+    }
+    func awardParsingAndTextFileCreation() {
+        // Build the awards text using your existing utility
+        let bidAwardText = CBUtils.generateTextForAwardData(
+            lineAwardDetails,
+            mrtAward: mrtAwardDetails,
+            jobShareAward: jobshareAwardDetails,
+            reserveData: reserveAwardDetails,
+            bidPeriod: bidPeriod
+        )
+
+        // Replace the existing awards text file on the bid period
+        bidPeriod?.deleteTextFile(text: bidAwardText, name: BIAwardsTextFileName)
+        bidPeriod?.addTextFile(text: bidAwardText, name: BIAwardsTextFileName)
+
+        // Now call server alert flow (same as Obj-C awardAlertFromWbidServer:)
+        // If your original method took the HUD or completion, adapt as needed.
+        guard let empNo = self.defaultEmplyeeNumber else {return}
+        DispatchQueue.main.async {
+            self.view.hideActivityIndicator()
+        }
+        self.awardsViewModel?.getAwardAlertFromServer(empNum: empNo) { success in
+        }
+    }
+    
+    
     @objc func showBidAwardReadError(notification: NSNotification){
         let str1 = AlertService.getAttributedMessage(from: notification.object as! String)
         let str2 = AlertService.getAttributedMessage(from: "\n\nPlease make sure that bid awards are available at this time.")
@@ -806,7 +936,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }
             
         var empNum = self.txtUserID.text ?? ""
-        if bidPeriod.isFABid() || bidPeriod.isSwaAPI?.boolValue == true{ //MARK:  &&
+        if bidPeriod.isFABid() && bidPeriod.isSwaAPI?.boolValue == true{ //MARK:  &&
             if let token = KeychainHelper.retrieveTokenFromKeyChain(),
                 let userDetails = JWTDecoder.decode(jwtToken: token),
                 let user = userDetails["cn"] as? String{

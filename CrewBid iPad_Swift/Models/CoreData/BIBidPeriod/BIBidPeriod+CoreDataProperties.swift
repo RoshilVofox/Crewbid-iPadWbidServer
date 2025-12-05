@@ -1316,4 +1316,46 @@ extension BIBidPeriod : Identifiable {
         return lineList
     }
     
+    
+    func deleteTextFile(text: String, name: String) {
+        guard let context = self.managedObjectContext else {
+            print("No managedObjectContext available.")
+            return
+        }
+
+        let fetchRequest = NSFetchRequest<BITextFile>(entityName: "TextFile")
+        fetchRequest.predicate = NSPredicate(format: "name == %@", name)
+
+        do {
+            let existingFiles = try context.fetch(fetchRequest)
+            for file in existingFiles {
+                context.delete(file)
+            }
+        } catch {
+            print("Fetch error while deleting text file: \(error.localizedDescription)")
+        }
+    }
+    
+    func addTextFile(text: String, name: String) {
+        guard let context = self.managedObjectContext else {
+            print("No managedObjectContext available.")
+            return
+        }
+
+        if let entity = NSEntityDescription.entity(forEntityName: "TextFile", in: context) {
+            let textFile = BITextFile(entity: entity, insertInto: context)
+            textFile.setValue(text, forKey: "text")
+            textFile.setValue(name, forKey: "name")
+
+            if self.responds(to: NSSelectorFromString("addToTextFiles:")) {
+                self.perform(NSSelectorFromString("addToTextFiles:"), with: textFile)
+            } else {
+                self.mutableSetValue(forKey: "textFiles").add(textFile)
+            }
+        } else {
+            print("Failed to create BITextFile entity description.")
+        }
+    }
+    
+    
 }

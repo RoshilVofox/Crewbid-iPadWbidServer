@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="25B78" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24411" systemVersion="25B78" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AwardDetails" representedClassName="AwardDetails" syncable="YES">
         <attribute name="empName" optional="YES" attributeType="String"/>
         <attribute name="empNum" optional="YES" attributeType="String"/>
@@ -554,7 +554,7 @@
         <attribute name="vacation" optional="YES" attributeType="String"/>
         <relationship name="bidPeriod" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="seniorityList" inverseEntity="BidPeriod"/>
     </entity>
-    <entity name="TextFile" representedClassName="BITextFile" syncable="YES" codeGenerationType="class">
+    <entity name="TextFile" representedClassName="BITextFile" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="text" optional="YES" attributeType="String"/>
         <relationship name="bidPeriod" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="textFiles" inverseEntity="BidPeriod"/>
