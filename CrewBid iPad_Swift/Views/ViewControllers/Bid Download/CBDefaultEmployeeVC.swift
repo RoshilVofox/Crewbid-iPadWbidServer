@@ -391,15 +391,21 @@ class CBDefaultEmployeeVC: BaseViewController {
     }
     
     func goToNextPage(){
-        if self.bidPeriod!.positionType?.intValue == BICrewPositionType.FlightAttendant.rawValue && self.bidPeriod!.round == 1 {
-                AlertService.showAlertForTopVC(title: "Alert", message: "If you are Buddy Bidding you need to verify that you are buddy bidders on your Buddy list, and they know you are buddy bidding with them.", actions: [(title: "I have Verified", style: .default, handler: {_ in
+        if self.bidPeriod!.positionType?.intValue == BICrewPositionType.FlightAttendant.rawValue{
+//            if self.bidPeriod!.isSwaAPI?.boolValue == true{
+                if self.bidPeriod!.round == 1 {
+                AlertService.showAlertForTopVC(title: "CrewBid iPad", message: "If you are Buddy Bidding you need to verify that you are buddy bidders on your Buddy list, and they know you are buddy bidding with them.", actions: [(title: "I have Verified", style: .default, handler: {_ in
                     self.buddyBid(selected: true)
-
-                }),(title: "I am NOT Buddy Bidding", style: .default, handler: {_ in
+                    
+                    }),(title: "I am NOT Buddy Bidding", style: .default, handler: {_ in
                     self.buddyBid(selected: false)
-                })])
-            }
-            else if self.bidPeriod!.positionType?.intValue == BICrewPositionType.FirstOfficer.rawValue && self.bidPeriod!.round == 1 {
+                    })])
+                }else{
+                    self.loginView()
+                }
+//            }
+        }
+        else if self.bidPeriod!.positionType?.intValue == BICrewPositionType.FirstOfficer.rawValue && self.bidPeriod!.round == 1 {
                 let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
                 let vc = storyboard.instantiateViewController(withIdentifier: "CBAvoidanceBidViewController") as! CBAvoidanceBidViewController
                 vc.empID = self.textEmpNum.text!
@@ -429,24 +435,30 @@ class CBDefaultEmployeeVC: BaseViewController {
             vc.preferredContentSize = CGSize(width: 600, height: 500)
             vc.empID = self.textEmpNum.text!
             vc.bidPeriod = self.bidPeriod!
+            
             self.navigationController?.pushViewController(vc, animated: true)
-        }else{
-            jobShareAlert()
+            return
         }
+        
+        self.bidPeriod?.buddyBidder1 = nil
+        self.bidPeriod?.buddyBidder2 = nil
+        
+            jobShareAlert()
+        
     }
     
     
     
     
     @objc func jobShareAlert() {
-        AlertService.showAlertForTopVC(title: "Job Share", message: "Do you want Job Share?", actions: [(title:"Yes", style: .default, handler: {_ in
+        AlertService.showAlertForTopVC(title: "Do you want to JOB SHARE?", message: "If you are Job Share Bidding, you need to verify that your Job Share Bidders are on your Buddy List, and they know you are Job Sharing with them!", actions: [(title:"I have verified", style: .default, handler: {_ in
             let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "JobShareViewController") as! JobShareViewController
             vc.preferredContentSize = CGSize(width: 600, height: 500)
             vc.bidPeriod = self.bidPeriod!
             self.navigationController?.pushViewController(vc, animated: true)
         }),
-        (title:"No", style: .cancel , handler: {_ in
+        (title:"I am NOT Job Share bidding", style: .cancel , handler: {_ in
             self.loginView()
         })])
     }

@@ -18,9 +18,15 @@ class BISwaBidDataDownloadViewModel{
     var onDownloadError: ((NSError) -> Void)?
 
 
-       private var isHistoricBid = false
-       private var userId: String?
+    private var isHistoricBid = false
+    private var userId: String?
 
+    private var downloadTasksCompleted = 0
+    private let totalDownloadTasks = 5
+    private var progressPerTask: Double {
+        return 60.0 / Double(totalDownloadTasks)
+    }
+    
     init?(dataSource:BIBidInfoDataSource = GlobalBidInfo.shared) {
         
         guard !dataSource.base.isEmpty,
@@ -47,6 +53,7 @@ class BISwaBidDataDownloadViewModel{
 
         // HISTORIC BID → only one API to call
         if AppState.shared.isHistoricBid {
+            CBUtils.getFALISTWB4JSONFromServer()
             self.downloadSwaHistoricBid { success, error in
                 if success {
                     completion(.success(()))
@@ -72,6 +79,14 @@ class BISwaBidDataDownloadViewModel{
                 if !success {
                     capturedError = error
                 }
+                self.downloadTasksCompleted += 1
+                let updatedProgress = Double(self.downloadTasksCompleted) * self.progressPerTask
+                let progress = Float(updatedProgress / 100)
+                NotificationCenter.default.post(
+                    name: Notification.Name("UpdateProgress"),
+                    object: nil,
+                    userInfo: ["progress": progress]
+                )
                 downloadGroup.leave()
             }
         }
@@ -90,13 +105,19 @@ class BISwaBidDataDownloadViewModel{
                 completion(.failure(error))
                 return
             }
+
+            NotificationCenter.default.post(name: Notification.Name("BidDownloaded"), object: nil)
             // All downloads completed successfully → NOW parse
-            self.readSwaBidData { result in
-                switch result {
-                case .success:
-                    completion(.success(()))
-                case .failure(let error):
-                    completion(.failure(error))
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.readSwaBidData { result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success:
+                            completion(.success(()))
+                        case .failure(let error):
+                            completion(.failure(error))
+                        }
+                    }
                 }
             }
         }
@@ -116,9 +137,6 @@ class BISwaBidDataDownloadViewModel{
             }
         }
     }
-    
-
-    
     
     //MARK: Cover Letter
     private func downloadSwaCoverLetter(completion: @escaping (Bool, Error?) -> Void) {
@@ -231,7 +249,7 @@ class BISwaBidDataDownloadViewModel{
             return
         }
 
-        guard let parser = BISwaBidDataParsing() else {
+        guard let parser = BISwaBidDataParsing(dataSource: self.dataSource!) else {
             let err = NSError(
                 domain: "BISwaBidParsing",
                 code: 2000,

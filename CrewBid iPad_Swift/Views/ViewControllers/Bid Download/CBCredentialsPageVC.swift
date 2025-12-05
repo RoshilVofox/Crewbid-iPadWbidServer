@@ -12,6 +12,11 @@ import WebKit
 protocol submissionGoActiondelegate{
     func goActionFromSubmitCertifyDelegate()
 }
+
+protocol CBCredentialsPageVCDelegate: AnyObject {
+    func credentialsDidRefreshToken(_ vc: CBCredentialsPageVC)
+}
+
 enum TypeWebServices {
     case wbidUserCheck
     case importUserDetails
@@ -408,7 +413,12 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     var tokenEndpoint: String = ""
     var codeVerifier: String = ""
     var env = ""
+    var selectedObject: [String: Any] = [:]
     let webViewModel = BISwaBidDataDownloadViewModel()
+    var bidDetails:[String:Any] = [:]
+    var isForReauth: Bool = false
+//    weak var delegate1: CBCredentialsPageVCDelegate?
+    
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -419,7 +429,14 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
      
     override func viewWillAppear(_ animated: Bool) {
         
-        if self.selectedPosition == BICrewPositionType.FlightAttendant{
+        if isForReauth {
+            backBtn.setImage(UIImage(named: "cc"), for: .normal)
+        }else{
+            backBtn.setImage(UIImage(named: "arrowleftbutton"), for: .normal)
+        }
+        
+        
+        if self.dataSource.position == BICrewPositionType.FlightAttendant{
             if app.connectedToInternet(){
                 self.view.showActivityIndicator(message: "Loading SWA Login...")
             }else{
@@ -435,7 +452,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         setupUI()
         
         //for new API
-        if self.selectedPosition == BICrewPositionType.FlightAttendant{
+        if self.dataSource.position == BICrewPositionType.FlightAttendant{
             self.setupSwaLogin()
         }else{
             self.setupLegacyLogin()
@@ -488,7 +505,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
 
     
     func setupSwaLogin(){
-        var apiEnv = UserDefaults.standard.string(forKey: "SwaApiEnv")
+        let apiEnv = UserDefaults.standard.string(forKey: "SwaApiEnv")
         if apiEnv == "Dev"{
             env = "dev"
             redirectURI = "com.crewbid-wbidmax://callback"
@@ -532,9 +549,11 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     
     func setupUI(){
         setupTitle()
-        checkEarlyBidding()
+        if type == .defaultType{
+            checkEarlyBidding()
+        }
         
-        if selectedPosition == BICrewPositionType.FlightAttendant{
+        if self.dataSource.position == BICrewPositionType.FlightAttendant{
             self.webView.isHidden = false
             self.goBtn.isHidden = true
         }else{
@@ -731,24 +750,37 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     
     
     //MARK: Award retrieval
-    func handleAwardRetrieval(sessionKey: String){
-        let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
-        let empNum = bidPeriod?.crewIdentifier?.stringValue
-        CBGlobalMethods.shared.secretKey = sessionKey
-        awardsViewModel?.retrieveAwardFile(sessionKey: sessionKey){ result in
-            if result{
-                DispatchQueue.main.async{
-                    self.dismiss(animated: false) {
-                        if self.awardsViewModel?.bidPeriod.awardString != nil {
-                            var emp = ""
-                            if (CBGlobalMethods.shared.awardLertSecretEmpNum?.length ?? 0 > 0) {
-                                emp = CBGlobalMethods.shared.awardLertSecretEmpNum!;
-                            } else {
-                                emp = empNum!
+    func handleAwardRetrieval(sessionKey: String? = nil){
+        guard let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod else {
+            AlertService.showAlertForTopVC(title: "Award Retrieval Error", message: "No bid period selected.")
+            return
+        }
+        let empNum = bidPeriod.crewIdentifier?.stringValue ?? ""
+        
+        //New API (FA)
+        if bidPeriod.isFABid() || bidPeriod.isSwaAPI?.boolValue == true { //MARK: &&
+            
+        }else{
+            guard let sk = sessionKey, !sk.isEmpty else {
+                AlertService.showAlertForTopVC(title: "Pilot Award Retrieval", message: "Missing session key for pilot award retrieval. Please login to continue.")
+                return
+            }
+            CBGlobalMethods.shared.secretKey = sk
+            awardsViewModel?.retrieveAwardFile(sessionKey: sk){ result in
+                if result{
+                    DispatchQueue.main.async{
+                        self.dismiss(animated: false) {
+                            if self.awardsViewModel?.bidPeriod.awardString != nil {
+                                var emp = ""
+                                if (CBGlobalMethods.shared.awardLertSecretEmpNum?.length ?? 0 > 0) {
+                                    emp = CBGlobalMethods.shared.awardLertSecretEmpNum!;
+                                } else {
+                                    emp = empNum
+                                }
+                                self.awardsViewModel?.getAwardAlertFromServer(empNum: emp) { finished in
+                                    CBGlobalMethods.shared.awardLertSecretEmpNum = nil;
+                                 }
                             }
-                            self.awardsViewModel?.getAwardAlertFromServer(empNum: emp) { finished in
-                                CBGlobalMethods.shared.awardLertSecretEmpNum = nil;
-                             }
                         }
                     }
                 }
@@ -765,38 +797,70 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }
     }
     
-    func handleBidSubmission(sessionKey: String){
+    func handleBidSubmission(sessionKey: String? = nil){
         self.view.hideActivityIndicator()
         print("Submit bid")
-        if let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod {
-            submissionViewModel = CBBidSubmissionViewModel(bidPeriod: bidPeriod, userID: self.txtUserID.text!, password: self.txtPassword.text!, defaultEmpNum: self.defaultEmplyeeNumber!, optionalEmpNum: self.optionalEmployees)
+        guard let bidPeriod = self.bidPeriod else {
+            AlertService.showAlertForTopVC(title: "Submission Error", message: "Bid period is not set.")
+            return
         }
-//        submissionViewModel?.setBidLineNumbers { (success) in
-//            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Submitting Bid...")
-//            if success{
+            
+        var empNum = self.txtUserID.text ?? ""
+        if bidPeriod.isFABid() || bidPeriod.isSwaAPI?.boolValue == true{ //MARK:  &&
+            if let token = KeychainHelper.retrieveTokenFromKeyChain(),
+                let userDetails = JWTDecoder.decode(jwtToken: token),
+                let user = userDetails["cn"] as? String{
+                    empNum = user
+            }
+        }
+        submissionViewModel = CBBidSubmissionViewModel(bidPeriod: bidPeriod, userID: empNum, password: self.dataSource.password, defaultEmpNum: self.defaultEmplyeeNumber, optionalEmpNum: self.optionalEmployees, selectedObject: self.selectedObject)
+
+        submissionViewModel?.setBidLineNumbers { (success) in
+            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Submitting Bid...")
+            if success{
+                DispatchQueue.main.async {
+                    self.view.showActivityIndicator(message: "Submitting your bid...")
+                }
 //                self.submissionViewModel?.startBidSubmission(sessionKey: sessionKey) { result in
 //                    self.view.hideActivityIndicator()
 //                    switch result{
-//                    case .success(let dataString):
-//                        self.bidPeriod?.addBidReceiptWithText(bidReceiptText: dataString)
-//                        AlertService.showAlertForTopVC(title: "Bid Successfully Submitted", message: "The bid receipt shown is the bid receipt for the last bid submitted.\n\n Bid receipts are available under the Bid Action (top right) menu and in SwaLife in BidInfo.\n\n Caution: You must see your bid receipt. If you DON'T see your bid receipt, then \"Please try to submit again\".", actions: [(title: "OK", style: .default, handler:{_ in
-//                            self.submissionViewModel?.handleAddSubmittedBid(empNumber: self.defaultEmplyeeNumber!){result in
-//                                if result == false{
-//                                    self.dismissVC()
-//                                }
+//                    case .success(let submitted):
+//                        if submitted{
+//                            DispatchQueue.main.async {
+//                                self.view.hideActivityIndicator()
 //                            }
-//                        })])
-//                    case .failure(let error): print(error.localizedDescription)
-//                        
+//                            AlertService.showAlertForTopVC(title: "Bid Successfully Submitted", message: "The bid receipt shown is the bid receipt for the last bid submitted.\n\n Bid receipts are available under the Bid Action (top right) menu and in SwaLife in BidInfo.\n\n Caution: You must see your bid receipt. If you DON'T see your bid receipt, then \"Please try to submit again\".", actions: [(title: "OK", style: .default, handler:{_ in
+//                                
+//                                // ---- PILOT ----
+//                                if !self.bidPeriod!.isFABid(){
+//                                    self.submissionViewModel?.handleAddSubmittedBid(empNumber: self.defaultEmplyeeNumber!){success in
+//                                        if success == false{
+//                                            self.dismissVC()
+//                                        }
+//                                    }
+//                                    return
+//                                }
+//                                
+//                                // ---- FA ----
+//                                self.submissionViewModel?.addSubmittedDataToServerForFA { success in
+//                                    if !success { self.dismissVC() }
+//                                }
+//                            })])
+//                        }
+//
+//                    case .failure(let error):
+//                        AlertService.showAlertForTopVC(
+//                            title: "Submission Failed",
+//                            message: error.localizedDescription
+//                        )
 //                    }
-//                    
 //                }
-//            }
-//        }
-        
-       
-        
+            }
+        }
     }
+    
+    
+    
 
     
     private func checkEarlyBidding(){
@@ -846,12 +910,19 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     }
     
     @IBAction func btnBackAction(_ sender: UIButton) {
+        
+        if isForReauth {
+            NotificationCenter.default.post(name: Notification.Name("AuthFlowEnded"), object: nil)
+            self.dismiss(animated: true, completion: nil)
+            return
+        }
+        
         if type == .retrieveAwards {
-              self.dismiss(animated: true, completion: nil)
-          }
-          else {
-              self.navigationController?.popViewController(animated: true)
-          }
+            self.dismiss(animated: true, completion: nil)
+            return
+        }
+
+        self.navigationController?.popViewController(animated: true)
     }
     
     @IBAction func btnGoAction(_ sender: UIButton) {
@@ -900,9 +971,11 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             let userID = String(empID.dropFirst())
             GlobalBidInfo.shared.userid = userID
             CBGlobalMethods.shared.userid = userID
+            GlobalBidInfo.shared.password = self.txtPassword.text ?? ""
         }else if !empID.lowercased().hasPrefix("x") && !empID.lowercased().hasPrefix("e") {
             GlobalBidInfo.shared.userid = empID
             CBGlobalMethods.shared.userid = empID
+            GlobalBidInfo.shared.password = self.txtPassword.text ?? ""
         }
         if empID.lowercased().hasPrefix("x") || empID.lowercased().hasPrefix("e") {
             empID = String(empID.dropFirst())
@@ -955,7 +1028,6 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     
         
     private func startAuthentication(empID: String, formattedUserID: String, password: String) {
-//        self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
 
         AuthService.shared.checkAuthentication(empID: empID) { [weak self] authResult in
             guard let self = self else { return }
@@ -963,7 +1035,20 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             if authResult.isAuthorized || authResult.isSomehowSubscribed || formattedUserID == DevUserID {
                 saveSelectionToUserDefaults()
                 if webViewloaded{
-                    self.startBidDownload()
+                    if self.dataSource.position == .FlightAttendant{
+                        switch self.type {
+                        case .defaultType:
+                            self.startBidDownload()
+                        case .retrieveAwards:
+                            print("FA Award Retrieval")
+                            //handle awards
+                            self.handleAwardRetrieval()
+                        case .submitBid:
+                            print("FA Bid submission")
+                            self.handleBidSubmission()
+                            //handle submission
+                        }
+                    }
                 }else{
                     self.loginViewModel.checkLogin(userID: formattedUserID, password: password)
                 }

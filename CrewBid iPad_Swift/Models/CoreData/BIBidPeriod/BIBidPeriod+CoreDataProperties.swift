@@ -1228,6 +1228,42 @@ extension BIBidPeriod : Identifiable {
         self.lastBidDate = receipt.timeStamp
     }
     
+    func addBidReceipt(withJSON bidReceiptJSON: [[String: Any]]) {
+
+        let reorderedArray: [[String: Any]]
+        if bidReceiptJSON.count > 1 {
+            reorderedArray = reorderArrayBasedOnMatchingKeys(bidReceiptJSON)
+        } else {
+            reorderedArray = bidReceiptJSON
+        }
+
+        for json in reorderedArray {
+            let receipt = BIBidReceipt(context: self.managedObjectContext!)
+            receipt.setProperties(withReceiptJson: json)
+            self.addToBidReceipts(receipt)
+            self.lastBidDate = receipt.timeStamp
+        }
+    }
+    
+    func reorderArrayBasedOnMatchingKeys(_ array: [[String: Any]]) -> [[String: Any]] {
+        var matchingObjects: [[String: Any]] = []
+        var nonMatchingObjects: [[String: Any]] = []
+
+        for dict in array {
+            let employeeId = dict["employeeId"] as? String
+            let submittedBy = dict["submittedBy"] as? String
+
+            if employeeId == submittedBy {
+                matchingObjects.append(dict)
+            } else {
+                nonMatchingObjects.append(dict)
+            }
+        }
+
+        // Matching first, then non-matching
+        return matchingObjects + nonMatchingObjects
+    }
+    
     func sortedBidReceipts() -> [BIBidReceipt] {
         let timeStampSort = NSSortDescriptor(key: "timeStamp", ascending: false)
         let sortedBidReceipts = (bidReceipts!.allObjects as NSArray).sortedArray(using: [timeStampSort])

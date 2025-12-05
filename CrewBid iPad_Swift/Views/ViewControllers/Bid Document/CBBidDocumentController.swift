@@ -390,7 +390,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         if 0 == linesCount {
             // Display a warning if there are no lines in the Bid List
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-                AlertService.showAlertForTopVC(title: "Warning!", message: "There are no lines in the Bid List. Please add lines to bid list for bid submission")
+                AlertService.showAlertForTopVC(title: "Warning!", message: "There are no lines in the Bid List. Please add lines to bid list for bid submission.")
             })
 
         }
@@ -410,6 +410,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBDefaultEmployeeVC") as! CBDefaultEmployeeVC
         vc.preferredContentSize = CGSize(width: 600, height: 500)
+        vc.isModalInPresentation = true
         vc.type = .submitEmployeeNumber
         vc.bidPeriod = self.bidPeriod!
         vc.isEmpIDVerified = false
@@ -764,12 +765,15 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let year = dataSource.year
         let base = dataSource.base
         let round = dataSource.round
-        var empID = bidPeriod!.crewIdentifier!.stringValue
+        var empID = bidPeriod!.bidByEmpID ?? ""
         if empID == "21221"{
             empID = String(format: "x%@", empID)
         }else{
             empID = String(format: "e%@", empID)
         }
+        
+        
+        
         lblHome.text = "\(version) \(month) \(year) \(base) \(position) Rnd \(round) - \(empID)"
 
 

@@ -30,7 +30,6 @@ class BISwaBidDataParsing{
               dataSource.year > 0,
               dataSource.round > 0
         else {
-            print("Missing a required property in GlobalBidInfo")
             return nil
         }
         self.dataSource = dataSource
@@ -59,15 +58,15 @@ class BISwaBidDataParsing{
         var lineFileName = "\(self.bidInfo)-lines.json"
         var tripFileName = "\(self.bidInfo)-pairings.json"
 
-//        if AppState.shared.isHistoricBid {
-//            // Historic filenames are fixed
-//            lineFileName = "SWALineFile"
-//            tripFileName = "SWATripFile"
-//
-//            self.linesData = CBUtils.readJSONStringFromFileForArray(lineFileName)
-//            self.tripsData = CBUtils.readJSONStringFromFileForArray(tripFileName)
-//
-//        } else {
+        if AppState.shared.isHistoricBid {
+            // Historic filenames are fixed
+            lineFileName = "SWALineFile"
+            tripFileName = "SWATripFile"
+
+            self.linesData = CBUtils.readJSONStringFromFileForArray(lineFileName)
+            self.tripsData = CBUtils.readJSONStringFromFileForArray(tripFileName)
+
+        } else {
             // Non-historic → dictionaries
             if let lineDict = CBUtils.readJSONString(fromFile:lineFileName),
                let tripDict = CBUtils.readJSONString(fromFile:tripFileName) {
@@ -94,7 +93,7 @@ class BISwaBidDataParsing{
                     return
                 }
             }
-//        }
+        }
 
 
         self.bidPeriod?.bidByEmpID = self.dataSource?.employeeNumber
@@ -108,6 +107,12 @@ class BISwaBidDataParsing{
                 try moc.save()
                 CBUtils.deleteFile(withName: lineFileName)
                 CBUtils.deleteFile(withName: tripFileName)
+                
+                NotificationCenter.default.post(
+                    name: Notification.Name("BidParsingCompleted"),
+                    object: nil
+                )
+                
                 completion(.success(()))
             }catch{
                 print("Error saving new data: %@", error.localizedDescription)
@@ -123,6 +128,32 @@ class BISwaBidDataParsing{
         }
     }
     
+    
+    private func postParsingProgress(currentIndex: Int, total: Int) {
+        let parsingStart: Double = 0.60     // Parsing begins at 60%
+        let parsingEnd: Double   = 1.00     // Parsing ends at 100%
+
+        if total == 0 { return }
+
+        if currentIndex == 0 {
+            // Force EXACT 60% on first update
+            NotificationCenter.default.post(
+                name: Notification.Name("UpdateProgress"),
+                object: nil,
+                userInfo: ["progress": Float(parsingStart)]
+            )
+            return
+        }
+
+        let percent = Double(currentIndex) / Double(total)
+        let progress = parsingStart + (percent * (parsingEnd - parsingStart))
+
+        NotificationCenter.default.post(
+            name: Notification.Name("UpdateProgress"),
+            object: nil,
+            userInfo: ["progress": Float(progress)]
+        )
+    }
     
     private func parseBidData() -> Bool{
         guard let moc = dataSource?.managedObjectContext else { return false}
@@ -151,6 +182,8 @@ class BISwaBidDataParsing{
         
         if let linesData = self.linesData as? [[String: Any]] {
             for i in 0..<linesData.count where !shouldStop {
+                
+                self.postParsingProgress(currentIndex: i, total: linesData.count)
                 
                 let lineData = linesData[i]
                 
@@ -295,8 +328,15 @@ class BISwaBidDataParsing{
                     }
                 }
             }
+            NotificationCenter.default.post(
+                name: Notification.Name("ReadingTrips"),
+                object: nil
+            )
         }
-        
+        NotificationCenter.default.post(
+            name: Notification.Name("ReadingLines"),
+            object: nil
+        )
         if moc.hasChanges{
             do{
                 try moc.save()

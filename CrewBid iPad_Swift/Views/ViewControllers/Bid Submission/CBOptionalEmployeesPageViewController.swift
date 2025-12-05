@@ -25,10 +25,18 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
     var bidPeriod: BIBidPeriod!
     var FAListDict:[String:Any]? = nil
     var optionalEmployees = NSMutableArray()
+    var biddersBuddyList = [String]()
+    var buddy1BuddyList = [String]()
+    var buddy2BuddyList = [String]()
+    private var isPresentingInvalidTokenAlert = false
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         FAListDict = CBUtils.readJSONStringFromFile()
+        NotificationCenter.default.addObserver(self,
+            selector: #selector(handleAuthFlowEnded),
+            name: Notification.Name("AuthFlowEnded"),
+            object: nil)
     }
     
     func setupUI() {
@@ -49,22 +57,35 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
         buddyBidTxtField_2.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
+    @objc private func handleAuthFlowEnded() {
+        self.isPresentingInvalidTokenAlert = false
+    }
+    
+    
     @IBAction func btnDismissAction(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
     }
     
     @IBAction func btnNextAction(_ sender: Any) {
-        if buddyBidTxtField_1.text!.isEmpty && buddyBidTxtField_2.text!.isEmpty{
-//            print("Job Share Alert")
+        
+        let buddy1 = buddyBidTxtField_1.text ?? ""
+        let buddy2 = buddyBidTxtField_2.text ?? ""
+        
+        if buddy1.isEmpty && buddy2.isEmpty {
             NotificationCenter.default.post(name:Notification.Name("showJobShareAlert"), object: nil)
-        }else{
-            if self.buddyBidTxtField_1.text == self.buddyBidTxtField_2.text {
+            return
+        }
+           
+        if buddy1 == buddy2 && !buddy1.isEmpty {
                 AlertService.showAlertForTopVC(title: "CrewBid", message: "You cannot enter the same employee number in Buddy 1 and Buddy 2", actions: [(title: "OK", style: .default, handler: { _ in
                     self.buddyBidTxtField_2.text = ""
                     self.buddyBidderName_2.text = ""
                     self.buddyBidderDomicile_2.text = ""
                 })])
-            }else if CBGlobalMethods.shared.domicileIsDifferent == true{
+            return
+            }
+        
+        if CBGlobalMethods.shared.domicileIsDifferent == true{
                 AlertService.showAlertForTopVC(title: "CrewBid", message: "One of the Buddy Bidders is NOT in \(CBGlobalMethods.shared.selectedBidPeriod?.base ?? "")", actions: [(title: "OK", style: .default, handler: {_ in
                     self.buddyBidTxtField_1.text = ""
                     self.buddyBidTxtField_2.text = ""
@@ -74,32 +95,65 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
                     self.buddyBidderDomicile_2.text = ""
                     self.optionalEmployees.removeAllObjects()
                 })])
+            return
+            }
+        
+        if buddy1 == self.empID || buddy2 == self.empID {
+            let bidder = self.empID ?? ""
+            
+            if buddy1 == bidder {
+                AlertService.showAlertForTopVC(title: "Buddy Bid",
+                                               message: "Bidder [\(bidder)] and Buddy 1 [\(buddy1)] should not be the same.")
+                return
             }
             
-            //needs code for buddy id validation from new API
-//            else if self.ifEmployeeContainsInFALIST(){
-//                if isBuddy1Valid && isBuddy2Valid{
-//                    if self.buddyBidTxtField_1.text != ""{
-//                        self.optionalEmployees.add(self.buddyBidTxtField_1.text!)
-//                    }
-//                    if self.buddyBidTxtField_2.text != ""{
-//                        self.optionalEmployees.add(self.buddyBidTxtField_2.text!)
-//                    }
-//                    finalAlert()
-//                }
-//            }
-            
+            if buddy2 == bidder {
+                AlertService.showAlertForTopVC(title: "Buddy Bid",
+                                               message: "Bidder [\(bidder)] and Buddy 2 [\(buddy2)] should not be the same.")
+                return
+            }
         }
+            
+        if !self.ifEmployeeContainsInFALIST() { return }
+        
+        self.view.showActivityIndicator(message: "Validating Buddies...")
+        
+            self.hasBuddyExistInEachOtherList { isValid in
+                DispatchQueue.main.async {
+                    self.view.hideActivityIndicator()
+                    if !isValid {
+                        return
+                    }
+                    self.view.updateActivityIndicator(message: "Authentication Checking...")
+                    self.checkAllBuddysSubscription { output, success in
+                        DispatchQueue.main.async {
+                            self.view.hideActivityIndicator()
+                            if success {
+                                // Add employees
+                                if !buddy1.isEmpty { self.optionalEmployees.add(buddy1) }
+                                if !buddy2.isEmpty { self.optionalEmployees.add(buddy2) }
+
+                                // ALL checks passed → show final alert
+                                self.finalAlert()
+                            } else {
+                                // Show subscription failure message
+                                AlertService.showAlertForTopVC(title: "Buddy Bid", message: output)
+                            }
+                        }
+                    }
+                }
+            }
     }
     
     
     
     func finalAlert() {
-        AlertService.showAlertForTopVC(title: "Buddy Bidding Terms", message: "By continuing, you represent that you have the permission of your buddy or buddies to Buddy Bid with them and you have taken the necessary steps inSwA lite to out them on vour BuddyBidding list.I Understand and Accept", actions: [(title: "OK", style: .default, handler: { _ in
+        AlertService.showAlertForTopVC(title: "Buddy Bidding Terms", message: "By continuing, you represent that you have the permission of your buddy or buddies to Buddy Bid with them and you have taken the necessary steps in SwA lite to out them on vour BuddyBidding list.I Understand and Accept", actions: [(title: "OK", style: .default, handler: { _ in
             let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
             vc.type = .submitBid
             vc.bidPeriod = self.bidPeriod
+            vc.defaultEmplyeeNumber = self.empID
             vc.optionalEmployees = self.optionalEmployees
             vc.preferredContentSize = CGSize(width: 600, height: 500)
             self.navigationController?.pushViewController(vc, animated: true)
@@ -110,38 +164,34 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
         if CBGlobalMethods.shared.falistDict.count == 0{
             CBGlobalMethods.shared.falistDict = CBUtils.readJSONStringFromFile()!
         }
-        var emplyeeInFALIST = false
+        var employeeInFALIST = false
         var isFirstBuddyCorrect = false
         var isSecondBuddyCorrect = false
-        if self.buddyBidTxtField_1.text == "" {
-            isFirstBuddyCorrect = true
-        }
-        if self.buddyBidTxtField_2.text == "" {
-            isSecondBuddyCorrect = true
-        }
+
+        let buddy1 = buddyBidTxtField_1.text ?? ""
+        let buddy2 = buddyBidTxtField_2.text ?? ""
+
+        if buddy1.isEmpty { isFirstBuddyCorrect = true }
+        if buddy2.isEmpty { isSecondBuddyCorrect = true }
+        
         if self.bidPeriod.positionType?.intValue == BICrewPositionType.FlightAttendant.rawValue {
-            if !emplyeeInFALIST {
+            if !employeeInFALIST {
+                
                 if !isFirstBuddyCorrect {
-                    let firstEmpName = CBGlobalMethods.shared.falistDict[self.buddyBidTxtField_1.text!]
-                    if firstEmpName == nil {
-                        isFirstBuddyCorrect = false
-                    } else {
-                        isFirstBuddyCorrect = true
-                    }
-                }
-                if !isSecondBuddyCorrect {
-                    let secondEmpName = CBGlobalMethods.shared.falistDict[self.buddyBidTxtField_2.text!]
-                    if secondEmpName == nil {
-                        isSecondBuddyCorrect = false
-                    } else {
-                        isSecondBuddyCorrect = true
-                    }
-                }
-                if isFirstBuddyCorrect && isSecondBuddyCorrect {
-                    emplyeeInFALIST = true
                     
+                    let firstEmp = CBGlobalMethods.shared.falistDict[buddy1]
+                    isFirstBuddyCorrect = (firstEmp != nil)
+                }
+                
+                if !isSecondBuddyCorrect {
+                    let secondEmp = CBGlobalMethods.shared.falistDict[buddy2]
+                    isSecondBuddyCorrect = (secondEmp != nil)
+                }
+                
+                if isFirstBuddyCorrect && isSecondBuddyCorrect {
+                    employeeInFALIST = true
                 } else {
-                    emplyeeInFALIST = false
+                    employeeInFALIST = false
                 }
                 
             }
@@ -164,7 +214,329 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
     }
     
     
+    func checkAllBuddysSubscription(completion: @escaping (_ outputString: String, _ success: Bool) -> Void) {
+
+        let emp1 = self.buddyBidTxtField_1.text ?? ""
+        let emp2 = self.buddyBidTxtField_2.text ?? ""
+        // Build authentication dictionary
+        var employees: [[String: Any]] = []
+
+        if emp1.count >= 2 {
+            employees.append([
+                "Password": "",
+                "EmpNumber": emp1
+            ])
+        }
+
+        if emp2.count >= 2 {
+            employees.append([
+                "Password": "",
+                "EmpNumber": emp2
+            ])
+        }
+
+        // No buddy numbers → success
+        if employees.isEmpty {
+            completion("", true)
+            return
+        }
+        
+        let params: [String: Any] = [
+            "Platform": "iPad",
+            "EmployeeNumbers": employees
+        ]
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: params, options: []) else {
+            completion("", true)
+            return
+        }
+        
+
+//        self.view.showActivityIndicator(message: "Checking subscription...")
+        APIService.shared.fetch(
+            urlString: EndPoint.shared.checkValidSubscriptionForEmployeesRest,
+            method: .POST,
+            body: jsonData,
+            headers: ["Content-Type": "application/x-www-form-urlencoded"],
+            parse: { data in
+                // Parse into [[String: Any]]
+                return try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]] ?? []
+            },
+            completion: { result in
+
+                DispatchQueue.main.async {
+                    self.view.hideActivityIndicator()
+                }
+
+                switch result {
+                case .success(let jsonArray):
+
+                    var invalidEmployees: [String] = []
+
+                    for dict in jsonArray {
+                        let isValid = dict["IsValid"] as? Bool ?? true
+                        let empNum = "\(dict["EmployeeNumber"] ?? "")"
+
+                        if !isValid {
+                            invalidEmployees.append(empNum)
+                        }
+                    }
+
+                    if invalidEmployees.isEmpty {
+                        completion("", true)
+                    } else {
+                        let msg = invalidEmployees.joined(separator: " and ") +
+                                  " does not have a current subscription."
+                        completion(msg, false)
+                    }
+
+                case .failure:
+                    completion("", true)
+                }
+        })
+
+
+    }
+    
+    func hasBuddyExistInEachOtherList(completion: @escaping (Bool) -> Void) {
+        
+        // Step 1 — check FA list locally
+        var isValidBuddy = self.ifEmployeeContainsInFALIST()
+        if !isValidBuddy {
+            completion(false)
+            return
+        }
+        
+        let buddy1 = self.buddyBidTxtField_1.text ?? ""
+        let buddy2 = self.buddyBidTxtField_2.text ?? ""
+        
+        var userList: [String] = []
+        userList.append(self.empID ?? "")
+        
+        if !buddy1.isEmpty { userList.append(buddy1) }
+        if !buddy2.isEmpty { userList.append(buddy2) }
+        
+        if userList.isEmpty {
+            completion(true)
+            return
+        }
+        
+        var pendingCalls = userList.count
+        
+        var didFinish = false
+        
+        for userID in userList {
+            self.downloadBuddies(userID: userID) { success in
+                DispatchQueue.main.async {
+                    
+                    if didFinish {return}
+                    
+                    if !success{
+                        // If an auth alert is being/has been presented, treat it as authError
+                        if self.isPresentingInvalidTokenAlert {
+                            didFinish = true
+                            completion(false)
+                            return
+                        }
+                    }
+                    pendingCalls -= 1
+                    
+                    if pendingCalls == 0 {
+                        didFinish = true
+                        isValidBuddy = self.checkBuddyInTheBuddyList()
+                        completion(isValidBuddy)
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    func downloadBuddies(userID: String, completion: @escaping (Bool) -> Void){
+        let cleanUserID = userID.replacingOccurrences(of: "e", with: "")
+        
+        let buddy1 = self.buddyBidTxtField_1.text ?? ""
+        let buddy2 = self.buddyBidTxtField_2.text ?? ""
+        let url = "\(self.kCBSwaServiceURL())/if-line-base-auction/buddies?employeeId=\(cleanUserID)"
+        
+        let headers: [String: String] = [
+            "Content-Type": "application/hal+json",
+            "Authorization": "Bearer \(KeychainHelper.retrieveTokenFromKeyChain()!)",
+            "x-swa-user-department": "IF"
+        ]
+        
+        APIService.shared.fetch(
+            urlString: url,
+            method: .GET,
+            headers: headers,
+            allowNon200Status: true,
+            parse: { data in
+                try JSONSerialization.jsonObject(with: data)
+            },
+            completion: { result in
+                
+                switch result {
+                    
+                case .success(let jsonObj):
+                    
+                    if let dict = jsonObj as? [String: Any] {
+                        let statusFromBody = dict["status"] as? Int
+                        let errorFromBody = (dict["error"] as? String)?.lowercased()
+                        let messageFromBody = (dict["message"] as? String)?.lowercased() ?? ""
+                        
+                        let looksLikeAuthError =
+                            statusFromBody == 401 ||
+                            errorFromBody == "invalid_token" ||
+                            messageFromBody.contains("token not valid") ||
+                            messageFromBody.contains("token expired")
+                        
+                        if looksLikeAuthError {
+                            self.showInvalidTokenAlertOnce()
+                            completion(false)
+                            return
+                        }
+                    }
+                    
+                    guard
+                        let dict = jsonObj as? [String: Any],
+                        let buddyArray = dict["buddyIds"] as? [String]
+                    else {
+                        AlertService.showAlertForTopVC(title: "Buddy Bid Error", message: "Data is not in the correct format.")
+                        completion(false)
+                        return
+                    }
+
+                    if userID == self.empID {
+                        self.biddersBuddyList = buddyArray
+                    }
+                    else if userID == buddy1 {
+                        self.buddy1BuddyList = buddyArray
+                    }
+                    else if userID == buddy2 {
+                        self.buddy2BuddyList = buddyArray
+                    }
+                    
+                    completion(true)
+                    
+                    
+                case .failure(let error):
+                    switch error{
+                    case .httpStatus(let status) where status == 401:
+                        self.showInvalidTokenAlertOnce()
+                    default:AlertService.showAlertForTopVC(title: "Buddy Bid Error", message: error.localizedDescription)
+                    }
+                    completion(false)
+                }
+            }
+        )
+    }
+    
+    private func showInvalidTokenAlertOnce() {
+        DispatchQueue.main.async {
+            // If already showing/presented, do nothing
+            guard !self.isPresentingInvalidTokenAlert else { return }
+            self.isPresentingInvalidTokenAlert = true
+
+            self.invalidTokenAlert()
+        }
+    }
+
+    
+    func invalidTokenAlert(){
+        AlertService.showAlertForTopVC(title: "Buddy Bid Alert", message: "The token has expired or is invalid. Please provide the credentials to proceed.", actions: [(title: "OK", style: .default, handler:{ _ in
+            DispatchQueue.main.async {
+                guard let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBCredentialsPageVC") as? CBCredentialsPageVC else { return }
+                vc.preferredContentSize = CGSize(width: 600, height: 500)
+                vc.isModalInPresentation = true
+                var dictInfo: [String: Any] = [:]
+                dictInfo["base"] = self.bidPeriod?.base
+                dictInfo["month"] = self.bidPeriod?.month
+                dictInfo["round"] = self.bidPeriod?.round
+                if let positionValue = self.bidPeriod?.positionType?.intValue,
+                   let pos = BICrewPositionType(rawValue: positionValue){
+                    dictInfo["position"] = CBUtils.shortName(for: pos)
+                    vc.selectedPosition = pos
+                }
+                vc.isForReauth = true
+                self.isPresentingInvalidTokenAlert = true
+                self.present(vc, animated: true)
+            }
+        })])
+    }
+    
+    func kCBSwaServiceURL() -> String{
+        let env = UserDefaults.standard.string(forKey: "SwaApiEnv")
+        var baseURL = ""
+        if env == "Dev"{
+            baseURL = "https://itest.service.east.0.crewbid.dev.swalife.com/"
+        }else if env == "QA"{
+            baseURL = "https://service.east.0.crewbid.qa.swalife.com/itest"
+        }else{
+            baseURL = "https://service.crewbid.swalife.com/golden"
+        }
+        return baseURL
+    }
+        
+    
+    func checkBuddyInTheBuddyList() -> Bool{
+        var result = true
+
+        DispatchQueue.main.async {
+            let empNum = self.empID ?? ""
+            let buddy1 = self.buddyBidTxtField_1.text ?? ""
+            let buddy2 = self.buddyBidTxtField_2.text ?? ""
+            
+            var message = ""
+            var isExist = true
+      
+            // Buddy 1 in bidder's list
+            if !buddy1.isEmpty {
+                if !(self.biddersBuddyList.contains(buddy1)) {
+                    message = "Buddy 1 [ID: \(buddy1)] is not in the buddy list of Employee Number (\(empNum))."
+                    isExist = false
+                }
+            }
+            
+            // Buddy 2 in bidder's list
+            if !buddy2.isEmpty && !self.biddersBuddyList.contains(buddy2) {
+                if message.isEmpty {
+                    message = "Buddy 2 [ID: \(buddy2)] is not in the buddy list of Employee Number (\(empNum))."
+                } else {
+                    message += "\n\nBuddy 2 [ID: \(buddy2)] is not in the buddy list of Employee Number (\(empNum))."
+                }
+                isExist = false
+            }
+
+            // EMP in buddy1 list
+            if !empNum.isEmpty && !buddy1.isEmpty && !self.buddy1BuddyList.contains(empNum) {
+                if message.isEmpty {
+                    message = "Employee Number \(empNum) is not in the buddy list of Buddy 1 [ID: \(buddy1)]."
+                } else {
+                    message += "\n\nEmployee Number \(empNum) is not in the buddy list of Buddy 1 [ID: \(buddy1)]."
+                }
+                isExist = false
+            }
+
+            // EMP in buddy2 list
+            if !empNum.isEmpty && !buddy2.isEmpty && !self.buddy2BuddyList.contains(empNum) {
+                if message.isEmpty {
+                    message = "Employee Number \(empNum) is not in the buddy list of Buddy 2 [ID: \(buddy2)]."
+                } else {
+                    message += "\n\nEmployee Number \(empNum) is not in the buddy list of Buddy 2 [ID: \(buddy2)]."
+                }
+                isExist = false
+            }
+
+            if !isExist {
+                AlertService.showAlertForTopVC(title: "Buddy Bid", message: message)
+            }
+
+            result = isExist
+        }
+
+        return result
+    }
 }
+
 
 extension CBOptionalEmployeesPageViewController: UITextFieldDelegate {
     

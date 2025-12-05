@@ -20,6 +20,7 @@ enum Errors: Error {
     case emptyData
     case networkError
     case other(Error)
+    case httpStatus(Int)
 }
 
 enum HTTPMethod: String {
@@ -59,6 +60,15 @@ extension Errors {
             return "Failed to encode the request"
         case .networkError:
             return "A network error occurred. Please check your connection and try again."
+        case .httpStatus(let code):
+            switch code {
+            case 400: return "Bad Request (400)."
+            case 401: return "Unauthorized (401)."
+            case 403: return "Forbidden (403)."
+            case 404: return "Not Found (404)."
+            case 500: return "Server Error (500)."
+            default: return "HTTP Error: \(code)."
+            }
         }
     }
 }
@@ -120,7 +130,7 @@ class APIService {
             if !allowNon200Status {
                 // Old behavior: Only accept 200–299
                 guard 200..<300 ~= httpResponse.statusCode else {
-                    completion(.failure(.noData))
+                    completion(.failure(.httpStatus(httpResponse.statusCode)))
                     return
                 }
             }
@@ -189,11 +199,15 @@ class DownloadManager: NSObject, URLSessionDataDelegate {
     
     var totalProgress: Float = 0
     var totalBytesDownloaded: Float = 0
-    let maxProgress: Float = 0.40
-    let estimatedTotalBytes: Float = 4_00_000
+    private var isPilotDownload: Bool = true
     
+    var maxProgress: Float {
+        return isPilotDownload ? 0.40 : 0.60
+    }
+    let estimatedTotalBytes: Float = 400_000
+    
+    private var expectedContentLength: Int64 = -1
     private var completionHandler: ((Result<URL, Errors>) -> Void)?
-    private var tempFileURL: URL?
     var downloadedData = Data()
     
     func fetch(
@@ -227,17 +241,47 @@ class DownloadManager: NSObject, URLSessionDataDelegate {
 
     // MARK: - URLSessionDataDelegate
 
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        downloadedData.append(data)
-        totalBytesDownloaded += Float(data.count)
+    
+    func urlSession(_ session: URLSession,
+                    dataTask: URLSessionDataTask,
+                    didReceive response: URLResponse,
+                    completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
 
-        let progress = min(totalBytesDownloaded / estimatedTotalBytes * maxProgress, maxProgress)
-        totalProgress = progress
-        NotificationCenter.default.post(
-               name: Notification.Name("UpdateProgress"),
-               object: nil,
-               userInfo: ["progress": totalProgress]
-           )
+        expectedContentLength = response.expectedContentLength   // FA gives a real value
+        completionHandler(.allow)
+    }
+
+    
+    func urlSession(_ session: URLSession,
+                    dataTask: URLSessionDataTask,
+                    didReceive data: Data) {
+        
+        downloadedData.append(data)
+        // Pilot: content length is -1 → use estimated logic
+        if dataTask.countOfBytesExpectedToReceive == NSURLSessionTransferSizeUnknown {
+            totalBytesDownloaded += Float(data.count)
+
+            let progress = min(totalBytesDownloaded / estimatedTotalBytes * maxProgress, maxProgress)
+
+            NotificationCenter.default.post(
+                name: Notification.Name("UpdateProgress"),
+                object: nil,
+                userInfo: ["progress": progress]
+            )
+        }
+        else {
+            // FA: real content length
+            let expected = Float(dataTask.countOfBytesExpectedToReceive)
+            let received = Float(dataTask.countOfBytesReceived)
+
+            let progress = min(received / expected * maxProgress, maxProgress)
+
+            NotificationCenter.default.post(
+                name: Notification.Name("UpdateProgress"),
+                object: nil,
+                userInfo: ["progress": progress]
+            )
+        }
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
