@@ -2582,7 +2582,8 @@ class BIBidInfoReader{
                         BILineType.HardNonConUS.rawValue,
                         BILineType.NonEtopsConUS.rawValue,
                         BILineType.NonEtopsNonConUS.rawValue,
-                        BILineType.EtopsFAFirstRound.rawValue
+                        BILineType.EtopsFAFirstRound.rawValue,
+                        BILineType.BILineTypeLoDo.rawValue
                     ]
                 }else{
                     set = [
@@ -4310,7 +4311,9 @@ class BIBidInfoReader{
                         containsNonConUSLeg = true
                         nonConUSLegs += 1
                         if self.bidPeriod!.isFirstRoundBid(){
-                            line.type = BILineType.HardNonConUS.rawValue as NSNumber
+                            if bidPeriod?.isSwaAPI?.boolValue == false {
+                                line.type = NSNumber(value: BILineType.HardNonConUS.rawValue)
+                            }
                             if line.isETOPS?.intValue == 0 && ((self.bidPeriod?.isEtopsLinesContainsInBid) != nil){
                                 line.type = BILineType.NonEtopsNonConUS.rawValue as NSNumber
                             }
@@ -4330,6 +4333,10 @@ class BIBidInfoReader{
                                 }
                             }
                         }
+                    
+                    if line.isLODO?.boolValue == true{
+                        line.type = BILineType.BILineTypeLoDo.rawValue as NSNumber
+                    }
                         // Duty time calculation
                         // Leg is reserve if depart and arrive cities are the same.
                     let isReserveLeg = legInfo.departCity == legInfo.arriveCity

@@ -118,11 +118,6 @@ class CBBiddataDownloadVC: BaseViewController {
             AppState.shared.mockDataYear = self.year
             
             self.showCredentialPage()
-//            if selectedPosition == "FA"{
-//                self.showCredentialPageFA()
-//            }else{
-//                self.showCredentialPageCP()
-//            }
         }
     }
     
@@ -173,17 +168,6 @@ class CBBiddataDownloadVC: BaseViewController {
 //        }
 //    }
     
-    func showCredentialPageFA(){
-        let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "CBWebViewCredentialPageVC") as! CBWebViewCredentialPageVC
-        vc.selectedRound = self.selectedRound
-        vc.isHistoricBid = self.isHistoricBid
-        vc.selectedDomicile = self.selectedDomicile
-        vc.empNum = self.empNum
-        vc.month = self.month
-        vc.year = self.year
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
     
     func didDismissWebView() {
 //        self.showProgressView()
@@ -205,8 +189,19 @@ class CBBiddataDownloadVC: BaseViewController {
         }
         vc.selectedRound = self.selectedRound
         vc.empNum = self.empNum
-        vc.month = self.month
-        vc.year = self.year
+        let isQATest = UserDefaults.standard.bool(forKey: "isQATest")
+        if isQATest {
+            if let qaMonthStr = UserDefaults.standard.string(forKey: "QATestMonth"),
+               let qaYearStr  = UserDefaults.standard.string(forKey: "QATestYear"),
+               let qaM = Int(qaMonthStr),
+               let qaY = Int(qaYearStr) {
+                vc.month = qaM
+                vc.year = qaY
+            }
+        }else{
+            vc.month = self.month
+            vc.year = self.year
+        }
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -512,6 +507,9 @@ class CBBiddataDownloadVC: BaseViewController {
         }else{
             lblTitle.text = "New Bid Data"
         }
+
+        
+        
         let nextMonthDate = Calendar.current.date(byAdding: .month, value: 1, to: Date())!
         let indexMonth = Calendar.current.component(.month, from: nextMonthDate)
         let indexYear = Calendar.current.component(.year, from: nextMonthDate)
@@ -527,7 +525,12 @@ class CBBiddataDownloadVC: BaseViewController {
         
         
         if !isHistoricBid {
-            //Year view hiding for new bid period
+            let isQATest = UserDefaults.standard.bool(forKey: "isQATest")
+            if isQATest {
+                self.viewMonth.isHidden = true
+            }else{
+                self.viewMonth.isHidden = false
+            }
             viewYear.isHidden = true
             let btnArray : [UIButton] = [btnJAN,btnFEB,btnMAR,btnAPR,btnMAY,btnJUN,btnJUL,btnAUG,btnSEP,btnOCT,btnNOV,btnDEC]
             let monthInt = Calendar.current.component(.month, from: Date())
@@ -590,11 +593,25 @@ class CBBiddataDownloadVC: BaseViewController {
     
     //Automatic navigation
     private func proceedIfReady() {
+        var finalMonth = self.month
+        var finalYear  = self.year
+        
+        let isQATest = UserDefaults.standard.bool(forKey: "isQATest")
+        if isQATest {
+            if let qaMonthStr = UserDefaults.standard.string(forKey: "QATestMonth"),
+               let qaYearStr  = UserDefaults.standard.string(forKey: "QATestYear"),
+               let qaM = Int(qaMonthStr),
+               let qaY = Int(qaYearStr) {
+
+                finalMonth = qaM
+                finalYear = qaY
+            }
+        }
         guard let selectedDomicile = selectedDomicile,
               let selectedPosition = selectedPosition,
               let selectedRound = selectedRound,
-              let month = month,
-              let year = year else {
+              let month = finalMonth,
+              let year = finalYear else {
             return
         }
         
@@ -603,6 +620,7 @@ class CBBiddataDownloadVC: BaseViewController {
         AppData.shared.postion = selectedPosition
         
         let emp = UserDefaults.standard.string(forKey: kCBDefaultEmployeeNumberKey) ?? ""
+
         print("Base:\(selectedDomicile) Position:\(selectedPosition) Rnd:\(selectedRound) EmpNo:\(self.empNum ?? emp) Month:\(month) Year:\(year)")
         
         GlobalBidInfo.shared.base = selectedDomicile

@@ -523,7 +523,7 @@
         <relationship name="bidPeriod" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="lineSortKeyMaps" inverseEntity="BidPeriod"/>
         <relationship name="lineSort" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="LineSort" inverseName="lineSortKeyMap" inverseEntity="LineSort"/>
     </entity>
-    <entity name="MetaData" representedClassName="MetaData" syncable="YES" codeGenerationType="class">
+    <entity name="MetaData" representedClassName="MetaData" syncable="YES">
         <attribute name="abcdPositions" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="abcPositions" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="aPositions" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>

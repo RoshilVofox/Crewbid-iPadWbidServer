@@ -11,11 +11,23 @@ class SecretMethodsViewController: UIViewController {
     @IBOutlet weak var secretVacationSegment: UISegmentedControl!
     @IBOutlet weak var secretAwsrdSegment: UISegmentedControl!
     @IBOutlet weak var envSegment: UISegmentedControl!
+    @IBOutlet weak var envLbl: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupUI()
+
+    }
+    
+    func setupUI() {
+        let isQATest = UserDefaults.standard.bool(forKey: "isQATest")
+            qaTestSegment.selectedSegmentIndex = isQATest ? 0 : 1
+        mockDataSegment.selectedSegmentIndex = 1
+        secretVacationSegment.selectedSegmentIndex = 1
+        secretAwsrdSegment.selectedSegmentIndex = 1
+        closeBtn.setTitle("", for: .normal)
+        
         let env = UserDefaults.standard.string(forKey: "SwaApiEnv") ?? "Prod"
         switch env {
         case "Prod":
@@ -28,16 +40,8 @@ class SecretMethodsViewController: UIViewController {
             envSegment.selectedSegmentIndex = 0
         }
         
-        
-    }
-    
-    func setupUI() {
-        let isQATest = UserDefaults.standard.bool(forKey: "isQATest")
-            qaTestSegment.selectedSegmentIndex = isQATest ? 0 : 1
-        mockDataSegment.selectedSegmentIndex = 1
-        secretVacationSegment.selectedSegmentIndex = 1
-        secretAwsrdSegment.selectedSegmentIndex = 1
-        closeBtn.setTitle("", for: .normal)
+        envSegment.isHidden = !isQATest
+        envLbl.isHidden = !isQATest
     }
     
     @IBAction func closeBtnAction(_ sender: Any) {
@@ -65,7 +69,11 @@ class SecretMethodsViewController: UIViewController {
            if selectedIndex == 0 {
                alertinQASegment()
            } else if selectedIndex == 1 {
+               self.envSegment.isHidden = true
+               self.envSegment.selectedSegmentIndex = 0
+               self.envLbl.isHidden = true
                UserDefaults.standard.setValue(false, forKey: "isQATest")
+               UserDefaults.standard.setValue("Prod", forKey: "SwaApiEnv")
                NotificationCenter.default.post(name: NSNotification.Name("updateTitle"), object: nil)
            }
     }
@@ -102,6 +110,8 @@ class SecretMethodsViewController: UIViewController {
                 UserDefaults.standard.setValue(qaYear, forKey: "QATestYear")
                 UserDefaults.standard.setValue(true, forKey: "isQATest")
                 NotificationCenter.default.post(name: NSNotification.Name("updateTitle"), object: nil)
+                self.envSegment.isHidden = false
+                self.envLbl.isHidden = false
                 print("Saved QA Month: \(qaMonth), QA Year: \(qaYear)")
             } else {
                 // Re-present the same alert with an error message
@@ -117,6 +127,10 @@ class SecretMethodsViewController: UIViewController {
         alert.addAction(okAction)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
             self.qaTestSegment.selectedSegmentIndex = 1
+            self.envSegment.isHidden = true
+            self.envLbl.isHidden = true
+            UserDefaults.standard.setValue("Prod", forKey: "SwaApiEnv")
+            self.envSegment.selectedSegmentIndex = 0
             UserDefaults.standard.setValue(false, forKey: "isQATest")
             NotificationCenter.default.post(name: NSNotification.Name("updateTitle"), object: nil)
         })

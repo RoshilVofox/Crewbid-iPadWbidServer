@@ -13,8 +13,8 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
     }
     
     @IBOutlet weak var collectionView: UICollectionView!
-    @IBOutlet weak var btnSecretBidload1: UIButton!
-    @IBOutlet weak var btnSecretBidload2: UIButton!
+
+    @IBOutlet weak var secretView: UIView!
     @IBOutlet weak var closeBtn: UIButton!
     
     override func viewDidLoad() {
@@ -45,64 +45,114 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         collectionView.setCollectionViewLayout(layout, animated: true)
-        btnSecretBidload1.setTitle("", for: .normal)
-        btnSecretBidload2.setTitle("", for: .normal)
         closeBtn.setTitle("", for: .normal)
         readhelpMenuItems()
+        configureSecretGesture()
     }
     
-    @IBAction func btnSecretBidDownload(_ sender: Any) {
-        if (self.btnSecretBidload1.isTouchInside &&  self.btnSecretBidload2.isTouchInside){
-//            print("hello")
-            AlertService.showAlertForTopVC(
-                title: "Secret Menu",
-                message: "please enter the Password:",
-                actions: [
-                    (
-                        title: "Cancel",
-                        style: .cancel,
-                        handler: { _, _ in
-                            print("User tapped Cancel")
-                        }
-                    ),
-                    (
-                        title: "OK",
-                        style: .default,
-                        handler: { _, textFields in
-                            if let value = textFields?.first?.text {
-                                if value == "Vofox2013-1" {
-                                    let storyBoard = UIStoryboard(name: "Secret", bundle: nil)
-                                    if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "SecretMethodsViewController") as? SecretMethodsViewController{
-                                        helpMenuVC.isModalInPresentation = true
-                                        //            helpMenuVC.modalPresentationStyle = .formSheet
-                                        helpMenuVC.preferredContentSize = CGSize(width: 700, height: 600)
-                                        self.present(helpMenuVC, animated: true)
-                                    }
-                                } else {
-                                    print("invalid input")
-                                }
-                            }
-                        }
-                    )
-                ],
-                textFields: [
-                    (
-                        placeholder: "Enter Password here",
-                        keyboardType: .default,
-                        tag: 0,
-                        delegate: nil
-                    )
-                ]
-            )
-
-//            let storyBoard = UIStoryboard(name: "Secret", bundle: nil)
-//            if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "SecretMethodsViewController") as? SecretMethodsViewController{
-//                //            helpMenuVC.modalPresentationStyle = .formSheet
-//                helpMenuVC.preferredContentSize = CGSize(width: 700, height: 600)
-//                present(helpMenuVC, animated: true)
-//            }
-        }
+    private func configureSecretGesture(){
+        secretView.isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(showSecretMenu(_:)))
+        tap.numberOfTapsRequired = 2
+        secretView.addGestureRecognizer(tap)
     }
+    
+    @objc func showSecretMenu(_ recognizer: UITapGestureRecognizer){
+        guard recognizer.state == .recognized else { return }
+
+        // Avoid showing multiple alerts / VCs if already presented
+        if self.presentedViewController != nil { return }
+
+        // Present password alert
+        let alert = UIAlertController(title: "Secret Menu",
+                                      message: "Please enter the password:",
+                                      preferredStyle: .alert)
+
+        alert.addTextField { textField in
+            textField.placeholder = "Enter Password here"
+            textField.isSecureTextEntry = true
+            textField.keyboardType = .default
+        }
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
+            // nothing to do
+        })
+
+        alert.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            let entered = alert.textFields?.first?.text ?? ""
+            if entered == "Vofox2013-1" {
+                self.presentSecretMethods()
+            } else {
+                // you can show a small invalid message or shake animation
+                let invalid = UIAlertController(title: "Invalid Password",
+                                                message: "The password you entered is incorrect.",
+                                                preferredStyle: .alert)
+                invalid.addAction(UIAlertAction(title: "OK", style: .default))
+                self.present(invalid, animated: true)
+            }
+        })
+
+        present(alert, animated: true)
+    }
+    
+    private func presentSecretMethods() {
+        let storyBoard = UIStoryboard(name: "Secret", bundle: nil)
+        guard let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "SecretMethodsViewController") as? SecretMethodsViewController else {
+            return
+        }
+        // Prevent swipe-to-dismiss if you want it modal and required
+        helpMenuVC.isModalInPresentation = true
+        helpMenuVC.preferredContentSize = CGSize(width: 700, height: 600)
+        // choose presentation style you prefer
+        helpMenuVC.modalPresentationStyle = .formSheet
+        present(helpMenuVC, animated: true)
+    }
+    
+//    @IBAction func btnSecretBidDownload(_ sender: Any) {
+//        if (self.btnSecretBidload1.isTouchInside &&  self.btnSecretBidload2.isTouchInside){
+//            AlertService.showAlertForTopVC(
+//                title: "Secret Menu",
+//                message: "please enter the Password:",
+//                actions: [
+//                    (
+//                        title: "Cancel",
+//                        style: .cancel,
+//                        handler: { _, _ in
+//                            print("User tapped Cancel")
+//                        }
+//                    ),
+//                    (
+//                        title: "OK",
+//                        style: .default,
+//                        handler: { _, textFields in
+//                            if let value = textFields?.first?.text {
+//                                if value == "Vofox2013-1" {
+//                                    let storyBoard = UIStoryboard(name: "Secret", bundle: nil)
+//                                    if let helpMenuVC = storyBoard.instantiateViewController(withIdentifier: "SecretMethodsViewController") as? SecretMethodsViewController{
+//                                        helpMenuVC.isModalInPresentation = true
+//                                        //            helpMenuVC.modalPresentationStyle = .formSheet
+//                                        helpMenuVC.preferredContentSize = CGSize(width: 700, height: 600)
+//                                        self.present(helpMenuVC, animated: true)
+//                                    }
+//                                } else {
+//                                    print("invalid input")
+//                                }
+//                            }
+//                        }
+//                    )
+//                ],
+//                textFields: [
+//                    (
+//                        placeholder: "Enter Password here",
+//                        keyboardType: .default,
+//                        tag: 0,
+//                        delegate: nil
+//                    )
+//                ]
+//            )
+//        }
+//    }
     
     func readhelpMenuItems() {
         helpMenuItems.removeAll()

@@ -873,11 +873,8 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             }
         }
 
-        // If there was an error, show an alert and then parse after user taps OK
         if let error = self.awardError {
-            // Using your AlertService helper that accepts actions
             let okAction = (title: "OK", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction) in
-                // continue to parsing / file creation
                 self.awardParsingAndTextFileCreation()
             })
 
@@ -889,12 +886,10 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                 )
             }
         } else {
-            // No error → continue directly
             self.awardParsingAndTextFileCreation()
         }
     }
     func awardParsingAndTextFileCreation() {
-        // Build the awards text using your existing utility
         let bidAwardText = CBUtils.generateTextForAwardData(
             lineAwardDetails,
             mrtAward: mrtAwardDetails,
@@ -903,12 +898,9 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             bidPeriod: bidPeriod
         )
 
-        // Replace the existing awards text file on the bid period
         bidPeriod?.deleteTextFile(text: bidAwardText, name: BIAwardsTextFileName)
         bidPeriod?.addTextFile(text: bidAwardText, name: BIAwardsTextFileName)
 
-        // Now call server alert flow (same as Obj-C awardAlertFromWbidServer:)
-        // If your original method took the HUD or completion, adapt as needed.
         guard let empNo = self.defaultEmplyeeNumber else {return}
         DispatchQueue.main.async {
             self.view.hideActivityIndicator()

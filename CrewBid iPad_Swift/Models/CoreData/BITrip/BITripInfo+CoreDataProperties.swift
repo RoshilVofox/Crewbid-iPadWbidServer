@@ -128,7 +128,8 @@ extension BITripInfo : Identifiable {
         else {
             return nil
         }
-        let tafb = (lastLeg as AnyObject).arriveMinutes!.intValue - firstLeg.departMinutes!.intValue + briefMinutes!.intValue + debriefMinutes!.intValue
+//        let tafb = (lastLeg as AnyObject).arriveMinutes!.intValue - firstLeg.departMinutes!.intValue + briefMinutes!.intValue + debriefMinutes!.intValue
+        let tafb = lastLeg.arriveMinutes!.intValue - firstDay!.firstLeg!.departMinutes!.intValue + briefMinutes!.intValue + debriefMinutes!.intValue
         return NSNumber(value: tafb)
 //        return 00
     }
