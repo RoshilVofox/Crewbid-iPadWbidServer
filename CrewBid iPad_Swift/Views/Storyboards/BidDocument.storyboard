@@ -1508,6 +1508,9 @@
                                                                     <state key="normal" title="LODO">
                                                                         <color key="titleColor" systemColor="labelColor"/>
                                                                     </state>
+                                                                    <connections>
+                                                                        <action selector="buttonAction:" destination="h7b-Zw-mlp" eventType="touchUpInside" id="oHl-FH-8sy"/>
+                                                                    </connections>
                                                                 </button>
                                                             </subviews>
                                                         </stackView>
@@ -3086,7 +3089,7 @@
                                             <outlet property="backView" destination="N8d-3N-UQt" id="vyg-yD-ziJ"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="PDORuleCell" rowHeight="66" id="3Dz-vs-CDz" userLabel="PDORuleCell" customClass="CBPDORuleCell" customModule="CrewBid_iPad" customModuleProvider="target">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="PDORuleCell" rowHeight="66" id="3Dz-vs-CDz" userLabel="PDORuleCell" customClass="CBPDORuleCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="1871" width="652" height="66"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="3Dz-vs-CDz" id="xDV-dV-d21">
@@ -5198,7 +5201,7 @@
             <objects>
                 <viewController storyboardIdentifier="CBBidListSortOptions" useStoryboardIdentifierAsRestorationIdentifier="YES" id="5qd-YZ-YDL" customClass="CBBidListSortOptions" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dUy-3l-WsS">
-                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
+                        <rect key="frame" x="0.0" y="0.0" width="580" height="500"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view alpha="0.29999999999999999" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TKf-Sk-9Vu" userLabel="BgView">

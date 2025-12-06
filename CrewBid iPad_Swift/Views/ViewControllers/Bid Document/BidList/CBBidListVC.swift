@@ -180,6 +180,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         NotificationCenter.default.addObserver(self, selector: #selector(self.unfreezeTopLines(_:)), name: NSNotification.Name(rawValue: "CBUnFreezeLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.deselectAllLines), name: NSNotification.Name(rawValue: "CBDeselectAllLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.moveSelectedLinesToInsertionIndex), name: NSNotification.Name(rawValue: "CBMoveSelectedNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.addObserverAfterClosingExpandedView), name: NSNotification.Name(rawValue: "AddObserverAfterClosingExpandedView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.undoAction), name: NSNotification.Name(rawValue: "CBUndoNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.redoAction), name: NSNotification.Name(rawValue: "CBRedoNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.deleteSelectedLines), name: NSNotification.Name(rawValue: "CBReturnSelectedLinesNotification"), object: nil)
@@ -483,7 +484,9 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
 //        UserDefaults.standard.setValue(true, forKey: "isShouldScrollToInsertionIndex")
 //        self.updateBidList()
 //    }
-    
+    @objc func addObserverAfterClosingExpandedView() {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.moveSelectedLinesToInsertionIndex), name: NSNotification.Name(rawValue: "CBMoveSelectedNotification"), object: nil)
+    }
     @objc func moveSelectedLinesToInsertionIndex() {
         // Move selected lines to the insertion index
 
@@ -1887,6 +1890,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     @IBAction func btnFiltersAction(_ sender: Any) {
         if bidPeriod.isBidListSortOn?.boolValue ?? false {
             bidPeriod.isBidListSortOn = false
+            AppData.shared.isBidListSort = false
             NotificationCenter.default.post(name: NSNotification.Name("SortBidListAction"), object: self)
             NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
         } else {
