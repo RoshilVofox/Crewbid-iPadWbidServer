@@ -9,6 +9,7 @@ class faqViewController: UIViewController {
     @IBOutlet weak var webView: WKWebView!
     @IBOutlet weak var btnDone: UIButton!
     @IBOutlet weak var btnBack: UIButton!
+    var isVacation = false
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -29,10 +30,18 @@ class faqViewController: UIViewController {
         self.dismiss(animated: false, completion: nil)
     }
     func loadWebView() {
-        if let path = Bundle.main.path(forResource: "FAQs", ofType: "pdf") {
+        if isVacation {
+            let path = Bundle.main.path(forResource: "SWAPtimizerFAQ", ofType: "pdf")!
             let targetURL = URL(fileURLWithPath: path)
             let request = URLRequest(url: targetURL)
             webView.load(request)
+        }
+        else {
+            if let path = Bundle.main.path(forResource: "FAQs", ofType: "pdf") {
+                let targetURL = URL(fileURLWithPath: path)
+                let request = URLRequest(url: targetURL)
+                webView.load(request)
+            }
         }
     }
 

@@ -174,6 +174,7 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
             btnSortTheBidlist.backgroundColor = .systemRed
             AppData.shared.isBidListSort = false
             NotificationCenter.default.post(name: NSNotification.Name("SortBidListAction"), object: self)
+            NotificationCenter.default.post(name: NSNotification.Name("RemoveObserverInBidList"), object: self)
             btnFilter.isHidden = false
             btnPreset.isHidden = false
             btnBids.isHidden = false

@@ -71,16 +71,20 @@ extension swaptimizerHelpMenuViewController: UICollectionViewDelegate, UICollect
         switch indexPath.item {
         case 0:
             let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "quickTutorialViewController") as! quickTutorialViewController
+            vc.isVacation = true
+            vc.isFirstTime = false
             self.navigationController?.pushViewController(vc, animated: true)
             break
             
         case 1:
             let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "faqViewController") as! faqViewController
+            vc.isVacation = true
             self.navigationController?.pushViewController(vc, animated: true)
             break
             
         case 2:
             let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "defenitionsViewController") as! defenitionsViewController
+            vc.isVacation = true
             self.navigationController?.pushViewController(vc, animated: true)
             break
         default:

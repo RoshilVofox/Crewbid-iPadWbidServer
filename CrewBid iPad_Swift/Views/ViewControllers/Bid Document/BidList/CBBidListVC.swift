@@ -86,6 +86,19 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(labelTapped))
         lblBidLineCount.addGestureRecognizer(tapGestureRecognizer)
     }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesBelowNotification"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesAboveNotification"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBMoveSelectedNotification"), object: nil)
+    }
+    
+    deinit {
+        print("💀 deinit — removing observer")
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesBelowNotification"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesAboveNotification"), object: nil)
+    }
 
     
     override func viewDidAppear(_ animated: Bool) {
@@ -167,12 +180,14 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         NotificationCenter.default.addObserver(self, selector: #selector(self.unfreezeTopLines(_:)), name: NSNotification.Name(rawValue: "CBUnFreezeLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.deselectAllLines), name: NSNotification.Name(rawValue: "CBDeselectAllLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.moveSelectedLinesToInsertionIndex), name: NSNotification.Name(rawValue: "CBMoveSelectedNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.addObserverAfterClosingExpandedView), name: NSNotification.Name(rawValue: "AddObserverAfterClosingExpandedView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.undoAction), name: NSNotification.Name(rawValue: "CBUndoNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.redoAction), name: NSNotification.Name(rawValue: "CBRedoNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.deleteSelectedLines), name: NSNotification.Name(rawValue: "CBReturnSelectedLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.deleteAllLines), name: NSNotification.Name(rawValue: "CBReturnUnfrozenLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.cellDidSelect(notification:)), name: Notification.Name("CBBidLineTableCellDidSelectNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.cellDidDeselect(notification:)), name: Notification.Name("CBBidLineTableCellDidDeselectNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.removeObserverInBidList(notification:)), name: Notification.Name("RemoveObserverInBidList"), object: nil)
         self.isSubmitSort = (self.bidPeriod.isSortBySubmitOn ?? 0).boolValue
         self.isAwardSort = (self.bidPeriod.isAwardSortOn ?? 0).boolValue
         if isAwardSort{
@@ -469,128 +484,105 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
 //        UserDefaults.standard.setValue(true, forKey: "isShouldScrollToInsertionIndex")
 //        self.updateBidList()
 //    }
-    
+    @objc func addObserverAfterClosingExpandedView() {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.moveSelectedLinesToInsertionIndex), name: NSNotification.Name(rawValue: "CBMoveSelectedNotification"), object: nil)
+    }
     @objc func moveSelectedLinesToInsertionIndex() {
+        // Move selected lines to the insertion index
+
         CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
         CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
         CBGlobalMethods.shared.selectedBidPeriod!.loadedPresetIdentifier = nil
-
         var selectedIndexPaths = NSMutableArray()
         selectedIndexPaths = selectedCellIndexPaths
-
-        if selectedIndexPaths.count == 0 { return }
-
+        if selectedIndexPaths.count == 0 {
+            return
+        }
         let firstSelectedIndex = selectedIndexPaths[0] as? IndexPath
         let lastSelectedIndex: IndexPath? = selectedIndexPaths.lastObject as? IndexPath
         var firstRow: Int = firstSelectedIndex!.row
         var lastRow: Int? = lastSelectedIndex?.row
+        // Determine the range of selected rows
 
         for case let ip as IndexPath in selectedIndexPaths {
-            if ip.row < firstRow { firstRow = ip.row }
-            if ip.row > lastRow! { lastRow = ip.row }
+            if ip.row < firstRow {
+                firstRow = ip.row
+            }
+            if ip.row > lastRow! {
+                lastRow = ip.row
+            }
         }
-
-        // -------- FIX #1: Sort properly (use NSMutableArray for work) --------
-        let sorted = (self.linesArray as NSArray)
-            .sortedArray(using: [NSSortDescriptor(key: "bidOrder", ascending: true)])
-        let affectedRows = NSMutableArray(array: sorted)
-
-        // Use typed array for moved lines
-        var movedLines = [BILine]()
+        
+        var affectedRows = self.linesArray as [Any]
+        (affectedRows as NSArray).sortedArray(using: [NSSortDescriptor(key: "bidOrder", ascending: true)])
+        var movedLines = [AnyHashable]() /* TODO: .reserveCapacity(selectedIndexPaths.count) */
         let removedIndexes = NSMutableIndexSet()
-
         var insertionIndex: Int = self.insertAbove ? self.insertionIndex : self.insertionIndex + 1
         let countOfBidLines: Int = self.linesArray.count
+        // Loop through the selected lines
 
-        // Collect moved lines + build removedIndexes
         for case let indexPath as IndexPath in selectedIndexPaths {
-            let row = indexPath.row
-            let line = affectedRows[row] as? BILine
-
+            let row: Int = indexPath.row
+            let line: BILine? = affectedRows[row] as? BILine
             if let aLine = line {
                 movedLines.append(aLine)
             }
-
             removedIndexes.add(row)
-
-            if let title = line?.markerTitle, row < countOfBidLines - 1 {
-                let nextLine = affectedRows[row + 1] as? BILine
-                if nextLine?.markerTitle == nil {
-                    nextLine?.markerTitle = title
+            // Attempt to preserve marker by moving it to line below (if one
+            // exists below line and that line does not have a marker).
+            if ((line?.markerTitle) != nil) && row < countOfBidLines - 1 {
+                let nextLine: BILine? = affectedRows[row + 1] as? BILine
+                if nil == nextLine?.markerTitle {
+                    nextLine?.markerTitle = line?.markerTitle
                 }
             }
-
             line?.markerTitle = nil
-
+            // If inserting above a line that has a marker, transfer marker to
+            // moved line.
             if insertAbove {
-                // guard insertionIndex is valid in affectedRows
-                if insertionIndex >= 0 && insertionIndex < affectedRows.count {
-                    let insertionPointLine = affectedRows[insertionIndex] as? BILine
-                    if insertionPointLine?.markerTitle != nil {
-                        line?.markerTitle = insertionPointLine?.markerTitle
-                        insertionPointLine?.markerTitle = nil
-                    }
+                let insertionPointLine: BILine? = affectedRows[insertionIndex] as? BILine
+                if insertionPointLine?.markerTitle != nil {
+                    line?.markerTitle = insertionPointLine?.markerTitle
+                    insertionPointLine?.markerTitle = nil
                 }
             }
-
             if insertionIndex >= 0 && insertionIndex < linesArray.count {
                 let endLine = linesArray[insertionIndex]
                 if (endLine.isFrozen != 0) {
-                    line?.isFrozen = true
+                    line!.isFrozen = true
                 }
+            } else {
+               print("Sorry")
             }
+            
         }
-
-        // -------- FIX #2: Remove cleanly (reverse order) --------
-        for deletionIndex in removedIndexes.reversed() {
-            affectedRows.removeObject(at: deletionIndex)
-        }
-
-        // adjust insertionIndex after removal
-        let countOfLinesRemovedBelowInsertionIndex =
-            removedIndexes.countOfIndexes(in: NSRange(location: 0, length: insertionIndex))
+        
+        for deletionIndex in removedIndexes.reversed() { affectedRows.remove(at: deletionIndex) }
+        let countOfLinesRemovedBelowInsertionIndex: Int = removedIndexes.countOfIndexes(in: NSRange(location: 0, length: insertionIndex))
         insertionIndex -= countOfLinesRemovedBelowInsertionIndex
-
-        // -------- FIX #3: Insert moved lines safely (no NSIndexSet enumeration bug) --------
-        for (i, obj) in movedLines.enumerated() {
-            affectedRows.insert(obj, at: insertionIndex + i)
-        }
-
-        // Adjust UI selection range
+        let insertedIndexes = NSIndexSet(indexesIn: NSRange(location: insertionIndex, length: selectedIndexPaths.count))
+        for (objectIndex, insertionIndex) in insertedIndexes.enumerated() { affectedRows.insert((movedLines)[objectIndex], at: insertionIndex) }
         if self.insertionIndex < firstRow {
             firstRow = self.insertionIndex
         }
-
         if lastRow! < insertionIndex + selectedIndexPaths.count - 1 {
             lastRow = insertionIndex + selectedIndexPaths.count - 1
         }
-
-        // -------- FIX #4: Update bidOrder --------
-        if firstRow <= lastRow! {
-            for i in firstRow...lastRow! {
-                let line = affectedRows[i] as? BILine
-                line?.bidOrder = NSNumber(value: i + 1)
-            }
+        // Renumber the lines
+        for i in firstRow...lastRow! {
+            let line: BILine? = affectedRows[i] as? BILine
+            line?.bidOrder = i + 1 as NSNumber
         }
-
         previousInsertionIndex = insertionIndex
         self.insertionIndex = self.insertionIndex + selectedIndexPaths.count - countOfLinesRemovedBelowInsertionIndex
-
-        // Reselect inserted rows in table — select at insertionIndex..insertionIndex+movedLines.count-1
-        for i in 0..<movedLines.count {
-            let rowToSelect = insertionIndex + i
-            let idxPath = IndexPath(row: rowToSelect, section: 0)
-            tableViewNormalView.selectRow(at: idxPath, animated: false, scrollPosition: .none)
-        }
-
+        insertedIndexes.enumerate({(_ idx: Int, _ stop:UnsafeMutablePointer<ObjCBool>) -> Void in
+            let idxPth = IndexPath(row: idx, section: 0)
+            tableViewNormalView.selectRow(at: idxPth, animated: false, scrollPosition: .none)
+        })
         selectedCellIndexPaths.removeAllObjects()
-
-        // -------- FIX #5: Update main data source (convert NSMutableArray -> [BILine]) --------
-        self.linesArray = affectedRows.compactMap { $0 as? BILine }
-
+        // Set undo action name.
         bidPeriod.managedObjectContext?.undoManager?.setActionName("Move Selected Line\(selectedIndexPaths.count > 1 ? "s" : "")")
         UserDefaults.standard.setValue(true, forKey: "isShouldScrollToInsertionIndex")
-
         self.updateBidList()
     }
 
@@ -954,6 +946,12 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         }
 //        print("selectedCellIndexPaths \(selectedCellIndexPaths)")
 
+    }
+    
+    @objc func removeObserverInBidList(notification: Notification) {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesBelowNotification"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesAboveNotification"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBMoveSelectedNotification"), object: nil)
     }
     
     private func removeASortUI() {
@@ -1892,6 +1890,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     @IBAction func btnFiltersAction(_ sender: Any) {
         if bidPeriod.isBidListSortOn?.boolValue ?? false {
             bidPeriod.isBidListSortOn = false
+            AppData.shared.isBidListSort = false
             NotificationCenter.default.post(name: NSNotification.Name("SortBidListAction"), object: self)
             NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
         } else {
@@ -2548,9 +2547,9 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
                 self.showTripTextPopover(for: tripButton)
             }        }
         
-        cell.vacationDoubleTapActionBlock = { tappedButton in
+        cell.vacationDoubleTapActionBlock = { [weak self] tappedButton in
                     DispatchQueue.main.async {
-                        self.showVacationPopover(for: tappedButton, line: line)
+                        self?.showVacationPopover(for: tappedButton, line: line)
                     }
                 }
         return cell
