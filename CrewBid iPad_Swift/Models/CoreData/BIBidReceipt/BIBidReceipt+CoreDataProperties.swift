@@ -146,6 +146,155 @@ extension BIBidReceipt : Identifiable {
         }
     }
     
+    func setProperties(withReceiptJson json: [String: Any]) {
+        var condensedText = ""
+        var bidLineNumbers: [String] = []
+        var isValidReceipt = false
+
+        // Extract values safely
+        let employeeId = json["employeeId"] as? String
+        let submittedBy = json["submittedBy"] as? String
+        let confirmationNumber = json["confirmationNumber"] as? String
+        let bidChoices = json["bidChoices"] as? [[String: Any]]
+        let bidInfo = json["packetId"]
+        let position = json["department"]
+        let jobShare1 = json["jobShareId1"] as? String
+        let jobShare2 = json["jobShareId2"] as? String
+        let buddy1 = json["buddyId1"] as? String
+        let buddy2 = json["buddyId2"] as? String
+        let receivedAt = json["receivedAt"] as? String
+
+        var buddyText = ""
+
+        // MARK: Buddy / Job Share Handling
+        if jobShare1 != nil, jobShare1 as Any is NSNull == false,
+           jobShare2 != nil, jobShare2 as Any is NSNull == false {
+
+            if employeeId == jobShare1 {
+                buddyText = "JOB SHARE: \(jobShare2 ?? "")"
+            } else {
+                buddyText = "JOB SHARE: \(jobShare1 ?? "")"
+            }
+        } else {
+
+            if let b1 = buddy1, !b1.isEmpty, buddy1 as Any is NSNull == false {
+                buddyText = "BUDDY ID:   \(b1)"
+
+                if let b2 = buddy2, !b2.isEmpty, buddy2 as Any is NSNull == false {
+                    buddyText += ", \(b2)"
+                }
+            } else {
+                buddyText = ""
+            }
+        }
+
+        // MARK: Main Validation
+        if let employeeId, let submittedBy, let confirmationNumber, let bidChoices {
+
+            self.submittedBy = submittedBy
+            self.submittedByUserId = extractNumber(from: submittedBy)
+
+            self.submittedFor = employeeId
+            self.submittedForUserId = extractNumber(from: employeeId)
+
+            self.timeStamp = Date()
+
+            let df = DateFormatter()
+            df.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            self.submittedDateString = df.string(from: self.timeStamp ?? Date())
+
+            self.bidLineNumbers = bidLineNumbers
+            self.submittedLineNumbersString = bidLineNumbers.joined(separator: ",")
+
+            // BID INFO
+            condensedText += "BID INFO: \(position ?? "")  -  \(bidInfo ?? "")\n"
+            condensedText += "SUBMITTED BY: [\(submittedBy)]   \(employeeId)\n"
+
+            if !buddyText.isEmpty {
+                condensedText += "\(buddyText)\n"
+            }
+
+            condensedText += "Confirmation Number: \(confirmationNumber)\n"
+
+            if let receivedAt {
+                let utcDateStr = convertDateToUTC(receivedAt)
+                let herbDateStr = convertDateToHerb(receivedAt)
+                self.submittedDateString = herbDateStr
+
+                condensedText += "Received At: \(herbDateStr)  [HERB]\n"
+                condensedText += "           : \(utcDateStr)  [UTC]\n\n"
+            }
+
+            // MARK: Bid Choices
+            let maxLength = bidChoices
+                .compactMap { $0["choice"] as? String }
+                .map { $0.count }
+                .max() ?? 1
+
+            for choice in bidChoices {
+                if let line = choice["choice"] as? String {
+                    bidLineNumbers.append(line)
+
+                    let padded = line.padding(
+                        toLength: maxLength,
+                        withPad: " ",
+                        startingAt: 0
+                    )
+                    condensedText += "\(padded) "
+                }
+            }
+
+            isValidReceipt = true
+        }
+
+        // Final properties
+        self.bidLineNumbers = bidLineNumbers
+        self.submittedLineNumbersString = bidLineNumbers.joined(separator: ",")
+        self.condensedText = condensedText
+        self.createdAt = Date()
+
+        // MARK: Error Alert
+        if !isValidReceipt {
+            DispatchQueue.main.async {
+                AlertService.showAlertForTopVC(title: "Bid Receipt Error!", message: "The Bid Receipt format was not correct. This may mean that your bid was not properly received by SWA. You can double-check in SWA Life to be sure your bid was received (instructions are in the FAQ file in the Help Menu).\n\nThere is either an issue with SWA's bid server or you are probably connected to airport or hotel wifi but have not fully connected to the internet.  If the second case, open Safari and follow the wifi network's instructions to fully connect.")
+            }
+        }
+    }
+    
+    
+    func convertDateToUTC(_ dateStr: String) -> String {
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+
+        // Parse ISO8601 date string
+        guard let date = isoFormatter.date(from: dateStr) else {
+            return dateStr // fallback, same as Objective-C
+        }
+
+        // Format as UTC yyyy-MM-dd HH:mm:ss
+        let outputFormatter = DateFormatter()
+        outputFormatter.timeZone = TimeZone(abbreviation: "UTC")
+        outputFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+
+        return outputFormatter.string(from: date)
+    }
+    
+    func convertDateToHerb(_ dateStr: String) -> String {
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+
+        // Parse ISO8601 input
+        guard let date = isoFormatter.date(from: dateStr) else {
+            return dateStr // fallback identical to Objective-C
+        }
+
+        // Convert to HERB → US/Central time
+        let outputFormatter = DateFormatter()
+        outputFormatter.timeZone = TimeZone(identifier: "US/Central")
+        outputFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+
+        return outputFormatter.string(from: date)
+    }
     
     func extractNumber(from text: String) -> String {
         let digits = text.unicodeScalars.filter { CharacterSet.decimalDigits.contains($0) }

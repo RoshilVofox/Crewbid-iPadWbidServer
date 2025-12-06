@@ -335,6 +335,8 @@
 		F41EBFBC2DC4DB20001413DE /* CBSyncInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE8A2DC4DB20001413DE /* CBSyncInfoViewController.swift */; };
 		F41EBFBD2DC4DB20001413DE /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBE8C2DC4DB20001413DE /* BaseViewController.swift */; };
 		F41EBFC32DC4E19A001413DE /* DocumentsCollectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F41EBFC22DC4E19A001413DE /* DocumentsCollectionViewModel.swift */; };
+		F42E4D412EE2D924000308E3 /* BITextFile+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42E4D402EE2D924000308E3 /* BITextFile+CoreDataProperties.swift */; };
+		F42E4D422EE2D924000308E3 /* BITextFile+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42E4D3F2EE2D924000308E3 /* BITextFile+CoreDataClass.swift */; };
 		F4371C582DF1531100391303 /* BIBidFileDownloadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4371C572DF1531100391303 /* BIBidFileDownloadViewModel.swift */; };
 		F4371C5C2DF1559700391303 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4371C5B2DF1559700391303 /* AppState.swift */; };
 		F4400BD62DD9BA370066C7E0 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4400BD52DD9BA370066C7E0 /* APIService.swift */; };
@@ -740,6 +742,8 @@
 		F41EBE8C2DC4DB20001413DE /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		F41EBE8F2DC4DB20001413DE /* CrewBid_iPad_Swift.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CrewBid_iPad_Swift.xcdatamodel; sourceTree = "<group>"; };
 		F41EBFC22DC4E19A001413DE /* DocumentsCollectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentsCollectionViewModel.swift; sourceTree = "<group>"; };
+		F42E4D3F2EE2D924000308E3 /* BITextFile+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BITextFile+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F42E4D402EE2D924000308E3 /* BITextFile+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BITextFile+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F4371C572DF1531100391303 /* BIBidFileDownloadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIBidFileDownloadViewModel.swift; sourceTree = "<group>"; };
 		F4371C5B2DF1559700391303 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		F4400BD52DD9BA370066C7E0 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
@@ -1940,6 +1944,8 @@
 		F4CF5A1F2D891A3800A351DB = {
 			isa = PBXGroup;
 			children = (
+				F42E4D3F2EE2D924000308E3 /* BITextFile+CoreDataClass.swift */,
+				F42E4D402EE2D924000308E3 /* BITextFile+CoreDataProperties.swift */,
 				F4D5B5832EC8518F006B7E4B /* SeniorityList+CoreDataClass.swift */,
 				F4D5B5842EC8518F006B7E4B /* SeniorityList+CoreDataProperties.swift */,
 				F4C656B62EACD3440002F1D0 /* AwardDetails+CoreDataClass.swift */,
@@ -2293,6 +2299,8 @@
 				F41EBF5E2DC4DB20001413DE /* CBComparisonRuleCell.swift in Sources */,
 				F41EBF5F2DC4DB20001413DE /* CBComutabilityRuleCell.swift in Sources */,
 				F41EBF602DC4DB20001413DE /* CBDayMonthRuleCell.swift in Sources */,
+				F42E4D412EE2D924000308E3 /* BITextFile+CoreDataProperties.swift in Sources */,
+				F42E4D422EE2D924000308E3 /* BITextFile+CoreDataClass.swift in Sources */,
 				F41EBF612DC4DB20001413DE /* CBFaReserveRuleCell.swift in Sources */,
 				8BA705FC2DCB5BB90090EA71 /* ArrivalDepartureTimeCell.swift in Sources */,
 				F41EBF622DC4DB20001413DE /* CBLineTypeRuleCell.swift in Sources */,

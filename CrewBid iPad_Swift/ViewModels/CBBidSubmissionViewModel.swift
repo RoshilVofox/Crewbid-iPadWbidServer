@@ -15,24 +15,30 @@ class CBBidSubmissionViewModel{
     var bidPeriod:BIBidPeriod?
     var userID = ""
     var password = ""
-    var bidEmployeeNumber = "" // default Emp
+    var bidEmployeeNumber :String? // default Emp
     var optionalEmpNumbers = NSArray()
     var bidListNumbers = NSMutableArray()
     var app:AppDelegate!
     var isBiddingIDCertified:Bool = false
-//    var bidFileDownload:BIBidFileDownload?
     let dataSource = GlobalBidInfo.shared
-    var swaBidDataDownload:BISwaBidDataDownload?
+    var swaBidDataDownload = BISwaBidDataDownload()
     
     var jobShare1:String?
     var jobShare2:String?
     var isJobShareContingency:Bool = false
-    init(bidPeriod: BIBidPeriod, userID: String,password: String, defaultEmpNum: String, optionalEmpNum: NSArray) {
+    init(bidPeriod: BIBidPeriod, userID: String,password: String, defaultEmpNum: String?, optionalEmpNum: NSArray, selectedObject:[String:Any]) {
         self.bidPeriod = bidPeriod
         self.optionalEmpNumbers = optionalEmpNum
         self.bidEmployeeNumber = defaultEmpNum
         self.userID = userID.lowercased()
         self.password = password
+        if let js1 = selectedObject["jobShare1"] as? String, !js1.isEmpty {
+            self.jobShare1 = js1
+        }
+        if let js2 = selectedObject["jobShare2"] as? String, !js2.isEmpty {
+            self.jobShare2 = js2
+        }
+        self.isJobShareContingency = selectedObject["isJobShareContingency"] as? Bool ?? false
     }
     
     func setBidLineNumbers(completion: @escaping (Bool) -> Void){
@@ -96,34 +102,54 @@ class CBBidSubmissionViewModel{
     }
     
     
-    func startBidSubmission(sessionKey: String, completion: @escaping (Result<String, Error>) -> Void){
-        if bidPeriod!.isFABid(){
+    func startBidSubmission(sessionKey: String? = nil, completion: @escaping (Result<Bool, Error>) -> Void){
+        if bidPeriod!.isFABid() && (self.bidPeriod?.isSwaAPI?.boolValue == true){
             //MARK: bid submission for FA
             // new API
-//            self.handleBidSubmissionForFA()
+            self.handleBidSubmissionForFA(){result in
+                switch result{
+                case .success(let submitted):
+                    completion(.success(submitted))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
             
         }else{
             //MARK: bid submission for Pilot
             //get the httpBody format for bid submission
-            let httpBody = self.setupBidSubmissionFormat(sessionKey: sessionKey, bidEmployeeNumber: self.bidEmployeeNumber, packetID: self.getPacketID(), avoidanceEmpID: self.optionalEmpNumbers)
+            guard let sessionKey = sessionKey, !sessionKey.isEmpty else {
+                let err = NSError(domain: "CBBidSubmission", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Missing session key for pilot submission."])
+                completion(.failure(err))
+                return
+            }
+            
+            guard let bidEmployeeNumber = self.bidEmployeeNumber, !bidEmployeeNumber.isEmpty else {
+                let err = NSError(domain: "CBBidSubmission", code: 1002, userInfo: [NSLocalizedDescriptionKey: "Missing employee number for pilot submission."])
+                completion(.failure(err))
+                return
+            }
+
+            let httpBody = self.setupBidSubmissionFormat(sessionKey: sessionKey, bidEmployeeNumber: bidEmployeeNumber, packetID: self.getPacketID(), avoidanceEmpID: self.optionalEmpNumbers)
             print(httpBody)
             //logging raw data into server
-//            self.handleRawDataSentToServer()
-//            self.handleSubmissionRawDataToServer(year: self.dataSource.year, month: self.dataSource.month, round: self.dataSource.round, fromApp: "5", position: self.dataSource.position.shortName, rawData: httpBody, empNum: self.bidEmployeeNumber, domicile: self.dataSource.base)
+            self.handleRawDataSentToServer()
+            self.handleSubmissionRawDataToServer(year: self.dataSource.year, month: self.dataSource.month, round: self.dataSource.round, fromApp: "5", position: self.dataSource.position.shortName, rawData: httpBody, empNum: bidEmployeeNumber, domicile: self.dataSource.base)
             
-//            submitBid(httpBody: httpBody) { result in
-//                switch result {
-//                case .success(let dataString):
-//                    self.handleLogBidSubmissionProcess(event: "submitBid", SWAmessage: "")
-//                    if CBGlobalMethods.shared.certified {
-//                        self.handleLogBidSubmissionProcessCertify()
-//                    }
-//                    completion(.success(dataString))
-//
-//                case .failure(let error):
-//                    completion(.failure(error))
-//                }
-//            }
+            self.submitBid(httpBody: httpBody) { result in
+                switch result {
+                case .success(let dataString):
+                    self.bidPeriod?.addBidReceiptWithText(bidReceiptText: dataString)
+                    self.handleLogBidSubmissionProcess(event: "submitBid", SWAmessage: "", message: "Bid Submit")
+                    if CBGlobalMethods.shared.certified {
+                        self.handleLogBidSubmissionProcessCertify()
+                    }
+                    completion(.success(true))
+
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
         }
     }
     
@@ -149,51 +175,6 @@ class CBBidSubmissionViewModel{
     }
     
     
-    
-    
-//    func handleRawDataSentToServer(){
-//        var optionalParameters = ""
-//        if self.optionalEmpNumbers.count > 0 {
-//            //for CP, FO
-//            var optionName = "PILOT"
-//            if BICrewPositionType.FlightAttendant == self.dataSource.position{
-//                //for FA
-//                optionName = "BUDDY"
-//            }
-//            for i in 0..<self.optionalEmpNumbers.count {
-//                let paramName = optionName + String(i+1)
-//                let paramValue = self.optionalEmpNumbers[i]
-//                optionalParameters.append(contentsOf: "&\(paramName)=\(paramValue)")
-//            }
-//        }
-//        let packetID = self.getPacketID()
-//
-//        let httpBody = """
-//         REQUEST=UPLOAD_BID
-//         &CREDENTIALS=
-//         &PACKETID=\(packetID)
-//         &BIDDER=\(bidEmployeeNumber)\(optionalParameters)
-//         &BASE=\(dataSource.base)
-//         &SEAT=\(dataSource.position.shortName)
-//         &BIDROUND=Round\(dataSource.round)
-//         &VENDOR=\(kVendor)
-//         &BID=\(self.bidListNumbers.componentsJoined(by: ","))
-//         """
-//        
-//        let dict = NSMutableDictionary()
-//        
-//        dict["Year"] = self.bidPeriod?.year
-//        dict["Month"] = self.bidPeriod?.month
-//        dict["Round"] = self.bidPeriod?.round
-//        dict["Domicile"] = self.bidPeriod?.base
-//        dict["Position"] = CBUtils.shortName(for: BICrewPositionType(rawValue: (self.bidPeriod?.positionType?.intValue)!)!)
-//        dict["EmployeeNumber"] = self.bidEmployeeNumber
-//        dict["RawData"] = httpBody
-//        dict["FromApp"] = "5"
-//        
-//        bidFileDownload?.sendRawDataToServer(dict: dict)
-//    }
-    
     func handleRawDataSentToServer() {
         var optionalParameters = ""
         if self.optionalEmpNumbers.count > 0 {
@@ -215,7 +196,7 @@ class CBBidSubmissionViewModel{
         REQUEST=UPLOAD_BID
         &CREDENTIALS=
         &PACKETID=\(packetID)
-        &BIDDER=\(bidEmployeeNumber)\(optionalParameters)
+        &BIDDER=\(bidEmployeeNumber ?? "")\(optionalParameters)
         &BASE=\(dataSource.base)
         &SEAT=\(dataSource.position.shortName)
         &BIDROUND=Round\(dataSource.round)
@@ -229,7 +210,7 @@ class CBBidSubmissionViewModel{
             "Round": self.bidPeriod?.round ?? 0,
             "Domicile": self.bidPeriod?.base ?? "",
             "Position": CBUtils.shortName(for: BICrewPositionType(rawValue: self.bidPeriod?.positionType?.intValue ?? 0)!),
-            "EmployeeNumber": self.bidEmployeeNumber,
+            "EmployeeNumber": self.bidEmployeeNumber ?? "",
             "RawData": httpBody,
             "FromApp": fromApp
         ]
@@ -309,19 +290,6 @@ class CBBidSubmissionViewModel{
     
     //MARK: Server Logging
     
-//    func handleSubmissionRawDataToServer(year: Int, month: Int, round: Int, fromApp: String, position: String, rawData: String, empNum: String, domicile: String){
-//        let dict = NSMutableDictionary()
-//        dict["Year"] = year
-//        dict["Month"] = month
-//        dict["Round"] = round
-//        dict["RawData"] = rawData
-//        dict["EmployeeNumber"] = empNum
-//        dict["FromApp"] = fromApp
-//        dict["Position"] = position
-//        dict["Domicile"] = domicile
-//        bidFileDownload?.sendRawDataToServer(dict: dict)
-//    }
-    
     func handleSubmissionRawDataToServer(
         year: Int,
         month: Int,
@@ -373,80 +341,8 @@ class CBBidSubmissionViewModel{
             }
         )
     }
-    
-//    func handleLogBidSubmissionProcess(event: String, SWAmessage: String){
-//        let mailInfoDict = NSMutableDictionary()
-//        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-//        let employeeNumReal = self.userID.replacingOccurrences(of: "e", with: "").replacingOccurrences(of: "x", with: "").trimmingCharacters(in: .symbols)
-//        
-//        mailInfoDict["EmployeeNumber"] = Int(employeeNumReal)
-//        mailInfoDict["Event"] = event
-//        mailInfoDict["Base"] = self.bidPeriod?.base
-//        mailInfoDict["Month"] = CBUtils.shortMonthName(month: self.bidPeriod!.month as! Int, uc: false)
-//        mailInfoDict["Position"] = CBUtils.shortName(for: BICrewPositionType(rawValue: (self.bidPeriod?.positionType?.intValue)!)!)
-//        
-//        var round = ""
-//        if bidPeriod?.round?.intValue == 1 {
-//            round = "M"
-//        } else if bidPeriod?.round?.intValue == 2 {
-//            round = "S"
-//        }
-//        
-//        mailInfoDict["Round"] = round
-//        mailInfoDict["SWAMessage"] = SWAmessage
-//        mailInfoDict["Message"] = event
-//        mailInfoDict["OperatingSystemNum"] = "iPad OS"
-//        mailInfoDict["VersionNumber"] = appVersion
-//        mailInfoDict["PlatformNumber"] = "iPad"
-//        
-//        let defaultEmp = self.bidEmployeeNumber.replacingOccurrences(of: "e", with: "").trimmingCharacters(in: .symbols)
-//        
-//        mailInfoDict["BidForEmpNum"] = Int(defaultEmp)
-//        
-//        var optionalBuddy1 = ""
-//        var optionalBuddy2 = ""
-//        var optionalBuddy3 = ""
-//        
-//        if self.optionalEmpNumbers.count > 0 {
-//            if self.optionalEmpNumbers.count > 0{
-//                optionalBuddy1 = "\(self.optionalEmpNumbers[0])"
-//            }
-//            if self.optionalEmpNumbers.count > 1{
-//                optionalBuddy2 = "\(self.optionalEmpNumbers[1])"
-//            }
-//            if self.optionalEmpNumbers.count == 3{
-//                optionalBuddy3 = "\(self.optionalEmpNumbers[2])"
-//            }
-//            print("Optional emplyee count: \(self.optionalEmpNumbers.count)")
-//        }
-//        
-//        if !(optionalBuddy1.length > 0) {
-//            optionalBuddy1 = "0"
-//        }
-//        if !(optionalBuddy2.length > 0) {
-//            optionalBuddy2 = "0"
-//        }
-//        if !(optionalBuddy3.length > 0) {
-//            optionalBuddy3 = "0"
-//        }
-//        mailInfoDict["BuddyBid1"] = Int(optionalBuddy1.replacingOccurrences(of: "e", with: "").trimmingCharacters(in: .symbols)) ?? 0
-//        mailInfoDict["BuddyBid2"] = Int(optionalBuddy2.replacingOccurrences(of: "e", with: "").trimmingCharacters(in: .symbols)) ?? 0
-//        mailInfoDict["BuddyBid3"] = Int(optionalBuddy3.replacingOccurrences(of: "e", with: "").trimmingCharacters(in: .symbols)) ?? 0
-//        
-//        let now = Date()
-//        let startDate = CFTimeInterval(now.timeIntervalSince1970 * 1000)
-//        let dateStarted = String(format: "/Date(%.0f+0800)", startDate)
-//        mailInfoDict["Date"] = dateStarted
-//        mailInfoDict["IpAddress"] = CBGlobalMethods.getIPAddress()
-//        
-//        if app.objNetworkType == .free {
-//            //Needs code for cboffline events
-//            return
-//        }
-//        bidFileDownload?.logBidSubmission(dict: mailInfoDict)
-//    }
-    
-    func handleLogBidSubmissionProcess(event: String, SWAmessage: String) {
+
+    func handleLogBidSubmissionProcess(event: String, SWAmessage: String, message: String) {
         var mailInfoDict: [String: Any] = [:]
         
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
@@ -469,16 +365,16 @@ class CBBidSubmissionViewModel{
         }
         mailInfoDict["Round"] = round
         mailInfoDict["SWAMessage"] = SWAmessage
-        mailInfoDict["Message"] = event
+        mailInfoDict["Message"] = message
         mailInfoDict["OperatingSystemNum"] = "iPad OS"
         mailInfoDict["VersionNumber"] = appVersion
         mailInfoDict["PlatformNumber"] = "iPad"
         
-        let defaultEmp = self.bidEmployeeNumber
+        if let defaultEmp = self.bidEmployeeNumber?
             .replacingOccurrences(of: "e", with: "")
-            .trimmingCharacters(in: .symbols)
-        mailInfoDict["BidForEmpNum"] = Int(defaultEmp)
-        
+            .trimmingCharacters(in: .symbols){
+            mailInfoDict["BidForEmpNum"] = Int(defaultEmp)
+        }
         // Optional buddies
         var buddies = self.optionalEmpNumbers.map { "\($0)" }
         while buddies.count < 3 { buddies.append("0") }
@@ -538,13 +434,15 @@ class CBBidSubmissionViewModel{
         let logDict = NSMutableDictionary()
         
         let empNum = self.userID.replacingOccurrences(of: "e", with: "").replacingOccurrences(of: "x", with: "")
-        let bid4EmpNum = self.bidEmployeeNumber
+        let bid4EmpNum = self.bidEmployeeNumber ?? ""
         let message = String(format: "Certify with empnum %@ and %@ as the bid4EmpNum.", empNum, bid4EmpNum)
+        logDict["Message"] = message
+        logDict["BidForEmpNum"] = bid4EmpNum
         
         logDict["Event"] = "certify"
-        logDict["BidForEmpNum"] = bid4EmpNum
+        
         logDict["EmployeeNumber"] = empNum
-        logDict["Message"] = message
+
         
         let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
         
@@ -566,43 +464,37 @@ class CBBidSubmissionViewModel{
         }
     }
     
-//    func handleAddSubmittedBid(empNumber: String, completion: @escaping (Bool) -> Void){
-//        let bidReceipt = self.bidPeriod?.sortedBidReceipts()[0]
-//        self.bidPeriod?.submittedBid = bidReceipt?.submittedLineNumbersString
-//        
-//        let mailInfoDict = NSMutableDictionary()
-//        mailInfoDict["Year"] = self.bidPeriod?.year
-//        mailInfoDict["Month"] = self.bidPeriod?.month
-//        mailInfoDict["Round"] = self.bidPeriod?.round
-//        mailInfoDict["Domicile"] = self.bidPeriod?.base
-//        mailInfoDict["Position"] = CBUtils.shortName(for: BICrewPositionType(rawValue: (self.bidPeriod?.positionType?.intValue)!)!)
-//        mailInfoDict["EmpNum"] = Int(empNumber)
-//        let bidNumbersString = bidReceipt?.submittedLineNumbersString
-//        if bidNumbersString == nil || bidReceipt?.submittedBy == nil {
-//            // send mail
-//            // log missing emp number function
-//            AlertService.showAlertForTopVC(title: "Oops!", message: "Your bid receipt has been returned with NO employee number.  This can occur when you are on a leave of absence.  Please contact us if you are not on a leave of absence.", actions: [(title: "OK", style: .default, handler: {_ in
-//                completion(false)
-//            })])
-//            return
-//        }
-//        mailInfoDict["SubmittedResult"] = bidNumbersString
-//        mailInfoDict["SubmitBy"] = bidReceipt?.submittedBy
-//        mailInfoDict["SubmitFor"] = bidReceipt?.submittedFor
-//        mailInfoDict["SubmitDTG"] = bidReceipt?.submittedDateString
-//        mailInfoDict["FromApp"] = "5"
-//        
-//        if app.objNetworkType == .free{
-//            //cboffline events
-//            //add offline event
-//            return
-//        }
-//        bidFileDownload?.addSubmittedBid(dict: mailInfoDict){ result in
-//            if result == true {
-//                self.bidPeriod?.submittedBid = bidNumbersString
-//            }
-//        }
-//    }
+    func addSubmittedDataToServerForFA(completion: @escaping (Bool) -> Void){
+//        let bidLineNumbers = self.bidListNumbers
+        guard let bidReceipts = bidPeriod?.sortedBidReceipts() else {
+            completion(false)
+            return
+        }
+        let total = bidReceipts.count
+        if total == 0 {
+            completion(true)
+            return
+        }
+        var processed = 0
+        
+        for bidReceipt in bidReceipts {
+            self.handleAddSubmittedBid(empNumber: bidReceipt.submittedFor!) { success in
+                
+                processed += 1
+                
+                if !success {
+                    completion(false)
+                    return
+                }
+                
+                // All submissions finished
+                if processed == total {
+                    completion(true)
+                }
+            }
+        }
+    }
+    
     
     func handleAddSubmittedBid(empNumber: String, completion: @escaping (Bool) -> Void) {
         guard let bidReceipt = self.bidPeriod?.sortedBidReceipts().first else {
@@ -621,7 +513,8 @@ class CBBidSubmissionViewModel{
         
         guard let bidNumbersString = bidReceipt.submittedLineNumbersString,
               let submittedBy = bidReceipt.submittedBy else {
-            // send mail
+                let mailObj = CBSendMail()
+            mailObj.sendBidReceiptErrorMail(bidReceipt.text ?? "")
             AlertService.showAlertForTopVC(
                 title: "Oops!",
                 message: "Your bid receipt has been returned with NO employee number. This can occur when you are on a leave of absence. Please contact us if you are not on a leave of absence.",
@@ -639,15 +532,21 @@ class CBBidSubmissionViewModel{
         mailInfoDict["FromApp"] = "5"
         
         if app.objNetworkType == .free {
-            // Handle offline case here
+            let objEvent = CBOfflineEvents()
+            objEvent.addOfflineEvent(mailInfoDict)
+            completion(false)
             return
         }
         
-        addSubmittedBid(dict: mailInfoDict) { success in
-            if success {
-                self.bidPeriod?.submittedBid = bidNumbersString
+        self.addSubmittedBid(dict: mailInfoDict) { success in
+            guard success else {
+                completion(false)
+                return
             }
-            completion(success)
+            
+            self.bidPeriod?.submittedBid = bidNumbersString
+            
+            completion(true)
         }
     }
     
@@ -685,27 +584,53 @@ class CBBidSubmissionViewModel{
     
     
     //for FA new API
-    func handleBidSubmissionForFA(){
+    func handleBidSubmissionForFA(completion: @escaping (Result<Bool,Error>) -> Void){
         let params = self.getFABidSubmissionParamString()
-        self.swaBidDataDownload = BISwaBidDataDownload()
-        //logging raw data into server
-        self.handleRawDataSentToServer()
-        //code for FA bid submission
         
+        self.handleRawDataSentToServer()
+        
+        self.swaBidDataDownload?.submitBid(params: params){ response in
+            switch response{
+            case .success(let result):
+                
+                guard
+                    let embedded = result["_embedded"] as? [String: Any],
+                    let bidReceipts = embedded["IFLineBaseAuctionBids"] as? [[String: Any]]
+                else {
+                    completion(.failure(Errors.other("Invalid JSON format" as! Error)))
+                    return
+                }
+                
+                self.bidPeriod?.addBidReceipt(withJSON: bidReceipts)
+                
+                let message = self.getConfirmationNum(bidReceipts)
+                
+                self.handleLogBidSubmissionProcess(event: "submitBid", SWAmessage: "", message: message)
+                if CBGlobalMethods.shared.certified {
+                    self.handleLogBidSubmissionProcessCertify()
+                }
+                completion(.success(true))
+                
+            case .failure(let error):
+                
+                completion(.failure(error))
+            }
+        }
     }
     
-    func getFABidSubmissionParamString() -> NSDictionary{
+    
+    func getFABidSubmissionParamString() -> [String: Any]{
         let bidChoices: [String] = (self.bidListNumbers) as? [String] ?? []
         
-        let token = KeychainHelper.retrieveTokenFromKeyChain()
-        let userDetails = JWTDecoder.decode(jwtToken: token!)!
+        let token = KeychainHelper.retrieveTokenFromKeyChain()!
+        let userDetails = JWTDecoder.decode(jwtToken: token)!
         var submittedID = userDetails["cn"] as! String
         self.userID = submittedID
         submittedID = submittedID.lowercased()
         submittedID = submittedID.replacingOccurrences(of: "e", with: "").replacingOccurrences(of: "x", with: "")
         
         //Buddy Bids
-        let buddyBids = NSMutableDictionary()
+        var buddyBids: [String: Any] = [:]
         if self.optionalEmpNumbers.count > 0 {
             for employee in self.optionalEmpNumbers {
                 if let emp = employee as? String {
@@ -723,13 +648,17 @@ class CBBidSubmissionViewModel{
         
         //Constructing the bid details dictionary
         
-        let bidDetails: NSDictionary = [
+        let packet: [String: Any] = [
+            "base": self.bidPeriod!.base!,
+            "year": self.bidPeriod!.year!,
+            "schedulePeriod": CBUtils.shortMonthName(month: self.bidPeriod!.month!.intValue, uc: true),
+            "roundType": self.bidPeriod!.round?.intValue == 1 ? "PRIMARY" : "SECONDARY"
+        ]
+
+        let bidDetails: [String: Any] = [
             "department": "IF",
-            "packetID": ["base": self.bidPeriod!.base!,
-                         "year": self.bidPeriod!.year!,
-                         "schedulePeriod":CBUtils.shortMonthName(month: (self.bidPeriod?.month!.intValue)!, uc: true),
-                         "roundType":self.bidPeriod?.round?.intValue == 1 ? "PRIMARY": "SECONDARY"],
-            "employeeId": self.bidEmployeeNumber,
+            "packetID": packet,
+            "employeeId": self.bidEmployeeNumber ?? "",
             "submittedBy": submittedID,
             "submittedAt": submittedAt,
             "buddyBids": buddyBids,
@@ -740,6 +669,26 @@ class CBBidSubmissionViewModel{
             "mrtContingent": false,
             "bidChoices": bidChoices
         ]
+        
         return bidDetails
+    }
+    
+    func getConfirmationNum(_ bidReceipts: [[String: Any]]) -> String {
+        var message = "Submit Bid"
+
+        for dict in bidReceipts {
+            guard
+                let userID = dict["employeeId"] as? String,
+                let confirmNum = dict["confirmationNumber"] as? String
+            else { continue }
+
+            if message == "Submit Bid" {
+                message += " \(userID) - \(confirmNum)"
+            } else {
+                message += ", \(userID) - \(confirmNum)"
+            }
+        }
+
+        return message
     }
 }

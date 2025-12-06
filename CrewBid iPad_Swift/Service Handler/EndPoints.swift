@@ -59,5 +59,6 @@ class EndPoint {
     var saveCBAppStateAndPresetToServer = "\(baseURL)SaveCBAppStateAndPresetToServer"
     var getCBAppStateAndPresetFromServer = "\(baseURL)GetCBAppStateAndPresetFromServer"
     var getCAPData = "\(baseURL)GetCAPData"
+    var checkValidSubscriptionForEmployeesRest = "\(baseURL)CheckValidSubscriptionForEmployeesRest"
 }
 

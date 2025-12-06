@@ -3133,6 +3133,7 @@ class BIBidInfoReader{
             let progressRange: Float = 0.30
             var lastProgressSent: Float = 0.70
             
+            self.bidPeriod?.bidByEmpID = self.dataSource.employeeNumber
             
             linesData.enumerateLines { (info, stop) in
                 if info.length > 80{
@@ -3804,6 +3805,8 @@ class BIBidInfoReader{
                     let bidPeriod = try moc1.existingObject(with: self.bidPeriod!.objectID) as? BIBidPeriod
                     
                     line?.bidPeriod = bidPeriod
+                    
+                    self.bidPeriod?.bidByEmpID = self.dataSource.employeeNumber
                     
                     //Number
                    

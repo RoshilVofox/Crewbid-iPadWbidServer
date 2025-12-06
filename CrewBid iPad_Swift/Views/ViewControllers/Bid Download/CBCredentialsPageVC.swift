@@ -12,6 +12,11 @@ import WebKit
 protocol submissionGoActiondelegate{
     func goActionFromSubmitCertifyDelegate()
 }
+
+protocol CBCredentialsPageVCDelegate: AnyObject {
+    func credentialsDidRefreshToken(_ vc: CBCredentialsPageVC)
+}
+
 enum TypeWebServices {
     case wbidUserCheck
     case importUserDetails
@@ -408,7 +413,12 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     var tokenEndpoint: String = ""
     var codeVerifier: String = ""
     var env = ""
+    var selectedObject: [String: Any] = [:]
     let webViewModel = BISwaBidDataDownloadViewModel()
+    var bidDetails:[String:Any] = [:]
+    var isForReauth: Bool = false
+    let swaBidDataDownload = BISwaBidDataDownload()
+    
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -417,27 +427,36 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         return formatter
     }()
      
-//    override func viewWillAppear(_ animated: Bool) {
-//        
-//        if self.selectedPosition == BICrewPositionType.FlightAttendant{
-//            if app.connectedToInternet(){
-//                self.view.showActivityIndicator(message: "Loading SWA Login...")
-//            }else{
-//                AlertService.showAlertForTopVC(title: "No Internet Connection", message: "An internet connection is required to Login. Please connect to the internet and try again.")
-//            }
-//        }
-//        
-//            NotificationCenter.default.addObserver(self, selector: #selector(closeCredentilaPage), name: Notification.Name("CloseCredentilaPage"), object: nil)
-//        }
+    override func viewWillAppear(_ animated: Bool) {
+        
+        if isForReauth {
+            backBtn.setImage(UIImage(named: "cc"), for: .normal)
+        }else{
+            backBtn.setImage(UIImage(named: "arrowleftbutton"), for: .normal)
+        }
+        
+        
+        if self.dataSource.position == BICrewPositionType.FlightAttendant{
+            if app.connectedToInternet(){
+                self.view.showActivityIndicator(message: "Loading SWA Login...")
+            }else{
+                AlertService.showAlertForTopVC(title: "No Internet Connection", message: "An internet connection is required to Login. Please connect to the internet and try again.")
+            }
+        }
+        
+            NotificationCenter.default.addObserver(self, selector: #selector(closeCredentilaPage), name: Notification.Name("CloseCredentilaPage"), object: nil)
+        }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        
+        if let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod {
+            awardsViewModel = AwardsViewModel(bidPeriod: bidPeriod)
+        }
         //for new API
-        if self.selectedPosition == BICrewPositionType.FlightAttendant{
-//            self.setupSwaLogin()
-//        }else{
+        if self.dataSource.position == BICrewPositionType.FlightAttendant{
+            self.setupSwaLogin()
+        }else{
             self.setupLegacyLogin()
         }
         
@@ -488,7 +507,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
 
     
     func setupSwaLogin(){
-        var apiEnv = UserDefaults.standard.string(forKey: "SwaApiEnv")
+        let apiEnv = UserDefaults.standard.string(forKey: "SwaApiEnv")
         if apiEnv == "Dev"{
             env = "dev"
             redirectURI = "com.crewbid-wbidmax://callback"
@@ -508,9 +527,6 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     
     func setupLegacyLogin(){
         
-        if let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod {
-            awardsViewModel = AwardsViewModel(bidPeriod: bidPeriod)
-        }
         if type == .retrieveAwards {
             backBtn.setImage(UIImage(named: "cc"), for: .normal)
         }else{
@@ -532,12 +548,14 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     
     func setupUI(){
         setupTitle()
-        checkEarlyBidding()
+        if type == .defaultType{
+            checkEarlyBidding()
+        }
         
-//        if selectedPosition == BICrewPositionType.FlightAttendant{
-//            self.webView.isHidden = false
-//            self.goBtn.isHidden = true
-//        }else{
+        if self.dataSource.position == BICrewPositionType.FlightAttendant{
+            self.webView.isHidden = false
+            self.goBtn.isHidden = true
+        }else{
             self.webView.isHidden = true
             txtUserID.delegate = self
             txtPassword.delegate = self
@@ -553,7 +571,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             txtUserID.leftViewMode = .always
             txtPassword.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtPassword.frame.height))
             txtPassword.leftViewMode = .always
-//        }
+        }
 
         //------viewmodel--------
         loginViewModel.onLoginSuccess = { sessionKey in
@@ -729,32 +747,176 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
     }
     
+    var lineAwardDetails:[String:Any] = [:]
+    var lineAwardDownloaded = false
     
+    var mrtAwardDetails:[String:Any] = [:]
+    var mrtAwardDownloaded = false
+    
+    var jobshareAwardDetails:[String:Any] = [:]
+    var jobShareAwardDownloaded = false
+    
+    var reserveAwardDetails:[String:Any] = [:]
+    var reserveAwardDownloaded = false
+    
+    var awardError:Error?
     //MARK: Award retrieval
-    func handleAwardRetrieval(sessionKey: String){
-        let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
-        let empNum = bidPeriod?.crewIdentifier?.stringValue
-        CBGlobalMethods.shared.secretKey = sessionKey
-        awardsViewModel?.retrieveAwardFile(sessionKey: sessionKey){ result in
-            if result{
-                DispatchQueue.main.async{
-                    self.dismiss(animated: false) {
-                        if self.awardsViewModel?.bidPeriod.awardString != nil {
-                            var emp = ""
-                            if (CBGlobalMethods.shared.awardLertSecretEmpNum?.length ?? 0 > 0) {
-                                emp = CBGlobalMethods.shared.awardLertSecretEmpNum!;
-                            } else {
-                                emp = empNum!
+    func handleAwardRetrieval(sessionKey: String? = nil){
+        guard let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod else {
+            AlertService.showAlertForTopVC(title: "Award Retrieval Error", message: "No bid period selected.")
+            return
+        }
+        let empNum = bidPeriod.crewIdentifier?.stringValue ?? ""
+        
+        //New API (FA)
+        if bidPeriod.isFABid() && bidPeriod.isSwaAPI?.boolValue == true { //MARK: &&
+            DispatchQueue.main.async {
+                self.view.updateActivityIndicator(message: "Retrieving bid awards...")
+            }
+            self.retrieveAwardsForFA()
+            
+        }else{
+            guard let sk = sessionKey, !sk.isEmpty else {
+                AlertService.showAlertForTopVC(title: "Pilot Award Retrieval", message: "Missing session key for pilot award retrieval. Please login to continue.")
+                return
+            }
+            CBGlobalMethods.shared.secretKey = sk
+            awardsViewModel?.retrieveAwardFile(sessionKey: sk){ result in
+                if result{
+                    DispatchQueue.main.async{
+                        self.dismiss(animated: false) {
+                            if self.awardsViewModel?.bidPeriod.awardString != nil {
+                                var emp = ""
+                                if (CBGlobalMethods.shared.awardLertSecretEmpNum?.length ?? 0 > 0) {
+                                    emp = CBGlobalMethods.shared.awardLertSecretEmpNum!;
+                                } else {
+                                    emp = empNum
+                                }
+                                self.awardsViewModel?.getAwardAlertFromServer(empNum: emp) { finished in
+                                    CBGlobalMethods.shared.awardLertSecretEmpNum = nil;
+                                 }
                             }
-                            self.awardsViewModel?.getAwardAlertFromServer(empNum: emp) { finished in
-                                CBGlobalMethods.shared.awardLertSecretEmpNum = nil;
-                             }
                         }
                     }
                 }
             }
         }
     }
+    
+    func retrieveAwardsForFA(){
+        swaBidDataDownload?.getAwards(){ result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let responseDict):
+                    self.lineAwardDownloaded = true
+                    self.lineAwardDetails = responseDict
+                case .failure(let error):
+                    self.lineAwardDownloaded = true
+                    self.awardError = error
+                }
+                self.checkForAwardError()
+            }
+        }
+        
+        if !self.bidPeriod!.isSecondRoundBid(){
+            // MRT awards
+            swaBidDataDownload?.getMrtAwards(){ result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let responseDict):
+                        self.mrtAwardDownloaded = true
+                        self.mrtAwardDetails = responseDict
+                    case .failure(let error):
+                        self.mrtAwardDownloaded = true
+                        self.awardError = error
+                    }
+                    self.checkForAwardError()
+                }
+            }
+            // JobShare awards
+            swaBidDataDownload?.getJobShareAwards { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let responseDict):
+                        self.jobShareAwardDownloaded = true
+                        self.jobshareAwardDetails = responseDict
+                    case .failure(let error):
+                        self.jobShareAwardDownloaded = true
+                        self.awardError = error
+                    }
+                    self.checkForAwardError()
+                }
+            }
+            
+            // Reserve data
+            swaBidDataDownload?.getReserveDataForAward { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let responseDict):
+                        self.reserveAwardDownloaded = true
+                        self.reserveAwardDetails = responseDict
+                    case .failure(let error):
+                        self.reserveAwardDownloaded = true
+                        self.awardError = error
+                    }
+                    self.checkForAwardError()
+                }
+            }
+        }
+    }
+    
+    func checkForAwardError() {
+        // If not a second round, wait until all 4 downloads have finished
+        if !(bidPeriod?.isSecondRoundBid() ?? false) {
+            if !(reserveAwardDownloaded && mrtAwardDownloaded && lineAwardDownloaded && jobShareAwardDownloaded) {
+                return
+            }
+        }
+
+        // If there was an error, show an alert and then parse after user taps OK
+        if let error = self.awardError {
+            // Using your AlertService helper that accepts actions
+            let okAction = (title: "OK", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction) in
+                // continue to parsing / file creation
+                self.awardParsingAndTextFileCreation()
+            })
+
+            DispatchQueue.main.async {
+                AlertService.showAlertForTopVC(
+                    title: "Award Download Error",
+                    message: error.localizedDescription,
+                    actions: [okAction]
+                )
+            }
+        } else {
+            // No error → continue directly
+            self.awardParsingAndTextFileCreation()
+        }
+    }
+    func awardParsingAndTextFileCreation() {
+        // Build the awards text using your existing utility
+        let bidAwardText = CBUtils.generateTextForAwardData(
+            lineAwardDetails,
+            mrtAward: mrtAwardDetails,
+            jobShareAward: jobshareAwardDetails,
+            reserveData: reserveAwardDetails,
+            bidPeriod: bidPeriod
+        )
+
+        // Replace the existing awards text file on the bid period
+        bidPeriod?.deleteTextFile(text: bidAwardText, name: BIAwardsTextFileName)
+        bidPeriod?.addTextFile(text: bidAwardText, name: BIAwardsTextFileName)
+
+        // Now call server alert flow (same as Obj-C awardAlertFromWbidServer:)
+        // If your original method took the HUD or completion, adapt as needed.
+        guard let empNo = self.defaultEmplyeeNumber else {return}
+        DispatchQueue.main.async {
+            self.view.hideActivityIndicator()
+        }
+        self.awardsViewModel?.getAwardAlertFromServer(empNum: empNo) { success in
+        }
+    }
+    
     
     @objc func showBidAwardReadError(notification: NSNotification){
         let str1 = AlertService.getAttributedMessage(from: notification.object as! String)
@@ -765,38 +927,70 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }
     }
     
-    func handleBidSubmission(sessionKey: String){
+    func handleBidSubmission(sessionKey: String? = nil){
         self.view.hideActivityIndicator()
         print("Submit bid")
-        if let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod {
-            submissionViewModel = CBBidSubmissionViewModel(bidPeriod: bidPeriod, userID: self.txtUserID.text!, password: self.txtPassword.text!, defaultEmpNum: self.defaultEmplyeeNumber!, optionalEmpNum: self.optionalEmployees)
+        guard let bidPeriod = self.bidPeriod else {
+            AlertService.showAlertForTopVC(title: "Submission Error", message: "Bid period is not set.")
+            return
         }
-//        submissionViewModel?.setBidLineNumbers { (success) in
-//            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Submitting Bid...")
-//            if success{
+            
+        var empNum = self.txtUserID.text ?? ""
+        if bidPeriod.isFABid() && bidPeriod.isSwaAPI?.boolValue == true{ //MARK:  &&
+            if let token = KeychainHelper.retrieveTokenFromKeyChain(),
+                let userDetails = JWTDecoder.decode(jwtToken: token),
+                let user = userDetails["cn"] as? String{
+                    empNum = user
+            }
+        }
+        submissionViewModel = CBBidSubmissionViewModel(bidPeriod: bidPeriod, userID: empNum, password: self.dataSource.password, defaultEmpNum: self.defaultEmplyeeNumber, optionalEmpNum: self.optionalEmployees, selectedObject: self.selectedObject)
+
+        submissionViewModel?.setBidLineNumbers { (success) in
+            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Submitting Bid...")
+            if success{
+                DispatchQueue.main.async {
+                    self.view.showActivityIndicator(message: "Submitting your bid...")
+                }
 //                self.submissionViewModel?.startBidSubmission(sessionKey: sessionKey) { result in
 //                    self.view.hideActivityIndicator()
 //                    switch result{
-//                    case .success(let dataString):
-//                        self.bidPeriod?.addBidReceiptWithText(bidReceiptText: dataString)
-//                        AlertService.showAlertForTopVC(title: "Bid Successfully Submitted", message: "The bid receipt shown is the bid receipt for the last bid submitted.\n\n Bid receipts are available under the Bid Action (top right) menu and in SwaLife in BidInfo.\n\n Caution: You must see your bid receipt. If you DON'T see your bid receipt, then \"Please try to submit again\".", actions: [(title: "OK", style: .default, handler:{_ in
-//                            self.submissionViewModel?.handleAddSubmittedBid(empNumber: self.defaultEmplyeeNumber!){result in
-//                                if result == false{
-//                                    self.dismissVC()
-//                                }
+//                    case .success(let submitted):
+//                        if submitted{
+//                            DispatchQueue.main.async {
+//                                self.view.hideActivityIndicator()
 //                            }
-//                        })])
-//                    case .failure(let error): print(error.localizedDescription)
-//                        
+//                            AlertService.showAlertForTopVC(title: "Bid Successfully Submitted", message: "The bid receipt shown is the bid receipt for the last bid submitted.\n\n Bid receipts are available under the Bid Action (top right) menu and in SwaLife in BidInfo.\n\n Caution: You must see your bid receipt. If you DON'T see your bid receipt, then \"Please try to submit again\".", actions: [(title: "OK", style: .default, handler:{_ in
+//                                
+//                                // ---- PILOT ----
+//                                if !self.bidPeriod!.isFABid(){
+//                                    self.submissionViewModel?.handleAddSubmittedBid(empNumber: self.defaultEmplyeeNumber!){success in
+//                                        if success == false{
+//                                            self.dismissVC()
+//                                        }
+//                                    }
+//                                    return
+//                                }
+//                                
+//                                // ---- FA ----
+//                                self.submissionViewModel?.addSubmittedDataToServerForFA { success in
+//                                    if !success { self.dismissVC() }
+//                                }
+//                            })])
+//                        }
+//
+//                    case .failure(let error):
+//                        AlertService.showAlertForTopVC(
+//                            title: "Submission Failed",
+//                            message: error.localizedDescription
+//                        )
 //                    }
-//                    
 //                }
-//            }
-//        }
-        
-       
-        
+            }
+        }
     }
+    
+    
+    
 
     
     private func checkEarlyBidding(){
@@ -846,12 +1040,19 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     }
     
     @IBAction func btnBackAction(_ sender: UIButton) {
+        
+        if isForReauth {
+            NotificationCenter.default.post(name: Notification.Name("AuthFlowEnded"), object: nil)
+            self.dismiss(animated: true, completion: nil)
+            return
+        }
+        
         if type == .retrieveAwards {
-              self.dismiss(animated: true, completion: nil)
-          }
-          else {
-              self.navigationController?.popViewController(animated: true)
-          }
+            self.dismiss(animated: true, completion: nil)
+            return
+        }
+
+        self.navigationController?.popViewController(animated: true)
     }
     
     @IBAction func btnGoAction(_ sender: UIButton) {
@@ -900,9 +1101,11 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             let userID = String(empID.dropFirst())
             GlobalBidInfo.shared.userid = userID
             CBGlobalMethods.shared.userid = userID
+            GlobalBidInfo.shared.password = self.txtPassword.text ?? ""
         }else if !empID.lowercased().hasPrefix("x") && !empID.lowercased().hasPrefix("e") {
             GlobalBidInfo.shared.userid = empID
             CBGlobalMethods.shared.userid = empID
+            GlobalBidInfo.shared.password = self.txtPassword.text ?? ""
         }
         if empID.lowercased().hasPrefix("x") || empID.lowercased().hasPrefix("e") {
             empID = String(empID.dropFirst())
@@ -955,7 +1158,6 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     
         
     private func startAuthentication(empID: String, formattedUserID: String, password: String) {
-//        self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
 
         AuthService.shared.checkAuthentication(empID: empID) { [weak self] authResult in
             guard let self = self else { return }
@@ -963,7 +1165,20 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             if authResult.isAuthorized || authResult.isSomehowSubscribed || formattedUserID == DevUserID {
                 saveSelectionToUserDefaults()
                 if webViewloaded{
-                    self.startBidDownload()
+                    if self.dataSource.position == .FlightAttendant{
+                        switch self.type {
+                        case .defaultType:
+                            self.startBidDownload()
+                        case .retrieveAwards:
+                            print("FA Award Retrieval")
+                            //handle awards
+                            self.handleAwardRetrieval()
+                        case .submitBid:
+                            print("FA Bid submission")
+                            self.handleBidSubmission()
+                            //handle submission
+                        }
+                    }
                 }else{
                     self.loginViewModel.checkLogin(userID: formattedUserID, password: password)
                 }

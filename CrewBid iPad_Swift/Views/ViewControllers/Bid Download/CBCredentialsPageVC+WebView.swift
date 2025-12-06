@@ -87,8 +87,14 @@ extension CBCredentialsPageVC: WKNavigationDelegate{
             completion: { result in
                 switch result{
                 case .success(let response):
-                    let token = response["access_token"] as! String
-                    self.saveToKeychain(token: token)
+                    guard let accessToken = response["access_token"] as? String else {
+                        DispatchQueue.main.async {
+                            AlertService.showAlertForTopVC(title: "Authentication Failed", message: "Missing access token in response.")
+                        }
+                        return
+                    }
+
+                    self.saveToKeychain(token: accessToken)
                     
                 case .failure(let error):
                     AlertService.showAlertForTopVC(title: "Authentication Failed", message: error.localizedDescription)
@@ -98,28 +104,34 @@ extension CBCredentialsPageVC: WKNavigationDelegate{
     }
     
     private func saveToKeychain(token: String){
-        let userDetail = JWTDecoder.decode(jwtToken: token)!
+        guard let userDetail = JWTDecoder.decode(jwtToken: token) else {
+            DispatchQueue.main.async {
+                AlertService.showAlertForTopVC(title: "Authentication Failed", message: "Unable to decode token.")
+            }
+            return
+        }
         
-        let group = userDetail["groups"] as! String
+        let group = (userDetail["groups"] as? String) ?? ""
         
         if !group.contains("Attendant"){
             AlertService.showAlertForTopVC(title: "Authentication Failed", message: "You are attempting to log in with Pilot credentials. Please use valid Flight Attendant credentials instead.")
             return
         }
         
-        let tokenData = token.data(using: .utf8)
+        guard let tokenData = token.data(using: .utf8) else { return }
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: "BearerToken"
         ]
         
-        let deleteStatus = SecItemDelete(query as CFDictionary)
-        if deleteStatus == errSecSuccess || deleteStatus == errSecItemNotFound {
-            print("Keychain item deleted (or not found). Proceeding to add the new token.")
-        } else {
-            print("Failed to delete Keychain item, error code: \(deleteStatus)")
-            return
-        }
+        SecItemDelete(query as CFDictionary)
+//        let deleteStatus = SecItemDelete(query as CFDictionary)
+//        if deleteStatus == errSecSuccess || deleteStatus == errSecItemNotFound {
+//            print("Keychain item deleted (or not found). Proceeding to add the new token.")
+//        } else {
+//            print("Failed to delete Keychain item, error code: \(deleteStatus)")
+//            return
+//        }
         // Add the new token
         var addQuery = query
         addQuery[kSecValueData as String] = tokenData
@@ -130,28 +142,41 @@ extension CBCredentialsPageVC: WKNavigationDelegate{
             
             DispatchQueue.main.async {
                 self.stopWebViewOperations()
+                if self.isForReauth {
+                    NotificationCenter.default.post(name: Notification.Name("AuthFlowEnded"), object: nil)
+                    self.dismiss(animated: true, completion: nil)
+                    return
+                }
                 
-                let token = KeychainHelper.retrieveTokenFromKeyChain()
-                let userDetails = JWTDecoder.decode(jwtToken: token!)
-                let rawUserId = (userDetails?["cn"] as? String) ?? ""
+                guard let storedToken = KeychainHelper.retrieveTokenFromKeyChain(),
+                      let userDetails = JWTDecoder.decode(jwtToken: storedToken) else {
+                    AlertService.showAlertForTopVC(title: "Authentication Failed", message: "Unable to read saved credentials.")
+                    return
+                }
+                let rawUserId = (userDetails["cn"] as? String) ?? ""
 
                 let normalizedId = rawUserId.lowercased().hasPrefix("e") || rawUserId.lowercased().hasPrefix("x")
                     ? String(rawUserId.dropFirst())
                     : rawUserId
 
                 self.userid = normalizedId
-                
-                
+                GlobalBidInfo.shared.employeeNumber = normalizedId
+                GlobalBidInfo.shared.credentialEmployeeNumber = rawUserId
                 self.webViewModel?.onDownloadError = { [weak self] error in
                     self?.handleDownloadError(error)
                 }
                 self.checkAuthenticationFA()
             }
+        } else {
+            print("Failed to save token, status: \(addStatus)")
+            DispatchQueue.main.async {
+                AlertService.showAlertForTopVC(title: "Authentication Failed", message: "Could not persist token.")
+            }
         }
     }
     
     func handleDownloadError(_ error: NSError) {
-        if isAllDomicelEnabled() {
+        if isAllDomicileEnabled() {
             var parameters: [String: Any] = [:]
             parameters["errorInfo"] = error.localizedDescription
             NotificationCenter.default.post(
@@ -166,7 +191,7 @@ extension CBCredentialsPageVC: WKNavigationDelegate{
         }
     }
     
-    func isAllDomicelEnabled() -> Bool {
+    func isAllDomicileEnabled() -> Bool {
         if let secretDownloadAllDomicileEnabled = UserDefaults.standard.string(forKey: "isSecretForAllDomicileDownloadEnabled") {
             return secretDownloadAllDomicileEnabled == "YES"
         }
@@ -197,10 +222,10 @@ extension CBCredentialsPageVC: WKNavigationDelegate{
             DispatchQueue.main.async {
                 switch result{
                 case .success(()):
-                    print("Historic Bid download complete — navigating")
+                    print("Bid download complete — navigating")
                     self.loginActions()
                 case .failure(let error):
-                    print("Historic bid download failed: \(error.localizedDescription)")
+                    print("Bid download failed: \(error.localizedDescription)")
                     AlertService.showAlertForTopVC(title: "Error", message: "Failed to download bid data: \(error.localizedDescription)")
                 }
             }

@@ -40,7 +40,6 @@ class BISwaBidDataDownload{
     func kCBSwaServiceURL() -> String{
         var env = UserDefaults.standard.string(forKey: "SwaApiEnv")
         var baseURL = ""
-        env = "QA"
         if env == "Dev"{
             baseURL = "https://itest.service.east.0.crewbid.dev.swalife.com/"
         }else if env == "QA"{
@@ -162,6 +161,14 @@ class BISwaBidDataDownload{
         self.fetchPaginatedData(urlTemplate: urlTemplate, keyPath: keyPath){ result in
             switch result{
             case .success(let resultDict):
+                if type == "pairings"{
+                    NotificationCenter.default.post(
+                        name: Notification.Name("UpdateProgress"),
+                        object: nil,
+                        userInfo: ["progress": Float(0.60)]
+                    )
+                }
+                
                 let writeFileMsg = CBUtils.writeJSONDictToFile(resultDict, fileName: String(format: "%@-%@.json", self.bidInfo, type))
                 
                 if writeFileMsg == nil {
@@ -452,6 +459,60 @@ class BISwaBidDataDownload{
         
     }
     
+    func getAwards(completion: @escaping (Result<[String:Any],Error>) -> Void){
+        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/line-awards?page=%%ld&size=\(self.pageSize)"
+        
+        self.fetchPaginatedData(urlTemplate: urlTemplate, keyPath:"IFLineBaseAuctionAwards"){ result in
+            switch result{
+            case .success(let resultDict):
+                completion(.success(resultDict))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    
+    func getMrtAwards(completion: @escaping (Result<[String:Any],Error>) -> Void){
+        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/mrt-awards?page=%%ld&size=\(self.pageSize)"
+        
+        self.fetchPaginatedData(urlTemplate: urlTemplate, keyPath:"IFLineBaseAuctionAwards"){ result in
+            switch result{
+            case .success(let resultDict):
+                completion(.success(resultDict))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func getJobShareAwards(completion: @escaping (Result<[String:Any],Error>) -> Void){
+        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/jobshare-awards?page=%%ld&size=\(self.pageSize)"
+        
+        self.fetchPaginatedData(urlTemplate: urlTemplate, keyPath:"IFLineBaseAuctionAwards"){ result in
+            switch result{
+            case .success(let resultDict):
+                completion(.success(resultDict))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func getReserveDataForAward(completion: @escaping (Result<[String:Any],Error>) -> Void){
+        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/reserve-awards?page=%%ld&size=\(self.pageSize)"
+        
+        self.fetchPaginatedData(urlTemplate: urlTemplate, keyPath:"IFLineBaseAuctionAwards"){ result in
+            switch result{
+            case .success(let resultDict):
+                completion(.success(resultDict))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    
     func fetchPaginatedData(
         urlTemplate: String,
         keyPath: String,
@@ -467,47 +528,53 @@ class BISwaBidDataDownload{
             "x-swa-user-department": "IF",
             "Postman-Token": "d6c9db45-8ea6-4dd9-9b7e-f77f2baa8b8b"
         ]
-        var accumulatedResponse = responseDict
+        
         APIService.shared.fetch(
             urlString: urlString,
             method: .GET,
             headers: headers,
             parse: {data in
-                try! JSONSerialization.jsonObject(with: data)
+                try JSONSerialization.jsonObject(with: data)
             },
             completion: {result in
                 switch result{
-                case .success(let dict):
-                    if let resultDict = dict as? [String:Any]{
-                        if accumulatedResponse.isEmpty {
-                            accumulatedResponse.merge(resultDict){(_,new) in new}
-                        }else if
-                            let embeddedDict = resultDict["_embedded"] as? [String: Any],
-                            var embeddedResponse = accumulatedResponse["_embedded"] as? [String: Any],
-                            var currentItems = embeddedResponse[keyPath] as? [Any],
-                            let newItems = embeddedDict[keyPath] as? [Any] {
-                
+                case .success(let parsed):
+                            guard let resultDict = parsed as? [String: Any] else {
+                                completion(.failure(Errors.other("Invalid JSON" as! Error)))
+                                return
+                            }
+
+                            var accumulated = responseDict
+                            if pageNumber == 0 {
+                                accumulated = resultDict
+                            }
+
+                            if
+                                let embedded = resultDict["_embedded"] as? [String: Any],
+                                let newItems = embedded[keyPath] as? [Any]
+                            {
+                                var embeddedResponse = accumulated["_embedded"] as? [String: Any] ?? [:]
+                                var currentItems = embeddedResponse[keyPath] as? [Any] ?? []
+
                                 currentItems.append(contentsOf: newItems)
+
                                 embeddedResponse[keyPath] = currentItems
-                                accumulatedResponse["_embedded"] = embeddedResponse
-                            
-                        }
-                        
-//                        if urlString.contains("award"){
-//                            let pageDict = resultDict["award"] as! [String:Any]
-//                            let totalElements = pageDict["totalElements"] as! Int
-//                            let totalPages = pageDict["totalPages"] as! Int
-//                            //for handling the progress
-//                        }
-                        
-                        let hasNextPage = self.hasNextPage(resultDict)
-                        if hasNextPage{
-                            self.fetchPaginatedData(urlTemplate: urlTemplate, keyPath: keyPath,responseDict: accumulatedResponse,pageNumber: pageNumber + 1, completion: completion)
-                        }else{
-                            completion(.success(accumulatedResponse))
-                        }
-                        
-                    }
+                                accumulated["_embedded"] = embeddedResponse
+                            }
+
+                            let hasNext = self.hasNextPage(resultDict)
+
+                            if hasNext {
+                                self.fetchPaginatedData(
+                                    urlTemplate: urlTemplate,
+                                    keyPath: keyPath,
+                                    responseDict: accumulated,
+                                    pageNumber: pageNumber + 1,
+                                    completion: completion
+                                )
+                            } else {
+                                completion(.success(accumulated))
+                            }
                 case .failure(let error):
                     completion(.failure(error))
                 }
@@ -526,5 +593,46 @@ class BISwaBidDataDownload{
             userInfo: userInfo
         )
         return newError
+    }
+    
+    
+    //MARK: Bid Submission
+    
+    func submitBid(params:[String:Any], completion: @escaping (Result<[String:Any],Error>) -> Void){
+        
+        let urlTemplate = "\(self.kCBSwaServiceURL())if-line-base-auction/bid-round/\(self.packetID)/bids"
+        
+        let headers: [String: String] = [
+            "Content-Type": "application/hal+json",
+            "Authorization": "Bearer \(KeychainHelper.retrieveTokenFromKeyChain()!)",
+            "x-swa-user-department": "IF",
+            "Postman-Token": "d6c9db45-8ea6-4dd9-9b7e-f77f2baa8b8b"
+        ]
+        
+        guard let bodyData = try? JSONSerialization.data(withJSONObject: params, options: []) else {
+            completion(.failure(Errors.other("Invalid JSON" as! Error)))
+            return
+        }
+        
+        
+        APIService.shared.fetch(
+            urlString: urlTemplate,
+            method: .POST,
+            body: bodyData,
+            headers: headers,
+            parse: {data in
+                try JSONSerialization.jsonObject(with: data)
+            },
+            completion: { result in
+                switch result{
+                case .success(let response):
+                    guard let result = response as? [String:Any] else {
+                        completion(.failure(Errors.other("Invalid JSON" as! Error)))
+                        return }
+                    completion(.success(result))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            })
     }
 }

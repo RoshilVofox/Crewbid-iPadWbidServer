@@ -117,7 +117,7 @@ class CBBiddataDownloadVC: BaseViewController {
             AppState.shared.mockDataMonth = self.month
             AppState.shared.mockDataYear = self.year
             
-            self.showCredentialPageCP()
+            self.showCredentialPage()
 //            if selectedPosition == "FA"{
 //                self.showCredentialPageFA()
 //            }else{
@@ -194,7 +194,7 @@ class CBBiddataDownloadVC: BaseViewController {
 
 
     
-    func showCredentialPageCP(){
+    func showCredentialPage(){
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
         vc.isNewBid = self.isNewBid
@@ -616,7 +616,7 @@ class CBBiddataDownloadVC: BaseViewController {
         
         AppState.shared.mockDataMonth = month
         AppState.shared.mockDataYear = year
-        self.showCredentialPageCP()
+        self.showCredentialPage()
 //        if selectedPosition == "FA"{
 //            self.showCredentialPageFA()
 //        }else{

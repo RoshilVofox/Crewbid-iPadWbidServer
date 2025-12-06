@@ -293,7 +293,7 @@ class CBUtils{
             return true
         }
         
-        let scanner = Scanner(string: fileContent)
+//        let scanner = Scanner(string: fileContent)
         
         autoreleasepool {
             let managedContext = GlobalBidInfo.shared.managedObjectContext
@@ -1906,6 +1906,585 @@ class CBUtils{
         return false
     }
     
+    static func generateTextForAwardData(_ lineAward: [String: Any]?,
+                                         mrtAward: [String: Any]?,
+                                         jobShareAward: [String: Any]?,
+                                         reserveData: [String: Any]?,
+                                         bidPeriod: BIBidPeriod?) -> String {
+        var text = String()
+
+        guard let bidPeriod = bidPeriod else {
+            return text
+        }
+
+        if bidPeriod.isSecondRoundBid() {
+            let secondRoundAwardText = secondRoundAwardStr(lineAward, bidPeriod: bidPeriod)
+            text.append(secondRoundAwardText)
+        } else {
+            let lineAwardText = lineAwardString(lineAward, jsAward: jobShareAward, bidPeriod: bidPeriod)
+            let mrtAwardText = mrtAwardString(mrtAward, bidPeriod: bidPeriod)
+            let jsAwardText = jobshareAwardString(jobShareAward, bidPeriod: bidPeriod)
+            let reserveText = reserveAwardString(reserveData, bidPeriod: bidPeriod)
+            let lineAwardNameSortText = lineAwardStringnameSort(lineAward, bidPeriod: bidPeriod)
+
+            text.append(mrtAwardText)
+            text.append(jsAwardText)
+            text.append(lineAwardText)
+            text.append(reserveText)
+            text.append(lineAwardNameSortText)
+        }
+
+        return text
+    }
+    
+    static func secondRoundAwardStr(_ lineAward: [String: Any]?, bidPeriod: BIBidPeriod) -> String {
+            var text = ""
+
+            // Header title (uses existing ShortMonthName equivalent)
+            let monthName = CBUtils.shortMonthName(month: bidPeriod.month?.intValue ?? 0, uc: true)
+            let year = bidPeriod.year ?? 0
+            let base = bidPeriod.base ?? ""
+            text += "**Subject to Protest**\n\(monthName) \(year)\nReserve Award List\n\(base) Base\n\n"
+
+            let col0Width = 3   // Left Padding
+            let col1Width = 7   // Line Num
+            let col2Width = 8   // Base Seq
+            let col3Width = 38  // Name
+            let col4Width = 10  // Emp ID
+            let col5Width = 21  // Regulatory
+
+            var vrString = ""
+            var sprString = ""
+            var sarString = ""
+            var jprString = ""
+            var jarString = ""
+            var jlrString = ""
+
+            // Helper: padding generator
+            func pad(_ s: String, to length: Int) -> String {
+                if s.count >= length { return s }
+                return s + String(repeating: " ", count: length - s.count)
+            }
+            func leftPad(_ s: String, to length: Int) -> String {
+                if s.count >= length { return s }
+                return String(repeating: " ", count: length - s.count) + s
+            }
+
+            // Build header rows (same pattern used for each block)
+            func headerRow(_ title: String) -> String {
+                let p0 = String(repeating: " ", count: col0Width)
+                let c1 = pad(title, to: col1Width)
+                let c2 = pad("Sen#", to: col2Width)
+                let c3 = pad("Name", to: col3Width)
+                let c4 = pad("Emp#", to: col4Width)
+                let c5 = pad("Regulatory (Y/N)", to: col5Width)
+                var row = "\(p0)\(c1)\(c2)\(c3)\(c4)\(c5)\n"
+                row += "   ----------------------------------------------------------------------------------\n"
+                return row
+            }
+
+            vrString += headerRow("VR")
+            sprString += headerRow("SPR")
+            sarString += headerRow("SAR")
+            jprString += headerRow("JPR")
+            jarString += headerRow("JAR")
+            jlrString += headerRow("JLR")
+
+
+            guard let lineAward = lineAward,
+                  let embedded = lineAward["_embedded"] as? [String: Any],
+                  let awardArray = embedded["IFLineBaseAuctionAwards"] as? [[String: Any]],
+                  awardArray.count > 0 else {
+                text += "** NONE **\n"
+                return text
+            }
+
+
+            let sortedAwardArray = awardArray.sorted { a, b in
+                let aLine = String(describing: a["line"] ?? "")
+                let bLine = String(describing: b["line"] ?? "")
+                
+                if let ai = Int(aLine), let bi = Int(bLine) {
+                    return ai < bi
+                } else {
+                    return aLine.localizedStandardCompare(bLine) == .orderedAscending
+                }
+            }
+
+            var prevLineNum = ""
+            let maxLineNumberLength = (sortedAwardArray.last?["line"] as? String)?.count ?? 0
+
+            for awardDict in sortedAwardArray {
+                let line = (awardDict["line"] as? String) ?? ""
+                var lineNumStr: String
+
+                if line == prevLineNum {
+                    let indentLen = maxLineNumberLength + 3
+                    lineNumStr = String(repeating: " ", count: indentLen)
+                } else {
+                    let padded = leftPad(line, to: max(0, maxLineNumberLength))
+                    lineNumStr = padded
+                    prevLineNum = line
+                }
+
+                let seniorityNum = String(describing: awardDict["baseSeniority"] ?? "")
+                let nameStr = String(describing: awardDict["legalName"] ?? "")
+                let empNum = "[\(String(describing: awardDict["employeeId"] ?? ""))]"
+
+                let regulatoryBool = (awardDict["regulatory"] as? Bool) ?? ( (awardDict["regulatory"] as? NSNumber)?.boolValue ?? false )
+                let regulatory = regulatoryBool ? "       Y" : "       N"
+
+
+                let leftPadding = String(repeating: " ", count: col0Width)
+                let lineWithPos = pad(lineNumStr, to: col1Width)
+                let seq = pad(seniorityNum, to: col2Width)
+                let name = pad(nameStr.uppercased(), to: col3Width)
+                let empID = pad(empNum, to: col4Width)
+                let reg = pad(regulatory, to: col5Width)
+
+                let rowString = "\(leftPadding)\(lineWithPos)\(seq)\(name)\(empID)\(reg)\n"
+
+
+                if let reserveType = awardDict["reserveType"] as? String {
+                    switch reserveType {
+                    case "VR": vrString += rowString
+                    case "SPR": sprString += rowString
+                    case "SAR": sarString += rowString
+                    case "JPR": jprString += rowString
+                    case "JAR": jarString += rowString
+                    case "JLR": jlrString += rowString
+                    default: break
+                    }
+                }
+            }
+
+            text += "\(vrString)\n\n\(sarString)\n\n\(jarString)\n\n\(sprString)\n\n\(jprString)\n\n\(jlrString)\n\n"
+
+            return text
+        }
+    
+    static func lineAwardString(_ lineAward: [String: Any]?, jsAward: [String: Any]?, bidPeriod: BIBidPeriod) -> String {
+        var text = ""
+
+        // Header title
+        let monthName = CBUtils.shortMonthName(month: bidPeriod.month?.intValue ?? 0, uc: true)
+        let year = bidPeriod.year ?? 0
+        let base = bidPeriod.base ?? ""
+        text += "**Subject to Protest**\n\(monthName) \(year)\nAward List - \(base)\n\n"
+
+        // Fixed column widths
+        let col0Width = 3   // Left Padding
+        let col1Width = 10  // Line Num
+        let col2Width = 8   // Base Seq
+        let col3Width = 35  // Name
+        let col4Width = 10  // Emp ID
+        let col5Width = 3   // NH
+        let col6Width = 21  // Regulatory
+
+        // Helper padding functions
+        func padRight(_ s: String, to length: Int) -> String {
+            if s.count >= length { return s }
+            return s + String(repeating: " ", count: length - s.count)
+        }
+        func padLeft(_ s: String, to length: Int) -> String {
+            if s.count >= length { return s }
+            return String(repeating: " ", count: length - s.count) + s
+        }
+
+        // Header row
+        let p0 = String(repeating: " ", count: col0Width)
+        let header = "\(p0)\(padRight("Line-Pos", to: col1Width))\(padRight("Sen#", to: col2Width))\(padRight("Name", to: col3Width))\(padRight("Emp#", to: col4Width))\(padRight("NH", to: col5Width))\(padRight("Regulatory (Y/N)", to: col6Width))\n"
+        text += header
+        text += "   ----------------------------------------------------------------------------------\n"
+
+        // Prepare jobshare array (if any)
+        var jsAwardArray: [[String: Any]]? = nil
+        if let embedded = jsAward?["_embedded"] as? [String: Any],
+           let arr = embedded["IFLineBaseAuctionJobShareAwards"] as? [[String: Any]] {
+            jsAwardArray = arr
+        }
+
+        // If no lineAward embedded data -> ** NONE **
+        guard let lineAward = lineAward,
+              let embedded = lineAward["_embedded"] as? [String: Any],
+              let awardArray = embedded["IFLineBaseAuctionAwards"] as? [[String: Any]],
+              awardArray.count > 0 else {
+            text += "** NONE **\n\n"
+            return text
+        }
+
+        // Sort awards by line+position numerically if possible
+        let sortedAwardArray = awardArray.sorted { a, b -> Bool in
+            let aLine = String(describing: a["line"] ?? "")
+            let aPos = String(describing: a["position"] ?? "")
+            let bLine = String(describing: b["line"] ?? "")
+            let bPos = String(describing: b["position"] ?? "")
+
+            let aKey = aLine + aPos
+            let bKey = bLine + bPos
+
+            // attempt numeric compare by extracting ints where possible
+            if let ai = Int(aKey), let bi = Int(bKey) { return ai < bi }
+            return aKey.localizedStandardCompare(bKey) == .orderedAscending
+        }
+
+        var prevLineNum = ""
+        let maxLineNumberLength = (sortedAwardArray.last?["line"] as? String)?.count ?? 0
+
+        for awardDict in sortedAwardArray {
+            let line = (awardDict["line"] as? String) ?? ""
+            let position = (awardDict["position"] as? String) ?? ""
+
+            var lineNum = ""
+
+            if line == prevLineNum {
+                // indent to align multi-row, width = maxLineNumberLength + 3
+                let indent = String(repeating: " ", count: maxLineNumberLength + 3)
+                lineNum = "\(indent)\(position)"
+            } else {
+                // padded left so the line numbers align
+                let paddedLine = padLeft(line, to: max(0, maxLineNumberLength))
+                lineNum = "\(paddedLine) - \(position)"
+
+                if prevLineNum != "" {
+                    text += "   ----------------------------------------------------------------------------------\n"
+                }
+                prevLineNum = line
+            }
+
+            // Check Jobshare: find matching jsAward with same baseSeniority
+            var jsSeq = ""
+            let seniorityNum = String(describing: awardDict["baseSeniority"] ?? "")
+            if let jsArr = jsAwardArray {
+                for js in jsArr {
+                    let jsSen = String(describing: js["baseSeniority"] ?? "")
+                    if jsSen == seniorityNum {
+                        let pos = js["jobSharePosition"].map { String(describing: $0) } ?? ""
+                        jsSeq = "JS\(pos)"
+                        break
+                    }
+                }
+            }
+
+            var nameStr = String(describing: awardDict["legalName"] ?? "")
+            if !jsSeq.isEmpty {
+                nameStr = "\(nameStr)...\(jsSeq)"
+            }
+
+            let empNum = "[\(String(describing: awardDict["employeeId"] ?? ""))]"
+
+            let regulatoryBool = (awardDict["regulatory"] as? Bool) ?? ((awardDict["regulatory"] as? NSNumber)?.boolValue ?? false)
+            let regulatory = regulatoryBool ? "       Y" : "       N"
+
+            // Build columns with padding
+            let leftPadding = String(repeating: " ", count: col0Width)
+            let lineWithPos = padRight(lineNum, to: col1Width)
+            let seq = padRight(seniorityNum, to: col2Width)
+            let name = padRight(nameStr, to: col3Width)
+            let empID = padRight(empNum, to: col4Width)
+            let nh = padRight("", to: col5Width)
+            let reg = padRight(regulatory, to: col6Width)
+
+            let rowString = "\(leftPadding)\(lineWithPos)\(seq)\(name)\(empID)\(nh)\(reg)\n"
+            text += rowString
+        }
+
+        text += "\n\n"
+
+        return text
+    }
+    
+    static func mrtAwardString(_ mrtAward: [String: Any]?, bidPeriod: BIBidPeriod) -> String {
+        var text = ""
+
+        // Header title
+        let monthName = CBUtils.shortMonthName(month: bidPeriod.month?.intValue ?? 0, uc: true)
+        let year = bidPeriod.year ?? 0
+        let base = bidPeriod.base ?? ""
+        text += "**Subject to Protest**\n\(monthName) \(year)\nMRT Employees Awards - \(base)\n\n"
+
+        // Fixed column widths
+        let col0Width = 3   // Left Padding
+        let col1Width = 8   // Base Seq (Sen)
+        let col2Width = 10  // Emp ID
+        let col3Width = 34  // Name
+        let col4Width = 15  // Contingency
+
+        // helper padding functions
+        func padRight(_ s: String, to length: Int) -> String {
+            if s.count >= length { return s }
+            return s + String(repeating: " ", count: length - s.count)
+        }
+        func padLeft(_ s: String, to length: Int) -> String {
+            if s.count >= length { return s }
+            return String(repeating: " ", count: length - s.count) + s
+        }
+
+        // Header row
+        let p0 = String(repeating: " ", count: col0Width)
+        let header = "\(p0)\(padRight("Sen", to: col1Width))\(padRight("EmpID", to: col2Width))\(padRight("Name", to: col3Width))\(padRight("Cont. Bid", to: col4Width))\n"
+        text += header
+        text += "\n"
+
+        guard let mrtAward = mrtAward,
+              let embedded = mrtAward["_embedded"] as? [String: Any],
+              let awardArray = embedded["IFLineBaseAuctionMrtAwards"] as? [[String: Any]],
+              awardArray.count > 0
+        else {
+            text += "** NONE **\n\n\n"
+            return text
+        }
+
+        let sortedAwardArray = awardArray.sorted { a, b -> Bool in
+            let aLine = String(describing: a["line"] ?? "")
+            let aPos = String(describing: a["position"] ?? "")
+            let bLine = String(describing: b["line"] ?? "")
+            let bPos = String(describing: b["position"] ?? "")
+            let aKey = aLine + aPos
+            let bKey = bLine + bPos
+            if let ai = Int(aKey), let bi = Int(bKey) { return ai < bi }
+            return aKey.localizedStandardCompare(bKey) == .orderedAscending
+        }
+
+        for awardDict in sortedAwardArray {
+            let seniorityNum = String(describing: awardDict["baseSeniority"] ?? "")
+            let nameStr = String(describing: awardDict["legalName"] ?? "")
+            let empNum = String(describing: awardDict["employeeId"] ?? "")
+
+            let contingencyBool = (awardDict["contingency"] as? Bool) ?? ((awardDict["contingency"] as? NSNumber)?.boolValue ?? false)
+            let contingency = contingencyBool ? "     Y" : "     N"
+
+            let leftPadding = String(repeating: " ", count: col0Width)
+            let seq = padRight(seniorityNum, to: col1Width)
+            let empID = padRight(empNum, to: col2Width)
+            let name = padRight(nameStr, to: col3Width)
+            let cont = padRight(contingency, to: col4Width)
+
+            let rowString = "\(leftPadding)\(seq)\(empID)\(name)\(cont)\n"
+            text += rowString
+        }
+
+        text += "\n\n"
+
+        return text
+    }
+    
+    static func jobshareAwardString(_ jobshareAward: [String: Any]?, bidPeriod: BIBidPeriod) -> String {
+        var text = ""
+
+        // Header title
+        let monthName = CBUtils.shortMonthName(month: bidPeriod.month?.intValue ?? 0, uc: true)
+        let year = bidPeriod.year ?? 0
+        let base = bidPeriod.base ?? ""
+        text += "**Subject to Protest**\n\(monthName) \(year)\nJob Share Employees Awards - \(base)\n\n"
+
+        // Fixed column widths
+        let col0Width = 3   // Left Padding
+        let col1Width = 8   // Base Seq (Sen)
+        let col2Width = 10  // Emp ID
+        let col3Width = 34  // Name
+        let col4Width = 6   // Jobshare Position
+        let col5Width = 5   // Line Num
+        let col6Width = 6   // Position
+        let col7Width = 12  // Contingency
+
+        // Padding helpers
+        func padRight(_ s: String, to length: Int) -> String {
+            if s.count >= length { return s }
+            return s + String(repeating: " ", count: length - s.count)
+        }
+        func padLeft(_ s: String, to length: Int) -> String {
+            if s.count >= length { return s }
+            return String(repeating: " ", count: length - s.count) + s
+        }
+
+        // Header row
+        let p0 = String(repeating: " ", count: col0Width)
+        let header = "\(p0)\(padRight("Sen", to: col1Width))\(padRight("EmpID", to: col2Width))\(padRight("Name", to: col3Width))\(padRight("JPos", to: col4Width))\(padRight("L", to: col5Width))\(padRight("Pos", to: col6Width))\(padRight("Cont. Bid", to: col7Width))\n"
+        text += header
+        text += "\n"
+
+        // Parse embedded jobshare array
+        guard let jobshareAward = jobshareAward,
+              let embedded = jobshareAward["_embedded"] as? [String: Any],
+              let awardArray = embedded["IFLineBaseAuctionJobShareAwards"] as? [[String: Any]],
+              awardArray.count > 0
+        else {
+            text += "** NONE **\n\n\n"
+            return text
+        }
+
+        let sortedAwardArray = awardArray.sorted { a, b -> Bool in
+            let aLine = String(describing: a["line"] ?? "")
+            let aPos = String(describing: a["position"] ?? "")
+            let bLine = String(describing: b["line"] ?? "")
+            let bPos = String(describing: b["position"] ?? "")
+            let aKey = aLine + aPos
+            let bKey = bLine + bPos
+            if let ai = Int(aKey), let bi = Int(bKey) { return ai < bi }
+            return aKey.localizedStandardCompare(bKey) == .orderedAscending
+        }
+
+        for awardDict in sortedAwardArray {
+            let line = String(describing: awardDict["line"] ?? "")
+            let pos = String(describing: awardDict["position"] ?? "")
+            let seniorityNum = String(describing: awardDict["baseSeniority"] ?? "")
+            let nameStr = String(describing: awardDict["legalName"] ?? "")
+            let empNum = String(describing: awardDict["employeeId"] ?? "")
+            let contingencyBool = (awardDict["contingency"] as? Bool) ?? ((awardDict["contingency"] as? NSNumber)?.boolValue ?? false)
+            let contingency = contingencyBool ? "    Y" : "    N"
+            let jobSharePosition = String(describing: awardDict["jobSharePosition"] ?? "")
+            let jPos = "JS\(jobSharePosition)"
+
+            let leftPadding = String(repeating: " ", count: col0Width)
+            let seq = padRight(seniorityNum, to: col1Width)
+            let empID = padRight(empNum, to: col2Width)
+            let name = padRight(nameStr, to: col3Width)
+            let jobSharePos = padRight(jPos, to: col4Width)
+            let lineNum = padRight(line, to: col5Width)
+            let posStr = padRight(pos, to: col6Width)
+            let cont = padRight(contingency, to: col7Width)
+
+            let rowString = "\(leftPadding)\(seq)\(empID)\(name)\(jobSharePos)\(lineNum)\(posStr)\(cont)\n"
+            text += rowString
+        }
+
+        text += "\n\n"
+        return text
+    }
+    
+    static func reserveAwardString(_ reserveData: [String: Any]?, bidPeriod: BIBidPeriod) -> String {
+        var text = ""
+
+        // Header title
+        let monthName = CBUtils.shortMonthName(month: bidPeriod.month?.intValue ?? 0, uc: true)
+        let year = bidPeriod.year ?? 0
+        let base = bidPeriod.base ?? ""
+        text += "**Subject to Protest**\n\(monthName) \(year)\nReserve List - \(base)\n\n"
+
+        // Fixed column widths
+        let col0Width = 3   // Left Padding
+        let col1Width = 6   // Base Seq
+        let col2Width = 38  // Name (filled with '-')
+        let col3Width = 12  // Emp ID
+
+        func padRight(_ s: String, to length: Int, fill: Character = " ") -> String {
+            if s.count >= length { return s }
+            return s + String(repeating: fill, count: length - s.count)
+        }
+        func padLeft(_ s: String, to length: Int) -> String {
+            if s.count >= length { return s }
+            return String(repeating: " ", count: length - s.count) + s
+        }
+
+        let p0 = String(repeating: " ", count: col0Width)
+        let header = "\(p0)\(padRight("Sen#", to: col1Width))\(padRight("  ", to: 3))\(padRight("Name", to: col2Width))\(padRight("Emp ID", to: col3Width))\n"
+        text += header
+        text += "   -----------------------------------------------------\n"
+
+        guard let reserve = reserveData,
+              let embedded = reserve["_embedded"] as? [String: Any],
+              let awardArray = embedded["IFLineBaseAuctionReserveAwards"] as? [[String: Any]],
+              awardArray.count > 0
+        else {
+            text += "** NONE **\n\n"
+            return text
+        }
+
+        let sortedAwardArray = awardArray.sorted { a, b -> Bool in
+
+            let aKey = String(describing: a["baseSeniority"] ?? a["Seniority"] ?? "")
+            let bKey = String(describing: b["baseSeniority"] ?? b["Seniority"] ?? "")
+            if let ai = Int(aKey), let bi = Int(bKey) { return ai < bi }
+            return aKey.localizedStandardCompare(bKey) == .orderedAscending
+        }
+
+        for awardDict in sortedAwardArray {
+            let seniorityNum = String(describing: awardDict["baseSeniority"] ?? "")
+            let nameStr = String(describing: awardDict["legalName"] ?? "")
+            let empNum = String(describing: awardDict["employeeId"] ?? "")
+
+            let leftPadding = String(repeating: " ", count: col0Width)
+            let seq = padRight(seniorityNum, to: col1Width)
+            let hyphen = padRight("-", to: 3)
+            let name = padRight(nameStr, to: col2Width, fill: "-")
+            let empID = padRight(empNum, to: col3Width)
+
+            let rowString = "\(leftPadding)\(seq)\(hyphen)\(name)\(empID)\n"
+            text += rowString
+        }
+
+        text += "\n"
+
+        return text
+    }
+    
+    static func lineAwardStringnameSort(_ lineAward: [String: Any]?, bidPeriod: BIBidPeriod) -> String {
+        var text = ""
+
+        // Header title
+        let monthName = CBUtils.shortMonthName(month: bidPeriod.month?.intValue ?? 0, uc: true)
+        let year = bidPeriod.year ?? 0
+        let base = bidPeriod.base ?? ""
+        text += "**Subject to Protest**\n\(monthName) \(year)\nAward List - \(base)\n\n"
+
+        // Fixed column widths
+        let col0Width = 3   // Left Padding
+        let col1Width = 6   // Base Seq
+        let col2Width = 38  // Name
+        let col3Width = 12  // Emp ID
+        let col4Width = 13  // Line Num
+
+        // Padding helpers
+        func padRight(_ s: String, to length: Int, fill: Character = " ") -> String {
+            if s.count >= length { return s }
+            return s + String(repeating: fill, count: length - s.count)
+        }
+        func padLeft(_ s: String, to length: Int) -> String {
+            if s.count >= length { return s }
+            return String(repeating: " ", count: length - s.count) + s
+        }
+
+        let p0 = String(repeating: " ", count: col0Width)
+        let header = "\(p0)\(padRight("Sen#", to: col1Width))\(padRight("  ", to: 3))\(padRight("Name", to: col2Width))\(padRight("Emp #", to: col3Width))\(padRight("Line-Pos", to: col4Width))\n"
+        text += header
+        text += "   --------------------------------------------------------------------\n"
+
+        guard let lineAward = lineAward,
+              let embedded = lineAward["_embedded"] as? [String: Any],
+              let awardArray = embedded["IFLineBaseAuctionAwards"] as? [[String: Any]],
+              awardArray.count > 0
+        else {
+            text += "** NONE **\n\n\n"
+            return text
+        }
+
+        let sortedAwardArray = awardArray.sorted { a, b -> Bool in
+            let aName = String(describing: a["legalName"] ?? "")
+            let bName = String(describing: b["legalName"] ?? "")
+            return aName.localizedStandardCompare(bName) == .orderedAscending
+        }
+
+        for awardDict in sortedAwardArray {
+            let lineNum = "\(String(describing: awardDict["line"] ?? ""))-\(String(describing: awardDict["position"] ?? ""))"
+            let seniorityNum = String(describing: awardDict["baseSeniority"] ?? "")
+            let nameStr = String(describing: awardDict["legalName"] ?? "")
+            let empNum = "[\(String(describing: awardDict["employeeId"] ?? ""))]"
+
+            let leftPadding = String(repeating: " ", count: col0Width)
+            let seq = padRight(seniorityNum, to: col1Width)
+            let hyphen = padRight("-", to: 3)
+            let name = padRight(nameStr, to: col2Width)
+            let empID = padRight(empNum, to: col3Width)
+            let lineWithPos = padRight(lineNum, to: col4Width)
+
+            let rowString = "\(leftPadding)\(seq)\(hyphen)\(name)\(empID)\(lineWithPos)\n"
+            text += rowString
+        }
+
+        text += "\n\n"
+        return text
+    }
 }
 
 class JWTDecoder{

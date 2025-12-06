@@ -10,41 +10,18 @@ import Foundation
 class AwardsViewModel {
     var bidPeriod:BIBidPeriod
     var EmpNum:String!
+    let swaDownload = BISwaBidDataDownload()
     init(bidPeriod: BIBidPeriod) {
         self.bidPeriod = bidPeriod
     }
     
     
+
     
-//    func retrieveAwardFile(completion : @escaping (Bool)->Void) {
-//        let bidDownload = BIBidFileDownload()
-//        let bidInfo = BIBidInfo()
-//        let filename = bidInfo.bidAwardTextFilename()
-//        bidDownload.downloadBidFiles(sessionKey: CBGlobalMethods.shared.secretKey!, filename: filename){ result in
-//            switch result{
-//            case .success(let fileURL):
-//                do{
-//                    let fileContents = try String(contentsOf: fileURL, encoding: .utf8)
-//                    self.bidPeriod.awardString = fileContents
-//                    try self.bidPeriod.managedObjectContext?.save()
-//                    completion(true)
-//                }catch{
-//                    print("Failed to read award file: \(error.localizedDescription)")
-//                    completion(false)
-//                }
-//            case .failure(let error):
-//                print("Download error: \(error.localizedDescription)")
-//                completion(false)
-//            }
-//        }
-//    }
     func retrieveAwardFile(sessionKey: String,completion: @escaping (Bool) -> Void) {
         let bidInfo = BIBidInfo()
         let filename = bidInfo.bidAwardTextFilename()
-//        guard let sessionKey = CBGlobalMethods.shared.secretKey else {
-//            completion(false)
-//            return
-//        }
+
 
         downloadAwardFile(sessionKey: sessionKey, filename: filename) { result in
             switch result {
@@ -89,18 +66,8 @@ class AwardsViewModel {
         ) { result in
             completion(result.mapError { $0 as Error })
         }
-//        DownloadManager.shared.fetch(
-//            urlString: EndPoint.shared.thirdpartyURL,
-//            httpMethod: .POST,
-//            body: bodyData,
-//            headers: nil,
-//            timeout: 300
-//        ) { result in
-//            completion(result.mapError { $0 as Error })
-//        }
     }
     
-
     
     
     func getAwardAlertFromServer(empNum: String, completion: @escaping (Bool) -> Void) {
