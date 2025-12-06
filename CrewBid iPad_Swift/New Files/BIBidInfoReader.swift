@@ -2588,7 +2588,8 @@ class BIBidInfoReader{
                 }else{
                     set = [
                         BILineType.HardConUS.rawValue,
-                        BILineType.HardNonConUS.rawValue
+                        BILineType.HardNonConUS.rawValue,
+                        BILineType.BILineTypeLoDo.rawValue
                     ]
                 }
             }else{
@@ -2601,13 +2602,15 @@ class BIBidInfoReader{
                         BILineType.NonEtopsReserve.rawValue,
                         BILineType.NonReserveEtops.rawValue,
                         BILineType.NonEtopsConUS.rawValue,
-                        BILineType.NonEtopsNonConUS.rawValue
+                        BILineType.NonEtopsNonConUS.rawValue,
+                        BILineType.BILineTypeLoDo.rawValue
                     ]
                 }else{
                     set = [
                         BILineType.HardConUS.rawValue,
                         BILineType.HardNonConUS.rawValue,
-                        BILineType.ReserveLine.rawValue
+                        BILineType.ReserveLine.rawValue,
+                        BILineType.BILineTypeLoDo.rawValue
                     ]
                 }
             }
