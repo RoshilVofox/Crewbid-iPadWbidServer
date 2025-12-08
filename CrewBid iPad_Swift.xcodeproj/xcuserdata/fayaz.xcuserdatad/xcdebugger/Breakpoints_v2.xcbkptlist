@@ -11034,5 +11034,51 @@
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5D2B84EC-CA33-40E1-9370-ECF5189EBFE8"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Download/CBCredentialsPageVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "946"
+            endingLineNumber = "946"
+            landmarkName = "handleBidSubmission(sessionKey:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "5D2B84EC-CA33-40E1-9370-ECF5189EBFE8 - e72d44c89fb82d34"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Bool) -&gt; () in CrewBid_iPad_Swift.CBCredentialsPageVC.handleBidSubmission(sessionKey: Swift.Optional&lt;Swift.String&gt;) -&gt; ()"
+                  moduleName = "CrewBid iPad_Swift.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/fayaz/Documents/GitHub/Crewbid-iPadWbidServer/CrewBid%20iPad_Swift/Views/ViewControllers/Bid%20Download/CBCredentialsPageVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "946"
+                  endingLineNumber = "946">
+               </Location>
+               <Location
+                  uuid = "5D2B84EC-CA33-40E1-9370-ECF5189EBFE8 - 846280dad0615d2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Result&lt;Swift.Bool, Swift.Error&gt;) -&gt; () in closure #1 (Swift.Bool) -&gt; () in CrewBid_iPad_Swift.CBCredentialsPageVC.handleBidSubmission(sessionKey: Swift.Optional&lt;Swift.String&gt;) -&gt; ()"
+                  moduleName = "CrewBid iPad_Swift.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/fayaz/Documents/GitHub/Crewbid-iPadWbidServer/CrewBid%20iPad_Swift/Views/ViewControllers/Bid%20Download/CBCredentialsPageVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "947"
+                  endingLineNumber = "947">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

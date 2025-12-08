@@ -938,45 +938,45 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         submissionViewModel = CBBidSubmissionViewModel(bidPeriod: bidPeriod, userID: empNum, password: self.dataSource.password, defaultEmpNum: self.defaultEmplyeeNumber, optionalEmpNum: self.optionalEmployees, selectedObject: self.selectedObject)
 
         submissionViewModel?.setBidLineNumbers { (success) in
-            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Submitting Bid...")
+//            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Submitting Bid...")
             if success{
                 DispatchQueue.main.async {
                     self.view.showActivityIndicator(message: "Submitting your bid...")
                 }
-//                self.submissionViewModel?.startBidSubmission(sessionKey: sessionKey) { result in
-//                    self.view.hideActivityIndicator()
-//                    switch result{
-//                    case .success(let submitted):
-//                        if submitted{
-//                            DispatchQueue.main.async {
-//                                self.view.hideActivityIndicator()
-//                            }
-//                            AlertService.showAlertForTopVC(title: "Bid Successfully Submitted", message: "The bid receipt shown is the bid receipt for the last bid submitted.\n\n Bid receipts are available under the Bid Action (top right) menu and in SwaLife in BidInfo.\n\n Caution: You must see your bid receipt. If you DON'T see your bid receipt, then \"Please try to submit again\".", actions: [(title: "OK", style: .default, handler:{_ in
-//                                
-//                                // ---- PILOT ----
-//                                if !self.bidPeriod!.isFABid(){
-//                                    self.submissionViewModel?.handleAddSubmittedBid(empNumber: self.defaultEmplyeeNumber!){success in
-//                                        if success == false{
-//                                            self.dismissVC()
-//                                        }
-//                                    }
-//                                    return
-//                                }
-//                                
-//                                // ---- FA ----
-//                                self.submissionViewModel?.addSubmittedDataToServerForFA { success in
-//                                    if !success { self.dismissVC() }
-//                                }
-//                            })])
-//                        }
-//
-//                    case .failure(let error):
-//                        AlertService.showAlertForTopVC(
-//                            title: "Submission Failed",
-//                            message: error.localizedDescription
-//                        )
-//                    }
-//                }
+                self.submissionViewModel?.startBidSubmission(sessionKey: sessionKey) { result in
+                    self.view.hideActivityIndicator()
+                    switch result{
+                    case .success(let submitted):
+                        if submitted{
+                            DispatchQueue.main.async {
+                                self.view.hideActivityIndicator()
+                            }
+                            AlertService.showAlertForTopVC(title: "Bid Successfully Submitted", message: "The bid receipt shown is the bid receipt for the last bid submitted.\n\n Bid receipts are available under the Bid Action (top right) menu and in SwaLife in BidInfo.\n\n Caution: You must see your bid receipt. If you DON'T see your bid receipt, then \"Please try to submit again\".", actions: [(title: "OK", style: .default, handler:{_ in
+                                
+                                // ---- PILOT ----
+                                if !self.bidPeriod!.isFABid(){
+                                    self.submissionViewModel?.handleAddSubmittedBid(empNumber: self.defaultEmplyeeNumber!){success in
+                                        if success == false{
+                                            self.dismissVC()
+                                        }
+                                    }
+                                    return
+                                }
+                                
+                                // ---- FA ----
+                                self.submissionViewModel?.addSubmittedDataToServerForFA { success in
+                                    if !success { self.dismissVC() }
+                                }
+                            })])
+                        }
+
+                    case .failure(let error):
+                        AlertService.showAlertForTopVC(
+                            title: "Submission Failed",
+                            message: error.localizedDescription
+                        )
+                    }
+                }
             }
         }
     }
