@@ -205,6 +205,19 @@ class BIBidInfoReader{
 //        
 //    }
     
+    private func createBidDocumentFile() -> Bool {
+        let fileURL = BIBidInfo().bidDocumentFileURL()
+
+        do {
+            try Data().write(to: fileURL, options: .atomic)
+            print("Created new bid document at:", fileURL.path)
+            return true
+        } catch {
+            print("Failed to create bid document:", error.localizedDescription)
+            return false
+        }
+    }
+    
     func checkForSeniorityVacationAndReadBidInfo(completion: @escaping (Bool) -> Void) {
         self.isNetworkNotAvailable = false
         self.isSeniorityVacParsingFailed = false
@@ -227,6 +240,12 @@ class BIBidInfoReader{
                 
                 guard app.connectedToInternet() else {
                     self.isNetworkNotAvailable = true
+                    
+                    guard self.createBidDocumentFile() else {
+                        finishParsingBid(success: false)
+                        return
+                    }
+                    
                     let success = self.readBidData()
                     finishParsingBid(success: success)
                     return
@@ -234,8 +253,15 @@ class BIBidInfoReader{
                 
                 if app.objNetworkType == .free {
                     self.isSeniorityVacParsingFailed = true
+                    
+                    guard self.createBidDocumentFile() else {
+                        finishParsingBid(success: false)
+                        return
+                    }
+                    
                     let success = self.readBidData()
                     finishParsingBid(success: success)
+                    return
                 } else {
                     APIService.shared.fetch(
                         urlString: EndPoint.shared.GetAllSeniorityListFormatFromDB,
@@ -255,6 +281,11 @@ class BIBidInfoReader{
                                         self.seniorityPositionDetails = dict
                                         break
                                     }
+                                }
+                                
+                                guard self.createBidDocumentFile() else {
+                                    finishParsingBid(success: false)
+                                    return
                                 }
                                 
                                 let success = self.readBidData()

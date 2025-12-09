@@ -167,6 +167,17 @@ class CBDocumentsCollectionViewController: BaseViewController {
                         let rawValue = obj.positionType!.intValue
                         self.dataSource.position = BICrewPositionType(rawValue: rawValue)!
                         
+                        let fileManager = FileManager.default
+                        
+                        let bidDocURL = BIBidInfo().bidDocumentFileURL()
+                        if fileManager.fileExists(atPath: bidDocURL.path) {
+                            do {
+                                try fileManager.removeItem(at: bidDocURL)
+                                print("Deleted bid document: \(bidDocURL.lastPathComponent)")
+                            } catch {
+                                print("Failed to delete bid document: \(error.localizedDescription)")
+                            }
+                        }
                         // Build file path
                         let tempDir = BIBidInfo.temporaryDirectory()
                         let originalFileName = BIBidInfo.shared.bidDataFilename()
@@ -177,9 +188,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
                             fileNameWithoutSuffix = originalFileName
                         }
                         let fileURL = tempDir.appendingPathComponent(fileNameWithoutSuffix)
-     
                           // Delete the file if it exists
-                          let fileManager = FileManager.default
                           if fileManager.fileExists(atPath: fileURL.path) {
                               do {
                                   try fileManager.removeItem(at: fileURL)

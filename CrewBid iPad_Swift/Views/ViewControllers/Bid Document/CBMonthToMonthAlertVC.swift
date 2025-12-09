@@ -16,8 +16,8 @@ class CBMonthToMonthAlertVC: UIViewController {
     
     @IBOutlet weak var content: UITextView!
     var text = ""
-    var delegate: CBMonthToMonthAlertDelegate?
-
+//    var delegate: CBMonthToMonthAlertDelegate?
+    var onDismiss: ((_ tappedOK: Bool) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,10 +58,9 @@ class CBMonthToMonthAlertVC: UIViewController {
     @IBAction func btnOkAction(_ sender: UIButton) {
         CBGlobalMethods.shared.selectedBidPeriod!.vactionWeekAlertDisplayed = NSNumber(value: true)
         self.dismiss(animated: true)
-//        {
-//            //CBGlobalMethods.shared.showActivityIndicator(bgColor: .purple)
-//            self.delegate?.monthToMonthViewDismissed()
-//        }
+        dismiss(animated: true) { [weak self] in
+            self?.onDismiss?(true)
+        }
     }
     
 }

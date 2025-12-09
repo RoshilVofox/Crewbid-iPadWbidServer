@@ -454,21 +454,43 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             awardsViewModel = AwardsViewModel(bidPeriod: bidPeriod)
         }
         //for new API
-        if self.dataSource.position == BICrewPositionType.FlightAttendant{
-            self.setupSwaLogin()
-        }else{
-            self.setupLegacyLogin()
-        }
+//        if self.dataSource.position == BICrewPositionType.FlightAttendant{
+//            self.setupSwaLogin()
+//        }else{
+//            self.setupLegacyLogin()
+//        }
         
         if !UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
             NotificationCenter.default.addObserver(self, selector: #selector(showProgressView), name: Notification.Name("ShowProgressView"), object: nil)
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(showBidAwardReadError(notification:)), name: NSNotification.Name("BidAwardReadError"), object: nil)
-        
-        
     }
     
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if self.dataSource.position == BICrewPositionType.FlightAttendant {
+            // FA: check for existing bid file first
+            if self.bidAlreadyExists() {
+                // show alert which will call the closure on "Download Again"
+                self.showAlertForExistingBid {
+                    // user chose Download Again -> start FA web login after deletion
+                    DispatchQueue.main.async {
+                        self.setupSwaLogin()
+                    }
+                }
+            } else {
+                // no existing bid -> start FA web login now
+                self.setupSwaLogin()
+            }
+        } else {
+            // legacy (pilot) flow: if you want the pilot path to still show the existing-bid alert here,
+            // you can do the same check or keep your existing go-button based flow.
+            // If you want to start legacy login immediately:
+            self.setupLegacyLogin()
+        }
+    }
 
     
     @objc func closeCredentilaPage() {
@@ -1199,91 +1221,170 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     
 
     private func bidAlreadyExists() -> Bool {
-        let downloadDir = BIBidInfo().downloadDirectory()
-
-        // Check if the directory exists
-        var isDir: ObjCBool = false
-        let exists = FileManager.default.fileExists(atPath: downloadDir.path, isDirectory: &isDir)
-
-        // Return true only if it exists and is a directory
-        return exists && isDir.boolValue
+        let fileURL = BIBidInfo().bidDocumentFileURL()
+        return FileManager.default.fileExists(atPath: fileURL.path)
     }
+//    private func bidAlreadyExists() -> Bool {
+//        let downloadDir = BIBidInfo().downloadDirectory()
+//
+//        // Check if the directory exists
+//        var isDir: ObjCBool = false
+//        let exists = FileManager.default.fileExists(atPath: downloadDir.path, isDirectory: &isDir)
+//
+//        // Return true only if it exists and is a directory
+//        return exists && isDir.boolValue
+//    }
+    
+//    private func showAlertForExistingBid(onRetry: @escaping () -> Void) {
+//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
+//        let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: self.context)
+//        fetchRequest.entity = entity
+//        var array:[NSPredicate] = []
+//        array.append(NSPredicate(format: "base == %@", self.dataSource.base))
+//        array.append(NSPredicate(format: "round == %d", self.dataSource.round))
+//        array.append(NSPredicate(format: "month == %d", self.dataSource.month))
+//        array.append(NSPredicate(format: "positionType == %d", self.dataSource.position.rawValue))
+//        array.append(NSPredicate(format: "year == %d", self.dataSource.year))
+//        
+//        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
+//        let list = try! self.context.fetch(fetchRequest) as! [BIBidPeriod]
+//        
+//        let monthArr = ["January", "February", "March", "April", "May", "June", "July", "August","September","October","November","December"]
+//        let alert = AlertService.showAlert(title: "Download Bid Again?", message: "The Bid for \(monthArr[dataSource.month-1]) \(dataSource.base) \(dataSource.position) Round \(dataSource.round) already exists. If you download it again, all existing data, including bid receipts, will be removed.", actions: [(title: "Download Again", style: .default, handler: {_ in
+//            
+//            // Build file path
+//            let tempDir = BIBidInfo.temporaryDirectory()
+//            let originalFileName = BIBidInfo.shared.dataFilenameBase()
+//            let fileURL = tempDir.appendingPathComponent(originalFileName)
+//             
+//            // Delete the file if it exists
+//            let fileManager = FileManager.default
+//            if fileManager.fileExists(atPath: fileURL.path) {
+//                do {
+//                    try fileManager.removeItem(at: fileURL)
+//                    print("Deleted file: \(fileURL.lastPathComponent)")
+//                } catch {
+//                    print("Failed to delete file: \(error.localizedDescription)")
+//                }
+//            }
+//            let context = self.context
+//            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = BIBidPeriod.fetchRequest()
+//            fetchRequest.predicate = NSPredicate(format: "month == %d AND base == %@ AND positionType == %d AND round == %d AND year == %d",self.dataSource.month, self.dataSource.base, self.dataSource.position.rawValue, self.dataSource.round, self.dataSource.year)
+//            let batchDelete = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+//            batchDelete.resultType = .resultTypeObjectIDs
+//
+//            do {
+//                let result = try context.execute(batchDelete) as? NSBatchDeleteResult
+//                if let objectIDs = result?.result as? [NSManagedObjectID] {
+//                    // Merge changes into context so collectionView sees deletion
+//                    let changes: [AnyHashable: Any] = [NSDeletedObjectsKey: objectIDs]
+//                    NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [context])
+//                }
+//                NotificationCenter.default.post(name: NSNotification.Name(ReloadCollectionView), object: nil)
+//                print("Deleted BidPeriod objects using batch delete.")
+//                onRetry()
+//            } catch {
+//                print("Failed batch delete: \(error)")
+//            }
+//            
+//        }), (title: "Cancel", style: .cancel, handler: {_ in}), (title: "Open Bid", style: .default, handler: {_ in
+//            self.view.hideActivityIndicator()
+//            if list.count > 0 {
+//                let obj = list[0]
+//                CBGlobalMethods.shared.selectedBidPeriod = obj
+//                UserDefaults.standard.setValue(obj.round!.intValue, forKey: "SelectedRound")
+//                self.dismiss(animated: true)
+//                self.loginActions()
+//            }
+//            
+//        })])
+//        self.present(alert, animated: true)
+//    }
     
     private func showAlertForExistingBid(onRetry: @escaping () -> Void) {
+        // Fetch existing BidPeriod objects (same as before)
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
         let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: self.context)
         fetchRequest.entity = entity
-        var array:[NSPredicate] = []
-        array.append(NSPredicate(format: "base == %@", self.dataSource.base))
-        array.append(NSPredicate(format: "round == %d", self.dataSource.round))
-        array.append(NSPredicate(format: "month == %d", self.dataSource.month))
-        array.append(NSPredicate(format: "positionType == %d", self.dataSource.position.rawValue))
-        array.append(NSPredicate(format: "year == %d", self.dataSource.year))
-        
-        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
-        let list = try! self.context.fetch(fetchRequest) as! [BIBidPeriod]
-        
-        let monthArr = ["January", "February", "March", "April", "May", "June", "July", "August","September","October","November","December"]
-        let alert = AlertService.showAlert(title: "Download Bid Again?", message: "The Bid for \(monthArr[dataSource.month-1]) \(dataSource.base) \(dataSource.position) Round \(dataSource.round) already exists. If you download it again, all existing data, including bid receipts, will be removed.", actions: [(title: "Download Again", style: .default, handler: {_ in
-            
-            // Build file path
-            let tempDir = BIBidInfo.temporaryDirectory()
-            let originalFileName = BIBidInfo.shared.dataFilenameBase()
-            let fileURL = tempDir.appendingPathComponent(originalFileName)
-             
-            // Delete the file if it exists
-            let fileManager = FileManager.default
-            if fileManager.fileExists(atPath: fileURL.path) {
-                do {
-                    try fileManager.removeItem(at: fileURL)
-                    print("Deleted file: \(fileURL.lastPathComponent)")
-                } catch {
-                    print("Failed to delete file: \(error.localizedDescription)")
-                }
-            }
-//            if list.count > 0 {
-//                let obj = list[0]
-//                self.context.delete(obj)
-//                do {
-//                    try self.context.save()
-//                } catch {
-//                    print("Failed to save context after deletion: \(error)")
-//                }
-//                NotificationCenter.default.post(name: NSNotification.Name(ReloadCollectionView), object: nil)
-//                onRetry()
-//            }
-            let context = self.context
-            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = BIBidPeriod.fetchRequest()
-            fetchRequest.predicate = NSPredicate(format: "month == %d AND base == %@ AND positionType == %d AND round == %d AND year == %d",self.dataSource.month, self.dataSource.base, self.dataSource.position.rawValue, self.dataSource.round, self.dataSource.year)
-            let batchDelete = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-            batchDelete.resultType = .resultTypeObjectIDs
+        var predicates: [NSPredicate] = []
+        predicates.append(NSPredicate(format: "base == %@", self.dataSource.base))
+        predicates.append(NSPredicate(format: "round == %d", self.dataSource.round))
+        predicates.append(NSPredicate(format: "month == %d", self.dataSource.month))
+        predicates.append(NSPredicate(format: "positionType == %d", self.dataSource.position.rawValue))
+        predicates.append(NSPredicate(format: "year == %d", self.dataSource.year))
 
-            do {
-                let result = try context.execute(batchDelete) as? NSBatchDeleteResult
-                if let objectIDs = result?.result as? [NSManagedObjectID] {
-                    // Merge changes into context so collectionView sees deletion
-                    let changes: [AnyHashable: Any] = [NSDeletedObjectsKey: objectIDs]
-                    NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [context])
-                }
-                NotificationCenter.default.post(name: NSNotification.Name(ReloadCollectionView), object: nil)
-                print("Deleted BidPeriod objects using batch delete.")
-                onRetry()
-            } catch {
-                print("Failed batch delete: \(error)")
-            }
-            
-        }), (title: "Cancel", style: .cancel, handler: {_ in}), (title: "Open Bid", style: .default, handler: {_ in
-            self.view.hideActivityIndicator()
-            if list.count > 0 {
-                let obj = list[0]
-                CBGlobalMethods.shared.selectedBidPeriod = obj
-                UserDefaults.standard.setValue(obj.round!.intValue, forKey: "SelectedRound")
-                self.dismiss(animated: true)
-                self.loginActions()
-//                NotificationCenter.default.post(name: NSNotification.Name("openBidPeriodFromDownloadPage"), object: nil)
-            }
-            
-        })])
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        let list = (try? self.context.fetch(fetchRequest) as? [BIBidPeriod]) ?? []
+
+        // Build message using bidDocument filename
+        let fileURL = BIBidInfo().bidDocumentFileURL()
+        let bidFileName = fileURL.deletingPathExtension().lastPathComponent
+        let message = "The bid for\n\(bidFileName)\nalready exists. If you download it again, all existing data, including bid receipts, will be removed."
+
+        let alert = AlertService.showAlert(
+            title: "Download Bid Again?",
+            message: message,
+            actions: [
+                (title: "Download Again", style: .default, handler: { _ in
+                    // Delete the bid document file if present
+                    let fileManager = FileManager.default
+                    let bidDocURL = BIBidInfo().bidDocumentFileURL()
+                    
+                    if fileManager.fileExists(atPath: bidDocURL.path) {
+                        do {
+                            try fileManager.removeItem(at: bidDocURL)
+                            print("Deleted bid document file: \(bidDocURL.lastPathComponent)")
+                        } catch {
+                            print("Failed to delete bid document file: \(error.localizedDescription)")
+                        }
+                    }
+
+                    // Also remove the temporary data file if your flow uses it (optional)
+                     let tempDir = BIBidInfo.temporaryDirectory()
+                     let originalFileName = BIBidInfo.shared.dataFilenameBase()
+                     let tempFileURL = tempDir.appendingPathComponent(originalFileName)
+                     try? fileManager.removeItem(at: tempFileURL)
+
+                    // Batch delete existing BidPeriod objects matching the selection
+                    let context = self.context
+                    let fetchReq: NSFetchRequest<NSFetchRequestResult> = BIBidPeriod.fetchRequest()
+                    fetchReq.predicate = NSPredicate(format: "month == %d AND base == %@ AND positionType == %d AND round == %d AND year == %d",
+                                                    self.dataSource.month,
+                                                    self.dataSource.base,
+                                                    self.dataSource.position.rawValue,
+                                                    self.dataSource.round,
+                                                    self.dataSource.year)
+                    let batchDelete = NSBatchDeleteRequest(fetchRequest: fetchReq)
+                    batchDelete.resultType = .resultTypeObjectIDs
+
+                    do {
+                        let result = try context.execute(batchDelete) as? NSBatchDeleteResult
+                        if let objectIDs = result?.result as? [NSManagedObjectID] {
+                            let changes: [AnyHashable: Any] = [NSDeletedObjectsKey: objectIDs]
+                            NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [context])
+                        }
+                        NotificationCenter.default.post(name: NSNotification.Name(ReloadCollectionView), object: nil)
+                        print("Deleted BidPeriod objects using batch delete.")
+                        onRetry()
+                    } catch {
+                        print("Failed batch delete: \(error)")
+                    }
+                }),
+                (title: "Cancel", style: .cancel, handler: { _ in
+                    // nothing
+                }),
+                (title: "Open Bid", style: .default, handler: { _ in
+                    self.view.hideActivityIndicator()
+                    if let obj = list.first {
+                        CBGlobalMethods.shared.selectedBidPeriod = obj
+                        UserDefaults.standard.setValue(obj.round!.intValue, forKey: "SelectedRound")
+                        self.dismiss(animated: true)
+                        self.loginActions()
+                    }
+                })
+            ]
+        )
+
         self.present(alert, animated: true)
     }
     
@@ -1314,9 +1415,10 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         print("called login")
         let context = CoreDataManager.shared.persistentContainer.viewContext
                 let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
+                fetchRequest.sortDescriptors = [NSSortDescriptor(key: "created", ascending: false)]
                 do {
                     // Fetch bid periods and reverse to show newest first
-                    self.bidPeriodList = try context.fetch(fetchRequest).reversed()
+                    self.bidPeriodList = try context.fetch(fetchRequest)
                     CBGlobalMethods.shared.selectedBidPeriod = bidPeriodList[0]
                 } catch {
                     print("Failed to fetch bid periods: \(error)")
@@ -1333,9 +1435,9 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                 homeNav.view.layer.add(transition, forKey: kCATransition)
                 homeNav.pushViewController(docVC, animated: false)
             }
-        
     }
     
+ 
 //    MARK: Retrieve Awards Action
     func retriveAwardsAction() {
         guard let rawUserID = txtUserID.text, !rawUserID.isEmpty,
