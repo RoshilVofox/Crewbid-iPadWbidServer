@@ -18,6 +18,7 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
     @IBOutlet weak var btnPreset: UIButton!
     @IBOutlet weak var btnBids: UIButton!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var filterStackView: UIStackView!
     var sortsFetchController: NSFetchedResultsController<BILineSort> = NSFetchedResultsController()
     
     var bidPeriod: BIBidPeriod?
@@ -72,6 +73,8 @@ class CBLineSortsTVC: UIViewController, NSFetchedResultsControllerDelegate {
         tableView.isEditing = true
         calendarData = calendarData.initWithBidPeriod(bidPeriod: bidPeriod!)!
         updateBidListCount()
+        self.filterStackView.layer.borderColor = UIColor.black.cgColor
+        self.filterStackView.layer.borderWidth = 1
     }
     
     @objc func setupLayoutView() {

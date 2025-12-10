@@ -177,7 +177,7 @@ class RectangularProgressView: UIView {
         label.text = "0%"
         label.font = UIFont.boldSystemFont(ofSize: 14)
         label.textAlignment = .center
-        label.textColor = .black
+        label.textColor = .label
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()

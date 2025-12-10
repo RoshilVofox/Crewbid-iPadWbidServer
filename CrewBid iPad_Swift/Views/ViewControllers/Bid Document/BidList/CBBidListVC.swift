@@ -1962,8 +1962,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     }
     
     func manageViewSelection(){
-        var bgColor: UIColor = .white
-        bgColor = .secondarySystemBackground
+        let bgColor = UIColor.secondarySystemBackground
         if UserDefaults.standard.bool(forKey: "isSelectedCalanderView"){
             self.btnNormalView.backgroundColor = bgColor
             self.btnCalendarView.backgroundColor = .orange
@@ -2541,7 +2540,10 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
         cell.showsReorderControl = true
         cell.fromScrachpadView = true
         cell.refreshTripButtons(highlightFlag: true, calendarWidth: self.view.frame.size.width - 160)
-        
+        // Use the system dynamic background (adapts to light/dark automatically)
+        cell.contentView.backgroundColor = .systemBackground
+        cell.backgroundView?.backgroundColor = .systemBackground
+        cell.selectedBackgroundView?.backgroundColor = .systemBackground
         cell.tripButtonActionBlock = {(_ tripButton: CBTripButton) -> Void in
             DispatchQueue.main.async {
                 self.showTripTextPopover(for: tripButton)

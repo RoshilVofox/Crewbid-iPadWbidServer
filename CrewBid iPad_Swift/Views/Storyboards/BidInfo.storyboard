@@ -1046,7 +1046,7 @@
                             </label>
                             <wkWebView hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fCH-RJ-nwO">
                                 <rect key="frame" x="0.0" y="60" width="600" height="440"/>
-                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                 <wkWebViewConfiguration key="configuration">
                                     <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
                                     <wkPreferences key="preferences"/>
@@ -1328,26 +1328,21 @@
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Checking Internet Connection:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4sp-qb-ra0">
                                                 <rect key="frame" x="0.0" y="0.0" width="370" height="64"/>
-                                                <color key="backgroundColor" name="contentBgColor"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Downloading Bid Files:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AeY-0N-n2r">
                                                 <rect key="frame" x="0.0" y="64" width="370" height="64"/>
-                                                <color key="backgroundColor" name="contentBgColor"/>
-                                                <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reading Trip Files:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tDe-9Q-71G">
                                                 <rect key="frame" x="0.0" y="128" width="370" height="64"/>
-                                                <color key="backgroundColor" name="contentBgColor"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="19"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Reading Line Files:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lD7-JL-nMW">
                                                 <rect key="frame" x="0.0" y="192" width="370" height="64"/>
-                                                <color key="backgroundColor" name="contentBgColor"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
@@ -1358,7 +1353,7 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                         </subviews>
-                                        <color key="backgroundColor" name="contentBgColor"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="VJL-vm-3IF">
                                         <rect key="frame" x="460" y="0.0" width="0.0" height="320"/>
@@ -1378,7 +1373,6 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="0.0" height="64"/>
                                                     </activityIndicatorView>
                                                 </subviews>
-                                                <color key="backgroundColor" name="contentBgColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="bottom" secondItem="O7V-wO-2ev" secondAttribute="bottom" id="OPL-CV-flU"/>
                                                     <constraint firstAttribute="trailing" secondItem="O7V-wO-2ev" secondAttribute="trailing" id="Vgw-OY-pm8"/>
@@ -1403,7 +1397,6 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="0.0" height="64"/>
                                                     </activityIndicatorView>
                                                 </subviews>
-                                                <color key="backgroundColor" name="contentBgColor"/>
                                                 <constraints>
                                                     <constraint firstItem="lIR-Qz-o3b" firstAttribute="centerY" secondItem="dgj-Rh-VMY" secondAttribute="centerY" id="9ah-wf-Dsf"/>
                                                     <constraint firstAttribute="bottom" secondItem="oxc-4V-2Wl" secondAttribute="bottom" id="ATG-au-R2c"/>
@@ -1428,7 +1421,6 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="0.0" height="64"/>
                                                     </activityIndicatorView>
                                                 </subviews>
-                                                <color key="backgroundColor" name="contentBgColor"/>
                                                 <constraints>
                                                     <constraint firstItem="VwY-ga-Sx1" firstAttribute="centerX" secondItem="T2i-ms-PKD" secondAttribute="centerX" id="1nN-wX-1gZ"/>
                                                     <constraint firstItem="aNz-qf-Lo3" firstAttribute="top" secondItem="T2i-ms-PKD" secondAttribute="top" id="70t-WP-d9R"/>
@@ -1453,7 +1445,6 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="0.0" height="64"/>
                                                     </activityIndicatorView>
                                                 </subviews>
-                                                <color key="backgroundColor" name="contentBgColor"/>
                                                 <constraints>
                                                     <constraint firstAttribute="trailing" secondItem="ZJu-In-0HQ" secondAttribute="trailing" id="3Zf-pG-VKJ"/>
                                                     <constraint firstItem="ZJu-In-0HQ" firstAttribute="leading" secondItem="nyg-uP-lGo" secondAttribute="leading" id="7OH-Bn-bqH"/>
@@ -1478,7 +1469,6 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="0.0" height="64"/>
                                                     </activityIndicatorView>
                                                 </subviews>
-                                                <color key="backgroundColor" name="contentBgColor"/>
                                                 <constraints>
                                                     <constraint firstItem="Kp7-wl-owu" firstAttribute="leading" secondItem="lyL-iw-XrR" secondAttribute="leading" id="5v2-Sk-PMB"/>
                                                     <constraint firstItem="w9R-tP-Nmh" firstAttribute="centerX" secondItem="lyL-iw-XrR" secondAttribute="centerX" id="792-CJ-wgZ"/>
@@ -1489,10 +1479,10 @@
                                                 </constraints>
                                             </view>
                                         </subviews>
-                                        <color key="backgroundColor" name="contentBgColor"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </stackView>
                                 </subviews>
-                                <color key="backgroundColor" name="contentBgColor"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="320" id="Lh9-3k-jDi"/>
                                 </constraints>
@@ -1848,23 +1838,20 @@
         <namedColor name="TopViewColor">
             <color red="0.70200002193450928" green="0.70200002193450928" blue="0.70200002193450928" alpha="0.90299999713897705" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
-        <namedColor name="contentBgColor">
-            <color red="0.99607843137254903" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </namedColor>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="secondarySystemBackgroundColor">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray3Color">
-            <color red="0.7803921568627451" green="0.7803921568627451" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.78039215689999997" green="0.78039215689999997" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

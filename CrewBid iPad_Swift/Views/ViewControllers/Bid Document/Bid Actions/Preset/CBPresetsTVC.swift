@@ -12,6 +12,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
     
     @IBOutlet weak var btnBidListCount: UIButton!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var filterStackView: UIStackView!
     
     var presetsArray: [Any] = []
     var bidPeriod: BIBidPeriod?
@@ -43,6 +44,8 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
     
     func setupUI(){
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
+        self.filterStackView.layer.borderColor = UIColor.black.cgColor
+        self.filterStackView.layer.borderWidth = 1
         updateBidListCount()
         setPrests()
     }

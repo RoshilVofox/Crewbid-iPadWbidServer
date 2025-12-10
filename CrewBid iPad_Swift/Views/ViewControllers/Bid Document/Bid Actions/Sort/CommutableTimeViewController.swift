@@ -14,7 +14,11 @@ class CommutableTimeViewController: UIViewController, KUIPopOverUsable, UICollec
     @IBOutlet weak var lblMonthandYear: UILabel!
     @IBOutlet weak var lblCommuteCity: UILabel!
     @IBOutlet weak var lblBase: UILabel!
-    @IBOutlet weak var navTitle: UINavigationItem!
+    @IBOutlet weak var herbLocalView: UIView!
+    @IBOutlet weak var herbLbl: UILabel!
+    @IBOutlet weak var localLbl: UILabel!
+    @IBOutlet weak var herbLocalBtn: UIButton!
+    @IBOutlet weak var lblTitle: UILabel!
     
     var bidPeriod: BIBidPeriod?
     var commuteCityValue = ""
@@ -72,30 +76,73 @@ class CommutableTimeViewController: UIViewController, KUIPopOverUsable, UICollec
         lblMonthandYear.text = strDate
         arrCommutTimeFetched = generateCommutableTimeData()
         if isNonStop {
-            self.navTitle.title = "Arr & Dep Times (Non stop)"
+            self.lblTitle.text = "Arr & Dep Times (Non stop)"
         }
+        
+        herbLocalView.layer.borderWidth = 1
+        herbLocalView.layer.borderColor = UIColor.black.cgColor
+        herbLocalView.layer.cornerRadius = 11
+    
+        herbLbl.layer.borderColor = UIColor.white.cgColor
+        herbLbl.layer.borderWidth = 0.4
+        herbLbl.layer.cornerRadius = 10
+        herbLbl.clipsToBounds = true
+        
+        localLbl.layer.borderColor = UIColor.white.cgColor
+        localLbl.layer.borderWidth = 0.4
+        localLbl.layer.cornerRadius = 10
+        localLbl.clipsToBounds = true
+        
+        if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.herbTime.rawValue {
+            herbLbl.backgroundColor = .purple
+            herbLbl.textColor = .white
+            localLbl.backgroundColor = .white
+            localLbl.textColor = .black
+        }else{
+            localLbl.backgroundColor = .purple
+            localLbl.textColor = .white
+            herbLbl.backgroundColor = .white
+            herbLbl.textColor = .black
+        }
+        
+        
     }
     
     func generateCommutableTimeData() -> NSMutableArray {
-        let fetchedObjects = (bidPeriod!.commuteTime!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "bidDay", ascending: true)]) as! [CommuteTime]
         let arrModifiedValues = NSMutableArray()
+        
+        guard let bidPeriod = self.bidPeriod else { return arrModifiedValues }
+        let useHerbTime = UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.herbTime.rawValue
+        let herbTZ = TimeZone(secondsFromGMT: 0)!
+        let commuteTZ = CBUtils.timeZone(forAirportCode: self.commuteCityValue)
+        let targetTZ = useHerbTime ? herbTZ : commuteTZ
+
+
+        let fetchedObjects = (bidPeriod.commuteTime!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "bidDay", ascending: true)]) as! [CommuteTime]
+
         for i in 0..<fetchedObjects.count {
             autoreleasepool {
                 let dateFormat = DateFormatter()
                 dateFormat.dateFormat = "HHmm"
-                if let timezone = TimeZone(secondsFromGMT: 0) {
-                    dateFormat.timeZone = timezone as TimeZone
-                }
+//                if let timezone = TimeZone(secondsFromGMT: 0) {
+//                    dateFormat.timeZone = timezone as TimeZone
+//                }
+
+                dateFormat.timeZone = targetTZ
+                
                 let commuteTime = fetchedObjects[i]
                 let depDate = commuteTime.latestDeparture!
-                var arrivalDate = commuteTime.earliestArrivel!
-                var latestDeparture = dateFormat.string(from: depDate as Date)
-                var earliestArrival = dateFormat.string(from: arrivalDate as Date)
+                let arrivalDate = commuteTime.earliestArrivel!
+                let latestDeparture = dateFormat.string(from: depDate as Date)
+                let earliestArrival = dateFormat.string(from: arrivalDate as Date)
                 let dateFormateForDate = DateFormatter()
                 dateFormateForDate.dateFormat = "dd"
-                if let timezone = TimeZone(secondsFromGMT: 0) {
-                    dateFormateForDate.timeZone = timezone as TimeZone
-                }
+//                if let timezone = TimeZone(secondsFromGMT: 0) {
+//                    dateFormateForDate.timeZone = timezone as TimeZone
+//                }
+//                
+
+                dateFormateForDate.timeZone = targetTZ
                 
                 let biDay = commuteTime.bidDay!
                 var day: String? = nil
@@ -109,9 +156,35 @@ class CommutableTimeViewController: UIViewController, KUIPopOverUsable, UICollec
         }
         return arrModifiedValues
     }
+
+
+
     
     @IBAction func btnDoneAction(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func herbLocalBtnAction(_ sender: Any) {
+        if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.herbTime.rawValue {
+            UserDefaults.standard.set(CBTimeZoneSetting.localTime.rawValue, forKey: kCBTimeZoneSetting)
+           // btnTimeToggle.setTitle("Local Time", for: .normal)
+            localLbl.backgroundColor = .purple
+            localLbl.textColor = .white
+            herbLbl.backgroundColor = .white
+            herbLbl.textColor = .black
+        }
+        else {
+            UserDefaults.standard.set(CBTimeZoneSetting.herbTime.rawValue, forKey: kCBTimeZoneSetting)
+            //btnTimeToggle.setTitle("Herb Time", for: .normal)
+            herbLbl.backgroundColor = .purple
+            herbLbl.textColor = .white
+            localLbl.backgroundColor = .white
+            localLbl.textColor = .black
+        }
+        arrCommutTimeFetched = generateCommutableTimeData()
+        collectionView.reloadData()
+        NotificationCenter.default.post(name: NSNotification.Name("updateLocalHerbSwitchUI"), object: nil)
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
     }
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {

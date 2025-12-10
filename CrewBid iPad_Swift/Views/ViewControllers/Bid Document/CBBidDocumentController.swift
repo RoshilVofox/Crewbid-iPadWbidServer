@@ -66,6 +66,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     var alertShouldDisplay: Bool = true
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setupLayout()
         updateLocalHerbSwitchUI()
         self.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
         self.context = CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!
@@ -127,6 +128,34 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         } else {
             self.btnSync.isHidden = true
         }
+    }
+    
+    
+    func setupLayout(){
+        self.leftContainerView.clipsToBounds = true
+        self.leftContainerView.layer.cornerRadius = 5
+        self.rightContainerView.clipsToBounds = true
+        self.rightContainerView.layer.cornerRadius = 5
+        self.leftShadowView.clipsToBounds = true
+        self.leftShadowView.layer.cornerRadius = 5
+        self.rightShadowView.clipsToBounds = true
+        self.rightShadowView.layer.cornerRadius = 5
+        self.bidView.clipsToBounds = true
+        self.bidView.layer.cornerRadius = 5
+        self.btnWbidMax.clipsToBounds = true
+        self.btnWbidMax.layer.cornerRadius = self.btnWbidMax.frame.height / 2
+        self.btnWbidMax.layer.borderColor = UIColor.black.cgColor
+        self.btnWbidMax.layer.borderWidth = 1
+        self.btnSwaptimizer.clipsToBounds = true
+        self.btnSwaptimizer.layer.cornerRadius = self.btnSwaptimizer.frame.height / 2
+        self.btnSwaptimizer.layer.borderColor = UIColor.black.cgColor
+        self.btnSwaptimizer.layer.borderWidth = 1
+        self.btnEOM.layer.borderColor = UIColor.black.cgColor
+        self.btnEOM.layer.borderWidth = 1
+        self.btnSync.layer.cornerRadius = self.btnSync.frame.height / 2
+        self.btnSync.layer.borderColor = UIColor.black.cgColor
+        self.btnSync.layer.borderWidth = 1
+
     }
     
     
@@ -990,16 +1019,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @IBAction func localHerbAction(_ sender: Any) {
         if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.herbTime.rawValue{
             UserDefaults.standard.set(CBTimeZoneSetting.localTime.rawValue, forKey: kCBTimeZoneSetting)
-//            localLabel.backgroundColor = UIColor.purple
-//            localLabel.textColor = UIColor.white
-//            herbLabel.backgroundColor = UIColor.white
-//            herbLabel.textColor = UIColor.black
         }else{
             UserDefaults.standard.set(CBTimeZoneSetting.herbTime.rawValue, forKey: kCBTimeZoneSetting)
-//            localLabel.backgroundColor = UIColor.white
-//            localLabel.textColor = UIColor.black
-//            herbLabel.backgroundColor = UIColor.purple
-//            herbLabel.textColor = UIColor.white
         }
         updateLocalHerbSwitchUI()
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
