@@ -765,7 +765,12 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
             let formatString = String(format: "(rptLessThanentered == NO AND rlsGreaterThanEntered == NO)")
             format = NSPredicate(format: formatString)
             return format!
-        }else{
+        }
+        else if BIFilterRuleCategory.BIPDOFilterRuleCategory.rawValue == category {
+            let formatString = String(format: "isPdoFiltered == NO")
+            format = NSPredicate(format: formatString)
+        }
+        else{
             let formatString = String(format: "%@ %@ $%@", self.keyPath!,self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
             format = NSPredicate(format: formatString)
         }

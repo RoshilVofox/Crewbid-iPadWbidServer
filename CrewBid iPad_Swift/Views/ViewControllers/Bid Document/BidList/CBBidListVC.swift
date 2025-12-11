@@ -71,6 +71,12 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         self.sortButtonColorChange()
         NotificationCenter.default.addObserver(self, selector: #selector(self.returnLine(_:)), name: NSNotification.Name(rawValue: "CBReturnLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.reloadBidListView(_:)), name: NSNotification.Name(rawValue: "ReloadBidListView"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesBelowNotification"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesAboveNotification"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBMoveSelectedNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.moveInsertionIndex(_:)), name: NSNotification.Name(rawValue: "CBInsertLinesAboveNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.moveInsertionIndex(_:)), name: NSNotification.Name(rawValue: "CBInsertLinesBelowNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.moveSelectedLinesToInsertionIndex), name: NSNotification.Name(rawValue: "CBMoveSelectedNotification"), object: nil)
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -95,7 +101,6 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     }
     
     deinit {
-        print("💀 deinit — removing observer")
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesBelowNotification"), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesAboveNotification"), object: nil)
     }
@@ -180,7 +185,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         NotificationCenter.default.addObserver(self, selector: #selector(self.unfreezeTopLines(_:)), name: NSNotification.Name(rawValue: "CBUnFreezeLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.deselectAllLines), name: NSNotification.Name(rawValue: "CBDeselectAllLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.moveSelectedLinesToInsertionIndex), name: NSNotification.Name(rawValue: "CBMoveSelectedNotification"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.addObserverAfterClosingExpandedView), name: NSNotification.Name(rawValue: "AddObserverAfterClosingExpandedView"), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(self.addObserverAfterClosingExpandedView), name: NSNotification.Name(rawValue: "AddObserverAfterClosingExpandedView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.undoAction), name: NSNotification.Name(rawValue: "CBUndoNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.redoAction), name: NSNotification.Name(rawValue: "CBRedoNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.deleteSelectedLines), name: NSNotification.Name(rawValue: "CBReturnSelectedLinesNotification"), object: nil)
@@ -484,9 +489,9 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
 //        UserDefaults.standard.setValue(true, forKey: "isShouldScrollToInsertionIndex")
 //        self.updateBidList()
 //    }
-    @objc func addObserverAfterClosingExpandedView() {
-        NotificationCenter.default.addObserver(self, selector: #selector(self.moveSelectedLinesToInsertionIndex), name: NSNotification.Name(rawValue: "CBMoveSelectedNotification"), object: nil)
-    }
+//    @objc func addObserverAfterClosingExpandedView() {
+//        
+//    }
     @objc func moveSelectedLinesToInsertionIndex() {
         // Move selected lines to the insertion index
 
@@ -953,6 +958,8 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesAboveNotification"), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBMoveSelectedNotification"), object: nil)
     }
+    
+    
     
     private func removeASortUI() {
         // removing A-Sort properties

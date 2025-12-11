@@ -217,6 +217,7 @@ extension BILine {
     @NSManaged public var vOBne: NSNumber?
     @NSManaged public var vOFcu: NSNumber?
     @NSManaged public var vOFne: NSNumber?
+    @NSManaged public var isPdoFiltered: NSNumber?
 
     
 

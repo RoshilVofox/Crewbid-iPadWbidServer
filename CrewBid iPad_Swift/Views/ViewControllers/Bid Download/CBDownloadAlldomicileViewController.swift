@@ -348,83 +348,85 @@ class CBDownloadAlldomicileViewController: UIViewController {
         }
         print(arrBase)
         self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "deleting...")
-        let context = CoreDataManager.shared.managedObjectContext
-        let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
-        
-                do {
-                    let bidPeriods = try context.fetch(fetchRequest)
-        
-                    for obj in bidPeriods {
-                        self.dataSource.month = (obj.month as? Int)!
-                        self.dataSource.base = obj.base!
-                        self.dataSource.round = (obj.round as? Int)!
-                        let rawValue = obj.positionType!.intValue
-                        self.dataSource.position = BICrewPositionType(rawValue: rawValue)!
-                        
-                        // Build file path
-                        let tempDir = BIBidInfo.temporaryDirectory()
-                        let originalFileName = BIBidInfo.shared.bidDataFilename()
-                        let fileNameWithoutSuffix: String
-                        if let range = originalFileName.range(of: ".737", options: .backwards) {
-                            fileNameWithoutSuffix = String(originalFileName[..<range.lowerBound])
-                        } else {
-                            fileNameWithoutSuffix = originalFileName
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            let context = CoreDataManager.shared.managedObjectContext
+            let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
+            
+            do {
+                let bidPeriods = try context.fetch(fetchRequest)
+                
+                for obj in bidPeriods {
+                    self.dataSource.month = (obj.month as? Int)!
+                    self.dataSource.base = obj.base!
+                    self.dataSource.round = (obj.round as? Int)!
+                    let rawValue = obj.positionType!.intValue
+                    self.dataSource.position = BICrewPositionType(rawValue: rawValue)!
+                    
+                    // Build file path
+                    let tempDir = BIBidInfo.temporaryDirectory()
+                    let originalFileName = BIBidInfo.shared.bidDataFilename()
+                    let fileNameWithoutSuffix: String
+                    if let range = originalFileName.range(of: ".737", options: .backwards) {
+                        fileNameWithoutSuffix = String(originalFileName[..<range.lowerBound])
+                    } else {
+                        fileNameWithoutSuffix = originalFileName
+                    }
+                    let fileURL = tempDir.appendingPathComponent(fileNameWithoutSuffix)
+                    
+                    // Delete the file if it exists
+                    let fileManager = FileManager.default
+                    if fileManager.fileExists(atPath: fileURL.path) {
+                        do {
+                            try fileManager.removeItem(at: fileURL)
+                            print("✅ Deleted file: \(fileURL.lastPathComponent)")
+                        } catch {
+                            print("❌ Failed to delete file: \(error.localizedDescription)")
                         }
-                        let fileURL = tempDir.appendingPathComponent(fileNameWithoutSuffix)
-
-                          // Delete the file if it exists
-                          let fileManager = FileManager.default
-                          if fileManager.fileExists(atPath: fileURL.path) {
-                              do {
-                                  try fileManager.removeItem(at: fileURL)
-                                  print("✅ Deleted file: \(fileURL.lastPathComponent)")
-                              } catch {
-                                  print("❌ Failed to delete file: \(error.localizedDescription)")
-                              }
-                          }
-                        context.delete(obj)
                     }
-        
-                    try context.save() // Save changes to persist deletion
-                    print("Successfully deleted all BIBidPeriod records.")
-                    NotificationCenter.default.post(name: NSNotification.Name("ReloadCollectionView"), object: nil)
-                    DispatchQueue.main.async {
-                        self.view.hideActivityIndicator()
-                    }
-//                    view.hideActivityIndicator()
-                    self.bidPeriodList = []
-                } catch {
-                    print("Failed to delete BIBidPeriod records: \(error)")
+                    context.delete(obj)
                 }
-        var position: BICrewPositionType = .FlightAttendant
-        if btnCp.isSelected {
-            position = .Captain
+                
+                try context.save() // Save changes to persist deletion
+                print("Successfully deleted all BIBidPeriod records.")
+                NotificationCenter.default.post(name: NSNotification.Name("ReloadCollectionView"), object: nil)
+                DispatchQueue.main.async {
+                    self.view.hideActivityIndicator()
+                }
+                //                    view.hideActivityIndicator()
+                self.bidPeriodList = []
+            } catch {
+                print("Failed to delete BIBidPeriod records: \(error)")
+            }
+            var position: BICrewPositionType = .FlightAttendant
+            if self.btnCp.isSelected {
+                position = .Captain
+            }
+            else if self.btnFo.isSelected {
+                position = .FirstOfficer
+            }
+            
+            dictionary["position"] = position
+            if self.btnFirstRound.isSelected {
+                dictionary["round"] = 1
+            }
+            if self.btnSecondRound.isSelected {
+                dictionary["round"] = 2
+            }
+            dictionary["month"] = Int(self.txtMonth.text!)
+            dictionary["bases"] = self.arrBase
+            dictionary["year"] = Int(self.txtYear.text!)
+            if self.btnBoth.isSelected == true {
+                dictionary["both"] = true
+            }
+            else {
+                dictionary["both"] = false
+            }
+            GlobalBidInfo.shared.employeeNumber = self.txtUserID.text!
+            print(dictionary)
+            UserDefaults.standard.set(true, forKey: "isSecretForAllDomicileDownloadEnabled")
+            GlobalBidInfo.shared.allDomicileDownloadDictionary = dictionary
+            self.authChecking()
         }
-        else if btnFo.isSelected {
-            position = .FirstOfficer
-        }
-        
-        dictionary["position"] = position
-        if btnFirstRound.isSelected {
-            dictionary["round"] = 1
-        }
-        if btnSecondRound.isSelected {
-            dictionary["round"] = 2
-        }
-        dictionary["month"] = Int(txtMonth.text!)
-        dictionary["bases"] = arrBase
-        dictionary["year"] = Int(txtYear.text!)
-        if btnBoth.isSelected == true {
-            dictionary["both"] = true
-        }
-        else {
-            dictionary["both"] = false
-        }
-        GlobalBidInfo.shared.employeeNumber = txtUserID.text!
-        print(dictionary)
-        UserDefaults.standard.set(true, forKey: "isSecretForAllDomicileDownloadEnabled")
-        GlobalBidInfo.shared.allDomicileDownloadDictionary = dictionary
-        self.authChecking()
         
         
     }

@@ -410,6 +410,7 @@ var BIFilterRuleFriDepartTimeVariablesKey: String = "FRI_DEPART"
 var BIFilterRuleFriReturnTimeVariablesKey: String = "FRI_RETURN"
 var BIFilterRuleSatDepartTimeVariablesKey: String = "SAT_DEPART"
 var BIFilterRuleSatReturnTimeVariablesKey: String = "SAT_RETURN"
+var BIFilterRuleStepVariablesKey = "STEP"
 
 var BIFilterRuleReportVariablesKey = "reportValue"
 var BIFilterRuleReleaseVariablesKey = "releaseValue"
@@ -473,6 +474,7 @@ var BIFilterRuleCheckstateIsNoMidVariablesKey = "isNoMid"
     case BI1or2OFFFilterRuleCategory    //44
     case BIReserveOffDaysFilterRuleCategory    //45
     case BIRedEyeTripsFilterRuleCategory    //46
+    case BIPDOFilterRuleCategory //47
     
     func name () -> Int {
         switch self
@@ -564,6 +566,7 @@ var BIFilterRuleCheckstateIsNoMidVariablesKey = "isNoMid"
         case .BI1or2OFFFilterRuleCategory: return 44
         case .BIReserveOffDaysFilterRuleCategory: return 45
         case .BIRedEyeTripsFilterRuleCategory: return 46
+        case .BIPDOFilterRuleCategory: return 47
         }
     }
     

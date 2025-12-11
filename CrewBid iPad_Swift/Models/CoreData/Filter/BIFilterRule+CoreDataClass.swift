@@ -35,6 +35,9 @@ enum PopoverViewType: Int {
     case CommutingManualNoMidInfo
     case CommutingManualNoMidInfoSort
     case RuleValue
+    case pdoBeforeorAfter
+    case pdoCities
+    case pdoValue
 }
 
 @objc enum BITypeFilterRuleType : Int {

@@ -217,6 +217,7 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     var kOverNightBulkRuleCell = "OvernightBulkRuleCell"
     var kReportReleaseRuleCell = "ReportReleaseCell"
     var kworkBlockRuleCell = "CBWorkBlockRuleCell"
+    var kpdoRuleCell = "PDORuleCell"
     
     //    seting filter identifier
     func cellIdentifier(for category: BIFilterRuleCategory.RawValue, type: Int) -> String? {
@@ -301,6 +302,8 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
             
         case BIFilterRuleCategory.BIWorkBlockCountCategory.rawValue:
             cellIdentifier = kComparisonFilterRuleCell
+        case BIFilterRuleCategory.BIPDOFilterRuleCategory.rawValue:
+            cellIdentifier = kpdoRuleCell
         default:
             cellIdentifier = kComparisonFilterRuleCell
         }
@@ -631,6 +634,13 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
             ruleCell?.filterRule = rule!
             ruleCell?.bidPeriod = bidPeriod
             ruleCell?.configureOvernightBulkCell()
+        }
+        else if BIFilterRuleCategory.BIPDOFilterRuleCategory.rawValue == rule?.category?.intValue {
+            useComparisonCell = false
+            let ruleCell = cell as? CBPDORuleCell
+            ruleCell?.bidPeriod = bidPeriod
+            ruleCell?.calendarData = calendarData
+            ruleCell?.setFilterRule(rule)
         }
         
         if useComparisonCell {

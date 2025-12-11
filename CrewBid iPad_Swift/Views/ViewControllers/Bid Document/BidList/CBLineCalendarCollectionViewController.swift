@@ -734,7 +734,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                     continue
                 }
                 else{
-                    tripLength = vacay.length!.intValue
+                    tripLength = vacay.length!.intValue - 1
                 }
                 let column = index % 7
                 var buttonLength = 0
@@ -918,7 +918,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                 }else if index > (daysInCalendar - 1) {
                     continue
                 }else{
-                    tripLength = vacay.fvLength!.intValue
+                    tripLength = vacay.fvLength!.intValue - 1
                 }
                 let column = index % 7
                 var buttonLength = 0
