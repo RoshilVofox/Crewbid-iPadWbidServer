@@ -943,7 +943,7 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
                     continue
                 }
                 else {
-                    tripLength = vacay.length as! Int
+                    tripLength = vacay.length!.intValue - 1
                 }
                 
                 if index < 0 {
@@ -1071,7 +1071,7 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
                     continue
                 }
                 else {
-                    tripLength = vacay.fvLength as! Int
+                    tripLength = (vacay.fvLength?.intValue ?? 0) - 1
                 }
                 
                 let column: Int = index % 7

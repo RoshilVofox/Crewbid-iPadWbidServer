@@ -1020,7 +1020,7 @@ class CBAwardLineCalendarViewController: UIViewController, UIGestureRecognizerDe
                     continue
                 }
                 else{
-                    tripLength = vacay.length!.intValue
+                    tripLength = vacay.length!.intValue - 1
                 }
                 let column = index % 7
                 var buttonLength = 0

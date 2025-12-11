@@ -15,6 +15,7 @@
 		353FC68F2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */; };
 		353FC6912DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */; };
 		35428C292DEEE9F2009E7AC5 /* CBUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35428C282DEEE9F2009E7AC5 /* CBUserDefaults.swift */; };
+		354A3F292EE7FA5600C74117 /* CBPDORuleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354A3F282EE7FA5600C74117 /* CBPDORuleCell.swift */; };
 		354F38612EDEAFFD00973BF5 /* CBVacationDataVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 354F38602EDEAFFD00973BF5 /* CBVacationDataVC.swift */; };
 		357E313F2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357E313E2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift */; };
 		357F66402E5829E3000273BE /* CBCommutability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 357F663F2E5829E3000273BE /* CBCommutability.swift */; };
@@ -418,6 +419,7 @@
 		353FC68E2DD60719002CEBCB /* CBSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
 		353FC6902DD60735002CEBCB /* CBConfirmSubmitEmployeeNumberVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBConfirmSubmitEmployeeNumberVC.swift; sourceTree = "<group>"; };
 		35428C282DEEE9F2009E7AC5 /* CBUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUserDefaults.swift; sourceTree = "<group>"; };
+		354A3F282EE7FA5600C74117 /* CBPDORuleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPDORuleCell.swift; sourceTree = "<group>"; };
 		354F38602EDEAFFD00973BF5 /* CBVacationDataVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBVacationDataVC.swift; sourceTree = "<group>"; };
 		357E313E2E3E05EE00CE1E71 /* CBMonthToMonthAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBMonthToMonthAlertVC.swift; sourceTree = "<group>"; };
 		357F663F2E5829E3000273BE /* CBCommutability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCommutability.swift; sourceTree = "<group>"; };
@@ -1246,6 +1248,7 @@
 				F41EBE082DC4DB20001413DE /* CBUserFlagRuleCell.swift */,
 				F41EBE092DC4DB20001413DE /* CBWeekdayRuleCell.swift */,
 				F41EBE0A2DC4DB20001413DE /* CBWorkBlockRuleCell.swift */,
+				354A3F282EE7FA5600C74117 /* CBPDORuleCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -2289,6 +2292,7 @@
 				F41EBF572DC4DB20001413DE /* EmbeddedBidActionsVC.swift in Sources */,
 				F41EBF582DC4DB20001413DE /* EmbeddedCredentialVC.swift in Sources */,
 				F4C6F93A2DCB78770092C00C /* SimplePing.m in Sources */,
+				354A3F292EE7FA5600C74117 /* CBPDORuleCell.swift in Sources */,
 				F41EBF592DC4DB20001413DE /* EmbeddedLineImporterVC.swift in Sources */,
 				F41EBF5A2DC4DB20001413DE /* EmbeddedShowCAPVC.swift in Sources */,
 				F41EBF5B2DC4DB20001413DE /* CBAmPmRuleCell.swift in Sources */,

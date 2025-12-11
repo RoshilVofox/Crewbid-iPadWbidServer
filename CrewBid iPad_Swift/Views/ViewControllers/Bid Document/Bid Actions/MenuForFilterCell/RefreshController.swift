@@ -150,7 +150,14 @@ class RefreshController: UIViewController, UITableViewDataSource, UITableViewDel
         {
             size = CGSize(width: 120.0, height: CGFloat(arrCellParameters.count * 44))
         }
-        else if popOverType == PopoverViewType.cityPopUp
+        else if popOverType == PopoverViewType.pdoBeforeorAfter
+        {
+            size = CGSize(width: 140, height: 102)
+        }
+        else if  popOverType == PopoverViewType.pdoValue{
+            size = CGSize(width: 130.0, height: CGFloat(arrCellParameters.count * 44))
+        }
+        else if popOverType == PopoverViewType.cityPopUp  || popOverType == PopoverViewType.pdoCities
         {
             if filterRule?.category?.intValue == BIFilterRuleCategory.BIDeadheadsFilterRuleCategory.rawValue {
                 size = CGSize(width: 100.0, height: CGFloat(menuItems.count * 44))
@@ -228,7 +235,7 @@ class RefreshController: UIViewController, UITableViewDataSource, UITableViewDel
         else if popOverType == PopoverViewType.MoveFAPositions {
             rowsCount = arrFAPositions.count
         }
-        else if popOverType == PopoverViewType.comparisonButton || popOverType == PopoverViewType.valuesButton || popOverType == PopoverViewType.cityPopUp || popOverType == PopoverViewType.CommutabilityFirstCell || popOverType == PopoverViewType.CommutabilitySecondCell || popOverType == PopoverViewType.CommutabilityThirdCell || popOverType == PopoverViewType.CommutabilityFourthCell || popOverType == PopoverViewType.CommutingManualValueCell || popOverType == PopoverViewType.RuleValue {
+        else if popOverType == PopoverViewType.comparisonButton || popOverType == PopoverViewType.valuesButton || popOverType == PopoverViewType.cityPopUp || popOverType == PopoverViewType.CommutabilityFirstCell || popOverType == PopoverViewType.CommutabilitySecondCell || popOverType == PopoverViewType.CommutabilityThirdCell || popOverType == PopoverViewType.CommutabilityFourthCell || popOverType == PopoverViewType.CommutingManualValueCell || popOverType == PopoverViewType.RuleValue || popOverType == PopoverViewType.pdoBeforeorAfter || popOverType == PopoverViewType.pdoCities || popOverType == PopoverViewType.pdoValue {
             rowsCount = arrCellParameters.count
         }
         return rowsCount
@@ -314,7 +321,7 @@ class RefreshController: UIViewController, UITableViewDataSource, UITableViewDel
         else if popOverType == PopoverViewType.RuleValue {
             cell.textLabel?.text = arrCellParameters[indexPath.row] as? String
         }
-        else if popOverType == PopoverViewType.valuesButton {
+        else if popOverType == PopoverViewType.valuesButton || popOverType == PopoverViewType.pdoValue {
             cell.textLabel?.text = arrCellParameters[indexPath.row] as? String
         }
         else if popOverType == PopoverViewType.cityPopUp {
@@ -345,6 +352,13 @@ class RefreshController: UIViewController, UITableViewDataSource, UITableViewDel
         }
         else if popOverType == PopoverViewType.CommutingManualValueCell {
             cell.textLabel?.text = String(describing: arrCellParameters[indexPath.row])
+        }
+        
+        else if popOverType == PopoverViewType.pdoBeforeorAfter{
+            cell.textLabel?.text =  String(describing: arrCellParameters[indexPath.row])
+        }
+        else if popOverType == PopoverViewType.pdoCities{
+            cell.textLabel?.text =  String(describing: arrCellParameters[indexPath.row])
         }
         
         return cell
@@ -707,6 +721,55 @@ class RefreshController: UIViewController, UITableViewDataSource, UITableViewDel
             CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
             self.CommutingManualDelegate?.valueBtnAction(indexPath.row)
             self.dismissPopover(animated: true)
+        }
+        else if popOverType == PopoverViewType.pdoBeforeorAfter {
+            if let filterRule = filterRule,
+               filterRule.category?.intValue == BIFilterRuleCategory.BIPDOFilterRuleCategory.rawValue {
+
+                if let selected = arrCellParameters[indexPath.row] as? String {
+                    
+                    Delegate?.didSelected(itemName: selected)
+                    dismissPopover(animated: true)
+                    return
+                }
+            }
+        }
+
+        
+        else if popOverType == PopoverViewType.pdoCities {
+            if let filterRule = filterRule,
+               filterRule.category?.intValue == BIFilterRuleCategory.BIPDOFilterRuleCategory.rawValue {
+
+                if let city = arrCellParameters[indexPath.row] as? String {
+                  
+                    Delegate?.didSelected(itemName: city)
+                    dismissPopover(animated: true)
+                    return
+                }
+            }
+        }
+
+        else if popOverType == PopoverViewType.pdoValue {
+
+            self.bidPeriod.loadedPresetIdentifier = nil
+            CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
+            CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = NSNumber(booleanLiteral: true)
+
+            guard let filterRule = filterRule,
+                  filterRule.category?.intValue == BIFilterRuleCategory.BIPDOFilterRuleCategory.rawValue else {
+                dismissPopover(animated: true)
+                return
+            }
+
+            guard let selectedTime = arrCellParameters[indexPath.row] as? String else {
+                dismissPopover(animated: true)
+                return
+            }
+
+         
+            Delegate?.didSelected(itemName: selectedTime)
+            dismissPopover(animated: true)
+            return
         }
     }
     

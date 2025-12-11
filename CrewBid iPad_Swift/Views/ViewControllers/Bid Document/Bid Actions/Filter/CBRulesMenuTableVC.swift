@@ -325,6 +325,20 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
                 variables[BIFilterRuleCheckstateReleaseVariablesKey] = NSNumber(value: false)
                 rule.variables = variables
             }
+            else if category == BIFilterRuleCategory.BIPDOFilterRuleCategory.rawValue {
+
+                let defaultVars: [String: Any] = [
+                    "CITY": "",
+                    "DAY": "",
+                    BIFilterRuleValueVariablesKey: 915,
+                    BIFilterRuleRangeStartVariablesKey: 180,
+                    BIFilterRuleRangeEndVariablesKey: 1620,
+                    BIFilterRuleStepVariablesKey: 15
+                ]
+
+                rule.variables = defaultVars as NSDictionary
+                rule.comparison = NSNumber(value: 1)
+            }
             else if (BIFilterRuleCategory.BIUserFlagFilterRuleCategory.rawValue == category) {
                 
                 let SET = Set([CBUserFlagType.none.rawValue, CBUserFlagType.yellow.rawValue, CBUserFlagType.orange.rawValue, CBUserFlagType.red.rawValue, CBUserFlagType.green.rawValue, CBUserFlagType.blue.rawValue, CBUserFlagType.brown.rawValue, CBUserFlagType.pink.rawValue])

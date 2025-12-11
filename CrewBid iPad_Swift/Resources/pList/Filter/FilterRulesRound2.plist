@@ -1521,6 +1521,35 @@
 		</dict>
 		<dict>
 			<key>category</key>
+			<integer>47</integer>
+			<key>type</key>
+			<integer>2</integer>
+			<key>name</key>
+			<string>PDO</string>
+			<key>keyPath</key>
+			<string>pdo</string>
+			<key>variables</key>
+			<dict>
+				<key>RANGESTART</key>
+				<string>180</string>
+				<key>RANGEEND</key>
+				<string>1620</string>
+				<key>VALUE</key>
+				<integer>915</integer>
+				<key>STEP</key>
+				<string>15</string>
+				<key>CITY</key>
+				<string>Any Cities</string>
+				<key>DAY</key>
+				<string>Any Days</string>
+			</dict>
+			<key>comparison</key>
+			<integer>1</integer>
+			<key>abbreviation</key>
+			<string>PDO</string>
+		</dict>
+		<dict>
+			<key>category</key>
 			<integer>46</integer>
 			<key>type</key>
 			<integer>1</integer>

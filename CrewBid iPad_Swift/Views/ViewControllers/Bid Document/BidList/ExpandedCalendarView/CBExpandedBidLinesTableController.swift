@@ -130,7 +130,7 @@ class CBExpandedBidLinesTableController: BaseViewController, UIPopoverPresentati
 
     @IBAction func btnCloseAction(_ sender: Any) {
         (sender as? UIButton)?.isEnabled = false
-        NotificationCenter.default.post(name: NSNotification.Name("AddObserverAfterClosingExpandedView"), object: nil)
+//        NotificationCenter.default.post(name: NSNotification.Name("AddObserverAfterClosingExpandedView"), object: nil)
         self.dismiss(animated: true)
     }
     
