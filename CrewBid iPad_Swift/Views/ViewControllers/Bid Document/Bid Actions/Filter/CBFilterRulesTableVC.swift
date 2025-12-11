@@ -22,6 +22,7 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     @IBOutlet weak var btnBids: UIButton!
     @IBOutlet weak var btnBidListCount: UIButton!
     @IBOutlet weak var objFilterTableView: UITableView!
+    @IBOutlet weak var filterStackView: UIStackView!
     var bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
     var disabledCellIndexPaths = NSMutableArray()
     var context: NSManagedObjectContext?
@@ -66,6 +67,8 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     
     func setupUI(){
         btnBidListCount.layer.cornerRadius = btnBidListCount.frame.height/2
+        self.filterStackView.layer.borderColor = UIColor.black.cgColor
+        self.filterStackView.layer.borderWidth = 1
         updateBidListCount()
     }
     

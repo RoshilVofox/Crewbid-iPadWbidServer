@@ -67,7 +67,7 @@ class BISwaBidDataParsing{
             self.tripsData = CBUtils.readJSONStringFromFileForArray(tripFileName)
 
         } else {
-            // Non-historic → dictionaries
+
             if let lineDict = CBUtils.readJSONString(fromFile:lineFileName),
                let tripDict = CBUtils.readJSONString(fromFile:tripFileName) {
 
@@ -364,7 +364,7 @@ class BISwaBidDataParsing{
         self.bidPeriod?.positionType = NSNumber(value: self.dataSource?.position.rawValue ?? 0)
         self.bidPeriod?.round = NSNumber(value: self.dataSource?.round ?? 0)
         self.bidPeriod?.appVersion = CBUtils.AppVersion()
-
+        self.bidPeriod?.created = Date()
         if let empNumString = self.dataSource?.employeeNumber,
            let empNum = Int(empNumString) {
             self.bidPeriod?.crewIdentifier = NSNumber(value: empNum)
@@ -488,11 +488,11 @@ class BISwaBidDataParsing{
             switch result{
             case .success(let dict):
                 
-                guard let context = self.dataSource?.managedObjectContext else {
-                    print("Missing managedObjectContext")
+                guard let bidPeriod = self.bidPeriod,
+                      let context = bidPeriod.managedObjectContext else {
+                    print("Missing bidPeriod or its managedObjectContext")
                     return
                 }
-
 
                 let metaData = MetaData(context: context)
 
@@ -516,9 +516,6 @@ class BISwaBidDataParsing{
                 print(error)
             }
         }
-        
-        
-        
     }
     
     private func readTripsForReserve(line: BILine,tripDict: [String: Any],moc: NSManagedObjectContext) {

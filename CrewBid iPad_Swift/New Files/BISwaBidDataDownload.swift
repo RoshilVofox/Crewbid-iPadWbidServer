@@ -547,21 +547,21 @@ class BISwaBidDataDownload{
                             var accumulated = responseDict
                             if pageNumber == 0 {
                                 accumulated = resultDict
+                            }else{
+                                
+                                if
+                                    let embedded = resultDict["_embedded"] as? [String: Any],
+                                    let newItems = embedded[keyPath] as? [Any]
+                                {
+                                    var embeddedResponse = accumulated["_embedded"] as? [String: Any] ?? [:]
+                                    var currentItems = embeddedResponse[keyPath] as? [Any] ?? []
+                                    
+                                    currentItems.append(contentsOf: newItems)
+                                    
+                                    embeddedResponse[keyPath] = currentItems
+                                    accumulated["_embedded"] = embeddedResponse
+                                }
                             }
-
-                            if
-                                let embedded = resultDict["_embedded"] as? [String: Any],
-                                let newItems = embedded[keyPath] as? [Any]
-                            {
-                                var embeddedResponse = accumulated["_embedded"] as? [String: Any] ?? [:]
-                                var currentItems = embeddedResponse[keyPath] as? [Any] ?? []
-
-                                currentItems.append(contentsOf: newItems)
-
-                                embeddedResponse[keyPath] = currentItems
-                                accumulated["_embedded"] = embeddedResponse
-                            }
-
                             let hasNext = self.hasNextPage(resultDict)
 
                             if hasNext {

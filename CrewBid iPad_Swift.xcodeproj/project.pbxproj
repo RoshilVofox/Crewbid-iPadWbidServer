@@ -343,6 +343,8 @@
 		F4400BD62DD9BA370066C7E0 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4400BD52DD9BA370066C7E0 /* APIService.swift */; };
 		F4400BD82DD9DB1C0066C7E0 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4400BD72DD9DB1C0066C7E0 /* AuthService.swift */; };
 		F4400BDA2DD9E5D60066C7E0 /* CBLoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4400BD92DD9E5D60066C7E0 /* CBLoginViewModel.swift */; };
+		F4425CA52EE4330800389B4B /* MetaData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4425CA42EE4330800389B4B /* MetaData+CoreDataProperties.swift */; };
+		F4425CA62EE4330800389B4B /* MetaData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4425CA32EE4330800389B4B /* MetaData+CoreDataClass.swift */; };
 		F4615E0E2EA2448E00DF8F14 /* EmbeddedTripAwardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4615E0D2EA2448E00DF8F14 /* EmbeddedTripAwardViewController.swift */; };
 		F474F42E2E92407D00B940B7 /* CrewBid Privacy Policy.pdf in Resources */ = {isa = PBXBuildFile; fileRef = F474F42D2E92407D00B940B7 /* CrewBid Privacy Policy.pdf */; };
 		F474F4302E92408200B940B7 /* CrewBid License Agreement.pdf in Resources */ = {isa = PBXBuildFile; fileRef = F474F42F2E92408200B940B7 /* CrewBid License Agreement.pdf */; };
@@ -751,6 +753,8 @@
 		F4400BD52DD9BA370066C7E0 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		F4400BD72DD9DB1C0066C7E0 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		F4400BD92DD9E5D60066C7E0 /* CBLoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLoginViewModel.swift; sourceTree = "<group>"; };
+		F4425CA32EE4330800389B4B /* MetaData+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MetaData+CoreDataClass.swift"; sourceTree = "<group>"; };
+		F4425CA42EE4330800389B4B /* MetaData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MetaData+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F4615E0D2EA2448E00DF8F14 /* EmbeddedTripAwardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedTripAwardViewController.swift; sourceTree = "<group>"; };
 		F474F42D2E92407D00B940B7 /* CrewBid Privacy Policy.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "CrewBid Privacy Policy.pdf"; sourceTree = "<group>"; };
 		F474F42F2E92408200B940B7 /* CrewBid License Agreement.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = "CrewBid License Agreement.pdf"; sourceTree = "<group>"; };
@@ -1947,6 +1951,8 @@
 		F4CF5A1F2D891A3800A351DB = {
 			isa = PBXGroup;
 			children = (
+				F4425CA32EE4330800389B4B /* MetaData+CoreDataClass.swift */,
+				F4425CA42EE4330800389B4B /* MetaData+CoreDataProperties.swift */,
 				F42E4D3F2EE2D924000308E3 /* BITextFile+CoreDataClass.swift */,
 				F42E4D402EE2D924000308E3 /* BITextFile+CoreDataProperties.swift */,
 				F4D5B5832EC8518F006B7E4B /* SeniorityList+CoreDataClass.swift */,
@@ -2419,6 +2425,8 @@
 				F4E66E6E2E73FB540038D148 /* ChimpKit.m in Sources */,
 				F4CAAF892E70469E0094ADB6 /* SoapWebServiceController.swift in Sources */,
 				F41EBFAA2DC4DB20001413DE /* defenitionsViewController.swift in Sources */,
+				F4425CA52EE4330800389B4B /* MetaData+CoreDataProperties.swift in Sources */,
+				F4425CA62EE4330800389B4B /* MetaData+CoreDataClass.swift in Sources */,
 				F41EBFAB2DC4DB20001413DE /* faqViewController.swift in Sources */,
 				F41EBFAC2DC4DB20001413DE /* CBHelpItemsController.swift in Sources */,
 				35EFE82A2E53034900AFDF8F /* CBCommutingCellHelper.swift in Sources */,

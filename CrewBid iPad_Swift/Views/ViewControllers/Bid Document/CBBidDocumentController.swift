@@ -66,6 +66,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     var alertShouldDisplay: Bool = true
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setupLayout()
         updateLocalHerbSwitchUI()
         self.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
         self.context = CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!
@@ -127,6 +128,34 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         } else {
             self.btnSync.isHidden = true
         }
+    }
+    
+    
+    func setupLayout(){
+        self.leftContainerView.clipsToBounds = true
+        self.leftContainerView.layer.cornerRadius = 5
+        self.rightContainerView.clipsToBounds = true
+        self.rightContainerView.layer.cornerRadius = 5
+        self.leftShadowView.clipsToBounds = true
+        self.leftShadowView.layer.cornerRadius = 5
+        self.rightShadowView.clipsToBounds = true
+        self.rightShadowView.layer.cornerRadius = 5
+        self.bidView.clipsToBounds = true
+        self.bidView.layer.cornerRadius = 5
+        self.btnWbidMax.clipsToBounds = true
+        self.btnWbidMax.layer.cornerRadius = self.btnWbidMax.frame.height / 2
+        self.btnWbidMax.layer.borderColor = UIColor.black.cgColor
+        self.btnWbidMax.layer.borderWidth = 1
+        self.btnSwaptimizer.clipsToBounds = true
+        self.btnSwaptimizer.layer.cornerRadius = self.btnSwaptimizer.frame.height / 2
+        self.btnSwaptimizer.layer.borderColor = UIColor.black.cgColor
+        self.btnSwaptimizer.layer.borderWidth = 1
+        self.btnEOM.layer.borderColor = UIColor.black.cgColor
+        self.btnEOM.layer.borderWidth = 1
+        self.btnSync.layer.cornerRadius = self.btnSync.frame.height / 2
+        self.btnSync.layer.borderColor = UIColor.black.cgColor
+        self.btnSync.layer.borderWidth = 1
+
     }
     
     
@@ -886,10 +915,23 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @objc private func didDismissLatestNews() {
         if self.bidPeriod?.latestNewsDisplayed?.boolValue == true{
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {[weak self] in
-                self?.handleVacationData()
+//                self?.handleVacationData()
+                guard let self = self else { return }
+
+                if bidPeriod?.vactionWeekAlertDisplayed == nil {
+                    // Show the alert first
+                    self.showVacationWeekAlert { tappedOK in
+                        // Always call handleVacationData after alert
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            self.handleVacationData()
+                        }
+                    }
+                } else {
+                    // Alert already shown → directly process vacation data
+                    self.handleVacationData()
+                }
             }
         }
-        
     }
     
     func extractNumber(from text: String) -> String {
@@ -977,16 +1019,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @IBAction func localHerbAction(_ sender: Any) {
         if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.herbTime.rawValue{
             UserDefaults.standard.set(CBTimeZoneSetting.localTime.rawValue, forKey: kCBTimeZoneSetting)
-//            localLabel.backgroundColor = UIColor.purple
-//            localLabel.textColor = UIColor.white
-//            herbLabel.backgroundColor = UIColor.white
-//            herbLabel.textColor = UIColor.black
         }else{
             UserDefaults.standard.set(CBTimeZoneSetting.herbTime.rawValue, forKey: kCBTimeZoneSetting)
-//            localLabel.backgroundColor = UIColor.white
-//            localLabel.textColor = UIColor.black
-//            herbLabel.backgroundColor = UIColor.purple
-//            herbLabel.textColor = UIColor.white
         }
         updateLocalHerbSwitchUI()
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
@@ -1130,7 +1164,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     alertMessage += "\n\nF weeks generally are the lead-out month vacation.\n\nThere are opportunities with Month-To-Month Vacations, but there are ALSO limitations.\n\nWe suggest you read the following documents to improve your bidding knowledge."
                 }
                 if weekTypes.contains("A") && weekTypes.contains("E") {
-                    var alertMessage = "You have an `A` & `E` Week Vacation: \(weekTypeDate["aStartDate"] ?? "") - \(weekTypeDate["aEndDate"] ?? "") and \(weekTypeDate["eStartDate"] ?? "") - \(weekTypeDate["eEndDate"] ?? "")."
+                    alertMessage = "You have an `A` & `E` Week Vacation: \(weekTypeDate["aStartDate"] ?? "") - \(weekTypeDate["aEndDate"] ?? "") and \(weekTypeDate["eStartDate"] ?? "") - \(weekTypeDate["eEndDate"] ?? "")."
                     alertMessage += "\n\nA weeks generally are the lead-out month and E weeks generally are the lead-in month vacation.\n\nThere are opportunities with Month-To-Month Vacations, but there are ALSO limitations.\n\nWe suggest you read the following documents to improve your bidding knowledge."
                 }
             }
@@ -1138,27 +1172,15 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 completionHandler(true)
                 return
             }
-            let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
-            let monthToMonthAlert = storyboard.instantiateViewController(withIdentifier: "CBMonthToMonthAlertVC") as! CBMonthToMonthAlertVC
-            monthToMonthAlert.text = alertMessage
-            if didDisplayMonthToMonthAlert == false {
-                let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
-                let vc = storyboard.instantiateViewController(withIdentifier: "CBMonthToMonthAlertVC") as! CBMonthToMonthAlertVC
-                vc.text = alertMessage
-//                vc.delegate = self
-                vc.preferredContentSize = CGSize(width: 700, height: 600)
-//                vc.providesPresentationContextTransitionStyle = true
-//                vc.definesPresentationContext = true
-//                vc.modalPresentationStyle = UIModalPresentationStyle.overCurrentContext
-//                vc.view.backgroundColor = UIColor.clear
-//                    vc.onDoneBlock = { result in
-//                        dismissHandler(true)
-//                    }
-                self.present(vc, animated: true, completion: nil)
-            }
-            else {
+            let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "CBMonthToMonthAlertVC") as! CBMonthToMonthAlertVC
+            vc.text = alertMessage
+            vc.preferredContentSize = CGSize(width: 700, height: 600)
+            vc.modalPresentationStyle = .automatic
+            vc.onDismiss = { tappedOK in
                 completionHandler(true)
             }
+            self.present(vc, animated: true, completion: nil)
         }
         else {
             completionHandler(true)
@@ -1531,7 +1553,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         }
         
         else if vacationType == "WBIDF" {
-            if self.bidPeriod!.wbVacationfileF == nil {
+            if self.bidPeriod!.wbFileIntentF != nil {
                 self.eomWbid(vDL: vDL)
             }
             else {
@@ -2274,6 +2296,19 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     func seniorityAlert2() {
+        
+        let etopsDict = self.getEtopsLineCount()
+        let etopsCount = etopsDict["etops"] ?? 0
+        let etopsResCount = etopsDict["etopsRes"] ?? 0
+        
+        var etopsStr = ""
+        if self.bidPeriod?.isFABid() == true{
+            etopsStr = ""
+        }else{
+            etopsStr = String(format: "\n\nThere are %ld ETOPS Lines.\n There are %ld ETOPS Reserve Lines.", etopsCount, etopsResCount)
+        }
+        
+        
         if self.bidPeriod?.seniorityNumber?.intValue != 0 {
             if self.bidPeriod?.positionType?.intValue == 2{
                 let textFile = self.bidPeriod?.textFile(withName: BISeniorityListTextFileName)
@@ -2350,7 +2385,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                             if self.bidPeriod!.paperBidCount!.intValue > 0 {
                                 let paperCountAvoidedSeniorityListPosition = NSNumber(
                                     value: self.bidPeriod!.seniorityNumber!.intValue - self.bidPeriod!.paperBidCount!.intValue)
-                                alertText = String(format: "We found you in the Seniority List. You are number %@ out of %@\n\nThere are %@ paper bids above you, making you %@ on the bid list.", self.bidPeriod!.seniorityNumber!, self.totalNumberString!, self.bidPeriod!.paperBidCount!, paperCountAvoidedSeniorityListPosition)
+                                alertText = String(format: "We found you in the Seniority List. You are number %@ out of %@\n\nThere are %@ paper bids above you, making you %@ on the bid list.%@", self.bidPeriod!.seniorityNumber!, self.totalNumberString!, self.bidPeriod!.paperBidCount!, paperCountAvoidedSeniorityListPosition,etopsStr)
                             }else{
                                 alertText = String(format: "We found you in the Seniority List.\nYou are number %@ out of %@", self.bidPeriod!.seniorityNumber!, self.totalNumberString!)
                             }
@@ -2380,7 +2415,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                         if self.bidPeriod!.paperBidCount!.intValue > 0 {
                             let paperCountAvoidedSeniorityListPosition = NSNumber(
                                 value: self.bidPeriod!.seniorityNumber!.intValue - self.bidPeriod!.paperBidCount!.intValue)
-                            alertText = String(format: "We found you in the Seniority List. You are number %@ out of %@\n\nThere are %@ paper bids above you, making you %@ on the bid list.", self.bidPeriod!.seniorityNumber!,newDes, self.bidPeriod!.paperBidCount!, paperCountAvoidedSeniorityListPosition)
+                            alertText = String(format: "We found you in the Seniority List. You are number %@ out of %@\n\nThere are %@ paper bids above you, making you %@ on the bid list.%@", self.bidPeriod!.seniorityNumber!,newDes, self.bidPeriod!.paperBidCount!, paperCountAvoidedSeniorityListPosition,etopsStr)
                         }else{
                             alertText = String(format: "We found you in the Seniority List.\nYou are number %@ out of %@", self.bidPeriod!.seniorityNumber!, newDes)
                         }
@@ -2395,7 +2430,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     if self.bidPeriod!.paperBidCount!.intValue > 0 {
                         let paperCountAvoidedSeniorityListPosition = NSNumber(
                             value: self.bidPeriod!.seniorityNumber!.intValue - self.bidPeriod!.paperBidCount!.intValue)
-                        alertText = String(format: "We found you in the Seniority List. You are number %@ out of %@\n\nThere are %@ paper bids above you, making you %@ on the bid list.", self.bidPeriod!.seniorityNumber!, newDes, self.bidPeriod!.paperBidCount!, paperCountAvoidedSeniorityListPosition)
+                        alertText = String(format: "We found you in the Seniority List. You are number %@ out of %@\n\nThere are %@ paper bids above you, making you %@ on the bid list.%@", self.bidPeriod!.seniorityNumber!, newDes, self.bidPeriod!.paperBidCount!, paperCountAvoidedSeniorityListPosition,etopsStr)
                     }else{
                         alertText = String(format: "We found you in the Seniority List. You are number %@ out of %@", self.bidPeriod!.seniorityNumber!, newDes)
                     }
@@ -2459,6 +2494,22 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             }
         }
     }
+    
+    private func getEtopsLineCount() -> [String:Int]{
+        var etopsCount = 0
+        var etopsResCount = 0
+        for case let line as BILine in self.bidPeriod!.lines!{
+            if line.isETOPS?.intValue == 1{
+                etopsCount += 1
+            }
+            if line.isETOPSRES?.intValue == 1{
+                etopsResCount += 1
+            }
+        }
+        let dict = ["etops":etopsCount, "etopsRes": etopsResCount]
+        return dict
+    }
+    
     
     func resetDisplayTypesOfAllDays() {
         let fetchRequest: NSFetchRequest<BITrip> = BITrip.fetchRequest()
@@ -2905,7 +2956,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             btnEOM.setTitleColor(.white, for: .selected)
             let vacationEndDateDisp = formatter.string(from: exactVacEndDate)
             let alertMessage = "You have an `EOM` Vacation: \(vacationStartDateDisp) - \(vacationEndDateDisp).\n\nEOM weeks can affect the vacation pay in the current bid period and also the next month.\n\nWe have two documents regarding Month-to-Month vacations that also apply to EOM vacation weeks.\n\nWe suggest you read the following documents to improve your bidding knowledge."
-            let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
             if didDisplayMonthToMonthAlert == false {
                 let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
                 let vc = storyboard.instantiateViewController(withIdentifier: "CBMonthToMonthAlertVC") as! CBMonthToMonthAlertVC

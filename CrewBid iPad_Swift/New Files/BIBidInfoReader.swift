@@ -205,6 +205,19 @@ class BIBidInfoReader{
 //        
 //    }
     
+    private func createBidDocumentFile() -> Bool {
+        let fileURL = BIBidInfo().bidDocumentFileURL()
+
+        do {
+            try Data().write(to: fileURL, options: .atomic)
+            print("Created new bid document at:", fileURL.path)
+            return true
+        } catch {
+            print("Failed to create bid document:", error.localizedDescription)
+            return false
+        }
+    }
+    
     func checkForSeniorityVacationAndReadBidInfo(completion: @escaping (Bool) -> Void) {
         self.isNetworkNotAvailable = false
         self.isSeniorityVacParsingFailed = false
@@ -227,6 +240,12 @@ class BIBidInfoReader{
                 
                 guard app.connectedToInternet() else {
                     self.isNetworkNotAvailable = true
+                    
+                    guard self.createBidDocumentFile() else {
+                        finishParsingBid(success: false)
+                        return
+                    }
+                    
                     let success = self.readBidData()
                     finishParsingBid(success: success)
                     return
@@ -234,8 +253,15 @@ class BIBidInfoReader{
                 
                 if app.objNetworkType == .free {
                     self.isSeniorityVacParsingFailed = true
+                    
+                    guard self.createBidDocumentFile() else {
+                        finishParsingBid(success: false)
+                        return
+                    }
+                    
                     let success = self.readBidData()
                     finishParsingBid(success: success)
+                    return
                 } else {
                     APIService.shared.fetch(
                         urlString: EndPoint.shared.GetAllSeniorityListFormatFromDB,
@@ -255,6 +281,11 @@ class BIBidInfoReader{
                                         self.seniorityPositionDetails = dict
                                         break
                                     }
+                                }
+                                
+                                guard self.createBidDocumentFile() else {
+                                    finishParsingBid(success: false)
+                                    return
                                 }
                                 
                                 let success = self.readBidData()
@@ -2582,12 +2613,14 @@ class BIBidInfoReader{
                         BILineType.HardNonConUS.rawValue,
                         BILineType.NonEtopsConUS.rawValue,
                         BILineType.NonEtopsNonConUS.rawValue,
-                        BILineType.EtopsFAFirstRound.rawValue
+                        BILineType.EtopsFAFirstRound.rawValue,
+                        BILineType.BILineTypeLoDo.rawValue
                     ]
                 }else{
                     set = [
                         BILineType.HardConUS.rawValue,
-                        BILineType.HardNonConUS.rawValue
+                        BILineType.HardNonConUS.rawValue,
+                        BILineType.BILineTypeLoDo.rawValue
                     ]
                 }
             }else{
@@ -2600,13 +2633,15 @@ class BIBidInfoReader{
                         BILineType.NonEtopsReserve.rawValue,
                         BILineType.NonReserveEtops.rawValue,
                         BILineType.NonEtopsConUS.rawValue,
-                        BILineType.NonEtopsNonConUS.rawValue
+                        BILineType.NonEtopsNonConUS.rawValue,
+                        BILineType.BILineTypeLoDo.rawValue
                     ]
                 }else{
                     set = [
                         BILineType.HardConUS.rawValue,
                         BILineType.HardNonConUS.rawValue,
-                        BILineType.ReserveLine.rawValue
+                        BILineType.ReserveLine.rawValue,
+                        BILineType.BILineTypeLoDo.rawValue
                     ]
                 }
             }
@@ -4310,7 +4345,9 @@ class BIBidInfoReader{
                         containsNonConUSLeg = true
                         nonConUSLegs += 1
                         if self.bidPeriod!.isFirstRoundBid(){
-                            line.type = BILineType.HardNonConUS.rawValue as NSNumber
+                            if bidPeriod?.isSwaAPI?.boolValue == false {
+                                line.type = NSNumber(value: BILineType.HardNonConUS.rawValue)
+                            }
                             if line.isETOPS?.intValue == 0 && ((self.bidPeriod?.isEtopsLinesContainsInBid) != nil){
                                 line.type = BILineType.NonEtopsNonConUS.rawValue as NSNumber
                             }
@@ -4330,6 +4367,10 @@ class BIBidInfoReader{
                                 }
                             }
                         }
+                    
+                    if line.isLODO?.boolValue == true{
+                        line.type = BILineType.BILineTypeLoDo.rawValue as NSNumber
+                    }
                         // Duty time calculation
                         // Leg is reserve if depart and arrive cities are the same.
                     let isReserveLeg = legInfo.departCity == legInfo.arriveCity

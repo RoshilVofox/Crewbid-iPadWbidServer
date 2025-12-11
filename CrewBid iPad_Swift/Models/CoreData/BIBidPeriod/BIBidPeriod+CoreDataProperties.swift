@@ -1113,7 +1113,6 @@ extension BIBidPeriod : Identifiable {
         let daysOffBits: UInt64 = lineSort.variables!["DAYS_OFF_MONTH_BITS"] as! UInt64
         let array = Array(lines!)
         for (index, value) in array.enumerated() {
-//            print(index)
             let line:BILine = value as! BILine
             let flippedMonthBits: UInt64 = UInt64(Int(truncating: line.tripStartMonthBits!))
             let daysOffForLineBits: UInt64 = flippedMonthBits & daysOffBits
@@ -1222,7 +1221,8 @@ extension BIBidPeriod : Identifiable {
     
     func addBidReceiptWithText(bidReceiptText: String){
         let receipt = BIBidReceipt(context: self.managedObjectContext!)
-        receipt.setPropertiesWithReceiptText(receiptText: bidReceiptText)
+        receipt.setProperties(withReceiptTextForVerticalAlignment: bidReceiptText, bidPeriod: self)
+//        receipt.setProperties(withReceiptText: bidReceiptText)
         receipt.bidPeriod = self
         self.addToBidReceipts(receipt)
         self.lastBidDate = receipt.timeStamp

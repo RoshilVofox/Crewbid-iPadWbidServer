@@ -29,6 +29,7 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
     @IBOutlet weak var imgAccessoryView: UIImageView!
     @IBOutlet weak var selectionToggleButton: CBToggleButton!
     @IBOutlet weak var calendarCollectionView: CBLineCalendarCollectionView!
+    @IBOutlet weak var subView: UIView!
     
     var calendarData: BICalendarData?
     var line: BILine?

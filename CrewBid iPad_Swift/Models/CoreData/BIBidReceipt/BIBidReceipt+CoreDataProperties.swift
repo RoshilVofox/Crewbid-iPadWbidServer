@@ -33,8 +33,9 @@ extension BIBidReceipt {
 }
 
 extension BIBidReceipt : Identifiable {
-
-    func setPropertiesWithReceiptText(receiptText: String){
+    
+    //old format
+    func setProperties(withReceiptText receiptText: String){
         self.text = receiptText
         
         // String for holding condensed version of bid receipt. Temp numbers line
@@ -146,9 +147,212 @@ extension BIBidReceipt : Identifiable {
         }
     }
     
+    //new format
+    func setProperties(withReceiptTextForVerticalAlignment receiptText:String, bidPeriod:BIBidPeriod){
+        self.bidPeriod = bidPeriod
+        self.text = receiptText
+        
+        var condensedText = ""
+        
+        var bidLineNumbers:[String] = []
+        var optionalEmployeeNumbers:[String] = []
+        
+        var readFirstLine = true
+        var readBidLineNUmbers = false
+        var readOptionalEmployeeNumbers = false
+        var readFinalLine = false
+        var isValidReceipt = false
+        
+        
+        receiptText.enumerateLines { line, stop in
+            
+            // ----- FIRST LINE -----
+            
+            if readFirstLine{
+                self.submittedFor = line
+                condensedText += "\(line)\n"
+                readFirstLine = false
+                readBidLineNUmbers = true
+            }
+            
+            // ----- BID LINE NUMBERS -----
+            
+            else if readBidLineNUmbers{
+                if line == "*E"{
+                    condensedText += "\(line)\n"
+                    readBidLineNUmbers = false
+                    readOptionalEmployeeNumbers = true
+                }else{
+                    bidLineNumbers.append(line)
+                }
+            }
+            
+            // ----- OPTIONAL EMPLOYEE NUMBERS -----
+            
+            else if readOptionalEmployeeNumbers{
+                if line == "*E"{
+                    condensedText += "\(line)\n"
+                    readOptionalEmployeeNumbers = false
+                    readFinalLine = true
+                }else{
+                    optionalEmployeeNumbers.append(line)
+                    condensedText += "\(line)\n"
+                }
+            }
+            
+            // ----- FINAL LINE (submitted by, for, timestamp) -----
+            
+            else if readFinalLine{
+                
+                let brackets = CharacterSet(charactersIn: "[]")
+                let digits = CharacterSet.decimalDigits
+                
+                let formatter = DateFormatter()
+                formatter.dateFormat = "MM/dd/yy HH:mm:ss"
+                
+                let scanner = Scanner(string: line)
+                
+                _ = scanner.scanUpToString("SUBMITTED BY:")
+                _ = scanner.scanString("SUBMITTED BY:")
+                
+                scanner.charactersToBeSkipped = CharacterSet(charactersIn: "")
+                
+                _ = scanner.scanUpToCharacters(from: brackets)
+                _ = scanner.scanCharacters(from: brackets)
+                let submittedBy = scanner.scanUpToCharacters(from: brackets) ?? ""
+                
+                _ = scanner.scanUpToCharacters(from: digits)
+                let submittedFor = scanner.scanCharacters(from: digits) ?? ""
+                
+                _ = scanner.scanUpToCharacters(from: digits)
+                
+                let timeStamp = String(line[scanner.currentIndex...])
+                
+                if submittedFor == self.submittedFor {
+                    isValidReceipt = true
+                }
+                
+                self.submittedBy = submittedBy
+                self.submittedByUserId = self.extractNumber(from: submittedBy)
+                self.submittedForUserId = submittedFor
+                self.timeStamp = formatter.date(from: timeStamp)
+                self.submittedDateString = timeStamp
+                
+                self.optionalEmployeeNumbers = optionalEmployeeNumbers
+                condensedText += "\(line)\n"
+            }
+        }
+        
+        // Assign base properties
+        self.bidLineNumbers = bidLineNumbers
+        self.submittedLineNumbersString = bidLineNumbers.joined(separator: ",")
+        self.createdAt = Date()
+        
+        // ============ APPLY 5-COLUMN FORMATTER ============
+        
+        if bidLineNumbers.count > 0{
+            let vertical = self.formatLineNumbers(numbers: bidLineNumbers, maxColumns: 5)
+            condensedText += "\n\n"
+            condensedText += vertical
+        }
+        
+        self.condensedText = condensedText
+        
+        if !isValidReceipt{
+            AlertService.showAlertForTopVC(title: "Bid Receipt Error!", message: "The Bid receipt format was not correct...")
+        }
+    }
+    
+    //MARK: For PILOT - 5 Column Vertical Formatter
+    func formatLineNumbers(numbers:[String], maxColumns:Int) -> String{
+        
+        let totalCount = numbers.count
+        if totalCount == 0 { return ""}
+        
+        // Serial width
+        let maxSerialString = "\(totalCount)."
+        let maxSerialWidth = maxSerialString.length
+        
+        // Line number width
+        var maxLineWidth = 0
+        for line in numbers{
+            if line.length > maxLineWidth{
+                maxLineWidth = line.length
+            }
+        }
+        
+        // Row rules
+        var maxRowsPage1 = self.bidPeriod!.isFABid() ? 32 : 45
+        if self.optionalEmployeeNumbers.count == 1{
+            maxRowsPage1 = maxRowsPage1 - 1
+        }
+        if self.optionalEmployeeNumbers.count == 2{
+            maxRowsPage1 = maxRowsPage1 - 2
+        }
+        if self.optionalEmployeeNumbers.count == 3{
+            maxRowsPage1 = maxRowsPage1 - 3
+        }
+        
+        let maxRowsOther = self.bidPeriod!.isFABid() ? 37 : 51
+        
+        var output = ""
+        var index = 0
+        var pageNumber = 1
+        var prevPageOffset = 0
+        
+        while index < totalCount{
+            let currentMaxRows = (pageNumber == 1) ? maxRowsPage1 : maxRowsOther
+            
+            var columns: [[String]] = Array(repeating: [], count: maxColumns)
+            
+            // Fill columns top-to-bottom
+            for col in 0..<maxColumns{
+                for _ in 0..<currentMaxRows where index < totalCount{
+                    columns[col].append(numbers[index])
+                    index += 1
+                }
+            }
+            
+            // Render rows
+            for row in 0..<currentMaxRows{
+                for col in 0..<maxColumns{
+                    let colArray = columns[col]
+                    let value = (row < colArray.count) ? colArray[row] : ""
+                    
+                    let globalIndex = row + (col * currentMaxRows) + prevPageOffset + 1
+                    
+                    if globalIndex <= numbers.count{
+                        
+                        // --- SERIAL NUMBER (RIGHT-ALIGNED) ---
+                        let serial = "\(globalIndex)."
+                        let serialRightAligned = self.rightAlign(text: serial, width: maxSerialWidth)
+                        
+                        // LINE NUMBER (left-aligned)
+                        let valueLeftAligned = value.padding(toLength: maxLineWidth, withPad: " ", startingAt: 0)
+                        
+                        // FINAL MIX — NO SPACE between serial + line number
+                        output += "\(serialRightAligned)\(valueLeftAligned)   "
+                    }
+                }
+                output += "\n"
+            }
+            
+            if index < totalCount - 1 {
+                output += "\n"
+            }
+            
+            prevPageOffset += currentMaxRows * maxColumns
+            pageNumber += 1
+        }
+        
+        return output
+    }
+    
+    
+    
     func setProperties(withReceiptJson json: [String: Any]) {
         var condensedText = ""
-        var bidLineNumbers: [String] = []
+        let bidLineNumbers: [String] = []
         var isValidReceipt = false
 
         // Extract values safely
@@ -208,6 +412,7 @@ extension BIBidReceipt : Identifiable {
 
             // BID INFO
             condensedText += "BID INFO: \(position ?? "")  -  \(bidInfo ?? "")\n"
+            condensedText += "Receipt File Dated: \(self.convertLocalFormat()) (Local)\n"
             condensedText += "SUBMITTED BY: [\(submittedBy)]   \(employeeId)\n"
 
             if !buddyText.isEmpty {
@@ -222,9 +427,21 @@ extension BIBidReceipt : Identifiable {
                 self.submittedDateString = herbDateStr
 
                 condensedText += "Received At: \(herbDateStr)  [HERB]\n"
-                condensedText += "           : \(utcDateStr)  [UTC]\n\n"
+                condensedText += "           : \(utcDateStr)  [UTC]"
             }
-
+            
+            if condensedText.contains("JOB SHARE") || condensedText.contains("BUDDY ID:"){
+                condensedText += "\n\n"
+            }else{
+                condensedText += "\n\n\n"
+            }
+            
+            let alignedLineNo = self.formatForA4Columns(items: bidChoices, maxColumns: 5, font: UIFont(name: "Courier", size: 15)!)
+            condensedText += "\(alignedLineNo) "
+            
+            
+            
+            /*
             // MARK: Bid Choices
             let maxLength = bidChoices
                 .compactMap { $0["choice"] as? String }
@@ -243,7 +460,7 @@ extension BIBidReceipt : Identifiable {
                     condensedText += "\(padded) "
                 }
             }
-
+             */
             isValidReceipt = true
         }
 
@@ -261,6 +478,95 @@ extension BIBidReceipt : Identifiable {
         }
     }
     
+    func convertLocalFormat() -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.dateFormat = "EEEE, MMM dd, yyyy"
+        return formatter.string(from: Date())
+    }
+    
+    //MARK: Main Formatter
+    
+    func formatForA4Columns(items: [[String:Any]], maxColumns:Int, font:UIFont) -> String{
+        let totalCount = items.count
+        guard totalCount > 0 else { return "" }
+        
+        let maxSerialWidth = "\(totalCount).".count
+        
+        let maxRows = 36
+        let maxRowsPage1 = 30
+        
+        var maxLen = 0
+        
+        for dict in items{
+            let choice = (dict["choice"] as? String) ?? ""
+            if choice.count > maxLen { maxLen = choice.count }
+        }
+        
+        var finalOutput = ""
+        var index = 0
+        
+        var pageNumber = 1
+        var prevPageOffset = 0
+        
+        while index < items.count{
+            
+            let currentMaxRows = (pageNumber == 1) ? maxRowsPage1 : maxRows
+            
+            var columns: [[String]] = Array(repeating: [], count: maxColumns)
+            
+            for col in 0..<maxColumns{
+                for _ in 0..<currentMaxRows where index < items.count {
+                    let dict = items[index]
+                    let lineNo = dict["choice"] as? String ?? ""
+                    
+                    columns[col].append(lineNo)
+                    index += 1
+                }
+            }
+            
+            for row in 0..<currentMaxRows {
+                for col in 0..<maxColumns {
+                    let colArr = columns[col]
+                    let value = (row < colArr.count) ? colArr[row] : ""
+                    
+                    let globalIndex = row + (col * currentMaxRows) + prevPageOffset + 1
+                    
+                    if globalIndex <= totalCount {
+                        
+                        
+                        // --- SERIAL NUMBER (RIGHT-ALIGNED) ---
+                        let serial = "\(globalIndex)."
+                        let serialAligned = self.rightAlign(text: serial, width: maxSerialWidth)
+                        
+                        // --- VALUE (LEFT-ALIGNED) ---
+                        let valueAligned = value.padding(toLength: maxLen, withPad: " ", startingAt: 0)
+                        
+                        
+                        let combined = "\(serialAligned) \(valueAligned)"
+                        
+                        finalOutput.append(combined)
+                        finalOutput.append("  ")
+                    }
+                }
+                finalOutput.append("\n")
+            }
+            
+            if index < (items.count - 1) {
+                finalOutput.append("\n\n")
+            }
+            
+            prevPageOffset += currentMaxRows * maxColumns
+            pageNumber += 1
+        }
+        return finalOutput
+    }
+    
+    func rightAlign(text:String, width:Int) -> String{
+        let spaceCount = (width > text.length) ? (width - text.length) : 0
+        let spaces = String(repeating: " ", count: spaceCount)
+        return spaces.appending(text)
+    }
     
     func convertDateToUTC(_ dateStr: String) -> String {
         let isoFormatter = ISO8601DateFormatter()
@@ -300,6 +606,8 @@ extension BIBidReceipt : Identifiable {
         let digits = text.unicodeScalars.filter { CharacterSet.decimalDigits.contains($0) }
         return String(String.UnicodeScalarView(digits))
     }
+    
+
     
 }
 

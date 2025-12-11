@@ -118,80 +118,8 @@ class CBBiddataDownloadVC: BaseViewController {
             AppState.shared.mockDataYear = self.year
             
             self.showCredentialPage()
-//            if selectedPosition == "FA"{
-//                self.showCredentialPageFA()
-//            }else{
-//                self.showCredentialPageCP()
-//            }
         }
     }
-    
-//    func checkEarlyBiddingForFA(){
-//        let currentDate = Date()
-//        let units: Set<Calendar.Component> = [.hour, .day, .month, .year]
-//        var dc = Calendar.current.dateComponents(units, from: currentDate)
-//        dc.hour = 12
-//        dc.timeZone = TimeZone(identifier: "US/Central")!
-//        var dayString: String? = nil
-//        if selectedRound == 1 {
-//            if selectedPosition == "FA" {
-//                dc.day = 2
-//                dayString = "2nd"
-//            } else {
-//                dc.day = 4
-//                dayString = "4th"
-//            }
-//        } else {
-//            if selectedPosition == "FA" {
-//                dc.day = 11
-//                dayString = "11th"
-//            } else {
-//                dc.day = 17
-//                dayString = "17th"
-//            }
-//        }
-//        let bidReleaseDate: Date? = Calendar.current.date(from: dc)
-//        if bidReleaseDate?.compare(currentDate) == .orderedDescending {
-//            if !isHistoricBid{
-//                AlertService.showAlertForTopVC(title: "Early Bid Warning", message: "SWA guarantees that the lines will be released by noon Central Time on the \(dayString!).  Sometimes SWA releases the lines earlier. If SWA has not released the lines early, then attempting to download them now will result in a BID INFO UNAVAILABLE error.  So if you receive this error, try again later.", actions: [(title:"OK", style: .default, handler:{_ in
-//                    self.showCredentialPageFA()
-//                    CBGlobalMethods.shared.isFromCredentialPage = true
-//                    CBGlobalMethods.shared.isFromNewSubmission = false
-//                    CBGlobalMethods.shared.isFromAwards = false
-//                })])
-//            }else{
-//                self.showCredentialPageFA()
-//                CBGlobalMethods.shared.isFromCredentialPage = true
-//                CBGlobalMethods.shared.isFromNewSubmission = false
-//                CBGlobalMethods.shared.isFromAwards = false
-//            }
-//        }else{
-//            self.showCredentialPageFA()
-//            CBGlobalMethods.shared.isFromCredentialPage = true
-//            CBGlobalMethods.shared.isFromNewSubmission = false
-//            CBGlobalMethods.shared.isFromAwards = false
-//        }
-//    }
-    
-    func showCredentialPageFA(){
-        let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "CBWebViewCredentialPageVC") as! CBWebViewCredentialPageVC
-        vc.selectedRound = self.selectedRound
-        vc.isHistoricBid = self.isHistoricBid
-        vc.selectedDomicile = self.selectedDomicile
-        vc.empNum = self.empNum
-        vc.month = self.month
-        vc.year = self.year
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    func didDismissWebView() {
-//        self.showProgressView()
-//        self.startBidInfoDownload()
-    }
-    
-    
-
 
     
     func showCredentialPage(){
@@ -205,95 +133,22 @@ class CBBiddataDownloadVC: BaseViewController {
         }
         vc.selectedRound = self.selectedRound
         vc.empNum = self.empNum
-        vc.month = self.month
-        vc.year = self.year
+        let isQATest = UserDefaults.standard.bool(forKey: "isQATest")
+        if isQATest {
+            if let qaMonthStr = UserDefaults.standard.string(forKey: "QATestMonth"),
+               let qaYearStr  = UserDefaults.standard.string(forKey: "QATestYear"),
+               let qaM = Int(qaMonthStr),
+               let qaY = Int(qaYearStr) {
+                vc.month = qaM
+                vc.year = qaY
+            }
+        }else{
+            vc.month = self.month
+            vc.year = self.year
+        }
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
-    
-//    private func bidAlreadyExists() -> Bool {
-//        var status = false
-//        let context = CoreDataManager.shared.managedObjectContext
-//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
-//        let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: context)
-//        fetchRequest.entity = entity
-//        let positionCode = self.selectedPosition!
-//        let position = BICrewPositionType(from: positionCode)
-//        var array:[NSPredicate] = []
-//        array.append(NSPredicate(format: "base == %@", self.selectedDomicile!))
-//        array.append(NSPredicate(format: "round == %d", self.selectedRound!))
-//        array.append(NSPredicate(format: "month == %d", self.month!))
-//        array.append(NSPredicate(format: "positionType == %d", position!.rawValue))
-//        array.append(NSPredicate(format: "year == %d", self.year!))
-//        
-//        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
-//        let list = try! context.fetch(fetchRequest) as! [BIBidPeriod]
-//        if list.count > 0 {
-//            status = true
-//        }
-//        return status
-//    }
-//    
-//    private func showAlertForExistingBid(onRetry: @escaping () -> Void) {
-//        let fetchRequest = NSFetchRequest<NSFetchRequestResult>()
-//        let context = CoreDataManager.shared.managedObjectContext
-//        let positionCode = self.selectedPosition!
-//        let position = BICrewPositionType(from: positionCode)
-//        let entity = NSEntityDescription.entity(forEntityName: "BidPeriod", in: context)
-//        fetchRequest.entity = entity
-//        var array:[NSPredicate] = []
-//        array.append(NSPredicate(format: "base == %@", self.selectedDomicile!))
-//        array.append(NSPredicate(format: "round == %d", self.selectedRound!))
-//        array.append(NSPredicate(format: "month == %d", self.month!))
-//        array.append(NSPredicate(format: "positionType == %d", position!.rawValue))
-//        array.append(NSPredicate(format: "year == %d", self.year!))
-//        
-//        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
-//        let list = try! context.fetch(fetchRequest) as! [BIBidPeriod]
-//        
-//        let monthArr = ["January", "February", "March", "April", "May", "June", "July", "August","September","October","November","December"]
-//        let alert = AlertService.showAlert(title: "Download Bid Again?", message: "The Bid for \(monthArr[self.month!-1]) \(self.selectedDomicile!) \(position!) Round \(self.selectedRound!) already exists. If you download it again, all existing data, including bid receipts, will be removed.", actions: [(title: "Download Again", style: .default, handler: {_ in
-//            
-//            // Build file path
-//            let tempDir = BIBidInfo.temporaryDirectory()
-//            let originalFileName = BIBidInfo.shared.dataFilenameBase()
-//            let fileURL = tempDir.appendingPathComponent(originalFileName)
-//             
-//            // Delete the file if it exists
-//            let fileManager = FileManager.default
-//            if fileManager.fileExists(atPath: fileURL.path) {
-//                do {
-//                    try fileManager.removeItem(at: fileURL)
-//                    print("Deleted file: \(fileURL.lastPathComponent)")
-//                } catch {
-//                    print("Failed to delete file: \(error.localizedDescription)")
-//                }
-//            }
-//            if list.count > 0 {
-//                let obj = list[0]
-//                context.delete(obj)
-//                do {
-//                    try context.save()
-//                } catch {
-//                    print("Failed to save context after deletion: \(error)")
-//                }
-////                NotificationCenter.default.post(name: NSNotification.Name(ReloadCollectionView), object: nil)
-//                onRetry()
-//            }
-//            
-//        }), (title: "Cancel", style: .cancel, handler: {_ in}), (title: "Open Bid", style: .default, handler: {_ in
-//            if list.count > 0 {
-//                let obj = list[0]
-//                CBGlobalMethods.shared.selectedBidPeriod = obj
-//                UserDefaults.standard.setValue(obj.round!.intValue, forKey: "SelectedRound")
-//                self.dismiss(animated: true)
-//                self.loginActions()
-//                NotificationCenter.default.post(name: NSNotification.Name("openBidPeriodFromDownloadPage"), object: nil)
-//            }
-//            
-//        })])
-//        self.present(alert, animated: true)
-//    }
     
     
     
@@ -512,6 +367,9 @@ class CBBiddataDownloadVC: BaseViewController {
         }else{
             lblTitle.text = "New Bid Data"
         }
+
+        
+        
         let nextMonthDate = Calendar.current.date(byAdding: .month, value: 1, to: Date())!
         let indexMonth = Calendar.current.component(.month, from: nextMonthDate)
         let indexYear = Calendar.current.component(.year, from: nextMonthDate)
@@ -527,7 +385,12 @@ class CBBiddataDownloadVC: BaseViewController {
         
         
         if !isHistoricBid {
-            //Year view hiding for new bid period
+            let isQATest = UserDefaults.standard.bool(forKey: "isQATest")
+            if isQATest {
+                self.viewMonth.isHidden = true
+            }else{
+                self.viewMonth.isHidden = false
+            }
             viewYear.isHidden = true
             let btnArray : [UIButton] = [btnJAN,btnFEB,btnMAR,btnAPR,btnMAY,btnJUN,btnJUL,btnAUG,btnSEP,btnOCT,btnNOV,btnDEC]
             let monthInt = Calendar.current.component(.month, from: Date())
@@ -590,11 +453,25 @@ class CBBiddataDownloadVC: BaseViewController {
     
     //Automatic navigation
     private func proceedIfReady() {
+        var finalMonth = self.month
+        var finalYear  = self.year
+        
+        let isQATest = UserDefaults.standard.bool(forKey: "isQATest")
+        if isQATest {
+            if let qaMonthStr = UserDefaults.standard.string(forKey: "QATestMonth"),
+               let qaYearStr  = UserDefaults.standard.string(forKey: "QATestYear"),
+               let qaM = Int(qaMonthStr),
+               let qaY = Int(qaYearStr) {
+
+                finalMonth = qaM
+                finalYear = qaY
+            }
+        }
         guard let selectedDomicile = selectedDomicile,
               let selectedPosition = selectedPosition,
               let selectedRound = selectedRound,
-              let month = month,
-              let year = year else {
+              let month = finalMonth,
+              let year = finalYear else {
             return
         }
         
@@ -603,6 +480,7 @@ class CBBiddataDownloadVC: BaseViewController {
         AppData.shared.postion = selectedPosition
         
         let emp = UserDefaults.standard.string(forKey: kCBDefaultEmployeeNumberKey) ?? ""
+
         print("Base:\(selectedDomicile) Position:\(selectedPosition) Rnd:\(selectedRound) EmpNo:\(self.empNum ?? emp) Month:\(month) Year:\(year)")
         
         GlobalBidInfo.shared.base = selectedDomicile
@@ -617,10 +495,5 @@ class CBBiddataDownloadVC: BaseViewController {
         AppState.shared.mockDataMonth = month
         AppState.shared.mockDataYear = year
         self.showCredentialPage()
-//        if selectedPosition == "FA"{
-//            self.showCredentialPageFA()
-//        }else{
-//            self.showCredentialPageCP()
-//        }
     }
 }

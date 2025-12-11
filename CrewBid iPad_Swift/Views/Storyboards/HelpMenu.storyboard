@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="tWM-Yx-dV9">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="tWM-Yx-dV9">
     <device id="ipad10_9rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -52,13 +52,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="764" height="605"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="taG-nd-ztR" userLabel="header">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="taG-nd-ztR" userLabel="header">
                                 <rect key="frame" x="0.0" y="0.0" width="764" height="50"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a1V-MD-dJW">
-                                        <rect key="frame" x="24" y="4" width="45" height="42"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a1V-MD-dJW">
+                                        <rect key="frame" x="16" y="2.5" width="45" height="45"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="45" id="SMe-dh-hVm"/>
+                                            <constraint firstAttribute="width" constant="45" id="uW6-3p-IDF"/>
+                                        </constraints>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" image="NewBid-navbar-xcancelbutton">
                                             <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -67,19 +69,37 @@
                                             <action selector="btnDismissAction:" destination="eyb-dD-XIO" eventType="touchUpInside" id="1X3-3R-Bok"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Help Menu (Crew Bid Version 7.34.5)" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="s2L-wF-9kA">
-                                        <rect key="frame" x="80" y="4" width="604" height="42"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Help Menu (Crew Bid Version 7.34.5)" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="s2L-wF-9kA">
+                                        <rect key="frame" x="214.5" y="4" width="335.5" height="42"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="42" id="fa9-I2-wzN"/>
+                                        </constraints>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="20"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rry-67-PMo">
+                                        <rect key="frame" x="714" y="0.0" width="50" height="50"/>
+                                        <color key="backgroundColor" red="0.70196078431372544" green="0.70196078431372544" blue="0.70196078431372544" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="50" id="ABA-cp-ghb"/>
+                                            <constraint firstAttribute="height" constant="50" id="EeG-3P-hig"/>
+                                        </constraints>
+                                    </view>
                                 </subviews>
-                                <color key="backgroundColor" name="TopViewColor"/>
+                                <color key="backgroundColor" red="0.70200002193450928" green="0.70200002193450928" blue="0.70200002193450928" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstItem="s2L-wF-9kA" firstAttribute="centerY" secondItem="taG-nd-ztR" secondAttribute="centerY" id="Mho-ky-xri"/>
+                                    <constraint firstItem="s2L-wF-9kA" firstAttribute="centerX" secondItem="taG-nd-ztR" secondAttribute="centerX" id="NdL-Dc-7Tm"/>
+                                    <constraint firstAttribute="height" constant="50" id="PDb-7Y-8Cz"/>
+                                    <constraint firstItem="a1V-MD-dJW" firstAttribute="centerY" secondItem="taG-nd-ztR" secondAttribute="centerY" id="VzH-fY-mwb"/>
+                                    <constraint firstItem="rry-67-PMo" firstAttribute="centerY" secondItem="taG-nd-ztR" secondAttribute="centerY" id="Zuw-mE-L7P"/>
+                                    <constraint firstAttribute="trailing" secondItem="rry-67-PMo" secondAttribute="trailing" id="f5Q-gQ-ST6"/>
+                                    <constraint firstItem="a1V-MD-dJW" firstAttribute="leading" secondItem="taG-nd-ztR" secondAttribute="leading" constant="16" id="gd9-Ln-PTd"/>
+                                </constraints>
                             </view>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Bnu-ae-wIY">
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Bnu-ae-wIY">
                                 <rect key="frame" x="52" y="74" width="660" height="482"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="JBS-B3-SMf">
                                     <size key="itemSize" width="234" height="183"/>
@@ -130,48 +150,27 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6c1-qV-cPF">
-                                <rect key="frame" x="0.0" y="326" width="75" height="279"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="75" id="Xfm-i7-AaP"/>
-                                </constraints>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain"/>
-                                <connections>
-                                    <action selector="btnSecretBidDownload:" destination="eyb-dD-XIO" eventType="touchUpInside" id="SkK-IR-Tdb"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pEN-bQ-tKu">
-                                <rect key="frame" x="689" y="326" width="75" height="279"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="75" id="NeT-aW-76g"/>
-                                </constraints>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain"/>
-                                <connections>
-                                    <action selector="btnSecretBidDownload:" destination="eyb-dD-XIO" eventType="touchUpInside" id="U4j-8s-7Nf"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="i9z-BB-wGN"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="pEN-bQ-tKu" firstAttribute="top" secondItem="KFc-4E-ECO" secondAttribute="top" constant="326" id="QUb-Z4-21h"/>
-                            <constraint firstItem="6c1-qV-cPF" firstAttribute="top" secondItem="KFc-4E-ECO" secondAttribute="top" constant="326" id="XQz-8I-gry"/>
-                            <constraint firstItem="pEN-bQ-tKu" firstAttribute="trailing" secondItem="i9z-BB-wGN" secondAttribute="trailing" id="bLa-9j-3Z5"/>
-                            <constraint firstAttribute="bottom" secondItem="6c1-qV-cPF" secondAttribute="bottom" id="doO-Qj-6kF"/>
-                            <constraint firstItem="6c1-qV-cPF" firstAttribute="leading" secondItem="i9z-BB-wGN" secondAttribute="leading" id="iUX-U1-ZCX"/>
-                            <constraint firstAttribute="bottom" secondItem="pEN-bQ-tKu" secondAttribute="bottom" id="xkq-Ho-JaP"/>
+                            <constraint firstItem="Bnu-ae-wIY" firstAttribute="top" secondItem="taG-nd-ztR" secondAttribute="bottom" constant="24" id="CLY-q7-lkp"/>
+                            <constraint firstItem="Bnu-ae-wIY" firstAttribute="leading" secondItem="i9z-BB-wGN" secondAttribute="leading" constant="52" id="GQI-3O-dPH"/>
+                            <constraint firstItem="i9z-BB-wGN" firstAttribute="bottom" secondItem="Bnu-ae-wIY" secondAttribute="bottom" constant="24" id="MUj-Al-PtA"/>
+                            <constraint firstItem="taG-nd-ztR" firstAttribute="trailing" secondItem="i9z-BB-wGN" secondAttribute="trailing" id="RYJ-Kl-RqP"/>
+                            <constraint firstItem="taG-nd-ztR" firstAttribute="top" secondItem="KFc-4E-ECO" secondAttribute="top" id="crJ-ay-ADN"/>
+                            <constraint firstItem="Bnu-ae-wIY" firstAttribute="centerX" secondItem="KFc-4E-ECO" secondAttribute="centerX" id="diK-TI-Tos"/>
+                            <constraint firstItem="taG-nd-ztR" firstAttribute="leading" secondItem="i9z-BB-wGN" secondAttribute="leading" id="vhw-7K-c6l"/>
+                            <constraint firstItem="i9z-BB-wGN" firstAttribute="trailing" secondItem="Bnu-ae-wIY" secondAttribute="trailing" constant="52" id="yqM-Nn-HmH"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="LrL-jg-9FM"/>
                     <size key="freeformSize" width="764" height="605"/>
                     <connections>
-                        <outlet property="btnSecretBidload1" destination="6c1-qV-cPF" id="g4h-e8-dZo"/>
-                        <outlet property="btnSecretBidload2" destination="pEN-bQ-tKu" id="ZXH-sl-tkC"/>
                         <outlet property="closeBtn" destination="a1V-MD-dJW" id="TEc-kG-G6K"/>
                         <outlet property="collectionView" destination="Bnu-ae-wIY" id="Qd6-nW-pjN"/>
                         <outlet property="menuTitle" destination="s2L-wF-9kA" id="QuL-xg-TuY"/>
+                        <outlet property="secretView" destination="rry-67-PMo" id="8WZ-jS-fjo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IRC-3i-Gfk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -2553,7 +2552,7 @@ Please select the information to use.</string>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </view>
-                                    <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d6C-ym-Y6E" customClass="customButton" customModule="CrewBid_iPad" customModuleProvider="target">
+                                    <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d6C-ym-Y6E" customClass="customButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                         <rect key="frame" x="524" y="500" width="200" height="40"/>
                                         <color key="backgroundColor" red="0.76078431369999999" green="0.094117647060000004" blue="0.1176470588" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
@@ -2569,7 +2568,7 @@ Please select the information to use.</string>
                                             <action selector="btnUpdateAction:" destination="c3X-Ep-Qo3" eventType="touchUpInside" id="SzO-3s-ZwX"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2tF-Ta-uEb" customClass="customButton" customModule="CrewBid_iPad" customModuleProvider="target">
+                                    <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2tF-Ta-uEb" customClass="customButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                         <rect key="frame" x="40" y="500" width="200" height="40"/>
                                         <color key="backgroundColor" systemColor="systemOrangeColor"/>
                                         <constraints>

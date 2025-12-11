@@ -15,7 +15,7 @@ class CBCalendarDayCell: UICollectionViewCell {
          var path: UIBezierPath? = nil
          if CBCalendarTripDayType.cbCalendarTripDayNone.rawValue == type.rawValue {
             path = UIBezierPath(rect: rect)
-            UIColor.secondarySystemBackground.set()
+            UIColor.systemBackground.set()
             path?.fill()
             return
          }
