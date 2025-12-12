@@ -420,6 +420,9 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
             lineValueView.setValue(value: "\(String(describing: line.vDaysOff!.intValue))", forTitle: "DaysOff", andType: valueType)
             break
             
+        case .ClawBack:
+            lineValueView.setValue(value: String(format: "%0.2f", line.clawBack?.floatValue ?? 0.0), forTitle: "ClawBack", andType: valueType)
+            
         case .VLength:
             lineValueView.setValue(value: "\(String(describing: line.vEffectiveVacayLength!.intValue))", forTitle: "EffLength", andType: valueType)
             break
@@ -565,8 +568,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         case .CoPlusHoli:
             lineValueView.setValue(value: String(format: "%0.2f", line.coPlusHoli?.floatValue ?? 0.0), forTitle: "Co+Holi", andType: valueType)
             break
-        case .ClawBack:
-            lineValueView.setValue(value: String(format: "%0.2f", line.clawBack?.floatValue ?? 0.0), forTitle: "ClawBack", andType: valueType)
+       
         }
     }
     

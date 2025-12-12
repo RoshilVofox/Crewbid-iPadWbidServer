@@ -4345,7 +4345,7 @@ class BIBidInfoReader{
                         containsNonConUSLeg = true
                         nonConUSLegs += 1
                         if self.bidPeriod!.isFirstRoundBid(){
-                            if bidPeriod?.isSwaAPI?.boolValue == false {
+                            if bidPeriod?.isSwaAPI?.boolValue != true {
                                 line.type = NSNumber(value: BILineType.HardNonConUS.rawValue)
                             }
                             if line.isETOPS?.intValue == 0 && ((self.bidPeriod?.isEtopsLinesContainsInBid) != nil){

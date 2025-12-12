@@ -398,22 +398,29 @@ class CBDownloadAlldomicileViewController: UIViewController {
                 print("Failed to delete BIBidPeriod records: \(error)")
             }
             var position: BICrewPositionType = .FlightAttendant
+            GlobalBidInfo.shared.position = .FlightAttendant
             if self.btnCp.isSelected {
                 position = .Captain
+                GlobalBidInfo.shared.position = .Captain
             }
             else if self.btnFo.isSelected {
                 position = .FirstOfficer
+                GlobalBidInfo.shared.position = .FirstOfficer
             }
             
             dictionary["position"] = position
             if self.btnFirstRound.isSelected {
                 dictionary["round"] = 1
+                GlobalBidInfo.shared.round = 1
             }
             if self.btnSecondRound.isSelected {
                 dictionary["round"] = 2
+                GlobalBidInfo.shared.round = 2
             }
             dictionary["month"] = Int(self.txtMonth.text!)
+            GlobalBidInfo.shared.month = Int(self.txtMonth.text!) ?? 0
             dictionary["bases"] = self.arrBase
+            GlobalBidInfo.shared.base = self.arrBase[0]
             dictionary["year"] = Int(self.txtYear.text!)
             if self.btnBoth.isSelected == true {
                 dictionary["both"] = true
