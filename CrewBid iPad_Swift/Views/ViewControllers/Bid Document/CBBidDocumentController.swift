@@ -919,15 +919,22 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 if self.bidPeriod?.vactionWeekAlertDisplayed == nil {
                     // Show the alert first
                     self.showVacationWeekAlert { tappedOK in
-                        // Always call handleVacationData after alert
-                        DispatchQueue.main.async {
-                            self.handleVacationData()
+                        if tappedOK {
+                            DispatchQueue.main.async {
+                                self.handleVacationData()
+                            }
+                        }else{
+                            DispatchQueue.main.async {
+                                self.handleVacationData()
+                            }
                         }
+
                     }
-                } else {
-                    // Alert already shown → directly process vacation data
-                    self.handleVacationData()
                 }
+//                else {
+                    // Alert already shown → directly process vacation data
+//                    self.handleVacationData()
+//                }
             }
         }
     }
@@ -1176,7 +1183,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             vc.preferredContentSize = CGSize(width: 700, height: 600)
             vc.modalPresentationStyle = .automatic
             vc.onDismiss = { tappedOK in
-                completionHandler(true)
+                self.bidPeriod?.vactionWeekAlertDisplayed = true
+                completionHandler(tappedOK)
             }
             self.present(vc, animated: true, completion: nil)
         }

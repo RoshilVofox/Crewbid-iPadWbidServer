@@ -2750,7 +2750,17 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                                 let displayDayType = self.getDisplayType(date: day!.date!, startDate: startDate, endDate: endDate, label: label, displayType: displayType)
                                 if displayDayType != -1 {
                                     day?.displayType = displayDayType as NSNumber
-                                    day?.redEyeDayDisplayDayType = displayDayType as NSNumber
+//                                    day?.redEyeDayDisplayDayType = displayDayType as NSNumber
+                                }
+                                
+                                if trip?.isRedEyeTrip == true{
+                                    if missingDateIndex != -1 && missingRedEyeDate != nil && missingDateIndex == d{
+                                        let displayType = self.getDisplayType(date: missingRedEyeDate!, startDate: startDate, endDate: endDate, label: label, displayType: displayType)
+                                        if displayType != -1 {
+                                            day?.displayType = displayType as NSNumber
+                                            day?.redEyeDayDisplayDayType = displayDayType as NSNumber
+                                        }
+                                    }
                                 }
                             }
                             //                        End vacationPieces loop
@@ -2834,7 +2844,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     if displayType == kFrontVoFull {
                         dayDisplayType = BIDayDisplayType.fullPay.rawValue
                     }
-                    else if label == kBackVoFull {
+                    else if displayType == kBackVoFull {
                         dayDisplayType = BIDayDisplayType.fullPay.rawValue
                     }
                     else if (self.calendarData.daysBetweenDate(fromDateTime: startDate, toDateTime: startDate) > 0) {
