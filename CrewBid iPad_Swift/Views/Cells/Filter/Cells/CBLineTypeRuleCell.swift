@@ -353,7 +353,7 @@ class CBLineTypeRuleCell: UITableViewCell {
                         SET.add(BILineType.NonEtopsConUS.rawValue)
                     }
                     if nonConusButton.isSelected {
-                        SET.add(BILineType.NonEtopsConUS.rawValue)
+                        SET.add(BILineType.NonEtopsNonConUS.rawValue)
                     }
                 } else {
                     if conusButton.isSelected {

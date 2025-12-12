@@ -914,15 +914,13 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     
     @objc private func didDismissLatestNews() {
         if self.bidPeriod?.latestNewsDisplayed?.boolValue == true{
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {[weak self] in
-//                self?.handleVacationData()
-                guard let self = self else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
 
-                if bidPeriod?.vactionWeekAlertDisplayed == nil {
+                if self.bidPeriod?.vactionWeekAlertDisplayed == nil {
                     // Show the alert first
                     self.showVacationWeekAlert { tappedOK in
                         // Always call handleVacationData after alert
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                        DispatchQueue.main.async {
                             self.handleVacationData()
                         }
                     }

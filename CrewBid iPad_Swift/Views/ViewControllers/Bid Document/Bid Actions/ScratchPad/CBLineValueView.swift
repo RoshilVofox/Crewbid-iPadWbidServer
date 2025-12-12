@@ -73,10 +73,15 @@ class CBLineValueView: UIView {
             }
             
         } else {
-           
+            if type.rawValue == 79 {
+                titleLabel?.textColor = vacTitleColor
+                valueLabel?.textColor = vacValueColor
+            }
+            else {
+                
                 titleLabel?.textColor = UIColor.lightGray
                 valueLabel?.textColor = UIColor.darkGray
-            
+            }
         }
     }
     
