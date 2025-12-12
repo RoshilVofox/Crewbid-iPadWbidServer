@@ -208,8 +208,8 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         let flowLayout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
         let itemSize = CGSize(width: calendarWidth / 7, height: flowLayout.itemSize.height)
         
-        let rightRoundedInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 18)
-        let leftRoundedInsets  = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 0)
+        let rightRoundedInsets = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 18)
+        let leftRoundedInsets  = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 18)
         let bothRoundedInsets  = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 18)
         let verticalPadding: CGFloat = 12.0
         let buttonHeight = itemSize.height - verticalPadding

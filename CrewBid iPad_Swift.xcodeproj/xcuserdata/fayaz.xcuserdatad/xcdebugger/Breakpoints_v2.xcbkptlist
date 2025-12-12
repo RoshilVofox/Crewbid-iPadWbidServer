@@ -4061,22 +4061,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "FA79B7B3-B097-4695-BA52-4A00C3D3256A"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1256"
-            endingLineNumber = "1256"
-            landmarkName = "parseSeniorityWithNewFormat(dictDetails:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "2800848B-636E-4CAB-AB84-F4EA7976CBAC"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -7046,7 +7030,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "126"
             endingLineNumber = "126"
-            landmarkName = "setupVariables()"
+            landmarkName = "labelTapped()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -7158,7 +7142,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "743"
             endingLineNumber = "743"
-            landmarkName = "moveInsertionIndex(_:)"
+            landmarkName = "moveInsertionIndex(to:above:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -7222,7 +7206,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "123"
             endingLineNumber = "123"
-            landmarkName = "labelTapped()"
+            landmarkName = "viewDidAppear(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -7238,7 +7222,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "957"
             endingLineNumber = "957"
-            landmarkName = "removeASortUI()"
+            landmarkName = "removeObserverInBidList(notification:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -7382,8 +7366,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "492"
             endingLineNumber = "492"
-            landmarkName = "moveSelectedLinesToInsertionIndex()"
-            landmarkType = "7">
+            landmarkName = "CBBidListVC"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -7558,7 +7542,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "877"
             endingLineNumber = "877"
-            landmarkName = "removeReserveMRTline(indexpath:isReserve:)"
+            landmarkName = "addReserveMRTline(indexpath:isReserve:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -7574,8 +7558,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "892"
             endingLineNumber = "892"
-            landmarkName = "cellDidSelect(notification:)"
-            landmarkType = "7">
+            landmarkName = "CBBidListVC"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -7606,8 +7590,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "922"
             endingLineNumber = "922"
-            landmarkName = "cellDidDeselect(notification:)"
-            landmarkType = "7">
+            landmarkName = "CBBidListVC"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -7622,8 +7606,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "976"
             endingLineNumber = "976"
-            landmarkName = "setPreviousBidOrder()"
-            landmarkType = "7">
+            landmarkName = "CBBidListVC"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -7638,7 +7622,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "984"
             endingLineNumber = "984"
-            landmarkName = "addMarker(_:)"
+            landmarkName = "setPreviousBidOrder()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -7830,8 +7814,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "373"
             endingLineNumber = "373"
-            landmarkName = "CBBidListVC"
-            landmarkType = "3">
+            landmarkName = "deleteSelectedLines()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -7894,8 +7878,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2928"
             endingLineNumber = "2928"
-            landmarkName = "tableView(_:heightForRowAt:)"
-            landmarkType = "7">
+            landmarkName = "CBBidListVC"
+            landmarkType = "21">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -7942,8 +7926,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3062"
             endingLineNumber = "3062"
-            landmarkName = "CBBidListVC"
-            landmarkType = "21">
+            landmarkName = "tableView(_:canMoveRowAt:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8006,8 +7990,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3103"
             endingLineNumber = "3103"
-            landmarkName = "didTappedAwardSort(isOn:)"
-            landmarkType = "7">
+            landmarkName = "CBBidListVC"
+            landmarkType = "21">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8070,8 +8054,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3102"
             endingLineNumber = "3102"
-            landmarkName = "didTappedAwardSort(isOn:)"
-            landmarkType = "7">
+            landmarkName = "CBBidListVC"
+            landmarkType = "21">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8294,7 +8278,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3160"
             endingLineNumber = "3160"
-            landmarkName = "saveToCoreData()"
+            landmarkName = "didTappedAwardSort(isOn:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -8422,8 +8406,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3082"
             endingLineNumber = "3082"
-            landmarkName = "tableView(_:willDisplay:forRowAt:)"
-            landmarkType = "7">
+            landmarkName = "CBBidListVC"
+            landmarkType = "21">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8438,7 +8422,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3054"
             endingLineNumber = "3054"
-            landmarkName = "tableView(_:canMoveRowAt:)"
+            landmarkName = "tableView(_:moveRowAt:to:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -8502,8 +8486,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3090"
             endingLineNumber = "3090"
-            landmarkName = "CBBidListVC"
-            landmarkType = "21">
+            landmarkName = "tableView(_:willDisplay:forRowAt:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8566,8 +8550,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3166"
             endingLineNumber = "3166"
-            landmarkName = "apiForGetAwardDetails(success:)"
-            landmarkType = "7">
+            landmarkName = "CBBidListVC"
+            landmarkType = "21">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8710,7 +8694,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3167"
             endingLineNumber = "3167"
-            landmarkName = "apiForGetAwardDetails(success:)"
+            landmarkName = "saveToCoreData()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -9974,8 +9958,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "388"
             endingLineNumber = "388"
-            landmarkName = "undoAction()"
-            landmarkType = "7">
+            landmarkName = "CBBidListVC"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -10502,8 +10486,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1249"
             endingLineNumber = "1249"
-            landmarkName = "updateBidList(_:)"
-            landmarkType = "7">
+            landmarkName = "CBBidListVC"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -11671,6 +11655,22 @@
             startingLineNumber = "3232"
             endingLineNumber = "3232"
             landmarkName = "processFAVacationWithJsonFile(file:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "205859D5-9F8D-4691-A219-EF1A770160DE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "927"
+            endingLineNumber = "927"
+            landmarkName = "vacationScan()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
