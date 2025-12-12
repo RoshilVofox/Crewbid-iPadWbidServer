@@ -1374,7 +1374,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     }
                 }),
                 (title: "Cancel", style: .cancel, handler: { _ in
-                    // nothing
+                    self.dismiss(animated: true, completion: nil)
                 }),
                 (title: "Open Bid", style: .default, handler: { _ in
                     self.view.hideActivityIndicator()

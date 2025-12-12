@@ -112,10 +112,10 @@ class CommutableTimeViewController: UIViewController, KUIPopOverUsable, UICollec
         let arrModifiedValues = NSMutableArray()
         
         guard let bidPeriod = self.bidPeriod else { return arrModifiedValues }
-        let useHerbTime = UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.herbTime.rawValue
-        let herbTZ = TimeZone(secondsFromGMT: 0)!
-        let commuteTZ = CBUtils.timeZone(forAirportCode: self.commuteCityValue)
-        let targetTZ = useHerbTime ? herbTZ : commuteTZ
+//        let useHerbTime = UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.herbTime.rawValue
+//        let herbTZ = TimeZone(secondsFromGMT: 0)!
+//        let commuteTZ = CBUtils.timeZone(forAirportCode: self.commuteCityValue)
+//        let targetTZ = useHerbTime ? herbTZ : commuteTZ
 
 
         let fetchedObjects = (bidPeriod.commuteTime!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "bidDay", ascending: true)]) as! [CommuteTime]
@@ -124,11 +124,11 @@ class CommutableTimeViewController: UIViewController, KUIPopOverUsable, UICollec
             autoreleasepool {
                 let dateFormat = DateFormatter()
                 dateFormat.dateFormat = "HHmm"
-//                if let timezone = TimeZone(secondsFromGMT: 0) {
-//                    dateFormat.timeZone = timezone as TimeZone
-//                }
+                if let timezone = TimeZone(secondsFromGMT: 0) {
+                    dateFormat.timeZone = timezone as TimeZone
+                }
 
-                dateFormat.timeZone = targetTZ
+//                dateFormat.timeZone = targetTZ
                 
                 let commuteTime = fetchedObjects[i]
                 let depDate = commuteTime.latestDeparture!
@@ -137,12 +137,12 @@ class CommutableTimeViewController: UIViewController, KUIPopOverUsable, UICollec
                 let earliestArrival = dateFormat.string(from: arrivalDate as Date)
                 let dateFormateForDate = DateFormatter()
                 dateFormateForDate.dateFormat = "dd"
-//                if let timezone = TimeZone(secondsFromGMT: 0) {
-//                    dateFormateForDate.timeZone = timezone as TimeZone
-//                }
-//                
+                if let timezone = TimeZone(secondsFromGMT: 0) {
+                    dateFormateForDate.timeZone = timezone as TimeZone
+                }
+                
 
-                dateFormateForDate.timeZone = targetTZ
+//                dateFormateForDate.timeZone = targetTZ
                 
                 let biDay = commuteTime.bidDay!
                 var day: String? = nil
@@ -181,7 +181,7 @@ class CommutableTimeViewController: UIViewController, KUIPopOverUsable, UICollec
             localLbl.backgroundColor = .white
             localLbl.textColor = .black
         }
-        arrCommutTimeFetched = generateCommutableTimeData()
+//        arrCommutTimeFetched = generateCommutableTimeData()
         collectionView.reloadData()
         NotificationCenter.default.post(name: NSNotification.Name("updateLocalHerbSwitchUI"), object: nil)
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
@@ -205,17 +205,103 @@ class CommutableTimeViewController: UIViewController, KUIPopOverUsable, UICollec
         if indexPath.row >= weekday - 1 {
             cell.isHidden = false
             cell.dateLabel.backgroundColor = UIColor(red: 205.0 / 255.0, green: 85.0 / 255.0, blue: 4.0 / 255.0, alpha: 1.0)
-            let value = arrCommutTimeFetched.object(at: indexPath.row - (weekday - 1)) as! NSDictionary
-            cell.dateLabel.text = value.value(forKey: "Day") as? String
+            let item = arrCommutTimeFetched.object(at: indexPath.row - (weekday - 1)) as! NSDictionary
+//            cell.dateLabel.text = item.value(forKey: "Day") as? String
             //For showing the the latest departure value blank if the latest departure value is 0000
-            cell.latestDeparureLabel.text = value.value(forKey: "departure") as? String
+//            cell.latestDeparureLabel.text = item.value(forKey: "departure") as? String
             //For showing the the earliest arrival value blank if the earliest arrival value is 0000
-            cell.earliestArrivalLabel.text = value.value(forKey: "arrival") as? String
+//            cell.earliestArrivalLabel.text = item.value(forKey: "arrival") as? String
+            cell.dateLabel.text = item["Day"] as? String
+            let day = (item["Day"] as? NSString)?.integerValue ?? 1
+            let month = (self.bidPeriod?.month as? NSNumber)?.intValue ?? ((self.bidPeriod?.month as? Int) ?? 1)
+            let year = (self.bidPeriod?.year as? NSNumber)?.intValue ?? ((self.bidPeriod?.year as? Int) ?? 1970)
+            
+            if let depTime = item["departure"] as? String {
+                if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.herbTime.rawValue{
+                    cell.latestDeparureLabel.text = depTime
+                }else{
+                    if depTime != "0000" && !depTime.isEmpty{
+                        cell.latestDeparureLabel.text = convertHHMM(depTime, day: day, month: month, year: year)
+                    }else{
+                        cell.latestDeparureLabel.text = ""
+                    }
+                }
+            }else{
+                cell.latestDeparureLabel.text = ""
+            }
+            
+            if let arrTime = item["arrival"] as? String {
+                if UserDefaults.standard.integer(forKey: kCBTimeZoneSetting) == CBTimeZoneSetting.herbTime.rawValue{
+                    cell.earliestArrivalLabel.text = arrTime
+                }else{
+                    if arrTime != "0000" && !arrTime.isEmpty{
+                        cell.earliestArrivalLabel.text = convertHHMM(arrTime, day: day, month: month, year: year)
+                    }else{
+                        cell.earliestArrivalLabel.text = ""
+                    }
+                }
+            }else{
+                cell.earliestArrivalLabel.text = ""
+            }
         }
         else {
             cell.isHidden = true
         }
         return cell
+    }
+    
+    
+    
+    func convertHHMM(_ hhmm: String, day: Int, month: Int, year: Int) -> String {
+        let trimmed = hhmm.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty { return "" }
+
+        // Herb TZ (original code used US/Central for herb)
+        let herbTZ = TimeZone(identifier: "US/Central") ?? TimeZone(secondsFromGMT: 0)!
+
+        // commute city local tz — use your CBUtils helper (adapt name if different)
+        let commuteTZ = CBUtils.timeZone(forAirportCode: self.commuteCityValue)
+
+        // parse HHmm or HH:mm
+        var hh = "00", mm = "00"
+        if trimmed.contains(":") {
+            let parts = trimmed.split(separator: ":").map { String($0) }
+            if parts.count >= 2 {
+                hh = parts[0].trimmingCharacters(in: .whitespaces)
+                mm = parts[1].trimmingCharacters(in: .whitespaces)
+            }
+        } else if trimmed.count >= 4 {
+            let start = trimmed.startIndex
+            let hhRange = start..<trimmed.index(start, offsetBy: 2)
+            let mmRange = trimmed.index(start, offsetBy: 2)..<trimmed.index(start, offsetBy: 4)
+            hh = String(trimmed[hhRange])
+            mm = String(trimmed[mmRange])
+        } else {
+            return hhmm // fallback if unexpected format
+        }
+
+        // sanitize components
+        let safeDay = (1...31).contains(day) ? day : 1
+        let safeMonth = (1...12).contains(month) ? month : 1
+        let safeYear = (year >= 1) ? year : 1970
+
+        let full = String(format: "%04d-%02d-%02d %@:%@", safeYear, safeMonth, safeDay, hh, mm)
+
+        let parser = DateFormatter()
+        parser.locale = Locale(identifier: "en_US_POSIX")
+        parser.dateFormat = "yyyy-MM-dd HH:mm"
+        parser.timeZone = herbTZ
+
+        guard let date = parser.date(from: full) else {
+            return hhmm // fallback
+        }
+
+        let out = DateFormatter()
+        out.locale = Locale(identifier: "en_US_POSIX")
+        out.dateFormat = "HHmm"
+        out.timeZone = commuteTZ
+
+        return out.string(from: date)
     }
 }
 

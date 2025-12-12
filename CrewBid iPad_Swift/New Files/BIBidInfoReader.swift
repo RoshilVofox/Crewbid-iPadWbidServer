@@ -4977,7 +4977,10 @@ class BIBidInfoReader{
                 if !self.calendarData.dateIsInBidMonth(date: day.date!) && !self.calendarData.dateIsBeforeFirstDateOfBidMonth(date: day.date!){
                     vcCarryOutPay += day.info!.dayPayWithRig!.floatValue
                 }
-                let dayMaxValue = day.info?.dayPayWithRig?.floatValue
+                var dayMaxValue = day.info?.dayPayWithRig?.floatValue
+                if self.bidPeriod!.isFABid(){
+                    dayMaxValue = Float(day.info?.dayPay ?? 0)
+                }
                 if trip.isRedEyeTrip{
                     if self.isFABid(){
                         var dayDate = day.date!

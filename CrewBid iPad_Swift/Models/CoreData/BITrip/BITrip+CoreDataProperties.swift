@@ -417,7 +417,8 @@ extension BITrip : Identifiable {
             
             if self.isReserve {
                 let departAndReturnDifference: CGFloat = returnMinutes - departMinutes
-                dayDutyMinutes = Int(departAndReturnDifference)
+//                dayDutyMinutes = Int(departAndReturnDifference)
+                dayDutyMinutes = abs(Int(departAndReturnDifference))
                 dutyTime = String(format: "%2zd%02zd", dayDutyMinutes / 60, dayDutyMinutes % 60)
             } else {
                 dutyTime = String(format: "%2zd%02zd", dayDutyMinutes / 60, dayDutyMinutes % 60)
