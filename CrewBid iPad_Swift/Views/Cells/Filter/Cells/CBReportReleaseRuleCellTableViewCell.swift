@@ -319,23 +319,32 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
         
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
-        let date1 = formatter.date(from: time1)!
-        let date2 = formatter.date(from: time2)!
-        let result = date1.compare(date2)
-        
-        if result == .orderedDescending {
+        let date1 = formatter.date(from: time1)
+        let date2 = formatter.date(from: time2)
+        if date1 == nil || date2 == nil {
             isGreater = false
-        }
-        else if result == .orderedAscending {
-            isGreater = true
         }
         else {
-            isGreater = false
+            let result = date1!.compare(date2!)
+            
+            if result == .orderedDescending {
+                isGreater = false
+            }
+            else if result == .orderedAscending {
+                isGreater = true
+            }
+            else {
+                isGreater = false
+            }
         }
         return isGreater
     }
     
     func compareReleaseTimeEntered(release: String, releaseEntered: String) -> Bool {
+        var release = release
+        if release == "2400" {
+            release = "0000"
+        }
         var isGreater = false
 
         var strReleaseHour = release
@@ -392,9 +401,14 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
             time2 = strReleaseHourEntered
             date2 = formatter.date(from: time2)
 
-            if let date2Unwrapped = date2 {
-                date2 = Calendar.current.date(byAdding: .day, value: 1, to: date2Unwrapped)
+            let getEnteredReleaseHour = String(strReleaseHourEntered.prefix(2))
+
+            if ["00", "01", "02", "03"].contains(getEnteredReleaseHour) {
+                if let date2Unwrapped = date2 {
+                    date2 = Calendar.current.date(byAdding: .day, value: 1, to: date2Unwrapped)
+                }
             }
+
         }
 
         if let d1 = date1, let d2 = date2 {
@@ -511,9 +525,22 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
         let variables = NSMutableDictionary(dictionary: filterRule!.variables!)
         variables.setValue(self.txtReport.text, forKey: "reportValue")
         variables.setValue(self.txtRelease.text, forKey: "releaseValue")
+        if variables["isFirst"] as? Int == 1 {
+            variables["isFirst"] = 0
+        }
+        if variables["isNoMid"] as? Int == 1 {
+            variables["isNoMid"] = 0
+        }
+        if variables["isLast"] as? Int == 1 {
+            variables["isLast"] = 0
+        }
+        variables["isCalendar"] = 1
+        
         self.filterRule?.variables = variables
         let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "category == 37")
+        let predicate1 = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+        let predicate2 = NSPredicate(format: "category == 37")
+        fetchRequest.predicate = NSCompoundPredicate(type: .and, subpredicates: [predicate1, predicate2])
         let fetchedObjects = try? context?.fetch(fetchRequest) ?? []
         if fetchedObjects!.count == 0 {
             
@@ -589,12 +616,11 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                                     }
                                 }
                             }
-                            try? self.context?.save()
                         }
                     }
                 }
-                
             }
+            try? self.context?.save()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
                 NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
                 self.hideActivityIndicator()
@@ -618,8 +644,19 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
             line.rptLessThanentered = NSNumber(value: false)
         }
 //        fetch all data for Report Release
+        let varb = NSMutableDictionary(dictionary: filterRule!.variables!)
+        if tripFirstButton.isSelected {
+            varb.setValue(self.txtReport.text, forKey: "reportValue")
+        }
+        if tripLastButton.isSelected {
+            varb.setValue(self.txtRelease.text, forKey: "releaseValue")
+        }
+        varb.setValue(0, forKey: "isCalendar")
+        filterRule?.variables = varb
         let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "category == 37")
+        let predicate1 = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+        let predicate2 = NSPredicate(format: "category == 37")
+        fetchRequest.predicate = NSCompoundPredicate(type: .and, subpredicates: [predicate1, predicate2])
         let fetchedObjects = try? context?.fetch(fetchRequest) ?? []
         if fetchedObjects!.count == 0 {
             
@@ -783,10 +820,10 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                             }
                         }
                         self.filterRule?.variables = variables
-                        try? self.context!.save()
                     }
                 }
             }
+            try? self.context!.save()
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
                 NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
@@ -882,9 +919,20 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
         let variables = NSMutableDictionary(dictionary: filterRule!.variables!)
         variables.setValue(reportValue, forKey: "reportValue")
         variables.setValue(releaseValue, forKey: "releaseValue")
+        if variables["isFirst"] as? Int == 1 {
+            variables["isFirst"] = 0
+        }
+        if variables["isNoMid"] as? Int == 1 {
+            variables["isNoMid"] = 0
+        }
+        if variables["isLast"] as? Int == 1 {
+            variables["isLast"] = 0
+        }
         self.filterRule?.variables = variables
         let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "category == 37")
+        let predicate1 = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+        let predicate2 = NSPredicate(format: "category == 37")
+        fetchRequest.predicate = NSCompoundPredicate(type: .and, subpredicates: [predicate1, predicate2])
         let fetchedObjects = try? context?.fetch(fetchRequest) ?? []
         if fetchedObjects!.count == 0 {
             
@@ -958,12 +1006,12 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                                     }
                                 }
                             }
-                            try? self.context?.save()
                         }
                     }
                 }
                 
             }
+            try? self.context?.save()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
                 NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
                 self.hideActivityIndicator()
@@ -984,7 +1032,9 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
             line.rptLessThanentered = false
         }
         let fetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "category == 37")
+        let predicate1 = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+        let predicate2 = NSPredicate(format: "category == 37")
+        fetchRequest.predicate = NSCompoundPredicate(type: .and, subpredicates: [predicate1, predicate2])
         let fetchedObjects = try? self.context?.fetch(fetchRequest)
         reportReleaseArray = NSMutableArray()
         for i in 0..<fetchedObjects!.count {
@@ -1144,11 +1194,11 @@ class CBReportReleaseRuleCellTableViewCell: UITableViewCell,UITextFieldDelegate,
                             }
                         }
                         self.filterRule?.variables = variables
-                        try? self.context!.save()
+                        
                     }
                 }
             }
-            
+            try? self.context!.save()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2){
                 NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
                 self.hideActivityIndicator()
