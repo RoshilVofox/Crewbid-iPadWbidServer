@@ -5629,7 +5629,7 @@ class BIBidInfoReader{
                             if (resultStart == .orderedDescending && resultEnd == .orderedAscending) {
                                 workBPInVac += 1
                             }
-                            else if (resultStart == .orderedSame && resultEnd == .orderedSame) {
+                            else if (resultStart == .orderedSame || resultEnd == .orderedSame) {
                                 workBPInVac += 1
                             }
                         }
@@ -5644,7 +5644,7 @@ class BIBidInfoReader{
                             if (resultStart == .orderedDescending && resultEnd == .orderedAscending) {
                                 workBPInVac += 1
                             }
-                            else if (resultStart == .orderedSame && resultEnd == .orderedSame) {
+                            else if (resultStart == .orderedSame || resultEnd == .orderedSame) {
                                 workBPInVac += 1
                             }
                         }
