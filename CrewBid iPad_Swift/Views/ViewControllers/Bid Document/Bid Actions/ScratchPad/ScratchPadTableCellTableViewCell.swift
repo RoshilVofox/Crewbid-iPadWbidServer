@@ -208,8 +208,8 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         let flowLayout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
         let itemSize = CGSize(width: calendarWidth / 7, height: flowLayout.itemSize.height)
         
-        let rightRoundedInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 18)
-        let leftRoundedInsets  = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 0)
+        let rightRoundedInsets = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 18)
+        let leftRoundedInsets  = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 18)
         let bothRoundedInsets  = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 18)
         let verticalPadding: CGFloat = 12.0
         let buttonHeight = itemSize.height - verticalPadding
@@ -804,7 +804,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                     continue
                 }
                 else{
-                    tripLength = vacay.length!.intValue - 1
+                    tripLength = vacay.length!.intValue /*- 1*/
                 }
                 let column = index % 7
                 var buttonLength = 0
@@ -984,7 +984,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                 }else if index > (daysInCalendar - 1) {
                     continue
                 }else{
-                    tripLength = vacay.fvLength!.intValue - 1
+                    tripLength = vacay.fvLength!.intValue /*- 1*/
                 }
                 let column = index % 7
                 var buttonLength = 0

@@ -436,14 +436,16 @@ class BICalendarData {
     
     // Calculate the number of days between two dates
 
-    func daysBetweenDate(fromDateTime: Date,toDateTime: Date) -> Int {
-        let calendar = Calendar.current
-        let fromDate : Date?
-        fromDate = calendar.startOfDay(for:fromDateTime)
-        let toDate : Date?
-        toDate = calendar.startOfDay(for: toDateTime)
-        let difference = calendar.dateComponents( [.day],from: fromDate!,to: toDate!)
-        return (difference.day) ?? 0
+    func daysBetweenDate(fromDateTime: Date, toDateTime: Date) -> Int {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale(identifier: "en_US")
+        calendar.timeZone = TimeZone(identifier: "US/Central")!
+
+        let fromStart = calendar.startOfDay(for: fromDateTime)
+        let toStart   = calendar.startOfDay(for: toDateTime)
+
+        let difference = calendar.dateComponents([.day], from: fromStart, to: toStart)
+        return difference.day ?? 0
     }
     
     // Calculate the number of days between two dates, inclusive

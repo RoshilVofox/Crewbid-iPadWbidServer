@@ -1329,6 +1329,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             message: message,
             actions: [
                 (title: "Download Again", style: .default, handler: { _ in
+                    CBGlobalMethods.shared.selectedBidPeriod = nil
                     // Delete the bid document file if present
                     let fileManager = FileManager.default
                     let bidDocURL = BIBidInfo().bidDocumentFileURL()
@@ -1366,9 +1367,11 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                             let changes: [AnyHashable: Any] = [NSDeletedObjectsKey: objectIDs]
                             NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [context])
                         }
-                        NotificationCenter.default.post(name: NSNotification.Name(ReloadCollectionView), object: nil)
-                        print("Deleted BidPeriod objects using batch delete.")
-                        onRetry()
+                        DispatchQueue.main.async {
+                            NotificationCenter.default.post(name: NSNotification.Name(ReloadCollectionView), object: nil)
+                            print("Deleted BidPeriod objects using batch delete.")
+                            onRetry()
+                        }
                     } catch {
                         print("Failed batch delete: \(error)")
                     }

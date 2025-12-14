@@ -662,7 +662,7 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
         let itemSize = CGSizeMake(calendarWidth/7, flowLayout.itemSize.height)
 //        let inset: CGFloat = itemSize.height/2.0
         let rightRoundedInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 18)
-        let leftRoundedInsets  = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 0)
+        let leftRoundedInsets  = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 18)
         let bothRoundedInsets  = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 18)
 //        let insets: UIEdgeInsets = UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset)
         let verticalPadding: CGFloat = 12.0

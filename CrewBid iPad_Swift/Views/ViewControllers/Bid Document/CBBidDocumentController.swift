@@ -1178,7 +1178,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             vc.preferredContentSize = CGSize(width: 700, height: 600)
             vc.modalPresentationStyle = .automatic
             vc.onDismiss = { tappedOK in
-                completionHandler(true)
+                self.bidPeriod?.vactionWeekAlertDisplayed = true
+                completionHandler(tappedOK)
             }
             self.present(vc, animated: true, completion: nil)
         }
