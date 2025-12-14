@@ -127,7 +127,9 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
         }
         
         let filterFetchRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
-        filterFetchRequest.predicate = NSPredicate(format: "category == 34")
+        let predicate1 = NSPredicate(format: "bidPeriod == %@", self.bidPeriod!)
+        let predicate2 = NSPredicate(format: "category == 34")
+        filterFetchRequest.predicate = NSCompoundPredicate(type: .and, subpredicates: [predicate1, predicate2])
         let fetchedFilter = try? context?.fetch(filterFetchRequest)
         for filter in fetchedFilter! {
             context?.delete(filter)

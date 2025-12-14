@@ -1482,6 +1482,9 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                         if dict2!["isSelectedAll"] != nil {
                             isSelectedAll = ((dict2!["isSelectedAll"] as? Int)!)
                         }
+                        if dict2!["isCalendar"] != nil {
+                            isCalendar = ((dict2!["isCalendar"] as? Int)!)
+                        }
                         
                         
                         
@@ -1494,6 +1497,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                         tempDict["isSelectedAll"] = isSelectedAll
                         tempDict["releaseValue"] = releaseValue
                         tempDict["reportValue"] = reportValue
+                        tempDict["isCalendar"] = isCalendar
                         
                         var MONTH_BITS = NSNumber(value: 0)
                         if let dates = dict2?["SELECTED_DATES"] as? NSMutableArray, dates.count > 0 {

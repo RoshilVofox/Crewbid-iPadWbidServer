@@ -920,8 +920,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     // Show the alert first
                     self.showVacationWeekAlert { tappedOK in
                         // Always call handleVacationData after alert
-                        DispatchQueue.main.async {
-                            self.handleVacationData()
+                        if tappedOK {
+                            DispatchQueue.main.async {
+                                self.handleVacationData()
+                            }
                         }
                     }
                 } else {
@@ -1427,6 +1429,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     func executeEOMForFA() {
+        if bidPeriod != CBGlobalMethods.shared.selectedBidPeriod {
+            return
+        }
         if ( self.bidPeriod!.vacationType == "FAVacationF") {
             self.bidPeriod!.userVacationWbidOrCrewBid = "FAVacationF"
             alertShouldDisplay = false
@@ -3728,6 +3733,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     func executeEOMModule() {
+        if bidPeriod != CBGlobalMethods.shared.selectedBidPeriod {
+            return
+        }
         if self.bidPeriod!.vacationType == "CREWBIDF" {
             self.bidPeriod?.userVacationWbidOrCrewBid = "CREWBIDF"
             alertShouldDisplay = false
