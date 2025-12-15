@@ -79,7 +79,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         let title = value["name"] as? String
         cell.textLabel?.text = title
         let type = value["type"] as! Int
-        if (type > 25 && type < 39) || type == 42 || type == 50 || type == 68 || type == 52 || type == 53 || (type >= 58 && type <= 63) {
+        if (type > 25 && type < 39) || type == 42 || type == 79 || type == 50 || type == 68 || type == 52 || type == 53 || (type >= 58 && type <= 63) {
             if cellIsHidden(for: value as! [AnyHashable : Any]) {
                 cell.isHidden = true
             } else {
@@ -459,16 +459,54 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
             lineValueView.setValue(value: String(format: "%0.2f", line.holidayPay!.floatValue), forTitle: "HoliRig", andType: valueType)
             break
             
+//        case .VacationPayDifference:
+//            let wbidVacPay = Float(truncating: line.vWBVacPay!)
+//            let swaVacPay = Float(truncating: line.vCBVacPay!)
+//            var vDiff: Float = 0.0
+//            if bidPeriod.isSwaptimizerOn == true {
+//                vDiff = swaVacPay - wbidVacPay
+//            } else {
+//                vDiff = wbidVacPay - swaVacPay
+//            }
+//            lineValueView.setValue(value: String(format: "%0.2f", vDiff), forTitle: "vDiff", andType: valueType)
+//            break
+            
         case .VacationPayDifference:
-            let wbidVacPay = Float(truncating: line.vWBVacPay!)
-            let swaVacPay = Float(truncating: line.vCBVacPay!)
-            var vDiff: Float = 0.0
-            if bidPeriod.isSwaptimizerOn == true {
-                vDiff = swaVacPay - wbidVacPay
-            } else {
-                vDiff = wbidVacPay - swaVacPay
+
+            guard
+                let wbidVacPayNum = line.vWBVacPay,
+                let cbVacPayNum = line.vCBVacPay
+            else {
+                break
             }
-            lineValueView.setValue(value: String(format: "%0.2f", vDiff), forTitle: "vDiff", andType: valueType)
+
+            let wbidVacPay = wbidVacPayNum.floatValue
+            let cbVacPay = cbVacPayNum.floatValue
+
+            let vDiff: Float
+            if bidPeriod.vacationType == "WBID" {
+                // WBID - CB
+                vDiff = wbidVacPay - cbVacPay
+            } else {
+                // CB - WBID
+                vDiff = cbVacPay - wbidVacPay
+            }
+
+            // Debug logging (same as NSLog)
+            if wbidVacPay != cbVacPay {
+                print("vacation diff--\(wbidVacPay)-\(cbVacPay)")
+            }
+
+            // This condition exists in Obj-C but does nothing (kept intentionally)
+            if abs(vDiff) == wbidVacPay || abs(vDiff) == cbVacPay {
+                // intentionally empty
+            }
+
+            lineValueView.setValue(
+                value: String(format: "%.2f", vDiff),
+                forTitle: "vDiff",
+                andType: valueType
+            )
             break
             
         case .CommutabilityBacks:

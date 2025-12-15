@@ -164,9 +164,10 @@ class CBDocumentsCollectionViewController: BaseViewController {
                         self.dataSource.month = (obj.month as? Int)!
                         self.dataSource.base = obj.base!
                         self.dataSource.round = (obj.round as? Int)!
+                        self.dataSource.year = obj.year!.intValue
                         let rawValue = obj.positionType!.intValue
                         self.dataSource.position = BICrewPositionType(rawValue: rawValue)!
-                        
+                        AppState.shared.isHistoricBid = false
                         let fileManager = FileManager.default
                         
                         let bidDocURL = BIBidInfo().bidDocumentFileURL()
