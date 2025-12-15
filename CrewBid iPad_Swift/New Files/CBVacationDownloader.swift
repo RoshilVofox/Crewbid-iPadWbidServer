@@ -66,35 +66,35 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
     override init() {
         super.init()
 //        self.fetchAndPrintTripCount()
-        let ab = dataSource.position
-        let cb = dataSource.base
-        print("base\(cb) postion\(ab)")
-        let context = dataSource.managedObjectContext
-        let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
-
-        let targetRound = dataSource.round as NSNumber
-        let targetMonth = dataSource.month as NSNumber
-        let targetPosition = NSNumber(value: dataSource.position.rawValue)
-        let targetBase = dataSource.base
-        let targetYear = dataSource.year as NSNumber
-        let targetEmployee = dataSource.employeeNumber
-
-        fetchRequest.predicate = NSPredicate(
-            format: "round == %@ AND month == %@ AND positionType == %@ AND base == %@ AND year == %@ AND crewIdentifier == %@",
-            targetRound, targetMonth, targetPosition, targetBase, targetYear, targetEmployee
-        )
-
-        do {
-            let results = try context.fetch(fetchRequest)
-            self.bidPeriod = results.first
-            if (self.bidPeriod != nil){
-                print("Found bidPeriod: ")
-            } else {
-                print("No matching bidPeriod found.")
-            }
-        } catch {
-            print("Fetch error: \(error)")
-        }
+//        let ab = dataSource.position
+//        let cb = dataSource.base
+//        print("base\(cb) postion\(ab)")
+//        let context = dataSource.managedObjectContext
+//        let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
+//
+//        let targetRound = dataSource.round as NSNumber
+//        let targetMonth = dataSource.month as NSNumber
+//        let targetPosition = NSNumber(value: dataSource.position.rawValue)
+//        let targetBase = dataSource.base
+//        let targetYear = dataSource.year as NSNumber
+//        let targetEmployee = dataSource.employeeNumber
+//
+//        fetchRequest.predicate = NSPredicate(
+//            format: "round == %@ AND month == %@ AND positionType == %@ AND base == %@ AND year == %@ AND crewIdentifier == %@",
+//            targetRound, targetMonth, targetPosition, targetBase, targetYear, targetEmployee
+//        )
+//
+//        do {
+//            let results = try context.fetch(fetchRequest)
+//            self.bidPeriod = results.first
+//            if (self.bidPeriod != nil){
+//                print("Found bidPeriod: ")
+//            } else {
+//                print("No matching bidPeriod found.")
+//            }
+//        } catch {
+//            print("Fetch error: \(error)")
+//        }
 
      
     }
@@ -2661,7 +2661,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     // Set up the droppped trips for Fv Vacation.
                     // Below the trip.vacationOverlapType is defined as default value
                     
-                    if ((self.bidPeriod?.containsVacay) != nil) {
+                    if ((self.bidPeriod?.containsFvVacay) != nil) {
                         let trips = line.trips as? Set<BITrip> ?? []
                         let vacations = line.fvvacations as? Set<BIVacation> ?? []
                         

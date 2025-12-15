@@ -53,7 +53,7 @@ class CBLineValueView: UIView {
         let vacTitleColor = UIColor(named: "lineValueVacationColor")?.withAlphaComponent(0.7)
         let vacValueColor = UIColor(named: "lineValueVacationColor")
         
-        if ((type.rawValue > 25 && type.rawValue < 39) || type.rawValue == 42 || type.rawValue == 68 || type.rawValue == 50 || type.rawValue == 52 || type.rawValue == 53 || (type.rawValue >= 58 && type.rawValue <= 63)) {
+        if ((type.rawValue > 25 && type.rawValue < 39) || type.rawValue == 42 || type.rawValue == 79 || type.rawValue == 68 || type.rawValue == 50 || type.rawValue == 52 || type.rawValue == 53 || (type.rawValue >= 58 && type.rawValue <= 63)) {
             
             if (type.rawValue == 42) { // vDiff - Vacation Difference line value
                 let FloatValue = (value! as String).floatValue
