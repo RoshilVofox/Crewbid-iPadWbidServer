@@ -260,8 +260,9 @@ class CommutableTimeViewController: UIViewController, KUIPopOverUsable, UICollec
         let herbTZ = TimeZone(identifier: "US/Central") ?? TimeZone(secondsFromGMT: 0)!
 
         // commute city local tz — use your CBUtils helper (adapt name if different)
-        let commuteTZ = CBUtils.timeZone(forAirportCode: self.commuteCityValue)
-
+//        let commuteTZ = CBUtils.timeZone(forAirportCode: self.commuteCityValue)
+        let commuteTZ = CBUtils.timeZone(forAirportCode: self.bidPeriod?.base ?? "")
+        
         // parse HHmm or HH:mm
         var hh = "00", mm = "00"
         if trimmed.contains(":") {
