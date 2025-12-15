@@ -477,7 +477,8 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
             objCommutablity?.isNonStop = NSNumber(value: self.isNonStop)
             objCommutablity?.type = type
             objCommutablity?.secondCellValue = secondCellValue // No Middle
-            objCommutablity?.thirdCellValue = thirdCellValue // Percentage
+            objCommutablity?.thirdCellValue = thirdCellValue //Overall
+            objCommutablity?.value = value // Percentage
             objCommutablity?.commutableType = 0
             
             let rule = BIFilterRule(context: self.context!)
