@@ -130,8 +130,8 @@ class CBCityComparisonRuleCell: CBComparisonRuleCell, UITextFieldDelegate {
         }
         
         
-        if (filterRule?.ruleHighlightsTrips())! {
-            filterRule?.deHighlightTrips()
+        if let rule = filterRule, rule.ruleHighlightsTrips() {
+            rule.deHighlightTrips()
         }
         if (self.tapGesture != nil)
         {

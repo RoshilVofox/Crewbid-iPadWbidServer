@@ -30,7 +30,7 @@ class CBOvernightBulkRuleCell: UITableViewCell, UICollectionViewDelegate, UIColl
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        arrCitiesList = UserDefaults.standard.value(forKey: kCBAllCitiesList) as? NSMutableArray
+//        arrCitiesList = UserDefaults.standard.value(forKey: kCBAllCitiesList) as? NSMutableArray
         lblOvernightBulkTitle.transform = CGAffineTransformMakeRotation(3.14/2)
         lblnoOvernightCities.transform = CGAffineTransformMakeRotation(3.14/2)
         dictCityStatus = [:]

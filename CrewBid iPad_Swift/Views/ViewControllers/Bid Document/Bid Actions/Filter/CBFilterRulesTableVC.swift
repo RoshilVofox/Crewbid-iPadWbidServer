@@ -631,6 +631,8 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
         else if BIFilterRuleCategory.BIOvernightCitiesBulkRuleCategory.rawValue == rule?.category?.intValue {
             useComparisonCell = false
             let ruleCell = cell as? CBOvernightBulkRuleCell
+            let array = UserDefaults.standard.array(forKey: kCBAllCitiesList)
+            ruleCell?.arrCitiesList = NSMutableArray(array: array!)
             ruleCell?.filterRule = rule!
             ruleCell?.bidPeriod = bidPeriod
             ruleCell?.configureOvernightBulkCell()

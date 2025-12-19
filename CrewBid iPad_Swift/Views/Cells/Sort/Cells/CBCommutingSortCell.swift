@@ -387,10 +387,10 @@ class CBCommutingSortCell: UITableViewCell, GRButtonDelegate {
             let NoMidCheckState : Bool = (variables["NoMidCheckState"] as? NSNumber ?? 0).boolValue
             
             if NoMidCheckState == true {
-                obj.calculateCommuteLinePropertiesForWorkblock(withDepartureMonThursText: depMonThurs, departureFriText: depFriday, departureSatText: depSat, departureSunText: depSun, returnMonThursText: returnMonThurs, returnSunText: returnSun, returnSatText: returnSat, returnFriText: returnFriday, bidPeriod: bidPeriod)
+                obj.calculateCommuteLinePropertiesForWorkblock(withDepartureMonThursText: depMonThurs, departureFriText: depFriday, departureSatText: depSat, departureSunText: depSun, returnMonThursText: returnMonThurs, returnSunText: returnSun, returnSatText: returnSat, returnFriText: returnFriday, bidPeriod: bidPeriod, isFromSort: true)
             }
             else {
-                obj.calculateCommuteLinePropertiesForManualTrips(withDepartureMonThursText: depMonThurs, departureFriText: depFriday, departureSatText: depSat, departureSunText: depSun, returnMonThursText: returnMonThurs, returnSunText: returnSun, returnSatText: returnSat, returnFriText: returnFriday, bidPeriod: bidPeriod)
+                obj.calculateCommuteLinePropertiesForManualTrips(withDepartureMonThursText: depMonThurs, departureFriText: depFriday, departureSatText: depSat, departureSunText: depSun, returnMonThursText: returnMonThurs, returnSunText: returnSun, returnSatText: returnSat, returnFriText: returnFriday, bidPeriod: bidPeriod, isFromSort: true)
             }
         }
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
