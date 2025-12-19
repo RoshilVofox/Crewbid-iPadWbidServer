@@ -737,7 +737,15 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
     }
     
     @objc func handleTapToScrollTop(_ sender: UITapGestureRecognizer) {
-        self.scratchPadTableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
+//        self.scratchPadTableView.scrollRectToVisible(CGRect(x: 0, y: 0, width: 1, height: 1), animated: true)
+        guard scratchPadTableView.numberOfSections > 0,
+              scratchPadTableView.numberOfRows(inSection: 0) > 0 else { return }
+
+        scratchPadTableView.scrollToRow(
+            at: IndexPath(row: 0, section: 0),
+            at: .top,
+            animated: true
+        )
     }
     
     //Tap gesture for refresh button in trash menu.
@@ -1036,6 +1044,7 @@ extension CBScratchPadVC: UITableViewDelegate,UITableViewDataSource{
                 print("lineValueView is nil - \(tag) - \(row) - \(CBLineValueTypes(rawValue: valueType)!)")
             }
             lineValueView?.alpha = 1.0
+            
             // To handle the vDiff line value show / hide for Swaptimizer enable condition
             if CBLineValueTypes(rawValue: valueType) == .VacationPayDifference {
                 if line.vCBVacPay as? Double ?? 0.0 > 0.0 || line.orderedTrips.count == 0 {

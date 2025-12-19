@@ -1381,7 +1381,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
             NSSortDescriptor(key: "number", ascending: true)
         ])
         let notBlankPredicate = NSPredicate(format: "type != %d", BILineType.BlankLine.rawValue)
-        sortedLines = (sortedLines as NSArray).filtered(using: notBlankPredicate) as? [AnyObject] ?? []
+        sortedLines = (sortedLines as NSArray).filtered(using: notBlankPredicate)
         let file = jsonData["File"] as! [String: Any]
         let toplevel = file["SWAPtimizer_CrewBid_Data"] as! [String: Any]
         let vacayLines = toplevel["Lines"] as! [[String: Any]]

@@ -197,11 +197,11 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
             lblActionTitle.text = "Show File"
             btnBidAction.isHidden = false
             btnBidAction.setTitle("Bid Actions", for: .normal)
-            if self.bidPeriod?.textFile(withName: BICoverLetterTextFileName) == nil{
-                cell.selectionStyle = .none
-                cell.isUserInteractionEnabled = false
-                cell.lblTitle.textColor = .lightGrey
-            }
+//            if self.bidPeriod?.textFile(withName: BICoverLetterTextFileName) == nil{
+//                cell.selectionStyle = .none
+//                cell.isUserInteractionEnabled = false
+//                cell.lblTitle.textColor = .lightGrey
+//            }
             if !((bidPeriod?.isFABid())!) {
                 cell.lblTitle.text = fileArrayPilot[indexPath.row]
                 cell.imgNext.isHidden = true
@@ -492,9 +492,18 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
             case 0: //Coverletter
                 //dismissFn()
                 let details = ["isFromFirstTimeOpenBid":false]
-                self.dismiss(animated: false) {
-                    NotificationCenter.default.post(name: NSNotification.Name(KCBOpenCoverletter), object: self,userInfo: details)
+                if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSwaAPI?.boolValue == true {
+                    // Open PDF with Quick Look
+                    self.dismiss(animated: false) {
+                        NotificationCenter.default.post(name: NSNotification.Name("KCBOpenCoverletterForFA"), object: nil)
+                        
+                    }
+                }else{
+                    self.dismiss(animated: false) {
+                        NotificationCenter.default.post(name: NSNotification.Name(KCBOpenCoverletter), object: self,userInfo: details)
+                    }
                 }
+
                 break
             case 1: //Seniority
                 //dismissFn()

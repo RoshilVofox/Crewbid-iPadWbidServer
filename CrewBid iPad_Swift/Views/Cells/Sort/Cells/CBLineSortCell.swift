@@ -59,8 +59,8 @@ class CBLineSortCell: UITableViewCell, UIPopoverControllerDelegate {
     }
     
     override func layoutSubviews() {
-        if let cityTextFeild = self.cityNametxt {
-            cityTextFeild.placeholder = "City"
+        if let cityTextField = self.cityNametxt {
+            cityTextField.placeholder = "City"
 //            cityTextFeild.isEnabled = true
         }
         if self.lineSort != nil {
@@ -318,7 +318,7 @@ class CBCityTextFieldDelegate: NSObject, UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        let city = textField.text?.uppercased()
+        let city = textField.text/*?.uppercased()*/
         textField.text = city
         
         var arrAllCities = NSArray()
@@ -332,8 +332,8 @@ class CBCityTextFieldDelegate: NSObject, UITextFieldDelegate {
     
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
         var shouldReturn = true
-        if let city = textField.text?.uppercased() {
-            textField.text = city
+        if let city = textField.text/*?.uppercased()*/ {
+//            textField.text = city
             
             var arrAllCities = NSArray()
             if let aList = UserDefaults.standard.object(forKey: kCBAllCitiesList) as? [Any] {
@@ -354,26 +354,50 @@ class CBCityTextFieldDelegate: NSObject, UITextFieldDelegate {
         return true
     }
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        // Allow only letters in the text field.
-        var nonLettersCharacterSet: CharacterSet? = nil
-        if nil == nonLettersCharacterSet {
-            var lettersOnly = CharacterSet.uppercaseLetters
-            lettersOnly.formUnion(CharacterSet.lowercaseLetters)
-            nonLettersCharacterSet = lettersOnly.inverted
+//    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+//        // Allow only letters in the text field.
+//        var nonLettersCharacterSet: CharacterSet? = nil
+//        if nil == nonLettersCharacterSet {
+//            var lettersOnly = CharacterSet.uppercaseLetters
+//            lettersOnly.formUnion(CharacterSet.lowercaseLetters)
+//            nonLettersCharacterSet = lettersOnly.inverted
+//        }
+//        var shouldChangeCharacters = true
+//        var rangeOfNonLetterCharacters: NSRange? = nil
+//        if let aSet = nonLettersCharacterSet {
+//            rangeOfNonLetterCharacters = (string as NSString).rangeOfCharacter(from: aSet)
+//        }
+//        if NSNotFound != Int(rangeOfNonLetterCharacters?.location ?? 0) {
+//            shouldChangeCharacters = false
+//        }
+//        let city = textField.text?.uppercased()
+//        textField.text = city
+//        return shouldChangeCharacters
+//    }
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
+
+        // Allow only letters
+        let allowedSet = CharacterSet.letters
+        if string.rangeOfCharacter(from: allowedSet.inverted) != nil {
+            return false
         }
-        var shouldChangeCharacters = true
-        var rangeOfNonLetterCharacters: NSRange? = nil
-        if let aSet = nonLettersCharacterSet {
-            rangeOfNonLetterCharacters = (string as NSString).rangeOfCharacter(from: aSet)
+
+        // Build updated text
+        if let text = textField.text,
+           let textRange = Range(range, in: text) {
+
+            let updatedText = text
+                .replacingCharacters(in: textRange, with: string.uppercased())
+
+            textField.text = updatedText
         }
-        if NSNotFound != Int(rangeOfNonLetterCharacters?.location ?? 0) {
-            shouldChangeCharacters = false
-        }
-        let city = textField.text?.uppercased()
-        textField.text = city
-        return shouldChangeCharacters
+
+        // We handled the update manually
+        return false
     }
+    
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let city = textField.text?.uppercased() {

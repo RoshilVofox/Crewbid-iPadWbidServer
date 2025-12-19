@@ -40,8 +40,8 @@ class SecretMethodsViewController: UIViewController {
             envSegment.selectedSegmentIndex = 0
         }
         
-        envSegment.isHidden = !isQATest
-        envLbl.isHidden = !isQATest
+//        envSegment.isHidden = !isQATest
+//        envLbl.isHidden = !isQATest
     }
     
     @IBAction func closeBtnAction(_ sender: Any) {
@@ -69,9 +69,9 @@ class SecretMethodsViewController: UIViewController {
            if selectedIndex == 0 {
                alertinQASegment()
            } else if selectedIndex == 1 {
-               self.envSegment.isHidden = true
-               self.envSegment.selectedSegmentIndex = 0
-               self.envLbl.isHidden = true
+//               self.envSegment.isHidden = true
+//               self.envSegment.selectedSegmentIndex = 0
+//               self.envLbl.isHidden = true
                UserDefaults.standard.setValue(false, forKey: "isQATest")
                UserDefaults.standard.setValue("Prod", forKey: "SwaApiEnv")
                NotificationCenter.default.post(name: NSNotification.Name("updateTitle"), object: nil)
@@ -110,8 +110,8 @@ class SecretMethodsViewController: UIViewController {
                 UserDefaults.standard.setValue(qaYear, forKey: "QATestYear")
                 UserDefaults.standard.setValue(true, forKey: "isQATest")
                 NotificationCenter.default.post(name: NSNotification.Name("updateTitle"), object: nil)
-                self.envSegment.isHidden = false
-                self.envLbl.isHidden = false
+//                self.envSegment.isHidden = false
+//                self.envLbl.isHidden = false
                 print("Saved QA Month: \(qaMonth), QA Year: \(qaYear)")
             } else {
                 // Re-present the same alert with an error message
@@ -127,8 +127,8 @@ class SecretMethodsViewController: UIViewController {
         alert.addAction(okAction)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
             self.qaTestSegment.selectedSegmentIndex = 1
-            self.envSegment.isHidden = true
-            self.envLbl.isHidden = true
+//            self.envSegment.isHidden = true
+//            self.envLbl.isHidden = true
             UserDefaults.standard.setValue("Prod", forKey: "SwaApiEnv")
             self.envSegment.selectedSegmentIndex = 0
             UserDefaults.standard.setValue(false, forKey: "isQATest")

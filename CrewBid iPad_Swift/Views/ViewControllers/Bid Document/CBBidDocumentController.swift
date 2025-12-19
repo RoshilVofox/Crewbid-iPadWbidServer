@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreData
+import QuickLook
 
 class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDelegate {
 
@@ -103,6 +104,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         firstTimeBidOpen()
         NotificationCenter.default.addObserver(self, selector: #selector(didDismissLatestNews), name: NSNotification.Name("DidDismissLatestNews"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openCoverLetter(notification:)), name: NSNotification.Name(KCBOpenCoverletter), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(openCoverLetterFA), name: NSNotification.Name("KCBOpenCoverletterForFA"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openSeniority), name: NSNotification.Name(KCBOpenSeniority), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openLineText), name: NSNotification.Name(KCBOpenLineText), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openTripText), name: NSNotification.Name(KCBOpenTripText), object: nil)
@@ -288,6 +290,31 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         insertionPoint?.index = NSNumber(value: newInsert)
         NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: self, userInfo: nil)
         
+    }
+    
+    func getLineCountFromCoverLetterPDF() -> String {
+
+        guard let metaData = bidPeriod?.metaData?.anyObject() as? MetaData else {
+            return "0"
+        }
+
+        let abcdCount = metaData.abcdPositions
+        let abcCount  = metaData.abcPositions
+        let bcCount   = metaData.bcPositions
+        let dCount    = metaData.dPositions
+        let aCount    = metaData.aPositions
+
+        let lineCount = (abcdCount * 4) + (abcCount * 3) + (bcCount * 2) + aCount + dCount
+
+        return "\(lineCount)"
+    }
+    
+    @objc func openCoverLetterFA(){
+        let previewController = QLPreviewController()
+        previewController.dataSource = self
+        previewController.delegate = self
+        previewController.navigationItem.title = "Cover Letter"
+        present(previewController, animated: true)
     }
     
     @objc func openCoverLetter(notification: Notification) {
@@ -596,10 +623,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             (bidPeriod?.month?.intValue != (sanityCheckedBidPackage?[kCBMonthWord] as? NSNumber)?.intValue ||
              bidPeriod?.year?.intValue  != (sanityCheckedBidPackage?[kCBYearWord] as? NSNumber)?.intValue) {
             
-            if self.bidPeriod!.isFABid()/* && self.bidPeriod.isSwaAPI */{//MARK: for FA SWA
-               //get line count form the pdf
-                //and check line validation
-//                self.checkLineCountValidation(lineCount: lineCount, sanityCheckedBidPackage: &sanityCheckedBidPackage)
+            if self.bidPeriod!.isFABid() && self.bidPeriod?.isSwaAPI?.boolValue == true{
+                let lineCount = self.getLineCountFromCoverLetterPDF()
+                if !lineCount.isEmpty{
+                    self.checkLineCountValidation(lineCount: lineCount, sanityCheckedBidPackage: &sanityCheckedBidPackage)
+                }
             }else{
                 
                 let textFile = self.bidPeriod?.textFile(withName: BICoverLetterTextFileName)
@@ -901,7 +929,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     
     func showSeniority(){
         self.seniorityShowed = true
-        //add FA asn Swa condition
+        if  self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSwaAPI?.boolValue == true{
+            //MARK: needs code
+        }
         let vc = UIStoryboard(name: "BidActions", bundle: nil).instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
         vc.bidPeriod = self.bidPeriod
         vc.dataTypeSelected = TextFileType.seniorityList
@@ -4174,6 +4204,32 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 btnSwaptimizer.setTitleColor(.black, for: .normal)
                 NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
             }
+        }
+    }
+}
+
+extension CBBidDocumentController: QLPreviewControllerDelegate, QLPreviewControllerDataSource {
+    func numberOfPreviewItems(in controller: QLPreviewController) -> Int {
+        return 1
+    }
+    
+    func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> any QLPreviewItem {
+        
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+
+        let destinationURL = documentsDirectory.appendingPathComponent(self.bidPeriod!.coverLetterFileName!)
+
+        return destinationURL as QLPreviewItem
+    }
+    func previewController(_ controller: QLPreviewController,
+                           editingModeFor previewItem: QLPreviewItem) -> QLPreviewItemEditingMode {
+
+        return .disabled
+    }
+    
+    func previewControllerDidDismiss(_ controller: QLPreviewController) {
+        if self.bidPeriod?.coverLetterDisplayed?.boolValue == true && self.bidPeriod?.latestNewsDisplayed?.boolValue != true {
+            self.didDismissLatestNews()
         }
     }
 }

@@ -428,6 +428,7 @@ extension CBLineSortsTVC: UITableViewDataSource, UITableViewDelegate {
         }
         else if lineSort.category?.intValue == BILineSortCategory.BICommutingLineSortCategory.rawValue {
             let sortCell = cell as! CBCommutingSortCell
+            sortCell.titleLabel.text = "Commuting"
             sortCell.bidPeriod = self.bidPeriod
             sortCell.lineSort = lineSort
             sortCell.CalculateCommutingManualSort() // need to code in this function

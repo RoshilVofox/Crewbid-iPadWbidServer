@@ -10,8 +10,8 @@ import UIKit
 
 class CBLineValueView: UIView {
     
-    private weak var titleLabel: UILabel?
-    private weak var valueLabel: UILabel?
+    /*private weak*/ var titleLabel: UILabel?
+    /*private weak*/ var valueLabel: UILabel?
     
     let kCBLineValueViewWidth: CGFloat = 55.0
     let kCBLineValueViewHeight: CGFloat = 28.0

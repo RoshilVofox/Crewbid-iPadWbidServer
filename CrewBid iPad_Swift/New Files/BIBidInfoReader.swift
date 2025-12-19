@@ -4039,7 +4039,7 @@ class BIBidInfoReader{
                 line.tripTfp = line.actualPay
                 line.blockMinutes = line.actualBlockMinutes
                 line.vTpLPay = line.lineRig
-            }else if line.vTpLPay!.intValue > 0{
+            }else if line.vTotalPay!.intValue > 0{
                 if (self.bidPeriod?.vacations!.count)! > 0{
                     line.pay = line.vTotalPay
                     line.tripTfp = line.vFlyPay
@@ -4927,6 +4927,17 @@ class BIBidInfoReader{
             let tripMinimumDefaultPay:Float = (trip.isReserve && !isFABid) ? 6 : 6.5 // 6.5 for FA reserve
             
             var tripMinimum = NSNumber(value: Float(trip.orderedDays.count) * tripMinimumDefaultPay)
+            
+            if trip.isRedEyeTrip{
+                let domicileDayCount = trip.info!.calendarDaysCount!
+                
+                if domicileDayCount.intValue == 1{
+                    tripMinimum = 6.5
+                }else{
+                    tripMinimum = domicileDayCount.floatValue * 6.5 as NSNumber
+                }
+            }
+            
             var tripMinimumBasedOnTAFBHour:NSNumber = 0
             if trip.isReserve{
                 tripMinimumBasedOnTAFBHour = 0
@@ -4938,16 +4949,7 @@ class BIBidInfoReader{
             }else{
                 tripMinimum = 0
             }
-            
-            if trip.isRedEyeTrip{
-                let domicileDayCount = trip.info!.calendarDaysCount!
-                
-                if domicileDayCount.intValue == 1{
-                    tripMinimum = 6.5
-                }else{
-                    tripMinimum = domicileDayCount.floatValue * 6.5 as NSNumber
-                }
-            }
+
             
             let tripMaxValue = fmaxf(tripMinimum.floatValue, fmaxf(tripActualPay, tripMinimumBasedOnTAFBHour.floatValue))
             
@@ -4971,7 +4973,7 @@ class BIBidInfoReader{
             }
             var dayCountSecondLoop = 0
             let dutyDates = self.datesOnlyArrayFromTrip(trip: trip)
-            
+            var addedHoliDays: Set<String> = []
             for dayInfo in tripOrderedDays{
                 let day = trip.orderedDays[dayCountSecondLoop] as BIDay
                 if !self.calendarData.dateIsInBidMonth(date: day.date!) && !self.calendarData.dateIsBeforeFirstDateOfBidMonth(date: day.date!){
@@ -4981,33 +4983,143 @@ class BIBidInfoReader{
                 if self.bidPeriod!.isFABid(){
                     dayMaxValue = Float(day.info?.dayPay ?? 0)
                 }
-                if trip.isRedEyeTrip{
-                    if self.isFABid(){
-                        var dayDate = day.date!
-                        if tripOrderedDays.count == dutyDates.count{
-                            dayDate = dutyDates[dayCountSecondLoop]
-                        }else{
-                            if missingRedEyeDate != nil && missingDateIndex == dayCountSecondLoop{
-                                dayDate = missingRedEyeDate
-                            }
+                let herbTimeZone = TimeZone(identifier: "US/Central")!   // UTC−6
+
+                if trip.isRedEyeTrip {
+
+                    // Holiday rules …
+
+                    let tripStartDate = trip.startDate!
+
+                    // Base calendar in HERB time for converting minutes since midnight
+                    var herbCal = Calendar.current
+                    herbCal.timeZone = herbTimeZone
+
+                    // Extract Y/M/D in HERB TZ
+                    let ymd = herbCal.dateComponents([.year, .month, .day], from: tripStartDate)
+
+                    // ----- Departure -----
+                    guard
+                        let firstLeg = day.info?.orderedLegs.first as? BILegInfo,
+                        let depMinutes = firstLeg.departMinutes?.intValue
+                    else { return }
+
+                    let depTZ = CBUtils.rawTimeZone(forAirportCode: firstLeg.departCity!)
+
+                    var depComps = ymd
+                    depComps.hour = depMinutes / 60
+                    depComps.minute = depMinutes % 60
+
+                    let localDepartureDate = herbCal.date(from: depComps)!
+
+                    // ----- Arrival -----
+                    guard
+                        let lastLeg = day.info?.orderedLegs.last as? BILegInfo,
+                        let arrMinutes = lastLeg.arriveMinutes?.intValue
+                    else { return }
+
+                    let arrTZ = CBUtils.rawTimeZone(forAirportCode: lastLeg.arriveCity!)
+
+                    var arrComps = ymd
+                    arrComps.hour = arrMinutes / 60
+                    arrComps.minute = arrMinutes % 60
+
+                    let localArrivalDate = herbCal.date(from: arrComps)!
+
+                    // ----- Format / Log -----
+                    let depFormatter = DateFormatter()
+                    depFormatter.timeZone = depTZ
+                    depFormatter.dateFormat = "EEE MMM dd HH:mm:ss yyyy"
+                    print("Dep Date: \(depFormatter.string(from: localDepartureDate))")
+
+                    let arrFormatter = DateFormatter()
+                    arrFormatter.timeZone = arrTZ
+                    arrFormatter.dateFormat = "EEE MMM dd HH:mm:ss yyyy"
+                    print("Arr Date: \(arrFormatter.string(from: localArrivalDate))")
+
+                    let dayKeyFormatter = DateFormatter()
+                    dayKeyFormatter.dateFormat = "dd-MMM-yyyy"
+
+                    dayKeyFormatter.timeZone = depTZ
+                    let depDayKey = dayKeyFormatter.string(from: localDepartureDate)
+
+                    dayKeyFormatter.timeZone = arrTZ
+                    let arrDayKey = dayKeyFormatter.string(from: localArrivalDate)
+
+                    var holidayPay: Float = 0.0
+
+                    if self.isFABid() {
+
+                        // Convert to components to extract local hour
+                        var depCal = Calendar.current
+                        depCal.timeZone = depTZ
+
+                        let depTime = depCal.dateComponents([.hour, .minute], from: localDepartureDate)
+                        var normalizedDate = localDepartureDate
+
+                        // If before 03:00 AM -> push forward by 24h
+                        if let hour = depTime.hour, hour < 3 {
+                            normalizedDate = normalizedDate.addingTimeInterval(24 * 3600)
                         }
-                        if missingRedEyeDate != nil && !isHolidayPayForRedEyeAdded{
-                            let holidayPay = self.holidayCalculation(for: dayDate, day: day, line: line, dayInfo: dayInfo, maxPay: dayMaxValue!)
-                            line.holidayPay = (line.holidayPay as! Float + holidayPay) as NSNumber
-                            if holidayPay != 0{
-                                isHolidayPayForRedEyeAdded = true
-                            }
+
+                        // Apply the 03:00 boundary shift
+                        let adjustedDepartureDate = normalizedDate.addingTimeInterval(-3 * 3600)
+
+                        let adjustedDayKeyFormatter = DateFormatter()
+                        adjustedDayKeyFormatter.dateFormat = "dd-MMM-yyyy"
+                        adjustedDayKeyFormatter.timeZone = depTZ
+                        let adjustedDepDayKey = adjustedDayKeyFormatter.string(from: adjustedDepartureDate)
+
+                        let depPay = self.holidayCalculation(
+                            for: adjustedDepartureDate,
+                            timezone: depTZ,
+                            day: day,
+                            line: line,
+                            dayInfo: dayInfo,
+                            maxPay: dayMaxValue!
+                        )
+
+                        if depPay > 0 && !addedHoliDays.contains(adjustedDepDayKey) {
+                            addedHoliDays.insert(adjustedDepDayKey)
+                            holidayPay += depPay
                         }
-                    }else{
-                        if missingRedEyeDate != nil && !isHolidayPayForRedEyeAdded{
-                            if self.isDatePilotHolidayDate(date: missingRedEyeDate, displayType: day.redEyeDayDisplayDayType!, line: line){
-                                line.holidayPay = NSNumber(value: (line.holidayPay!.doubleValue) + 6.5)
-                                isHolidayPayForRedEyeAdded = true
+                    }else {
+                        
+                        let depPay = self.holidayCalculation(
+                            for: localDepartureDate,
+                            timezone: depTZ,
+                            day: day,
+                            line: line,
+                            dayInfo: dayInfo,
+                            maxPay: dayMaxValue!
+                        )
+
+                        if depPay > 0, !addedHoliDays.contains(depDayKey) {
+                            addedHoliDays.insert(depDayKey)
+                            holidayPay += depPay
+                        }
+
+                        if depDayKey != arrDayKey {
+
+                            let arrPay = self.holidayCalculation(
+                                for: localArrivalDate,
+                                timezone: arrTZ,
+                                day: day,
+                                line: line,
+                                dayInfo: dayInfo,
+                                maxPay: dayMaxValue!
+                            )
+
+                            if arrPay > 0, !addedHoliDays.contains(arrDayKey) {
+                                addedHoliDays.insert(arrDayKey)
+                                holidayPay += arrPay
                             }
                         }
                     }
+
+                    line.holidayPay = NSNumber(value: (line.holidayPay?.floatValue ?? 0.0) + holidayPay)
                 }else{
-                    let holidayPay = self.holidayCalculation(for: day.date!, day: day, line: line, dayInfo: dayInfo, maxPay: dayMaxValue!)
+                    let holidayPay = self.holidayCalculation(for: day.date!, timezone: herbTimeZone, day: day, line: line, dayInfo: dayInfo, maxPay: dayMaxValue!)
                     line.holidayPay = (line.holidayPay as! Float + holidayPay) as NSNumber
                 }
                dayCountSecondLoop += 1
@@ -5024,7 +5136,8 @@ class BIBidInfoReader{
             if (self.bidPeriod?.vacations?.allObjects.count)! > 0{
                 line.pay = line.vTotalPay?.floatValue as? NSNumber
             }else{
-                line.pay = NSNumber(value: (line.actualPay!.floatValue) + (line.holidayPay!.floatValue))
+//                line.pay = NSNumber(value: (line.actualPay!.floatValue) + (line.holidayPay!.floatValue))
+                line.pay = NSNumber(value: (line.actualPay!.floatValue) + (line.holidayPay!.floatValue) + (line.lineRig!.floatValue))
             }
         }else{
             line.pay = NSNumber(value: (line.actualPay!.floatValue) + (line.holidayPay!.floatValue) + (line.lineRig!.floatValue))
@@ -5131,7 +5244,7 @@ class BIBidInfoReader{
         
         var ovMinutes = 0
         var ovCount = 0
-        
+        /*
         for case let trip as BITrip in line.trips! {
             if !trip.isReserve && trip.dropForFiltersSorts == 0 {
                 let tripOrderedDays = trip.orderedDays
@@ -5165,9 +5278,39 @@ class BIBidInfoReader{
                 }
             }
         }
+         */
+        for case let trip as BITrip in line.trips! {
+            if trip.isReserve == false && trip.dropForFiltersSorts?.intValue == 0 {
+
+                let orderedDays = trip.orderedDays
+
+                for day in orderedDays {
+
+                    guard let nextDay = day.info?.nextDay else { break }
+
+                    guard
+                        let lastLeg = day.info?.orderedLegs.last as? BILegInfo,
+                        let firstLeg = nextDay.orderedLegs.first
+                    else { continue }
+
+                    let release = lastLeg.arriveMinutes?.intValue ?? 0
+                    var report  = firstLeg.departMinutes?.intValue ?? 0
+
+                    if report < release {
+                        report += 24 * 60
+                    }
+
+                    let diffMinutes = report - release
+
+                    ovMinutes += diffMinutes
+                    ovCount += 1
+                }
+            }
+        }
+        
         if ovCount != 0 {
             let calculatedMinutes = ovMinutes / ovCount
-            line.ovAvg = calculatedMinutes as NSNumber
+            line.ovAvg = (calculatedMinutes - 60) as NSNumber
         }else{
             line.ovAvg = 0
         }
@@ -5364,16 +5507,16 @@ class BIBidInfoReader{
     
    
     
-    private func holidayCalculation(for date:Date, day:BIDay, line:BILine, dayInfo:BIDayInfo, maxPay:Float) -> Float{
+    private func holidayCalculation(for date:Date,timezone: TimeZone, day:BIDay, line:BILine, dayInfo:BIDayInfo, maxPay:Float) -> Float{
         var isHoliday = false
         if !self.isFABid(){
             var holidayPay:Float = 0
-            if self.isDatePilotHolidayDate(date: day.date!, displayType: day.displayType!, line: line){
+            if self.isDatePilotHolidayDate(date: day.date!,timezone: timezone, displayType: day.displayType!, line: line){
                 holidayPay = 6.5
             }
             return holidayPay
         }else{
-            if self.isDateFAHolidayDate(day: day, date: date, line: line){
+            if self.isDateFAHolidayDate(day: day, date: date, timezone: timezone, line: line){
                 isHoliday = true
             }
         }
@@ -5386,8 +5529,9 @@ class BIBidInfoReader{
     }
     
     
-    private func isDatePilotHolidayDate(date: Date, displayType: NSNumber, line: BILine) -> Bool {
-        let calendar = Calendar.current
+    private func isDatePilotHolidayDate(date: Date,timezone: TimeZone, displayType: NSNumber, line: BILine) -> Bool {
+        var calendar = Calendar.current
+        calendar.timeZone = timezone
         let components = calendar.dateComponents([.year, .month, .day], from: date)
         
         let specialDates: [[Int]] = [
@@ -5426,8 +5570,9 @@ class BIBidInfoReader{
         return false
     }
     
-    private func isDateFAHolidayDate(day: BIDay, date: Date, line: BILine) -> Bool {
-        let calendar = Calendar.current
+    private func isDateFAHolidayDate(day: BIDay, date: Date,timezone: TimeZone, line: BILine) -> Bool {
+        var calendar = Calendar.current
+        calendar.timeZone = timezone
         let components = calendar.dateComponents([.year, .month, .day], from: date)
 
         let specialDates: [[Int]] = [

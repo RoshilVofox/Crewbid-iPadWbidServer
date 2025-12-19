@@ -15,7 +15,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var resetButton: UIButton!
     var lineValuesTemp:NSArray!
-    
+    var SwaptimizerVacationImage = ""
     var selectedValuesCount: Int = 0
     var lineValues = [Any]()
     weak var bidPeriod: BIBidPeriod?
@@ -41,6 +41,12 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         self.tableView.allowsMultipleSelection = true
         self.tableView.layer.cornerRadius = 5
         lineValues = lineValues1()
+        if self.bidPeriod?.isWbidMaxOn?.boolValue == true {
+            SwaptimizerVacationImage = "WBidmax-logo"
+        }
+        else if self.bidPeriod?.isSwaptimizerOn?.boolValue == true {
+            SwaptimizerVacationImage = "SwaptAlert"
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -63,11 +69,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         let value = lineValues[indexPath.row] as! NSDictionary
         if linevaluesToDisplay.count > 0 {
             let type = value.value(forKey: "type") as! NSNumber
-            if linevaluesToDisplay.contains(type) {
-                cell.setSelected(true, animated: true)
-            }else{
-                cell.setSelected(false, animated: false)
-            }
+            cell.isSelected = linevaluesToDisplay.contains(type)
         }
         if cell.isSelected{
             cell.accessoryType = .checkmark
@@ -79,6 +81,18 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         let title = value["name"] as? String
         cell.textLabel?.text = title
         let type = value["type"] as! Int
+        
+        
+//         if self.bidPeriod?.isSecondRoundBid() == true && self.bidPeriod?.isFABid() == false{
+//             if self.lineValueTypeIsHidden(forPilotSecondRound: CBLineValueTypes(rawValue: type)!){
+//                 cell.isHidden = true
+//             }
+//         }
+         
+        
+        if self.lineValueTypeIsHidden(forPilotSecondRound: CBLineValueTypes(rawValue: type)!){
+            cell.isHidden = true
+        }
         if (type > 25 && type < 39) || type == 42 || type == 79 || type == 50 || type == 68 || type == 52 || type == 53 || (type >= 58 && type <= 63) {
             if cellIsHidden(for: value as! [AnyHashable : Any]) {
                 cell.isHidden = true
@@ -111,10 +125,18 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         let value = lineValues[indexPath.row] as! NSDictionary
         let typeNum = value.value(forKey: "type") as! NSNumber
         let type = Int(truncating: typeNum)
-//        if self.lineValueTypeIsHidden(forPilotSecondRound: CBLineValueTypes(rawValue: type)!){
-//            return 0
-//        }
-        /*else*/ if type > 25 {
+        
+//         if self.bidPeriod?.isSecondRoundBid() == true && self.bidPeriod?.isFABid() == false{
+//             if self.lineValueTypeIsHidden(forPilotSecondRound: CBLineValueTypes(rawValue: type)!){
+//                 return 0
+//             }
+//         }
+         
+        
+        if self.lineValueTypeIsHidden(forPilotSecondRound: CBLineValueTypes(rawValue: type)!){
+            return 0
+        }
+        else if type > 26 {
             if self.cellIsHidden(for: value as! [AnyHashable : Any]){
                 return 0
             }else{
@@ -459,18 +481,6 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
             lineValueView.setValue(value: String(format: "%0.2f", line.holidayPay!.floatValue), forTitle: "HoliRig", andType: valueType)
             break
             
-//        case .VacationPayDifference:
-//            let wbidVacPay = Float(truncating: line.vWBVacPay!)
-//            let swaVacPay = Float(truncating: line.vCBVacPay!)
-//            var vDiff: Float = 0.0
-//            if bidPeriod.isSwaptimizerOn == true {
-//                vDiff = swaVacPay - wbidVacPay
-//            } else {
-//                vDiff = wbidVacPay - swaVacPay
-//            }
-//            lineValueView.setValue(value: String(format: "%0.2f", vDiff), forTitle: "vDiff", andType: valueType)
-//            break
-            
         case .VacationPayDifference:
 
             guard
@@ -492,21 +502,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
                 vDiff = cbVacPay - wbidVacPay
             }
 
-            // Debug logging (same as NSLog)
-            if wbidVacPay != cbVacPay {
-                print("vacation diff--\(wbidVacPay)-\(cbVacPay)")
-            }
-
-            // This condition exists in Obj-C but does nothing (kept intentionally)
-            if abs(vDiff) == wbidVacPay || abs(vDiff) == cbVacPay {
-                // intentionally empty
-            }
-
-            lineValueView.setValue(
-                value: String(format: "%.2f", vDiff),
-                forTitle: "vDiff",
-                andType: valueType
-            )
+            lineValueView.setValue(value: String(format: "%.2f", vDiff),forTitle: "vDiff",andType: valueType)
             break
             
         case .CommutabilityBacks:
@@ -698,10 +694,10 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
     
     
     func lineValueTypeIsHidden(forPilotSecondRound type:CBLineValueTypes) -> Bool{
-        if (self.bidPeriod?.wbFileIntent == nil) || (self.bidPeriod?.cbFileIntent == nil) || (type == .VacationPayDifference){
+        if ((self.bidPeriod?.wbFileIntent == nil) || (self.bidPeriod?.cbFileIntent == nil)) && (type == .VacationPayDifference){
             return true
         }
-        if (self.bidPeriod?.containsMissingTripLines!.boolValue)! && !(self.bidPeriod?.isFABid())! && type == .AircraftChanges || type == .Deadheads || type == .DutyTime || type == .Legs || type == .PayPerDutyTime || type == .PayPerLeg || type == .BlockTime || type == .PayPerBlock{
+        if (self.bidPeriod?.containsMissingTripLines?.boolValue == true) && (self.bidPeriod?.isFABid() == false) && (type == .AircraftChanges || type == .Deadheads || type == .DutyTime || type == .Legs || type == .PayPerDutyTime || type == .PayPerLeg || type == .BlockTime || type == .PayPerBlock){
             return true
         }else{
             return false
