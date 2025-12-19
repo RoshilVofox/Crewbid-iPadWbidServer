@@ -202,7 +202,7 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
             }
             else {
                 let city = self.variables![BIFilterRuleCityVariablesKey] as? String
-                if (!city!.isEmpty) {
+                if (city!.isEmpty) {
                     return false
                 }
                 else {
@@ -222,9 +222,9 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
         else if (category == BIFilterRuleCategory.BIPassesThruBaseFilterRuleCategory.rawValue && BIPassesThruBaseFilterRuleType.standard.rawValue == type) {
             return true
         }
-        else if (category == BIFilterRuleCategory.BIWorkBlockRuleCategory.rawValue) {
-            return true
-        }
+//        else if (category == BIFilterRuleCategory.BIWorkBlockRuleCategory.rawValue) {
+//            return true
+//        }
         else if (category == BIFilterRuleCategory.BICommutabilityFilterRuleCategory.rawValue) {
             return true
         } else {
@@ -372,7 +372,7 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
         if (BIFilterRuleCategory.BICitiesFilterRuleCategory.rawValue == category) {
             if (BICitiesFilterRuleType.BICitiesFilterRuleTypeEastCoast.rawValue == type || BICitiesFilterRuleType.BICitiesFilterRuleTypeWestCoast.rawValue == type || BICitiesFilterRuleType.BICitiesFilterRuleTypeNonConus.rawValue == type || BICitiesFilterRuleType.BICitiesFilterRuleTypeIntl.rawValue == type || BICitiesFilterRuleType.BICitiesFilterRuleTypeAll.rawValue == type || BICitiesFilterRuleType.BICitiesFilterRuleTypeHawaii.rawValue == type) {
                 let formatString = "SUBQUERY(days, $DAY, ($DAY.info.city IN $SET) && $DAY.trip.dropForFiltersSorts == 0).@count > 0"
-                let format = NSPredicate(format: formatString)
+                format = NSPredicate(format: formatString)
 
                 if let filterVars = (self.variables as? NSMutableDictionary),
                    let citiesArray = self.selectedRegionalCities() as? [String] {
@@ -400,10 +400,13 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
                 }
                 // Leg city predicate.
                 else {
-                    let formatString = """
-                    SUBQUERY(legs, $LEG, $LEG.info.arriveCity == $\(BIFilterRuleCityVariablesKey) && $LEG.info.lastLegOfTrip == NO && $LEG.trip.dropForFiltersSorts == 0).@count > 0
-                    """
-                    let format = NSPredicate(format: formatString)
+                    let formatString = String(
+                        format: "SUBQUERY(legs, $LEG, $LEG.info.arriveCity == $%@ && $LEG.info.lastLegOfTrip == NO && $LEG.trip.dropForFiltersSorts == 0).@count > 0",
+                        BIFilterRuleCityVariablesKey
+                    )
+
+                    format = NSPredicate(format: formatString)
+
                 }
             }
         }
@@ -774,7 +777,9 @@ extension BIFilterRule : Identifiable, NSFetchedResultsControllerDelegate {
             let formatString = String(format: "%@ %@ $%@", self.keyPath!,self.predicateOperatorString(), BIFilterRuleValueVariablesKey)
             format = NSPredicate(format: formatString)
         }
-        
+        if format == nil {
+            format = NSPredicate()
+        }
         return format!.withSubstitutionVariables(self.variables as! [String : Any])
     }
     

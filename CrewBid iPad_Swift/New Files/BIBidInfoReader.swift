@@ -4120,7 +4120,11 @@ class BIBidInfoReader{
         for i in 0..<7{
             weekdays[i] = 0
         }
-        let numDaysInBidMonth = CBUtils.numberOfDays(inMonth: (self.dateComponents?.month)!, forYear: (self.dateComponents?.year)!)
+//        number of days in bid month
+        var numDaysInBidMonth = CBUtils.numberOfDays(inMonth: (self.dateComponents?.month)!, forYear: (self.dateComponents?.year)!)
+        if bidPeriod?.month?.intValue == 1 && bidPeriod?.positionType?.intValue == BICrewPositionType.FlightAttendant.rawValue{
+            numDaysInBidMonth = numDaysInBidMonth - 1
+        }
         var numAircraftChanges = 0
         var numLegs = 0
         var numReserveDays = 0
@@ -4662,6 +4666,7 @@ class BIBidInfoReader{
             }
             let lastDate = tripEndDates.last!
             let lastDayOfBidMonth = self.calendarData.dateForDayOfMonth(dayOfMonth:numDaysInBidMonth)
+            
             daysDiff = (self.calendarData.daysBetweenDate(fromDateTime:lastDate, toDateTime:lastDayOfBidMonth!))
             if daysDiff > blockOfDaysOff{
                 blockOfDaysOff = daysDiff

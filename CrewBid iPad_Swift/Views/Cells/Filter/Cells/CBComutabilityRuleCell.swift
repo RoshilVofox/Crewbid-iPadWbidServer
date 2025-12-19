@@ -190,11 +190,77 @@ class CBComutabilityRuleCell: UITableViewCell, CommutabilityCellDelegate {
                 line.commutabilityFront = 0
                 line.commutabilityBack = 0
                 line.commutabilityOverall = 0
+                
+//                 to remove trip highlight
+                var tripStartDate: Date?
+                var workBlockStartDate: Date?
+                var dateStatus = false
+
+                for case let workBlock as WorkBlockList in line.orderedWorkBlocks {
+                    for case let trip as BITrip in line.orderedTrips {
+
+                        tripStartDate = getOnlyStartDateOfTrip(trip)
+                        workBlockStartDate = getOnlyStartDateOfWorkBlock(workBlock.startDateTime!)
+
+                        if let tripStartDate = tripStartDate,
+                           let workBlockStartDate = workBlockStartDate {
+
+                            dateStatus = dayDateCheck(tripStartDate, isBetween: workBlockStartDate, and: workBlock.endDateOnly!)
+
+                            if dateStatus {
+                                trip.highlightCount = NSNumber(
+                                    value: (trip.highlightCount?.intValue ?? 0) - 1
+                                )
+                                trip.bidListHighlighted = false
+                            }
+                        }
+                    }
+                }
+
             }
             try? self.context?.save()
         }
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
     }
     
-    
+    func getOnlyStartDateOfTrip(_ trip: BITrip) -> Date? {
+        let calendar = Calendar(identifier: .gregorian)
+        var calendarWithSettings = calendar
+        calendarWithSettings.locale = Locale.current
+        calendarWithSettings.timeZone = TimeZone(identifier: "GMT")!
+
+        let dateComponents = calendarWithSettings.dateComponents(
+            [.year, .month, .day],
+            from: trip.startDate!
+        )
+
+        return calendarWithSettings.date(from: dateComponents)
+    }
+
+    func getOnlyStartDateOfWorkBlock(_ date: Date) -> Date? {
+        let calendar = Calendar(identifier: .gregorian)
+        var calendarWithSettings = calendar
+        calendarWithSettings.locale = Locale.current
+        calendarWithSettings.timeZone = TimeZone(identifier: "GMT")!
+
+        let dateComponents = calendarWithSettings.dateComponents(
+            [.year, .month, .day],
+            from: date
+        )
+
+        return calendarWithSettings.date(from: dateComponents)
+    }
+
+    func dayDateCheck(_ date: Date, isBetween beginDate: Date, and endDate: Date) -> Bool {
+        if date.compare(beginDate) == .orderedAscending {
+            return false
+        }
+
+        if date.compare(endDate) == .orderedDescending {
+            return false
+        }
+
+        return true
+    }
+
 }

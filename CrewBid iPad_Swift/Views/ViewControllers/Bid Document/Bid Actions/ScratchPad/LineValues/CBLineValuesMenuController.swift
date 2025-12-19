@@ -506,7 +506,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
             break
             
         case .CommutabilityBacks:
-            if line.commutabilityBack == 0 {
+            if line.commutabilityBack == 0 || line.commutabilityBack == nil {
                 lineValueView.setValue(value: "0", forTitle: "cmt%Ba", andType: valueType)
             }
             else {
@@ -514,7 +514,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
             }
             break
         case .CommutabilityFronts:
-            if line.commutabilityFront == 0 {
+            if line.commutabilityFront == 0 || line.commutabilityFront == nil {
                 lineValueView.setValue(value: "0", forTitle: "cmt%Fr", andType: valueType)
             }
             else {
@@ -544,7 +544,7 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
             break
             
         case .CommutabilityOverall:
-            if line.commutabilityOverall == 0 {
+            if line.commutabilityOverall == 0 || line.commutabilityOverall == nil {
                 lineValueView.setValue(value: "0", forTitle: "cmt%Ov", andType: valueType)
             }
             else {
