@@ -6580,8 +6580,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1177"
             endingLineNumber = "1177"
-            landmarkName = "startAuthentication(empID:formattedUserID:password:)"
-            landmarkType = "7">
+            landmarkName = "CBCredentialsPageVC"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6852,8 +6852,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1132"
             endingLineNumber = "1132"
-            landmarkName = "CBCredentialsPageVC"
-            landmarkType = "3">
+            landmarkName = "loginValidation()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8660,8 +8660,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "936"
             endingLineNumber = "936"
-            landmarkName = "CBCredentialsPageVC"
-            landmarkType = "3">
+            landmarkName = "awardParsingAndTextFileCreation()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8676,8 +8676,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "937"
             endingLineNumber = "937"
-            landmarkName = "CBCredentialsPageVC"
-            landmarkType = "3">
+            landmarkName = "awardParsingAndTextFileCreation()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -11028,8 +11028,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1224"
             endingLineNumber = "1224"
-            landmarkName = "CBCredentialsPageVC"
-            landmarkType = "3">
+            landmarkName = "saveSelectionToUserDefaults()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

@@ -1145,6 +1145,20 @@
 					<key>abbreviation</key>
 					<string>Pay+CO</string>
 				</dict>
+				<dict>
+					<key>name</key>
+					<string>HoliRig</string>
+					<key>category</key>
+					<integer>0</integer>
+					<key>keyPath</key>
+					<string>holidayPay</string>
+					<key>ascending</key>
+					<false/>
+					<key>isMutable</key>
+					<true/>
+					<key>abbreviation</key>
+					<string>HoliRig</string>
+				</dict>
 			</array>
 		</dict>
 		<dict>
