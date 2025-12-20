@@ -5076,7 +5076,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1148"
             endingLineNumber = "1148"
-            landmarkName = "removeVacationsForSync()"
+            landmarkName = "btnSyncAction(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11236,7 +11236,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "968"
             endingLineNumber = "968"
-            landmarkName = "didDismissLatestNews()"
+            landmarkName = "extractNumber(from:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11316,7 +11316,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "946"
             endingLineNumber = "946"
-            landmarkName = "showSeniority()"
+            landmarkName = "didDismissLatestNews()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11364,7 +11364,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2960"
             endingLineNumber = "2960"
-            landmarkName = "executeEOmWBid(vDL:)"
+            landmarkName = "showEOMAlert()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11396,7 +11396,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2893"
             endingLineNumber = "2893"
-            landmarkName = "eomWbid(vDL:)"
+            landmarkName = "wbidMaxErrorMessageEOMSpecialcase()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11508,8 +11508,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3771"
             endingLineNumber = "3771"
-            landmarkName = "CBBidDocumentController"
-            landmarkType = "3">
+            landmarkName = "executeEOMModule()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -11781,7 +11781,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1222"
             endingLineNumber = "1222"
-            landmarkName = "showVacationWeekAlert(completionHandler:)"
+            landmarkName = "getWeekTypeForVacationAlert()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11797,7 +11797,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1263"
             endingLineNumber = "1263"
-            landmarkName = "getWeekTypeForVacationAlert()"
+            landmarkName = "getWeekTypeDateForVacationAlert()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11813,8 +11813,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1260"
             endingLineNumber = "1260"
-            landmarkName = "getWeekTypeForVacationAlert()"
-            landmarkType = "7">
+            landmarkName = "CBBidDocumentController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -12303,7 +12303,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "E7F24C22-26BB-4E8A-8386-3632D6BAD23E"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/Views/Cells/Sort/Cells/CBLineSortCell.swift"
@@ -12319,7 +12319,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "3F1252D3-1FDA-4F7D-81F2-85EE390F98EC"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/LineValues/CBLineValuesMenuController.swift"
@@ -12335,7 +12335,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "5E0F54DE-602F-4E6B-AE1E-D61C24E83E68"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/Models/CoreData/Filter/BIFilterRule+CoreDataProperties.swift"
@@ -12351,7 +12351,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "3D61297D-21E4-4992-B274-EFFC038ADF37"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             condition = "line.number?.intValue == 73"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -12361,6 +12361,23 @@
             startingLineNumber = "4085"
             endingLineNumber = "4085"
             landmarkName = "initDerivedPropertiesForLine(line:isReprocessing:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2A10716D-7F58-4150-B51A-41201E9BD6C0"
+            shouldBeEnabled = "Yes"
+            condition = "trip.number == &quot;AA5Z&quot;"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Document/Bid Actions/ScratchPad/ScratchPadTableCellTableViewCell.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "441"
+            endingLineNumber = "441"
+            landmarkName = "refreshTripButtons(highlightFlag:calendarWidth:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
