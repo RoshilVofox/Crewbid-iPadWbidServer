@@ -922,7 +922,7 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                     labelFrame.origin.x = CGFloat(d - buttonLength) * itemSize.width + 3
                     if !self.bidPeriod.isFABid() && trip.info?.dutyPeriodsCount != trip.info?.calendarDaysCount {
                         if !showingRedEyeIconForThisTrip {
-                            if trip.isRedEyeTrip && (dayIndex - buttonLength) >= missingDateIndex && missingDateIndex != -1 {
+                            if trip.isRedEyeTrip && ((dayIndex - buttonLength) >= missingDateIndex || d == buttonLength) && missingDateIndex != -1 {
                                 redEyeIconButton.frame = labelFrame
                                 labelButton?.addSubview(redEyeIconButton)
                                 redEyePayLabel = UILabel(frame: labelFrame)
