@@ -160,7 +160,7 @@ extension CBCredentialsPageVC: WKNavigationDelegate{
                     : rawUserId
 
                 self.userid = normalizedId
-                GlobalBidInfo.shared.employeeNumber = normalizedId
+//                GlobalBidInfo.shared.employeeNumber = normalizedId
                 GlobalBidInfo.shared.credentialEmployeeNumber = rawUserId
                 self.webViewModel?.onDownloadError = { [weak self] error in
                     self?.handleDownloadError(error)

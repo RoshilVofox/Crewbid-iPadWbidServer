@@ -471,21 +471,25 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if self.dataSource.position == BICrewPositionType.FlightAttendant {
-            // FA: check for existing bid file first
-            if self.bidAlreadyExists() {
-                // show alert which will call the closure on "Download Again"
-                self.showAlertForExistingBid {
-                    // user chose Download Again -> start FA web login after deletion
-                    DispatchQueue.main.async {
-                        self.setupSwaLogin()
-//                        self.setupLegacyLogin()
+            if type == .defaultType{
+                if self.bidAlreadyExists() {
+                    // show alert which will call the closure on "Download Again"
+                    self.showAlertForExistingBid {
+                        // user chose Download Again -> start FA web login after deletion
+                        DispatchQueue.main.async {
+                            self.setupSwaLogin()
+    //                        self.setupLegacyLogin()
+                        }
                     }
+                } else {
+                    // no existing bid -> start FA web login now
+                    self.setupSwaLogin()
+    //                self.setupLegacyLogin()
                 }
-            } else {
-                // no existing bid -> start FA web login now
+            }else{
                 self.setupSwaLogin()
-//                self.setupLegacyLogin()
             }
+
         } else {
             // legacy (pilot) flow: if you want the pilot path to still show the existing-bid alert here,
             // you can do the same check or keep your existing go-button based flow.

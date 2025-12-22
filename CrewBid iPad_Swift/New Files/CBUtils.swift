@@ -1474,6 +1474,39 @@ class CBUtils{
         default:    return ""
         }
     }
+    
+    static func fullMonthName(month :Int) -> String{
+        var monthNmae = ""
+        switch month{
+        case 1,13: monthNmae = "January"
+            break
+        case 2: monthNmae = "February"
+            break
+        case 3: monthNmae = "March"
+            break
+        case 4: monthNmae = "April"
+            break
+        case 5: monthNmae = "May"
+            break
+        case 6: monthNmae = "June"
+            break
+        case 7: monthNmae = "July"
+            break
+        case 8: monthNmae = "August"
+            break
+        case 9: monthNmae = "September"
+            break
+        case 10: monthNmae = "October"
+            break
+        case 11: monthNmae = "November"
+            break
+        case 12: monthNmae = "December"
+            break
+        default:break
+        }
+        return monthNmae
+    }
+    
     static func shortName(for type: BICrewPositionType) -> String {
         switch type {
         case .Captain:

@@ -329,30 +329,39 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         
         let transition = CATransition()
         transition.duration = 0.4
-        transition.type = .fade  // cross dissolve effect
+        transition.type = .fade
         transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
         self.navigationController?.view.layer.add(transition, forKey: kCATransition)
         self.navigationController?.pushViewController(vc, animated: false)
-//           vc.modalPresentationStyle = .fullScreen
-//           vc.modalTransitionStyle = .crossDissolve
-//           self.present(vc, animated: true, completion: nil)
     }
-        //openSeniority view controller push action
+    
+    //openSeniority view controller push action
     @objc func openSeniority() {
-        let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
-        vc.bidPeriod = bidPeriod
-        vc.dataTypeSelected = TextFileType.seniorityList
-        let transition = CATransition()
-        transition.duration = 0.4
-        transition.type = .fade  // cross dissolve effect
-        transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-        self.navigationController?.view.layer.add(transition, forKey: kCATransition)
-        self.navigationController?.pushViewController(vc, animated: false)
-//        vc.modalPresentationStyle = .fullScreen
-//        vc.modalTransitionStyle = .crossDissolve
-//        self.present(vc, animated: true, completion: nil)
+        if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSwaAPI?.boolValue == true {
+            let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "CBSeniorityListVC") as! CBSeniorityListVC
+            vc.bidPeriod = self.bidPeriod
+            let transition = CATransition()
+            transition.duration = 0.4
+            transition.type = .fade
+            transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+            self.navigationController?.view.layer.add(transition, forKey: kCATransition)
+            self.navigationController?.pushViewController(vc, animated: false)
+            
+        }else{
+            let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
+            vc.bidPeriod = bidPeriod
+            vc.dataTypeSelected = TextFileType.seniorityList
+            let transition = CATransition()
+            transition.duration = 0.4
+            transition.type = .fade 
+            transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+            self.navigationController?.view.layer.add(transition, forKey: kCATransition)
+            self.navigationController?.pushViewController(vc, animated: false)
+        }
     }
+    
         //LineText view controller push action
     @objc func openLineText() {
         let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
@@ -885,18 +894,20 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             }
         }
         // Seniority List alert
-        self.seniorityAlert()
+        if !isOldBidPackage{
+            self.seniorityAlert()
+        }
         try? self.bidPeriod?.managedObjectContext?.save()
     }
     //MARK: need to check this alert fn
-    func showSeniorityAlert(text: String){
-        AlertService.showAlertForTopVC(title: "Seniority List", message: text, actions: [(title: "View Seniority List", style: .default, handler:{_ in
-            self.showSeniority()
-        }),(title: "OK", style: .default, handler:{_ in
-            self.bidPeriod?.coverLetterDisplayed = true
-            self.showCoverLetter()
-        })])
-    }
+//    func showSeniorityAlert(text: String){
+//        AlertService.showAlertForTopVC(title: "Seniority List", message: text, actions: [(title: "View Seniority List", style: .default, handler:{_ in
+//            self.showSeniority()
+//        }),(title: "OK", style: .default, handler:{_ in
+//            self.bidPeriod?.coverLetterDisplayed = true
+//            self.showCoverLetter()
+//        })])
+//    }
     
     func showToastWith(text: String, duration: TimeInterval){
         self.toastView.layer.cornerRadius = 20
