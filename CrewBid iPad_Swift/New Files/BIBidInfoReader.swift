@@ -5035,12 +5035,12 @@ class BIBidInfoReader{
                     let depFormatter = DateFormatter()
                     depFormatter.timeZone = depTZ
                     depFormatter.dateFormat = "EEE MMM dd HH:mm:ss yyyy"
-                    print("Dep Date: \(depFormatter.string(from: localDepartureDate))")
+//                    print("Dep Date: \(depFormatter.string(from: localDepartureDate))")
 
                     let arrFormatter = DateFormatter()
                     arrFormatter.timeZone = arrTZ
                     arrFormatter.dateFormat = "EEE MMM dd HH:mm:ss yyyy"
-                    print("Arr Date: \(arrFormatter.string(from: localArrivalDate))")
+//                    print("Arr Date: \(arrFormatter.string(from: localArrivalDate))")
 
                     let dayKeyFormatter = DateFormatter()
                     dayKeyFormatter.dateFormat = "dd-MMM-yyyy"

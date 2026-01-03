@@ -91,7 +91,6 @@ class CBSeniorityListVC: UIViewController {
     }
     
     func fetchSeniorityData() {
-
         let set = bidPeriod?.seniorityList as? Set<SeniorityList> ?? []
         seniorityList = Array(set)
 
@@ -124,9 +123,9 @@ class CBSeniorityListVC: UIViewController {
         
         let col0Width = self.bidPeriod!.isFirstRoundBid() ? 5 : 2
         let col1Width = 8   //Base Seq
-        let col3Width = 32  //Name
-        let col4Width = 7  //Emp ID
-        let col5Width = 5  //Vacation left space
+        let col3Width = 35  //Name
+        let col4Width = 10 //Emp ID
+        let col5Width = 13 //Vacation left space
         
         let sortedSeniority = (seniorityList?.sorted {
             ($0.companySeniority?.intValue ?? 0) < ($1.companySeniority?.intValue ?? 0)

@@ -120,9 +120,9 @@ class CBExpandedBidLinesTableController: BaseViewController, UIPopoverPresentati
         lblTitle.text = "Expanded Bid List \(version) \(month) \(year) \(base) \(position) Rnd \(round)"
         
         let closeImg = UIImage(named: "NewBid-navbar-xcancelbutton")?.withRenderingMode(.alwaysTemplate)
-        let shareImg = UIImage(named: "NavBarGray-ActionButton")?.withRenderingMode(.alwaysTemplate)
+//        let shareImg = UIImage(named: "NavBarGray-ActionButton")?.withRenderingMode(.alwaysTemplate)
         btnClose.setImage(closeImg, for: .normal)
-        btnShare.setImage(shareImg, for: .normal)
+//        btnShare.setImage(shareImg, for: .normal)
         btnClose.imageView?.tintColor = .white
         btnShare.imageView?.tintColor = .white
         btnClose.tintColor = .white
@@ -130,9 +130,20 @@ class CBExpandedBidLinesTableController: BaseViewController, UIPopoverPresentati
 
     @IBAction func btnCloseAction(_ sender: Any) {
         (sender as? UIButton)?.isEnabled = false
-//        NotificationCenter.default.post(name: NSNotification.Name("AddObserverAfterClosingExpandedView"), object: nil)
-        self.dismiss(animated: true)
+
+        self.dismiss(animated: true){
+                    NotificationCenter.default.post(name: NSNotification.Name("reloadTableView"), object: nil)
+        }
     }
+    
+    
+    @IBAction func btnSubmitAction(_ sender: Any) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            NotificationCenter.default.post(name: NSNotification.Name("checkLinesAvailableInBidList"), object: self)
+        }
+        dismissFn()
+    }
+    
     
     // Sets up variables related to the insertion point
 

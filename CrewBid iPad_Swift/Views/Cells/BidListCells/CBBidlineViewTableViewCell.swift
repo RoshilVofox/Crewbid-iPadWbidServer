@@ -303,6 +303,7 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
         lblInsertLineHere.isHidden = true
         txtMarker.isHidden = true
         txtMarker.delegate = self
+        txtMarker.returnKeyType = .done
         let placeholderText = "Untitled Marker."
         let attributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         txtMarker.attributedPlaceholder = NSAttributedString(string: placeholderText, attributes: attributes)
@@ -665,5 +666,42 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
         calendarCollectionView.reloadData()
         
     }
+ 
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.markerTextField.resignFirstResponder()
+        return true
+    }
     
+    public func textFieldDidBeginEditing(_ textField: UITextField)
+    {
+        markerViewHeightConstraint?.constant = 32.0
+        markerTextField.isHidden = false
+        markerTextFieldBaselineConstraint?.constant = 11.0
+        markerTextFieldHeightConstraint?.constant = -6.0
+        textField.borderStyle = .roundedRect
+        textField.backgroundColor = UIColor.white
+        textField.textColor = CBColor.purpleColor
+        markerTextField.becomeFirstResponder()
+        
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        let text = textField.text ?? ""
+        self.markerViewHeightConstraint?.constant = kCBBidLineTableCellMarkerHeight
+        self.markerTextField.isHidden = false
+        self.markerTextFieldBaselineConstraint?.constant = 6
+        self.markerTextFieldHeightConstraint?.constant = 0
+        textField.borderStyle = .none
+        textField.backgroundColor = .darkGray
+        textField.textColor = .white
+        self.line.markerTitle = text
+        self.bidPeriod.managedObjectContext?.processPendingChanges()
+        self.bidPeriod.managedObjectContext?.undoManager?.removeAllActions()
+    }
+    public func textFieldShouldClear(_ textField: UITextField) -> Bool
+    {
+        textField.text = ""
+        
+        return true
+    }
 }

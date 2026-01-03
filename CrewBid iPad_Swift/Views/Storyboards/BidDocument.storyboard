@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="06c-Ha-XoX">
-    <device id="ipad11_0rounded" orientation="landscape" layout="fullscreen" appearance="dark"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="06c-Ha-XoX">
+    <device id="ipad11_0rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24063"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -373,10 +373,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hbU-8T-yOM">
-                                <rect key="frame" x="10" y="34" width="180" height="136"/>
+                                <rect key="frame" x="10" y="42" width="180" height="128"/>
                                 <subviews>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="pzZ-5E-cDD">
-                                        <rect key="frame" x="0.0" y="0.0" width="180" height="136"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="180" height="128"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="BidLineMenuCell" rowHeight="30" id="y0a-KD-NSK">
@@ -4382,15 +4382,18 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9F7-dv-aa0">
-                                        <rect key="frame" x="959" y="29" width="30" height="30"/>
+                                        <rect key="frame" x="915" y="29" width="89" height="30"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="30" id="fEY-si-wed"/>
                                             <constraint firstAttribute="height" constant="30" id="lj4-By-kjZ"/>
                                         </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                         <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                        <state key="normal">
+                                        <state key="normal" title="Submit Bid">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </state>
+                                        <connections>
+                                            <action selector="btnSubmitAction:" destination="uyZ-EO-Nwt" eventType="touchUpInside" id="o2A-Xh-QlT"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" name="CrewbidOrange"/>
@@ -4398,7 +4401,7 @@
                                     <constraint firstAttribute="bottom" secondItem="9F7-dv-aa0" secondAttribute="bottom" constant="15" id="Bdg-FG-ED9"/>
                                     <constraint firstAttribute="height" constant="74" id="Hww-8B-Jak"/>
                                     <constraint firstItem="enF-CE-ntq" firstAttribute="leading" secondItem="4DP-tn-Sbe" secondAttribute="leading" constant="40" id="IyA-RI-HLU"/>
-                                    <constraint firstAttribute="trailing" secondItem="9F7-dv-aa0" secondAttribute="trailing" constant="35" id="ROP-aB-Yhe"/>
+                                    <constraint firstAttribute="trailing" secondItem="9F7-dv-aa0" secondAttribute="trailing" constant="20" id="ROP-aB-Yhe"/>
                                     <constraint firstItem="zwG-OX-CSr" firstAttribute="centerX" secondItem="4DP-tn-Sbe" secondAttribute="centerX" id="XVf-Xh-VFR"/>
                                     <constraint firstAttribute="bottom" secondItem="zwG-OX-CSr" secondAttribute="bottom" constant="15" id="fNa-tq-5im"/>
                                     <constraint firstAttribute="bottom" secondItem="enF-CE-ntq" secondAttribute="bottom" constant="15" id="q8g-qb-zMl"/>
@@ -4560,7 +4563,7 @@
                                                             <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="small"/>
                                                         </imageView>
                                                         <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Untitled Marker" adjustsFontForContentSizeCategory="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="tBf-gh-lY9">
-                                                            <rect key="frame" x="0.0" y="110.5" width="1024" height="19.5"/>
+                                                            <rect key="frame" x="0.0" y="108" width="1024" height="22"/>
                                                             <color key="backgroundColor" white="0.33333333329999998" alpha="1" colorSpace="calibratedWhite"/>
                                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
@@ -4651,10 +4654,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="40" translatesAutoresizingMaskIntoConstraints="NO" id="JD4-0a-MWZ">
-                                <rect key="frame" x="315" y="54" width="80" height="171"/>
+                                <rect key="frame" x="315" y="62" width="80" height="163"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tlB-1J-TUC">
-                                        <rect key="frame" x="0.0" y="0.0" width="80" height="30.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="80" height="27.5"/>
                                         <color key="backgroundColor" systemColor="quaternarySystemFillColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <state key="normal" title="Clear All"/>
@@ -4669,7 +4672,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Ha-0x-Gsd">
-                                        <rect key="frame" x="0.0" y="70.5" width="80" height="30"/>
+                                        <rect key="frame" x="0.0" y="67.5" width="80" height="28"/>
                                         <color key="backgroundColor" systemColor="quaternarySystemFillColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <state key="normal" title="Select All"/>
@@ -4684,7 +4687,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aMV-K8-5MY">
-                                        <rect key="frame" x="0.0" y="140.5" width="80" height="30.5"/>
+                                        <rect key="frame" x="0.0" y="135.5" width="80" height="27.5"/>
                                         <color key="backgroundColor" systemColor="quaternarySystemFillColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <state key="normal" title="Close"/>
@@ -4704,7 +4707,7 @@
                                 </constraints>
                             </stackView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" tag="210" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="GtB-qz-agj" userLabel="Calendar Collection View">
-                                <rect key="frame" x="0.0" y="54" width="310" height="176"/>
+                                <rect key="frame" x="0.0" y="62" width="310" height="168"/>
                                 <color key="backgroundColor" name="custom_colour"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="310" id="oZ6-yD-Ljs"/>
@@ -5230,11 +5233,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view alpha="0.29999999999999999" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TKf-Sk-9Vu" userLabel="BgView">
-                                <rect key="frame" x="0.0" y="24" width="580" height="456"/>
+                                <rect key="frame" x="0.0" y="32" width="580" height="448"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2cv-fM-WhY" userLabel="pop Back View">
-                                <rect key="frame" x="310" y="44" width="250" height="81"/>
+                                <rect key="frame" x="310" y="52" width="250" height="81"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="0BD-z6-HpL">
                                         <rect key="frame" x="0.0" y="0.0" width="250" height="81"/>
@@ -5331,7 +5334,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="ida-H0-gVI">
-                                <rect key="frame" x="10" y="34" width="280" height="286"/>
+                                <rect key="frame" x="10" y="42" width="280" height="278"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="CBBidListActionTableCell" rowHeight="35" id="3lU-Ct-dTO" customClass="CBBidListActionTableCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
@@ -5392,7 +5395,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="jYJ-t9-cZt">
-                                <rect key="frame" x="10" y="34" width="120" height="338"/>
+                                <rect key="frame" x="10" y="42" width="120" height="330"/>
                                 <color key="backgroundColor" name="custom_colour"/>
                                 <inset key="separatorInset" minX="2" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <prototypes>
@@ -6349,7 +6352,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mTE-8M-2F1">
-                                <rect key="frame" x="10" y="34" width="480" height="436"/>
+                                <rect key="frame" x="10" y="42" width="480" height="428"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6zk-mw-xgi">
                                         <rect key="frame" x="0.0" y="0.0" width="512" height="420"/>
@@ -6385,7 +6388,7 @@
                                 </constraints>
                             </scrollView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VAz-YO-lYB">
-                                <rect key="frame" x="380" y="34" width="110" height="20"/>
+                                <rect key="frame" x="380" y="42" width="110" height="20"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Herb" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W5f-ek-jSL">
                                         <rect key="frame" x="0.0" y="0.0" width="55" height="20"/>
@@ -6471,7 +6474,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" tag="210" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" minimumZoomScale="0.0" maximumZoomScale="0.0" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="byQ-UJ-wRD" userLabel="Calendar Collection View">
-                                <rect key="frame" x="0.0" y="54" width="310" height="176"/>
+                                <rect key="frame" x="0.0" y="62" width="310" height="168"/>
                                 <color key="backgroundColor" name="custom_colour"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="310" id="50M-DF-7fg"/>
@@ -6518,10 +6521,10 @@
                                 </connections>
                             </collectionView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="40" translatesAutoresizingMaskIntoConstraints="NO" id="sKj-SD-0QA">
-                                <rect key="frame" x="315" y="54" width="80" height="171"/>
+                                <rect key="frame" x="315" y="62" width="80" height="163"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Fd-Xo-Ho5">
-                                        <rect key="frame" x="0.0" y="0.0" width="80" height="30.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="80" height="27.5"/>
                                         <color key="backgroundColor" systemColor="quaternarySystemFillColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <state key="normal" title="Clear All"/>
@@ -6533,7 +6536,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oLa-WZ-cCl">
-                                        <rect key="frame" x="0.0" y="70.5" width="80" height="30"/>
+                                        <rect key="frame" x="0.0" y="67.5" width="80" height="28"/>
                                         <color key="backgroundColor" systemColor="quaternarySystemFillColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <state key="normal" title="Select All"/>
@@ -6545,7 +6548,7 @@
                                         </userDefinedRuntimeAttributes>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bce-x8-QEu">
-                                        <rect key="frame" x="0.0" y="140.5" width="80" height="30.5"/>
+                                        <rect key="frame" x="0.0" y="135.5" width="80" height="27.5"/>
                                         <color key="backgroundColor" systemColor="quaternarySystemFillColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <state key="normal" title="Close"/>
@@ -6916,7 +6919,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gfQ-Vo-mlT">
-                                <rect key="frame" x="8" y="30" width="384" height="38"/>
+                                <rect key="frame" x="8" y="38" width="384" height="38"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Touch to pick a city" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oNi-E5-o5W">
                                         <rect key="frame" x="114" y="8.5" width="156.5" height="21"/>
@@ -6951,7 +6954,7 @@
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Cg9-SP-uP0">
-                                <rect key="frame" x="8" y="68" width="384" height="302"/>
+                                <rect key="frame" x="8" y="76" width="384" height="294"/>
                                 <color key="backgroundColor" name="contentBgColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="5" minimumInteritemSpacing="5" id="AT1-S9-yfM">
                                     <size key="itemSize" width="30" height="30"/>
@@ -7020,10 +7023,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ti2-px-imn">
-                                <rect key="frame" x="10" y="34" width="180" height="136"/>
+                                <rect key="frame" x="10" y="42" width="180" height="128"/>
                                 <subviews>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="dB1-gG-YZQ">
-                                        <rect key="frame" x="0.0" y="0.0" width="180" height="136"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="180" height="128"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="RefreshMenuTableViewCell" rowHeight="30" id="F6K-84-btg" customClass="RefreshMenuTableViewCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
@@ -7095,10 +7098,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fLl-uH-SzK">
-                                <rect key="frame" x="10" y="34" width="180" height="136"/>
+                                <rect key="frame" x="10" y="42" width="180" height="128"/>
                                 <subviews>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="sTI-XM-XXj">
-                                        <rect key="frame" x="0.0" y="5" width="175" height="126"/>
+                                        <rect key="frame" x="0.0" y="5" width="175" height="118"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="default" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FaMoveBidListCell" rowHeight="30" id="NBZ-cH-dO4" customClass="FaMoveBidListCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
@@ -7170,10 +7173,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gAN-aj-Z4r">
-                                <rect key="frame" x="10" y="34" width="180" height="136"/>
+                                <rect key="frame" x="10" y="42" width="180" height="128"/>
                                 <subviews>
                                     <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="15p-kj-19J">
-                                        <rect key="frame" x="0.0" y="0.0" width="180" height="136"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="180" height="128"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="RefreshMenuTableViewCell" rowHeight="30" id="Ap3-If-sPC" customClass="RefreshMenuTableViewCell" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
@@ -7245,10 +7248,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LMP-i6-tlR">
-                                <rect key="frame" x="10" y="27" width="270" height="203"/>
+                                <rect key="frame" x="10" y="35" width="270" height="195"/>
                                 <subviews>
                                     <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="lg2-VC-DCI" customClass="CBBidLineCalendarCollectionView" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="26" width="270" height="177"/>
+                                        <rect key="frame" x="0.0" y="26" width="270" height="169"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="VJB-CQ-OTA">
                                             <size key="itemSize" width="30" height="30"/>
@@ -7265,9 +7268,9 @@
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" tag="100" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="44" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="J3m-TH-XcB">
-                                                            <rect key="frame" x="5" y="6" width="20" height="14"/>
+                                                            <rect key="frame" x="5" y="4" width="20" height="14"/>
                                                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="14"/>
                                                             <color key="textColor" name="preset_label"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
@@ -7276,9 +7279,9 @@
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstItem="J3m-TH-XcB" firstAttribute="leading" secondItem="89s-z0-cZX" secondAttribute="leading" constant="5" id="F1k-FC-wet"/>
-                                                    <constraint firstItem="J3m-TH-XcB" firstAttribute="top" secondItem="89s-z0-cZX" secondAttribute="top" constant="6" id="cE7-Kb-26W"/>
+                                                    <constraint firstItem="J3m-TH-XcB" firstAttribute="top" secondItem="89s-z0-cZX" secondAttribute="top" constant="4" id="cE7-Kb-26W"/>
                                                     <constraint firstAttribute="trailing" secondItem="J3m-TH-XcB" secondAttribute="trailing" constant="5" id="gNd-O0-akO"/>
-                                                    <constraint firstAttribute="bottom" secondItem="J3m-TH-XcB" secondAttribute="bottom" constant="10" id="iyd-T0-MMs"/>
+                                                    <constraint firstAttribute="bottom" secondItem="J3m-TH-XcB" secondAttribute="bottom" constant="12" id="iyd-T0-MMs"/>
                                                 </constraints>
                                                 <connections>
                                                     <outlet property="dayLabel" destination="J3m-TH-XcB" id="kGW-zp-89f"/>

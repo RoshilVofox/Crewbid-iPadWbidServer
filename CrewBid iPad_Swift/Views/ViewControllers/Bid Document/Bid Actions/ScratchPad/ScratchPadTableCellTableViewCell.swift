@@ -804,7 +804,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                     continue
                 }
                 else{
-                    tripLength = vacay.length!.intValue /*- 1*/
+                    tripLength = vacay.length!.intValue
                 }
                 let column = index % 7
                 var buttonLength = 0

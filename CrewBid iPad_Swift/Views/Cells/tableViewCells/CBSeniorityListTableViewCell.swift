@@ -19,7 +19,7 @@ class CBSeniorityListTableViewCell: UITableViewCell {
         super.awakeFromNib()
         self.empNumLbl.isUserInteractionEnabled = true
         self.nameLbl.isUserInteractionEnabled = true
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(menuDidHide), name: UIMenuController.willHideMenuNotification, object: nil)
         let nameTapGesture = UITapGestureRecognizer(target: self, action: #selector(labelTapped))
         let empNumTapGesture = UITapGestureRecognizer(target: self, action: #selector(labelTapped))
         self.empNumLbl.addGestureRecognizer(empNumTapGesture)
@@ -33,20 +33,29 @@ class CBSeniorityListTableViewCell: UITableViewCell {
         
     }
     
-    @objc func labelTapped(_ gesture:UILongPressGestureRecognizer){
-//        self.becomeFirstResponder()
-//        let label = gesture.view as! UILabel
-//        let copyItem = UIMenuItem(title: "Copy", action: #selector(copyText))
-//        UIMenuController().menuItems = [copyItem]
-//        UIMenuController().showMenu(from: label, rect: label.bounds)
-//
-//        let font = UIFont(name: "Courier New Bold", size: 15)
-//        label.font = font
-        
+    @objc func labelTapped(_ gesture:UITapGestureRecognizer){
+        window?.endEditing(true)
+        self.becomeFirstResponder()
+        guard let label = gesture.view as? UILabel else {return}
+        let copyItem = UIMenuItem(title: "Copy", action: #selector(copyText))
+        UIMenuController.shared.menuItems = [copyItem]
+        UIMenuController.shared.showMenu(from: label, rect: label.bounds)
+        let font = UIFont(name: "Courier New Bold", size: 16)
+        label.font = font
     }
     
+    
     @objc func copyText(){
-        
+        UIPasteboard.general.string = self.empNumLbl.text?.replacingOccurrences(of: "[()]", with: "", options: .regularExpression)
+        let font = UIFont(name: "Courier New Bold", size: 14)
+        self.empNumLbl.font = font
+        self.nameLbl.font = font
+    }
+    
+    @objc func menuDidHide(){
+        let font = UIFont(name: "Courier New Bold", size: 14)
+        self.empNumLbl.font = font
+        self.nameLbl.font = font
     }
     
 

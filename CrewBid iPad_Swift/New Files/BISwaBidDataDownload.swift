@@ -38,7 +38,7 @@ class BISwaBidDataDownload{
     
     
     func kCBSwaServiceURL() -> String{
-        var env = UserDefaults.standard.string(forKey: "SwaApiEnv")
+        let env = UserDefaults.standard.string(forKey: "SwaApiEnv")
         var baseURL = ""
         if env == "Dev"{
             baseURL = "https://itest.service.east.0.crewbid.dev.swalife.com/"
@@ -107,7 +107,7 @@ class BISwaBidDataDownload{
         }
     }
     
-    //MARK: Get Cover List
+    //MARK: Get Cover Letter
     func getSwaCoverLetter(completion: @escaping (Result<Void, Error>) -> Void){
         let urlString = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(self.packetID)/cover-letter"
         
