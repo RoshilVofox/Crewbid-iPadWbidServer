@@ -1901,9 +1901,9 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
             
             // Compute based on mode
             if noMidCheckState == 1 {
-                obj.calculateCommuteLinePropertiesForWorkblock(withDepartureMonThursText: monThursDept, departureFriText: friDept, departureSatText: satDept, departureSunText: sunDept, returnMonThursText: monThursRet, returnSunText: sunRet, returnSatText: satRet, returnFriText: friRet, bidPeriod: bidPeriod)
+                obj.calculateCommuteLinePropertiesForWorkblock(withDepartureMonThursText: monThursDept, departureFriText: friDept, departureSatText: satDept, departureSunText: sunDept, returnMonThursText: monThursRet, returnSunText: sunRet, returnSatText: satRet, returnFriText: friRet, bidPeriod: bidPeriod, isFromSort: true)
             } else {
-                obj.calculateCommuteLinePropertiesForManualTrips(withDepartureMonThursText: monThursDept, departureFriText: friDept, departureSatText: satDept, departureSunText: sunDept, returnMonThursText: monThursRet, returnSunText: sunRet,returnSatText: satRet,returnFriText: friRet,bidPeriod: bidPeriod)
+                obj.calculateCommuteLinePropertiesForManualTrips(withDepartureMonThursText: monThursDept, departureFriText: friDept, departureSatText: satDept, departureSunText: sunDept, returnMonThursText: monThursRet, returnSunText: sunRet,returnSatText: satRet,returnFriText: friRet,bidPeriod: bidPeriod, isFromSort: true)
             }
         }
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)

@@ -166,14 +166,14 @@ extension BILineSort : Identifiable, NSFetchedResultsControllerDelegate {
                     return nil
                 }
                 // Overnight city predicate.
-                if (BICitiesFilterRuleType.BIOvernightCityType.rawValue == type) {
+                if (BICityLineSortType.BIOvernightCityLineSortType.rawValue == type) {
                     if city == self.bidPeriod?.base {
                         return nil
                     }
                     let formatString = String(format:
                         "SUBQUERY(days, $DAY, $DAY.info.city == '%@' && $DAY.trip.dropForFiltersSorts == 0).@count > 0",
                         self.city ?? "")
-                    let format = NSPredicate(format: formatString)
+                    format = NSPredicate(format: formatString)
 
                 }
                 // Leg city predicate.

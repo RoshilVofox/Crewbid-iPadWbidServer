@@ -74,9 +74,12 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesBelowNotification"), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesAboveNotification"), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBMoveSelectedNotification"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBReturnSelectedLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.moveInsertionIndex(_:)), name: NSNotification.Name(rawValue: "CBInsertLinesAboveNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.moveInsertionIndex(_:)), name: NSNotification.Name(rawValue: "CBInsertLinesBelowNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.moveSelectedLinesToInsertionIndex), name: NSNotification.Name(rawValue: "CBMoveSelectedNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.deleteSelectedLines), name: NSNotification.Name(rawValue: "CBReturnSelectedLinesNotification"), object: nil)
+        
     }
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -98,11 +101,13 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesBelowNotification"), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesAboveNotification"), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBMoveSelectedNotification"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBReturnSelectedLinesNotification"), object: nil)
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesBelowNotification"), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesAboveNotification"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBReturnSelectedLinesNotification"), object: nil)
     }
 
     

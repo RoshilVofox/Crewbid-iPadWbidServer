@@ -5364,7 +5364,7 @@ class BIBidInfoReader{
     private func updateEndDateForRedEyeTrips(line:BILine){
         for case let trip as BITrip in line.trips! {
             if trip.isRedEyeTrip{
-                if trip.info?.calendarDaysCount == trip.info!.orderedDays().count as NSNumber{
+                if trip.info?.calendarDaysCount != trip.info!.orderedDays().count as NSNumber{
                     if CBUtils.findMissingDate(forRedEyeTrip: trip) != nil {
                         trip.endDate = self.calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue + ((trip.info?.orderedDays().count)!-1)+1)
                     }

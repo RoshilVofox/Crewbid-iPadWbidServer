@@ -465,8 +465,17 @@ class CBLineTypeRuleCell: UITableViewCell {
                     // Second Round data
                     var Etopsvariables = etopsfilterRule?.variables
                     var EtopsResvariables = etopsResfilterRule?.variables
-                    let variables = filterRule.variables?["SET"] as! NSSet
-                    let arrVariables = NSMutableArray(array:variables.allObjects)
+                    var variables: Set<NSNumber> = NSSet() as! Set<NSNumber>
+                    if let value = filterRule.variables?["SET"] {
+                        if let set = value as? NSSet {
+                            variables = set as! Set<NSNumber>
+                        } else if let array = value as? [Any] {
+                            variables = NSSet(array: array) as! Set<NSNumber>
+                        } else {
+                            print("Unexpected type:", type(of: value))
+                        }
+                    }
+                    let arrVariables = NSMutableArray(array: Array(variables))
               //      hardLinesButton.isSelected = arrVariables.contains(BILineType.BIHardLineType.rawValue)
                     if bidPeriod.isEtopsLinesContainsInBid?.boolValue == true {
                         hardLinesButton.isSelected = arrVariables.contains(BILineType.NonEtopsHard.rawValue)
@@ -502,6 +511,7 @@ class CBLineTypeRuleCell: UITableViewCell {
                             etopsResButton.isSelected = ETOPSRES_ON
                         }
                     }
+                    
                     
                 }
             } else {  // for FA data

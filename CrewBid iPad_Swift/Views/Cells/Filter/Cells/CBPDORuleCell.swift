@@ -78,8 +78,8 @@ class CBPDORuleCell: UITableViewCell, RefreshDelegate {
         }
         
         let vars = rule.variables ?? [:]
-        let dayValue = vars["DAY"] as? String ?? ""
-        let city = vars[BIFilterRuleCityVariablesKey] as? String ?? ""
+        let dayValue = vars["DAY"] as? String ?? "Any Days"
+        let city = vars[BIFilterRuleCityVariablesKey] as? String ?? "Any Cities"
         let comparison = rule.comparison
         let filterMinutes = (vars[BIFilterRuleValueVariablesKey] as? NSNumber)?.intValue ?? 0
         
@@ -91,356 +91,273 @@ class CBPDORuleCell: UITableViewCell, RefreshDelegate {
             }
             let df = DateFormatter()
             df.dateFormat = "dd-MMM-yyyy"
+            df.locale = Locale(identifier: "en_US_POSIX")
             df.timeZone = TimeZone(abbreviation: "UTC")
             filterDate = df.date(from: "\(dayValue)-\(year)")
         }
         
-        let checkCity = (!city.isEmpty && city != "Any Cities")
-        let checkDate = (filterDate != nil)
-       
+        let isAnyDay = dayValue.length == 0 || dayValue == "Any Days"
+        let isAnyCity = city.length == 0 || city == "Any Cities"
+        
         let isAtAfter: Bool
         if let comp = comparison?.intValue {
             isAtAfter = (comp == 1)
         } else {
             isAtAfter = true
         }
-
+        
         var utcCal = Calendar(identifier: .gregorian)
         utcCal.timeZone = TimeZone(abbreviation: "UTC")!
         
-        for anyLine in bid.orderedLines() {
-            guard let line = anyLine as? BILine else { continue }
-         
-            if (checkCity || checkDate),
-               !bid.isFABid(),
-               ((line.orderedTrips as? [BITrip])?.isEmpty ?? true) {
+        for case let line as BILine in bid.lines! {
+            
+            //            filter out blank lines
+            if ((!isAnyDay || !isAnyCity) && !bid.isFABid() && line.trips?.count == 0) {
                 line.isPdoFiltered = true
                 continue
             }
             
-            var lineMatched = false
-            var allLegsMeetMinutes = true
+            var status = false
+            var lineMatched = false // will be set YES if line satisfies filters
             
-            tripsLoop: for anyTrip in line.orderedTrips ?? [] {
-                guard let trip = anyTrip as? BITrip else { continue }
+            for case let trip as BITrip in line.orderedTrips {
+                let filterComp = utcCal.dateComponents([.year, .month, .day], from: filterDate ?? Calendar(identifier: .gregorian).date(from: DateComponents(year: 1997, month: 1, day: 1))!)
+                let startComp = utcCal.dateComponents([.year, .month, .day], from: trip.startDate ?? Date())
+                let endComp = utcCal.dateComponents([.year, .month, .day], from: trip.endDate ?? Date())
                 
-                if (line.daysOff?.intValue ?? 0) > 0,
-                   checkCity,
-                   !checkDate,
-                   city == bid.base {
-                    continue
-                }
+                let filterDay = utcCal.date(from: filterComp)
+                let tripStartDay = utcCal.date(from: startComp)
+                let tripEndDay = utcCal.date(from: endComp)
                 
-                if let fd = filterDate, checkDate {
-                    let filterComp = utcCal.dateComponents([.year, .month, .day], from: fd)
-                    let startComp = utcCal.dateComponents([.year, .month, .day], from: trip.startDate ?? Date())
-                    let endComp = utcCal.dateComponents([.year, .month, .day], from: trip.endDate ?? Date())
-                    
-                    let filterDay = utcCal.date(from: filterComp)!
-                    let tripStartDay = utcCal.date(from: startComp)!
-                    
-                    var tripEndDay = utcCal.date(from: endComp)!
-                    
-                    if trip.isRedEyeTrip == true {
-                        if let lastDay = trip.info?.orderedDays().last,
-                           let firstLegOfLastDay = lastDay.orderedLegs.first {
-
-                            let lastLegDepartMinutes = firstLegOfLastDay.departMinutes?.intValue
-
-                            
-                            tripEndDay = tripStartDay.addingTimeInterval(
-                                TimeInterval((lastLegDepartMinutes ?? 0) * 60)
-                            )
-                        }
-                    }
-                    
-                    if filterDay < tripStartDay || filterDay > tripEndDay {
-                        if (line.isPdoFiltered as? Bool ?? false) && !checkCity {
-                           
-                            break
-                        }
-                        line.isPdoFiltered = false
-
-                        if checkCity && city == bid.base {
-                           
-                        } else if !checkCity {
-                           
-                            continue
-                        }
-                    }
-                }
+                var dayIndex = 0
                 
-                let tripComponents = utcCal.dateComponents([.year, .month, .day],
-                                                           from: trip.startDate ?? Date())
-                let tripStartOfDay = utcCal.date(from: tripComponents) ?? (trip.startDate ?? Date())
-                
-                for anyDay in trip.info?.orderedDays() ?? [] {
-                    guard let dayInfo = anyDay as? BIDayInfo else { continue }
-
-                    guard
-                        let firstLegAny = dayInfo.orderedLegs.first,
-                        let lastLegAny  = dayInfo.orderedLegs.last,
-                        let firstLeg    = firstLegAny as? BILegInfo,
-                        let lastLeg     = lastLegAny as? BILegInfo
-                    else { continue }
-
-                   
-                    var legMinutes = isAtAfter
-                        ? (lastLeg.arriveMinutes?.intValue ?? 0)
-                        : (firstLeg.departMinutes?.intValue ?? 0)
-
-                    var legCity = isAtAfter
-                        ? (lastLeg.arriveCity ?? "")
-                        : (firstLeg.departCity ?? "")
-
+                for dayInfo in trip.info!.orderedDays() {
+                    let firstLeg = dayInfo.firstLeg
+                    let lastLeg = dayInfo.orderedLegs.last
                     
-                    if bid.isFABid(),
-                       bid.isSecondRoundBid(),
-                       trip.isReserveFa?.boolValue == true {
-                        legMinutes = minutesForReserveTime(line: line, trip: trip, isAfter: isAtAfter)
-                        legCity = bid.base ?? ""
-                    }
+                    let dayStartDate = tripStartDay?.addingTimeInterval(TimeInterval((firstLeg?.departMinutes?.intValue ?? 0) * 60))
+                    let dayStartDateComp = utcCal.dateComponents([.year, .month, .day], from: dayStartDate ?? Date())
+                    let tripComponents = utcCal.dateComponents([.year, .month, .day], from: trip.startDate ?? Date())
+                    let tripStartOfDay = utcCal.date(from: tripComponents)
                     
-                    let dayStartDate = tripStartOfDay.addingTimeInterval(TimeInterval((firstLeg.departMinutes?.intValue ?? 0) * 60))
-
-                   
-                    let legDate = tripStartOfDay.addingTimeInterval(TimeInterval(legMinutes * 60))
-
-                    let legHM = (utcCal.component(.hour, from: legDate) * 60) +
-                                (utcCal.component(.minute, from: legDate))
-
+                    let legDepartDate = tripStartOfDay?.addingTimeInterval(TimeInterval((firstLeg?.departMinutes?.intValue ?? 0) * 60))
+                    let legArriveDate = tripStartOfDay?.addingTimeInterval(TimeInterval((lastLeg?.arriveMinutes?.intValue ?? 0) * 60))
                     
-                    let startHM = (utcCal.component(.hour, from: dayStartDate) * 60) +
-                                  (utcCal.component(.minute, from: dayStartDate))
-
+                    let dateCompArr = utcCal.dateComponents([.year, .month, .day, .hour, .minute], from: legArriveDate!)
+                    let dateCompDep = utcCal.dateComponents([.year, .month, .day, .hour, .minute], from: legDepartDate!)
                     
-                    var correctedDate = legDate
-
-                    if legHM < startHM {
-                        correctedDate = utcCal.date(byAdding: .day, value: 1, to: legDate)!
-                    }
-                    var shifted: DateComponents
-                    if bid.isFABid(),
-                       bid.isSecondRoundBid(),
-                       trip.isReserveFa?.boolValue == true {
-                        shifted = shiftedDayComponents(for: correctedDate,
-                                                           dayStartDate: dayStartDate,
-                                                           calendar: utcCal)
-                    }
-                    else{
-                        shifted = shiftedDayComponents(for: legDate,
-                                                           dayStartDate: dayStartDate,
-                                                           calendar: utcCal)
-                    }
+                    var depMins = (dateCompDep.hour ?? 0) * 60 + (dateCompDep.minute ?? 0)
+                    var arrMins = (dateCompArr.hour ?? 0) * 60 + (dateCompArr.minute ?? 0)
                     
-                    let legDateMinutes = (shifted.hour ?? 0) * 60 + (shifted.minute ?? 0)
-                    let legDay = shifted.day ?? 0
-                    let legMonth = shifted.month ?? 0
-
-                  
-                    var dateCondition = true
-                    if let fd = filterDate, checkDate {
-                        var cal = Calendar(identifier: .gregorian)
-                        cal.timeZone = TimeZone(abbreviation: "UTC")!
-
-                        let filterComponents = cal.dateComponents([.day, .month], from: fd)
-                        dateCondition = (legDay == filterComponents.day && legMonth == filterComponents.month)
+                    var depCity = firstLeg?.departCity
+                    var arrCity = lastLeg?.arriveCity
+                    
+                    if bid.isFABid() && bid.isSecondRoundBid() && trip.isReserveFa?.boolValue == true {
+                        depMins = self.minutesForReserveTime(line: line, trip: trip, isAfter: false)
+                        arrMins = self.minutesForReserveTime(line: line, trip: trip, isAfter: true)
+                        depCity = bid.base
+                        arrCity = bid.base
                     }
-
-                   
-                    var cityCondition = true
-                    if checkCity {
-                        cityCondition = (legCity == city)
-                    }
-
-                   
-                    let minutesCondition: Bool = isAtAfter
-                        ? (legDateMinutes <= filterMinutes)
-                        : (legDateMinutes >= filterMinutes)
-
-                    if checkCity || checkDate {
-
-                        if dateCondition {
-                            
-                            if cityCondition && minutesCondition {
-                                
-                                line.isPdoFiltered = false
-                                lineMatched = true
-
-                                
-                                if !(trip.isRedEyeTrip) {
-                                    break
+                    if isAnyDay {
+                        if isAnyCity {
+                            if !isAtAfter {
+                                if (!trip.isRedEyeTrip && depMins < 180) {
+                                    depMins = depMins + 1440
                                 }
-                            } else {
-                               
-                                line.isPdoFiltered = true
-
-                                
-                                if checkDate {
+                                if depMins < filterMinutes {
+                                    status = true
                                     lineMatched = true
                                     break
                                 }
-
-                               
-                                if (trip.isRedEyeTrip), isAtAfter {
-                                    if let nextDay = dayInfo.nextDay,
-                                       let nextFirstLegAny = nextDay.orderedLegs.first,
-                                       let nextFirstLeg = nextFirstLegAny as? BILegInfo,
-                                       let fd = filterDate {
-
-                                        let nextLegDate = tripStartOfDay.addingTimeInterval(
-                                            TimeInterval((nextFirstLeg.departMinutes?.intValue ?? 0) * 60)
-                                        )
-
-                                        var cal = Calendar(identifier: .gregorian)
-                                        cal.timeZone = TimeZone(abbreviation: "UTC")!
-
-                                        let legComponents = cal.dateComponents([.day, .month], from: nextLegDate)
-                                        let filterComponents = cal.dateComponents([.day, .month], from: fd)
-
-                                        if !(legComponents.day == filterComponents.day &&
-                                             legComponents.month == filterComponents.month) {
-                                           
+                            }
+                            else if isAtAfter {
+                                if depMins > arrMins {
+                                    arrMins = arrMins + 1440
+                                }
+                                if arrMins > filterMinutes {
+                                    status = true
+                                    lineMatched = true
+                                    break
+                                }
+                            }
+                        }
+                        else {
+                            status = true
+                            let isBaseCity = (city == bid.base)
+                            if !isAtAfter {
+                                let cityMatch = depCity == city
+                                let timeMatch = depMins >= filterMinutes
+                                
+                                if ((isBaseCity && (cityMatch || timeMatch)) || (!isBaseCity && ( cityMatch && timeMatch))) {
+                                    status = false
+                                    lineMatched = true
+                                    break
+                                }
+                            }
+                            else if isAtAfter {
+                                if depMins > arrMins {
+                                    arrMins = arrMins + 1440
+                                }
+                                let cityMatch = arrCity == city
+                                let timeMatch = arrMins <= filterMinutes
+                                
+                                if ((isBaseCity && (cityMatch || timeMatch)) || (!isBaseCity && ( cityMatch && timeMatch))) {
+                                    status = false
+                                    lineMatched = true
+                                    break
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        // Check Filter Date Condition
+                        if (filterDate == nil) {
+                            line.isPdoFiltered = true
+                            continue
+                        }
+                        if filterDay?.compare(tripStartDay!) == .orderedAscending || filterDay?.compare(tripEndDay!) == .orderedDescending {
+                            if (isAnyCity || (!isAnyCity && city == bid.base)) {
+                                line.isPdoFiltered = false
+                                continue
+                            }
+                        }
+                        if trip.orderedDays.count == 1 && filterDay?.compare(tripStartDay!) != .orderedSame {
+                            if (isAnyCity || (!isAnyCity && city == bid.base)) {
+                                line.isPdoFiltered = false
+                                continue
+                            }
+                        }
+                        status = true
+                        
+                        let sameDay = (filterComp.year == dayStartDateComp.year && filterComp.month == dayStartDateComp.month  && filterComp.day == dayStartDateComp.day)
+                        
+                        if isAnyCity {
+                            if !isAtAfter {
+                                if (sameDay && (depMins >= filterMinutes)) {
+                                    status = false
+                                    lineMatched = true
+                                    break
+                                }
+                            }
+                            else if isAtAfter {
+                                if (sameDay && (arrMins <= filterMinutes)) {
+                                    if depMins > arrMins {
+                                        arrMins = arrMins+1440
+                                        
+                                        if arrMins <= filterMinutes {
+//                                            condition for break the loop
+                                            if trip.isRedEyeTrip {
+                                                let nextLegDate = tripStartDay?.addingTimeInterval(TimeInterval((dayInfo.nextDay?.firstLeg?.departMinutes?.intValue ?? 0) * 60))
+                                                let legComponents = utcCal.dateComponents([.month, .day], from: nextLegDate!)
+                                                let filterComponents = utcCal.dateComponents([.month, .day], from: filterDate!)
+                                                
+                                                if legComponents.day == filterComponents.day && legComponents.month == filterComponents.month {
+                                                    status = true
+                                                }
+                                                else {
+                                                    status = false
+                                                    lineMatched = true
+                                                    break
+                                                }
+                                            }
+                                            else {
+                                                status = false
+                                                lineMatched = true
+                                                break
+                                            }
+                                        }
+                                    }
+                                    else {
+//                                        condition for break the loop
+                                        if trip.isRedEyeTrip {
+                                            let nextLegDate = tripStartOfDay?.addingTimeInterval(TimeInterval((dayInfo.nextDay?.firstLeg?.departMinutes?.intValue ?? 0) * 60))
+                                            let legComponents = utcCal.dateComponents([.month, .day], from: nextLegDate!)
+                                            let filterComponents = utcCal.dateComponents([.month, .day], from: filterDate!)
+                                            if legComponents.day == filterComponents.day && legComponents.month == filterComponents.month {
+                                                status = true
+                                            }
+                                            else {
+                                                status = false
+                                                lineMatched = true
+                                                break
+                                            }
+                                        }
+                                        else {
+                                            status = false
+                                            lineMatched = true
                                             break
                                         }
                                     }
                                 }
                             }
-
-                        } else {
-                           
-                            if (line.daysOff?.intValue ?? 0) > 0,
-                               checkCity,
-                               !checkDate,
-                               city == bid.base {
-                               
-                                line.isPdoFiltered = false
-                            } else {
-                                if trip.isRedEyeTrip {
-                                    if lineMatched || (!dateCondition && cityCondition) {
-                                        
-                                        line.isPdoFiltered = false
-
-                                        
-                                        if !isAtAfter, !dateCondition, let fd = filterDate {
-                                            let arrLegDate = tripStartOfDay.addingTimeInterval(
-                                                TimeInterval((lastLeg.arriveMinutes?.intValue ?? 0) * 60)
-                                            )
-
-                                            var cal = Calendar(identifier: .gregorian)
-                                            cal.timeZone = TimeZone(abbreviation: "UTC")!
-
-                                            let legComponents = cal.dateComponents([.day, .month], from: arrLegDate)
-                                            let filterComponents = cal.dateComponents([.day, .month], from: fd)
-
-                                            if legComponents.day == filterComponents.day &&
-                                                legComponents.month == filterComponents.month {
-                                                line.isPdoFiltered = true
-                                            }
+                            
+                            if (dayIndex == trip.info!.orderedDays().count - 1 && trip.isRedEyeTrip) {
+                                let missingRedEyeDate = CBUtils.findMissingDate(forRedEyeTrip: trip)
+                                if missingRedEyeDate != nil {
+                                    let missingDayComponents = utcCal.dateComponents([.day, .month], from: missingRedEyeDate!)
+                                    if missingDayComponents.day == filterComp.day && missingDayComponents.month == filterComp.month {
+                                        if (isAnyCity || city == lastLeg?.arriveCity) {
+                                            status = false
+                                            lineMatched = true
+                                            break
                                         }
-                                    } else {
-                                        
-                                        if checkCity, city == bid.base {
-                                            line.isPdoFiltered = false
-                                        } else {
-                                            line.isPdoFiltered = true
-
-                                            
-                                            if isAtAfter, let fd = filterDate,
-                                               let nextDay = dayInfo.nextDay,
-                                               let nextFirstLegAny = nextDay.orderedLegs.first,
-                                               let nextFirstLeg = nextFirstLegAny as? BILegInfo {
-
-                                                let nextLegDate = tripStartOfDay.addingTimeInterval(
-                                                    TimeInterval((nextFirstLeg.departMinutes?.intValue ?? 0) * 60)
-                                                )
-
-                                                var cal = Calendar(identifier: .gregorian)
-                                                cal.timeZone = TimeZone(abbreviation: "UTC")!
-
-                                                let legComponents = cal.dateComponents([.day, .month], from: nextLegDate)
-                                                let filterComponents = cal.dateComponents([.day, .month], from: fd)
-
-                                                if !(legComponents.day == filterComponents.day &&
-                                                     legComponents.month == filterComponents.month) {
-                                                    break
-                                                }
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    
-                                    if checkCity, city == bid.base {
-                                        line.isPdoFiltered = false
-                                    } else {
-                                        line.isPdoFiltered = true
                                     }
                                 }
                             }
                         }
-
-                    } else {
-                        
-                        if !minutesCondition {
-                            allLegsMeetMinutes = false
-                            break
-                        }
-
-                        
-                        if (trip.isRedEyeTrip),
-                           minutesCondition,
-                           !isAtAfter {
-
-                            let depLegDate = tripStartOfDay.addingTimeInterval(
-                                TimeInterval((firstLeg.departMinutes?.intValue ?? 0) * 60)
-                            )
-
-                            var cal = Calendar(identifier: .gregorian)
-                            cal.timeZone = TimeZone(abbreviation: "UTC")!
-
-                            let legComponents = cal.dateComponents([.day, .month], from: depLegDate)
-
-                            if legComponents.day == legDay {
-                                allLegsMeetMinutes = true
-                            } else {
-                                allLegsMeetMinutes = false
-                                break
+                        else {
+                            if !isAtAfter {
+                                let cityMach = depCity == city
+                                let timeMatch = depMins >= filterMinutes
+                                
+                                if (sameDay && cityMach && timeMatch) {
+                                    status = false
+                                    lineMatched = true
+                                    break
+                                }
+                            }
+                            else if isAtAfter {
+                                let cityMach = arrCity == city
+                                if depMins > arrMins {
+                                    arrMins = arrMins + 1440
+                                }
+                                let timeMatch = arrMins <= filterMinutes
+                                
+                                if sameDay && cityMach && timeMatch {
+                                    if trip.isRedEyeTrip {
+                                        let nextLegDate = tripStartOfDay?.addingTimeInterval(TimeInterval((dayInfo.nextDay?.firstLeg?.departMinutes?.intValue ?? 0) * 60))
+                                        let legComponents = utcCal.dateComponents([.day, .month], from: nextLegDate!)
+                                        let filterComponents = utcCal.dateComponents([.day, .month], from: filterDate!)
+                                        
+                                        if legComponents.day == filterComponents.day && legComponents.month == filterComponents.month {
+                                            status = true
+                                        }
+                                        else {
+                                            status = false
+                                            lineMatched = true
+                                            break
+                                        }
+                                    }
+                                    else {
+                                        status = false
+                                        lineMatched = true
+                                        break
+                                    }
+                                }
                             }
                         }
-                        
-                        if (trip.isRedEyeTrip),
-                           minutesCondition,
-                           !isAtAfter {
-
-                           
-                            let depLegDateReal = tripStartOfDay.addingTimeInterval(
-                                TimeInterval((firstLeg.departMinutes?.intValue ?? 0) * 60)
-                            )
-
-                            var cal = Calendar(identifier: .gregorian)
-                            cal.timeZone = TimeZone(abbreviation: "UTC")!
-
-                            let real = cal.dateComponents([.day, .month], from: depLegDateReal)
-
-                            
-                            if real.day != legDay || real.month != legMonth {
-                                allLegsMeetMinutes = false
-                                break
-                            }
-                        }
-
                     }
+                    dayIndex += 1
                 }
-
-               
-                if (checkCity || checkDate), lineMatched {
-                    break tripsLoop
+                line.isPdoFiltered = status as NSNumber
+                if lineMatched == true {
+                    break
                 }
             }
-
-            
-            if !checkCity && !checkDate {
-                line.isPdoFiltered = allLegsMeetMinutes ? false : true
+        }
+        if ((dayValue == "Any Days" || dayValue == "")  && (city == "Any Cities" || city == "")) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                NotificationCenter.default.post(name: NSNotification.Name("updateScrthPad"), object: nil)
             }
         }
     }
@@ -633,59 +550,35 @@ class CBPDORuleCell: UITableViewCell, RefreshDelegate {
     }
 
     func minutesForReserveTime(line: BILine, trip: BITrip, isAfter: Bool) -> Int {
-
-       
-        guard
-            let firstDay = trip.info?.orderedDays().first,
-            let firstLeg = firstDay.orderedLegs.first
-        else {
-            return 0
-        }
-
-    
-
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.locale = Locale(identifier: "en_US")
-        calendar.timeZone = TimeZone(identifier: "US/Central")!
-
-       
-        var dateComps = calendar.dateComponents([.year, .month, .day],
-                                                from: trip.startDate! as Date)
-
-       
-        let departFormatter = DateFormatter()
-        departFormatter.dateFormat = "HHmm"
-        departFormatter.timeZone = CBUtils.timeZone(forAirportCode: firstLeg.departCity!)
-
-        let arriveFormatter = DateFormatter()
-        arriveFormatter.dateFormat = "HHmm"
-        arriveFormatter.timeZone = CBUtils.timeZone(forAirportCode: firstLeg.arriveCity!)
-
-       
-        dateComps.minute = Int(truncating: firstLeg.departMinutes!)
-        let departDate = calendar.date(from: dateComps)!
-
-      
-        dateComps.minute = Int(truncating: firstLeg.arriveMinutes!)
-        let arriveDate = calendar.date(from: dateComps)!
-
-      
-        let departHHMM = departFormatter.string(from: departDate)
-        let arriveHHMM = arriveFormatter.string(from: arriveDate)
-
+        let timeZoneStr = CBUtils.rawTimeZoneString(forAirportCode: self.bidPeriod!.base!)
         
         if isAfter {
-            
-            let h = Int(arriveHHMM.prefix(2)) ?? 0
-            let m = Int(arriveHHMM.suffix(2)) ?? 0
-            return h * 60 + m
-        } else {
-            
-            let h = Int(departHHMM.prefix(2)) ?? 0
-            let m = Int(departHHMM.suffix(2)) ?? 0
-            return h * 60 + m
+            let arriveHHMM = BITrip.staticTimeForReserveType(trip: trip, line: line, key: "arrive", timeZone: timeZoneStr!)
+            if arriveHHMM != nil {
+                let hourString = arriveHHMM?.substring(to: 2)
+                let minuteString = arriveHHMM?.substring(to: 2)
+                let hour = Int(hourString!)
+                let minute = Int(minuteString!)
+                
+                let arriveMinutes = hour! * 60 + minute!
+                return arriveMinutes
+            }
         }
+        else {
+            let departHHMM = BITrip.staticTimeForReserveType(trip: trip, line: line, key: "arrive", timeZone: timeZoneStr!)
+            if departHHMM != nil {
+                let hourString = departHHMM?.substring(to: 2)
+                let minuteString = departHHMM?.substring(to: 2)
+                let hour = Int(hourString!)
+                let minute = Int(minuteString!)
+                
+                let departMinutes = hour! * 60 + minute!
+                return departMinutes
+            }
+        }
+        return 0
     }
+    
     func findMissingDateAndIndexForRedEyeTrip(_ trip: BITrip?) -> (missingDate: Date?, missingIndex: Int?) {
      
         guard let trip = trip, trip.isRedEyeTrip == true else {
