@@ -83,7 +83,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             btnWbidMax.setTitle("WBidMax", for: .normal)
             btnSwaptimizer.isHidden = false
         }
-        self.seniorityAlert()
+//        self.seniorityAlert()
 //        if bidPeriod?.isHistoric?.boolValue == true {
 //            btnSwaptimizer.isHidden = true
 //            btnEOM.isHidden = true
