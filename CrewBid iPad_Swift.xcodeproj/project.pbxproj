@@ -394,6 +394,8 @@
 		F4D5B5862EC8518F006B7E4B /* SeniorityList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D5B5842EC8518F006B7E4B /* SeniorityList+CoreDataProperties.swift */; };
 		F4D690632EC6E25200B12223 /* CBCredentialsPageVC+WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D690622EC6E25200B12223 /* CBCredentialsPageVC+WebView.swift */; };
 		F4D690652EC72AFD00B12223 /* BISwaBidDataParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D690642EC72AFD00B12223 /* BISwaBidDataParsing.swift */; };
+		F4D8E5582EF90146003136B5 /* CBSeniorityListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D8E5572EF90146003136B5 /* CBSeniorityListVC.swift */; };
+		F4D8E55C2EF90C27003136B5 /* CBSeniorityListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4D8E55B2EF90C27003136B5 /* CBSeniorityListTableViewCell.swift */; };
 		F4DA88132E5722D000ECC906 /* BISwaBidDataDownload.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DA88122E5722D000ECC906 /* BISwaBidDataDownload.swift */; };
 		F4DA88152E57231D00ECC906 /* BISwaBidDataDownloadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DA88142E57231D00ECC906 /* BISwaBidDataDownloadViewModel.swift */; };
 		F4DB59522E30B5080079930A /* BILinesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4DB59512E30B5080079930A /* BILinesManager.swift */; };
@@ -809,6 +811,8 @@
 		F4D5B5842EC8518F006B7E4B /* SeniorityList+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SeniorityList+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		F4D690622EC6E25200B12223 /* CBCredentialsPageVC+WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CBCredentialsPageVC+WebView.swift"; sourceTree = "<group>"; };
 		F4D690642EC72AFD00B12223 /* BISwaBidDataParsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BISwaBidDataParsing.swift; sourceTree = "<group>"; };
+		F4D8E5572EF90146003136B5 /* CBSeniorityListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSeniorityListVC.swift; sourceTree = "<group>"; };
+		F4D8E55B2EF90C27003136B5 /* CBSeniorityListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBSeniorityListTableViewCell.swift; sourceTree = "<group>"; };
 		F4DA88122E5722D000ECC906 /* BISwaBidDataDownload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BISwaBidDataDownload.swift; sourceTree = "<group>"; };
 		F4DA88142E57231D00ECC906 /* BISwaBidDataDownloadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BISwaBidDataDownloadViewModel.swift; sourceTree = "<group>"; };
 		F4DB59512E30B5080079930A /* BILinesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BILinesManager.swift; sourceTree = "<group>"; };
@@ -1181,6 +1185,7 @@
 				F4EBBCAA2E4C6E1D00C87336 /* SegmentedTableViewCell.swift */,
 				35A420F92E828B7700D6C951 /* BulkDownloadStatusCell.swift */,
 				F4C352D62E94C8310033A1E5 /* UserAccountUpdateCell.swift */,
+				F4D8E55B2EF90C27003136B5 /* CBSeniorityListTableViewCell.swift */,
 			);
 			path = tableViewCells;
 			sourceTree = "<group>";
@@ -1484,6 +1489,7 @@
 			isa = PBXGroup;
 			children = (
 				F41EBE662DC4DB20001413DE /* CBTextViewController.swift */,
+				F4D8E5572EF90146003136B5 /* CBSeniorityListVC.swift */,
 			);
 			path = "Cover Letter";
 			sourceTree = "<group>";
@@ -2252,6 +2258,7 @@
 				3514CF412E7D1EF10040D75B /* CBOvernightCitiesBulkCollectionViewCell.swift in Sources */,
 				F41EBF382DC4DB20001413DE /* AppDelegate.swift in Sources */,
 				F41EBF392DC4DB20001413DE /* SceneDelegate.swift in Sources */,
+				F4D8E5582EF90146003136B5 /* CBSeniorityListVC.swift in Sources */,
 				F41EBF3A2DC4DB20001413DE /* BICalendarData.swift in Sources */,
 				F41EBF3B2DC4DB20001413DE /* KUIPopOver.swift in Sources */,
 				F41EBF3C2DC4DB20001413DE /* KUIPopOverUsable.swift in Sources */,
@@ -2298,6 +2305,7 @@
 				F41EBF572DC4DB20001413DE /* EmbeddedBidActionsVC.swift in Sources */,
 				F41EBF582DC4DB20001413DE /* EmbeddedCredentialVC.swift in Sources */,
 				F4C6F93A2DCB78770092C00C /* SimplePing.m in Sources */,
+				F4D8E55C2EF90C27003136B5 /* CBSeniorityListTableViewCell.swift in Sources */,
 				354A3F292EE7FA5600C74117 /* CBPDORuleCell.swift in Sources */,
 				F41EBF592DC4DB20001413DE /* EmbeddedLineImporterVC.swift in Sources */,
 				F41EBF5A2DC4DB20001413DE /* EmbeddedShowCAPVC.swift in Sources */,

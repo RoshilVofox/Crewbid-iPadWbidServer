@@ -83,11 +83,11 @@ class CBDefaultEmployeeVC: BaseViewController {
             descriptionTextView.text = "Enter employee number (no \"e\") to fetch the awarded line."
         }
         else if type == .submitEmployeeNumber {
-            titleLabel.text = "Enter Employee Number"
+            titleLabel.text = "Submit Bid"
             descriptionTextView.text = "Enter employee number (no \"e\") for whom the bid will be submitted"
         }
         else if type == .confirmEmployeeNumber {
-            titleLabel.text = "Confirm Employee Number"
+            titleLabel.text = "Submit Bid"
             descriptionTextView.text = "Confirm employee number (no \"e\") for whom the bid will be submitted"
         }
     }

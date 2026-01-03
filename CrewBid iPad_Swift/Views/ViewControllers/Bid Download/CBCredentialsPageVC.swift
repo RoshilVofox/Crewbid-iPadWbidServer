@@ -436,13 +436,13 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }
         
         
-//        if self.dataSource.position == BICrewPositionType.FlightAttendant{
-//            if app.connectedToInternet(){
-//                self.view.showActivityIndicator(message: "Loading SWA Login...")
-//            }else{
-//                AlertService.showAlertForTopVC(title: "No Internet Connection", message: "An internet connection is required to Login. Please connect to the internet and try again.")
-//            }
-//        }
+        if self.dataSource.position == BICrewPositionType.FlightAttendant{
+            if app.connectedToInternet(){
+                self.view.showActivityIndicator(message: "Loading SWA Login...")
+            }else{
+                AlertService.showAlertForTopVC(title: "No Internet Connection", message: "An internet connection is required to Login. Please connect to the internet and try again.")
+            }
+        }
         
             NotificationCenter.default.addObserver(self, selector: #selector(closeCredentilaPage), name: Notification.Name("CloseCredentilaPage"), object: nil)
         }
@@ -454,11 +454,11 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             awardsViewModel = AwardsViewModel(bidPeriod: bidPeriod)
         }
         //for new API
-//        if self.dataSource.position == BICrewPositionType.FlightAttendant{
-//            self.setupSwaLogin()
-//        }else{
-//            self.setupLegacyLogin()
-//        }
+        if self.dataSource.position == BICrewPositionType.FlightAttendant{
+            self.setupSwaLogin()
+        }else{
+            self.setupLegacyLogin()
+        }
         
         if !UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
             NotificationCenter.default.addObserver(self, selector: #selector(showProgressView), name: Notification.Name("ShowProgressView"), object: nil)
@@ -471,21 +471,25 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if self.dataSource.position == BICrewPositionType.FlightAttendant {
-            // FA: check for existing bid file first
-            if self.bidAlreadyExists() {
-                // show alert which will call the closure on "Download Again"
-                self.showAlertForExistingBid {
-                    // user chose Download Again -> start FA web login after deletion
-                    DispatchQueue.main.async {
-//                        self.setupSwaLogin()
-                        self.setupLegacyLogin()
+            if type == .defaultType{
+                if self.bidAlreadyExists() {
+                    // show alert which will call the closure on "Download Again"
+                    self.showAlertForExistingBid {
+                        // user chose Download Again -> start FA web login after deletion
+                        DispatchQueue.main.async {
+                            self.setupSwaLogin()
+    //                        self.setupLegacyLogin()
+                        }
                     }
+                } else {
+                    // no existing bid -> start FA web login now
+                    self.setupSwaLogin()
+    //                self.setupLegacyLogin()
                 }
-            } else {
-                // no existing bid -> start FA web login now
-//                self.setupSwaLogin()
-                self.setupLegacyLogin()
+            }else{
+                self.setupSwaLogin()
             }
+
         } else {
             // legacy (pilot) flow: if you want the pilot path to still show the existing-bid alert here,
             // you can do the same check or keep your existing go-button based flow.
@@ -576,10 +580,10 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             checkEarlyBidding()
         }
         
-//        if self.dataSource.position == BICrewPositionType.FlightAttendant{
-//            self.webView.isHidden = false
-//            self.goBtn.isHidden = true
-//        }else{
+        if self.dataSource.position == BICrewPositionType.FlightAttendant{
+            self.webView.isHidden = false
+            self.goBtn.isHidden = true
+        }else{
             self.webView.isHidden = true
             txtUserID.delegate = self
             txtPassword.delegate = self
@@ -595,7 +599,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             txtUserID.leftViewMode = .always
             txtPassword.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: txtPassword.frame.height))
             txtPassword.leftViewMode = .always
-//        }
+        }
 
         //------viewmodel--------
         loginViewModel.onLoginSuccess = { sessionKey in

@@ -38,7 +38,7 @@ class CBBidActionsViewController: BaseViewController, KUIPopOverUsable {
     let arrForPilotWithAwdTxt = ["Submit Bid","Show Bid Receipt","Show Awards","Show Bid File","Line Importer","Vacation", "Show CAP","Retrieve Awards","Restore Last Bid","ReDownload Flt Data"]
     let arrForPilotWithOutAwdTxt = ["Submit Bid","Show Bid Receipt","Retrieve Awards","Show Bid File","Line Importer","Vacation","Show CAP","Restore Last Bid","ReDownload Flt Data"]
     
-    let fileArrayFA = ["Cover Letter","Seniority List","Lines Text","Trips Text","FA Memo"]
+    let fileArrayFA = ["Cover Letter","Seniority List"/*,"Lines Text","Trips Text","FA Memo"*/]
     let fileArrayPilot = ["Cover Letter","Seniority List","Lines Text","Trips Text"]
     
     let vacPilotArray = ["Keep Pulled Trips In Filters/Sorts", "Hide Vacation in Scratchpad",/*"Check For",*/"Re-Download WBidMax Vac File","Re-Download Swaptimizer Vac File"]
@@ -197,11 +197,35 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
             lblActionTitle.text = "Show File"
             btnBidAction.isHidden = false
             btnBidAction.setTitle("Bid Actions", for: .normal)
-//            if self.bidPeriod?.textFile(withName: BICoverLetterTextFileName) == nil{
-//                cell.selectionStyle = .none
-//                cell.isUserInteractionEnabled = false
-//                cell.lblTitle.textColor = .lightGrey
-//            }
+            if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSwaAPI?.boolValue == true {
+                if self.bidPeriod?.coverLetterFileName == nil || self.bidPeriod?.coverLetterFileName == "" {
+                    cell.selectionStyle = .none
+                    cell.isUserInteractionEnabled = false
+                    cell.lblTitle.textColor = .lightGrey
+                }
+            }else{
+                if self.bidPeriod?.textFile(withName: BICoverLetterTextFileName) == nil{
+                    cell.selectionStyle = .none
+                    cell.isUserInteractionEnabled = false
+                    cell.lblTitle.textColor = .lightGrey
+                }
+            }
+            
+            if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSwaAPI?.boolValue == true {
+                if self.bidPeriod?.seniorityList == nil || self.bidPeriod?.seniorityList?.count == 0 {
+                    cell.selectionStyle = .none
+                    cell.isUserInteractionEnabled = false
+                    cell.lblTitle.textColor = .lightGrey
+                }
+            }else{
+                if self.bidPeriod?.textFile(withName: BISeniorityListTextFileName) == nil{
+                    cell.selectionStyle = .none
+                    cell.isUserInteractionEnabled = false
+                    cell.lblTitle.textColor = .lightGrey
+                }
+            }
+            
+            
             if !((bidPeriod?.isFABid())!) {
                 cell.lblTitle.text = fileArrayPilot[indexPath.row]
                 cell.imgNext.isHidden = true

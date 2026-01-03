@@ -141,7 +141,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
         // Get size of calendar items (cells) and create button frame from size.
         let flowLayout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout
         let itemSize: CGSize? = flowLayout?.itemSize
-        let inset: CGFloat = 15.0
+        let inset: CGFloat = 17.0
         let WidthSize = ((self.collectionView.frame.width)) / 7
         let insets: UIEdgeInsets = UIEdgeInsets(top: inset, left: inset, bottom: inset, right: inset)
         var buttonFrame = CGRect(x: 0.0, y: 0.0, width: WidthSize , height: itemSize?.height ?? 0.0)
@@ -397,7 +397,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                     labelFrame.origin.x = CGFloat(d - buttonLength) * WidthSize + 3
                     if !self.bidPeriod.isFABid() && trip.info?.dutyPeriodsCount != trip.info?.calendarDaysCount {
                         if !showingRedEyeIconForThisTrip {
-                            if trip.isRedEyeTrip && (dayIndex - buttonLength) >= missingDateIndex && missingDateIndex != -1 {
+                            if trip.isRedEyeTrip && ((dayIndex - buttonLength) >= missingDateIndex || d == buttonLength) && missingDateIndex != -1 {
                                 redEyeIconButton.frame = labelFrame
                                 labelButton?.addSubview(redEyeIconButton)
                                 redEyePayLabel = UILabel(frame: labelFrame)
@@ -734,7 +734,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                     continue
                 }
                 else{
-                    tripLength = vacay.length!.intValue - 1
+                    tripLength = vacay.length!.intValue
                 }
                 let column = index % 7
                 var buttonLength = 0

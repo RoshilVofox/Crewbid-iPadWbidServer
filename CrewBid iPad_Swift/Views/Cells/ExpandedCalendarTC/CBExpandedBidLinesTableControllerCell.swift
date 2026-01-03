@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableControllerDelegate  {
+class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableControllerDelegate, UITextFieldDelegate  {
 
 
     @IBOutlet weak var mainView: UIView!
@@ -136,12 +136,33 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
         let attributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         txtMarker.attributedPlaceholder = NSAttributedString(string: placeholderText, attributes: attributes)
         txtMarker.backgroundColor = .darkGray
+        txtMarker.delegate = self
+        txtMarker.returnKeyType = .done
         if CBBidLineTableCellType.cbMarkerBidLineTableCellType == self.cellType {
             self.txtMarker.isHidden = false
         } else {
             self.txtMarker.isHidden = true
         }
     }
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        let text = textField.text ?? ""
+//        self.markerViewHeightConstraint?.constant = kCBBidLineTableCellMarkerHeight
+        self.txtMarker.isHidden = false
+//        self.markerTextFieldBaselineConstraint?.constant = 6
+//        self.markerTextFieldHeightConstraint?.constant = 0
+        textField.borderStyle = .none
+        textField.backgroundColor = .darkGray
+        textField.textColor = .white
+        self.line?.markerTitle = text
+        self.bidPeriod?.managedObjectContext?.processPendingChanges()
+        self.bidPeriod?.managedObjectContext?.undoManager?.removeAllActions()
+    }
+    
     @objc func longPressLineValueContainerView(_ gesture: UILongPressGestureRecognizer) {
         // Check if the gesture state is not ended.
 
@@ -943,7 +964,7 @@ class CBExpandedBidLinesTableControllerCell: UITableViewCell, CBUserFlagTableCon
                     continue
                 }
                 else {
-                    tripLength = vacay.length!.intValue - 1
+                    tripLength = vacay.length!.intValue
                 }
                 
                 if index < 0 {

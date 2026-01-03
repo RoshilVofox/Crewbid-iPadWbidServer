@@ -89,6 +89,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        tableViewNormalView.keyboardDismissMode = .interactive
         self.view.clipsToBounds = true
         self.view.layer.cornerRadius = 5
         lblBidLineCount.isUserInteractionEnabled = true
@@ -190,7 +191,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         NotificationCenter.default.addObserver(self, selector: #selector(self.unfreezeTopLines(_:)), name: NSNotification.Name(rawValue: "CBUnFreezeLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.deselectAllLines), name: NSNotification.Name(rawValue: "CBDeselectAllLinesNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.moveSelectedLinesToInsertionIndex), name: NSNotification.Name(rawValue: "CBMoveSelectedNotification"), object: nil)
-//        NotificationCenter.default.addObserver(self, selector: #selector(self.addObserverAfterClosingExpandedView), name: NSNotification.Name(rawValue: "AddObserverAfterClosingExpandedView"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.reloadTableView), name: NSNotification.Name(rawValue: "reloadTableView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.undoAction), name: NSNotification.Name(rawValue: "CBUndoNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.redoAction), name: NSNotification.Name(rawValue: "CBRedoNotification"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.deleteSelectedLines), name: NSNotification.Name(rawValue: "CBReturnSelectedLinesNotification"), object: nil)
@@ -203,6 +204,12 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         if isAwardSort{
             loadAwardDetails()
         }
+    }
+    
+    @objc func reloadTableView(){
+//        self.tableViewNormalView.reloadData()
+        let visibleIndexPaths = tableViewNormalView.indexPathsForVisibleRows ?? []
+        tableViewNormalView.reloadRows(at: visibleIndexPaths, with: .none)
     }
     
     
@@ -813,6 +820,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
                 self.tableViewNormalView.reloadData()
             }
         }
+        self.tableViewNormalView.reloadData()
     }
     
     func addReserveMRTline(indexpath: Int, isReserve: Bool) {
@@ -1337,130 +1345,6 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         print("canUndo:", undoManager.canUndo, "actionName:", undoManager.undoActionName)
     }
     
-//    @objc func updateBidList(_ notification: Notification? = nil) {
-//        
-//        var isTableviewReload = true
-//        var notifictionFromTripTextView = false
-//        
-//        if let notification = notification {
-//            if let object = notification.object as? CBTripTextViewController {
-//                isTableviewReload = true
-//                notifictionFromTripTextView = true
-//            } else {
-//              
-//            }
-//        } else {
-//            
-//        }
-//        
-//        // Clear the linesArray and selectedCellIndexPaths
-//
-//        self.linesArray.removeAll()
-//
-//        // Populate linesArray with BILine objects
-//
-//        for case let line as BILine in CBGlobalMethods.shared.selectedBidPeriod!.lines! {
-//            linesArray.append(line)
-//        }
-//        // Apply a filter to linesArray to exclude lines with bidOrder <= 0
-//
-//        var array : [NSPredicate] = []
-//        array.append(NSPredicate(format: "bidOrder > %@", NSNumber(integerLiteral: 0)))
-//        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
-//        self.linesArray = (linesArray as NSArray).filtered(using: predicate) as! [BILine]
-//        
-//        // Sort linesArray based on certain criteria
-//        let sort = NSSortDescriptor(key: "bidOrder", ascending: true)
-//        if bidPeriod.isBidListSortOn?.boolValue ?? false{
-//            let lineSorts = getSortDescriptorsForBidList()
-//
-//            self.linesArray = (linesArray as NSArray).sortedArray(using: lineSorts ) as! [BILine]
-//            var tmp : Int = 0
-//            for case let line in  self.linesArray {
-//                tmp = tmp + 1
-//                line.bidOrder = NSNumber(integerLiteral: tmp)
-//                line.previousBidOrder = NSNumber(integerLiteral: tmp)
-//            }
-//            try? bidPeriod.managedObjectContext?.save()
-//        }
-//        else{
-//            self.linesArray = (linesArray as NSArray).sortedArray(using: [sort]) as! [BILine]
-//        }
-//        // Apply SubmitSort if needed
-//
-//        if isSubmitSort {
-//            self.linesArray = (linesArray as NSArray).sortedArray(using: [NSSortDescriptor(key: "submitSortOrder", ascending: true)]) as! [BILine]
-//        }
-//        // Update UI elements with the current bid list information
-//
-//        DispatchQueue.main.async {
-//            if self.bidPeriod.isBidListSortOn?.boolValue ?? false{
-//                if  self.bidPeriod.getOrderedBidListSorts().count > 0{
-//                    self.bidPeriod.isSortBySubmitOn = false
-//                    self.bidPeriod.isAwardSortOn = false
-//                }
-//            }
-//            self.isSubmitSort = (self.bidPeriod.isSortBySubmitOn ?? 0).boolValue
-//            self.isAwardSort = (self.bidPeriod.isAwardSortOn ?? 0).boolValue
-//            // Update UI elements based on ASort criteria
-//
-//            if self.btnASort != nil {
-//                if self.isAwardSort || self.isSubmitSort{
-//                    self.btnASort.backgroundColor = CBColor.cbGreenColor
-//                }else{
-//                    self.btnASort.backgroundColor = CBColor.cbOrangeColor
-//                }
-//            }
-//            // Update the label showing the number of lines in the bid list
-//
-//            if self.tableViewNormalView != nil {
-//                let totalLines = CBGlobalMethods.shared.selectedBidPeriod!.lines!
-//                let allLines = self.linesArray
-//                let bidListTotal: Int = (allLines.count)
-//                let etopsCount = ((self.linesArray) as NSArray).value(forKey: "isETOPS")
-//                let etopsReserveCount = ((self.linesArray) as NSArray).value(forKey: "isETOPSRES")
-//                let etopsCountNumber = NSCountedSet(array: etopsCount as! [Any])
-//                let etopsReserveCountNumber = NSCountedSet(array: etopsReserveCount as! [Any])
-//                var title = "\(totalLines.count) Lines - Bid List - \(bidListTotal)"
-//                if (etopsCountNumber.count(for: 1) != 0) || (etopsReserveCountNumber.count(for: 1) != 0) {
-//                    let eCount = etopsCountNumber.count(for: 1) + etopsReserveCountNumber.count(for: 1)
-//                    title = "\(totalLines.count) Lines - Bid List - \(bidListTotal) - \(eCount) ETOPS"
-//                }
-//                //modified the code given below on 18/01/2024 by Kripa to fix a crash
-//                if let seniority: Int = self.bidPeriod.seniorityNumber as? Int{
-//                    let seniorityNumberString : String = String(seniority)
-//                    if self.bidPeriod.seniorityNumber != 0 {
-//                        let isEffSenSelected = UserDefaults.standard.bool(forKey: "IsEffSenSelected")
-//                        if isEffSenSelected {
-//                            let paperBidCount = self.bidPeriod.paperBidCount?.intValue ?? 0
-//                            let paperCountAvoidedSeniorityListPosition = seniority - paperBidCount
-//                            title.append(" - EffSen #\(paperCountAvoidedSeniorityListPosition)")
-//                        } else{
-//                            title += " - Sen #\(seniorityNumberString)"
-//                        }
-//                    }
-//                }
-//                self.lblBidLineCount.text = title
-//                
-//                // This condition added by Raja on 03/01/2024
-//                // to fix the Trip data UI issue in Normal bid list view when tap Herb / Local time button.
-//                if isTableviewReload{
-//                    if UserDefaults.standard.bool(forKey: "isSelectedCalanderView") {
-//                        self.tableViewNormalView.reloadData()
-//                        self.scrollToInsertionIndex()
-//                    } else {
-//                        if notifictionFromTripTextView == false {
-//                            self.tableViewNormalView.reloadData()
-//                            self.scrollToInsertionIndex()
-//                        }
-//                    }
-//                }
-//              
-//                try? self.bidPeriod.managedObjectContext?.save()
-//            }
-//        }
-//    }
-
     
     
     private func updateBidListTitle(){
@@ -1546,17 +1430,17 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     }
     
     @objc func scrollToInsertionIndex() {
-        if UserDefaults.standard.value(forKey: "isShouldScrollToInsertionIndex") != nil {
-            if UserDefaults.standard.bool(forKey: "isShouldScrollToInsertionIndex") {
-                let insertionBarIndexPath = IndexPath(row: self.insertionIndex, section: 0)
-                if insertionBarIndexPath.row < self.tableViewNormalView.numberOfRows(inSection: 0) {
-                    self.tableViewNormalView.scrollToRow(at: insertionBarIndexPath, at: .middle, animated: true)
-                }
-                UserDefaults.standard.setValue(false, forKey: "isShouldScrollToInsertionIndex")
-            }
+        guard UserDefaults.standard.bool(forKey: "isShouldScrollToInsertionIndex") else { return }
+        let row = self.insertionIndex
+        let section = 0
+        guard row < self.tableViewNormalView.numberOfRows(inSection: section) else {return}
+        DispatchQueue.main.async {
+            self.tableViewNormalView.layoutIfNeeded()
+            let indexPath = IndexPath(row: row, section: section)
+            self.tableViewNormalView.scrollToRow(at: indexPath,at: .middle,animated: true)
+            UserDefaults.standard.set(false, forKey: "isShouldScrollToInsertionIndex")
         }
     }
-    
     
     
     //latest
@@ -1564,6 +1448,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         guard !lines.isEmpty else { return }
         guard let context = bidPeriod.managedObjectContext else { return }
         guard let undoManager = context.undoManager else { return }
+
         // Update current bid period state
         CBGlobalMethods.shared.selectedBidPeriod?.currentDateTime = Date()
         CBGlobalMethods.shared.selectedBidPeriod?.isStateFileModifiedToSync = true
@@ -1711,15 +1596,18 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     }
     
     func markerTitleForMultipleInsert() -> String {
+
         guard let context = bidPeriod.managedObjectContext else {
-            print("No managed object context available.")
             return ""
         }
 
-        let markerText = NSMutableString()
+        var markerText = ""
 
-        // MARK: - Fetch Filter Rules
+        // ------------------------------------------------
+        // MARK: Fetch Filter Rules (same as Obj-C)
+        // ------------------------------------------------
         let filterFetch: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
+        filterFetch.predicate = NSPredicate(format: "bidPeriod == %@", bidPeriod)
         filterFetch.sortDescriptors = [
             NSSortDescriptor(key: "category", ascending: true),
             NSSortDescriptor(key: "type", ascending: true)
@@ -1729,176 +1617,213 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
             let filters = try context.fetch(filterFetch)
 
             for rule in filters {
-                switch rule.category?.intValue {
-                case BIFilterRuleCategory.BITypeFilterRuleCategory.rawValue:
-                    if let variables = rule.variables?["SET"] as? Set<Int> {
-                        if variables.contains(BILineType.HardLine.rawValue) { markerText.append("H") }
-                        if variables.contains(BILineType.ReserveLine.rawValue) { markerText.append("R") }
-                        if variables.contains(BILineType.BlankLine.rawValue) { markerText.append("B") }
-                        if bidPeriod.isFABid() == true && variables.contains(BILineType.MixedLine.rawValue) {
-                            markerText.append("M")
-                        }
-                    }
-                    markerText.append(" | ")
+                guard let categoryInt = rule.category,
+                      let category = BIFilterRuleCategory(rawValue: categoryInt.intValue) else { continue }
 
-                case BIFilterRuleCategory.BIAmPmFilterRuleCategory.rawValue:
-                    if let variables = rule.variables?["SET"] as? Set<Int> {
-                        if variables.contains(BILineAMPM.AMLine.rawValue) { markerText.append("A") }
-                        if variables.contains(BILineAMPM.PMLine.rawValue) { markerText.append("P") }
-                        if bidPeriod.isFABid() == true && variables.contains(BILineAMPM.MixedAMPMLine.rawValue) {
-                            markerText.append("Mx")
-                        }
-                    }
-                    markerText.append(" | ")
+                switch category {
 
-                case BIFilterRuleCategory.BIFaReserveFilterRuleCategory.rawValue:
-                    if let variables = rule.variables?["SET"] as? Set<Int> {
-                        if variables.contains(BIFaReserveLineType.JnrAMres.rawValue) || variables.contains(BIFaReserveLineType.SnrAMres.rawValue) {
-                            markerText.append("A")
+                // ------------------------------------------------
+                // Line Type (H R B M)
+                // ------------------------------------------------
+                case .BITypeFilterRuleCategory:
+                    if let set = rule.variables?["SET"] as? Set<Int> {
+                        if set.contains(BILineType.HardLine.rawValue)    { markerText += "H" }
+                        if set.contains(BILineType.ReserveLine.rawValue) { markerText += "R" }
+                        if set.contains(BILineType.BlankLine.rawValue)   { markerText += "B" }
+                        if bidPeriod.isFABid(),
+                           set.contains(BILineType.MixedLine.rawValue) {
+                            markerText += "M"
                         }
-                        if variables.contains(BIFaReserveLineType.JnrPMres.rawValue) || variables.contains(BIFaReserveLineType.SnrPMres.rawValue) {
-                            markerText.append("P")
-                        }
-                        if bidPeriod.isFABid() == true && variables.contains(BIFaReserveLineType.JnrLateRes.rawValue) {
-                            markerText.append("R")
-                        }
+                        markerText += " | "
                     }
-                    markerText.append(" | ")
 
-                case BIFilterRuleCategory.BIDaysOfWeekFilterRuleCategory.rawValue:
+                // ------------------------------------------------
+                // AM / PM
+                // ------------------------------------------------
+                case .BIAmPmFilterRuleCategory:
+                    if let set = rule.variables?["SET"] as? Set<Int> {
+                        if set.contains(BILineAMPM.AMLine.rawValue) { markerText += "A" }
+                        if set.contains(BILineAMPM.PMLine.rawValue) { markerText += "P" }
+                        if bidPeriod.isFABid(),
+                           set.contains(BILineAMPM.MixedAMPMLine.rawValue) {
+                            markerText += "Mx"
+                        }
+                        markerText += " | "
+                    }
+
+                // ------------------------------------------------
+                // FA Reserve
+                // ------------------------------------------------
+                case .BIFaReserveFilterRuleCategory:
+                    if let set = rule.variables?["SET"] as? Set<Int> {
+                        if set.contains(BIFaReserveLineType.JnrAMres.rawValue) ||
+                           set.contains(BIFaReserveLineType.SnrAMres.rawValue) {
+                            markerText += "A"
+                        }
+                        if set.contains(BIFaReserveLineType.JnrPMres.rawValue) ||
+                           set.contains(BIFaReserveLineType.SnrPMres.rawValue) {
+                            markerText += "P"
+                        }
+                        if bidPeriod.isFABid(),
+                           set.contains(BIFaReserveLineType.JnrLateRes.rawValue) {
+                            markerText += "R"
+                        }
+                        markerText += " | "
+                    }
+
+                // ------------------------------------------------
+                // Days of Week
+                // ------------------------------------------------
+                case .BIDaysOfWeekFilterRuleCategory:
                     if rule.type?.intValue == BIWeekdaysFilterRuleType.BIWeekdaysCompoundType.rawValue,
-                       let weekdayBits = rule.variables?["WEEKDAY_BITS"] as? UInt {
-                        let days = ["S", "M", "T", "W", "Th", "F", "Sa"]
+                       let bits = rule.variables?["WEEKDAY_BITS"] as? UInt {
+
+                        let days = ["S","M","T","W","Th","F","Sa"]
                         for i in 0..<7 {
-                            if weekdayBits & (1 << i) == 0 {
-                                markerText.append("\(days[i])")
+                            if (bits & (1 << i)) == 0 {
+                                markerText += days[i]
                             }
                         }
-                    } else {
-                        let abbr = rule.abbreviation
-                        let op = rule.predicateOperatorString
-                        let val = rule.variables?[BIFilterRuleValueVariablesKey]
-                        markerText.append("\(String(describing: abbr)) \(String(describing: op)) \(String(describing: val))")
+                        markerText += " | "
                     }
-                    markerText.append(" | ")
 
-                case BIFilterRuleCategory.BITripLengthFilterRuleCategory.rawValue:
+                // ------------------------------------------------
+                // Trip Length
+                // ------------------------------------------------
+                case .BITripLengthFilterRuleCategory:
                     if rule.type?.intValue == BIWeekdaysFilterRuleType.BIWeekdaysCompoundType.rawValue,
                        let vars = rule.variables {
-                        if (vars["TURNS_ON"] as? Bool) == true { markerText.append("T") }
-                        if (vars["TWO_DAYS_ON"] as? Bool) == true { markerText.append("2") }
-                        if (vars["THREE_DAYS_ON"] as? Bool) == true { markerText.append("3") }
-                        if bidPeriod.isFABid() == false, (vars["FOUR_DAYS_ON"] as? Bool) == true {
-                            markerText.append("4")
+
+                        if (vars["TURNS_ON"] as? Bool) == true { markerText += "T" }
+                        if (vars["TWO_DAYS_ON"] as? Bool) == true { markerText += "2" }
+                        if (vars["THREE_DAYS_ON"] as? Bool) == true { markerText += "3" }
+                        if !bidPeriod.isFABid(),
+                           (vars["FOUR_DAYS_ON"] as? Bool) == true {
+                            markerText += "4"
                         }
-                        markerText.append(" | ")
-                    } else{
-                        let abbr = rule.abbreviation
-                        let op = rule.predicateOperatorString
-                        let val = rule.variables?[BIFilterRuleValueVariablesKey]
-                        markerText.append("\(String(describing: abbr)) \(String(describing: op)) \(String(describing: val)) | ")
+                        markerText += " | "
                     }
 
-                case BIFilterRuleCategory.BICitiesFilterRuleCategory.rawValue:
+                // ------------------------------------------------
+                // Cities
+                // ------------------------------------------------
+                case .BICitiesFilterRuleCategory:
                     if let city = rule.variables?[BIFilterRuleCityVariablesKey] as? String,
                        !city.isEmpty,
                        let abbr = rule.abbreviation{
-                       let op = rule.predicateOperatorString
-                       let val = rule.variables?[BIFilterRuleValueVariablesKey]
-                        markerText.append("\(abbr) \(city) \(String(describing: op)) \(String(describing: val)) | ")
-                    }
-
-                case BIFilterRuleCategory.BIDeadheadsFilterRuleCategory.rawValue:
-                    if rule.type?.intValue != BIDeadheadsFilterRuleType.BIDeadheadsType.rawValue,
-                       let city = rule.variables?[BIFilterRuleCityVariablesKey] as? String,
-                       !city.isEmpty,
-                       let abbr = rule.abbreviation{
-                       let op = rule.predicateOperatorString
-                       let val = rule.variables?[BIFilterRuleValueVariablesKey]
-                        markerText.append("\(abbr) \(city) \(String(describing: op)) \(String(describing: val)) | ")
-                    } else if let abbr = rule.abbreviation{
-                              let op = rule.predicateOperatorString
-                              let val = rule.variables?[BIFilterRuleValueVariablesKey]
-                        markerText.append("\(abbr) \(String(describing: op)) \(String(describing: val)) | ")
-                    }
-
-                case BIFilterRuleCategory.BICommutingFilterRuleCategory.rawValue,
-                    BIFilterRuleCategory.BICommutabilityFilterRuleCategory.rawValue:
-                    if let abbr = rule.abbreviation {
-                        markerText.append("\(abbr) | ")
-                    }
-
-                case BIFilterRuleCategory.BIPositionFilterRuleCategory.rawValue:
-                    if let variables = rule.variables?["SET"] as? Set<Int> {
-                        if variables.contains(BIFaPosition.FaPositionA.rawValue) { markerText.append("A") }
-                        if variables.contains(BIFaPosition.FaPositionB.rawValue) { markerText.append("B") }
-                        if variables.contains(BIFaPosition.FaPositionC.rawValue) { markerText.append("C") }
-                        if variables.contains(BIFaPosition.FaPositionD.rawValue) { markerText.append("D") }
-                        if bidPeriod.isSecondRoundBid() == true, variables.contains(BIFaPosition.FaPositionMultiple.rawValue) {
-                            markerText.append("M")
+                        let op = rule.predicateOperatorString
+                        if let val = rule.variables?[BIFilterRuleValueVariablesKey] {
+                            
+                            markerText += "\(abbr) \(city) \(op) \(val) | "
                         }
                     }
-                    markerText.append(" | ")
-
-                case BIFilterRuleCategory.BIDaysOfMonthFilterRuleCategory.rawValue:
-                    break // Not currently handled
-
-                default:
-                    let abbr = rule.abbreviation
-                    let op = rule.predicateOperatorString
-                    let val = rule.variables?[BIFilterRuleValueVariablesKey]
-                    markerText.append("\(String(describing: abbr)) \(String(describing: op)) \(String(describing: val)) | ")
-                }
-            }
-        } catch {
-            print("Failed to fetch filter rules: \(error)")
-        }
-
-        // MARK: - Fetch Sort Rules
-        let sortFetch: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
-        sortFetch.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
-
-        do {
-            let sorts = try context.fetch(sortFetch)
-            if !sorts.isEmpty {
-                markerText.append(" Sorts:")
-            }
-
-            for sort in sorts {
-                let direction = sort.ascending?.boolValue == true ? "L2H" : "H2L"
-
-                switch sort.category?.intValue {
-                case BILineSortCategory.BIStandardSortCategory.rawValue:
-                    if let abbr = sort.abbreviation {
-                        markerText.append("\(abbr)-\(direction) | ")
+                // ------------------------------------------------
+                // Deadheads
+                // ------------------------------------------------
+                case .BIDeadheadsFilterRuleCategory:
+                    if let abbr = rule.abbreviation{
+                        let op = rule.predicateOperatorString
+                        if let val = rule.variables?[BIFilterRuleValueVariablesKey] {
+                            
+                            if rule.type?.intValue == BIDeadheadsFilterRuleType.BIDeadheadsType.rawValue {
+                                markerText += "\(abbr) \(op) \(val) | "
+                            } else if let city = rule.variables?[BIFilterRuleCityVariablesKey] as? String,
+                                      !city.isEmpty {
+                                markerText += "\(abbr) \(city) \(op) \(val) | "
+                            }
+                        }
+                    }
+                // ------------------------------------------------
+                // Commuting / Commutability
+                // ------------------------------------------------
+                case .BICommutingFilterRuleCategory,
+                        .BICommutabilityFilterRuleCategory:
+                    if let abbr = rule.abbreviation {
+                        markerText += "\(abbr) | "
                     }
 
-                case BILineSortCategory.BICitiesLineSortCategory.rawValue:
-                    if let city = sort.city, !city.isEmpty,
-                       let abbr = sort.abbreviation {
-                        markerText.append("\(abbr) \(city)-\(direction) | ")
-                    }
-
-                case BILineSortCategory.BIDeadheadsLineSortCategory.rawValue:
-                    if sort.type?.intValue != BIDeadheadLineSortType.BIDeadheadSortType.rawValue,
-                       let city = sort.city, !city.isEmpty,
-                       let abbr = sort.abbreviation {
-                        markerText.append("\(abbr) \(city)-\(direction) | ")
-                    } else if let abbr = sort.abbreviation {
-                        markerText.append("\(abbr)-\(direction) | ")
+                // ------------------------------------------------
+                // Position
+                // ------------------------------------------------
+                case .BIPositionFilterRuleCategory:
+                    if let set = rule.variables?["SET"] as? Set<Int> {
+                        if set.contains(BIFaPosition.FaPositionA.rawValue) { markerText += "A" }
+                        if set.contains(BIFaPosition.FaPositionB.rawValue) { markerText += "B" }
+                        if set.contains(BIFaPosition.FaPositionC.rawValue) { markerText += "C" }
+                        if set.contains(BIFaPosition.FaPositionD.rawValue) { markerText += "D" }
+                        if bidPeriod.isSecondRoundBid(),
+                           set.contains(BIFaPosition.FaPositionMultiple.rawValue) {
+                            markerText += "M"
+                        }
+                        markerText += " | "
                     }
 
                 default:
                     break
                 }
             }
+
         } catch {
-            print("Failed to fetch sort rules: \(error)")
+            print("Filter fetch failed:", error)
         }
 
-        return markerText as String
+        // ------------------------------------------------
+        // MARK: Sorts (exact Obj-C behavior)
+        // ------------------------------------------------
+        let sortFetch: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
+        sortFetch.predicate = NSPredicate(format: "bidPeriod == %@", bidPeriod)
+        sortFetch.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true)]
+
+        do {
+            let sorts = try context.fetch(sortFetch)
+
+            if !sorts.isEmpty {
+                markerText += " Sorts:"
+            }
+
+            for sort in sorts {
+                
+                guard let categoryInt = sort.category,
+                      let category = BILineSortCategory(rawValue: categoryInt.intValue) else { continue }
+                
+                let direction = sort.ascending?.boolValue == true ? "L2H" : "H2L"
+
+                switch category {
+
+                case .BIStandardSortCategory:
+                    if let abbr = sort.abbreviation {
+                        markerText += "\(abbr)-\(direction) | "
+                    }
+
+                case .BICitiesLineSortCategory:
+                    if let city = sort.city, !city.isEmpty,
+                       let abbr = sort.abbreviation {
+                        markerText += "\(abbr) \(city)-\(direction) | "
+                    }
+
+                case .BIDeadheadsLineSortCategory:
+                    if sort.type?.intValue == BIDeadheadLineSortType.BIDeadheadSortType.rawValue,
+                       let abbr = sort.abbreviation {
+                        markerText += "\(abbr)-\(direction) | "
+                    } else if let city = sort.city, !city.isEmpty,
+                              let abbr = sort.abbreviation {
+                        markerText += "\(abbr) \(city)-\(direction) | "
+                    }
+
+                default:
+                    break
+                }
+            }
+
+        } catch {
+            print("Sort fetch failed:", error)
+        }
+
+        return markerText
     }
     
+
+
     @IBAction func btnFiltersAction(_ sender: Any) {
         if bidPeriod.isBidListSortOn?.boolValue ?? false {
             bidPeriod.isBidListSortOn = false
@@ -3686,3 +3611,4 @@ extension CBBidListVC: CBSortOptionDelegate{
         }
     
 }
+

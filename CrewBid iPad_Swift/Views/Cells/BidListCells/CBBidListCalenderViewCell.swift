@@ -922,7 +922,7 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                     labelFrame.origin.x = CGFloat(d - buttonLength) * itemSize.width + 3
                     if !self.bidPeriod.isFABid() && trip.info?.dutyPeriodsCount != trip.info?.calendarDaysCount {
                         if !showingRedEyeIconForThisTrip {
-                            if trip.isRedEyeTrip && (dayIndex - buttonLength) >= missingDateIndex && missingDateIndex != -1 {
+                            if trip.isRedEyeTrip && ((dayIndex - buttonLength) >= missingDateIndex || d == buttonLength) && missingDateIndex != -1 {
                                 redEyeIconButton.frame = labelFrame
                                 labelButton?.addSubview(redEyeIconButton)
                                 redEyePayLabel = UILabel(frame: labelFrame)
@@ -1259,7 +1259,7 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
                     continue
                 }
                 else{
-                    tripLength = vacay.length!.intValue - 1
+                    tripLength = vacay.length!.intValue
                 }
                 let column = index % 7
                 var buttonLength = 0
@@ -1706,7 +1706,24 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
     @objc func tripButtonAction(_ tripButton: CBTripButton) {
         tripButtonActionBlock!(tripButton)
     }
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
     
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        let text = textField.text ?? ""
+        self.markerViewHeightConstraint?.constant = kCBBidLineTableCellMarkerHeight
+        self.markerTextField.isHidden = false
+        self.markerTextFieldBaselineConstraint?.constant = 6
+        self.markerTextFieldHeightConstraint?.constant = 0
+        textField.borderStyle = .none
+        textField.backgroundColor = .darkGray
+        textField.textColor = .white
+        self.line?.markerTitle = text
+        self.bidPeriod.managedObjectContext?.processPendingChanges()
+        self.bidPeriod.managedObjectContext?.undoManager?.removeAllActions()
+    }
     
     // Function to handle insert line here and marker
     func HandleInsertLineHere()   {
@@ -1714,6 +1731,7 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
         lblInsertLineHere.isHidden = true
         txtMarker.isHidden = true
         txtMarker.delegate = self
+        txtMarker.returnKeyType = .done
         let placeholderText = "Untitled Marker."
         let attributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         txtMarker.attributedPlaceholder = NSAttributedString(string: placeholderText, attributes: attributes)
@@ -1730,6 +1748,7 @@ class CBBidListCalenderViewCell: UITableViewCell, UITextFieldDelegate, CBUserFla
             break
         case CBBidLineTableCellType.cbInsertAboveBidLineTableCellType.rawValue:
             lblInsertLineHere.isHidden = false
+            
             lblInsertLineHere.frame = CGRect(x: 0.0, y: 0.0, width: Devicewidth, height: kCBBidLineTableCellInsertionHeight)
             let a = lblInsertLineHere
             self.addSubview(a!)

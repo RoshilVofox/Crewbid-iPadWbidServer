@@ -83,6 +83,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             btnWbidMax.setTitle("WBidMax", for: .normal)
             btnSwaptimizer.isHidden = false
         }
+        self.seniorityAlert()
 //        if bidPeriod?.isHistoric?.boolValue == true {
 //            btnSwaptimizer.isHidden = true
 //            btnEOM.isHidden = true
@@ -329,30 +330,39 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         
         let transition = CATransition()
         transition.duration = 0.4
-        transition.type = .fade  // cross dissolve effect
+        transition.type = .fade
         transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
         self.navigationController?.view.layer.add(transition, forKey: kCATransition)
         self.navigationController?.pushViewController(vc, animated: false)
-//           vc.modalPresentationStyle = .fullScreen
-//           vc.modalTransitionStyle = .crossDissolve
-//           self.present(vc, animated: true, completion: nil)
     }
-        //openSeniority view controller push action
+    
+    //openSeniority view controller push action
     @objc func openSeniority() {
-        let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
-        vc.bidPeriod = bidPeriod
-        vc.dataTypeSelected = TextFileType.seniorityList
-        let transition = CATransition()
-        transition.duration = 0.4
-        transition.type = .fade  // cross dissolve effect
-        transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-        self.navigationController?.view.layer.add(transition, forKey: kCATransition)
-        self.navigationController?.pushViewController(vc, animated: false)
-//        vc.modalPresentationStyle = .fullScreen
-//        vc.modalTransitionStyle = .crossDissolve
-//        self.present(vc, animated: true, completion: nil)
+        if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSwaAPI?.boolValue == true {
+            let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "CBSeniorityListVC") as! CBSeniorityListVC
+            vc.bidPeriod = self.bidPeriod
+            let transition = CATransition()
+            transition.duration = 0.4
+            transition.type = .fade
+            transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+            self.navigationController?.view.layer.add(transition, forKey: kCATransition)
+            self.navigationController?.pushViewController(vc, animated: false)
+            
+        }else{
+            let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
+            vc.bidPeriod = bidPeriod
+            vc.dataTypeSelected = TextFileType.seniorityList
+            let transition = CATransition()
+            transition.duration = 0.4
+            transition.type = .fade 
+            transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+            self.navigationController?.view.layer.add(transition, forKey: kCATransition)
+            self.navigationController?.pushViewController(vc, animated: false)
+        }
     }
+    
         //LineText view controller push action
     @objc func openLineText() {
         let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
@@ -365,9 +375,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
         self.navigationController?.view.layer.add(transition, forKey: kCATransition)
         self.navigationController?.pushViewController(vc, animated: false)
-//        vc.modalPresentationStyle = .fullScreen
-//        vc.modalTransitionStyle = .crossDissolve
-//        self.present(vc, animated: true, completion: nil)
     }
         //TripText view controller push action
     @objc func openTripText() {
@@ -381,9 +388,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
         self.navigationController?.view.layer.add(transition, forKey: kCATransition)
         self.navigationController?.pushViewController(vc, animated: false)
-//        vc.modalPresentationStyle = .fullScreen
-//        vc.modalTransitionStyle = .crossDissolve
-//        self.present(vc, animated: true, completion: nil)
     }
         //LineText view controller push action
     @objc func openFAMemo(){
@@ -401,7 +405,6 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
         vc.bidPeriod = self.bidPeriod
         vc.dataTypeSelected = TextFileType.awardText
-//        self.navigationController?.pushViewController(vc, animated: true)
         let transition = CATransition()
         transition.duration = 0.4
         transition.type = .fade  // cross dissolve effect
@@ -885,18 +888,20 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             }
         }
         // Seniority List alert
-        self.seniorityAlert()
+        if !isOldBidPackage{
+            self.seniorityAlert()
+        }
         try? self.bidPeriod?.managedObjectContext?.save()
     }
     //MARK: need to check this alert fn
-    func showSeniorityAlert(text: String){
-        AlertService.showAlertForTopVC(title: "Seniority List", message: text, actions: [(title: "View Seniority List", style: .default, handler:{_ in
-            self.showSeniority()
-        }),(title: "OK", style: .default, handler:{_ in
-            self.bidPeriod?.coverLetterDisplayed = true
-            self.showCoverLetter()
-        })])
-    }
+//    func showSeniorityAlert(text: String){
+//        AlertService.showAlertForTopVC(title: "Seniority List", message: text, actions: [(title: "View Seniority List", style: .default, handler:{_ in
+//            self.showSeniority()
+//        }),(title: "OK", style: .default, handler:{_ in
+//            self.bidPeriod?.coverLetterDisplayed = true
+//            self.showCoverLetter()
+//        })])
+//    }
     
     func showToastWith(text: String, duration: TimeInterval){
         self.toastView.layer.cornerRadius = 20
@@ -1008,7 +1013,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     
     
     @IBAction func btnHomeAction(_ sender: UIButton) {
-        
+        UserDefaults.standard.set(false, forKey: "isSelectedCalanderView")
         if UserDefaults.standard.bool(forKey: KCBIsSyncEnabled){
             AlertService.showAlertForTopVC(title: "Smart Sync", message: "Do you want to sync local changes with server?", actions: [(title: "YES", style: .default, handler: { _ in
                 let vc = UIStoryboard(name: "Sync", bundle: nil).instantiateViewController(withIdentifier: "CBSyncInfoViewController") as! CBSyncInfoViewController
@@ -1071,7 +1076,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @IBAction func btnShareAction(_ sender: Any) {
         let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedBidActionsVC") as! EmbeddedBidActionsVC
-        vc.preferredContentSize = CGSize(width: 310, height: 610)
+//        vc.preferredContentSize = CGSize(width: 310, height: 610)
         vc.modalPresentationStyle = .custom
         let frame = CGRect(x: 15, y: 35, width: 0, height: 0)
         vc.showPopover(sourceView: btnShare, sourceRect: frame)

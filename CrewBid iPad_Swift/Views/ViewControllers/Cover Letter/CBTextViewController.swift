@@ -43,6 +43,8 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
         }
         textView.clipsToBounds = true
         textView.layer.cornerRadius = 5
+        tableView.clipsToBounds = true
+        tableView.layer.cornerRadius = 5
         textAppending()
     }
     func textAppending() {
@@ -142,8 +144,6 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
         if self.presentingViewController != nil {
                 self.dismiss(animated: true, completion: nil)
             } else {
-                // Fallback: if it was pushed in a navigation controller
-//                self.navigationController?.popViewController(animated: true)
                 let transition = CATransition()
                 transition.duration = 0.4
                 transition.type = .fade

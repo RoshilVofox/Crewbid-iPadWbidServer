@@ -9,7 +9,7 @@ import UIKit
 
 class EmbeddedBidActionsVC: BaseViewController, KUIPopOverUsable {
     
-    var contentSize: CGSize = CGSize(width: 400, height: 450)
+    var contentSize: CGSize = CGSize(width: 400, height: 475)
     
     override func viewDidLoad() {
         super.viewDidLoad()

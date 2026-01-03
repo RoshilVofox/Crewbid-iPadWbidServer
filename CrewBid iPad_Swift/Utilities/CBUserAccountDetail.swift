@@ -294,10 +294,10 @@ import FirebaseCrashlytics
          }
 
          // Crashlytics logging
-         if let empId = dicUserData["LoginuserId"] {
+//         if let empId = dicUserData["LoginuserId"] {
 //             Crashlytics.crashlytics().log("Employee ID: \(empId)")
 //             Crashlytics.crashlytics().setCustomValue(empId, forKey: "EmployeeNumber")
-         }
+//         }
 
          // Save to Keychain
          saveToKeyChain(userdata: dicUserData)
