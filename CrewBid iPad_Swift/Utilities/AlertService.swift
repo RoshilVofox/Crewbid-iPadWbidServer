@@ -74,6 +74,47 @@ class AlertService{
         return attributedString
     }
     
+    static func makeBidErrorAttributedMessage(
+        _ text: String
+    ) -> NSAttributedString {
+
+        let attributed = NSMutableAttributedString(string: text)
+
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .center
+        paragraph.lineSpacing = 6
+
+        let fullRange = NSRange(location: 0, length: attributed.length)
+
+        attributed.addAttributes(
+            [
+                .paragraphStyle: paragraph,
+                .font: UIFont.systemFont(ofSize: 19, weight: .medium),
+                .foregroundColor: UIColor.systemGray
+            ],
+            range: fullRange
+        )
+
+        if let start = text.firstIndex(of: "("),
+           let end = text.firstIndex(of: ")") {
+
+            let nsText = text as NSString
+            let fileRange = nsText.range(
+                of: String(text[start...end])
+            )
+
+            attributed.addAttributes(
+                [
+                    .font: UIFont.systemFont(ofSize: 19, weight: .medium),
+                    .foregroundColor: UIColor.systemGray
+                ],
+                range: fileRange
+            )
+        }
+
+        return attributed
+    }
+    
     static func showAlertForTopVC(
             title: String?,
             message: String?,

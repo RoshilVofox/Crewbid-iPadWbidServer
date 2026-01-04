@@ -132,7 +132,7 @@ import FirebaseCrashlytics
          UserDefaults.standard.set(nonFaRound2LinesPostedDayMessage, forKey: "NonFAround2LinesPostedDayMessage")
          UserDefaults.standard.set(nonFaRound2LinesDueDayMessage, forKey: "NonFAround2LinesDueDayMessage")
          
-         dicUserDetails["Password"] = Password
+         dicUserDetails["Password"] = "\(Password)"
          dicUserDetails["Position"] = "\(position)"
          dicUserDetails["CarrierNum"] = "\(CarrierNum)"
          
@@ -140,11 +140,11 @@ import FirebaseCrashlytics
          dicUserDetails["isAcceptMail"] = isAcceptMail ? "YES" : "NO"
          dicUserDetails["isFAVactionDisplayOn"] = isFAVactionDisplayOn ? "YES" : "NO"
          
-         dicUserDetails["isFree"] = isFree ? "YES" : "NO"
-         dicUserDetails["IsMonthlySubscribed"] = isMonthlySubscribed ? "YES" : "NO"
-         dicUserDetails["IsYearlySubscribed"] = isYearlySubscribed ? "YES" : "NO"
-         dicUserDetails["IsCBMonthlySubscribed"] = isCBMonthlySubscribed ? "YES" : "NO"
-         dicUserDetails["IsCBYearlySubscribed"] = isCBYearlySubscribed ? "YES" : "NO"
+//         dicUserDetails["isFree"] = isFree ? "YES" : "NO"
+//         dicUserDetails["IsMonthlySubscribed"] = isMonthlySubscribed ? "YES" : "NO"
+//         dicUserDetails["IsYearlySubscribed"] = isYearlySubscribed ? "YES" : "NO"
+//         dicUserDetails["IsCBMonthlySubscribed"] = isCBMonthlySubscribed ? "YES" : "NO"
+//         dicUserDetails["IsCBYearlySubscribed"] = isCBYearlySubscribed ? "YES" : "NO"
          
          if dicLoginAuthDetails.count > 0 {
              dicUserDetails["DicLoginAuthDetails"] = dicLoginAuthDetails
@@ -153,9 +153,9 @@ import FirebaseCrashlytics
              dicUserDetails["DicLogInAuthExternalUser"] = dicLogInAuthExternalUser
          }
          
-         dicUserDetails["TopSubscriptionLine"] = topSubscriptionLine
-         dicUserDetails["SecondSubscriptionLine"] = secondSubscriptionLine
-         dicUserDetails["ThirdSubscriptionLine"] = thirdSubscriptionLine
+//         dicUserDetails["TopSubscriptionLine"] = topSubscriptionLine
+//         dicUserDetails["SecondSubscriptionLine"] = secondSubscriptionLine
+//         dicUserDetails["ThirdSubscriptionLine"] = thirdSubscriptionLine
          
          // Save to Keychain and Plist
          saveToKeyChain(userdata: dicUserDetails)
@@ -268,11 +268,11 @@ import FirebaseCrashlytics
 
              self.isFAVactionDisplayOn = boolFromYesNo(dicUserData["isFAVactionDisplayOn"])
              self.isAcceptMail = boolFromYesNo(dicUserData["isAcceptMail"])
-             self.isFree = boolFromYesNo(dicUserData["isFree"])
-             self.isMonthlySubscribed = boolFromYesNo(dicUserData["IsMonthlySubscribed"])
-             self.isYearlySubscribed = boolFromYesNo(dicUserData["IsYearlySubscribed"])
-             self.isCBYearlySubscribed = boolFromYesNo(dicUserData["IsCBYearlySubscribed"])
-             self.isCBMonthlySubscribed = boolFromYesNo(dicUserData["IsCBMonthlySubscribed"])
+//             self.isFree = boolFromYesNo(dicUserData["isFree"])
+//             self.isMonthlySubscribed = boolFromYesNo(dicUserData["IsMonthlySubscribed"])
+//             self.isYearlySubscribed = boolFromYesNo(dicUserData["IsYearlySubscribed"])
+//             self.isCBYearlySubscribed = boolFromYesNo(dicUserData["IsCBYearlySubscribed"])
+//             self.isCBMonthlySubscribed = boolFromYesNo(dicUserData["IsCBMonthlySubscribed"])
 
              // Dictionaries
              if let loginAuth = dicUserData["DicLoginAuthDetails"]  as? NSMutableDictionary {
@@ -283,9 +283,9 @@ import FirebaseCrashlytics
              }
 
              // Subscription lines
-             self.topSubscriptionLine = dicUserData["TopSubscriptionLine"] as! String
-             self.secondSubscriptionLine = dicUserData["SecondSubscriptionLine"] as! String
-             self.thirdSubscriptionLine = dicUserData["ThirdSubscriptionLine"] as! String
+//             self.topSubscriptionLine = dicUserData["TopSubscriptionLine"] as! String
+//             self.secondSubscriptionLine = dicUserData["SecondSubscriptionLine"] as! String
+//             self.thirdSubscriptionLine = dicUserData["ThirdSubscriptionLine"] as! String
 
              // Dates
              if let maxDate = dicUserData["MaxSubscriptionDate"] as? String {

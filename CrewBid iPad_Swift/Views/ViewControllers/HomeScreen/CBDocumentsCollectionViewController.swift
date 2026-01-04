@@ -38,17 +38,18 @@ class CBDocumentsCollectionViewController: BaseViewController {
         }
         NotificationCenter.default.addObserver(self, selector: #selector(refreshBidPeriods), name: NSNotification.Name(ReloadCollectionView), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(updateTitle), name: NSNotification.Name("updateTitle"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(showBidDownloadError), name: NSNotification.Name("showBidDownloadError"), object: nil)
         refreshBidPeriods()
         isUpdateAvailable()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(checkSubscription), name: NSNotification.Name("checkSubscription"), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(checkSubscription), name: NSNotification.Name("checkSubscription"), object: nil)
         refreshBidPeriods()
-        if !didPostInitialSubscriptionCheck {
-            didPostInitialSubscriptionCheck = true
-            NotificationCenter.default.post(name: NSNotification.Name("checkSubscription"), object: nil)
-        }
+//        if !didPostInitialSubscriptionCheck {
+//            didPostInitialSubscriptionCheck = true
+//            NotificationCenter.default.post(name: NSNotification.Name("checkSubscription"), object: nil)
+//        }
         NotificationCenter.default.addObserver(self, selector: #selector(showVersionAlert), name: NSNotification.Name("versionAlert"), object: nil)
     }
     
@@ -77,22 +78,22 @@ class CBDocumentsCollectionViewController: BaseViewController {
     }
     
     
-    @objc func checkSubscription(){
-        // show alert for expiry check
-        if let authDetails = app.ObjUserAccount?.dicLoginAuthDetails, authDetails.count > 0 {
-            DispatchQueue.main.async {
-                self.view.showActivityIndicator(message: "Subscription Checking...")
-            }
-            // Trigger an update of subscription details (network-driven)
-            CBSubscriptionInfoController().updateSubscriptionDetails(silent: true)
-            // After a short delay, evaluate and present the appropriate alert
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-                self.checkingAlertFunction()
-            }
-        } else {
-            self.view.hideActivityIndicator()
-        }
-    }
+//    @objc func checkSubscription(){
+//        // show alert for expiry check
+//        if let authDetails = app.ObjUserAccount?.dicLoginAuthDetails, authDetails.count > 0 {
+//            DispatchQueue.main.async {
+//                self.view.showActivityIndicator(message: "Subscription Checking...")
+//            }
+//            // Trigger an update of subscription details (network-driven)
+//            CBSubscriptionInfoController().updateSubscriptionDetails(silent: true)
+//            // After a short delay, evaluate and present the appropriate alert
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+//                self.checkingAlertFunction()
+//            }
+//        } else {
+//            self.view.hideActivityIndicator()
+//        }
+//    }
     
     
     @IBAction func downloadBid(_ sender: Any) {
@@ -124,14 +125,14 @@ class CBDocumentsCollectionViewController: BaseViewController {
             }
             if let authDetails = app.ObjUserAccount?.dicLoginAuthDetails, authDetails.count > 0 {
                 if app.connectedToInternet() {
-                    DispatchQueue.main.async {
-                        self.view.showActivityIndicator(message: "Checking User Account")
-                    }
-                    CBSubscriptionInfoController().updateSubscriptionDetails(silent: true)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                        self.view.hideActivityIndicator()
+//                    DispatchQueue.main.async {
+//                        self.view.showActivityIndicator(message: "Checking User Account")
+//                    }
+//                    CBSubscriptionInfoController().updateSubscriptionDetails(silent: true)
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//                        self.view.hideActivityIndicator()
                         presentNewBid()
-                    }
+//                    }
                 } else {
                     let alert = UIAlertController(title: "Network not available!!", message: "Please check your internet connection", preferredStyle: .alert)
                     alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
@@ -349,6 +350,20 @@ class CBDocumentsCollectionViewController: BaseViewController {
             } else {
                 self.lblHome.text = "Home (\(version))" + qaString
             }
+    }
+    
+    @objc func showBidDownloadError(_ notification: Notification){
+        guard let error = notification.object as? Error else { return }
+
+        let errMsg = error.localizedDescription.uppercased()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            AlertService.showDBAlert(
+                title: "Bid Download Failed",
+                attributedMessage: AlertService.makeBidErrorAttributedMessage(errMsg),
+                from: self
+            )
+        }
     }
     
     @objc func refreshBidPeriods() {

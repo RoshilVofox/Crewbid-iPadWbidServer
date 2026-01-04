@@ -25,6 +25,16 @@ class CBAlertVC: BaseViewController {
     }
     
     func setupUI(){
+        self.view.layer.masksToBounds = true
+        self.view.layer.cornerRadius = 10
+        self.view.layer.borderWidth = 5
+        self.view.layer.borderColor = UIColor.gray.cgColor
+        textView.isEditable = false
+        textView.isScrollEnabled = false
+        textView.textAlignment = .center
+        textView.textContainerInset = .zero
+        textView.textContainer.lineFragmentPadding = 0
+        
         if isSimpleAlert {
                tryAgainBtn.isHidden = true
                cancelBtn.setTitle("OK", for: .normal)
@@ -42,11 +52,8 @@ class CBAlertVC: BaseViewController {
     
 
     @IBAction func tryBtnAction(_ sender: Any) {
-        if let _ = self.fromView as? CBCredentialsPageVC{
-            navigationController?.popViewController(animated: true)
-            if navigationController == nil{
-                self.dismiss(animated: true)
-            }
+        dismiss(animated: true) {
+            AppNavigation.startNewBidFlow()
         }
     }
     
@@ -58,6 +65,60 @@ class CBAlertVC: BaseViewController {
                     NotificationCenter.default.post(name: .init("dismissLoginView"), object: self)
                 }
             });
+        }
+    }
+}
+enum AppNavigation {
+
+    static func startNewBidFlow() {
+        UserDefaults.standard.set(
+            false,
+            forKey: "isSecretForAllDomicileDownloadEnabled"
+        )
+
+        guard let topVC = UIApplication.topViewController() else { return }
+
+        let presentNewBid: () -> Void = {
+            let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+            let vc = storyboard.instantiateViewController(
+                withIdentifier: "CBNewBidVC"
+            ) as! CBNewBidVC
+
+            vc.preferredContentSize = CGSize(width: 600, height: 550)
+            vc.modalTransitionStyle = .crossDissolve
+            vc.isModalInPresentation = true
+
+            topVC.present(vc, animated: true)
+        }
+        let app = UIApplication.shared.delegate as! AppDelegate
+        
+        if let authDetails = app.ObjUserAccount?.dicLoginAuthDetails,
+           authDetails.count > 0 {
+
+            if app.connectedToInternet() {
+                topVC.view.showActivityIndicator(
+                    message: "Checking User Account"
+                )
+
+                CBSubscriptionInfoController()
+                    .updateSubscriptionDetails(silent: true)
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    topVC.view.hideActivityIndicator()
+                    presentNewBid()
+                }
+
+            } else {
+                let alert = UIAlertController(
+                    title: "Network not available!!",
+                    message: "Please check your internet connection",
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(title: "Ok", style: .default))
+                topVC.present(alert, animated: true)
+            }
+        } else {
+            presentNewBid()
         }
     }
 }

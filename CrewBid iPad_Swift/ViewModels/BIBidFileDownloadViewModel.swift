@@ -260,7 +260,14 @@ class BIBidFileDownloadViewModel {
 
                         // Move the downloaded file into the permanent directory
                         try FileManager.default.moveItem(at: tempURL, to: destinationURL)
-                        
+                        let attributes = try FileManager.default.attributesOfItem(atPath: destinationURL.path)
+                        let fileSize = attributes[.size] as? NSNumber ?? 0
+
+                        if fileSize.intValue == 0 || !self.isValidZipFile(at: destinationURL) {
+                            try? FileManager.default.removeItem(at: destinationURL)
+                            completion(.failure(Errors.noBidData(filename: nextFile)))
+                            return
+                        }
                         try FileManager.default.createDirectory(at: destinationDir, withIntermediateDirectories: true, attributes: nil)
 
                         let unzipSuccess = SSZipArchive.unzipFile(atPath: destinationURL.path, toDestination: destinationDir.path)
@@ -327,6 +334,27 @@ class BIBidFileDownloadViewModel {
         } else {
             downloadNext()
         }
+    }
+    
+    private func isValidZipFile(at url: URL) -> Bool {
+        guard let handle = try? FileHandle(forReadingFrom: url) else {
+            return false
+        }
+
+        defer {
+            if #available(iOS 13.0, *) {
+                try? handle.close()
+            } else {
+                handle.closeFile()
+            }
+        }
+
+        let header = handle.readData(ofLength: 4)
+        guard header.count == 4 else {
+            return false
+        }
+
+        return header == Data([0x50, 0x4B, 0x03, 0x04])
     }
     
     private func stringByAddingPercentEscapes(to unescapedString: String) -> String? {

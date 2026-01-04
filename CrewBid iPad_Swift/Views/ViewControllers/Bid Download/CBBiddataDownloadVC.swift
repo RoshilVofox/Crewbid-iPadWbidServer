@@ -14,6 +14,7 @@ class CBBiddataDownloadVC: BaseViewController {
     
     // base
     @IBOutlet weak var btnATL: dataDownloadingButton!
+    @IBOutlet weak var btnAUS: dataDownloadingButton!
     @IBOutlet weak var btnBNA: dataDownloadingButton!
     @IBOutlet weak var btnBWI: dataDownloadingButton!
     @IBOutlet weak var btnDAL: dataDownloadingButton!
@@ -158,7 +159,7 @@ class CBBiddataDownloadVC: BaseViewController {
     
     @IBAction func btnBaseAction(_ sender: UIButton) {
         // Iterate over a range of button tags
-        for i in (40..<52) {
+        for i in (40..<53) {
             if i == (sender as AnyObject).tag {
                 // Update the selected domicile based on the button title
                 selectedDomicile = sender.titleLabel!.text!

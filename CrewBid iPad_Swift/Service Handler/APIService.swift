@@ -17,6 +17,7 @@ enum Errors: Error {
     case unauthorized(message: String)
     case timeout
     case unzipFailed
+    case noBidData(filename:String)
     case emptyData
     case networkError
     case other(Error)
@@ -69,6 +70,8 @@ extension Errors {
             case 500: return "Server Error (500)."
             default: return "HTTP Error: \(code)."
             }
+        case .noBidData(let filename):
+            return "Bid Info Data not Available.\n(\(filename))"
         }
     }
 }

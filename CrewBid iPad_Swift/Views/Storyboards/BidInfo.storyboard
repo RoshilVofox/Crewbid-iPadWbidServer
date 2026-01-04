@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="ipad10_9rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -101,8 +101,19 @@
                                                             <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="aOV-Oo-wEw"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" tag="41" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="44Z-k7-7wD" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                    <button opaque="NO" tag="41" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ji5-Mo-6j7" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                                         <rect key="frame" x="92" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="AUS">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="3Cf-J8-jsu"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="42" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="44Z-k7-7wD" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="184" y="0.0" width="82" height="45"/>
                                                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                         <state key="normal" title="BNA">
@@ -112,8 +123,8 @@
                                                             <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="ZrL-bW-tle"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" tag="42" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ldb-gM-37a" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                        <rect key="frame" x="184" y="0.0" width="82" height="45"/>
+                                                    <button opaque="NO" tag="43" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ldb-gM-37a" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="276" y="0.0" width="82" height="45"/>
                                                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                         <state key="normal" title="BWI">
@@ -123,8 +134,8 @@
                                                             <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="seu-eF-twI"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" tag="43" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mRN-1i-h6f" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                        <rect key="frame" x="276" y="0.0" width="82" height="45"/>
+                                                    <button opaque="NO" tag="44" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mRN-1i-h6f" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="368" y="0.0" width="82" height="45"/>
                                                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                         <state key="normal" title="DAL">
@@ -132,17 +143,6 @@
                                                         </state>
                                                         <connections>
                                                             <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="ysl-FZ-Cjy"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" tag="44" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="la0-f5-1i8" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                        <rect key="frame" x="368" y="0.0" width="82" height="45"/>
-                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
-                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
-                                                        <state key="normal" title="DEN">
-                                                            <color key="titleColor" systemColor="labelColor"/>
-                                                        </state>
-                                                        <connections>
-                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="Fbj-16-a41"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
@@ -155,8 +155,19 @@
                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="fah-qJ-lO1">
                                                 <rect key="frame" x="0.0" y="50" width="450" height="45"/>
                                                 <subviews>
-                                                    <button opaque="NO" tag="45" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yPF-sL-aha" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                    <button opaque="NO" tag="45" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="la0-f5-1i8" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="DEN">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="Fbj-16-a41"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="46" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yPF-sL-aha" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="92" y="0.0" width="82" height="45"/>
                                                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                         <state key="normal" title="HOU">
@@ -166,8 +177,8 @@
                                                             <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="a1O-91-DSA"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" tag="46" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ebl-n9-eYN" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                        <rect key="frame" x="92" y="0.0" width="82" height="45"/>
+                                                    <button opaque="NO" tag="47" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ebl-n9-eYN" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="184" y="0.0" width="82" height="45"/>
                                                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                         <state key="normal" title="LAS">
@@ -177,8 +188,8 @@
                                                             <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="gWx-bj-o0k"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" tag="47" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fNT-yh-y87" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                        <rect key="frame" x="184" y="0.0" width="82" height="45"/>
+                                                    <button opaque="NO" tag="48" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fNT-yh-y87" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="276" y="0.0" width="82" height="45"/>
                                                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                         <state key="normal" title="LAX">
@@ -188,8 +199,8 @@
                                                             <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="Ta5-he-G7e"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" tag="48" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vPA-sx-JBN" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                        <rect key="frame" x="276" y="0.0" width="82" height="45"/>
+                                                    <button opaque="NO" tag="49" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vPA-sx-JBN" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="368" y="0.0" width="82" height="45"/>
                                                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                         <state key="normal" title="MCO">
@@ -197,17 +208,6 @@
                                                         </state>
                                                         <connections>
                                                             <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="n6u-VD-lpm"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button opaque="NO" tag="49" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uYu-vT-55t" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                        <rect key="frame" x="368" y="0.0" width="82" height="45"/>
-                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
-                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
-                                                        <state key="normal" title="MDW">
-                                                            <color key="titleColor" systemColor="labelColor"/>
-                                                        </state>
-                                                        <connections>
-                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="JS1-LZ-gbm"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>
@@ -221,8 +221,19 @@
                                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="WTN-XM-8l2">
                                                 <rect key="frame" x="0.0" y="100" width="450" height="45"/>
                                                 <subviews>
-                                                    <button opaque="NO" tag="50" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hbj-JJ-AXH" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                    <button opaque="NO" tag="50" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uYu-vT-55t" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
                                                         <rect key="frame" x="0.0" y="0.0" width="82" height="45"/>
+                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                        <state key="normal" title="MDW">
+                                                            <color key="titleColor" systemColor="labelColor"/>
+                                                        </state>
+                                                        <connections>
+                                                            <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="JS1-LZ-gbm"/>
+                                                        </connections>
+                                                    </button>
+                                                    <button opaque="NO" tag="51" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hbj-JJ-AXH" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="92" y="0.0" width="82" height="45"/>
                                                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                         <state key="normal" title="OAK">
@@ -232,8 +243,8 @@
                                                             <action selector="btnBaseAction:" destination="Pou-H5-XRA" eventType="touchUpInside" id="7tC-k0-5og"/>
                                                         </connections>
                                                     </button>
-                                                    <button opaque="NO" tag="51" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OHB-hO-cqm" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                                        <rect key="frame" x="92" y="0.0" width="82" height="45"/>
+                                                    <button opaque="NO" tag="52" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OHB-hO-cqm" customClass="dataDownloadingButton" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                                        <rect key="frame" x="184" y="0.0" width="82" height="45"/>
                                                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                         <state key="normal" title="PHX">
@@ -244,14 +255,6 @@
                                                         </connections>
                                                     </button>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MY9-6Y-fvk">
-                                                        <rect key="frame" x="184" y="0.0" width="82" height="45"/>
-                                                        <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
-                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
-                                                        <state key="normal">
-                                                            <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        </state>
-                                                    </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OM9-rS-4Zi">
                                                         <rect key="frame" x="276" y="0.0" width="82" height="45"/>
                                                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
@@ -259,7 +262,7 @@
                                                             <color key="titleColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         </state>
                                                     </button>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IiV-eu-xEB">
+                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OM9-rS-4Zi">
                                                         <rect key="frame" x="368" y="0.0" width="82" height="45"/>
                                                         <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
@@ -754,6 +757,7 @@
                         <outlet property="btnAPR" destination="amn-6X-uns" id="BMb-b7-bvv"/>
                         <outlet property="btnATL" destination="XVJ-pn-H6b" id="ZKC-8b-r6d"/>
                         <outlet property="btnAUG" destination="hyv-eF-k23" id="heG-Qr-bpD"/>
+                        <outlet property="btnAUS" destination="ji5-Mo-6j7" id="ySG-hB-2z3"/>
                         <outlet property="btnBNA" destination="44Z-k7-7wD" id="wm5-YJ-x6H"/>
                         <outlet property="btnBWI" destination="ldb-gM-37a" id="X3y-iQ-YIo"/>
                         <outlet property="btnBeforePrevious" destination="Hvm-Ht-WbS" id="vvi-Xx-Nfp"/>
@@ -1597,7 +1601,7 @@
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Oops!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mci-kZ-biS">
                                         <rect key="frame" x="0.0" y="0.0" width="600" height="50"/>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="24"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
@@ -1842,16 +1846,16 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="secondarySystemBackgroundColor">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray3Color">
-            <color red="0.78039215689999997" green="0.78039215689999997" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.7803921568627451" green="0.7803921568627451" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

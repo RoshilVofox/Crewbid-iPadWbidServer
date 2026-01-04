@@ -162,7 +162,7 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
         helpMenuItems.append(HelpMenuItem(imageName: "document", itemLabel: "Line Values", viewControllerName: "quickTutorial"))
         helpMenuItems.append(HelpMenuItem(imageName: "Update", itemLabel: "Update", viewControllerName: "quickTutorial"))
         helpMenuItems.append(HelpMenuItem(imageName: "Help_preserver", itemLabel: "FAQ", viewControllerName: "quickTutorial"))
-        helpMenuItems.append(HelpMenuItem(imageName: "Shopping", itemLabel: "My Subscription", viewControllerName: "quickTutorial"))
+//        helpMenuItems.append(HelpMenuItem(imageName: "Shopping", itemLabel: "My Subscription", viewControllerName: "quickTutorial"))
         helpMenuItems.append(HelpMenuItem(imageName: "Mail", itemLabel: "Contact Us", viewControllerName: "quickTutorial"))
         helpMenuItems.append(HelpMenuItem(imageName: "Link", itemLabel: "Latest News", viewControllerName: "quickTutorial"))
         helpMenuItems.append(HelpMenuItem(imageName: "Vacation1", itemLabel: "Vacation", viewControllerName: "quickTutorial"))
@@ -247,12 +247,12 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
             break
             
         case 6:
-            if self.isUserInfoAvailable(){
-                let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "CBSubscriptionInfoController") as! CBSubscriptionInfoController
-                self.navigationController?.pushViewController(vc, animated: true)
-            }else{
-                AlertService.showAlertForTopVC(title: "CrewBid", message: "You cannot check your subscription because you have not yet validated.  To validate, all you have to do is download bid data.  Then you can verify your subscription details.", actions: nil)
-            }
+//            if self.isUserInfoAvailable(){
+//                let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "CBSubscriptionInfoController") as! CBSubscriptionInfoController
+//                self.navigationController?.pushViewController(vc, animated: true)
+//            }else{
+//                AlertService.showAlertForTopVC(title: "CrewBid", message: "You cannot check your subscription because you have not yet validated.  To validate, all you have to do is download bid data.  Then you can verify your subscription details.", actions: nil)
+//            }
             break
             
         case 7:
