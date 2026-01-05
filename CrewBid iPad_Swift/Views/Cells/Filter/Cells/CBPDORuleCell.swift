@@ -19,6 +19,8 @@ class CBPDORuleCell: UITableViewCell, RefreshDelegate {
     var bidPeriod: BIBidPeriod?
     var calendarData: BICalendarData?
     var filterRule: BIFilterRule?
+    var lastUpdatedDayValue: String?
+    var lastUpdatedCityValue: String?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -66,6 +68,11 @@ class CBPDORuleCell: UITableViewCell, RefreshDelegate {
     func setFilterRule(_ filterRule: BIFilterRule?) {
         self.filterRule = filterRule
         getLinesForFilterRule()
+        if ((lastUpdatedDayValue == "Any Days" || lastUpdatedDayValue == "")  && (lastUpdatedCityValue == "Any Cities" || lastUpdatedCityValue == "")) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                NotificationCenter.default.post(name: NSNotification.Name("updateScrthPad"), object: nil)
+            }
+        }
     }
     
     func getLinesForFilterRule() {
@@ -355,11 +362,8 @@ class CBPDORuleCell: UITableViewCell, RefreshDelegate {
                 }
             }
         }
-        if ((dayValue == "Any Days" || dayValue == "")  && (city == "Any Cities" || city == "")) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                NotificationCenter.default.post(name: NSNotification.Name("updateScrthPad"), object: nil)
-            }
-        }
+        lastUpdatedDayValue = dayValue
+        lastUpdatedCityValue = city
     }
 
     func didSelected(itemName: String) {
@@ -487,8 +491,11 @@ class CBPDORuleCell: UITableViewCell, RefreshDelegate {
         vc.Delegate = self
 
         var cities = (UserDefaults.standard.array(forKey: kCBAllCitiesList) as? [String]) ?? []
-        if !cities.contains("Any Cities") { cities.insert("Any Cities", at: 0) }
-
+        cities.removeAll { $0.caseInsensitiveCompare("Any Cities") == .orderedSame }
+        cities.sort { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
+        // Insert "Any Cities" at the first position
+        cities.insert("Any Cities", at: 0)
+        
         vc.menuItems = NSMutableArray(array: cities)
         vc.arrCellParameters = vc.menuItems
         vc.selectedValue = cityBtn.currentTitle ?? ""

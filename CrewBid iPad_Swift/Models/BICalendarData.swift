@@ -306,7 +306,16 @@ class BICalendarData {
         let firstDayOfWeekComponents = myNewCalendar?.dateComponents([.weekday], from: firstDateOfMonth!)
         let firstDayWeekday = firstDayOfWeekComponents?.weekday
         dc.day = -firstDayWeekday! + 2
-        let firstDateOfCalendar = myNewCalendar?.date(from: dc)
+        var firstDateOfCalendar = myNewCalendar?.date(from: dc)
+        if (2 == self.month && (firstDateOfCalendar?.compare(firstDateOfMonth!) == .orderedSame)) {
+            // If the month is February and January 31 is not showing, we need to
+                    // change the first date of the calendar to make sure that it is showing
+                    // so that FA trips show up properly.
+                    // This scenario would only happen if February 1 is a Sunday
+            dc.month = 1
+            dc.day = 25
+            firstDateOfCalendar = myNewCalendar?.date(from: dc)
+        }
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"

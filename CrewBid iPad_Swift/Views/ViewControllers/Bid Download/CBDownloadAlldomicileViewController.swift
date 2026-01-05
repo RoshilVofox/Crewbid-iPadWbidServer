@@ -407,6 +407,10 @@ class CBDownloadAlldomicileViewController: UIViewController {
                 position = .FirstOfficer
                 GlobalBidInfo.shared.position = .FirstOfficer
             }
+            else if self.btnBoth.isSelected {
+                position = .FirstOfficer
+                GlobalBidInfo.shared.position = .FirstOfficer
+            }
             
             dictionary["position"] = position
             if self.btnFirstRound.isSelected {

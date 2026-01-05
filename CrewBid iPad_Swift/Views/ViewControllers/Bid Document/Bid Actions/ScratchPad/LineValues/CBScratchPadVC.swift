@@ -188,7 +188,7 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
         //Remove Observe Scratchpad line trashing notification
 //        NotificationCenter.default.removeObserver(self)
         NotificationCenter.default.removeObserver("refreshLines")
-        NotificationCenter.default.removeObserver(self, name: Notification.Name("updateScrthPad"), object: nil)
+//        NotificationCenter.default.removeObserver(self, name: Notification.Name("updateScrthPad"), object: nil)
         NotificationCenter.default.removeObserver(self, name: Notification.Name("CBLineTableCellTripButtonDehighlightNotification"), object: nil)
         NotificationCenter.default.removeObserver(self, name: Notification.Name(CBLineTableCellTripButtonDehighlightNotification), object: nil)
         NotificationCenter.default.removeObserver(self, name: Notification.Name(CBLineTableCellBidLineNotification), object: nil)
