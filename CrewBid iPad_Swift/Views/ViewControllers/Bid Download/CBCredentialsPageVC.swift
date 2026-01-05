@@ -59,9 +59,9 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                 
                 
                 dicWBAuthorizationDetails = NSMutableDictionary(dictionary: userArray.first!, copyItems: true) as! [String : Any]
-//                enteredEmpNo = self.userid?.replacingOccurrences(of: "e", with: "").replacingOccurrences(of: "x", with: "").trimmingCharacters(in: .symbols)
+
                 historySecretEnabled = UserDefaults.standard.string(forKey: "isMaxSubScriptionOfEnteredUser")
-                
+                app.ObjUserAccount?.LoginuserId = enteredEmpNo ?? ""
                 if historySecretEnabled == "YES"{
                     app.ObjUserAccount?.LoginuserId = UserDefaults.standard.string(forKey: "SecretVDuserName")!
                     app.ObjUserAccount?.saveUserInfo()
@@ -128,6 +128,16 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                         let password = self.txtPassword.text ?? ""
                             self.startAuthentication(empID: empID, formattedUserID: formattedUserID, password: password)
                     }
+                    //Check if employee is external user
+//                    if app.ObjUserAccount?.employeeNumber == enteredEmpNo{
+//                        // Internal user
+//                        WBSubscriptionChecking()
+//                    }else{
+//                        // External user
+//                        WBSubscriptionChecking()
+//                    }
+                    
+                    
                 } else {
                     if let account = KeychainHelper.retrieveUsername(forService: "CWAUserAccountDetails"){
                         KeychainHelper.delete(account: account, service: "CWAUserAccountDetails")
@@ -176,6 +186,18 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }
         
     }
+    
+    /*
+    func WBSubscriptionChecking(){
+        
+        app.ObjUserAccount?.isFree = dicWBAuthorizationDetails["IsFree"] as! Bool
+        app.ObjUserAccount?.isMonthlySubscribed = dicWBAuthorizationDetails["IsMonthlySubscribed"] as! Bool
+        app.ObjUserAccount?.isYearlySubscribed = dicWBAuthorizationDetails["IsYearlySubscribed"] as! Bool
+        app.ObjUserAccount?.isCBYearlySubscribed = dicWBAuthorizationDetails["IsCBYearlySubscribed"] as! Bool
+        app.ObjUserAccount?.isCBMonthlySubscribed = dicWBAuthorizationDetails["IsCBMonthlySubscribed"] as! Bool
+        app.ObjUserAccount?.saveUserInfo()
+    }
+    */
     
     func showUserAccountView(){
         let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "userAccountViewController") as! userAccountViewController
@@ -776,6 +798,8 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     private func handleNewBidDownloadFailure(error: Error) {
         print("Error downloading new bid: \(error.localizedDescription)")
         NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+        NotificationCenter.default.post(name: NSNotification.Name("showBidDownloadError"), object: error)
+ 
     }
     
     var lineAwardDetails:[String:Any] = [:]
@@ -1043,8 +1067,9 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         let bidReleaseDate: Date? = Calendar.current.date(from: dc)
         if bidReleaseDate?.compare(currentDate) == .orderedDescending {
             if !isHistoricBid{
-                let alert = AlertService.showAlert(title: "Early Bid Warning", message: "SWA guarantees that the lines will be released by noon Central Time on the \(dayString!).  Sometimes SWA releases the lines earlier. If SWA has not released the lines early, then attempting to download them now will result in a BID INFO UNAVAILABLE error.  So if you receive this error, try again later.", actions: nil)
-                self.present(alert, animated: true)
+                DispatchQueue.main.asyncAfter(deadline: .now()+0.3){
+                    AlertService.showAlertForTopVC(title: "Early Bid Warning", message: "SWA guarantees that the lines will be released by noon Central Time on the \(dayString!).  Sometimes SWA releases the lines earlier. If SWA has not released the lines early, then attempting to download them now will result in a BID INFO UNAVAILABLE error.  So if you receive this error, try again later.")
+                }
                 
             }
         }
