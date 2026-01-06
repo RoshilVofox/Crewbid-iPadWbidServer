@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class CBTextViewController: BaseViewController, UIPopoverPresentationControllerDelegate{
     
@@ -38,9 +39,6 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        if let str = self.bidPeriod?.awardString, str.contains("ERROR"){
-            print("")
-        }
         textView.clipsToBounds = true
         textView.layer.cornerRadius = 5
         tableView.clipsToBounds = true
@@ -48,7 +46,7 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
         textAppending()
     }
     func textAppending() {
-        textView.font = UIFont(name: "Courier New Bold", size: 12)
+        textView.font = UIFont(name: "Courier New Bold", size: 15)
         
         switch dataTypeSelected {
             case .seniorityList:
@@ -135,9 +133,230 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
             case .bidReceipt:
                 lblTitle.text = "Bid Receipt"
                 titleText = "Bid Receipt"
-                textView.text = ""
+            if let receiptText = self.bidReceipt?.condensedText{
+                textView.text = receiptText
+            }
                 break
         }
+    }
+    
+    
+//    func setPropertiesWithReceiptText(_ receiptText: String) {
+//
+//        let app = UIApplication.shared.delegate as? AppDelegate
+//
+//        self.text = receiptText
+//
+//        // MARK: - Attributes
+//        let attrBlank: [NSAttributedString.Key: Any] = [
+//            .backgroundColor: UIColor.blue,
+//            .foregroundColor: UIColor.white,
+//            .strokeWidth: -3.0,
+//            .font: UIFont(name: "Courier", size: 15)!
+//        ]
+//
+//        let attrReserve: [NSAttributedString.Key: Any] = [
+//            .backgroundColor: UIColor.red,
+//            .foregroundColor: UIColor.white,
+//            .strokeWidth: -3.0,
+//            .font: UIFont(name: "Courier", size: 15)!
+//        ]
+//
+//        let attrClear: [NSAttributedString.Key: Any] = [
+//            .backgroundColor: UIColor.clear,
+//            .font: UIFont(name: "Courier", size: 15)!
+//        ]
+//
+//        let condensedText = NSMutableAttributedString()
+//        var optionalEmployeeNumbers: [String] = []
+//
+//        var readFirstLine = true
+//        var readBidLineNumbers = false
+//        var readOptionalEmployeeNumbers = false
+//        var readFinalLine = false
+//        var isValidReceipt = false
+//        var count = 0
+//
+//        let rearrangedBidReceipt = rearrangedBidReceipt(receiptText)
+//
+//        if rearrangedBidReceipt.isEmpty {
+//            setPropertiesWithReceiptText2(receiptText)
+//            return
+//        }
+//
+//        rearrangedBidReceipt.enumerateLines { line, _ in
+//
+//            // MARK: - First line
+//            if readFirstLine {
+//                condensedText.append(
+//                    NSAttributedString(string: "\(line)\n", attributes: attrClear)
+//                )
+//                readFirstLine = false
+//                readBidLineNumbers = true
+//                return
+//            }
+//
+//            // MARK: - Bid line numbers
+//            if readBidLineNumbers {
+//
+//                if line == "*E" {
+//                    condensedText.append(
+//                        NSAttributedString(string: "\(line)\n", attributes: attrClear)
+//                    )
+//                    readBidLineNumbers = false
+//                    readOptionalEmployeeNumbers = true
+//                    return
+//                }
+//
+//                count += 1
+//                let padded = addBidReceiptSpacesForPilot(line)
+//                var attrs = attrClear
+//
+//                if bidPeriod?.isFlightAttendantBid == false,
+//                   let lineNumber = Int(line),
+//                   let myLine = fetchLine(lineNumber) {
+//
+//                    if myLine.orderedTrips.isEmpty {
+//                        attrs = attrBlank
+//                    } else if myLine.type == 3 || myLine.type == 6 || myLine.type == 12 {
+//                        attrs = attrReserve
+//                    }
+//                }
+//
+//                condensedText.append(
+//                    NSAttributedString(string: padded, attributes: attrs)
+//                )
+//
+//                if count % 10 == 0 {
+//                    condensedText.append(NSAttributedString(string: "\n"))
+//                }
+//                return
+//            }
+//
+//            // MARK: - Optional employee numbers
+//            if readOptionalEmployeeNumbers {
+//
+//                if line == "*E" {
+//                    condensedText.append(
+//                        NSAttributedString(string: "\(line)\n", attributes: attrClear)
+//                    )
+//                    readOptionalEmployeeNumbers = false
+//                    readFinalLine = true
+//                    return
+//                }
+//
+//                optionalEmployeeNumbers.append(line)
+//                condensedText.append(
+//                    NSAttributedString(string: "\(line)\n", attributes: attrClear)
+//                )
+//                return
+//            }
+//
+//            // MARK: - Final line (SUBMITTED BY)
+//            if readFinalLine {
+//
+//                let brackets = CharacterSet(charactersIn: "[]")
+//                let digits = CharacterSet.decimalDigits
+//                let scanner = Scanner(string: line)
+//
+//                var submittedBy: NSString?
+//                var submittedFor: NSString?
+//
+//                scanner.scanUpTo("SUBMITTED BY:", into: nil)
+//                scanner.scanString("SUBMITTED BY:", into: nil)
+//
+//                scanner.charactersToBeSkipped = CharacterSet()
+//                scanner.scanUpToCharacters(from: brackets, into: nil)
+//                scanner.scanCharacters(from: brackets, into: nil)
+//                scanner.scanUpToCharacters(from: brackets, into: &submittedBy)
+//
+//                scanner.scanUpToCharacters(from: digits, into: nil)
+//                scanner.scanCharacters(from: digits, into: &submittedFor)
+//
+//                if let submittedFor = submittedFor as String?,
+//                   submittedFor == self.submittedFor {
+//                    isValidReceipt = true
+//                }
+//
+//                if bidPeriod?.isFlightAttendantBid == false {
+//
+//                    let temp = NSMutableAttributedString(
+//                        string: "\(line)\n",
+//                        attributes: attrClear
+//                    )
+//
+//                    let regex = try? NSRegularExpression(pattern: "(\\d+)\\.(\\d+)")
+//                    let matches = regex?.matches(
+//                        in: line,
+//                        range: NSRange(location: 0, length: line.count)
+//                    ) ?? []
+//
+//                    for match in matches {
+//                        guard match.numberOfRanges >= 3 else { continue }
+//
+//                        let lineNumberRange = match.range(at: 2)
+//                        let nsLine = line as NSString
+//                        let lineNumber = nsLine.substring(with: lineNumberRange)
+//
+//                        guard let num = Int(lineNumber),
+//                              let myLine = fetchLine(num) else { continue }
+//
+//                        var attrs = attrClear
+//
+//                        if myLine.orderedTrips.isEmpty {
+//                            attrs = attrBlank
+//                        } else if myLine.type == 3 || myLine.type == 6 || myLine.type == 12 {
+//                            attrs = attrReserve
+//                        }
+//
+//                        temp.addAttributes(attrs, range: match.range(at: 0))
+//                    }
+//
+//                    condensedText.append(temp)
+//                } else {
+//                    condensedText.append(
+//                        NSAttributedString(string: "\(line)\n", attributes: attrClear)
+//                    )
+//                }
+//            }
+//        }
+//
+//        // MARK: - Night mode
+//        if UserDefaults.standard.bool(forKey: kCBNightTimeModeEnabled) {
+//            condensedText.addAttribute(
+//                .foregroundColor,
+//                value: UIColor.white,
+//                range: NSRange(location: 0, length: condensedText.length)
+//            )
+//        }
+//
+//        let finalText = addLeftMarginToString(condensedText, leftMargin: 30.0)
+//        textView.attributedText = finalText
+//
+//        print(finalText)
+//    }
+    func fetchLine(_ lineNumber: Int) -> BILine? {
+        guard let context = bidPeriod?.managedObjectContext else {
+            return nil
+        }
+
+        let fetchRequest = NSFetchRequest<BILine>(entityName: "Line")
+        fetchRequest.predicate = NSPredicate(format: "number == %@", NSNumber(value: lineNumber))
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(key: "number", ascending: true)
+        ]
+        fetchRequest.fetchLimit = 1   // optimization vs Obj-C
+
+        do {
+            return try context.fetch(fetchRequest).first
+        } catch {
+            print("fetchLine error:", error)
+            return nil
+        }
+    }
+    
+    func addBidReceiptSpacesForPilot(_ text: String) -> String {
+        return String(format: "%5s", text)
     }
     
     @IBAction func btnDismissAction(_ sender: Any) {

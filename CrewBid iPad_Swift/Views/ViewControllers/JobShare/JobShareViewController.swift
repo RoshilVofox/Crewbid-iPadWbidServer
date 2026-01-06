@@ -66,8 +66,9 @@ class JobShareViewController: BaseViewController {
         txtJobShare1.isEnabled = false
         txtJobShare1.isUserInteractionEnabled = false
         txtJobShare1.textColor = UIColor.darkGray
-        txtJobShare2.becomeFirstResponder()
+//        txtJobShare2.becomeFirstResponder()
         txtJobShare2.delegate = self
+        txtJobShare2.returnKeyType = .done
         btnCheckBox.setTitle("", for: .normal)
         empNameLbl.isHidden = true
         domicileLbl.isHidden = true
@@ -163,10 +164,12 @@ class JobShareViewController: BaseViewController {
             userList.append(id2)
         }
         
-        self.view.showActivityIndicator(message: "Authentication Checking...")
+        self.view.showActivityIndicator(message: "Validating Buddies...")
 
         if userList.isEmpty {
-            validateBuddiesAndSubscription()
+            
+            self.view.hideActivityIndicator()
+            validateBuddies()
             return
         }
 
@@ -193,13 +196,14 @@ class JobShareViewController: BaseViewController {
                 if pending == 0 {
                     DispatchQueue.main.async {
                         self.view.hideActivityIndicator()
-                        self.validateBuddiesAndSubscription()
+//                        self.validateBuddiesAndSubscription()
+                        self.validateBuddies()
                     }
                 }
             }
         }
     }
-    
+/*
     func checkSubscriptionFor(completion: @escaping (_ outputString: String, _ success: Bool) -> Void) {
 
         let emp1 = self.txtJobShare1.text ?? ""
@@ -268,9 +272,10 @@ class JobShareViewController: BaseViewController {
             }
         )
     }
+    */
     
-    
-    func validateBuddiesAndSubscription() {
+/*    func validateBuddiesAndSubscription()*/
+    func validateBuddies() {
         let buddyID = txtJobShare2.text ?? ""
         guard buddyID.count >= 2 else {
             self.validateBuddiesAndNavigate()
@@ -281,18 +286,18 @@ class JobShareViewController: BaseViewController {
         if !isValidBuddy{
             return
         }
-        
-        self.checkSubscriptionFor() { msg, success in
-            if !success {
-                DispatchQueue.main.async {
-                    AlertService.showAlertForTopVC(title: "CrewBid iPad", message: msg)
-                }
-                return
-            }
-            DispatchQueue.main.async {
-                self.validateBuddiesAndNavigate()
-            }
-        }
+        self.validateBuddiesAndNavigate()
+//        self.checkSubscriptionFor() { msg, success in
+//            if !success {
+//                DispatchQueue.main.async {
+//                    AlertService.showAlertForTopVC(title: "CrewBid iPad", message: msg)
+//                }
+//                return
+//            }
+//            DispatchQueue.main.async {
+//                self.validateBuddiesAndNavigate()
+//            }
+//        }
     }
     
     func validateBuddiesAndNavigate() {
@@ -483,6 +488,8 @@ class JobShareViewController: BaseViewController {
         AlertService.showAlertForTopVC(title: "Job Share Alert", message: "The token has expired or is invalid. Please provide the credentials to proceed.", actions: [(title: "OK", style: .default, handler:{ _ in
             DispatchQueue.main.async {
                 guard let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBCredentialsPageVC") as? CBCredentialsPageVC else { return }
+                vc.selectedRound = self.bidPeriod.round?.intValue
+                vc.loginReason = .tokenExpired
                 vc.preferredContentSize = CGSize(width: 600, height: 500)
                 vc.isModalInPresentation = true
                 var dictInfo: [String: Any] = [:]
@@ -534,6 +541,10 @@ extension JobShareViewController: UITextFieldDelegate {
             empNameLbl.text = empName as? String
             empNameLbl.textColor = CBColor.buddyTextColor
         }
+    }
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder() // dismiss keyboard
+        return true
     }
     
     

@@ -226,10 +226,8 @@ class BIBidInfoReader{
                 func finishParsingBid(success: Bool) {
                     if success {
                         NotificationCenter.default.post(name: NSNotification.Name("ReloadCollectionView"), object: nil)
-        //                NotificationCenter.default.post(name: Notification.Name("ParsingBid"), object: nil)
                         NotificationCenter.default.post(name: Notification.Name("BidParsingCompleted"), object: nil)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-        //                    NotificationCenter.default.post(name: Notification.Name("ParsingVacation"), object: nil)
                             NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
                             completion(true)
                         }
@@ -4255,17 +4253,17 @@ class BIBidInfoReader{
             var dateCompsReport = calendar.dateComponents([.year, .month, .day], from: trip.startDate!)
             let numberFormatter = NumberFormatter()
             numberFormatter.numberStyle = .decimal
-            for case let dayInfo as BIDayInfo in tripOrderedDays{
+            for dayInfo in tripOrderedDays{
                 if trip.isReserve {
                     numReserveDays += 1
                 }
                 let dayOrderedLegs = dayInfo.orderedLegs
                 
                 //block time, duty time and pay
-                if tripOrderedDays.first as? BIDayInfo === dayInfo {
-                    dateCompsReport.minute = ((dayOrderedLegs.first as? BILegInfo)?.departMinutes!.intValue)! - (trip.info!.briefMinutes!.intValue)
+                if tripOrderedDays.first === dayInfo {
+                    dateCompsReport.minute = ((dayOrderedLegs.first)?.departMinutes!.intValue)! - (trip.info!.briefMinutes!.intValue)
                 }else{
-                    dateCompsReport.minute = ((dayOrderedLegs.first as? BILegInfo)?.departMinutes!.intValue)! - (trip.info!.debriefMinutes!.intValue)
+                    dateCompsReport.minute = ((dayOrderedLegs.first)?.departMinutes!.intValue)! - (trip.info!.debriefMinutes!.intValue)
                 }
                 departFormatter.timeZone = TimeZone(identifier: "US/Central")
                 departDateReport = calendar.date(from: dateCompsReport)!
@@ -4279,7 +4277,7 @@ class BIBidInfoReader{
                     dayInfo.reportTime = numberFormatter.number(from: report)
                 }
                 arriveFormatter.timeZone = TimeZone(identifier: "US/Central")
-                dateCompsReport.minute = ((dayOrderedLegs.last as? BILegInfo)?.arriveMinutes!.intValue)! + (trip.info!.debriefMinutes!.intValue)
+                dateCompsReport.minute = ((dayOrderedLegs.last)?.arriveMinutes!.intValue)! + (trip.info!.debriefMinutes!.intValue)
                 arriveDate = calendar.date(from: dateCompsReport)!
                 release = String(format: "%@", arriveFormatter.string(from: arriveDate!))
                 if (trip.info?.number?.character(at: 1))! >= "W"{
@@ -4306,7 +4304,7 @@ class BIBidInfoReader{
                 dayBlockMinutes = 0
                 dayNumLegs = 0
                 
-                for case let legInfo as BILegInfo in dayOrderedLegs{
+                for legInfo in dayOrderedLegs{
                     var leg:BILeg? = nil
                     if !isReprocessing{
                         leg = BILeg(context: moc)
@@ -4417,7 +4415,7 @@ class BIBidInfoReader{
                 }// END leg loop
                 
                 if !dayOrderedLegs.isEmpty {
-                    if tripOrderedDays.first as? BIDayInfo === dayInfo {
+                    if tripOrderedDays.first === dayInfo {
                         dateComps.minute = ((dayOrderedLegs.first)?.departMinutes!.intValue)! - (trip.info!.briefMinutes!.intValue)
                     }
                     else{
@@ -4427,7 +4425,7 @@ class BIBidInfoReader{
                     dateComps.minute = ((dayOrderedLegs.last)?.arriveMinutes!.intValue)! + (trip.info!.debriefMinutes!.intValue)
                     arriveDate = appCal!.date(from: dateComps)
                     
-                    if tripOrderedDays.last as? BIDayInfo !== dayInfo {
+                    if tripOrderedDays.last !== dayInfo {
                         groundMinutes -= 2 * (trip.info?.debriefMinutes!.intValue)!
                     }
                     
@@ -4565,7 +4563,7 @@ class BIBidInfoReader{
             }
             // Check for deadheads at start and end
             
-            var dayInfo = tripOrderedDays.first as? BIDayInfo
+            var dayInfo = tripOrderedDays.first
             var legInfo = dayInfo?.orderedLegs.first as? BILegInfo
             legInfo?.firstLegOfTrip = true
             
@@ -4578,7 +4576,7 @@ class BIBidInfoReader{
                     dhStartCities.append((legInfo?.arriveCity)!)
                 }
             }
-            dayInfo = tripOrderedDays.last as? BIDayInfo
+            dayInfo = tripOrderedDays.last
             legInfo = dayInfo?.orderedLegs.last as? BILegInfo
             legInfo?.lastLegOfTrip = true
             
@@ -4968,17 +4966,19 @@ class BIBidInfoReader{
             
             self.tripRigDistributionCalculation(for: trip)
             
-            var isHolidayPayForRedEyeAdded = false
-            var missingDateIndex = -1
-            var missingRedEyeDate:Date!
+//            var isHolidayPayForRedEyeAdded = false
+//            var missingDateIndex = -1
+//            var missingRedEyeDate:Date!
             
-            if trip.isRedEyeTrip {
-                missingDateIndex = CBUtils.findMissingIndex(inRedEyeTrip: trip)
-                missingRedEyeDate = CBUtils.findMissingDate(forRedEyeTrip: trip)
-            }
+//            if trip.isRedEyeTrip {
+//                missingDateIndex = CBUtils.findMissingIndex(inRedEyeTrip: trip)
+//                missingRedEyeDate = CBUtils.findMissingDate(forRedEyeTrip: trip)
+//            }
+            //            let dutyDates = self.datesOnlyArrayFromTrip(trip: trip)
+            
             var dayCountSecondLoop = 0
-            let dutyDates = self.datesOnlyArrayFromTrip(trip: trip)
             var addedHoliDays: Set<String> = []
+            
             for dayInfo in tripOrderedDays{
                 let day = trip.orderedDays[dayCountSecondLoop] as BIDay
                 if !self.calendarData.dateIsInBidMonth(date: day.date!) && !self.calendarData.dateIsBeforeFirstDateOfBidMonth(date: day.date!){
@@ -4992,8 +4992,18 @@ class BIBidInfoReader{
 
                 if trip.isRedEyeTrip {
 
-                    // Holiday rules …
-
+                    /// Holiday rules for RedEye lines
+                    ///
+                    /// Holiday Periods will begin at 0300 on the holiday and end at 0259 the following day based on the local domicile time of the duty.
+                    ///
+                    /// Holiday Pay of 6.5 is earned if at least one duty period has duty (local time) during 0300 to 0259 for the Holiday.
+                    /// For example, Thanksgiving the 27th, is from 0300 local on the 27th to 0259 local on the 28th
+                    ///
+                    /// The Holiday Pay is earned if showtime is between 0300 and 0259 Local time on the Holiday.
+                    /// And if there are two duty periods that meet this criteria, then still only 6.5 holiday pay is paid.
+                    ///
+                    /// If Report Time is between 0300 and 0259 Local on the Holiday, then Holiday pay is earned
+                    
                     let tripStartDate = trip.startDate!
 
                     // Base calendar in HERB time for converting minutes since midnight
@@ -6948,117 +6958,8 @@ class BIBidInfoReader{
         }
     }
     
-//    private func readTextFiles() -> Bool{
-//        let directoryURL = BIBidInfo.shared.downloadDirectory()
-//        var errorReason = ""
-//        //Cover Letter
-//        var textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.coverLetterFileName())
-//        var text = ""
-//        do{
-//            let data = try Data(NSData(contentsOf: textFileURL))
-//            if self.isFABid(){
-//                if let asciitext = String(data: data, encoding: .ascii){
-//                    text = asciitext
-//                }else if let cp1252text = String(data: data, encoding: .windowsCP1252){
-//                    text = cp1252text
-//                }
-//            }else{
-//                if let utf8text = String(data: data, encoding: .utf8){
-//                    text = utf8text
-//                }else if let cp1252text = String(data: data, encoding: .windowsCP1252){
-//                    text = cp1252text
-//                }
-//            }
-//        }catch{
-////            print("Error reading text file: \(error.localizedDescription)")
-//            errorReason = String(format: "Unable to read %@ for %@ because: %@", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase(), error.localizedDescription)
-//            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
-//            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
-//        }
-//        if !text.isEmpty{
-//            self.bidPeriod?.addTextFile(withText: text, name: BICoverLetterTextFileName)
-//        }else{
-//            if AppState.shared.isMockData{
-//                return true
-//            }
-//            return false
-//        }
-//        
-//        //Seniority List
-//        textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.seniorityListFileName())
-//        
-//        do{
-//            text = try String(contentsOf: textFileURL, encoding: .utf8)
-//            if text.isEmpty{
-//                text = try String(contentsOf: textFileURL, encoding: .windowsCP1252)
-//            }
-//        
-//        
-//        if !text.isEmpty{
-//            self.bidPeriod?.addTextFile(withText: text, name: BISeniorityListTextFileName)
-//        }else{
-//            let errorReason = String(format: "Unable to read %@ for %@ because the file is empty", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase())
-//            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
-//            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
-////            print("Unable to read Seniority")
-//            return false
-//        }
-//        
-//        //Lines text
-//        textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.linesTextFilename())
-//        text = try String(contentsOf: textFileURL, encoding: .utf8)
-//        if !text.isEmpty{
-//            self.bidPeriod?.addTextFile(withText: text, name: BILinesTextFileName)
-//        }else{
-//            let errorReason = String(format: "Unable to read %@ for %@ because the file is empty", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase())
-//            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
-//            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
-//            return false
-//        }
-//        
-//        //Trips Text
-//        textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.tripsTextFilename())
-//        text = try String(contentsOf: textFileURL, encoding: .utf8)
-//        if !text.isEmpty{
-//            self.bidPeriod?.addTextFile(withText: text, name: BITripsTextFileName)
-//        }else{
-//            let errorReason = String(format: "Unable to read %@ for %@ because the file is empty", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase())
-//            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
-//            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
-//            return false
-//        }
-//        
-//        //FA Memo text
-//        if self.isFABid(){
-//            textFileURL = directoryURL.appendingPathComponent(BIBidInfo.shared.faMemoTextFilename())
-//            text = try String(contentsOf: textFileURL, encoding: .ascii)
-//            if !text.isEmpty{
-//                self.bidPeriod?.addTextFile(withText: text, name: BIFaMemoTextFileName)
-//            }
-//        }
-//        }catch{
-//            let errorReason = String(format: "Unable to read %@ for %@ because: %@", textFileURL.lastPathComponent, BIBidInfo().dataFilenameBase(), error.localizedDescription)
-//            self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: errorReason)
-//            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
-//            return false
-//        }
-//        //Save context
-//        let moc = dataSource.managedObjectContext
-//        if moc.hasChanges {
-//            do{
-//                try moc.save()
-//            }catch{
-////                print("Error saving context: \(error)")
-//                let errorReason = String(format: "%@ unable to save managed object context after reading text files.",BIBidInfo().dataFilenameBase())
-//                self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: errorReason)
-//                NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
-//                return false
-//            }
-//        }
-//        return true
-//    }
     
-    private func readTextFiles() -> Bool {
+ /*   private func readTextFiles() -> Bool {
         let directoryURL = BIBidInfo.shared.downloadDirectory()
         var errorReason = ""
         let moc = dataSource.managedObjectContext
@@ -7096,8 +6997,8 @@ class BIBidInfoReader{
             if !text.isEmpty {
                 self.bidPeriod?.addTextFile(withText: text, name: textFileName)
             } else {
-                if AppState.shared.isMockData { continue }
-                return false
+                if AppState.shared.isMockData { return true }
+                
             }
         }
         
@@ -7114,6 +7015,79 @@ class BIBidInfoReader{
         }
         
         return true
+    }*/
+    
+    private func readTextFiles() -> Bool {
+        let directoryURL = BIBidInfo.shared.downloadDirectory()
+        let moc = dataSource.managedObjectContext
+
+        let filesToRead: [(fileName: String, textFileName: String, fatal: Bool)] = [
+            (BIBidInfo.shared.coverLetterFileName(), BICoverLetterTextFileName, false),
+            (BIBidInfo.shared.seniorityListFileName(), BISeniorityListTextFileName, false),
+            (BIBidInfo.shared.linesTextFilename(), BILinesTextFileName, true),
+            (BIBidInfo.shared.tripsTextFilename(), BITripsTextFileName, true)
+        ]
+
+        var allFiles = filesToRead
+
+        if isFABid() {
+            allFiles.append(
+                (BIBidInfo.shared.faMemoTextFilename(), BIFaMemoTextFileName, false)
+            )
+        }
+
+        for (fileName, textFileName, isFatal) in allFiles {
+            let fileURL = directoryURL.appendingPathComponent(fileName)
+            var text: String?
+
+            do {
+                if isFABid(),
+                   fileName == BIBidInfo.shared.coverLetterFileName() {
+                    // FA Cover Letter: ASCII only
+                    text = try String(contentsOf: fileURL, encoding: .ascii)
+                } else if fileName == BIBidInfo.shared.coverLetterFileName() {
+                    // Pilot Cover Letter
+                    text = try String(contentsOf: fileURL, encoding: .utf8)
+                    if text?.isEmpty ?? true {
+                        text = try String(contentsOf: fileURL, encoding: .windowsCP1252)
+                    }
+                } else if fileName == BIBidInfo.shared.seniorityListFileName() {
+                    text = try String(contentsOf: fileURL, encoding: .utf8)
+                    if text?.isEmpty ?? true {
+                        text = try String(contentsOf: fileURL, encoding: .windowsCP1252)
+                    }
+                } else if fileName == BIBidInfo.shared.faMemoTextFilename() {
+                    text = try String(contentsOf: fileURL, encoding: .ascii)
+                } else {
+                    text = try String(contentsOf: fileURL, encoding: .utf8)
+                }
+            } catch {
+                if isFatal {
+                    let reason = "Unable to read \(fileURL.lastPathComponent) for \(BIBidInfo().dataFilenameBase()) because: \(error.localizedDescription)"
+                    self.readError = BIBidInfoError.error(for: .textFileReadFailed, underlyingReason: reason)
+                    NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+                    return false
+                }
+                continue
+            }
+
+            if let text, !text.isEmpty {
+                bidPeriod?.addTextFile(withText: text, name: textFileName)
+            } else if isFatal {
+                if AppState.shared.isMockData { return true }
+                return false
+            }
+        }
+
+        do {
+            try moc.save()
+            return true
+        } catch {
+            let reason = "\(BIBidInfo().dataFilenameBase()) unable to save managed object context after reading text files."
+            self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: reason)
+            NotificationCenter.default.post(name: .bidInfoReadError, object: self.readError)
+            return false
+        }
     }
     
     private func startOfMonth() -> Date? {

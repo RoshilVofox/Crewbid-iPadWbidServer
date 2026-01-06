@@ -562,6 +562,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
             let recipt = self.bidPeriod!.sortedBidReceipts()[indexPath.row]
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 NotificationCenter.default.post(name: NSNotification.Name("showBidReceiptWithObject"), object: recipt)
+
             }
         }
         if bidActionTypeSelected == BidActionType.Vacation{

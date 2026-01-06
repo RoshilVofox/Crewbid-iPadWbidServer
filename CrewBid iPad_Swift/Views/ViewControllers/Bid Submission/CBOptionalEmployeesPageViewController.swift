@@ -121,26 +121,30 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
             self.hasBuddyExistInEachOtherList { isValid in
                 DispatchQueue.main.async {
                     self.view.hideActivityIndicator()
-                    if !isValid {
-                        return
-                    }
-                    self.view.updateActivityIndicator(message: "Authentication Checking...")
-                    self.checkAllBuddysSubscription { output, success in
-                        DispatchQueue.main.async {
-                            self.view.hideActivityIndicator()
-                            if success {
-                                // Add employees
-                                if !buddy1.isEmpty { self.optionalEmployees.add(buddy1) }
-                                if !buddy2.isEmpty { self.optionalEmployees.add(buddy2) }
+                    guard isValid else { return }
 
-                                // ALL checks passed → show final alert
-                                self.finalAlert()
-                            } else {
-                                // Show subscription failure message
-                                AlertService.showAlertForTopVC(title: "Buddy Bid", message: output)
-                            }
-                        }
-                    }
+                    // Add buddies directly — no subscription check
+                    if !buddy1.isEmpty { self.optionalEmployees.add(buddy1) }
+                    if !buddy2.isEmpty { self.optionalEmployees.add(buddy2) }
+
+                    self.finalAlert()
+//                    self.view.updateActivityIndicator(message: "Authentication Checking...")
+//                    self.checkAllBuddysSubscription { output, success in
+//                        DispatchQueue.main.async {
+//                            self.view.hideActivityIndicator()
+//                            if success {
+//                                // Add employees
+//                                if !buddy1.isEmpty { self.optionalEmployees.add(buddy1) }
+//                                if !buddy2.isEmpty { self.optionalEmployees.add(buddy2) }
+//
+//                                // ALL checks passed → show final alert
+//                                self.finalAlert()
+//                            } else {
+//                                // Show subscription failure message
+//                                AlertService.showAlertForTopVC(title: "Buddy Bid", message: output)
+//                            }
+//                        }
+//                    }
                 }
             }
     }
@@ -213,7 +217,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
         return true
     }
     
-    
+    /*
     func checkAllBuddysSubscription(completion: @escaping (_ outputString: String, _ success: Bool) -> Void) {
 
         let emp1 = self.buddyBidTxtField_1.text ?? ""
@@ -295,7 +299,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
         })
 
 
-    }
+    }*/
     
     func hasBuddyExistInEachOtherList(completion: @escaping (Bool) -> Void) {
         

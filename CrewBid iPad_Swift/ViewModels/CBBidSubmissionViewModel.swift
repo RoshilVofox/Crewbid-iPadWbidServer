@@ -27,6 +27,7 @@ class CBBidSubmissionViewModel{
     var jobShare2:String?
     var isJobShareContingency:Bool = false
     init(bidPeriod: BIBidPeriod, userID: String,password: String, defaultEmpNum: String?, optionalEmpNum: NSArray, selectedObject:[String:Any]) {
+        self.app = UIApplication.shared.delegate as? AppDelegate
         self.bidPeriod = bidPeriod
         self.optionalEmpNumbers = optionalEmpNum
         self.bidEmployeeNumber = defaultEmpNum
@@ -133,7 +134,7 @@ class CBBidSubmissionViewModel{
             let httpBody = self.setupBidSubmissionFormat(sessionKey: sessionKey, bidEmployeeNumber: bidEmployeeNumber, packetID: self.getPacketID(), avoidanceEmpID: self.optionalEmpNumbers)
             print(httpBody)
             //logging raw data into server
-            self.handleRawDataSentToServer()
+//            self.handleRawDataSentToServer()
             self.handleSubmissionRawDataToServer(year: self.dataSource.year, month: self.dataSource.month, round: self.dataSource.round, fromApp: "5", position: self.dataSource.position.shortName, rawData: httpBody, empNum: bidEmployeeNumber, domicile: self.dataSource.base)
             
             self.submitBid(httpBody: httpBody) { result in
@@ -155,23 +156,23 @@ class CBBidSubmissionViewModel{
     
     // MARK: - Submit bid process
     func submitBid(httpBody: String, completion: @escaping (Result<String, Errors>) -> Void) {
-//        guard let bodyData = httpBody.data(using: .utf8) else {
-//            completion(.failure(.invalidURL))
-//            return
-//        }
-//
-//        APIService.shared.fetch(
-//            urlString: EndPoint.shared.thirdpartyURL,
-//            method: .POST,
-//            body: bodyData,
-//            parse: { data in
-//                guard let dataString = String(data: data, encoding: .utf8) else {
-//                    throw Errors.decodingError
-//                }
-//                return dataString
-//            },
-//            completion: completion
-//        )
+        guard let bodyData = httpBody.data(using: .utf8) else {
+            completion(.failure(.invalidURL))
+            return
+        }
+
+        APIService.shared.fetch(
+            urlString: EndPoint.shared.thirdpartyURL,
+            method: .POST,
+            body: bodyData,
+            parse: { data in
+                guard let dataString = String(data: data, encoding: .utf8) else {
+                    throw Errors.decodingError
+                }
+                return dataString
+            },
+            completion: completion
+        )
     }
     
     
@@ -269,18 +270,21 @@ class CBBidSubmissionViewModel{
             }
         }
 
-        let httpBody = """
-         REQUEST=UPLOAD_BID
-         &CREDENTIALS=\(sessionKey)
-         &PACKETID=\(packetID)
-         &BIDDER=\(bidEmployeeNumber)\(optionalParameters)
-         &BASE=\(dataSource.base)
-         &SEAT=\(dataSource.position.shortName)
-         &BIDROUND=Round\(dataSource.round)
-         &VENDOR=\(kVendor)
-         &BID=\(self.bidListNumbers.componentsJoined(by: ","))
-         """
-        return httpBody
+        let bidNumbers = self.bidListNumbers.compactMap { "\($0)" }
+
+        let parts: [String] = [
+            "REQUEST=UPLOAD_BID",
+            "&CREDENTIALS=\(sessionKey)",
+            "&PACKETID=\(packetID)",
+            "&BIDDER=\(bidEmployeeNumber)\(optionalParameters)",
+            "&BASE=\(dataSource.base)",
+            "&SEAT=\(dataSource.position.shortName)",
+            "&BIDROUND=Round \(dataSource.round)",
+            "&VENDOR=\(kVendor)",
+            "&BID=\(bidNumbers.joined(separator: ","))"
+        ]
+
+        return parts.joined()
     }
     
     func stringByAddingPercentEscapes(to unescapedString: String) -> String {
@@ -305,8 +309,8 @@ class CBBidSubmissionViewModel{
             "Month": month,
             "Round": round,
             "RawData": rawData,
-            "EmployeeNumber": empNum,
-            "FromApp": fromApp,
+            "EmployeeNumber": Int(empNum) ?? 0,
+            "FromApp": Int(fromApp) ?? 5,
             "Position": position,
             "Domicile": domicile
         ]
@@ -324,7 +328,11 @@ class CBBidSubmissionViewModel{
             body: body,
             headers: ["Content-Type": "application/x-www-form-urlencoded"],
             parse: { data in
-                // Parse into dictionary
+                
+                if data.isEmpty {
+                    return [:]   // empty success
+                }
+                
                 guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
                     throw Errors.decodingError
                 }
@@ -357,13 +365,13 @@ class CBBidSubmissionViewModel{
         mailInfoDict["Month"] = CBUtils.shortMonthName(month: self.bidPeriod!.month as! Int, uc: false)
         mailInfoDict["Position"] = CBUtils.shortName(for: BICrewPositionType(rawValue: (self.bidPeriod?.positionType?.intValue)!)!)
         
-        var round = ""
-        if bidPeriod?.round?.intValue == 1 {
-            round = "M"
-        } else if bidPeriod?.round?.intValue == 2 {
-            round = "S"
-        }
-        mailInfoDict["Round"] = round
+//        var round = ""
+//        if bidPeriod?.round?.intValue == 1 {
+//            round = "M"
+//        } else if bidPeriod?.round?.intValue == 2 {
+//            round = "S"
+//        }
+        mailInfoDict["Round"] = self.bidPeriod?.round?.intValue ?? 0
         mailInfoDict["SWAMessage"] = SWAmessage
         mailInfoDict["Message"] = message
         mailInfoDict["OperatingSystemNum"] = "iPad OS"
@@ -390,7 +398,9 @@ class CBBidSubmissionViewModel{
         mailInfoDict["IpAddress"] = CBGlobalMethods.getIPAddress()
         
         if app.objNetworkType == .free {
-            // Needs code for offline events
+            let offlineEvents = CBOfflineEvents()
+            mailInfoDict["Message"] = "SouthWestWifi \(event)"
+            offlineEvents.addOfflineEvent(mailInfoDict)
             return
         }
         
@@ -413,6 +423,9 @@ class CBBidSubmissionViewModel{
                 method: .POST,
                 body: jsonData,
                 parse: { data in
+                    if data.isEmpty {
+                        return [:]   // empty success
+                    }
                     let json = try JSONSerialization.jsonObject(with: data, options: [])
                     guard let dictionary = json as? [String: Any] else {
                         throw Errors.decodingError
@@ -501,7 +514,7 @@ class CBBidSubmissionViewModel{
             completion(false)
             return
         }
-        self.bidPeriod?.submittedBid = bidReceipt.submittedLineNumbersString
+//        self.bidPeriod?.submittedBid = bidReceipt.submittedLineNumbersString
         
         var mailInfoDict: [String: Any] = [:]
         mailInfoDict["Year"] = self.bidPeriod?.year
@@ -512,7 +525,7 @@ class CBBidSubmissionViewModel{
         mailInfoDict["EmpNum"] = Int(empNumber)
         
         guard let bidNumbersString = bidReceipt.submittedLineNumbersString,
-              let submittedBy = bidReceipt.submittedBy else {
+              let submittedBy = bidReceipt.submittedBy?.replacingOccurrences(of: "e", with: "").replacingOccurrences(of: "x", with: "") else {
                 let mailObj = CBSendMail()
             mailObj.sendBidReceiptErrorMail(bidReceipt.text ?? "")
             AlertService.showAlertForTopVC(
