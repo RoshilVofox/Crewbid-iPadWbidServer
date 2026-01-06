@@ -506,7 +506,7 @@ class CBPDORuleCell: UITableViewCell, RefreshDelegate {
     
     @IBAction func deleteAction(_ sender: UIButton) {
         guard let filterRule = filterRule else { return }
-
+        CBGlobalMethods.shared.selectedBidPeriod?.loadedPresetIdentifier = nil
         if filterRule.ruleHighlightsTrips() { filterRule.deHighlightTrips() }
         CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!.delete(filterRule)
         try? bidPeriod?.managedObjectContext?.save()

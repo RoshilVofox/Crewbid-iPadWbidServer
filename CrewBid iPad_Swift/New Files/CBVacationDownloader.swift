@@ -3462,53 +3462,54 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                     
                     // Grab the vacation pieces
                     let vacationPieces = (vLine!["VacationPieces"] as? [[String: Any]])!
-                    
-                    for d in 0..<(trip!.orderedDays.count) {
-                        let day = trip?.orderedDays[d]
-                        var currentDate = day?.date
-                        for k in 0..<vacationPieces.count {
-                            let currentDictionary = vacationPieces[k] as [String: Any]
-                            let label = (currentDictionary["Label"] as? String)!
-                            let displayType = (currentDictionary["DisplayType"] as? String)!
-                            let startDateString = (currentDictionary["FirstDay"] as? String)!
-                            let endDateString = (currentDictionary["LastDay"] as? String)!
-                            
-                            let startDate = (df.date(from: "0000" + startDateString))!
-                            let endDate = (df.date(from: "2359" + endDateString))!
-                            
-                            if (trip!.isRedEyeTrip) {
-                                currentDate = tripDaysDate[d]
-                                if (d == 0 && trip!.startDate! < currentDate!) {
-                                    currentDate = trip?.startDate
+                    if let trip = trip {
+                        for d in 0..<(trip.orderedDays.count) {
+                            let day = trip.orderedDays[d]
+                            var currentDate = day.date
+                            for k in 0..<vacationPieces.count {
+                                let currentDictionary = vacationPieces[k] as [String: Any]
+                                let label = (currentDictionary["Label"] as? String)!
+                                let displayType = (currentDictionary["DisplayType"] as? String)!
+                                let startDateString = (currentDictionary["FirstDay"] as? String)!
+                                let endDateString = (currentDictionary["LastDay"] as? String)!
+                                
+                                let startDate = (df.date(from: "0000" + startDateString))!
+                                let endDate = (df.date(from: "2359" + endDateString))!
+                                
+                                if (trip.isRedEyeTrip) {
+                                    currentDate = tripDaysDate[d]
+                                    if (d == 0 && trip.startDate! < currentDate!) {
+                                        currentDate = trip.startDate
+                                    }
                                 }
-                            }
-                            if (missingDateIndex != 0 && missingRedEyeDate != nil) {
-                                let lastDay = trip?.orderedDays.last
-                                if let missingDate = missingRedEyeDate, let lastDate = lastDay?.date, missingDate < lastDate {
-                                    let displayDayType = self.getDisplayType(date: missingRedEyeDate!, startDate: startDate, endDate: endDate, label: label, displayType: displayType)
-                                    
-                                    if (displayDayType != -1) {
-                                        day?.displayType = displayDayType as NSNumber
+                                if (missingDateIndex != 0 && missingRedEyeDate != nil) {
+                                    let lastDay = trip.orderedDays.last
+                                    if let missingDate = missingRedEyeDate, let lastDate = lastDay?.date, missingDate < lastDate {
+                                        let displayDayType = self.getDisplayType(date: missingRedEyeDate!, startDate: startDate, endDate: endDate, label: label, displayType: displayType)
+                                        
+                                        if (displayDayType != -1) {
+                                            day.displayType = displayDayType as NSNumber
+                                        }
+                                    }
+                                    else {
+                                        let displayDayType = self.getDisplayType(date: currentDate!, startDate: startDate, endDate: endDate, label: label, displayType: displayType)
+                                        if (displayDayType != -1) {
+                                            day.displayType = displayDayType as NSNumber
+                                        }
                                     }
                                 }
                                 else {
                                     let displayDayType = self.getDisplayType(date: currentDate!, startDate: startDate, endDate: endDate, label: label, displayType: displayType)
                                     if (displayDayType != -1) {
-                                        day?.displayType = displayDayType as NSNumber
+                                        day.displayType = displayDayType as NSNumber
                                     }
                                 }
+                            } // End vacationPieces loop
+                            if (day.displayType?.intValue == BIDayDisplayType.normal.rawValue) {
+                                day.displayType = BIDayDisplayType.noPay.rawValue as NSNumber
                             }
-                            else {
-                                let displayDayType = self.getDisplayType(date: currentDate!, startDate: startDate, endDate: endDate, label: label, displayType: displayType)
-                                if (displayDayType != -1) {
-                                    day?.displayType = displayDayType as NSNumber
-                                }
-                            }
-                        } // End vacationPieces loop
-                        if (day?.displayType?.intValue == BIDayDisplayType.normal.rawValue) {
-                            day?.displayType = BIDayDisplayType.noPay.rawValue as NSNumber
-                        }
-                    }// End day loop
+                        }// End day loop
+                    }
                 }// End pulled pairings loop
             }
             else {

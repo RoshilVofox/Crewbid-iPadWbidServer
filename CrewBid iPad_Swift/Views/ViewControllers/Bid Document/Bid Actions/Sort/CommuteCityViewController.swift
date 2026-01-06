@@ -35,6 +35,7 @@ class CommuteCityViewController: UIViewController, KUIPopOverUsable, UICollectio
         let sortedCityArray = cityArray!.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
         arrAllCities = NSMutableArray(array: sortedCityArray)
         arrAllCities?.remove("")
+        bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
        
     }
     

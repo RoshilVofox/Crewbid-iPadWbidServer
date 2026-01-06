@@ -581,6 +581,7 @@ class BISwaBidDataParsing{
 
                 trip.tripStartDay = CBUtils.getDay(from: trip.startDate ?? Date())
                 trip.startDay = CBUtils.getDateOnly(from: trip.startDate ?? Date())
+                trip.startDate = calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue)
 
                 let dayCount = tripInfo.orderedDays().count
                 let endDay = (trip.startDay?.intValue ?? 0) + (dayCount - 1)
@@ -835,6 +836,8 @@ class BISwaBidDataParsing{
 
             if let tripDate = df.date(from: dateString) {
                 trip.startDate = calendarData.dateForDate(date: tripDate)
+                trip.startDay = CBUtils.getDateOnly(from: trip.startDate ?? Date())
+                trip.startDate = calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue)
                 tripInfo.startDate = trip.startDate
             }
         }

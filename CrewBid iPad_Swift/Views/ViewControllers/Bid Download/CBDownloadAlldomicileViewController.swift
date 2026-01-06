@@ -20,6 +20,7 @@ class CBDownloadAlldomicileViewController: UIViewController {
     @IBOutlet weak var btnOk: UIButton!
     
     @IBOutlet weak var btnAtl: UIButton!
+    @IBOutlet weak var btnAus: UIButton!
     @IBOutlet weak var btnBna: UIButton!
     @IBOutlet weak var btnBwi: UIButton!
     @IBOutlet weak var btnDal: UIButton!
@@ -177,7 +178,7 @@ class CBDownloadAlldomicileViewController: UIViewController {
     
     // MARK: - All flt btn
     @IBAction func btnAllFltAttndAction(_ sender: Any) {
-        let btnArray: [UIButton] = [btnAtl, btnBna, btnBwi, btnDal, btnDen, btHou, btnLas, btnLax, btnMco, btnMdw, btnOak, btnPhx, btnAllFltAttendat]
+        let btnArray: [UIButton] = [btnAtl, btnAus, btnBna, btnBwi, btnDal, btnDen, btHou, btnLas, btnLax, btnMco, btnMdw, btnOak, btnPhx, btnAllFltAttendat]
         
         for btn in btnArray {
             self.selectButton(button: btn)
@@ -188,7 +189,7 @@ class CBDownloadAlldomicileViewController: UIViewController {
     
     // MARK: - All pilot btn
     @IBAction func btnAllPilotAction(_ sender: Any) {
-        let btnArray: [UIButton] = [btnAtl, btnBna, btnBwi, btnDal, btnDen, btHou, btnLas, btnLax, btnMco, btnMdw, btnOak, btnPhx, btnAllPilot]
+        let btnArray: [UIButton] = [btnAtl, btnAus, btnBna, btnBwi, btnDal, btnDen, btHou, btnLas, btnLax, btnMco, btnMdw, btnOak, btnPhx, btnAllPilot]
         
         for btn in btnArray {
             self.selectButton(button: btn)
@@ -319,7 +320,7 @@ class CBDownloadAlldomicileViewController: UIViewController {
             AlertService.showAlertForTopVC(title: "Warning", message: "Currently downloading all bids. Please wait")
             return
         }
-        let btnArray: [UIButton] = [btnAtl,  btnBna, btnBwi, btnDal, btnDen, btHou, btnLas, btnLax, btnMco, btnMdw, btnOak, btnPhx]
+        let btnArray: [UIButton] = [btnAtl, btnAus, btnBna, btnBwi, btnDal, btnDen, btHou, btnLas, btnLax, btnMco, btnMdw, btnOak, btnPhx]
         arrBase = []
 //        setting the selected bases to an array
         var dictionary = GlobalBidInfo.shared.allDomicileDownloadDictionary
