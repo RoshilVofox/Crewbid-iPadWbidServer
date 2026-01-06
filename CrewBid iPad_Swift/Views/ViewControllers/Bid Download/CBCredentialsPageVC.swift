@@ -1054,10 +1054,14 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                         }
 
                     case .failure(let error):
-                        AlertService.showAlertForTopVC(
-                            title: "Submission Failed",
-                            message: error.localizedDescription
-                        )
+                        DispatchQueue.main.async {
+                            AlertService.showAlertForTopVC(
+                                title: "Submission Failed",
+                                message: error.localizedDescription
+                            )
+                            self.dismissVC()
+                        }
+
                     }
                 }
             }
