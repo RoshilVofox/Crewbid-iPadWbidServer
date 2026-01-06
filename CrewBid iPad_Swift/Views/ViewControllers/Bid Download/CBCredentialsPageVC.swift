@@ -29,6 +29,12 @@ enum credentialVCType{
     case retrieveAwards
     case submitBid
 }
+
+enum LoginReason {
+    case normalBidFlow
+    case tokenExpired
+}
+
 class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAdaptivePresentationControllerDelegate, ServiceConnectionDelegate {
     func responseError(_ errMsg: String) {
         print("responseError:\(errMsg)")
@@ -440,6 +446,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     var bidDetails:[String:Any] = [:]
     var isForReauth: Bool = false
     let swaBidDataDownload = BISwaBidDataDownload()
+    var loginReason: LoginReason = .normalBidFlow
     
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -493,7 +500,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if self.dataSource.position == BICrewPositionType.FlightAttendant {
-            if type == .defaultType{
+            if type == .defaultType && loginReason == .normalBidFlow{
                 if self.bidAlreadyExists() {
                     // show alert which will call the closure on "Download Again"
                     self.showAlertForExistingBid {
@@ -598,7 +605,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     
     func setupUI(){
         setupTitle()
-        if type == .defaultType{
+        if type == .defaultType && loginReason == .normalBidFlow{
             checkEarlyBidding()
         }
         
@@ -983,7 +990,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }
             
         var empNum = self.txtUserID.text ?? ""
-        if bidPeriod.isFABid() && bidPeriod.isSwaAPI?.boolValue == true{ //MARK:  &&
+        if bidPeriod.isFABid() && bidPeriod.isSwaAPI?.boolValue == true{
             if let token = KeychainHelper.retrieveTokenFromKeyChain(),
                 let userDetails = JWTDecoder.decode(jwtToken: token),
                 let user = userDetails["cn"] as? String{
@@ -999,30 +1006,51 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                     self.view.showActivityIndicator(message: "Submitting your bid...")
                 }
                 self.submissionViewModel?.startBidSubmission(sessionKey: sessionKey) { result in
-                    self.view.hideActivityIndicator()
+                    DispatchQueue.main.async {
+                        self.view.hideActivityIndicator()
+                    }
                     switch result{
                     case .success(let submitted):
                         if submitted{
                             DispatchQueue.main.async {
                                 self.view.hideActivityIndicator()
-                            }
-                            AlertService.showAlertForTopVC(title: "Bid Successfully Submitted", message: "The bid receipt shown is the bid receipt for the last bid submitted.\n\n Bid receipts are available under the Bid Action (top right) menu and in SwaLife in BidInfo.\n\n Caution: You must see your bid receipt. If you DON'T see your bid receipt, then \"Please try to submit again\".", actions: [(title: "OK", style: .default, handler:{_ in
                                 
-                                // ---- PILOT ----
-                                if !self.bidPeriod!.isFABid(){
-                                    self.submissionViewModel?.handleAddSubmittedBid(empNumber: self.defaultEmplyeeNumber!){success in
-                                        if success == false{
+                                AlertService.showAlertForTopVC(title: "Bid Successfully Submitted", message: "The bid receipt shown is the bid receipt for the last bid submitted.\n\n Bid receipts are available under the Bid Action (top right) menu and in SwaLife in BidInfo.\n\n Caution: You must see your bid receipt. If you DON'T see your bid receipt, then \"Please try to submit again\".", actions: [(title: "OK", style: .default, handler:{_ in
+                                    
+                                    let completion: (Bool) -> Void = { _ in
+                                        DispatchQueue.main.async {
                                             self.dismissVC()
+                                            NotificationCenter.default.post(name: NSNotification.Name("showBidReceipt"), object: self)
+                                            
                                         }
                                     }
-                                    return
-                                }
-                                
-                                // ---- FA ----
-                                self.submissionViewModel?.addSubmittedDataToServerForFA { success in
-                                    if !success { self.dismissVC() }
-                                }
-                            })])
+
+                                    if self.bidPeriod?.isFABid() == true {
+                                        self.submissionViewModel?.addSubmittedDataToServerForFA(completion: completion)
+                                    } else {
+                                        self.submissionViewModel?.handleAddSubmittedBid(
+                                            empNumber: self.defaultEmplyeeNumber!,
+                                            completion: completion
+                                        )
+                                    }
+                                    
+                                    
+//                                    // ---- PILOT ----
+//                                    if !self.bidPeriod!.isFABid(){
+//                                        self.submissionViewModel?.handleAddSubmittedBid(empNumber: self.defaultEmplyeeNumber!){success in
+//                                            if success{
+//                                                self.dismissVC()
+//                                            }
+//                                        }
+//                                        return
+//                                    }
+//                                    
+//                                    // ---- FA ----
+//                                    self.submissionViewModel?.addSubmittedDataToServerForFA { success in
+//                                        if !success { self.dismissVC() }
+//                                    }
+                                })])
+                            }
                         }
 
                     case .failure(let error):

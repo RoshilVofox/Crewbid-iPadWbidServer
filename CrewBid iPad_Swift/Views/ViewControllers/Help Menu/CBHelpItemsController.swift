@@ -158,7 +158,7 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
         helpMenuItems.removeAll()
         helpMenuItems.append(HelpMenuItem(imageName: "Quick Tutorial1", itemLabel: "Quick Tutorial", viewControllerName: "quickTutorial"))
         helpMenuItems.append(HelpMenuItem(imageName: "Movie", itemLabel: "How-To Videos ", viewControllerName: "quickTutorial"))
-        helpMenuItems.append(HelpMenuItem(imageName: "Notebook", itemLabel: "defenitions", viewControllerName: "quickTutorial"))
+        helpMenuItems.append(HelpMenuItem(imageName: "Notebook", itemLabel: "Definitions", viewControllerName: "quickTutorial"))
         helpMenuItems.append(HelpMenuItem(imageName: "document", itemLabel: "Line Values", viewControllerName: "quickTutorial"))
         helpMenuItems.append(HelpMenuItem(imageName: "Update", itemLabel: "Update", viewControllerName: "quickTutorial"))
         helpMenuItems.append(HelpMenuItem(imageName: "Help_preserver", itemLabel: "FAQ", viewControllerName: "quickTutorial"))
@@ -246,31 +246,31 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
             self.navigationController?.pushViewController(vc, animated: true)
             break
             
-        case 6:
+//        case 6:
 //            if self.isUserInfoAvailable(){
 //                let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "CBSubscriptionInfoController") as! CBSubscriptionInfoController
 //                self.navigationController?.pushViewController(vc, animated: true)
 //            }else{
 //                AlertService.showAlertForTopVC(title: "CrewBid", message: "You cannot check your subscription because you have not yet validated.  To validate, all you have to do is download bid data.  Then you can verify your subscription details.", actions: nil)
 //            }
-            break
+//            break
             
-        case 7:
+        case 6:
             let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "contactUsViewController") as! contactUsViewController
             self.navigationController?.pushViewController(vc, animated: true)
             break
             
-        case 8:
+        case 7:
             let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "CBNewsController") as! CBNewsController
             self.navigationController?.pushViewController(vc, animated: true)
             break
             
-        case 9:
+        case 8:
             let userAccount = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "swaptimizerHelpMenuViewController") as! swaptimizerHelpMenuViewController
             self.navigationController?.pushViewController(userAccount, animated: true)
             break
             
-        case 10:
+        case 9:
             if self.isUserInfoAvailable(){
                 let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "userAccountViewController") as! userAccountViewController
                 vc.isfrom = self
@@ -283,7 +283,7 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
             break
             
             
-        case 11:
+        case 10:
             let vc = UIStoryboard(name: "HelpMenu", bundle: nil).instantiateViewController(withIdentifier: "serviceAgreementViewController") as! serviceAgreementViewController
             self.navigationController?.pushViewController(vc, animated: true)
             break

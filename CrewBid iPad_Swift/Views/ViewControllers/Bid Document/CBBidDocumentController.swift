@@ -107,6 +107,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         NotificationCenter.default.addObserver(self, selector: #selector(openCoverLetter(notification:)), name: NSNotification.Name(KCBOpenCoverletter), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openCoverLetterFA), name: NSNotification.Name("KCBOpenCoverletterForFA"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openSeniority), name: NSNotification.Name(KCBOpenSeniority), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(showBidReceipt), name: NSNotification.Name("showBidReceipt"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.showBidReceiptWithObject(_:)), name: NSNotification.Name("showBidReceiptWithObject"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openLineText), name: NSNotification.Name(KCBOpenLineText), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openTripText), name: NSNotification.Name(KCBOpenTripText), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openFAMemo), name: NSNotification.Name(KCBOpenFAMemo), object: nil)
@@ -363,6 +365,52 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         }
     }
     
+    @objc func showBidReceipt(){
+        if (self.bidPeriod?.isFABid() == true) && CBGlobalMethods.shared.buddyArray.count > 0 {
+            guard let sortedBidReceipts = self.bidPeriod?.sortedBidReceiptByCreatedAt() else{ return}
+            
+            if let matchingReceipt = sortedBidReceipts.first(where: {$0.submittedFor == $0.submittedBy}) {
+                showReceipt(receipt: matchingReceipt)
+                return
+            }
+        }
+        
+        if let bidReceipt = self.bidPeriod?.mostRecentBidReceiptByCreatedAt(){
+            showReceipt(receipt: bidReceipt)
+        }else{
+            DispatchQueue.main.async {
+                AlertService.showAlertForTopVC(title: "", message: "No saved bid receipt found!")
+            }
+        }
+        
+    }
+    
+    @objc func showBidReceiptWithObject(_ notification: NSNotification){
+        if let receipt = notification.object as? BIBidReceipt {
+            showReceipt(receipt: receipt)
+        }else{
+            DispatchQueue.main.async {
+                AlertService.showAlertForTopVC(title: "", message: "No saved bid receipt found!")
+            }
+        }
+        
+    }
+    
+    func showReceipt(receipt: BIBidReceipt){
+        let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
+        vc.bidPeriod = bidPeriod
+        vc.dataTypeSelected = TextFileType.bidReceipt
+        vc.bidReceipt = receipt
+        let transition = CATransition()
+        transition.duration = 0.4
+        transition.type = .fade  // cross dissolve effect
+        transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        self.navigationController?.view.layer.add(transition, forKey: kCATransition)
+        self.navigationController?.pushViewController(vc, animated: false)
+    }
+    
+    
         //LineText view controller push action
     @objc func openLineText() {
         let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
@@ -448,9 +496,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         linesCount = bidPeriod!.getBidListLines().count
         if 0 == linesCount {
             // Display a warning if there are no lines in the Bid List
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+            DispatchQueue.main.async {
                 AlertService.showAlertForTopVC(title: "Warning!", message: "There are no lines in the Bid List. Please add lines to bid list for bid submission.")
-            })
+            }
 
         }
         else if !self.bidPeriod!.isFABid() && !self.bidPeriod!.isSecondRoundBid() && isBlankLinesMissing() {
@@ -475,6 +523,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         vc.isEmpIDVerified = false
         let navController = UINavigationController(rootViewController: vc)
         navController.setNavigationBarHidden(true, animated: false)
+        navController.modalPresentationStyle = .formSheet
+        navController.preferredContentSize = CGSize(width: 600, height: 500)
         self.present(navController, animated: true)
     }
     
