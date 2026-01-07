@@ -4372,8 +4372,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "962"
             endingLineNumber = "962"
-            landmarkName = "showToastWith(text:duration:)"
-            landmarkType = "7">
+            landmarkName = "CBBidDocumentController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4388,8 +4388,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "950"
             endingLineNumber = "950"
-            landmarkName = "CBBidDocumentController"
-            landmarkType = "3">
+            landmarkName = "firstTimeBidOpen()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -4690,8 +4690,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/HomeScreen/CBDocumentsCollectionViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "695"
-            endingLineNumber = "695"
+            startingLineNumber = "710"
+            endingLineNumber = "710"
             landmarkName = "collectionView(_:didDeselectItemAt:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -4708,7 +4708,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "417"
             endingLineNumber = "417"
-            landmarkName = "openLineText()"
+            landmarkName = "showReceipt(receipt:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -5060,7 +5060,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1203"
             endingLineNumber = "1203"
-            landmarkName = "btnSyncAction(_:)"
+            landmarkName = "showCommutablilityFilterView()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -7924,8 +7924,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "917"
             endingLineNumber = "917"
-            landmarkName = "firstTimeBidOpen()"
-            landmarkType = "7">
+            landmarkName = "CBBidDocumentController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8820,7 +8820,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2614"
             endingLineNumber = "2614"
-            landmarkName = "resetDisplayTypesOfAllDays()"
+            landmarkName = "getEtopsLineCount()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -8836,8 +8836,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2649"
             endingLineNumber = "2649"
-            landmarkName = "resetAllVacationDetails()"
-            landmarkType = "7">
+            landmarkName = "CBBidDocumentController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8852,7 +8852,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1915"
             endingLineNumber = "1915"
-            landmarkName = "reprocessWorkBlock()"
+            landmarkName = "disableVacationButton()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -8868,7 +8868,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1370"
             endingLineNumber = "1370"
-            landmarkName = "reloadVacationButton()"
+            landmarkName = "getWeekTypeDateForVacationAlert()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -9156,7 +9156,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3266"
             endingLineNumber = "3266"
-            landmarkName = "tableViewReloadForFAWithHud()"
+            landmarkName = "executeEOMOnlyFA(vDL:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -9220,7 +9220,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1920"
             endingLineNumber = "1920"
-            landmarkName = "reprocessWorkBlock()"
+            landmarkName = "disableVacationButton()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -9236,7 +9236,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1972"
             endingLineNumber = "1972"
-            landmarkName = "tableViewReloadWithHud()"
+            landmarkName = "reprocessWorkBlock()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -9284,7 +9284,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2128"
             endingLineNumber = "2128"
-            landmarkName = "swaptimizerAction()"
+            landmarkName = "downloadSwaptimizer()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -9300,7 +9300,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2382"
             endingLineNumber = "2382"
-            landmarkName = "seniorityAlert()"
+            landmarkName = "checkPaperBidUserVacation(completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11060,7 +11060,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1224"
             endingLineNumber = "1224"
-            landmarkName = "showVacationWeekAlert(completionHandler:)"
+            landmarkName = "btnSyncAction(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11076,7 +11076,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1006"
             endingLineNumber = "1006"
-            landmarkName = "didDismissLatestNews()"
+            landmarkName = "showSeniority()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11124,7 +11124,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1023"
             endingLineNumber = "1023"
-            landmarkName = "extractNumber(from:)"
+            landmarkName = "didDismissLatestNews()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11172,7 +11172,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1525"
             endingLineNumber = "1525"
-            landmarkName = "executeEOMForFA()"
+            landmarkName = "enableOrDisableEOMButton()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11204,7 +11204,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1001"
             endingLineNumber = "1001"
-            landmarkName = "didDismissLatestNews()"
+            landmarkName = "showSeniority()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11252,7 +11252,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3015"
             endingLineNumber = "3015"
-            landmarkName = "showEOMAlert()"
+            landmarkName = "executeEOmWBid(vDL:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11284,7 +11284,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2948"
             endingLineNumber = "2948"
-            landmarkName = "wbidMaxErrorMessageEOMSpecialcase()"
+            landmarkName = "eomWbid(vDL:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11364,7 +11364,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "911"
             endingLineNumber = "911"
-            landmarkName = "firstTimeBidOpen()"
+            landmarkName = "setupUI()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11380,7 +11380,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1419"
             endingLineNumber = "1419"
-            landmarkName = "handleVacationData()"
+            landmarkName = "reloadVacationButton()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11396,7 +11396,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3826"
             endingLineNumber = "3826"
-            landmarkName = "executeEOMModule()"
+            landmarkName = "removeCurrentVacation()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11412,7 +11412,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1577"
             endingLineNumber = "1577"
-            landmarkName = "checkForSWAPtimizerFile()"
+            landmarkName = "executeEOMForFA()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11605,7 +11605,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1009"
             endingLineNumber = "1009"
-            landmarkName = "didDismissLatestNews()"
+            landmarkName = "showSeniority()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11669,7 +11669,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1277"
             endingLineNumber = "1277"
-            landmarkName = "getWeekTypeForVacationAlert()"
+            landmarkName = "showVacationWeekAlert(completionHandler:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11685,7 +11685,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1318"
             endingLineNumber = "1318"
-            landmarkName = "getWeekTypeDateForVacationAlert()"
+            landmarkName = "getWeekTypeForVacationAlert()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -11701,8 +11701,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1315"
             endingLineNumber = "1315"
-            landmarkName = "CBBidDocumentController"
-            landmarkType = "3">
+            landmarkName = "getWeekTypeForVacationAlert()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -12279,8 +12279,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Cover Letter/CBTextViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "461"
-            endingLineNumber = "461"
+            startingLineNumber = "401"
+            endingLineNumber = "401"
             landmarkName = "tableView(_:numberOfRowsInSection:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -12295,8 +12295,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Cover Letter/CBTextViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "478"
-            endingLineNumber = "478"
+            startingLineNumber = "418"
+            endingLineNumber = "418"
             landmarkName = "tableView(_:cellForRowAt:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -12521,7 +12521,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1127"
             endingLineNumber = "1127"
-            landmarkName = "btnShareAction(_:)"
+            landmarkName = "localHerbAction(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -12916,7 +12916,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "495"
             endingLineNumber = "495"
-            landmarkName = "checkLinesAvailableInBidList()"
+            landmarkName = "openLineFetchInTextView(notification:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -13028,8 +13028,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "500"
             endingLineNumber = "500"
-            landmarkName = "checkLinesAvailableInBidList()"
-            landmarkType = "7">
+            landmarkName = "CBBidDocumentController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -13060,7 +13060,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "369"
             endingLineNumber = "369"
-            landmarkName = "showBidReceipt()"
+            landmarkName = "openSeniority()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -13093,6 +13093,22 @@
             startingLineNumber = "629"
             endingLineNumber = "629"
             landmarkName = "handleBidSubmissionForFA(completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1E9ADDF2-3C0D-48D4-BF59-908C6660D429"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Cover Letter/CBTextViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "145"
+            endingLineNumber = "145"
+            landmarkName = "buildReceiptAttributedText(receiptText:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

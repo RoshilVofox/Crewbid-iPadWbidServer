@@ -134,230 +134,170 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
                 lblTitle.text = "Bid Receipt"
                 titleText = "Bid Receipt"
             if let receiptText = self.bidReceipt?.condensedText{
-                textView.text = receiptText
+                textView.attributedText = self.buildReceiptAttributedText(receiptText: receiptText)
             }
                 break
         }
     }
     
-    
-//    func setPropertiesWithReceiptText(_ receiptText: String) {
-//
-//        let app = UIApplication.shared.delegate as? AppDelegate
-//
-//        self.text = receiptText
-//
-//        // MARK: - Attributes
-//        let attrBlank: [NSAttributedString.Key: Any] = [
-//            .backgroundColor: UIColor.blue,
-//            .foregroundColor: UIColor.white,
-//            .strokeWidth: -3.0,
-//            .font: UIFont(name: "Courier", size: 15)!
-//        ]
-//
-//        let attrReserve: [NSAttributedString.Key: Any] = [
-//            .backgroundColor: UIColor.red,
-//            .foregroundColor: UIColor.white,
-//            .strokeWidth: -3.0,
-//            .font: UIFont(name: "Courier", size: 15)!
-//        ]
-//
-//        let attrClear: [NSAttributedString.Key: Any] = [
-//            .backgroundColor: UIColor.clear,
-//            .font: UIFont(name: "Courier", size: 15)!
-//        ]
-//
-//        let condensedText = NSMutableAttributedString()
-//        var optionalEmployeeNumbers: [String] = []
-//
-//        var readFirstLine = true
-//        var readBidLineNumbers = false
-//        var readOptionalEmployeeNumbers = false
-//        var readFinalLine = false
-//        var isValidReceipt = false
-//        var count = 0
-//
-//        let rearrangedBidReceipt = rearrangedBidReceipt(receiptText)
-//
-//        if rearrangedBidReceipt.isEmpty {
-//            setPropertiesWithReceiptText2(receiptText)
-//            return
-//        }
-//
-//        rearrangedBidReceipt.enumerateLines { line, _ in
-//
-//            // MARK: - First line
-//            if readFirstLine {
-//                condensedText.append(
-//                    NSAttributedString(string: "\(line)\n", attributes: attrClear)
-//                )
-//                readFirstLine = false
-//                readBidLineNumbers = true
-//                return
-//            }
-//
-//            // MARK: - Bid line numbers
-//            if readBidLineNumbers {
-//
-//                if line == "*E" {
-//                    condensedText.append(
-//                        NSAttributedString(string: "\(line)\n", attributes: attrClear)
-//                    )
-//                    readBidLineNumbers = false
-//                    readOptionalEmployeeNumbers = true
-//                    return
-//                }
-//
-//                count += 1
-//                let padded = addBidReceiptSpacesForPilot(line)
-//                var attrs = attrClear
-//
-//                if bidPeriod?.isFlightAttendantBid == false,
-//                   let lineNumber = Int(line),
-//                   let myLine = fetchLine(lineNumber) {
-//
-//                    if myLine.orderedTrips.isEmpty {
-//                        attrs = attrBlank
-//                    } else if myLine.type == 3 || myLine.type == 6 || myLine.type == 12 {
-//                        attrs = attrReserve
-//                    }
-//                }
-//
-//                condensedText.append(
-//                    NSAttributedString(string: padded, attributes: attrs)
-//                )
-//
-//                if count % 10 == 0 {
-//                    condensedText.append(NSAttributedString(string: "\n"))
-//                }
-//                return
-//            }
-//
-//            // MARK: - Optional employee numbers
-//            if readOptionalEmployeeNumbers {
-//
-//                if line == "*E" {
-//                    condensedText.append(
-//                        NSAttributedString(string: "\(line)\n", attributes: attrClear)
-//                    )
-//                    readOptionalEmployeeNumbers = false
-//                    readFinalLine = true
-//                    return
-//                }
-//
-//                optionalEmployeeNumbers.append(line)
-//                condensedText.append(
-//                    NSAttributedString(string: "\(line)\n", attributes: attrClear)
-//                )
-//                return
-//            }
-//
-//            // MARK: - Final line (SUBMITTED BY)
-//            if readFinalLine {
-//
-//                let brackets = CharacterSet(charactersIn: "[]")
-//                let digits = CharacterSet.decimalDigits
-//                let scanner = Scanner(string: line)
-//
-//                var submittedBy: NSString?
-//                var submittedFor: NSString?
-//
-//                scanner.scanUpTo("SUBMITTED BY:", into: nil)
-//                scanner.scanString("SUBMITTED BY:", into: nil)
-//
-//                scanner.charactersToBeSkipped = CharacterSet()
-//                scanner.scanUpToCharacters(from: brackets, into: nil)
-//                scanner.scanCharacters(from: brackets, into: nil)
-//                scanner.scanUpToCharacters(from: brackets, into: &submittedBy)
-//
-//                scanner.scanUpToCharacters(from: digits, into: nil)
-//                scanner.scanCharacters(from: digits, into: &submittedFor)
-//
-//                if let submittedFor = submittedFor as String?,
-//                   submittedFor == self.submittedFor {
-//                    isValidReceipt = true
-//                }
-//
-//                if bidPeriod?.isFlightAttendantBid == false {
-//
-//                    let temp = NSMutableAttributedString(
-//                        string: "\(line)\n",
-//                        attributes: attrClear
-//                    )
-//
-//                    let regex = try? NSRegularExpression(pattern: "(\\d+)\\.(\\d+)")
-//                    let matches = regex?.matches(
-//                        in: line,
-//                        range: NSRange(location: 0, length: line.count)
-//                    ) ?? []
-//
-//                    for match in matches {
-//                        guard match.numberOfRanges >= 3 else { continue }
-//
-//                        let lineNumberRange = match.range(at: 2)
-//                        let nsLine = line as NSString
-//                        let lineNumber = nsLine.substring(with: lineNumberRange)
-//
-//                        guard let num = Int(lineNumber),
-//                              let myLine = fetchLine(num) else { continue }
-//
-//                        var attrs = attrClear
-//
-//                        if myLine.orderedTrips.isEmpty {
-//                            attrs = attrBlank
-//                        } else if myLine.type == 3 || myLine.type == 6 || myLine.type == 12 {
-//                            attrs = attrReserve
-//                        }
-//
-//                        temp.addAttributes(attrs, range: match.range(at: 0))
-//                    }
-//
-//                    condensedText.append(temp)
-//                } else {
-//                    condensedText.append(
-//                        NSAttributedString(string: "\(line)\n", attributes: attrClear)
-//                    )
-//                }
-//            }
-//        }
-//
-//        // MARK: - Night mode
-//        if UserDefaults.standard.bool(forKey: kCBNightTimeModeEnabled) {
-//            condensedText.addAttribute(
-//                .foregroundColor,
-//                value: UIColor.white,
-//                range: NSRange(location: 0, length: condensedText.length)
-//            )
-//        }
-//
-//        let finalText = addLeftMarginToString(condensedText, leftMargin: 30.0)
-//        textView.attributedText = finalText
-//
-//        print(finalText)
-//    }
-    func fetchLine(_ lineNumber: Int) -> BILine? {
-        guard let context = bidPeriod?.managedObjectContext else {
-            return nil
-        }
+    private func buildReceiptAttributedText(receiptText: String) -> NSMutableAttributedString {
 
-        let fetchRequest = NSFetchRequest<BILine>(entityName: "Line")
-        fetchRequest.predicate = NSPredicate(format: "number == %@", NSNumber(value: lineNumber))
-        fetchRequest.sortDescriptors = [
-            NSSortDescriptor(key: "number", ascending: true)
+        let attrBlank: [NSAttributedString.Key: Any] = [
+            .backgroundColor: UIColor.systemBlue,
+            .foregroundColor: UIColor.white,
+            .strokeWidth: -3.0,
+            .font: UIFont(name: "Courier", size: 15)!
         ]
-        fetchRequest.fetchLimit = 1   // optimization vs Obj-C
 
-        do {
-            return try context.fetch(fetchRequest).first
-        } catch {
-            print("fetchLine error:", error)
-            return nil
+        let attrReserve: [NSAttributedString.Key: Any] = [
+            .backgroundColor: UIColor.systemRed,
+            .foregroundColor: UIColor.white,
+            .strokeWidth: -3.0,
+            .font: UIFont(name: "Courier", size: 15)!
+        ]
+
+        let attrClear: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.label,
+            .font: UIFont(name: "Courier", size: 15)!
+        ]
+
+        let condensedText = NSMutableAttributedString()
+
+        var readFirstLine = true
+        var readBidLineNumbers = false
+        var readFinalLine = false
+        var count = 0
+
+        receiptText.enumerateLines { line, _ in
+
+            if readFirstLine {
+                condensedText.append(NSAttributedString(string: "\(line)\n", attributes: attrClear))
+                readFirstLine = false
+                readBidLineNumbers = true
+                return
+            }
+
+            if readBidLineNumbers {
+
+                if line == "*E" {
+                    condensedText.append(NSAttributedString(string: "*E\n", attributes: attrClear))
+                    readBidLineNumbers = false
+                    readFinalLine = true
+                    return
+                }
+
+                count += 1
+                let padded = String(format: "%5s", line)
+
+                var attrs = attrClear
+
+                if let n = Int(line) {
+
+                    let lineObj = self.fetchLine(lineNumber: n)
+
+                    if lineObj?.orderedTrips.count == 0 {
+                        attrs = attrBlank
+                    }
+                    else if let type = lineObj?.type?.intValue,
+                            type == 3 || type == 6 || type == 12 {
+                        attrs = attrReserve
+                    }
+                }
+
+                condensedText.append(NSAttributedString(string: padded, attributes: attrs))
+
+                if count % 10 == 0 {
+                    condensedText.append(NSAttributedString(string: "\n", attributes: attrClear))
+                }
+                return
+            }
+            
+            if readFinalLine {
+                condensedText.append(
+                    self.highlightedFinalLine(line: line,
+                                         attrClear: attrClear,
+                                         attrBlank: attrBlank,
+                                         attrReserve: attrReserve)
+                )
+            }
         }
+
+        return addLeftMarginToString(condensedText, leftMargin: 30)
     }
     
-    func addBidReceiptSpacesForPilot(_ text: String) -> String {
-        return String(format: "%5s", text)
+    
+    private func fetchLine(lineNumber: Int) -> BILine? {
+        let request = NSFetchRequest<BILine>(entityName: "Line")
+        request.predicate = NSPredicate(format: "number == %@", NSNumber(value: lineNumber))
+        request.sortDescriptors = [NSSortDescriptor(key: "number", ascending: true)]
+
+        return try? bidPeriod?
+            .managedObjectContext?
+            .fetch(request)
+            .first
     }
+    private func highlightedFinalLine(
+        line: String,
+        attrClear: [NSAttributedString.Key: Any],
+        attrBlank: [NSAttributedString.Key: Any],
+        attrReserve: [NSAttributedString.Key: Any]
+    ) -> NSAttributedString {
+
+        let result = NSMutableAttributedString(
+            string: "\(line)\n",
+            attributes: attrClear
+        )
+
+        let regex = try? NSRegularExpression(pattern: "(\\d+)\\.(\\d+)")
+        let matches = regex?.matches(
+            in: line,
+            range: NSRange(location: 0, length: line.count)
+        ) ?? []
+
+        for match in matches {
+            guard match.numberOfRanges >= 3 else { continue }
+
+            let nsLine = line as NSString
+            let lineNumberString = nsLine.substring(with: match.range(at: 2))
+
+            if let n = Int(lineNumberString),
+               let lineObj = fetchLine(lineNumber: n) {
+
+                var attrs = attrClear
+
+                if lineObj.orderedTrips.count == 0 {
+                    attrs = attrBlank
+                }
+                else if let type = lineObj.type?.intValue,
+                        type == 3 || type == 6 || type == 12 {
+                    attrs = attrReserve
+                }
+
+                result.addAttributes(attrs, range: match.range(at: 0))
+            }
+        }
+
+        return result
+    }
+    
+    func addLeftMarginToString(
+        _ text: NSMutableAttributedString,
+        leftMargin: CGFloat
+    ) -> NSMutableAttributedString {
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.firstLineHeadIndent = leftMargin
+
+        text.addAttribute(
+            .paragraphStyle,
+            value: paragraphStyle,
+            range: NSRange(location: 0, length: text.length)
+        )
+
+        return text
+    }
+    
+    
     
     @IBAction func btnDismissAction(_ sender: Any) {
         if self.presentingViewController != nil {
@@ -445,7 +385,7 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
             bidActionVC.preferredContentSize = CGSize(width: 350, height: 160)
             bidActionVC.contentSize = CGSize(width: 350, height: 160)
             bidActionVC.title = self.titleText
-            bidActionVC.text = textView.text
+            bidActionVC.attributedTxt = textView.attributedText
             bidActionVC.dataTypeSelected = self.dataTypeSelected
             bidActionVC.modalPresentationStyle = .popover
             bidActionVC.showPopover(sourceView: btnShare)
@@ -494,7 +434,6 @@ extension CBTextViewController: UITableViewDataSource, UITableViewDelegate {
                 tableViewTF.textColor = .black
             }
             if let courierFont = UIFont(name: "Courier New Bold", size: 16.0) {
-                //let courierFontWithWeight = UIFont(descriptor: courierFont.fontDescriptor.withSymbolicTraits(.traitBold)!, size: 20.0)
                 tableViewTF.font = courierFont
             }
             let data = isSearchActive ? filteredListArray[indexPath.row] : listArray[indexPath.row]

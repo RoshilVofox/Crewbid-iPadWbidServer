@@ -599,6 +599,21 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
         cell.position.text = positionArray[bidPeriod.positionType!.intValue]
         cell.monthRoundLabel.text = CBGlobalMethods.shortMonthNameOf(monthInt: bidPeriod.month!.intValue) + " " +  bidPeriod.year!.stringValue + " Round " + bidPeriod.round!.stringValue
         
+        cell.lastBidDate.text = "Last bid: None"
+
+        if let lastBidDate = bidPeriod.lastBidDate {
+            let dateString = DateFormatter.localizedString(
+                from: lastBidDate,
+                dateStyle: .medium,
+                timeStyle: .short
+            )
+
+            let tz = TimeZone(identifier: "US/Central")
+            let abbrev = tz?.abbreviation() ?? ""
+
+            cell.lastBidDate.text = "Last bid: \(dateString) (\(abbrev))"
+        }
+        
         
         if self.editButton.currentTitle == "Edit" {
             collectionView.allowsMultipleSelection = false
