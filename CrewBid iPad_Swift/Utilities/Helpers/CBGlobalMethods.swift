@@ -35,7 +35,6 @@ public final class CBGlobalMethods: NSObject {
     var isLatestNewsDisplayed: Bool = false
     
     var selectedBidPeriod: BIBidPeriod?
-    var selectedBidPeriodID: NSManagedObjectID?
     var openedBidDocumentControllerClass: CBBidActionsVC!
     var isSortAvailable = false
     var awardLertSecretEmpNum: String?

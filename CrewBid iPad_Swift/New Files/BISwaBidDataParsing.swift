@@ -118,7 +118,7 @@ class BISwaBidDataParsing{
                 }
                 CBUtils.deleteFile(withName: lineFileName)
                 CBUtils.deleteFile(withName: tripFileName)
-                CBGlobalMethods.shared.selectedBidPeriodID = self.bidPeriod?.objectID
+                CBGlobalMethods.shared.selectedBidPeriod = self.bidPeriod
                 NotificationCenter.default.post(
                     name: Notification.Name("BidParsingCompleted"),
                     object: nil

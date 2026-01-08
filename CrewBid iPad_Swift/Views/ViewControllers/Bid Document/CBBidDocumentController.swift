@@ -69,21 +69,20 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         super.viewDidLoad()
         self.setupLayout()
         updateLocalHerbSwitchUI()
-        let viewContext = CoreDataManager.shared.persistentContainer.viewContext
-
-        guard
-            let bidPeriodID = CBGlobalMethods.shared.selectedBidPeriodID,
-            let bidPeriod = try? viewContext.existingObject(with: bidPeriodID) as? BIBidPeriod
-        else {
-            fatalError("BidPeriod missing or deleted")
-        }
-
-        self.bidPeriod = bidPeriod
-        self.context = bidPeriod.managedObjectContext
-//        self.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
-//        self.context = CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!
-//        self.linesManager = BILinesManager.init(managedObjectContext: self.managedObjectContext)
-        self.calendarData = calendarData.initWithBidPeriod(bidPeriod: bidPeriod)!
+//        let viewContext = CoreDataManager.shared.persistentContainer.viewContext
+//
+//        guard
+//            let bidPeriodID = CBGlobalMethods.shared.selectedBidPeriodID,
+//            let bidPeriod = try? viewContext.existingObject(with: bidPeriodID) as? BIBidPeriod
+//        else {
+//            fatalError("BidPeriod missing or deleted")
+//        }
+//
+//        self.bidPeriod = bidPeriod
+//        self.context = bidPeriod.managedObjectContext
+        self.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
+        self.context = CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!
+        self.calendarData = calendarData.initWithBidPeriod(bidPeriod: bidPeriod!)!
         isVacationsRemoved = false
         btnSwaptimizer.tag = 21
         if self.bidPeriod!.isFABid() {
