@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import CloudKit
+import CoreData
 
 public final class CBGlobalMethods: NSObject {
     // Can't init is singleton
@@ -34,6 +35,7 @@ public final class CBGlobalMethods: NSObject {
     var isLatestNewsDisplayed: Bool = false
     
     var selectedBidPeriod: BIBidPeriod?
+    var selectedBidPeriodID: NSManagedObjectID?
     var openedBidDocumentControllerClass: CBBidActionsVC!
     var isSortAvailable = false
     var awardLertSecretEmpNum: String?

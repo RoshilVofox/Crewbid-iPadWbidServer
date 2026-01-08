@@ -39,21 +39,24 @@ class BISwaBidDataParsing{
         
         self.bidInfo = "\(dataSource.base)\(positionShort)\(dataSource.year)\(formattedMonth)\(dataSource.round)"
         self.urlInfo = "\(dataSource.base)\(dataSource.year)\(formattedMonth)\(dataSource.round)"
-        
+
     }
 
 
 
 
     func parseAndSaveBidData(completion: @escaping ((Result<Void, Error>)) -> Void) {
-        guard let moc = dataSource?.managedObjectContext else {
-            let err = NSError(domain: "BISwaBidParsing",
-                              code: 1001,
-                              userInfo: [NSLocalizedDescriptionKey: "Missing Managed Object Context"])
-            completion(.failure(err))
-            return }
+//        guard let moc = dataSource?.managedObjectContext else {
+//            let err = NSError(domain: "BISwaBidParsing",
+//                              code: 1001,
+//                              userInfo: [NSLocalizedDescriptionKey: "Missing Managed Object Context"])
+//            completion(.failure(err))
+//            return }
+        let container = CoreDataManager.shared.persistentContainer
+        let moc = container.newBackgroundContext()
         
-        self.setupBidPeriodEntity()
+        // IMPORTANT: inject this context everywhere
+        self.setupBidPeriodEntity(moc: moc)
         
         var lineFileName = "\(self.bidInfo)-lines.json"
         var tripFileName = "\(self.bidInfo)-pairings.json"
@@ -100,14 +103,22 @@ class BISwaBidDataParsing{
         self.bidPeriod?.isSwaAPI = 1
 
         // Parse bid data
-        let success = self.parseBidData()
+        let success = self.parseBidData(moc: moc)
         
         if success{
             do{
                 try moc.save()
+                container.viewContext.perform {
+                    container.viewContext.mergeChanges(fromContextDidSave:
+                        Notification(
+                            name: .NSManagedObjectContextDidSave,
+                            object: moc
+                        )
+                    )
+                }
                 CBUtils.deleteFile(withName: lineFileName)
                 CBUtils.deleteFile(withName: tripFileName)
-                
+                CBGlobalMethods.shared.selectedBidPeriodID = self.bidPeriod?.objectID
                 NotificationCenter.default.post(
                     name: Notification.Name("BidParsingCompleted"),
                     object: nil
@@ -155,8 +166,8 @@ class BISwaBidDataParsing{
         )
     }
     
-    private func parseBidData() -> Bool{
-        guard let moc = dataSource?.managedObjectContext else { return false}
+    private func parseBidData(moc:NSManagedObjectContext) -> Bool{
+//        guard let moc = dataSource?.managedObjectContext else { return false}
         
         var dataParseCompleted = true
         
@@ -311,7 +322,15 @@ class BISwaBidDataParsing{
                         }
 
                         // Assign the filtered trips back
-                        line.trips = NSSet(set: tripsToKeep)
+//                        line.trips = NSSet(set: tripsToKeep)
+                        if let existingTrips = line.trips as? Set<BITrip> {
+                            for trip in existingTrips {
+                                let key = "\(trip.startDate?.description ?? "")_\(trip.number ?? "")"
+                                if !uniqueTrips.contains(key) {
+                                    moc.delete(trip)
+                                }
+                            }
+                        }
 
                         // Block minutes
                         let lineBlockMin = CBUtils.nsNumber(from: lineData["totalBlockTime"])
@@ -337,14 +356,14 @@ class BISwaBidDataParsing{
             name: Notification.Name("ReadingLines"),
             object: nil
         )
-        if moc.hasChanges{
-            do{
-                try moc.save()
-            }catch{
-                let errReason = "\(BIBidInfo().dataFilenameBase()) unable to save managed object context after reading trips and lines files."
-                self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: errReason)
-            }
-        }
+//        if moc.hasChanges{
+//            do{
+//                try moc.save()
+//            }catch{
+//                let errReason = "\(BIBidInfo().dataFilenameBase()) unable to save managed object context after reading trips and lines files."
+//                self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: errReason)
+//            }
+//        }
         
         bidInfoReader.addDefaultFilterRules(context: moc)
         bidInfoReader.calculateWorkBlockDetails()
@@ -352,58 +371,69 @@ class BISwaBidDataParsing{
         return dataParseCompleted
     }
     
-    private func setupBidPeriodEntity(){
-        guard let moc = dataSource?.managedObjectContext else { return }
+    private func setupBidPeriodEntity(moc: NSManagedObjectContext){
+//        guard let moc = dataSource?.managedObjectContext else { return }
         
-        self.bidPeriod = BIBidPeriod(context: moc)
-        
-        self.bidPeriod?.isHistoric = NSNumber(value: AppState.shared.isHistoricBid)
-        self.bidPeriod?.year = NSNumber(value: self.dataSource?.year ?? 0)
-        self.bidPeriod?.base = self.dataSource?.base
-        self.bidPeriod?.month = NSNumber(value: self.dataSource?.month ?? 0)
-        self.bidPeriod?.positionType = NSNumber(value: self.dataSource?.position.rawValue ?? 0)
-        self.bidPeriod?.round = NSNumber(value: self.dataSource?.round ?? 0)
-        self.bidPeriod?.appVersion = CBUtils.AppVersion()
-        self.bidPeriod?.created = Date()
-        if let empNumString = self.dataSource?.employeeNumber,
-           let empNum = Int(empNumString) {
-            self.bidPeriod?.crewIdentifier = NSNumber(value: empNum)
-        } else {
-            self.bidPeriod?.crewIdentifier = nil
-        }
-        
-        if let fullId = self.dataSource?.swaptimizerID {
-            let trimmed = String(fullId.dropFirst())
-            self.bidPeriod?.swaptimizerIdentifier = NSNumber(value: Int(trimmed) ?? 0)
-        }
-        self.bidPeriod?.isAllLinesTrashed = false
-        self.bidPeriod?.lastTrashedDetails = NSMutableArray()
-        
-        self.calendarData = self.calendarData.initWithBidPeriod(bidPeriod: self.bidPeriod!)!
-        self.thanksgivingDay = CBUtils.thanksgivingDay(for: self.bidPeriod?.year?.intValue ?? 0)
-        self.includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
-        self.intlCities = UserDefaults.standard.object(forKey: kCBInternationalCitiesDict) as? NSDictionary
+        moc.perform {
 
-        if !AppState.shared.isHistoricBid{
-            //Save seniority data in bidperiod
-            let seniorityList = self.parseAndSaveSeniorityData()
-            self.bidPeriod?.seniorityList = seniorityList as NSSet
-            self.bidPeriod?.coverLetterFileName = String(format: "%@-cover-letter.pdf", self.bidInfo)
-            
-            // Save Seniority Data in BidPeriod
-            let buddyBids = self.parseAndSaveBuddyBids()
-            self.bidPeriod?.buddyBid = buddyBids as NSSet
-            
-            self.getMetaData()
+            let bidPeriod = BIBidPeriod(context: moc)
+            self.bidPeriod = bidPeriod
+
+            bidPeriod.isHistoric = NSNumber(value: AppState.shared.isHistoricBid)
+            bidPeriod.year = NSNumber(value: self.dataSource?.year ?? 0)
+            bidPeriod.base = self.dataSource?.base
+            bidPeriod.month = NSNumber(value: self.dataSource?.month ?? 0)
+            bidPeriod.positionType = NSNumber(value: self.dataSource?.position.rawValue ?? 0)
+            bidPeriod.round = NSNumber(value: self.dataSource?.round ?? 0)
+            bidPeriod.appVersion = CBUtils.AppVersion()
+            bidPeriod.created = Date()
+
+            if let empNumString = self.dataSource?.employeeNumber,
+               let empNum = Int(empNumString) {
+                bidPeriod.crewIdentifier = NSNumber(value: empNum)
+            }
+
+            if let fullId = self.dataSource?.swaptimizerID {
+                let trimmed = String(fullId.dropFirst())
+                bidPeriod.swaptimizerIdentifier = NSNumber(value: Int(trimmed) ?? 0)
+            }
+
+            bidPeriod.isAllLinesTrashed = false
+            bidPeriod.lastTrashedDetails = NSMutableArray()
+
+            // Calendar data MUST use the same bidPeriod
+            let calendar = BICalendarData()
+            self.calendarData = calendar.initWithBidPeriod(bidPeriod: bidPeriod)!
+
+            self.thanksgivingDay = CBUtils.thanksgivingDay(for: bidPeriod.year?.intValue ?? 0)
+            self.includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
+            self.intlCities = UserDefaults.standard.object(forKey: kCBInternationalCitiesDict) as? NSDictionary
+
+            if !AppState.shared.isHistoricBid {
+
+                let seniorityList = self.parseAndSaveSeniorityData(context: moc)
+                bidPeriod.seniorityList = seniorityList as NSSet
+
+                bidPeriod.coverLetterFileName = "\(self.bidInfo)-cover-letter.pdf"
+
+                let buddyBids = self.parseAndSaveBuddyBids(context: moc)
+                bidPeriod.buddyBid = buddyBids as NSSet
+
+                self.getMetaData()
+            }
+
+//            do {
+//                try moc.save()
+//            } catch {
+//                print("BidPeriod save failed:", error)
+//            }
         }
-        
-        
     }
     
-    private func parseAndSaveSeniorityData() -> Set<SeniorityList>{
+    private func parseAndSaveSeniorityData(context:NSManagedObjectContext) -> Set<SeniorityList>{
         let fileName = String(format: "%@-SeniorityList.json", self.bidInfo)
-        guard let responseDict = CBUtils.readJSONString(fromFile: fileName),
-              let context = self.dataSource?.managedObjectContext else { return [] }
+        guard let responseDict = CBUtils.readJSONString(fromFile: fileName)
+              /*let context = self.dataSource?.managedObjectContext*/ else { return [] }
         
         guard let embeddedDict = responseDict["_embedded"] as? [String:Any] else { return [] }
         let dictKey = self.dataSource?.round == 1 ? "IFLineBaseAuctionSeniorities" : "IFLineBaseAuctionReserveAwards"
@@ -447,21 +477,21 @@ class BISwaBidDataParsing{
             }
             senioritySet.insert(seniority)
         }
-        do {
-            try context.save()
-            CBUtils.deleteFile(withName: fileName)
-        } catch {
-            print("Save Error: \(error)")
-        }
-        
+//        do {
+//            try context.save()
+//            CBUtils.deleteFile(withName: fileName)
+//        } catch {
+//            print("Save Error: \(error)")
+//        }
+        CBUtils.deleteFile(withName: fileName)
         return senioritySet
     }
     
-    private func parseAndSaveBuddyBids() -> Set<BuddyBids>{
+    private func parseAndSaveBuddyBids(context:NSManagedObjectContext) -> Set<BuddyBids>{
         
         let fileName = String(format: "%@-BuddyBidIDs.json", self.bidInfo)
-        guard let responseDict = CBUtils.readJSONString(fromFile: fileName),
-              let context = self.dataSource?.managedObjectContext else { return [] }
+        guard let responseDict = CBUtils.readJSONString(fromFile: fileName)
+              /*let context = self.dataSource?.managedObjectContext*/ else { return [] }
         
         guard let buddyArray = responseDict["buddyIds"]as? [String] else{ return []}
         
@@ -470,14 +500,16 @@ class BISwaBidDataParsing{
         for buddy in buddyArray{
             let buddyBidEntity = BuddyBids(context: context)
             buddyBidEntity.buddyId = buddy
+            buddyBidEntity.bidPeriod = bidPeriod
             buddySet.insert(buddyBidEntity)
         }
-        do {
-            try context.save()
-            CBUtils.deleteFile(withName: fileName)
-        } catch {
-            print("Save Error: \(error)")
-        }
+//        do {
+//            try context.save()
+//            CBUtils.deleteFile(withName: fileName)
+//        } catch {
+//            print("Save Error: \(error)")
+//        }
+        CBUtils.deleteFile(withName: fileName)
         return buddySet
     }
     
@@ -494,23 +526,24 @@ class BISwaBidDataParsing{
                     return
                 }
 
-                let metaData = MetaData(context: context)
 
-                // Assign values (matching Objective-C keys)
-                metaData.abcPositions = Int32(dict["abcPositions"] as? Int ?? 0)
-                metaData.abcdPositions = Int32(dict["abcdPositions"] as? Int ?? 0)
-                metaData.aPositions    = Int32(dict["apositions"] as? Int ?? 0)
-                metaData.dPositions    = Int32(dict["dpositions"] as? Int ?? 0)
-                metaData.bcPositions   = Int32(dict["bcPositions"] as? Int ?? 0)
+                context.perform {
 
-                // Add to bidPeriod
-                self.bidPeriod?.metaData = [metaData]
+                    let metaData = MetaData(context: context)
 
-                // Save Core Data
-                do {
-                    try context.save()
-                } catch {
-                    print("Save Error: \(error.localizedDescription)")
+                    metaData.abcPositions  = Int32(dict["abcPositions"] as? Int ?? 0)
+                    metaData.abcdPositions = Int32(dict["abcdPositions"] as? Int ?? 0)
+                    metaData.aPositions    = Int32(dict["apositions"] as? Int ?? 0)
+                    metaData.dPositions    = Int32(dict["dpositions"] as? Int ?? 0)
+                    metaData.bcPositions   = Int32(dict["bcPositions"] as? Int ?? 0)
+
+                    bidPeriod.addToMetaData(metaData)
+
+//                    do {
+//                        try context.save()
+//                    } catch {
+//                        print("Save Error:", error)
+//                    }
                 }
             case .failure(let error):
                 print(error)
@@ -523,10 +556,10 @@ class BISwaBidDataParsing{
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         dateFormatter.timeZone = TimeZone(identifier: "UTC")
 
-        let baseContext = self.dataSource?.managedObjectContext ?? moc
+//        let baseContext = /*self.dataSource?.managedObjectContext ??*/ moc
 
         //Trip Info
-        let tripInfo = BITripInfo(context: baseContext)
+        let tripInfo = BITripInfo(context: moc)
 
         let pairingKey = tripDict["pairingKey"] as? [String: Any]
         tripInfo.number = pairingKey?["pairingNumber"] as? String
@@ -590,7 +623,7 @@ class BISwaBidDataParsing{
         }
 
         // Day Info
-        let dayInfo = BIDayInfo(context: baseContext)
+        let dayInfo = BIDayInfo(context: moc)
         dayInfo.dutyPeriodNumber = 1
         dayInfo.trip = tripInfo
         tripInfo.firstDay = dayInfo

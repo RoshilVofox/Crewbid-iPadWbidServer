@@ -600,7 +600,7 @@ class BISwaBidDataDownload{
     
     func submitBid(params:[String:Any], completion: @escaping (Result<[String:Any],Error>) -> Void){
         
-        let urlTemplate = "\(self.kCBSwaServiceURL())if-line-base-auction/bid-round/\(self.packetID)/bids"
+        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(self.packetID)/bids"
         
         let headers: [String: String] = [
             "Content-Type": "application/hal+json",
@@ -621,7 +621,10 @@ class BISwaBidDataDownload{
             body: bodyData,
             headers: headers,
             parse: {data in
-                try JSONSerialization.jsonObject(with: data)
+                if data.isEmpty {
+                    return [:]
+                }
+                return try JSONSerialization.jsonObject(with: data) as! [String : Any]
             },
             completion: { result in
                 switch result{

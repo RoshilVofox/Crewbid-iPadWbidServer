@@ -229,6 +229,9 @@ class CBBidSubmissionViewModel{
             body: body,
             headers: ["Content-Type": "application/x-www-form-urlencoded"],
             parse: { data in
+                if data.isEmpty{
+                    return [:]
+                }
                 // Just return JSON object
                 guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
                     throw Errors.decodingError

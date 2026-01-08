@@ -385,6 +385,20 @@ extension BIBidPeriod {
     @NSManaged public func removeFromBuddyBids(_ values: NSSet)
 }
 
+extension BIBidPeriod {
+
+    @objc(addMetaDataObject:)
+    @NSManaged public func addToMetaData(_ value: MetaData)
+
+    @objc(removeMetaDataObject:)
+    @NSManaged public func removeFromMetaData(_ value: MetaData)
+
+    @objc(addMetaData:)
+    @NSManaged public func addToMetaData(_ values: NSSet)
+
+    @objc(removeMetaData:)
+    @NSManaged public func removeFromMetaData(_ values: NSSet)
+}
 
 
 enum VacButtonShape {

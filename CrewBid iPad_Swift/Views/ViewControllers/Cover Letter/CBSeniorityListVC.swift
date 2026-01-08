@@ -182,7 +182,7 @@ class CBSeniorityListVC: UIViewController {
     
     
     @IBAction func btnDismissAction(_ sender: Any) {
-        self.dismiss(animated: true)
+//        self.dismiss(animated: true)
             if self.presentingViewController != nil {
                     self.dismiss(animated: true, completion: nil)
                 } else {
@@ -193,18 +193,14 @@ class CBSeniorityListVC: UIViewController {
 
                     self.navigationController?.view.layer.add(transition, forKey: kCATransition)
                     self.navigationController?.popViewController(animated: false)
-                    return
                 }
             
-            if self.bidPeriod?.isHistoric?.boolValue ?? false{
-                return
-            }
+        guard bidPeriod?.isHistoric?.boolValue != true else { return }
             
 
-            if !(self.bidPeriod?.coverLetterDisplayed ?? 0).boolValue {
+        if bidPeriod?.coverLetterDisplayed?.boolValue != true {
                 let details = ["isFromFirstTimeOpenBid":true]
-                NotificationCenter.default.post(name: NSNotification.Name(KCBOpenCoverletter), object: self,userInfo: details)
-            return
+                NotificationCenter.default.post(name: NSNotification.Name("KCBOpenCoverletterForFA"), object: self,userInfo: details)
             }
             
 //            if isFromFirstTimeOpenBid == true {

@@ -126,13 +126,36 @@ extension BITrip : Identifiable {
         return formatter.string(from: localTime)
     }
     
+//    var orderedDays: [BIDay] {
+//        let daysArray = (self.days as? Set<BIDay>) ?? []
+//
+//        return daysArray.sorted { day1, day2 in
+//            let minDepart1 = day1.info?.legs?.compactMap { ($0 as? BILegInfo)?.departMinutes?.intValue }.min() ?? Int.max
+//            let minDepart2 = day2.info?.legs?.compactMap { ($0 as? BILegInfo)?.departMinutes?.intValue }.min() ?? Int.max
+//            return minDepart1 < minDepart2
+//        }
+//    }
     var orderedDays: [BIDay] {
         let daysArray = (self.days as? Set<BIDay>) ?? []
 
         return daysArray.sorted { day1, day2 in
-            let minDepart1 = day1.info?.legs?.compactMap { ($0 as? BILegInfo)?.departMinutes?.intValue }.min() ?? Int.max
-            let minDepart2 = day2.info?.legs?.compactMap { ($0 as? BILegInfo)?.departMinutes?.intValue }.min() ?? Int.max
-            return minDepart1 < minDepart2
+            func minDepart(_ day: BIDay) -> Int {
+                var minVal = Int.max
+                if let legs = day.info?.legs as? Set<BILegInfo> {
+                    for leg in legs {
+                        if let mins = leg.departMinutes?.intValue {
+                            minVal = min(minVal, mins)
+                        }
+                    }
+                }
+                return minVal
+            }
+
+            let min1 = minDepart(day1)
+            let min2 = minDepart(day2)
+
+            if min1 == min2 { return false }   // preserves relative order
+            return min1 < min2
         }
     }
     
