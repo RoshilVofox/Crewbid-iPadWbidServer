@@ -41,7 +41,9 @@ class CBCommutabilitySortCell: UITableViewCell {
     
     func configurecommutabilitySortCell() {
         let fetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "commutableType == %d", CommutabilityType.sort.rawValue)
+        let predicate1 = NSPredicate(format: "commutableType == %d", CommutabilityType.sort.rawValue)
+        let predicate2 = NSPredicate(format: "bidPeriod == %@", CBGlobalMethods.shared.selectedBidPeriod!)
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
         let results = (try? self.context!.fetch(fetchRequest)) ?? []
         if results.count > 0 {
             ObjcommutabilitySort = results[0]
@@ -63,12 +65,15 @@ class CBCommutabilitySortCell: UITableViewCell {
         }
         
         let fetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "commutableType == %d", CommutabilityType.sort.rawValue)
+        let predicate1 = NSPredicate(format: "commutableType == %d", CommutabilityType.sort.rawValue)
+        let predicate2 = NSPredicate(format: "bidPeriod == %@", CBGlobalMethods.shared.selectedBidPeriod!)
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
         let results = (try? self.context!.fetch(fetchRequest))
         for result in results ?? [] {
             self.context!.delete(result)
         }
-        fetchRequest.predicate = NSPredicate(format: "commutableType == %d", CommutabilityType.filter.rawValue)
+        let predicate3 = NSPredicate(format: "commutableType == %d", CommutabilityType.filter.rawValue)
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate3, predicate2])
         
         let filterFetchResults = (try? self.context!.fetch(fetchRequest)) ?? []
         if filterFetchResults.count == 0 {

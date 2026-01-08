@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24299" systemVersion="25B78" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24512" systemVersion="25C56" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AwardDetails" representedClassName="AwardDetails" syncable="YES">
         <attribute name="empName" optional="YES" attributeType="String"/>
         <attribute name="empNum" optional="YES" attributeType="String"/>
@@ -135,6 +135,7 @@
         <relationship name="awardDetails" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AwardDetails" inverseName="bidPeriod" inverseEntity="AwardDetails"/>
         <relationship name="bidReceipts" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="BidReceipt" inverseName="bidPeriod" inverseEntity="BidReceipt"/>
         <relationship name="buddyBid" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="BuddyBids" inverseName="bidPeriod" inverseEntity="BuddyBids"/>
+        <relationship name="commutabilities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Commutability" inverseName="bidPeriod" inverseEntity="Commutability"/>
         <relationship name="commuteTime" optional="YES" toMany="YES" deletionRule="No Action" destinationEntity="CommuteTime" inverseName="commutable" inverseEntity="CommuteTime"/>
         <relationship name="deadheadAtEndCities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DeadheadAtEndCity" inverseName="bidPeriod" inverseEntity="DeadheadAtEndCity"/>
         <relationship name="deadheadAtStartCities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="DeadheadAtStartCity" inverseName="bidPeriod" inverseEntity="DeadheadAtStartCity"/>
@@ -181,6 +182,7 @@
         <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="value" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="weight" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <relationship name="bidPeriod" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="commutabilities" inverseEntity="BidPeriod"/>
     </entity>
     <entity name="CommuteTime" representedClassName=".CommuteTime" syncable="YES">
         <attribute name="bidDay" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

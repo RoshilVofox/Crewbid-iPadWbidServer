@@ -26,6 +26,7 @@ class CBComutabilityRuleCell: UITableViewCell, CommutabilityCellDelegate {
     var filterRule: BIFilterRule?
     var objcommutability: Commutability?
     var fourthCellValueArray: NSMutableArray?
+    var bidPeriod: BIBidPeriod?
     let context = CBGlobalMethods.shared.selectedBidPeriod?.managedObjectContext!
     
     override func awakeFromNib() {
@@ -126,7 +127,9 @@ class CBComutabilityRuleCell: UITableViewCell, CommutabilityCellDelegate {
     
     func configureCommutabilityCell() {
         let fetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "commutableType == %d", CommutabilityType.filter.rawValue)
+        let predicate1 = NSPredicate(format: "bidPeriod == %@", CBGlobalMethods.shared.selectedBidPeriod!)
+        let predicate2 = NSPredicate(format: "commutableType == %d", CommutabilityType.filter.rawValue)
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate1])
         let fetchedObjects = (try? self.context!.fetch(fetchRequest)) ?? []
         if fetchedObjects.count > 0 {
             objcommutability = fetchedObjects[0]
@@ -167,7 +170,9 @@ class CBComutabilityRuleCell: UITableViewCell, CommutabilityCellDelegate {
         }
         
         let fetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "commutableType == 0")
+        let predicate1 = NSPredicate(format: "bidPeriod == %@", bidPeriod!)
+        let predicate2 = NSPredicate(format: "commutableType == %d", CommutabilityType.filter.rawValue)
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate1])
         let results = (try? self.context!.fetch(fetchRequest))
         for result in results ?? [] {
             self.context!.delete(result)

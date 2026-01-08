@@ -252,7 +252,7 @@ class CBPDORuleCell: UITableViewCell, RefreshDelegate {
                                         arrMins = arrMins+1440
                                         
                                         if arrMins <= filterMinutes {
-//                                            condition for break the loop
+                                            //                                            condition for break the loop
                                             if trip.isRedEyeTrip {
                                                 let nextLegDate = tripStartDay?.addingTimeInterval(TimeInterval((dayInfo.nextDay?.firstLeg?.departMinutes?.intValue ?? 0) * 60))
                                                 let legComponents = utcCal.dateComponents([.month, .day], from: nextLegDate!)
@@ -275,7 +275,7 @@ class CBPDORuleCell: UITableViewCell, RefreshDelegate {
                                         }
                                     }
                                     else {
-//                                        condition for break the loop
+                                        //                                        condition for break the loop
                                         if trip.isRedEyeTrip {
                                             let nextLegDate = tripStartOfDay?.addingTimeInterval(TimeInterval((dayInfo.nextDay?.firstLeg?.departMinutes?.intValue ?? 0) * 60))
                                             let legComponents = utcCal.dateComponents([.month, .day], from: nextLegDate!)
@@ -406,9 +406,9 @@ class CBPDORuleCell: UITableViewCell, RefreshDelegate {
         getLinesForFilterRule()
         try? filterRule.managedObjectContext?.save()
         configurePartialDayOffCell()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
-        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+//            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+//        }
     }
 
 
@@ -586,57 +586,57 @@ class CBPDORuleCell: UITableViewCell, RefreshDelegate {
         return 0
     }
     
-    func findMissingDateAndIndexForRedEyeTrip(_ trip: BITrip?) -> (missingDate: Date?, missingIndex: Int?) {
-     
-        guard let trip = trip, trip.isRedEyeTrip == true else {
-            return (nil, nil)
-        }
-     
-        let calendar = Calendar(identifier: .gregorian)
-        var dateComps = calendar.dateComponents([.year, .month, .day], from: trip.startDate ?? Date())
-     
-        let df = DateFormatter()
-        df.dateFormat = "dd-MMM-yyyy"
-        df.timeZone = TimeZone(identifier: "US/Central")
-     
-        var tripDates: [String] = []
-     
-        
-        for dayInfo in trip.info?.orderedDays() ?? []{
-            if let firstLeg = dayInfo.orderedLegs.first {
-                dateComps.minute = Int(truncating: firstLeg.departMinutes ?? 0)
-                if let legStartDate = calendar.date(from: dateComps) {
-                    tripDates.append(df.string(from: legStartDate))
-                }
-            }
-        }
-     
-        
-        let uniqueDatesArray = Array(NSOrderedSet(array: tripDates)) as! [String]
-     
-        if uniqueDatesArray.isEmpty {
-            return (nil, nil)
-        }
-     
-       
-        let dateObjects: [Date] = uniqueDatesArray.compactMap { df.date(from: $0) }
-     
-        
-        for i in 0..<dateObjects.count - 1 {
-            let currentDate = dateObjects[i]
-            let nextDate = dateObjects[i + 1]
-     
-           
-            if let expectedDate = calendar.date(byAdding: .day, value: 1, to: currentDate) {
-                
-                if !calendar.isDate(expectedDate, inSameDayAs: nextDate) {
-                    return (expectedDate, i + 1)
-                }
-            }
-        }
-     
-        
-        return (nil, nil)
-    }
+//    func findMissingDateAndIndexForRedEyeTrip(_ trip: BITrip?) -> (missingDate: Date?, missingIndex: Int?) {
+//     
+//        guard let trip = trip, trip.isRedEyeTrip == true else {
+//            return (nil, nil)
+//        }
+//     
+//        let calendar = Calendar(identifier: .gregorian)
+//        var dateComps = calendar.dateComponents([.year, .month, .day], from: trip.startDate ?? Date())
+//     
+//        let df = DateFormatter()
+//        df.dateFormat = "dd-MMM-yyyy"
+//        df.timeZone = TimeZone(identifier: "US/Central")
+//     
+//        var tripDates: [String] = []
+//     
+//        
+//        for dayInfo in trip.info?.orderedDays() ?? []{
+//            if let firstLeg = dayInfo.orderedLegs.first {
+//                dateComps.minute = Int(truncating: firstLeg.departMinutes ?? 0)
+//                if let legStartDate = calendar.date(from: dateComps) {
+//                    tripDates.append(df.string(from: legStartDate))
+//                }
+//            }
+//        }
+//     
+//        
+//        let uniqueDatesArray = Array(NSOrderedSet(array: tripDates)) as! [String]
+//     
+//        if uniqueDatesArray.isEmpty {
+//            return (nil, nil)
+//        }
+//     
+//       
+//        let dateObjects: [Date] = uniqueDatesArray.compactMap { df.date(from: $0) }
+//     
+//        
+//        for i in 0..<dateObjects.count - 1 {
+//            let currentDate = dateObjects[i]
+//            let nextDate = dateObjects[i + 1]
+//     
+//           
+//            if let expectedDate = calendar.date(byAdding: .day, value: 1, to: currentDate) {
+//                
+//                if !calendar.isDate(expectedDate, inSameDayAs: nextDate) {
+//                    return (expectedDate, i + 1)
+//                }
+//            }
+//        }
+//     
+//        
+//        return (nil, nil)
+//    }
     
 }

@@ -364,7 +364,7 @@ class CBPresetsTVC: BaseViewController, CBPresetCellDelegate, UITableViewDataSou
                         sortObj.city = sort["city"] as? String
                         sortObj.expression = sort["expression"] as? String
                         sortObj.order = sort["order"] as? NSNumber
-                        sortObj.lineSortKeyMap = sort["lineSortKeyMap"] as? BILineSortKeyMap
+                        sortObj.lineSortKeyMap = sort["lineSortKeyMap"] as? [String: Any]
                         sortObj.variables = sort["variables"] as? [String: Any]
                         sortObj.arrayVariables = sort["arrayVariables"] as? NSMutableArray
                         linesSorts.append(sortObj)

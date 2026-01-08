@@ -358,7 +358,9 @@ class CBRulesMenuTableVC: UIViewController,UITableViewDelegate,UITableViewDataSo
                 }
                 else {
                     let fetchCommutablityRequset: NSFetchRequest<Commutability> = Commutability.fetchRequest()
-                    fetchCommutablityRequset.predicate = NSPredicate(format: "commutableType == %d", CommutabilityType.filter.rawValue)
+                    let predicate1 = NSPredicate(format: "bidPeriod == %@", bidPeriod!)
+                    let predicate2 = NSPredicate(format: "commutableType == %d", CommutabilityType.filter.rawValue)
+                    fetchCommutablityRequset.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
                     let fetchedObjects = try! context!.fetch(fetchCommutablityRequset) ?? []
                     
                     if fetchedObjects.count > 0 {
