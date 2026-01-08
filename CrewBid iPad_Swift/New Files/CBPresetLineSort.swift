@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 
 let CBPresetLineSortEntityName = "PresetLineSort"
 
@@ -22,7 +23,7 @@ class CBPresetLineSort: NSObject, NSCoding {
     var order: NSNumber?
     var abbreviation: String?
     var variables: [String: Any]?
-    var lineSortKeyMap: BILineSortKeyMap?
+    var lineSortKeyMap: [String: Any]?
     var isBidListSort: NSNumber?
     var arrayVariables: NSMutableArray?
 
@@ -44,7 +45,9 @@ class CBPresetLineSort: NSObject, NSCoding {
         self.isBidListSort = sort.isBidListSort
         self.variables = sort.variables as? [String : Any]
         self.arrayVariables = sort.arrayVariables as? NSMutableArray
-        self.lineSortKeyMap = sort.lineSortKeyMap
+        let dict = self.lineSortKeyMap
+        sort.lineSortKeyMap = CBPresetLineSort.dictToLineSortKeyMap(dict ?? [:], context: CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!)
+
 
         if let cat = sort.category?.intValue,
            let typ = sort.type?.intValue,
@@ -96,4 +99,31 @@ class CBPresetLineSort: NSObject, NSCoding {
         isBidListSort = decoder.decodeObject(forKey: "isBidListSort") as? NSNumber
         variables = decoder.decodeObject(forKey: "variables") as? [String: Any]
     }
+    
+    
+    static func dictToLineSortKeyMap(_ dict: [String: Any], context: NSManagedObjectContext) -> BILineSortKeyMap? {
+
+        if dict.isEmpty { return nil }
+        let map = BILineSortKeyMap(context: context)
+
+        map.lineKey = dict["lineKey"] as? String
+        map.sortKey = dict["sortKey"] as? String
+
+        if let bidPeriodURI = dict["bidPeriodURI"] as? String,
+           let url = URL(string: bidPeriodURI),
+           let objectID = context.persistentStoreCoordinator?
+                .managedObjectID(forURIRepresentation: url) {
+            map.bidPeriod = try? context.existingObject(with: objectID) as? BIBidPeriod
+        }
+
+        if let lineSortURI = dict["lineSortURI"] as? String,
+           let url = URL(string: lineSortURI),
+           let objectID = context.persistentStoreCoordinator?
+                .managedObjectID(forURIRepresentation: url) {
+            map.lineSort = try? context.existingObject(with: objectID) as? BILineSort
+        }
+
+        return map
+    }
+
 }

@@ -77,8 +77,8 @@ class CBFilterRulesTableVC: BaseViewController, NSFetchedResultsControllerDelega
     }
     
     @objc func updateFilters(){
-        filterRules = (CBGlobalMethods.shared.selectedBidPeriod!.lineFilters!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "type", ascending: true), NSSortDescriptor(key: "category", ascending: true)]) as [Any]
-        self.objFilterTableView.reloadData()
+//        filterRules = (CBGlobalMethods.shared.selectedBidPeriod!.lineFilters!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "type", ascending: true), NSSortDescriptor(key: "category", ascending: true)]) as [Any]
+//        self.objFilterTableView.reloadData()
     }
     
     @objc func updateBidListCount(){
@@ -534,6 +534,7 @@ extension CBFilterRulesTableVC: UITableViewDelegate,UITableViewDataSource{
             useComparisonCell = false
             let ruleCell = cell as? CBComutabilityRuleCell
             ruleCell?.filterRule = rule!
+            ruleCell?.bidPeriod = bidPeriod
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 ruleCell?.configureCommutabilityCell()
             }

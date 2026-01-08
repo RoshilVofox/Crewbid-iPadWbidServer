@@ -1201,7 +1201,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @objc func ShowCommutablilitySortView() {
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let commuteInformation = storyboard.instantiateViewController(withIdentifier: "CommuteInformation") as! CBCommuteInfoViewController
-        commuteInformation.bidPeriod = self.bidPeriod
+        commuteInformation.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         commuteInformation.commutabilityType = CommutabilityType.sort
         commuteInformation.isModalInPresentation = true
         commuteInformation.preferredContentSize = CGSize(width: 320, height: 320)
@@ -1216,7 +1216,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let topVC = AlertService.currentTopViewController()
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let commuteInformation = storyboard.instantiateViewController(withIdentifier: "CommuteInformation") as! CBCommuteInfoViewController
-        commuteInformation.bidPeriod = self.bidPeriod
+        commuteInformation.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         commuteInformation.isModalInPresentation = true
         commuteInformation.commutabilityType = CommutabilityType.filter
         commuteInformation.preferredContentSize = CGSize(width: 320, height: 320)

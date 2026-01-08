@@ -50,6 +50,7 @@ extension BIBidPeriod {
     @NSManaged public var credentialEmployeenumber: NSNumber?
     @NSManaged public var currentAmPmHerb: NSNumber?
     @NSManaged public var currentDateTime: Date?
+    @NSManaged public var commutabilities: NSSet?
     @NSManaged public var cWeekDays: String?
     @NSManaged public var dWeekDays: String?
     @NSManaged public var eomIsNo: String?

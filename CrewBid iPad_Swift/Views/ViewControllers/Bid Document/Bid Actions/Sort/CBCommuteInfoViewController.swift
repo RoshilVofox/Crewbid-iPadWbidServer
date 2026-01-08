@@ -329,14 +329,16 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
     func saveCommutabilitySort() {
 //        added sort fetching to include bidPeriod check with commutable
         let fetchSortRequest: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
-        let predicate1 = NSPredicate(format: "bidPeriod == %@", bidPeriod!)
+        let predicate1 = NSPredicate(format: "bidPeriod == %@", CBGlobalMethods.shared.selectedBidPeriod!)
         let predicate2 = NSPredicate(format: "category == 9")
         let combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
         fetchSortRequest.predicate = combinedPredicate
         let fetchedSortObjects: [BILineSort] = (try? self.context!.fetch(fetchSortRequest)) ?? []
         
         let fetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "commutableType == 1")
+        let predicate3 = NSPredicate(format: "bidPeriod == %@", CBGlobalMethods.shared.selectedBidPeriod!)
+        let predicate4 = NSPredicate(format: "commutableType == 1")
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate3, predicate4])
         let fetchedObjects: [Commutability] = (try? self.context!.fetch(fetchRequest)) ?? []
         let objCommutablity: Commutability?
         if fetchedObjects.count > 0 && fetchedSortObjects.count > 0 {
@@ -359,6 +361,7 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
             objCommutablity?.value = value // percentage
             objCommutablity?.isNonStop = NSNumber(value: self.isNonStop)
             objCommutablity?.commutableType = 1
+            objCommutablity?.bidPeriod = bidPeriod
             try? self.context!.save()
             
             lineSort = BILineSort(context: context!)
@@ -411,7 +414,9 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
     
     func updateCommutabilityFilter() {
         let fetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "commutableType == 0")
+        let predicate3 = NSPredicate(format: "bidPeriod == %@", CBGlobalMethods.shared.selectedBidPeriod!)
+        let predicate4 = NSPredicate(format: "commutableType == 0")
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate3, predicate4])
         let fetchedObjects: [Commutability] = (try? self.context!.fetch(fetchRequest)) ?? []
         var objCommutabilityFiler: Commutability?
         if fetchedObjects.count > 0 {
@@ -443,7 +448,7 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
     
     func fetchCommutabilitydetails() {
         let fetchRequest: NSFetchRequest<BILineSort> = BILineSort.fetchRequest()
-        let predicate1 = NSPredicate(format: "bidPeriod == %@", bidPeriod!)
+        let predicate1 = NSPredicate(format: "bidPeriod == %@", CBGlobalMethods.shared.selectedBidPeriod!)
         let predicate2 = NSPredicate(format: "category == 9")
         let combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
         fetchRequest.predicate = combinedPredicate
@@ -457,14 +462,16 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
     func saveCommutabilityFilter() {
 //                added filter fetching to include bidPeriod check with commutable
         let fetchFilterRequest: NSFetchRequest<BIFilterRule> = BIFilterRule.fetchRequest()
-        let predicate1 = NSPredicate(format: "bidPeriod == %@", bidPeriod!)
+        let predicate1 = NSPredicate(format: "bidPeriod == %@", CBGlobalMethods.shared.selectedBidPeriod!)
         let predicate2 = NSPredicate(format: "category == 33")
         let combinedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
         fetchFilterRequest.predicate = combinedPredicate
         let fetchedFilterObjects: [BIFilterRule] = (try? self.context!.fetch(fetchFilterRequest)) ?? []
         
         let fetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "commutableType == 0")
+        let predicate3 = NSPredicate(format: "commutableType == %d", CommutabilityType.filter.rawValue)
+        let predicate4 = NSPredicate(format: "bidPeriod == %@", CBGlobalMethods.shared.selectedBidPeriod!)
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate3, predicate4])
         let fetchedObjects: [Commutability] = (try? self.context!.fetch(fetchRequest)) ?? []
         var objCommutablity: Commutability?
         if fetchedObjects.count > 0 && fetchedFilterObjects.count > 0{
@@ -480,9 +487,10 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
             objCommutablity?.thirdCellValue = thirdCellValue //Overall
             objCommutablity?.value = value // Percentage
             objCommutablity?.commutableType = 0
+            objCommutablity?.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
             
             let rule = BIFilterRule(context: self.context!)
-            rule.bidPeriod = bidPeriod
+            rule.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
             rule.abbreviation = "CmAuto"
             rule.category = 33
             rule.type = 0
@@ -542,7 +550,9 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
     
     func updateCommutabilitySort() {
         let fetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "commutableType == 1")
+        let predicate3 = NSPredicate(format: "bidPeriod == %@", CBGlobalMethods.shared.selectedBidPeriod!)
+        let predicate4 = NSPredicate(format: "commutableType == 1")
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate3, predicate4])
         let fetchedObjects: [Commutability] = (try? self.context!.fetch(fetchRequest)) ?? []
         let objCommutablityFilter: Commutability?
         if fetchedObjects.count > 0 {
@@ -779,6 +789,7 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
     
     func viewInitialization() {
         let fetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", CBGlobalMethods.shared.selectedBidPeriod!)
         let fetchedObjects: [Commutability] = (try? self.context!.fetch(fetchRequest)) ?? []
         let objCommutability: Commutability?
         if fetchedObjects.count > 0 {
@@ -795,11 +806,14 @@ class CBCommuteInfoViewController: UIViewController, KUIPopOverUsable, CityNameV
                 }
             }
             let filterFetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
-            filterFetchRequest.predicate = NSPredicate(format: "commutableType == %d", CommutabilityType.filter.rawValue)
+            let predicate1 = NSPredicate(format: "commutableType == %d", CommutabilityType.filter.rawValue)
+            let predicate2 = NSPredicate(format: "bidPeriod == %@", CBGlobalMethods.shared.selectedBidPeriod!)
+            filterFetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate1, predicate2])
             let filterFetchObjects = (try? self.context!.fetch(filterFetchRequest)) ?? []
             
             let sortFetchRequest: NSFetchRequest<Commutability> = Commutability.fetchRequest()
-            sortFetchRequest.predicate = NSPredicate(format: "commutableType == %d", CommutabilityType.sort.rawValue)
+            let predicate3 = NSPredicate(format: "commutableType == %d", CommutabilityType.sort.rawValue)
+            sortFetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [predicate3, predicate2])
             let sortFetchObjects = (try? self.context!.fetch(sortFetchRequest)) ?? []
             
             if sortFetchObjects.count > 0 && filterFetchObjects.count == 0 {
