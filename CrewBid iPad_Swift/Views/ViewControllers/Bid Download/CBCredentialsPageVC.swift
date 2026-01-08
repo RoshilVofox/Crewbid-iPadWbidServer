@@ -1393,6 +1393,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             actions: [
                 (title: "Download Again", style: .default, handler: { _ in
                     CBGlobalMethods.shared.selectedBidPeriod = nil
+                    CBGlobalMethods.shared.selectedBidPeriodID = nil
                     // Delete the bid document file if present
                     let fileManager = FileManager.default
                     let bidDocURL = BIBidInfo().bidDocumentFileURL()
@@ -1413,31 +1414,43 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                      try? fileManager.removeItem(at: tempFileURL)
 
                     // Batch delete existing BidPeriod objects matching the selection
-                    let context = self.context
-                    let fetchReq: NSFetchRequest<NSFetchRequestResult> = BIBidPeriod.fetchRequest()
-                    fetchReq.predicate = NSPredicate(format: "month == %d AND base == %@ AND positionType == %d AND round == %d AND year == %d",
-                                                    self.dataSource.month,
-                                                    self.dataSource.base,
-                                                    self.dataSource.position.rawValue,
-                                                    self.dataSource.round,
-                                                    self.dataSource.year)
-                    let batchDelete = NSBatchDeleteRequest(fetchRequest: fetchReq)
-                    batchDelete.resultType = .resultTypeObjectIDs
+                    let context = CoreDataManager.shared.persistentContainer.viewContext
+                    context.perform {
+                        let fetchReq: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
+                        fetchReq.predicate = NSPredicate(format: "month == %d AND base == %@ AND positionType == %d AND round == %d AND year == %d",
+                                                        self.dataSource.month,
+                                                        self.dataSource.base,
+                                                        self.dataSource.position.rawValue,
+                                                        self.dataSource.round,
+                                                        self.dataSource.year)
+//                        let batchDelete = NSBatchDeleteRequest(fetchRequest: fetchReq)
+//                        batchDelete.resultType = .resultTypeObjectIDs
 
-                    do {
-                        let result = try context.execute(batchDelete) as? NSBatchDeleteResult
-                        if let objectIDs = result?.result as? [NSManagedObjectID] {
-                            let changes: [AnyHashable: Any] = [NSDeletedObjectsKey: objectIDs]
-                            NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [context])
+                        do {
+                            let result = try context.fetch(fetchReq) /*as? NSBatchDeleteResult*/
+//                            if let objectIDs = result?.result as? [NSManagedObjectID] {
+//                                let changes: [AnyHashable: Any] = [NSDeletedObjectsKey: objectIDs]
+//                                NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [context])
+//                            }
+//                            context.reset()
+                            
+                            for bid in result {
+                                context.delete(bid)
+                            }
+
+                            if context.hasChanges {
+                                try context.save()
+                            }
+                            DispatchQueue.main.async {
+                                NotificationCenter.default.post(name: NSNotification.Name(ReloadCollectionView), object: nil)
+                                print("Deleted BidPeriod objects using batch delete.")
+                                onRetry()
+                            }
+                        } catch {
+                            print("Failed batch delete: \(error)")
                         }
-                        DispatchQueue.main.async {
-                            NotificationCenter.default.post(name: NSNotification.Name(ReloadCollectionView), object: nil)
-                            print("Deleted BidPeriod objects using batch delete.")
-                            onRetry()
-                        }
-                    } catch {
-                        print("Failed batch delete: \(error)")
                     }
+
                 }),
                 (title: "Cancel", style: .cancel, handler: { _ in
                     self.dismiss(animated: true, completion: nil)
@@ -1483,16 +1496,36 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     func loginActions(){
         print("called login")
         let context = CoreDataManager.shared.persistentContainer.viewContext
-                let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
-                fetchRequest.sortDescriptors = [NSSortDescriptor(key: "created", ascending: false)]
-                do {
-                    // Fetch bid periods and reverse to show newest first
-                    self.bidPeriodList = try context.fetch(fetchRequest)
-                    CBGlobalMethods.shared.selectedBidPeriod = bidPeriodList[0]
-                } catch {
-                    print("Failed to fetch bid periods: \(error)")
-                    self.bidPeriodList = []
-                }
+
+        if let bidID = CBGlobalMethods.shared.selectedBidPeriodID {
+            do {
+                let bid = try context.existingObject(with: bidID) as! BIBidPeriod
+                CBGlobalMethods.shared.selectedBidPeriod = bid
+            } catch {
+                print("Failed to refetch bid by objectID:", error)
+                CBGlobalMethods.shared.selectedBidPeriod = nil
+            }
+        }
+
+//        let context = CoreDataManager.shared.persistentContainer.viewContext
+//                let fetchRequest: NSFetchRequest<BIBidPeriod> = BIBidPeriod.fetchRequest()
+//                fetchRequest.sortDescriptors = [NSSortDescriptor(key: "created", ascending: false)]
+//                do {
+//                    // Fetch bid periods and reverse to show newest first
+//                    self.bidPeriodList = try context.fetch(fetchRequest)
+////                    CBGlobalMethods.shared.selectedBidPeriod = bidPeriodList[0]
+//                } catch {
+//                    print("Failed to fetch bid periods: \(error)")
+//                    self.bidPeriodList = []
+//                }
+//        if let selectedID = CBGlobalMethods.shared.selectedBidPeriodID,
+//           let selectedBid = try? context.existingObject(with: selectedID) as? BIBidPeriod {
+//
+//            CBGlobalMethods.shared.selectedBidPeriod = selectedBid
+//        } else {
+//            // Fallback (only if something went very wrong)
+//            CBGlobalMethods.shared.selectedBidPeriod = self.bidPeriodList.first
+//        }
         let storyboard = UIStoryboard(name: "BidDocument", bundle: nil)
         let docVC = storyboard.instantiateViewController(withIdentifier: "CBBidDocumentController") as! CBBidDocumentController
         guard let homeNav = UIApplication.shared.windows.first?.rootViewController as? UINavigationController else { return }

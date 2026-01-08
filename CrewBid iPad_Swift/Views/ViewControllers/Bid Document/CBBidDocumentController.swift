@@ -69,10 +69,21 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         super.viewDidLoad()
         self.setupLayout()
         updateLocalHerbSwitchUI()
-        self.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
-        self.context = CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!
+        let viewContext = CoreDataManager.shared.persistentContainer.viewContext
+
+        guard
+            let bidPeriodID = CBGlobalMethods.shared.selectedBidPeriodID,
+            let bidPeriod = try? viewContext.existingObject(with: bidPeriodID) as? BIBidPeriod
+        else {
+            fatalError("BidPeriod missing or deleted")
+        }
+
+        self.bidPeriod = bidPeriod
+        self.context = bidPeriod.managedObjectContext
+//        self.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod!
+//        self.context = CBGlobalMethods.shared.selectedBidPeriod!.managedObjectContext!
 //        self.linesManager = BILinesManager.init(managedObjectContext: self.managedObjectContext)
-        self.calendarData = calendarData.initWithBidPeriod(bidPeriod: self.bidPeriod!)!
+        self.calendarData = calendarData.initWithBidPeriod(bidPeriod: bidPeriod)!
         isVacationsRemoved = false
         btnSwaptimizer.tag = 21
         if self.bidPeriod!.isFABid() {
@@ -84,8 +95,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             btnSwaptimizer.isHidden = false
         }
 //        self.seniorityAlert()
-        if bidPeriod?.isHistoric?.boolValue == true {
-            if bidPeriod!.isFABid() {
+        if self.bidPeriod?.isHistoric?.boolValue == true {
+            if self.bidPeriod!.isFABid() {
                 btnSwaptimizer.isHidden = true
                 btnEOM.isHidden = true
                 btnWbidMax.isHidden = true
@@ -765,9 +776,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     func checkLineCountValidation(lineCount: String?, sanityCheckedBidPackage: inout NSDictionary?){
         // Check this number of lines against the bid package number of lines
         // Alert the user if there is a mismatch
-        if !self.bidPeriod!.isHistoric!.boolValue {
-            if (lineCount?.count ?? 0 > 0) {
-                if self.bidPeriod!.lines?.count != Int(lineCount!){
+        if self.bidPeriod?.isHistoric == nil {
+            if let lineCount = lineCount, !lineCount.isEmpty {
+                if self.bidPeriod!.lines?.count != Int(lineCount){
                     // Mismatch, alert the user
                     AlertService.showAlertForTopVC(title: "Bid Package Error", message: "The number of lines in the processed bid package does not match the number of lines in the Cover Letter.  Double check that this is indeed the case.  If so perform the following steps:\n\n  To try again: (1) delete the bid package, (2) close and reopen the app (by double-tapping the iPad's Home button and swiping CrewBid up), (3) downloading the bid package anew.", actions: [(title: "OK", style: .default, handler:{_ in
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
@@ -929,8 +940,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         year = 12 == month ? (year ?? 0) + 1 : year
         
         // Check if the opened bid package is older
-        
-        if month != self.bidPeriod?.month?.intValue{
+        let swaAPIenv = UserDefaults.standard.string(forKey: "SwaApiEnv")
+        if month != self.bidPeriod?.month?.intValue && self.bidPeriod?.isQAdata == nil && swaAPIenv != "QA"{
             isOldBidPackage = true
             AlertService.showAlertForTopVC(title: "Old Bid Package", message: "It looks like you've opened a previous month's bid package.  If you meant to, carry on, if not, download the NEW bid package by tapping the + button on the home screen.", actions: [(title: "OK", style: .default, handler: {_ in
                 //check sanity
@@ -983,10 +994,10 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     func showCoverLetter(){
         self.bidPeriod?.coverLetterDisplayed = true
         if !(self.bidPeriod?.latestNewsDisplayed?.boolValue ?? false) {
-            if self.bidPeriod!.isFABid()/* && self.bidPeriod.isSwaAPI*/{
+            if self.bidPeriod!.isFABid() && self.bidPeriod?.isSwaAPI?.boolValue == true{
                 if !isOldBidPackage{
                     let details = ["isFromFirstTimeOpenBid":true]
-                    NotificationCenter.default.post(name: NSNotification.Name(KCBOpenCoverletter), object: self,userInfo: details)
+                    NotificationCenter.default.post(name: NSNotification.Name("KCBOpenCoverletterForFA"), object: self,userInfo: details)
                 }
             }else{
                 let details = ["isFromFirstTimeOpenBid":true]
@@ -998,16 +1009,24 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     func showSeniority(){
         self.seniorityShowed = true
         if  self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSwaAPI?.boolValue == true{
-            //MARK: needs code
+            let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "CBSeniorityListVC") as! CBSeniorityListVC
+            vc.bidPeriod = self.bidPeriod
+            let transition = CATransition()
+            transition.duration = 0.4
+            transition.type = .fade
+            transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+            self.navigationController?.view.layer.add(transition, forKey: kCATransition)
+            self.navigationController?.pushViewController(vc, animated: false)
+        }else{
+            let vc = UIStoryboard(name: "BidActions", bundle: nil).instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
+            vc.bidPeriod = self.bidPeriod
+            vc.dataTypeSelected = TextFileType.seniorityList
+            vc.isFromFirstTimeOpenBid = true
+            vc.modalPresentationStyle = .fullScreen
+            vc.modalTransitionStyle = .crossDissolve
+            self.present(vc, animated: true, completion: nil)
         }
-        let vc = UIStoryboard(name: "BidActions", bundle: nil).instantiateViewController(withIdentifier: "CBTextViewController") as! CBTextViewController
-        vc.bidPeriod = self.bidPeriod
-        vc.dataTypeSelected = TextFileType.seniorityList
-        vc.isFromFirstTimeOpenBid = true
-//        self.navigationController?.pushViewController(vc, animated: true)
-        vc.modalPresentationStyle = .fullScreen
-        vc.modalTransitionStyle = .crossDissolve
-        self.present(vc, animated: true, completion: nil)
     }
     
     @objc private func didDismissLatestNews() {
@@ -4288,9 +4307,9 @@ extension CBBidDocumentController: QLPreviewControllerDelegate, QLPreviewControl
     func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> any QLPreviewItem {
         
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-
-        let destinationURL = documentsDirectory.appendingPathComponent(self.bidPeriod!.coverLetterFileName!)
-
+        let bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
+        let destinationURL = documentsDirectory.appendingPathComponent(bidPeriod!.coverLetterFileName!)
+        self.bidPeriod?.coverLetterDisplayed = true
         return destinationURL as QLPreviewItem
     }
     func previewController(_ controller: QLPreviewController,
@@ -4300,9 +4319,27 @@ extension CBBidDocumentController: QLPreviewControllerDelegate, QLPreviewControl
     }
     
     func previewControllerDidDismiss(_ controller: QLPreviewController) {
-        if self.bidPeriod?.coverLetterDisplayed?.boolValue == true && self.bidPeriod?.latestNewsDisplayed?.boolValue != true {
-            self.didDismissLatestNews()
+        guard bidPeriod?.coverLetterDisplayed?.boolValue == true,
+              bidPeriod?.latestNewsDisplayed?.boolValue != true else {
+            return
         }
+//            self.didDismissLatestNews()
+            CBGlobalMethods.shared.isLatestNewsDisplayed = true
+            let storyboard = UIStoryboard(name: "HelpMenu", bundle: nil)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                if let rootVC = UIApplication.shared.windows.first?.rootViewController {
+                    let vc = storyboard.instantiateViewController(withIdentifier: "CBHelpMenuController") as! CBHelpMenuController
+                    vc.preferredContentSize = CGSize(width: 764, height: 630)
+                    vc.modalTransitionStyle = .crossDissolve
+                    vc.isModalInPresentation = true
+                    rootVC.present(vc, animated: false, completion: nil)
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.bidPeriod?.latestNewsDisplayed = true
+                NotificationCenter.default.post(name: NSNotification.Name("goToLatestNews"), object: nil)
+            }
+        
     }
 }
 

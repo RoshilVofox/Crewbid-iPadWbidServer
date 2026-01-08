@@ -226,7 +226,7 @@ extension CBCredentialsPageVC: WKNavigationDelegate{
                     self.loginActions()
                 case .failure(let error):
                     print("Bid download failed: \(error.localizedDescription)")
-                    AlertService.showAlertForTopVC(title: "Error", message: "Failed to download bid data: \(error.localizedDescription)")
+//                    AlertService.showAlertForTopVC(title: "Error", message: "Failed to download bid data: \(error.localizedDescription)")
                 }
             }
         }

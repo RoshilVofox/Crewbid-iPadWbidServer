@@ -203,6 +203,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
                         context.delete(obj)
                         do {
                             try context.save()
+                            context.reset()
                         } catch {
                             print("Error", error.localizedDescription)
                         }
