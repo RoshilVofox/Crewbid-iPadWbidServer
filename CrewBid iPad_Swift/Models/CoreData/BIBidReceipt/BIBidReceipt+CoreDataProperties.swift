@@ -629,7 +629,7 @@ extension String {
         return ""
     }
     
-    func addBidreciptSacesForPilot() -> String{
+    func addBidreciptSpacesForPilot() -> String{
         let a = String(format: "%5s", (self as NSString).utf8String!)
         return a
     }

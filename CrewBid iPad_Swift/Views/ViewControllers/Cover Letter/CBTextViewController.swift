@@ -46,7 +46,7 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
         textAppending()
     }
     func textAppending() {
-        textView.font = UIFont(name: "Courier New Bold", size: 15)
+        textView.font = UIFont(name: "Courier", size: 15)
         
         switch dataTypeSelected {
             case .seniorityList:
@@ -134,7 +134,11 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
                 lblTitle.text = "Bid Receipt"
                 titleText = "Bid Receipt"
             if let receiptText = self.bidReceipt?.condensedText{
-                textView.attributedText = self.buildReceiptAttributedText(receiptText: receiptText)
+                if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSwaAPI?.boolValue == true{
+                    textView.text = receiptText
+                }else{
+                    textView.attributedText = self.buildReceiptAttributedText(receiptText: receiptText)
+                }
             }
                 break
         }
@@ -185,6 +189,8 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
                     readFinalLine = true
                     return
                 }
+                
+                
 
                 count += 1
                 let padded = String(format: "%5s", line)

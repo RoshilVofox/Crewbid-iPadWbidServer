@@ -402,7 +402,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     @IBOutlet weak var goBtn: UIButton!
     @IBOutlet weak var webView: WKWebView!
     
-    
+    var submittedEmpName = ""
     let reachability = try! Reachability()
     var isHistoricBid : Bool = false
     var isNewBid:Bool = false
@@ -426,7 +426,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     var awardsViewModel:AwardsViewModel?
     var submissionViewModel:CBBidSubmissionViewModel?
     var formattedEmpNum: String?
-    var defaultEmplyeeNumber:String?
+    var defaultEmployeeNumber:String?
     var optionalEmployees = NSMutableArray()
     var bidListNumbers = NSMutableArray()
     let allbidDownloadViewModel = BIAllDomicileDownloadViewModel()
@@ -963,7 +963,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         bidPeriod?.deleteTextFile(text: bidAwardText, name: BIAwardsTextFileName)
         bidPeriod?.addTextFile(text: bidAwardText, name: BIAwardsTextFileName)
 
-        guard let empNo = self.defaultEmplyeeNumber else {return}
+        guard let empNo = self.defaultEmployeeNumber else {return}
         DispatchQueue.main.async {
             self.view.hideActivityIndicator()
         }
@@ -988,84 +988,114 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             AlertService.showAlertForTopVC(title: "Submission Error", message: "Bid period is not set.")
             return
         }
-            
-        var empNum = self.txtUserID.text ?? ""
+        let isFA = bidPeriod.isFABid() && bidPeriod.isSwaAPI?.boolValue == true
+        var bidderEmpNum = self.txtUserID.text ?? ""
         if bidPeriod.isFABid() && bidPeriod.isSwaAPI?.boolValue == true{
             if let token = KeychainHelper.retrieveTokenFromKeyChain(),
                 let userDetails = JWTDecoder.decode(jwtToken: token),
                 let user = userDetails["cn"] as? String{
-                    empNum = user
+                bidderEmpNum = user
             }
         }
-        submissionViewModel = CBBidSubmissionViewModel(bidPeriod: bidPeriod, userID: empNum, password: self.dataSource.password, defaultEmpNum: self.defaultEmplyeeNumber, optionalEmpNum: self.optionalEmployees, selectedObject: self.selectedObject)
+        if isFA {
+            let defaultEmpNum = self.defaultEmployeeNumber ?? ""
+            if bidderEmpNum.replacingOccurrences(of: "x", with: "").replacingOccurrences(of: "e", with: "") != defaultEmpNum,
+               CBGlobalMethods.shared.certified == false {
 
-        submissionViewModel?.setBidLineNumbers { (success) in
-//            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Submitting Bid...")
-            if success{
-                DispatchQueue.main.async {
-                    self.view.showActivityIndicator(message: "Submitting your bid...")
+                let vc = UIStoryboard(name: "BidActions", bundle: nil).instantiateViewController(   withIdentifier: "CBSubmissionCertifyVC") as! CBSubmissionCertifyVC
+                vc.submittedEmpName = self.submittedEmpName.toCamelCaseName()
+                vc.submittedEmpNum = defaultEmpNum
+                vc.bidderEmpNum = bidderEmpNum
+                vc.delegate = self
+                vc.modalPresentationStyle = .formSheet
+                vc.preferredContentSize = CGSize(width: 600, height: 500)
+
+                if let presentationController = vc.presentationController {
+                    presentationController.delegate = self
                 }
-                self.submissionViewModel?.startBidSubmission(sessionKey: sessionKey) { result in
+
+                self.present(vc, animated: true)
+                return
+            }
+        }
+
+//        if isFA{
+//            DispatchQueue.main.async {
+//                self.view.showActivityIndicator(message: "Submitting your bid...")
+//            }
+//            submissionViewModel = CBBidSubmissionViewModel(
+//                bidPeriod: bidPeriod,
+//                userID: bidderEmpNum,
+//                password: nil, // FA does not use password
+//                defaultEmpNum: self.defaultEmployeeNumber,
+//                optionalEmpNum: self.optionalEmployees,
+//                selectedObject: self.selectedObject
+//            )
+//
+//            submissionViewModel?.startBidSubmission(sessionKey: sessionKey) { result in
+////                self.handleSubmissionResult(result)
+//                DispatchQueue.main.async {
+//                    self.view.hideActivityIndicator()
+//                }
+//                print(result)
+//            }
+//
+//            return
+//        }else{
+            submissionViewModel = CBBidSubmissionViewModel(bidPeriod: bidPeriod, userID: bidderEmpNum, password: self.dataSource.password, defaultEmpNum: self.defaultEmployeeNumber, optionalEmpNum: self.optionalEmployees, selectedObject: self.selectedObject)
+            
+            submissionViewModel?.setBidLineNumbers { (success) in
+                if success{
                     DispatchQueue.main.async {
-                        self.view.hideActivityIndicator()
+                        self.view.showActivityIndicator(message: "Submitting your bid...")
                     }
-                    switch result{
-                    case .success(let submitted):
-                        if submitted{
-                            DispatchQueue.main.async {
-                                self.view.hideActivityIndicator()
-                                
-                                AlertService.showAlertForTopVC(title: "Bid Successfully Submitted", message: "The bid receipt shown is the bid receipt for the last bid submitted.\n\n Bid receipts are available under the Bid Action (top right) menu and in SwaLife in BidInfo.\n\n Caution: You must see your bid receipt. If you DON'T see your bid receipt, then \"Please try to submit again\".", actions: [(title: "OK", style: .default, handler:{_ in
-                                    
-                                    let completion: (Bool) -> Void = { _ in
-                                        DispatchQueue.main.async {
-                                            self.dismissVC()
-                                            NotificationCenter.default.post(name: NSNotification.Name("showBidReceipt"), object: self)
-                                            
-                                        }
-                                    }
-
-                                    if self.bidPeriod?.isFABid() == true {
-                                        self.submissionViewModel?.addSubmittedDataToServerForFA(completion: completion)
-                                    } else {
-                                        self.submissionViewModel?.handleAddSubmittedBid(
-                                            empNumber: self.defaultEmplyeeNumber!,
-                                            completion: completion
-                                        )
-                                    }
-                                    
-                                    
-//                                    // ---- PILOT ----
-//                                    if !self.bidPeriod!.isFABid(){
-//                                        self.submissionViewModel?.handleAddSubmittedBid(empNumber: self.defaultEmplyeeNumber!){success in
-//                                            if success{
-//                                                self.dismissVC()
-//                                            }
-//                                        }
-//                                        return
-//                                    }
-//                                    
-//                                    // ---- FA ----
-//                                    self.submissionViewModel?.addSubmittedDataToServerForFA { success in
-//                                        if !success { self.dismissVC() }
-//                                    }
-                                })])
-                            }
-                        }
-
-                    case .failure(let error):
+                    self.submissionViewModel?.startBidSubmission(sessionKey: sessionKey) { result in
                         DispatchQueue.main.async {
-                            AlertService.showAlertForTopVC(
-                                title: "Submission Failed",
-                                message: error.localizedDescription
-                            )
-                            self.dismissVC()
+                            self.view.hideActivityIndicator()
                         }
+                        switch result{
+                        case .success(let submitted):
+                            if submitted{
+                                DispatchQueue.main.async {
+                                    self.view.hideActivityIndicator()
+                                    
+                                    AlertService.showAlertForTopVC(title: "Bid Successfully Submitted", message: "The bid receipt shown is the bid receipt for the last bid submitted.\n\n Bid receipts are available under the Bid Action (top right) menu and in SwaLife in BidInfo.\n\n Caution: You must see your bid receipt. If you DON'T see your bid receipt, then \"Please try to submit again\".", actions: [(title: "OK", style: .default, handler:{_ in
+                                        
+                                        let completion: (Bool) -> Void = { _ in
+                                            DispatchQueue.main.async {
+                                                self.dismissVC()
+                                                NotificationCenter.default.post(name: NSNotification.Name("showBidReceipt"), object: self)
+                                                
+                                            }
+                                        }
 
+                                        if self.bidPeriod?.isFABid() == true {
+                                            self.submissionViewModel?.addSubmittedDataToServerForFA(completion: completion)
+                                        } else {
+                                            self.submissionViewModel?.handleAddSubmittedBid(
+                                                empNumber: self.defaultEmployeeNumber!,
+                                                completion: completion
+                                            )
+                                        }
+                                    })])
+                                }
+                            }
+
+                        case .failure(let error):
+                            DispatchQueue.main.async {
+                                AlertService.showAlertForTopVC(
+                                    title: "Submission Failed",
+                                    message: error.localizedDescription
+                                )
+                                self.dismissVC()
+                            }
+
+                        }
                     }
                 }
             }
-        }
+//        }
+
     }
     
     
@@ -1564,7 +1594,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             self.shakeTextField(textField: txtPassword)
             return
         }
-        let empNum = self.defaultEmplyeeNumber ?? ""
+        let empNum = self.defaultEmployeeNumber ?? ""
         txtUserID.text = txtUserID.text!.lowercased()
         var txtUserIDString = txtUserID.text!
         if txtUserIDString.hasPrefix("x") || txtUserIDString.hasPrefix("e"){
@@ -1615,7 +1645,11 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     
     func goActionFromSubmitCertifyDelegate() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5){
-            self.submitBidAction()
+            if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSwaAPI?.boolValue == true{
+                self.handleBidSubmission()
+            }else{
+                self.submitBidAction()
+            }
         }
     }
     
@@ -1744,3 +1778,12 @@ extension CBCredentialsPageVC: UITextFieldDelegate {
     
 }
 
+extension String {
+    func toCamelCaseName() -> String {
+        return self
+            .lowercased()
+            .split(separator: " ")
+            .map { $0.capitalized }
+            .joined(separator: " ")
+    }
+}

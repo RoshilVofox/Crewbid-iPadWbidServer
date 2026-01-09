@@ -319,7 +319,7 @@ class JobShareViewController: BaseViewController {
         vc.type = .submitBid
         vc.bidPeriod = bidPeriod
         vc.selectedObject = self.selectedObject
-        vc.defaultEmplyeeNumber = self.txtJobShare1.text
+        vc.defaultEmployeeNumber = self.txtJobShare1.text
         vc.preferredContentSize = CGSize(width: 600, height: 500)
         navigationController?.pushViewController(vc, animated: true)
     }
