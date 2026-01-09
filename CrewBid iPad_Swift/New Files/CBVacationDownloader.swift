@@ -3563,11 +3563,28 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         
         var tripDates: [String] = []
         tripDates.reserveCapacity(4)
+        var legIndex = 0
+        
         for dayInfo in trip.info!.orderedDays() {
             for lengInfo in dayInfo.orderedLegs {
                 dateComps.minute = lengInfo.departMinutes?.intValue
                 let legStartDate = calendar.date(from: dateComps)!
-                tripDates.append(df.string(from: legStartDate))
+                
+                let legDateOnly = df.string(from: legStartDate)
+                let startDateOnly = df.string(from: trip.startDate!)
+                
+                if legIndex == 0 {
+                    if legDateOnly != startDateOnly {
+                        tripDates.append(startDateOnly)
+                    }
+                    else {
+                        tripDates.append(legDateOnly)
+                    }
+                }
+                else {
+                    tripDates.append(legDateOnly)
+                }
+                legIndex += 1
             }
         }
         let uniqueDatesSet = NSOrderedSet(array: tripDates)

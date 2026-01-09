@@ -3813,7 +3813,12 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 
     func removeCurrentVacation() {
         DispatchQueue.main.async {
-            self.view.showActivityIndicator(message: "Removing Vacation...")
+            if self.bidPeriod?.containsVacay?.boolValue == true {
+                self.view.showActivityIndicator(message: "Removing Vacation...")
+            }
+            else {
+                self.view.showActivityIndicator(message: "Processing...")
+            }
             self.bidPeriod!.isVacationRemoved = NSNumber(value: true)
             let vDL = CBVacationDownloader()
             vDL.bidPeriod = self.bidPeriod
