@@ -157,7 +157,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
             let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
             vc.type = .submitBid
             vc.bidPeriod = self.bidPeriod
-            vc.defaultEmplyeeNumber = self.empID
+            vc.defaultEmployeeNumber = self.empID
             vc.optionalEmployees = self.optionalEmployees
             vc.preferredContentSize = CGSize(width: 600, height: 500)
             self.navigationController?.pushViewController(vc, animated: true)

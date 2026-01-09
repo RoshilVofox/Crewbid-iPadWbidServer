@@ -41,7 +41,7 @@ class BISwaBidDataDownload{
         let env = UserDefaults.standard.string(forKey: "SwaApiEnv")
         var baseURL = ""
         if env == "Dev"{
-            baseURL = "https://itest.service.east.0.crewbid.dev.swalife.com/"
+            baseURL = "https://itest.service.east.0.crewbid.dev.swalife.com"
         }else if env == "QA"{
             baseURL = "https://service.east.0.crewbid.qa.swalife.com/itest"
         }else{

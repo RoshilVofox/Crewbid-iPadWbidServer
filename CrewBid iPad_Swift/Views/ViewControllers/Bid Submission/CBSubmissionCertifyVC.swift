@@ -18,11 +18,18 @@ class CBSubmissionCertifyVC: UIViewController {
     var delegate:submissionGoActiondelegate? = nil
     override func viewDidLoad() {
         super.viewDidLoad()
-        if CBGlobalMethods.shared.certifiedLastName == "" || CBGlobalMethods.shared.certifiedFirstName == ""{
-            self.firstLabel.text = "We have detected that you (\(self.bidderEmpNum)) are attempting to submit a bid for employee \(self.submittedEmpNum)."
-        }else{
-            self.firstLabel.text = "We have detected that you (\(self.bidderEmpNum)) are attempting to submit a bid for employee \(self.submittedEmpNum) (\(CBGlobalMethods.shared.certifiedFirstName) \(CBGlobalMethods.shared.certifiedLastName))."
+        
+        var infoText = "We have detected that you (\(self.bidderEmpNum)) are attempting to submit a bid for employee \(self.submittedEmpNum)."
+        var certifyText = "I certify that I have permission from \(self.submittedEmpNum) to submit a bid for them."
+        
+        if self.submittedEmpName != "" && self.submittedEmpName != "(null)" && self.submittedEmpName != "(null) (null)" {
+            infoText = "We have detected that you (\(self.bidderEmpNum)) are attempting to submit a bid for employee \(self.submittedEmpNum) (\(self.submittedEmpName))."
+            certifyText = "I certify that I have permission from \(self.submittedEmpNum) (\(self.submittedEmpName)) to submit a bid for them."
         }
+        
+        self.firstLabel.text = infoText
+        self.certifyLabel.text = certifyText
+    
         let text = "If this is correct, then check the CERTIFY CHECK BOX below, otherwise if this is a mistake, then click on CANCEL."
         let attributedText = NSMutableAttributedString(string: text)
         
@@ -43,12 +50,12 @@ class CBSubmissionCertifyVC: UIViewController {
         
         self.secondLabel.attributedText = attributedText
         self.imgvw.image = UIImage(named: "unchecked")
-        if (CBGlobalMethods.shared.certifiedLastName == "" || CBGlobalMethods.shared.certifiedFirstName == ""){
-            self.certifyLabel.text = "I certify that I have permission from \(self.submittedEmpNum) to submit a bid for them."
-        }
-        else{
-            self.certifyLabel.text = "I certify that I have permission from \(self.submittedEmpNum) (\(CBGlobalMethods.shared.certifiedFirstName) \(CBGlobalMethods.shared.certifiedLastName)) to submit a bid for them."
-        }
+//        if (CBGlobalMethods.shared.certifiedLastName == "" || CBGlobalMethods.shared.certifiedFirstName == ""){
+//            self.certifyLabel.text = "I certify that I have permission from \(self.submittedEmpNum) to submit a bid for them."
+//        }
+//        else{
+//            self.certifyLabel.text = "I certify that I have permission from \(self.submittedEmpNum) (\(CBGlobalMethods.shared.certifiedFirstName) \(CBGlobalMethods.shared.certifiedLastName)) to submit a bid for them."
+//        }
         certifyLabel.textColor = UIColor.red
 //        self.submitBtn.backgroundColor = CBColor.customGreenColor
         self.submitBtn.backgroundColor = .lightGrey

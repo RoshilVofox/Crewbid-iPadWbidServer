@@ -357,13 +357,25 @@ class CBDocumentsCollectionViewController: BaseViewController {
         guard let error = notification.object as? Error else { return }
 
         let errMsg = error.localizedDescription.uppercased()
-
+        let nsError = error as NSError
+        let is404 = (nsError.code == 404)
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            AlertService.showDBAlert(
-                title: "Bid Download Failed",
-                attributedMessage: AlertService.makeBidErrorAttributedMessage(errMsg),
-                from: self
-            )
+            if is404 {
+                // ✅ SIMPLE ALERT (OK only)
+                AlertService.showDBAlert(
+                    title: "Bid Download Error",
+                    message: errMsg,
+                    from: self
+                )
+            } else {
+                // 🔁 RETRY ALERT
+                AlertService.showDBAlert(
+                    title: "Bid Download Failed",
+                    attributedMessage: AlertService.makeBidErrorAttributedMessage(errMsg),
+                    from: self
+                )
+            }
         }
     }
     

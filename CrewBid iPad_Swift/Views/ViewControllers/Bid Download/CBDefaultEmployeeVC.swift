@@ -31,6 +31,7 @@ class CBDefaultEmployeeVC: BaseViewController {
     let dataSource = GlobalBidInfo.shared
     var bidPeriod: BIBidPeriod?
     var isJobShareAlertShowing:Bool = false
+    var empName = ""
     override func viewDidLoad() {
         super.viewDidLoad()
 //        bidPeriod = BIBidPeriod(context: CoreDataManager.shared.managedObjectContext)
@@ -142,6 +143,7 @@ class CBDefaultEmployeeVC: BaseViewController {
     }
     func handleAuthResult(_ result: AuthResult) {
         let msg = result.message ?? ""
+        self.empName = result.empName
         guard let empID = textEmpNum.text else {return}
         if msg == "Invalid Account" || msg == "For security purposes, all users need a CrewBid or WBidMax account.  Go to www.crewbidmax.com and create an account" {
             showAlert(message: "User \(empID) does not have a CrewBid account. Go to www.crewbid.com to create the account.")
@@ -383,6 +385,7 @@ class CBDefaultEmployeeVC: BaseViewController {
     func gotoConfirmEmployeeView(){
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBDefaultEmployeeVC") as! CBDefaultEmployeeVC
+        vc.empName = self.empName
         vc.type = .confirmEmployeeNumber
         vc.isEmpIDVerified = true
         vc.bidPeriod = self.bidPeriod
@@ -421,9 +424,10 @@ class CBDefaultEmployeeVC: BaseViewController {
     func loginView(){
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
+        vc.submittedEmpName = self.empName
         vc.type = .submitBid
         vc.bidPeriod = self.bidPeriod
-        vc.defaultEmplyeeNumber = self.textEmpNum.text!
+        vc.defaultEmployeeNumber = self.textEmpNum.text!
         vc.preferredContentSize = CGSize(width: 600, height: 500)
         self.navigationController?.pushViewController(vc, animated: true)
     }
@@ -458,7 +462,7 @@ class CBDefaultEmployeeVC: BaseViewController {
             vc.bidPeriod = self.bidPeriod!
             self.navigationController?.pushViewController(vc, animated: true)
         }),
-        (title:"I am NOT Job Share bidding", style: .cancel , handler: {_ in
+        (title:"I am NOT Job Share bidding", style: .default , handler: {_ in
             self.loginView()
         })])
     }

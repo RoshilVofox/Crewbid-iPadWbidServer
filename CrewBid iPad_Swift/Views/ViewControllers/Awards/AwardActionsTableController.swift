@@ -73,7 +73,7 @@ class AwardActionsTableController: BaseViewController, KUIPopOverUsable, UIPrint
                     readOptionalEmployeeNumbers = true
                 }  else {
                     count = count + 1
-                    let a = line.addBidreciptSacesForPilot()
+                    let a = line.addBidreciptSpacesForPilot()
                     var temp = NSAttributedString(string: a, attributes: attrClear)
                     if self.fetchLineType(lineNumber: Int(line) ?? 0) == .reserve {
                         temp = NSAttributedString(string: a, attributes: attrReserve)
