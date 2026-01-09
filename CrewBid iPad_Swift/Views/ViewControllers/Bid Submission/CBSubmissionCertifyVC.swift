@@ -16,6 +16,7 @@ class CBSubmissionCertifyVC: UIViewController {
     var submittedEmpNum = ""
     var submittedEmpName = ""
     var delegate:submissionGoActiondelegate? = nil
+    var delegate1:submissionCancelActiondelegate? = nil
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -83,6 +84,7 @@ class CBSubmissionCertifyVC: UIViewController {
     
     @IBAction func btnCancelAction(_ sender: Any) {
         CBGlobalMethods.shared.certified = false
+        delegate1?.cancelActionFromSubmitCertifyDelegate()
         self.dismiss(animated: true)
     }
     

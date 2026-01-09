@@ -21,7 +21,7 @@ enum Errors: Error {
     case emptyData
     case networkError
     case other(Error)
-    case httpStatus(Int)
+    case httpStatus(Int, Data?)
 }
 
 enum HTTPMethod: String {
@@ -61,7 +61,24 @@ extension Errors {
             return "Failed to encode the request"
         case .networkError:
             return "A network error occurred. Please check your connection and try again."
-        case .httpStatus(let code):
+        case .httpStatus(let code, let data):
+
+            // If server sent a message, show it AS-IS
+            if let data = data,
+               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+
+                let message = [
+                    "Error \(code): \(json["error"] ?? "Error")",
+                    json["message"] as? String,
+                    json["path"].map { "API path: \($0)" }
+                ]
+                .compactMap { $0 }
+                .joined(separator: "\n\n")
+
+                return message
+            }
+
+            // Fallback if no data
             switch code {
             case 400: return "Bad Request (400)."
             case 401: return "Unauthorized (401)."
@@ -79,6 +96,37 @@ extension Errors {
 extension Errors: LocalizedError {
     var errorDescription: String? {
         return self.localizedDescriptionString
+    }
+}
+
+extension Errors {
+    var rawServerMessage: String {
+        switch self {
+        case .httpStatus(let code, let data):
+            if let data = data {
+                // Try JSON first
+                if let json = try? JSONSerialization.jsonObject(with: data),
+                   let dict = json as? [String: Any] {
+
+                    // Join everything into readable text
+                    return dict
+                        .map { "\($0.key): \($0.value)" }
+                        .joined(separator: "\n")
+                }
+
+                // Fallback: plain text
+                if let text = String(data: data, encoding: .utf8) {
+                    return text
+                }
+            }
+            return "Error \(code)"
+
+        case .other(let error):
+            return error.localizedDescription
+
+        default:
+            return localizedDescription
+        }
     }
 }
 
@@ -130,12 +178,38 @@ class APIService {
                 return
             }
             
-            if !allowNon200Status {
-                // Old behavior: Only accept 200–299
-                guard 200..<300 ~= httpResponse.statusCode else {
-                    completion(.failure(.httpStatus(httpResponse.statusCode)))
+//            if !allowNon200Status {
+//                // Old behavior: Only accept 200–299
+//                guard 200..<300 ~= httpResponse.statusCode else {
+//                    completion(.failure(.httpStatus(httpResponse.statusCode, data)))
+//                    return
+//                }
+//            }
+            if !allowNon200Status, !(200..<300).contains(httpResponse.statusCode) {
+
+                if let data = data,
+                   let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+
+                    let message = [
+                        "Error \(httpResponse.statusCode): \(json["error"] ?? "Error")",
+                        json["message"] as? String,
+                        "API path: \(json["path"] ?? "")"
+                    ]
+                    .compactMap { $0 }
+                    .joined(separator: "\n\n")
+
+                    let nsError = NSError(
+                        domain: "SWA.API",
+                        code: httpResponse.statusCode,
+                        userInfo: [NSLocalizedDescriptionKey: message]
+                    )
+
+                    completion(.failure(.other(nsError)))
                     return
                 }
+
+                completion(.failure(.httpStatus(httpResponse.statusCode, data)))
+                return
             }
 
             guard let data = data else {
