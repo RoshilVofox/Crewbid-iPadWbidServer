@@ -158,7 +158,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
                                       { action -> Void in
                 // Iterate over selected rows and delete corresponding bid data
                 self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Deleting...")
-                DispatchQueue.main.async{
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3){
     //                self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "deleting...")
                     for index in self.selectedRows {
                         let obj = self.bidPeriodList[index]
@@ -203,15 +203,15 @@ class CBDocumentsCollectionViewController: BaseViewController {
                         context.delete(obj)
                         do {
                             try context.save()
-                            context.reset()
+//                            context.reset()
                         } catch {
                             print("Error", error.localizedDescription)
                         }
-                        self.selectedRows.removeAll()
                         //                self.refreshBidPeriods()
                     }
                     
                     if self.bidDownloadButton.tag == 2 {
+                        self.selectedRows.removeAll()
                         let plusImage = UIImage(named: "plus")
                         self.bidDownloadButton.setBackgroundImage(nil, for: .normal)
                         self.bidDownloadButton.setBackgroundImage(plusImage, for: .normal)
