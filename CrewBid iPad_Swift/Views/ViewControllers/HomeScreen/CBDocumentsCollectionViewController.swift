@@ -365,14 +365,14 @@ class CBDocumentsCollectionViewController: BaseViewController {
                 // ✅ SIMPLE ALERT (OK only)
                 AlertService.showDBAlert(
                     title: "Bid Download Error",
-                    message: errMsg,
+                    message: errMsg, retryFlow: .bidDownload,
                     from: self
                 )
             } else {
                 // 🔁 RETRY ALERT
                 AlertService.showDBAlert(
                     title: "Bid Download Failed",
-                    attributedMessage: AlertService.makeBidErrorAttributedMessage(errMsg),
+                    attributedMessage: AlertService.makeBidErrorAttributedMessage(errMsg), retryFlow: .bidDownload,
                     from: self
                 )
             }

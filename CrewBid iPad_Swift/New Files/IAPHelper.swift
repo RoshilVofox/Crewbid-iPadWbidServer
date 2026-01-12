@@ -4,7 +4,7 @@
 //
 //  Created by Fayaz on 02/09/25.
 //
-
+/*
 import Foundation
 import StoreKit
 
@@ -1649,4 +1649,4 @@ class IAPHelper: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelega
         offlineNewSKPaymentStatusLog(with: dict as! [String : Any])
         newSKPaymentStatusLog(dict as! [String : Any])
     }
-}
+ }*/

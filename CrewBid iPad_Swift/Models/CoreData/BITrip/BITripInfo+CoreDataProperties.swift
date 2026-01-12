@@ -97,21 +97,32 @@ extension BITripInfo : Identifiable {
     @objc public func orderedDays() -> [BIDayInfo] {
         // Create an array to store days and populate it from the 'days' set
 
-        let arrDays : NSMutableArray = NSMutableArray()
-        for days in self.days!.allObjects {
-            arrDays.add(days)
-        }
-//         Sort the 'orderedDays' array based on the 'firstLeg' of each day
+//        let arrDays : NSMutableArray = NSMutableArray()
+//        for days in self.days!.allObjects {
+//            arrDays.add(days)
+//        }
+////         Sort the 'orderedDays' array based on the 'firstLeg' of each day
+//
+//        let orderedDays: [BIDayInfo]? = (arrDays.sortedArray(options: NSSortOptions(rawValue: 0), usingComparator: {(_ day1: Any, _ day2: Any) -> ComparisonResult in
+//            let value1  = (day1 as AnyObject).value(forKey: "firstLeg") as! BILegInfo
+//            let value2  = (day2 as AnyObject).value(forKey: "firstLeg")  as! BILegInfo
+//            let value3: NSNumber  = value1.departMinutes!
+//            let value4:NSNumber = value2.departMinutes!
+//            let result: ComparisonResult? = value3.compare(value4)
+//            return result!
+//        }) as! [BIDayInfo])
+//        return orderedDays!
+        guard let daysSet = self.days as? Set<BIDayInfo> else { return [] }
 
-        let orderedDays: [BIDayInfo]? = (arrDays.sortedArray(options: NSSortOptions(rawValue: 0), usingComparator: {(_ day1: Any, _ day2: Any) -> ComparisonResult in
-            let value1  = (day1 as AnyObject).value(forKey: "firstLeg") as! BILegInfo
-            let value2  = (day2 as AnyObject).value(forKey: "firstLeg")  as! BILegInfo
-            let value3: NSNumber  = value1.departMinutes!
-            let value4:NSNumber = value2.departMinutes!
-            let result: ComparisonResult? = value3.compare(value4)
-            return result!
-        }) as! [BIDayInfo])
-        return orderedDays!
+        return daysSet.sorted {
+            guard
+                let m1 = $0.firstLeg?.departMinutes,
+                let m2 = $1.firstLeg?.departMinutes
+            else {
+                return false
+            }
+            return m1.compare(m2) == .orderedAscending
+        }
     }
     
     var isPilotReserve: Bool {

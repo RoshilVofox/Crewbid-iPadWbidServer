@@ -186,7 +186,7 @@ extension CBCredentialsPageVC: WKNavigationDelegate{
         } else {
             let attrString = AlertService.getAttributedMessage(from: error.localizedDescription, highlight: "Bid Download Error")
             DispatchQueue.main.async {
-                AlertService.showDBAlert(title: "Bid Download Error!", attributedMessage: attrString, from: self)
+                AlertService.showDBAlert(title: "Bid Download Error!", attributedMessage: attrString, retryFlow: .bidDownload, from: self)
             }
         }
     }

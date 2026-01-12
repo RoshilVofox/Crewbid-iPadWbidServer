@@ -21,7 +21,7 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
         super.viewDidLoad()
         self.menuTitle.text = String(format: "Help Menu (CrewBid Version %@)", CBUtils.AppVersion())
         setupUI()
-        NotificationCenter.default.addObserver(self, selector: #selector(self.openSubScriptionPage), name: Notification.Name(openSubscriptionPageNotification), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(self.openSubScriptionPage), name: Notification.Name(openSubscriptionPageNotification), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.openLatestNews), name: Notification.Name("goToLatestNews"), object: nil)
     }
     
@@ -31,12 +31,12 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
         vc.isFromBidVC = true
         self.navigationController?.pushViewController(vc, animated: true)
     }
-    
+    /*
     @objc func openSubScriptionPage(){
         let storyboard : UIStoryboard = UIStoryboard(name: "HelpMenu", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBSubscriptionInfoController") as! CBSubscriptionInfoController
         self.navigationController?.pushViewController(vc, animated: true)
-    }
+    }*/
     
     func setupUI() {
         collectionView.dataSource = self

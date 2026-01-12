@@ -56,7 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     var sc:ServiceConnection?
     var lastDownloadedBidInfo: NSMutableDictionary?
     let sendMail = CBSendMail()
-    var observer:IAPHelper?
+//    var observer:IAPHelper?
     
     func checkUpdate(){
         if self.connectedToInternet(){
@@ -127,14 +127,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
         if !transactions.isEmpty{
             let dict = transactions.last
             let productIdentifiers = Set([dict?["transactionIdentifier"] as? String].compactMap { $0 })
-            observer = IAPHelper(productIdentifiers: productIdentifiers)
-            observer?.checkReceiptWithICloud()
+//            observer = IAPHelper(productIdentifiers: productIdentifiers)
+//            observer?.checkReceiptWithICloud()
             let appRecPath = Bundle.main.appStoreReceiptURL?.path
             let positionFromIcloud = dict?["position"] as? Int ?? 0
             let userType = (positionFromIcloud == 3) ? "FA" : "CT"
             let userIdFromIcloud = (dict?["userId"] as? NSNumber)?.stringValue
             let userId = self.ObjUserAccount?.employeeNumber
-            
+            /*
             if userIdFromIcloud == userId {
                 let newDate = self.getNewPayDate(iCloudDate: dict?["transactionDate"] as! Date, currentDate: Date(), userType: userType)
                 if newDate?.compare(Date()) == .orderedDescending{
@@ -146,7 +146,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
                 }else{
                     observer?.removeTransactionIcloud(withTransactionIdentifier: dict?["transactionID"] as! String)
                 }
-            }
+            }*/
         }
         if UserDefaults.standard.object(forKey: "FirstRun") == nil{
              if let account = KeychainHelper.retrieveUsername(forService: "SaveLoginDetails") {
@@ -164,7 +164,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
             UserDefaults.standard.set(true, forKey: "firstLaunchWithiCloudAvailable")
         }
         
-        NotificationCenter.default.addObserver(self, selector: #selector(ubiquitousKeyValueStoreDidChange), name: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: NSUbiquitousKeyValueStore.default)
+//        NotificationCenter.default.addObserver(self, selector: #selector(ubiquitousKeyValueStoreDidChange), name: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: NSUbiquitousKeyValueStore.default)
         NotificationCenter.default.addObserver(self, selector: #selector(iCloudAccountAvailabilityChanged), name: .NSUbiquityIdentityDidChange, object: nil)
         NSUbiquitousKeyValueStore.default.synchronize()
         
@@ -310,7 +310,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     
     @objc func iCloudAccountAvailabilityChanged(){
     }
-    
+    /*
     @objc func ubiquitousKeyValueStoreDidChange(_ notification:Notification){
         let userInfo1 = notification.userInfo!
         guard let reasonForChange = userInfo1[NSUbiquitousKeyValueStoreChangeReasonKey] as? NSNumber else {
@@ -364,7 +364,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
                 }
             }
         }
-    }
+    }*/
     
     
     func getApplicationLoadData() {
@@ -467,12 +467,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate,SimplePingDelegate, CLLoca
     @objc func handleAppEnteringForeground(){
         let objEvent = CBOfflineEvents()
         objEvent.sendOfflineData()
-        objEvent.addFromOfflineNewSKPaymentStatusLog()
+//        objEvent.addFromOfflineNewSKPaymentStatusLog()
 //        NotificationCenter.default.post(name: Notification.Name("checkSubscription"), object: nil)
 //        NotificationCenter.default.post(name: Notification.Name("GetApplicationLoadDatas"), object: nil)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            objEvent.updateOfflinePayment()
-        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//            objEvent.updateOfflinePayment()
+//        }
     }
   
     func testInternetConnection(){

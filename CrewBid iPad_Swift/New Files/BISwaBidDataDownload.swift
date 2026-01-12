@@ -79,7 +79,7 @@ class BISwaBidDataDownload{
             var packetID = self.packetID
             let lastChar = packetID.substring(to: packetID.length - 1)
             packetID = lastChar.appending("1")
-            urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/reserve-awards?page=%%ld&size=\(self.pageSize)"
+            urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/reserve-awards?page=%ld&size=\(self.pageSize)"
             keyPath = "IFLineBaseAuctionReserveAwards"
         }
         
@@ -460,7 +460,7 @@ class BISwaBidDataDownload{
     }
     
     func getAwards(completion: @escaping (Result<[String:Any],Error>) -> Void){
-        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/line-awards?page=%%ld&size=\(self.pageSize)"
+        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/line-awards?page=%ld&size=\(self.pageSize)"
         
         self.fetchPaginatedData(urlTemplate: urlTemplate, keyPath:"IFLineBaseAuctionAwards"){ result in
             switch result{
@@ -474,7 +474,7 @@ class BISwaBidDataDownload{
     
     
     func getMrtAwards(completion: @escaping (Result<[String:Any],Error>) -> Void){
-        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/mrt-awards?page=%%ld&size=\(self.pageSize)"
+        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/mrt-awards?page=%ld&size=\(self.pageSize)"
         
         self.fetchPaginatedData(urlTemplate: urlTemplate, keyPath:"IFLineBaseAuctionAwards"){ result in
             switch result{
@@ -487,7 +487,7 @@ class BISwaBidDataDownload{
     }
     
     func getJobShareAwards(completion: @escaping (Result<[String:Any],Error>) -> Void){
-        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/jobshare-awards?page=%%ld&size=\(self.pageSize)"
+        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/jobshare-awards?page=%ld&size=\(self.pageSize)"
         
         self.fetchPaginatedData(urlTemplate: urlTemplate, keyPath:"IFLineBaseAuctionAwards"){ result in
             switch result{
@@ -500,7 +500,7 @@ class BISwaBidDataDownload{
     }
     
     func getReserveDataForAward(completion: @escaping (Result<[String:Any],Error>) -> Void){
-        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/reserve-awards?page=%%ld&size=\(self.pageSize)"
+        let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/reserve-awards?page=%ld&size=\(self.pageSize)"
         
         self.fetchPaginatedData(urlTemplate: urlTemplate, keyPath:"IFLineBaseAuctionAwards"){ result in
             switch result{
@@ -511,6 +511,7 @@ class BISwaBidDataDownload{
             }
         }
     }
+    
     
     
     func fetchPaginatedData(

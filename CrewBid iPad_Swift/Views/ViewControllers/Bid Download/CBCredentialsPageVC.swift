@@ -164,7 +164,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
                 if value != 0 {
                     dicWbidResponce = NSMutableDictionary(dictionary: userArray.first!, copyItems: true) as! [String : Any]
                     localAccountCreation()
-                    updateCBExpirationDate()
+//                    updateCBExpirationDate()
                     
                     app.ObjUserAccount?.captureUserEmail(app.ObjUserAccount?.email)
                     AlertService.showAlertForTopVC(title: "Great!", message: "We found a previous account from CrewBid or WbidMax.\nWe've imported those settings.\nPlease verify the settings and change as needed", actions: [(title: "OK", style: .default, handler:{_ in
@@ -260,7 +260,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
         }
     }
     
-    
+    /*
     func updateCBExpirationDate(){
         var dicMailInfo:[String: Any] = [:]
         dicMailInfo["EmpNum"] = app.ObjUserAccount?.employeeNumber
@@ -310,7 +310,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
         }
         dataTask.resume()
         
-    }
+    }*/
     
     
     func localAccountCreation(){
@@ -751,13 +751,13 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
                 str1.append(str3)
                 str1.append(str4)
                 str1.append(str5)
-                AlertService.showDBAlert(title: "Oops!", attributedMessage: str1, from: self)
+                AlertService.showDBAlert(title: "Oops!", attributedMessage: str1, retryFlow: .bidDownload, from: self)
                 
             }else if errorString.contains("timed out"){
                 if self.app.objNetworkType == .free || self.app.objNetworkType == .paid{
-                    AlertService.showDBAlert(title: "Darn it!", attributedMessage: NSAttributedString(string: "The company 3rd Party server is not responding.\nThis is not uncommon.\nYour only cources of action are to wait a while and try again, or try another internet connection.\nSometimes the internet signal on the plane is just too weak"), from: self)
+                    AlertService.showDBAlert(title: "Darn it!", attributedMessage: NSAttributedString(string: "The company 3rd Party server is not responding.\nThis is not uncommon.\nYour only cources of action are to wait a while and try again, or try another internet connection.\nSometimes the internet signal on the plane is just too weak"), retryFlow: .bidDownload, from: self)
                 }else if self.app.objNetworkType == .ground{
-                    AlertService.showDBAlert(title: "Darn it!", attributedMessage: NSAttributedString(string: "The company 3rd Party server is not responding.\nThis is not uncommon.\nYour only cources of action are to wait a while and try again, or try using a cellular internet connection.\n"), from: self)
+                    AlertService.showDBAlert(title: "Darn it!", attributedMessage: NSAttributedString(string: "The company 3rd Party server is not responding.\nThis is not uncommon.\nYour only cources of action are to wait a while and try again, or try using a cellular internet connection.\n"), retryFlow: .bidDownload, from: self)
                 }
             }
         }
@@ -1058,7 +1058,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
         let str2 = AlertService.getAttributedMessage(from: "\n\nPlease make sure that bid awards are available at this time.")
         str1.append(str2)
         DispatchQueue.main.async{
-            AlertService.showDBAlert(title: "Awards Retrieval Failed",attributedMessage: str1, from: self)
+            AlertService.showDBAlert(title: "Awards Retrieval Failed",attributedMessage: str1,retryFlow: .bidDownload ,from: self)
         }
     }
     
@@ -1142,23 +1142,45 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
 
                         case .failure(let error):
                             DispatchQueue.main.async {
-                                AlertService.showAlertForTopVC(title: "Bid Submission Failed",message: error.localizedDescription,actions: [
-                                    (title: "OK", style: .default, handler: { _ in
-                                        self.dismissVC()
-                                    })
-                                ])
+                                let paragraphStyle = NSMutableParagraphStyle()
+                                paragraphStyle.alignment = .center
+                                paragraphStyle.lineSpacing = 6
+                                
+                                let attrs: [NSAttributedString.Key: Any] = [
+                                    .font: UIFont.systemFont(ofSize: 17, weight: .regular),
+                                    .foregroundColor: UIColor.label,
+                                    .paragraphStyle: paragraphStyle
+                                ]
+                                
+                                let attributedError = NSAttributedString(
+                                    string: error.localizedDescription,
+                                    attributes: attrs
+                                )
+                                self.dismissVC(animated: false){
+                                    AlertService.showDBAlertForTopVC(
+                                        title: "Bid Submission Failed",
+                                        attributedMessage: attributedError,
+                                        retryFlow: .bidSubmission,
+                                        empName: self.submittedEmpName,
+                                        bidPeriod: self.bidPeriod
+                                    )
+                                }
                             }
-
                         }
                     }
                 }
             }
-//        }
-
     }
     
     
-    
+    func dismissVC(
+        animated: Bool = true,
+        completion: (() -> Void)? = nil
+    ) {
+        DispatchQueue.main.async {
+            self.dismiss(animated: animated, completion: completion)
+        }
+    }
 
     
     private func checkEarlyBidding(){
@@ -1197,8 +1219,10 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
     }
     
     @objc func dismissVC() {
-        DispatchQueue.main.async {
-            self.dismiss(animated: true, completion: nil)
+        if let presentingVC = self.presentingViewController {
+            presentingVC.dismiss(animated: false)
+        } else {
+            self.dismiss(animated: false)
         }
     }
     
@@ -1573,12 +1597,12 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
         }
         return attributedString
     }
-    func DBAlert(title:String, message:NSAttributedString){
-        let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBAlertVC") as! CBAlertVC
-        vc.alertTitle = title
-        vc.attributedMessage = message
-        
-    }
+//    func DBAlert(title:String, message:NSAttributedString){
+//        let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBAlertVC") as! CBAlertVC
+//        vc.alertTitle = title
+//        vc.attributedMessage = message
+//        
+//    }
     
 //    MARK: login action
     func loginActions(){

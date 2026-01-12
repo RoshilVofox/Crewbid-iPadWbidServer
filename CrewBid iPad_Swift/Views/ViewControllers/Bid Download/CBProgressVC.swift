@@ -72,7 +72,7 @@ class CBProgressVC: UIViewController {
         DispatchQueue.main.async {
             self.dismiss(animated: true){
                 if let topVC = AlertService.currentTopViewController() {
-                    AlertService.showDBAlert(title: "Error", message: error.localizedDescription, from: topVC)
+                    AlertService.showDBAlert(title: "Error", message: error.localizedDescription, retryFlow: .bidDownload, from: topVC)
                 }
             }
         }
