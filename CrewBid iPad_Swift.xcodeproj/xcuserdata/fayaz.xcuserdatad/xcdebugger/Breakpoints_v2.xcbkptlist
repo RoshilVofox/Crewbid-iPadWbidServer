@@ -4354,8 +4354,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "135"
-            endingLineNumber = "135"
+            startingLineNumber = "193"
+            endingLineNumber = "193"
             landmarkName = "startBidSubmission(sessionKey:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -10130,8 +10130,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Submission/CBOptionalEmployeesPageViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "426"
-            endingLineNumber = "426"
+            startingLineNumber = "427"
+            endingLineNumber = "427"
             landmarkName = "downloadBuddies(userID:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -10146,8 +10146,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Submission/CBOptionalEmployeesPageViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "372"
-            endingLineNumber = "372"
+            startingLineNumber = "373"
+            endingLineNumber = "373"
             landmarkName = "downloadBuddies(userID:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -10162,8 +10162,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Submission/CBOptionalEmployeesPageViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "384"
-            endingLineNumber = "384"
+            startingLineNumber = "385"
+            endingLineNumber = "385"
             landmarkName = "downloadBuddies(userID:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -10178,8 +10178,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Submission/CBOptionalEmployeesPageViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "382"
-            endingLineNumber = "382"
+            startingLineNumber = "383"
+            endingLineNumber = "383"
             landmarkName = "downloadBuddies(userID:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -10370,8 +10370,8 @@
             filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Submission/CBOptionalEmployeesPageViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "413"
-            endingLineNumber = "413"
+            startingLineNumber = "414"
+            endingLineNumber = "414"
             landmarkName = "downloadBuddies(userID:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -10450,8 +10450,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "602"
-            endingLineNumber = "602"
+            startingLineNumber = "660"
+            endingLineNumber = "660"
             landmarkName = "handleBidSubmissionForFA(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -10460,14 +10460,14 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "9D3BE90F-15C0-4F3D-9D62-94690E434953"
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "46"
-            endingLineNumber = "46"
+            startingLineNumber = "80"
+            endingLineNumber = "80"
             landmarkName = "setBidLineNumbers(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -10564,8 +10564,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "618"
             endingLineNumber = "618"
-            landmarkName = "BISwaBidDataDownload"
-            landmarkType = "3">
+            landmarkName = "fetchPaginatedData(urlTemplate:keyPath:responseDict:pageNumber:completion:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -12946,8 +12946,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "137"
-            endingLineNumber = "137"
+            startingLineNumber = "195"
+            endingLineNumber = "195"
             landmarkName = "startBidSubmission(sessionKey:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -12978,8 +12978,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "627"
-            endingLineNumber = "627"
+            startingLineNumber = "685"
+            endingLineNumber = "685"
             landmarkName = "handleBidSubmissionForFA(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13394,8 +13394,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "607"
-            endingLineNumber = "607"
+            startingLineNumber = "665"
+            endingLineNumber = "665"
             landmarkName = "handleBidSubmissionForFA(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13426,8 +13426,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "110"
-            endingLineNumber = "110"
+            startingLineNumber = "168"
+            endingLineNumber = "168"
             landmarkName = "startBidSubmission(sessionKey:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13442,8 +13442,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "605"
-            endingLineNumber = "605"
+            startingLineNumber = "663"
+            endingLineNumber = "663"
             landmarkName = "handleBidSubmissionForFA(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13474,8 +13474,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "604"
-            endingLineNumber = "604"
+            startingLineNumber = "662"
+            endingLineNumber = "662"
             landmarkName = "handleBidSubmissionForFA(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13490,8 +13490,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "609"
-            endingLineNumber = "609"
+            startingLineNumber = "667"
+            endingLineNumber = "667"
             landmarkName = "handleBidSubmissionForFA(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13525,22 +13525,6 @@
             startingLineNumber = "696"
             endingLineNumber = "696"
             landmarkName = "submitBid(params:completion:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "62A8050B-7810-439B-8462-6263E8BE1710"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "638"
-            endingLineNumber = "638"
-            landmarkName = "getFABidSubmissionParamString()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -13650,8 +13634,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "617"
-            endingLineNumber = "617"
+            startingLineNumber = "675"
+            endingLineNumber = "675"
             landmarkName = "handleBidSubmissionForFA(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13778,8 +13762,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "115"
-            endingLineNumber = "115"
+            startingLineNumber = "173"
+            endingLineNumber = "173"
             landmarkName = "startBidSubmission(sessionKey:completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13794,8 +13778,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "629"
-            endingLineNumber = "629"
+            startingLineNumber = "687"
+            endingLineNumber = "687"
             landmarkName = "handleBidSubmissionForFA(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -14189,7 +14173,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "AAA5ADDC-C0FE-4E3E-87F0-FA3AB155D639"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "CrewBid iPad_Swift/New Files/BISwaBidDataParsing.swift"
@@ -14199,6 +14183,148 @@
             endingLineNumber = "921"
             landmarkName = "readTrips(line:tripDict:position:moc:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D8436E9A-D44E-4323-89F7-4E2864FC1EEC"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Download/CBCredentialsPageVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1072"
+            endingLineNumber = "1072"
+            landmarkName = "handleBidSubmission(sessionKey:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "A262B123-0B3B-4DDB-A983-3B35A7988278"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Download/CBCredentialsPageVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1104"
+            endingLineNumber = "1104"
+            landmarkName = "handleBidSubmission(sessionKey:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F3066D40-77BC-4F31-97FB-76FAD8FE3D45"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "123"
+            endingLineNumber = "123"
+            landmarkName = "setBidLineNumbers(completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "CD1059AF-5BFF-471E-8C5D-ABF55EA03AA2"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "137"
+            endingLineNumber = "137"
+            landmarkName = "setBidLineNumbers(completion:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "779569A0-E2E0-42A6-B6C0-2FA6700277F9"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Download/CBCredentialsPageVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1111"
+            endingLineNumber = "1111"
+            landmarkName = "handleBidSubmission(sessionKey:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "17C654DF-164D-41E1-B7FA-96356A485FE2"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Download/CBCredentialsPageVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1117"
+            endingLineNumber = "1117"
+            landmarkName = "handleBidSubmission(sessionKey:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9C94C9B9-8B75-45D6-8C04-51ADA1DF516B"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Download/CBCredentialsPageVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1106"
+            endingLineNumber = "1106"
+            landmarkName = "handleBidSubmission(sessionKey:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "9C94C9B9-8B75-45D6-8C04-51ADA1DF516B - f6f27f084b545bd8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "CrewBid_iPad_Swift.CBCredentialsPageVC.handleBidSubmission(sessionKey: Swift.Optional&lt;Swift.String&gt;) -&gt; ()"
+                  moduleName = "CrewBid iPad_Swift.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/fayaz/Documents/GitHub/Crewbid-iPadWbidServer/CrewBid%20iPad_Swift/Views/ViewControllers/Bid%20Download/CBCredentialsPageVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1106"
+                  endingLineNumber = "1106">
+               </Location>
+               <Location
+                  uuid = "9C94C9B9-8B75-45D6-8C04-51ADA1DF516B - e72d44c89fb8307b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Bool) -&gt; () in CrewBid_iPad_Swift.CBCredentialsPageVC.handleBidSubmission(sessionKey: Swift.Optional&lt;Swift.String&gt;) -&gt; ()"
+                  moduleName = "CrewBid iPad_Swift.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/fayaz/Documents/GitHub/Crewbid-iPadWbidServer/CrewBid%20iPad_Swift/Views/ViewControllers/Bid%20Download/CBCredentialsPageVC.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "1107"
+                  endingLineNumber = "1107">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
