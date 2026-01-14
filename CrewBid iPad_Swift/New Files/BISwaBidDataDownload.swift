@@ -512,7 +512,84 @@ class BISwaBidDataDownload{
         }
     }
     
+    private func totalPages(from response: [String: Any]) -> Int {
+        if
+            let page = response["page"] as? [String: Any],
+            let totalPages = page["totalPages"] as? Int {
+            return totalPages
+        }
+        return 1
+    }
     
+    func fetchPaginatedDataParallel(
+        urlTemplate: String,
+        keyPath: String,
+        completion: @escaping (Result<[String:Any], Errors>) -> Void
+    ) {
+        // 1️⃣ Fetch page 0 first
+        fetchPaginatedData(
+            urlTemplate: urlTemplate,
+            keyPath: keyPath,
+            pageNumber: 0
+        ) { result in
+            switch result {
+            case .failure(let error):
+                completion(.failure(error))
+
+            case .success(let firstPage):
+                let totalPages = self.totalPages(from: firstPage)
+                guard totalPages > 1 else {
+                    completion(.success(firstPage))
+                    return
+                }
+
+                let group = DispatchGroup()
+                let lock = NSLock()
+
+                var accumulated = firstPage
+                var allItems =
+                    (firstPage["_embedded"] as? [String: Any])?[keyPath] as? [Any] ?? []
+                let headers: [String: String] = [
+                    "Content-Type": "application/hal+json",
+                    "Authorization": "Bearer \(KeychainHelper.retrieveTokenFromKeyChain()!)",
+                    "x-swa-user-department": "IF",
+                    "Postman-Token": "d6c9db45-8ea6-4dd9-9b7e-f77f2baa8b8b"
+                ]
+                // 2️⃣ Fetch remaining pages in parallel
+                for page in 1..<totalPages {
+                    group.enter()
+                    let url = String(format: urlTemplate, page)
+
+                    APIService.shared.fetch(
+                        urlString: url,
+                        method: .GET,
+                        headers: headers,
+                        parse: { try JSONSerialization.jsonObject(with: $0) }
+                    ) { result in
+                        if
+                            case .success(let parsed) = result,
+                            let dict = parsed as? [String: Any],
+                            let embedded = dict["_embedded"] as? [String: Any],
+                            let items = embedded[keyPath] as? [Any]
+                        {
+                            lock.lock()
+                            allItems.append(contentsOf: items)
+                            lock.unlock()
+                        }
+                        group.leave()
+                    }
+                }
+
+                // 3️⃣ Merge and return
+                group.notify(queue: .global()) {
+                    var embedded = accumulated["_embedded"] as? [String: Any] ?? [:]
+                    embedded[keyPath] = allItems
+                    accumulated["_embedded"] = embedded
+                    completion(.success(accumulated))
+                }
+            }
+        }
+    }
     
     func fetchPaginatedData(
         urlTemplate: String,

@@ -346,8 +346,9 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
                     
                     if pendingCalls == 0 {
                         didFinish = true
-                        isValidBuddy = self.checkBuddyInTheBuddyList()
-                        completion(isValidBuddy)
+                        self.checkBuddyInTheBuddyList{ isValid in
+                            completion(isValid)
+                        }
                     }
                 }
             }
@@ -481,8 +482,8 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
     }
         
     
-    func checkBuddyInTheBuddyList() -> Bool{
-        var result = true
+    func checkBuddyInTheBuddyList(completion: @escaping (Bool) -> Void){
+//        var result = true
 
         DispatchQueue.main.async {
             let empNum = self.empID ?? ""
@@ -534,10 +535,9 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
                 AlertService.showAlertForTopVC(title: "Buddy Bid", message: message)
             }
 
-            result = isExist
+            completion(isExist)
         }
 
-        return result
     }
 }
 

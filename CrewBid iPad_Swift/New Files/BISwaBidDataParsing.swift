@@ -170,8 +170,8 @@ class BISwaBidDataParsing{
         )
     }
     
-    private func buildTripLookup() -> [String: [String:Any]] {
-        var lookup: [String: [String:Any]] = [:]
+    private func buildTripLookup() -> [String: [[String:Any]]] {
+        var lookup: [String: [[String:Any]]] = [:]
 
         guard let trips = self.tripsData as? [[String:Any]] else { return lookup }
 
@@ -180,7 +180,8 @@ class BISwaBidDataParsing{
                let num = key["pairingNumber"] as? String,
                let date = key["pairingDate"] as? String {
 
-                lookup["\(num)|\(date)"] = trip
+                let lookupKey = "\(num)|\(date)"
+                lookup[lookupKey, default: []].append(trip)
             }
         }
         return lookup
@@ -293,17 +294,39 @@ class BISwaBidDataParsing{
 //                                }
 //                            }
                             let lookupKey = "\(lineTripNumber)|\(lineTripDate)"
+                            if let tripArray = tripLookup[lookupKey] {
 
-                            if let tripDict = tripLookup[lookupKey] {
+                                for tripDict in tripArray {
 
-                                linePairingArray[i] = NSNull()
+                                    linePairingArray[i] = NSNull()
 
-                                if isReserveLine {
-                                    self.readTripsForReserve(line: line,tripDict: tripDict,moc: moc)
-                                } else {
-                                    self.readTrips(line: line,tripDict: tripDict,position: position,moc: moc)
+                                    if isReserveLine {
+                                        self.readTripsForReserve(
+                                            line: line,
+                                            tripDict: tripDict,
+                                            moc: moc
+                                        )
+                                    } else {
+                                        self.readTrips(
+                                            line: line,
+                                            tripDict: tripDict,
+                                            position: position,
+                                            moc: moc
+                                        )
+                                    }
+                                    break   // IMPORTANT: matches Obj-C behavior
                                 }
                             }
+//                            if let tripDict = tripLookup[lookupKey] {
+//
+//                                linePairingArray[i] = NSNull()
+//
+//                                if isReserveLine {
+//                                    self.readTripsForReserve(line: line,tripDict: tripDict,moc: moc)
+//                                } else {
+//                                    self.readTrips(line: line,tripDict: tripDict,position: position,moc: moc)
+//                                }
+//                            }
                         }
                         
                         // Code for checking the Missing trip
@@ -642,7 +665,7 @@ class BISwaBidDataParsing{
 
                 trip.tripStartDay = CBUtils.getDay(from: trip.startDate ?? Date())
                 trip.startDay = CBUtils.getDateOnly(from: trip.startDate ?? Date())
-                trip.startDate = calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue)
+//                trip.startDate = calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue)
 
                 let dayCount = tripInfo.orderedDays().count
                 let endDay = (trip.startDay?.intValue ?? 0) + (dayCount - 1)
@@ -893,12 +916,12 @@ class BISwaBidDataParsing{
         if let pairingKey = tripDict["pairingKey"] as? [String: Any],
            let dateString = pairingKey["pairingDate"] as? String {
 
-            df.dateFormat = "yyyy-MM-dd"
+            df.dateFormat = "YYYY-MM-dd"
 
             if let tripDate = df.date(from: dateString) {
                 trip.startDate = calendarData.dateForDate(date: tripDate)
-                trip.startDay = CBUtils.getDateOnly(from: trip.startDate ?? Date())
-                trip.startDate = calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue)
+//                trip.startDay = CBUtils.getDateOnly(from: trip.startDate ?? Date())
+//                trip.startDate = calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue)
                 tripInfo.startDate = trip.startDate
             }
         }
