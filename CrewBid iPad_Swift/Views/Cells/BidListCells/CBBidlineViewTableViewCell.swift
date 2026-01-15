@@ -521,6 +521,7 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
     @objc func handleTapGesture(_ tapGesture: UITapGestureRecognizer) {
         let refreshViewController = UIStoryboard(name: "BidDocument", bundle: nil).instantiateViewController(withIdentifier: "CBLineCalendarCollectionViewController") as! CBLineCalendarCollectionViewController
         refreshViewController.line = line
+        refreshViewController.numberofRows = numberOfCalendarRows(year: CBGlobalMethods.shared.selectedBidPeriod!.year!.intValue, month: CBGlobalMethods.shared.selectedBidPeriod!.month!.intValue)
         refreshViewController.bidPeriod = bidPeriod
         refreshViewController.CollectionCellCalendarDaysArr = bidListCellCalendarDaysArr
         refreshViewController.calendarData = calendarData
@@ -704,4 +705,44 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
         
         return true
     }
+    
+    func numberOfCalendarRows(year: Int, month: Int) -> Int {
+        let calendar = Calendar.current
+
+        var components = DateComponents()
+        components.year = year
+        components.month = month
+        components.day = 1
+
+        let firstDate = calendar.date(from: components)!
+        let weekday = calendar.component(.weekday, from: firstDate) // Sunday = 1
+
+        var leadingDays = weekday - 1
+        let daysInMonth = calendar.range(of: .day, in: .month, for: firstDate)!.count
+
+        // 🔴 Special February rule:
+        // If Jan 31 is Saturday, show full Jan week
+        if month == 2 {
+            let jan31 = calendar.date(from: DateComponents(year: year, month: 1, day: 31))!
+            let jan31Weekday = calendar.component(.weekday, from: jan31)
+
+            if jan31Weekday == 7 { // Saturday
+                leadingDays = 7
+            }
+        }
+
+        let filledDays = leadingDays + daysInMonth
+
+        var trailingDays = (7 - (filledDays % 7)) % 7
+
+        // Minimum 3 next-month days
+        if trailingDays < 3 {
+            trailingDays += 7
+        }
+
+        let totalDays = leadingDays + daysInMonth + trailingDays
+        return totalDays / 7
+    }
+
+
 }

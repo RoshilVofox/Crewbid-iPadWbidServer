@@ -3023,6 +3023,8 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
         }
         selectedCellIndexPaths.removeAllObjects()
         
+        CBGlobalMethods.shared.canPerformUndo = true
+        CBGlobalMethods.shared.undoType = .undo
         bidPeriod.managedObjectContext!.undoManager?.setActionName("Move Line")
         NotificationCenter.default.post(name: NSNotification.Name("SortBidListAction"), object: self)
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)

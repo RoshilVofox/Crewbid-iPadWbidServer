@@ -13,6 +13,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
 
     @IBOutlet weak var collectionView: CBBidLineCalendarCollectionView!
     @IBOutlet weak var viewBackground: UIView!
+    @IBOutlet weak var headerLabel: UILabel!
     var line: BILine?
     var calendarData: BICalendarData?
     var CollectionCellCalendarDaysArr = [Any]()
@@ -28,8 +29,10 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
     var isTripButtonsInitialized = false
     var tripTextController: CBTripTextViewController?
     var fromScrachpadView:Bool?
+    var numberofRows:Int = 5
     override func viewDidLoad() {
         super.viewDidLoad()
+//        headerLabel.text = "S          M          T          W          T           F           S  "
         self.viewBackground.clipsToBounds = true
         self.viewBackground.layer.cornerRadius = 5
         tripDateFormatter = DateFormatter()
@@ -42,7 +45,12 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
 
     var contentSize: CGSize {
         var size:CGSize?
-        size = CGSize(width: 300.0, height: 270.0)
+        if numberofRows == 6 {
+            size = CGSize(width: 450, height: 405)
+        }
+        else {
+            size = CGSize(width: 450, height: 355)
+        }
         return size!
     }
     
@@ -140,6 +148,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
         let userDefaults = UserDefaults.standard
         // Get size of calendar items (cells) and create button frame from size.
         let flowLayout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout
+        flowLayout?.itemSize = CGSize(width: 50, height: 50)
         let itemSize: CGSize? = flowLayout?.itemSize
         let inset: CGFloat = 17.0
         let WidthSize = ((self.collectionView.frame.width)) / 7
@@ -274,7 +283,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                 }
                 if highlighted {
                     let leftBorder = CALayer()
-                    leftBorder.cornerRadius = 18.0
+                    leftBorder.cornerRadius = 27.0
                     leftBorder.borderColor = CBColor.tripHighlightColor.cgColor
                     
                     leftBorder.borderWidth = 2.0
@@ -282,7 +291,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                     button.layer.addSublayer(leftBorder)
                     
                     let rightBorder = CALayer()
-                    rightBorder.cornerRadius = 18.0
+                    rightBorder.cornerRadius = 27.0
                     rightBorder.borderColor = CBColor.tripHighlightColor.cgColor
                     rightBorder.borderWidth = 2.0
                     rightBorder.frame = CGRect(x: -15, y: -2, width: (otherButton?.frame.width)! + 15, height: (otherButton?.frame.height)! + 4)
@@ -423,7 +432,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                 if showingRedEyeIconForThisDay {
                     label.textColor = .clear
                 }
-                label.font = UIFont.boldSystemFont(ofSize: 12)
+                label.font = UIFont.boldSystemFont(ofSize: 16)
                 
                 let day:BIDay = orderedDays[d]
                 let dayInfo:BIDayInfo = day.info!
@@ -483,7 +492,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                         }
                         let timeLabelFrame = CGRect(x: labelFrame.origin.x, y: labelFrame.origin.y + labelFrame.size.height - 12, width: labelFrame.size.width, height: 10)
                         let timeLabel = UILabel(frame: timeLabelFrame)
-                        timeLabel.font = UIFont.systemFont(ofSize: 8)
+                        timeLabel.font = UIFont.systemFont(ofSize: 11)
                         if trip.highlightCount!.intValue > 0 {
                             timeLabel.textColor = CBColor.tripHighlightColor
                         }else{
@@ -559,7 +568,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                     if true{
                         let timeLabelFrame = CGRect(x: labelFrame.origin.x, y: labelFrame.origin.y + 2, width: labelFrame.size.width, height: 10)
                         let timeLabel = UILabel(frame: timeLabelFrame)
-                        timeLabel.font = UIFont.systemFont(ofSize: 8)
+                        timeLabel.font = UIFont.systemFont(ofSize: 11)
                         if trip.highlightCount!.intValue > 0{
                             timeLabel.textColor = CBColor.tripHighlightColor
                         }else{
@@ -641,12 +650,14 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
                             if isSaturday{
                                 xValue = fromScrachpadView == true ? xValue - 6 : xValue - 7
                             }
-                            let verticalLabelFrame = CGRect(x: xValue, y: labelFrame.origin.y + 12, width: 26, height: 10)
+                            let verticalLabelFrame = CGRect(x: xValue, y: labelFrame.origin.y + 23, width: 26, height: 10)
                             
                             let verticalLabel = UILabel(frame: verticalLabelFrame)
                             verticalLabel.textColor = CBColor.cbGreen
                             verticalLabel.textAlignment = .center
-                            verticalLabel.font = UIFont.boldSystemFont(ofSize: 8)
+                            verticalLabel.font = UIFont.boldSystemFont(ofSize: 10.5)
+                            verticalLabel.lineBreakMode = .byClipping   // 🔹 prevent "..."
+                            verticalLabel.adjustsFontSizeToFitWidth = false
                             verticalLabel.transform = CGAffineTransform(rotationAngle: CGFloat(-90.0 * .pi / 180.0))
                             verticalLabel.translatesAutoresizingMaskIntoConstraints = true
                             labelButton?.addSubview(verticalLabel)
@@ -1066,7 +1077,7 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 40, height: 40)
+        return CGSize(width: 60, height: 60)
     }
     
     //    vacation line value popover view
