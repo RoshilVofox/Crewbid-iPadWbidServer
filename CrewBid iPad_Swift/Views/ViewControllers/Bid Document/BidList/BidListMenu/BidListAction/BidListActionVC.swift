@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate {
     
@@ -13,6 +14,8 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
     var bidPeriod:BIBidPeriod!
     var ArrLinesDetails: [BILine] = []
     var selectedLinesCount:NSMutableArray = NSMutableArray()
+    var undoName:String = ""
+    var redoName:String = ""
     weak var delegate:StartOverDelegate?
     @IBOutlet weak var tableView: UITableView!
     var contentSize: CGSize{
@@ -60,8 +63,8 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
                 cell.lblTitle.alpha = 0.5
             }
         }else if indexPath.row == 3 {
-            if (bidPeriod.managedObjectContext!.undoManager?.canUndo)! || !(bidPeriod.managedObjectContext!.undoManager?.undoActionName == "") {
-                cell.lblTitle.text = bidPeriod.managedObjectContext!.undoManager?.undoMenuItemTitle
+            if undoName.isEmpty == false {
+                cell.lblTitle.text = undoName
                 cell.isUserInteractionEnabled = true
                 cell.lblTitle.alpha = 1.0
             } else {
@@ -69,14 +72,13 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
                 cell.lblTitle.alpha = 0.5
             }
         } else if indexPath.row == 4 {
-            cell.isUserInteractionEnabled = false
-            cell.lblTitle.alpha = 0.5
-            if bidPeriod.managedObjectContext!.undoManager != nil {
-                if (bidPeriod.managedObjectContext!.undoManager?.canRedo)! {
-                    cell.lblTitle.text = bidPeriod.managedObjectContext!.undoManager?.redoMenuItemTitle
-                    cell.isUserInteractionEnabled = true
-                    cell.lblTitle.alpha = 1.0
-                }
+            if redoName.isEmpty == false {
+                cell.lblTitle.text = redoName
+                cell.isUserInteractionEnabled = true
+                cell.lblTitle.alpha = 1.0
+            } else {
+                cell.isUserInteractionEnabled = false
+                cell.lblTitle.alpha = 0.5
             }
         } else if indexPath.row == 5 {
             cell.lblTitle.text = "Return Selected Line\(selectedLinesCount.count > 1 || !(selectedLinesCount.count > 0) ? "s" : "") to Scratchpad"
@@ -189,14 +191,18 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
             self.dismissPopover(animated: true)
         }else if indexPath.row == 3{
             // Handle Undo
+            CBGlobalMethods.shared.undoCount = 0
             NotificationCenter.default.post(name: Notification.Name("CBUndoNotification"), object: nil)
             self.dismissPopover(animated: true)
         }else if indexPath.row == 4{
             // Handle Redo
+            CBGlobalMethods.shared.redoCount = 0
             NotificationCenter.default.post(name: Notification.Name("CBRedoNotification"), object: nil)
             self.dismissPopover(animated: true)
         }else if indexPath.row == 5{
             // Handle Return Selected Lines To Scratchpad
+            CBGlobalMethods.shared.canPerformUndo = true
+            CBGlobalMethods.shared.undoType = .undo
             NotificationCenter.default.post(name: Notification.Name("CBReturnSelectedLinesNotification"), object: nil)
             self.dismissPopover(animated: true)
         }else if indexPath.row == 6{
@@ -204,6 +210,8 @@ class BidListActionVC: BaseViewController,KUIPopOverUsable,UITableViewDelegate,U
             let alertController = UIAlertController(title: "Tap OK to remove all unfrozen lines.", message: nil, preferredStyle: .alert)
             let OkAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default) {
                 UIAlertAction in
+                CBGlobalMethods.shared.canPerformUndo = true
+                CBGlobalMethods.shared.undoType = .undo
                 NotificationCenter.default.post(name: Notification.Name("CBReturnUnfrozenLinesNotification"), object: nil)
                 self.dismissPopover(animated: true)
             }

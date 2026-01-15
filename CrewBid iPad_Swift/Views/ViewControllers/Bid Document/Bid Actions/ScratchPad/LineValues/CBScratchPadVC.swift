@@ -239,6 +239,8 @@ class CBScratchPadVC: BaseViewController, NSFetchedResultsControllerDelegate, UI
             } else if tempLines.count == 1 { //Lines move directly to bidlist
                 let bidlist = CBBidListVC()
                 bidlist.setupVariables()
+                CBGlobalMethods.shared.canPerformUndo = true
+                CBGlobalMethods.shared.undoType = .undo
                 bidlist.insertLines(tempLines)
                 NotificationCenter.default.post(name: NSNotification.Name("flipToBidList"), object: nil)
             } else {

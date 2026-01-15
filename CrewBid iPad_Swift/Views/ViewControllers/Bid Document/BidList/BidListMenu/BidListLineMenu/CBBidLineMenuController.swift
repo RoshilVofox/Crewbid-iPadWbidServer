@@ -367,6 +367,8 @@ class CBBidLineMenuController: BaseViewController, UITableViewDelegate, UITableV
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        CBGlobalMethods.shared.canPerformUndo = true
+        CBGlobalMethods.shared.undoType = .undo
         self.bidPeriod.currentDateTime = Date()
         self.bidPeriod.isStateFileModifiedToSync = true
         let appendDictionary = NSMutableDictionary()

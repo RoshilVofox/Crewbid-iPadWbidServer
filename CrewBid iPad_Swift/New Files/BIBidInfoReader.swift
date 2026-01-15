@@ -4645,6 +4645,9 @@ class BIBidInfoReader{
             var daysDiff = 0
             if let firstDate = tripStartDates.first{
                 blockOfDaysOff = self.calendarData.noOfDaysBetweenDates(startDate: self.calendarData.firstDateOfMonth, endDate: firstDate)
+                if bidPeriod!.isFABid() && bidPeriod?.month?.intValue == 2 {
+                    blockOfDaysOff = self.calendarData.noOfDaysBetweenDates(startDate: Calendar.current.date(byAdding: .day, value: -1, to: self.calendarData.firstDateOfMonth!), endDate: firstDate)
+                }
             }
             for j in 0..<tripStartDates.count - 1 {
                 autoreleasepool {
@@ -4663,7 +4666,10 @@ class BIBidInfoReader{
                 }
             }
             let lastDate = tripEndDates.last!
-            let lastDayOfBidMonth = self.calendarData.dateForDayOfMonth(dayOfMonth:numDaysInBidMonth)
+            var lastDayOfBidMonth = self.calendarData.dateForDayOfMonth(dayOfMonth:numDaysInBidMonth)
+            if bidPeriod!.isFABid() && bidPeriod?.month?.intValue == 2 {
+                lastDayOfBidMonth = Calendar.current.date(byAdding: .day, value: 1, to: lastDayOfBidMonth!)
+            }
             
             daysDiff = (self.calendarData.daysBetweenDate(fromDateTime:lastDate, toDateTime:lastDayOfBidMonth!))
             if daysDiff > blockOfDaysOff{

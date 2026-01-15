@@ -50,6 +50,8 @@ class FaMoveBidListMenu: UIViewController,UITableViewDelegate,UITableViewDataSou
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedString = self.array[indexPath.row]
+        CBGlobalMethods.shared.canPerformUndo = true
+        CBGlobalMethods.shared.undoType = .undo
         NotificationCenter.default.post(name: NSNotification.Name("flipToBidList"), object: nil)
         switch selectedString {
         case "Move Position A to Bid List" :

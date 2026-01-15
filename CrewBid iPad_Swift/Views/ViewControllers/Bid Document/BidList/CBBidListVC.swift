@@ -400,21 +400,57 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     
 
     @objc func undoAction() {
-        guard let context = bidPeriod.managedObjectContext,
-              let undoManager = context.undoManager,
-              undoManager.canUndo else { return }
-        undoManager.undo()
-        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
-        NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: nil)
+        if (CBGlobalMethods.shared.undoCount == 0 && CBGlobalMethods.shared.canPerformUndo == true && AppData.shared.isBidListSort == false && CBGlobalMethods.shared.undoType == UndoType.undo) {
+            CBGlobalMethods.shared.undoCount += 1
+            guard let undoManager = bidPeriod.managedObjectContext?.undoManager,
+                  undoManager.canUndo else {
+                return
+            }
+            
+            while undoManager.canUndo {
+                
+                // Capture the name BEFORE undo
+                let currentUndoName = undoManager.undoActionName
+                
+                // Always perform undo
+                undoManager.undo()
+                // Stop immediately after undoing the first non-empty name
+                if !currentUndoName.isEmpty {
+                    CBGlobalMethods.shared.undoType = .redo
+                    break
+                }
+            }
+            
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+            NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: nil)
+        }
     }
 
     @objc func redoAction() {
-        guard let context = bidPeriod.managedObjectContext,
-              let undoManager = context.undoManager,
-              undoManager.canRedo else { return }
-        undoManager.redo()
-        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: nil)
-        NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: nil)
+        if (CBGlobalMethods.shared.undoCount != 0 && CBGlobalMethods.shared.canPerformUndo == true && AppData.shared.isBidListSort == false && CBGlobalMethods.shared.redoCount == 0 && CBGlobalMethods.shared.undoType == UndoType.redo) {
+            CBGlobalMethods.shared.redoCount += 1
+            guard let undoManager = bidPeriod.managedObjectContext?.undoManager,
+                  undoManager.canRedo else {
+                return
+            }
+            
+            while undoManager.canRedo {
+                
+                // Capture the name BEFORE undo
+                let currentRedoName = undoManager.redoActionName
+                
+                // Always perform undo
+                undoManager.redo()
+                // Stop immediately after undoing the first non-empty name
+                if !currentRedoName.isEmpty {
+                    CBGlobalMethods.shared.undoType = .undo
+                    break
+                }
+            }
+            
+            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+            NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: nil)
+        }
     }
     
 //    @objc func moveSelectedLinesToInsertionIndex() {
@@ -598,6 +634,8 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         })
         selectedCellIndexPaths.removeAllObjects()
         // Set undo action name.
+        CBGlobalMethods.shared.canPerformUndo = true
+        CBGlobalMethods.shared.undoType = .undo
         bidPeriod.managedObjectContext?.undoManager?.setActionName("Move Selected Line\(selectedIndexPaths.count > 1 ? "s" : "")")
         UserDefaults.standard.setValue(true, forKey: "isShouldScrollToInsertionIndex")
         self.updateBidList()
@@ -1825,6 +1863,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
 
 
     @IBAction func btnFiltersAction(_ sender: Any) {
+        CBGlobalMethods.shared.canPerformUndo = false
         if bidPeriod.isBidListSortOn?.boolValue ?? false {
             bidPeriod.isBidListSortOn = false
             AppData.shared.isBidListSort = false
@@ -1859,6 +1898,8 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         vc.selectedLinesCount = selectedCellIndexPaths
         vc.delegate = self
         vc.bidPeriod = self.bidPeriod
+        vc.undoName = shareUndoName()
+        vc.redoName = shareRedoName()
         vc.modalPresentationStyle = .custom
         let frame = CGRect(x: 15, y: 35, width: 0, height: 0)
         vc.showPopover(sourceView: btnActions, sourceRect: frame)
@@ -3165,7 +3206,7 @@ extension CBBidListVC: CBSortOptionDelegate{
                     }
                     
 //                    DispatchQueue.main.async {
-//                        
+//
 //                    }
                     
                 case .failure(let error):
@@ -3214,7 +3255,7 @@ extension CBBidListVC: CBSortOptionDelegate{
                     }
                     
                     awardDetail.lineNum = awardDict["LineNum"] as! Int16
-                    awardDetail.seqNumber = awardDict["SeqNumber"] as! Int16 
+                    awardDetail.seqNumber = awardDict["SeqNumber"] as! Int16
                     
                     if awardPosition == "FA" {
                         if let pos = awardDict["Position"], !(pos is NSNull) {
@@ -3610,5 +3651,69 @@ extension CBBidListVC: CBSortOptionDelegate{
             
         }
     
+    func shareUndoName() -> String {
+        var undoName = ""
+        if (CBGlobalMethods.shared.canPerformUndo == true && AppData.shared.isBidListSort == false && CBGlobalMethods.shared.undoType == UndoType.undo) {
+            guard let undoManager = bidPeriod.managedObjectContext?.undoManager,
+                  undoManager.canUndo else {
+                return undoName
+            }
+            
+            while undoManager.canUndo {
+                
+                // Capture the name BEFORE undo
+                let currentUndoName = undoManager.undoActionName
+                
+                // Stop immediately after undoing the first non-empty name
+                if !currentUndoName.isEmpty {
+                    undoName = "Undo \(currentUndoName)"
+                    break
+                }
+                else {
+                    // Always perform undo for blank undo name
+                    undoManager.undo()
+                }
+                // Stop immediately after undoing the first non-empty name
+                if !currentUndoName.isEmpty {
+                    break
+                }
+            }
+        }
+        return undoName
+    }
+    
+    func shareRedoName() -> String {
+        var redoName = ""
+
+        if (CBGlobalMethods.shared.canPerformUndo == true && AppData.shared.isBidListSort == false && CBGlobalMethods.shared.undoType == UndoType.redo) {
+
+            guard let undoManager = bidPeriod.managedObjectContext?.undoManager,
+                  undoManager.canRedo else {
+                return redoName
+            }
+
+            while undoManager.canRedo {
+
+                // Capture the name BEFORE redo
+                let currentRedoName = undoManager.redoActionName
+
+                // Stop immediately on first non-empty name
+                if !currentRedoName.isEmpty {
+                    redoName = "Redo \(currentRedoName)"
+                    break
+                } else {
+                    // Skip unnamed redo
+                    undoManager.redo()
+                }
+
+                if !currentRedoName.isEmpty {
+                    break
+                }
+            }
+        }
+
+        return redoName
+    }
+
 }
 
