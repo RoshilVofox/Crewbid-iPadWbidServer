@@ -526,7 +526,6 @@ class BISwaBidDataDownload{
         keyPath: String,
         completion: @escaping (Result<[String: Any], Errors>) -> Void
     ) {
-        // 1️⃣ Fetch FIRST page only
         fetchPage(urlTemplate: urlTemplate, pageNumber: 0) { result in
             switch result {
             case .failure(let error):
@@ -540,14 +539,10 @@ class BISwaBidDataDownload{
                     completion(.success(firstPage))
                     return
                 }
-
-                // No pagination needed
                 if totalPages <= 1 {
                     completion(.success(firstPage))
                     return
                 }
-
-                // 2️⃣ Fetch remaining pages IN PARALLEL
                 let group = DispatchGroup()
                 let mergeQueue = DispatchQueue(label: "com.crewBid.pagination.merge", attributes: .concurrent)
 
