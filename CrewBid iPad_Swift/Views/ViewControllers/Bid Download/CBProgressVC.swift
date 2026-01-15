@@ -202,6 +202,7 @@ class RectangularProgressView: UIView {
         label.textAlignment = .right
         label.textColor = .secondaryLabel
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.isHidden = true
         return label
     }()
     private var currentProgress: Float = 0.0
@@ -273,8 +274,15 @@ class RectangularProgressView: UIView {
         
         let percent = Int(progress * 100)
         percentageLabel.text = "\(percent)%"
-        updateETA()
+        
+        if currentProgress > 0.6 {
+            etaLabel.isHidden = false
+            updateETA()
+        } else {
+            etaLabel.isHidden = true
+        }
         if progress >= 1.0 {
+            etaLabel.isHidden = false
             etaLabel.text = "Completed"
             stopTimer()
         }
@@ -319,10 +327,7 @@ class RectangularProgressView: UIView {
     }
     
     private func updateETA() {
-        guard currentProgress > 0.05 else {
-            etaLabel.text = "ETA: --:--"
-            return
-        }
+        guard currentProgress > 0.6 else {return}
 
         let remainingSeconds = Int(
             Double(elapsedSeconds) * (1.0 - Double(currentProgress)) / Double(currentProgress)
