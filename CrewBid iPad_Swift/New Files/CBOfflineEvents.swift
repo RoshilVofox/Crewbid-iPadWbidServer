@@ -91,7 +91,7 @@ class CBOfflineEvents{
         arrListEvents.append(dicData)
         (arrListEvents as NSArray).write(toFile: path, atomically: true)
     }
-
+/*
     func addFromOfflineNewSKPaymentStatusLog() {
         
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
@@ -144,8 +144,8 @@ class CBOfflineEvents{
             }
         }
         task.resume()
-    }
-
+    }*/
+    /*
     func addOfflinePayment(_ objOfflineData: NSMutableDictionary) {
         
         let month = (objOfflineData["Month"] as? NSNumber)?.intValue ?? 0
@@ -163,7 +163,7 @@ class CBOfflineEvents{
         }
         
         objOfflineData.write(toFile: path, atomically: true)
-    }
+    }*/
     
     
     func sendOfflineData() {
@@ -211,7 +211,7 @@ class CBOfflineEvents{
         }
         dataTask.resume()
     }
-    
+    /*
     func updateOfflinePayment() {
         
         let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
@@ -294,9 +294,9 @@ class CBOfflineEvents{
                 self.updateCrewBidPaidUntilDateSoap(dicOffline, messageData: messageData)
             }
         }
-    }
+    }*/
     
-    
+    /*
     func saveCBExpirationDate(_ date: String) {
         guard let expiryDate = getDateFromJSON(date) else {
             return
@@ -312,8 +312,8 @@ class CBOfflineEvents{
 
         CBIAPHelper.shared.setICloudEncryptedExpirationDate(maxCBDate)
         CBIAPHelper.shared.setLocalEncryptedExpirationDate(maxCBDate)
-    }
-    
+    }*/
+    /*
     func saveWbidExpirationDate(_ date: String) {
         // Convert JSON date string to Date using your helper
         guard let expiryDate = getDateFromJSON(date) else {
@@ -332,7 +332,7 @@ class CBOfflineEvents{
         // Save encrypted expiration dates
         CBIAPHelper.shared.setICloudEncryptedWbidExpirationDate(maxWBDate)
         CBIAPHelper.shared.setLocalEncryptedWbidExpirationDate(maxWBDate)
-    }
+    }*/
     
     func getDateFromJSON(_ string: String) -> Date? {
         // Regex pattern to match /Date(1268123281843+0530)/
@@ -374,7 +374,7 @@ class CBOfflineEvents{
         return nil
     }
     
-    
+    /*
     func updateCrewBidPaidUntilDateRest(_ dicOffline: NSMutableDictionary, messageData: String) {
         guard let app = UIApplication.shared.delegate as? AppDelegate else { return }
         
@@ -459,9 +459,9 @@ class CBOfflineEvents{
             }
         }
         task.resume()
-    }
+    }*/
     
-    
+    /*
     func saveCBExpirationdate(_ date: String) {
         // Convert JSON date string to NSDate
         guard let expiryDate = getDateFromJSON(date) else { return }
@@ -479,8 +479,8 @@ class CBOfflineEvents{
         CBIAPHelper.shared.setICloudEncryptedExpirationDate(maxCBDate)
         CBIAPHelper.shared.setLocalEncryptedExpirationDate(maxCBDate)
 
-    }
-    
+    }*/
+    /*
     func updateCrewBidPaidUntilDateSoap(_ dicOffline: NSMutableDictionary, messageData: String) {
         guard let app = UIApplication.shared.delegate as? AppDelegate else { return }
         
@@ -597,8 +597,8 @@ class CBOfflineEvents{
             }
         }
         task.resume()
-    }
-    
+    }*/
+    /*
     func saveSoapCBExpirationDate(_ date: String) {
         guard let expiryDate = formatedSoapDate(date) else {
             return
@@ -616,8 +616,8 @@ class CBOfflineEvents{
         
         CBIAPHelper.shared.setICloudEncryptedExpirationDate(maxCBDate)
         CBIAPHelper.shared.setLocalEncryptedExpirationDate(maxCBDate)
-    }
-    
+    }*/
+    /*
     func saveSoapWbidExpirationDate(_ date: String) {
         guard let expiryDate = formatedSoapDate(date) else {
             return
@@ -635,7 +635,7 @@ class CBOfflineEvents{
         
         CBIAPHelper.shared.setICloudEncryptedWbidExpirationDate(maxWBDate!)
         CBIAPHelper.shared.setLocalEncryptedWbidExpirationDate(maxWBDate!)
-    }
+    }*/
     
     func formatedSoapDate(_ date: String) -> Date? {
         let dateFormatter = DateFormatter()

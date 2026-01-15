@@ -340,17 +340,29 @@ class CBDocumentsCollectionViewController: BaseViewController {
     }
     
     @objc func updateTitle(){
-            var qaString = ""
-            if UserDefaults.standard.string(forKey: "isQATest") == "1" {
-                qaString = " (QA Mode)"
+        
+        let isQATest = UserDefaults.standard.bool(forKey: "isQATest")
+        let swaEnv = UserDefaults.standard.string(forKey: "SwaApiEnv") ?? "Prod"
+        
+        var qaString = ""
+        
+        if isQATest {
+            switch swaEnv {
+            case "QA":
+                qaString = "(QA Mode)(SWA-QA)"
+            case "Dev":
+                qaString = "(QA Mode)(SWA-Dev)"
+            default:
+                qaString = "(QA Mode)"
             }
-            
-            let version = CBUtils.AppVersion()
-            if UserDefaults.standard.bool(forKey: "isTestDBSelected") {
-                self.lblHome.text = "Home (\(version)) (Test DB)" + qaString
-            } else {
-                self.lblHome.text = "Home (\(version))" + qaString
-            }
+        }
+
+        let version = CBUtils.AppVersion()
+        if UserDefaults.standard.bool(forKey: "isTestDBSelected") {
+            self.lblHome.text = "Home (\(version))(Test DB)" + qaString
+        } else {
+            self.lblHome.text = "Home (\(version))" + qaString
+        }
     }
     
     @objc func showBidDownloadError(_ notification: Notification){
@@ -362,17 +374,15 @@ class CBDocumentsCollectionViewController: BaseViewController {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             if is404 {
-                // ✅ SIMPLE ALERT (OK only)
                 AlertService.showDBAlert(
                     title: "Bid Download Error",
-                    message: errMsg,
+                    message: errMsg, retryFlow: .bidDownload,
                     from: self
                 )
             } else {
-                // 🔁 RETRY ALERT
                 AlertService.showDBAlert(
                     title: "Bid Download Failed",
-                    attributedMessage: AlertService.makeBidErrorAttributedMessage(errMsg),
+                    attributedMessage: AlertService.makeBidErrorAttributedMessage(errMsg), retryFlow: .bidDownload,
                     from: self
                 )
             }

@@ -12,6 +12,9 @@ import WebKit
 protocol submissionGoActiondelegate{
     func goActionFromSubmitCertifyDelegate()
 }
+protocol submissionCancelActiondelegate{
+    func cancelActionFromSubmitCertifyDelegate()
+}
 
 protocol CBCredentialsPageVCDelegate: AnyObject {
     func credentialsDidRefreshToken(_ vc: CBCredentialsPageVC)
@@ -35,7 +38,8 @@ enum LoginReason {
     case tokenExpired
 }
 
-class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAdaptivePresentationControllerDelegate, ServiceConnectionDelegate {
+class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submissionCancelActiondelegate, UIAdaptivePresentationControllerDelegate, ServiceConnectionDelegate {
+
     func responseError(_ errMsg: String) {
         print("responseError:\(errMsg)")
     }
@@ -160,7 +164,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                 if value != 0 {
                     dicWbidResponce = NSMutableDictionary(dictionary: userArray.first!, copyItems: true) as! [String : Any]
                     localAccountCreation()
-                    updateCBExpirationDate()
+//                    updateCBExpirationDate()
                     
                     app.ObjUserAccount?.captureUserEmail(app.ObjUserAccount?.email)
                     AlertService.showAlertForTopVC(title: "Great!", message: "We found a previous account from CrewBid or WbidMax.\nWe've imported those settings.\nPlease verify the settings and change as needed", actions: [(title: "OK", style: .default, handler:{_ in
@@ -256,7 +260,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }
     }
     
-    
+    /*
     func updateCBExpirationDate(){
         var dicMailInfo:[String: Any] = [:]
         dicMailInfo["EmpNum"] = app.ObjUserAccount?.employeeNumber
@@ -306,7 +310,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }
         dataTask.resume()
         
-    }
+    }*/
     
     
     func localAccountCreation(){
@@ -483,12 +487,11 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             awardsViewModel = AwardsViewModel(bidPeriod: bidPeriod)
         }
         //for new API
-        if self.dataSource.position == BICrewPositionType.FlightAttendant{
-            self.setupSwaLogin()
+//        if self.dataSource.position == BICrewPositionType.FlightAttendant{
+//            self.setupSwaLogin()
+//        }else{
 //            self.setupLegacyLogin()
-        }else{
-            self.setupLegacyLogin()
-        }
+//        }
         
         if !UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
             NotificationCenter.default.addObserver(self, selector: #selector(showProgressView), name: Notification.Name("ShowProgressView"), object: nil)
@@ -501,34 +504,110 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if self.dataSource.position == BICrewPositionType.FlightAttendant {
-            if type == .defaultType && loginReason == .normalBidFlow{
-                if self.bidAlreadyExists() {
-                    // show alert which will call the closure on "Download Again"
-                    self.showAlertForExistingBid {
-                        // user chose Download Again -> start FA web login after deletion
-                        DispatchQueue.main.async {
-                            self.setupSwaLogin()
-//                            self.setupLegacyLogin()
-                        }
-                    }
-                } else {
-                    // no existing bid -> start FA web login now
-                    self.setupSwaLogin()
-//                    self.setupLegacyLogin()
-                }
-            }else{
-                self.setupSwaLogin()
-//                self.setupLegacyLogin()
-            }
-
+//            if type == .defaultType && loginReason == .normalBidFlow{
+//                if self.bidAlreadyExists() {
+//                    // show alert which will call the closure on "Download Again"
+//                    self.showAlertForExistingBid {
+//                        // user chose Download Again -> start FA web login after deletion
+//                        DispatchQueue.main.async {
+//                            self.setupSwaLogin()
+////                            self.setupLegacyLogin()
+//                        }
+//                    }
+//                } else {
+//                    // no existing bid -> start FA web login now
+//                    self.setupSwaLogin()
+////                    self.setupLegacyLogin()
+//                }
+//            }else{
+//                self.setupSwaLogin()
+////                self.setupLegacyLogin()
+//            }
+            handleFAFlow()
         } else {
             // legacy (pilot) flow: if you want the pilot path to still show the existing-bid alert here,
             // you can do the same check or keep your existing go-button based flow.
             // If you want to start legacy login immediately:
             self.setupLegacyLogin()
+            handlePilotFlow()
         }
     }
+    
+    
+    private func handleFAFlow() {
+        guard type == .defaultType,
+              loginReason == .normalBidFlow else {
+            setupSwaLogin()
+            return
+        }
 
+        if bidAlreadyExists() {
+            showAlertForExistingBid {
+                if let dayString = self.earlyBidDayString() {
+                    AlertService.showAlertForTopVC(
+                        title: "Early Bid Warning",
+                        message: "SWA guarantees that the lines will be released by noon Central Time on the \(dayString). Sometimes SWA releases the lines earlier. If SWA has not released the lines early, attempting to download them now will result in a BID INFO UNAVAILABLE error. If you receive this error, try again later."
+                    )
+                }
+
+                DispatchQueue.main.async {
+                    self.setupSwaLogin()
+                }
+            }
+            return
+        }
+
+        // No existing bid
+        if let dayString = earlyBidDayString() {
+            AlertService.showAlertForTopVC(
+                title: "Early Bid Warning",
+                message: "SWA guarantees that the lines will be released by noon Central Time on the \(dayString). Sometimes SWA releases the lines earlier. If SWA has not released the lines early, attempting to download them now will result in a BID INFO UNAVAILABLE error. If you receive this error, try again later."
+            )
+        }
+
+        setupSwaLogin()
+    }
+    
+    private func handlePilotFlow() {
+        setupLegacyLogin()
+    }
+    
+    private func earlyBidDayString() -> String? {
+        let currentDate = Date()
+        let units: Set<Calendar.Component> = [.hour, .day, .month, .year]
+        var dc = Calendar.current.dateComponents(units, from: currentDate)
+        dc.hour = 12
+        dc.timeZone = TimeZone(identifier: "US/Central")!
+
+        var dayString: String?
+
+        if selectedRound == 1 {
+            if selectedPosition?.shortName == "FA" {
+                dc.day = 2
+                dayString = "2nd"
+            } else {
+                dc.day = 4
+                dayString = "4th"
+            }
+        } else {
+            if selectedPosition?.shortName == "FA" {
+                dc.day = 11
+                dayString = "11th"
+            } else {
+                dc.day = 17
+                dayString = "17th"
+            }
+        }
+
+        let bidReleaseDate = Calendar.current.date(from: dc)
+
+        if bidReleaseDate?.compare(currentDate) == .orderedDescending,
+           !isHistoricBid {
+            return dayString
+        }
+
+        return nil
+    }
     
     @objc func closeCredentilaPage() {
         DispatchQueue.main.async {
@@ -607,9 +686,9 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     
     func setupUI(){
         setupTitle()
-        if type == .defaultType && loginReason == .normalBidFlow{
-            checkEarlyBidding()
-        }
+//        if type == .defaultType && loginReason == .normalBidFlow{
+//            checkEarlyBidding()
+//        }
         
         if self.dataSource.position == BICrewPositionType.FlightAttendant{
             self.webView.isHidden = false
@@ -672,13 +751,13 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                 str1.append(str3)
                 str1.append(str4)
                 str1.append(str5)
-                AlertService.showDBAlert(title: "Oops!", attributedMessage: str1, from: self)
+                AlertService.showDBAlert(title: "Oops!", attributedMessage: str1, retryFlow: .bidDownload, from: self)
                 
             }else if errorString.contains("timed out"){
                 if self.app.objNetworkType == .free || self.app.objNetworkType == .paid{
-                    AlertService.showDBAlert(title: "Darn it!", attributedMessage: NSAttributedString(string: "The company 3rd Party server is not responding.\nThis is not uncommon.\nYour only cources of action are to wait a while and try again, or try another internet connection.\nSometimes the internet signal on the plane is just too weak"), from: self)
+                    AlertService.showDBAlert(title: "Darn it!", attributedMessage: NSAttributedString(string: "The company 3rd Party server is not responding.\nThis is not uncommon.\nYour only cources of action are to wait a while and try again, or try another internet connection.\nSometimes the internet signal on the plane is just too weak"), retryFlow: .bidDownload, from: self)
                 }else if self.app.objNetworkType == .ground{
-                    AlertService.showDBAlert(title: "Darn it!", attributedMessage: NSAttributedString(string: "The company 3rd Party server is not responding.\nThis is not uncommon.\nYour only cources of action are to wait a while and try again, or try using a cellular internet connection.\n"), from: self)
+                    AlertService.showDBAlert(title: "Darn it!", attributedMessage: NSAttributedString(string: "The company 3rd Party server is not responding.\nThis is not uncommon.\nYour only cources of action are to wait a while and try again, or try using a cellular internet connection.\n"), retryFlow: .bidDownload, from: self)
                 }
             }
         }
@@ -979,7 +1058,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         let str2 = AlertService.getAttributedMessage(from: "\n\nPlease make sure that bid awards are available at this time.")
         str1.append(str2)
         DispatchQueue.main.async{
-            AlertService.showDBAlert(title: "Awards Retrieval Failed",attributedMessage: str1, from: self)
+            AlertService.showDBAlert(title: "Awards Retrieval Failed",attributedMessage: str1,retryFlow: .bidDownload ,from: self)
         }
     }
     
@@ -1009,6 +1088,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                 vc.submittedEmpNum = defaultEmpNum
                 vc.bidderEmpNum = bidderEmpNum
                 vc.delegate = self
+                vc.delegate1 = self
                 vc.modalPresentationStyle = .formSheet
                 vc.preferredContentSize = CGSize(width: 600, height: 500)
 
@@ -1021,29 +1101,6 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
             }
         }
 
-//        if isFA{
-//            DispatchQueue.main.async {
-//                self.view.showActivityIndicator(message: "Submitting your bid...")
-//            }
-//            submissionViewModel = CBBidSubmissionViewModel(
-//                bidPeriod: bidPeriod,
-//                userID: bidderEmpNum,
-//                password: nil, // FA does not use password
-//                defaultEmpNum: self.defaultEmployeeNumber,
-//                optionalEmpNum: self.optionalEmployees,
-//                selectedObject: self.selectedObject
-//            )
-//
-//            submissionViewModel?.startBidSubmission(sessionKey: sessionKey) { result in
-////                self.handleSubmissionResult(result)
-//                DispatchQueue.main.async {
-//                    self.view.hideActivityIndicator()
-//                }
-//                print(result)
-//            }
-//
-//            return
-//        }else{
             submissionViewModel = CBBidSubmissionViewModel(bidPeriod: bidPeriod, userID: bidderEmpNum, password: self.dataSource.password, defaultEmpNum: self.defaultEmployeeNumber, optionalEmpNum: self.optionalEmployees, selectedObject: self.selectedObject)
             
             submissionViewModel?.setBidLineNumbers { (success) in
@@ -1085,23 +1142,45 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
 
                         case .failure(let error):
                             DispatchQueue.main.async {
-                                AlertService.showAlertForTopVC(
-                                    title: "Submission Failed",
-                                    message: error.localizedDescription
+                                let paragraphStyle = NSMutableParagraphStyle()
+                                paragraphStyle.alignment = .center
+                                paragraphStyle.lineSpacing = 6
+                                
+                                let attrs: [NSAttributedString.Key: Any] = [
+                                    .font: UIFont.systemFont(ofSize: 17, weight: .regular),
+                                    .foregroundColor: UIColor.label,
+                                    .paragraphStyle: paragraphStyle
+                                ]
+                                
+                                let attributedError = NSAttributedString(
+                                    string: error.localizedDescription,
+                                    attributes: attrs
                                 )
-                                self.dismissVC()
+                                self.dismissVC(animated: false){
+                                    AlertService.showDBAlertForTopVC(
+                                        title: "Bid Submission Failed",
+                                        attributedMessage: attributedError,
+                                        retryFlow: .bidSubmission,
+                                        empName: self.submittedEmpName,
+                                        bidPeriod: self.bidPeriod
+                                    )
+                                }
                             }
-
                         }
                     }
                 }
             }
-//        }
-
     }
     
     
-    
+    func dismissVC(
+        animated: Bool = true,
+        completion: (() -> Void)? = nil
+    ) {
+        DispatchQueue.main.async {
+            self.dismiss(animated: animated, completion: completion)
+        }
+    }
 
     
     private func checkEarlyBidding(){
@@ -1140,8 +1219,10 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
     }
     
     @objc func dismissVC() {
-        DispatchQueue.main.async {
-            self.dismiss(animated: true, completion: nil)
+        if let presentingVC = self.presentingViewController {
+            presentingVC.dismiss(animated: false)
+        } else {
+            self.dismiss(animated: false)
         }
     }
     
@@ -1516,12 +1597,12 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
         }
         return attributedString
     }
-    func DBAlert(title:String, message:NSAttributedString){
-        let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBAlertVC") as! CBAlertVC
-        vc.alertTitle = title
-        vc.attributedMessage = message
-        
-    }
+//    func DBAlert(title:String, message:NSAttributedString){
+//        let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBAlertVC") as! CBAlertVC
+//        vc.alertTitle = title
+//        vc.attributedMessage = message
+//        
+//    }
     
 //    MARK: login action
     func loginActions(){
@@ -1653,6 +1734,9 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, UIAda
                 self.submitBidAction()
             }
         }
+    }
+    func cancelActionFromSubmitCertifyDelegate() {
+        self.dismissVC()
     }
     
     

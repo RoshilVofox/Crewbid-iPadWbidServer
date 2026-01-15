@@ -26,20 +26,25 @@ class AlertService{
             return alert
         }
     }
-    static func showDBAlert(title: String?, message: String? = nil, attributedMessage: NSAttributedString? = nil, from viewController: UIViewController) {
+    static func showDBAlert(title: String?, message: String? = nil, attributedMessage: NSAttributedString? = nil, retryFlow:CBRetryFlow?, from viewController: UIViewController,
+                            empName:String? = nil,
+                            bidPeriod: BIBidPeriod? = nil) {
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         guard let alertVC = storyboard.instantiateViewController(withIdentifier: "CBAlertVC") as? CBAlertVC else {
             return}
         alertVC.modalPresentationStyle = .formSheet
         alertVC.modalTransitionStyle = .crossDissolve
         alertVC.alertTitle = title
+        alertVC.retryFlow = retryFlow
+        alertVC.empName = empName
+        alertVC.bidPeriod = bidPeriod
         if let attributedMessage = attributedMessage {
                 alertVC.attributedMessage = attributedMessage
             } else if let message = message {
                 let paragraphStyle = NSMutableParagraphStyle()
-                    paragraphStyle.alignment = .center  // Center align
+                    paragraphStyle.alignment = .center
                     let attrs: [NSAttributedString.Key: Any] = [
-                        .font: UIFont.systemFont(ofSize: 18, weight: .regular), // Bigger font
+                        .font: UIFont.systemFont(ofSize: 18, weight: .regular),
                         .paragraphStyle: paragraphStyle
                     ]
                     alertVC.attributedMessage = NSAttributedString(string: message, attributes: attrs)
@@ -178,7 +183,23 @@ class AlertService{
             showAlertForTopVC(title: title, message: message, actions: convertedActions, textFields: nil)
         }
 
+    static func showDBAlertForTopVC(
+        title: String?,
+        message: String? = nil,
+        attributedMessage: NSAttributedString? = nil,
+        retryFlow: CBRetryFlow,
+        empName:String? = nil,
+        bidPeriod: BIBidPeriod? = nil
+    ) {
+        guard let topVC = currentTopViewController() else { return }
 
+        showDBAlert(
+            title: title,
+            message: message,
+            attributedMessage: attributedMessage, retryFlow: retryFlow,
+            from: topVC,empName: empName,bidPeriod: bidPeriod
+        )
+    }
     
     static func currentTopViewController() -> UIViewController? {
         // Get the connected scenes

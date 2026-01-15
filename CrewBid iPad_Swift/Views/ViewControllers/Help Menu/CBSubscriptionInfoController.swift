@@ -1,3 +1,4 @@
+/*
 import UIKit
 import StoreKit
 
@@ -778,20 +779,11 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("TempInAppPurchaseUpdate"), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("InAppPurchaseUpdateAfterPending"), object: nil)
         
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(updateInAppPurchaseData(_:)),
-                                               name: NSNotification.Name("InAppPurchaseUpdate"),
-                                               object: nil)
+//        NotificationCenter.default.addObserver(self,selector: #selector(updateInAppPurchaseData(_:)),name: NSNotification.Name("InAppPurchaseUpdate"),object: nil)
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(tempUpdatePendingPurchaseData(_:)),
-                                               name: NSNotification.Name("TempInAppPurchaseUpdate"),
-                                               object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(tempUpdatePendingPurchaseData(_:)),name: NSNotification.Name("TempInAppPurchaseUpdate"),object: nil)
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(updateAfterPendingPurchaseData(_:)),
-                                               name: NSNotification.Name("InAppPurchaseUpdateAfterPending"),
-                                               object: nil)
+//        NotificationCenter.default.addObserver(self,selector: #selector(updateAfterPendingPurchaseData(_:)),name: NSNotification.Name("InAppPurchaseUpdateAfterPending"),object: nil)
         
         if app.objNetworkType == .free || !app.connectedToInternet(){
             subscriptionInfoTextLbl.isHidden = false
@@ -1030,7 +1022,7 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
         return isFree
     }
     
-    
+    /*
     @objc func updateInAppPurchaseData(_ notification: Notification){
         self.view.showActivityIndicator(message: "Updating Purchase Details")
         guard let userInfo = notification.userInfo else { return }
@@ -1087,8 +1079,8 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
                     objDataBuilder.soapUpdateInAppPurchaseDetails(dicData)
                 }
             }
-    }
-    
+    }*/
+    /*
     @objc func tempUpdatePendingPurchaseData(_ notification: Notification) {
         self.view.showActivityIndicator(message: "Updating Purchase Details")
 
@@ -1119,8 +1111,8 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
             webType = .updateMaxSubscription
             objDataBuilder.updateMaxInAppPurchaseDetails(dicData)
         }
-    }
-    
+    }*/
+    /*
     @objc func updateAfterPendingPurchaseData(_ notification: Notification) {
         self.view.showActivityIndicator(message: "Updating Purchase Details")
 
@@ -1149,7 +1141,7 @@ class CBSubscriptionInfoController: BaseViewController, ServiceConnectionDelegat
             webType = .updateMaxSubscription   // assuming you mapped enum in Swift
             objDataBuilder.updateMaxInAppPurchaseDetailsAfterPending(dicData)
         }
-    }
+    }*/
     
     
     func setupUI() {
@@ -1342,4 +1334,4 @@ extension CBSubscriptionInfoController: UICollectionViewDelegate, UICollectionVi
         return UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: rightInset)
     }
     
-}
+ }*/

@@ -7,6 +7,11 @@
 
 import UIKit
 
+enum CBRetryFlow {
+    case bidDownload
+    case bidSubmission
+}
+
 class CBAlertVC: BaseViewController {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var textView: UITextView!
@@ -16,6 +21,10 @@ class CBAlertVC: BaseViewController {
     var attributedMessage:NSAttributedString?
     var fromView:UIViewController?
     var isSimpleAlert: Bool = false
+    var retryFlow: CBRetryFlow? = .bidDownload
+    var bidPeriod: BIBidPeriod?
+    var empName: String?
+    var confirmEmpNum: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,24 +62,77 @@ class CBAlertVC: BaseViewController {
 
     @IBAction func tryBtnAction(_ sender: Any) {
         dismiss(animated: true) {
-            AppNavigation.startNewBidFlow()
+            switch self.retryFlow {
+            case .bidDownload:
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("dismissLoginView"),
+                    object: nil
+                )
+                guard let sourceVC = self.fromView else { return }
+
+                if let presentingVC = sourceVC.presentingViewController {
+                    presentingVC.dismiss(animated: false) {
+                        AppNavigation.startNewBidFlow(from: presentingVC)
+                    }
+                } else {
+                    AppNavigation.startNewBidFlow(from: sourceVC)
+                }
+
+            case .bidSubmission:
+                guard let sourceVC = self.fromView else { return }
+                if let presentingVC = sourceVC.presentingViewController {
+                    presentingVC.dismiss(animated: false) {
+                        AppNavigation.restartBidSubmissionFlow(
+                            from: presentingVC,
+                            empName: self.empName,
+                            bidPeriod: self.bidPeriod
+                        )
+                    }
+                } else {
+                    AppNavigation.restartBidSubmissionFlow(
+                        from: sourceVC,
+                        empName: self.empName,
+                        bidPeriod: self.bidPeriod
+                    )
+                }
+
+
+
+            case .none:
+                break
+            }
         }
     }
     
     @IBAction func cancelBtnAction(_ sender: Any) {
-        navigationController?.popViewController(animated: false)
-        if navigationController == nil {
-            self.presentingViewController?.dismiss(animated: false, completion: {
-                if let _ = self.fromView as? CBCredentialsPageVC {
-                    NotificationCenter.default.post(name: .init("dismissLoginView"), object: self)
+//        navigationController?.popViewController(animated: false)
+//        if navigationController == nil {
+//            self.presentingViewController?.dismiss(animated: false, completion: {
+//                if let _ = self.fromView as? CBCredentialsPageVC {
+//                    NotificationCenter.default.post(name: .init("dismissLoginView"), object: self)
+//                }
+//            });
+//        }
+        self.dismiss(animated: true) {
+            if let presentingVC = self.fromView {
+                if let nav = presentingVC.navigationController {
+                    nav.dismiss(animated: false)
+                } else {
+                    presentingVC.dismiss(animated: false)
                 }
-            });
+                if presentingVC is CBCredentialsPageVC {
+                    NotificationCenter.default.post(
+                        name: .init("dismissLoginView"),
+                        object: nil
+                    )
+                }
+            }
         }
     }
 }
 enum AppNavigation {
 
-    static func startNewBidFlow() {
+    static func startNewBidFlow(from presenter:UIViewController) {
         UserDefaults.standard.set(
             false,
             forKey: "isSecretForAllDomicileDownloadEnabled"
@@ -88,7 +150,7 @@ enum AppNavigation {
             vc.modalTransitionStyle = .crossDissolve
             vc.isModalInPresentation = true
 
-            topVC.present(vc, animated: true)
+            presenter.present(vc, animated: true)
         }
         let app = UIApplication.shared.delegate as! AppDelegate
         
@@ -96,18 +158,9 @@ enum AppNavigation {
            authDetails.count > 0 {
 
             if app.connectedToInternet() {
-                topVC.view.showActivityIndicator(
-                    message: "Checking User Account"
-                )
-
-                CBSubscriptionInfoController()
-                    .updateSubscriptionDetails(silent: true)
-
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                    topVC.view.hideActivityIndicator()
                     presentNewBid()
                 }
-
             } else {
                 let alert = UIAlertController(
                     title: "Network not available!!",
@@ -121,4 +174,31 @@ enum AppNavigation {
             presentNewBid()
         }
     }
+    
+    static func restartBidSubmissionFlow(
+            from sourceVC: UIViewController,
+            empName: String?,
+            bidPeriod: BIBidPeriod?
+        ) {
+            let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+            let vc = storyboard.instantiateViewController(
+                withIdentifier: "CBDefaultEmployeeVC"
+            ) as! CBDefaultEmployeeVC
+            guard let topVC = UIApplication.topViewController() else { return }
+            vc.empName = empName ?? ""
+            vc.type = .submitEmployeeNumber
+            vc.isEmpIDVerified = false
+            vc.bidPeriod = bidPeriod
+
+            vc.preferredContentSize = CGSize(width: 600, height: 500)
+            vc.isModalInPresentation = true
+            
+            let navController = UINavigationController(rootViewController: vc)
+            navController.setNavigationBarHidden(true, animated: false)
+            navController.modalPresentationStyle = .formSheet
+            navController.preferredContentSize = CGSize(width: 600, height: 500)
+            
+            topVC.present(navController, animated: true)
+        }
+    
 }

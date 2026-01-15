@@ -118,35 +118,36 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
         
         self.view.showActivityIndicator(message: "Validating Buddies...")
         
-            self.hasBuddyExistInEachOtherList { isValid in
-                DispatchQueue.main.async {
-                    self.view.hideActivityIndicator()
-                    guard isValid else { return }
+        self.hasBuddyExistInEachOtherList { isValid in
+            DispatchQueue.main.async {
+                self.view.hideActivityIndicator()
+                guard isValid else { return }
+                self.optionalEmployees.removeAllObjects()
+                // Add buddies directly — no subscription check
+                if !buddy1.isEmpty { self.optionalEmployees.add(buddy1) }
+                if !buddy2.isEmpty { self.optionalEmployees.add(buddy2) }
+//                self.finalAlert()
+                let removedCount = CBBidSubmissionViewModel.previewRemovedFALinesCount(
+                    bidPeriod: self.bidPeriod!,
+                    optionalEmpNumbers: self.optionalEmployees
+                )
 
-                    // Add buddies directly — no subscription check
-                    if !buddy1.isEmpty { self.optionalEmployees.add(buddy1) }
-                    if !buddy2.isEmpty { self.optionalEmployees.add(buddy2) }
-
+                if removedCount > 0 {
+                    AlertService.showAlertForTopVC(
+                        title: "CrewBid",
+                        message: "\(removedCount) lines were removed from the submission because they were D position lines. Buddy Bid Lines must have positions (A, B, etc.) for each bidder.",
+                        actions: [
+                            (title: "OK", style: .default, handler: { _ in
+                                self.finalAlert()   // Buddy Bid Terms NEXT
+                            }),
+                            (title: "Cancel", style: .cancel, handler: { _ in })
+                        ]
+                    )
+                } else {
                     self.finalAlert()
-//                    self.view.updateActivityIndicator(message: "Authentication Checking...")
-//                    self.checkAllBuddysSubscription { output, success in
-//                        DispatchQueue.main.async {
-//                            self.view.hideActivityIndicator()
-//                            if success {
-//                                // Add employees
-//                                if !buddy1.isEmpty { self.optionalEmployees.add(buddy1) }
-//                                if !buddy2.isEmpty { self.optionalEmployees.add(buddy2) }
-//
-//                                // ALL checks passed → show final alert
-//                                self.finalAlert()
-//                            } else {
-//                                // Show subscription failure message
-//                                AlertService.showAlertForTopVC(title: "Buddy Bid", message: output)
-//                            }
-//                        }
-//                    }
                 }
             }
+        }
     }
     
     
@@ -304,7 +305,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
     func hasBuddyExistInEachOtherList(completion: @escaping (Bool) -> Void) {
         
         // Step 1 — check FA list locally
-        var isValidBuddy = self.ifEmployeeContainsInFALIST()
+        let isValidBuddy = self.ifEmployeeContainsInFALIST()
         if !isValidBuddy {
             completion(false)
             return
@@ -346,8 +347,9 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
                     
                     if pendingCalls == 0 {
                         didFinish = true
-                        isValidBuddy = self.checkBuddyInTheBuddyList()
-                        completion(isValidBuddy)
+                        self.checkBuddyInTheBuddyList{ isValid in
+                            completion(isValid)
+                        }
                     }
                 }
             }
@@ -424,7 +426,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
                     
                 case .failure(let error):
                     switch error{
-                    case .httpStatus(let status) where status == 401:
+                    case .httpStatus(let status, _) where status == 401:
                         self.showInvalidTokenAlertOnce()
                     default:AlertService.showAlertForTopVC(title: "Buddy Bid Error", message: error.localizedDescription)
                     }
@@ -481,8 +483,8 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
     }
         
     
-    func checkBuddyInTheBuddyList() -> Bool{
-        var result = true
+    func checkBuddyInTheBuddyList(completion: @escaping (Bool) -> Void){
+//        var result = true
 
         DispatchQueue.main.async {
             let empNum = self.empID ?? ""
@@ -534,10 +536,9 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
                 AlertService.showAlertForTopVC(title: "Buddy Bid", message: message)
             }
 
-            result = isExist
+            completion(isExist)
         }
 
-        return result
     }
 }
 

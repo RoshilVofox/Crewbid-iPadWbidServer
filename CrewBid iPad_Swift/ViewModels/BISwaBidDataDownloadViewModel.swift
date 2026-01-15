@@ -131,6 +131,7 @@ class BISwaBidDataDownloadViewModel{
             switch result {
             case .success:
                 self.saveSelectionsToUserDefaults()
+                print("Seniority list Downloaded")
                 completion(true, nil)     // notify DispatchGroup
             case .failure(let error):
                 completion(false, error)  // notify DispatchGroup
@@ -144,6 +145,7 @@ class BISwaBidDataDownloadViewModel{
         self.swaBidDataDownload?.getSwaCoverLetter { result in
             switch result {
             case .success:
+                print("Cover letter Downloaded")
                 completion(true, nil)
             case .failure(let error):
                 completion(false, error)
@@ -157,6 +159,7 @@ class BISwaBidDataDownloadViewModel{
         self.swaBidDataDownload?.downloadBidData(type: "lines") { result in
             switch result {
             case .success:
+                print("Line Data Downloaded")
                 completion(true, nil)
             case .failure(let error):
                 completion(false, error)
@@ -170,6 +173,7 @@ class BISwaBidDataDownloadViewModel{
         self.swaBidDataDownload?.downloadBidData(type: "pairings") { result in
             switch result {
             case .success:
+                print("Trip Data Downloaded")
                 completion(true, nil)
             case .failure(let error):
                 completion(false, error)
@@ -183,6 +187,7 @@ class BISwaBidDataDownloadViewModel{
         self.swaBidDataDownload?.getBuddyBids(user_id: self.userId!) { result in
             switch result {
             case .success:
+                print("Buddy bids Downloaded")
                 completion(true, nil)
             case .failure(let error):
                 completion(false, error)
@@ -235,9 +240,9 @@ class BISwaBidDataDownloadViewModel{
     private func readSwaBidData(completion: @escaping (Result<Void, Error>) -> Void){
         
         if self.isAllDomicileEnabled(){
-            //parsing data notification
+
         }else{
-            //update the progress
+
         }
         
         let documentFileURL = BIBidInfo().bidDocumentFileURL()

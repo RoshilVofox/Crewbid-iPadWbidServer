@@ -1558,7 +1558,10 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
         posText.tag = 7
         posText.textColor = UIColor.white
         posText.text = "NA"
-        posText.font = posText.font.withSize(15)
+        posText.font = posText.font.withSize(12)
+        posText.adjustsFontSizeToFitWidth = true
+        posText.minimumScaleFactor = 0.5
+        posText.lineBreakMode = .byClipping
         posNAView.addSubview(posText)
         posNAView.alpha = 0
  

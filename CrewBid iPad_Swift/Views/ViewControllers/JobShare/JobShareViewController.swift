@@ -463,7 +463,7 @@ class JobShareViewController: BaseViewController {
                     
                 case .failure(let error):
                     switch error{
-                    case .httpStatus(let status) where status == 401:
+                    case .httpStatus(let status, _) where status == 401:
                         self.showInvalidTokenAlertOnce()
                         
                     default:

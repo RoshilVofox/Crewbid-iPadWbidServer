@@ -26,20 +26,54 @@ class CBBidSubmissionViewModel{
     var jobShare1:String?
     var jobShare2:String?
     var isJobShareContingency:Bool = false
-    init(bidPeriod: BIBidPeriod, userID: String,password: String?, defaultEmpNum: String?, optionalEmpNum: NSArray, selectedObject:[String:Any]) {
+    init(bidPeriod: BIBidPeriod, userID: String,password: String?, defaultEmpNum: String?, optionalEmpNum: NSArray, selectedObject:[String:Any]?) {
         self.app = UIApplication.shared.delegate as? AppDelegate
         self.bidPeriod = bidPeriod
         self.optionalEmpNumbers = optionalEmpNum
         self.bidEmployeeNumber = defaultEmpNum
         self.userID = userID.lowercased()
         self.password = password
-        if let js1 = selectedObject["jobShare1"] as? String, !js1.isEmpty {
+        if let js1 = selectedObject?["jobShare1"] as? String, !js1.isEmpty {
             self.jobShare1 = js1
         }
-        if let js2 = selectedObject["jobShare2"] as? String, !js2.isEmpty {
+        if let js2 = selectedObject?["jobShare2"] as? String, !js2.isEmpty {
             self.jobShare2 = js2
         }
-        self.isJobShareContingency = selectedObject["isJobShareContingency"] as? Bool ?? false
+        self.isJobShareContingency = selectedObject?["isJobShareContingency"] as? Bool ?? false
+    }
+    
+    
+    static func previewRemovedFALinesCount(
+        bidPeriod: BIBidPeriod,
+        optionalEmpNumbers: NSArray
+    ) -> Int {
+
+        guard bidPeriod.isFABid(), optionalEmpNumbers.count > 0 else {
+            return 0
+        }
+
+        let lines = (bidPeriod.lines!.allObjects as NSArray)
+            .sortedArray(using: [NSSortDescriptor(key: "bidOrder", ascending: true)])
+
+        let results = (lines as NSArray)
+            .filtered(using: NSPredicate(format: "bidOrder != 0"))
+
+        var bidLineNumbers: [String] = []
+
+        if bidPeriod.isSecondRoundBid() {
+            bidLineNumbers = results.compactMap { "\($0)" }
+        } else {
+            for case let line as BILine in results {
+                if line.faBidLineReserve != 0 {
+                    bidLineNumbers.append("M")
+                } else {
+                    bidLineNumbers.append("\(line.number!)\(line.faPositionString)")
+                }
+            }
+        }
+
+        let withoutD = bidLineNumbers.filter { !$0.contains("D") }
+        return bidLineNumbers.count - withoutD.count
     }
     
     func setBidLineNumbers(completion: @escaping (Bool) -> Void){
@@ -62,43 +96,67 @@ class CBBidSubmissionViewModel{
                 }
             }
         }
-        if self.bidPeriod!.isFABid(){
-            if self.optionalEmpNumbers.count > 0 {
-                let bidLineNumberWithoutDPosition = NSMutableArray()
-                if let array = bidLineNumbers as? [Int] {
-                    bidLineNumbers.removeAllObjects()
-                    for item in array{
-                        bidLineNumbers.add("\(item)")
-                    }
-                }
-                for num in bidLineNumbers as! [String]{
-                    if !num.contains("D"){
-                        bidLineNumberWithoutDPosition.add(num)
-                    }
-                }
-                if bidLineNumbers.count > bidLineNumberWithoutDPosition.count{
-                    let removedLinesCount = bidLineNumbers.count - bidLineNumberWithoutDPosition.count
-                    AlertService.showAlertForTopVC(title: "CrewBid", message: "\(removedLinesCount) lines were removed from the submission because they were D position lines. Buddy Bid Lines must have positions (A, B, etc.) for each bidder. Press or Cancel to return the position choices", actions: [(title: "OK", style: .default, handler: {_ in
-                        //Bid line number for FA with buddy and D position lines removed for submission
-                        self.bidListNumbers = bidLineNumberWithoutDPosition
-                        completion(true)
-                    })])
-                }
-                else{
-                    //bid line number for FA with buddy and no D position lines in bidlist
-                    self.bidListNumbers = bidLineNumbers
-                    completion(true)
-                }
-            }else{
-                //bid lines for FA without any buddy
-                self.bidListNumbers = bidLineNumbers
-                completion(true)
+        // FA + Buddy → remove D position lines (NO ALERT HERE)
+        if bidPeriod!.isFABid(), self.optionalEmpNumbers.count > 0 {
+
+            let filtered = NSMutableArray()
+
+            // Normalize to String
+            let normalized: [String] = bidLineNumbers.compactMap {
+                if let i = $0 as? Int { return "\(i)" }
+                return $0 as? String
             }
-        }else{
-            //bid lines for the Pilot
-            self.bidListNumbers = bidLineNumbers
+
+            for num in normalized where !num.contains("D") {
+                filtered.add(num)
+            }
+
+            self.bidListNumbers = filtered
             completion(true)
+            return
         }
+
+        // All other cases
+        self.bidListNumbers = bidLineNumbers
+        completion(true)
+        
+//        if self.bidPeriod!.isFABid(){
+//            if self.optionalEmpNumbers.count > 0 {
+//                let bidLineNumberWithoutDPosition = NSMutableArray()
+//                if let array = bidLineNumbers as? [Int] {
+//                    bidLineNumbers.removeAllObjects()
+//                    for item in array{
+//                        bidLineNumbers.add("\(item)")
+//                    }
+//                }
+//                for num in bidLineNumbers as! [String]{
+//                    if !num.contains("D"){
+//                        bidLineNumberWithoutDPosition.add(num)
+//                    }
+//                }
+//                if bidLineNumbers.count > bidLineNumberWithoutDPosition.count{
+//                    let removedLinesCount = bidLineNumbers.count - bidLineNumberWithoutDPosition.count
+//                    AlertService.showAlertForTopVC(title: "CrewBid", message: "\(removedLinesCount) lines were removed from the submission because they were D position lines. Buddy Bid Lines must have positions (A, B, etc.) for each bidder. Press or Cancel to return the position choices", actions: [(title: "OK", style: .default, handler: {_ in
+//                        //Bid line number for FA with buddy and D position lines removed for submission
+//                        self.bidListNumbers = bidLineNumberWithoutDPosition
+//                        completion(true)
+//                    })])
+//                }
+//                else{
+//                    //bid line number for FA with buddy and no D position lines in bidlist
+//                    self.bidListNumbers = bidLineNumbers
+//                    completion(true)
+//                }
+//            }else{
+//                //bid lines for FA without any buddy
+//                self.bidListNumbers = bidLineNumbers
+//                completion(true)
+//            }
+//        }else{
+//            //bid lines for the Pilot
+//            self.bidListNumbers = bidLineNumbers
+//            completion(true)
+//        }
         
     }
 
@@ -633,7 +691,14 @@ class CBBidSubmissionViewModel{
     
     
     func getFABidSubmissionParamString() -> [String: Any]{
-        let bidChoices: [Int] = (self.bidListNumbers) as? [Int] ?? []
+        
+        let bidChoices: [Any]
+        
+        if self.bidPeriod?.isFABid() == true {
+            bidChoices  = (self.bidListNumbers) as? [String] ?? []
+        }else{
+            bidChoices = (self.bidListNumbers) as? [Int] ?? []
+        }
         
         let token = KeychainHelper.retrieveTokenFromKeyChain()!
         let userDetails = JWTDecoder.decode(jwtToken: token)!

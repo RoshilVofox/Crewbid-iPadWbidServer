@@ -54,88 +54,92 @@ class BISwaBidDataParsing{
 //            return }
         let container = CoreDataManager.shared.persistentContainer
         let moc = container.newBackgroundContext()
-        
-        // IMPORTANT: inject this context everywhere
-        self.setupBidPeriodEntity(moc: moc)
-        
-        var lineFileName = "\(self.bidInfo)-lines.json"
-        var tripFileName = "\(self.bidInfo)-pairings.json"
-
-        if AppState.shared.isHistoricBid {
-            // Historic filenames are fixed
-            lineFileName = "SWALineFile"
-            tripFileName = "SWATripFile"
-
-            self.linesData = CBUtils.readJSONStringFromFileForArray(lineFileName)
-            self.tripsData = CBUtils.readJSONStringFromFileForArray(tripFileName)
-
-        } else {
-
-            if let lineDict = CBUtils.readJSONString(fromFile:lineFileName),
-               let tripDict = CBUtils.readJSONString(fromFile:tripFileName) {
-
-                if let embedded = lineDict["_embedded"] as? [String: Any],
-                   let lines = embedded["LinesLines"] as? [Any] {
-                    self.linesData = lines
-                }else{
-                    let err = NSError(domain: "BISwaBidParsing",
-                                      code: 1003,
-                                      userInfo: [NSLocalizedDescriptionKey: "Lines data missing in JSON"])
-                    completion(.failure(err))
-                    return
-                }
-
-                if let embedded = tripDict["_embedded"] as? [String: Any],
-                   let trips = embedded["LinesPairings"] as? [Any] {
-                    self.tripsData = trips
-                }else{
-                    let err = NSError(domain: "BISwaBidParsing",
-                                      code: 1004,
-                                      userInfo: [NSLocalizedDescriptionKey: "Trips data missing in JSON"])
-                    completion(.failure(err))
-                    return
+        moc.perform {
+            
+            // IMPORTANT: inject this context everywhere
+            self.setupBidPeriodEntity(moc: moc)
+            
+            var lineFileName = "\(self.bidInfo)-lines.json"
+            var tripFileName = "\(self.bidInfo)-pairings.json"
+            
+            if AppState.shared.isHistoricBid {
+                // Historic filenames are fixed
+                lineFileName = "SWALineFile"
+                tripFileName = "SWATripFile"
+                
+                self.linesData = CBUtils.readJSONStringFromFileForArray(lineFileName)
+                self.tripsData = CBUtils.readJSONStringFromFileForArray(tripFileName)
+                
+            } else {
+                
+                if let lineDict = CBUtils.readJSONString(fromFile:lineFileName),
+                   let tripDict = CBUtils.readJSONString(fromFile:tripFileName) {
+                    
+                    if let embedded = lineDict["_embedded"] as? [String: Any],
+                       let lines = embedded["LinesLines"] as? [Any] {
+                        self.linesData = lines
+                    }else{
+                        let err = NSError(domain: "BISwaBidParsing",
+                                          code: 1003,
+                                          userInfo: [NSLocalizedDescriptionKey: "Lines data missing in JSON"])
+                        completion(.failure(err))
+                        return
+                    }
+                    
+                    if let embedded = tripDict["_embedded"] as? [String: Any],
+                       let trips = embedded["LinesPairings"] as? [Any] {
+                        self.tripsData = trips
+                    }else{
+                        let err = NSError(domain: "BISwaBidParsing",
+                                          code: 1004,
+                                          userInfo: [NSLocalizedDescriptionKey: "Trips data missing in JSON"])
+                        completion(.failure(err))
+                        return
+                    }
                 }
             }
-        }
-
-
-        self.bidPeriod?.bidByEmpID = self.dataSource?.employeeNumber
-        self.bidPeriod?.isSwaAPI = 1
-
-        // Parse bid data
-        let success = self.parseBidData(moc: moc)
-        
-        if success{
-            do{
-                try moc.save()
-                container.viewContext.perform {
-                    container.viewContext.mergeChanges(fromContextDidSave:
-                        Notification(
-                            name: .NSManagedObjectContextDidSave,
-                            object: moc
+            
+            
+            self.bidPeriod?.bidByEmpID = self.dataSource?.employeeNumber
+            self.bidPeriod?.isSwaAPI = 1
+            
+            // Parse bid data
+            let success = self.parseBidData(moc: moc)
+            assert(self.bidPeriod?.managedObjectContext === moc)
+            assert(self.calendarData.bidPeriod === self.bidPeriod)
+            assert(self.calendarData.bidPeriod?.objectID == self.bidPeriod?.objectID)
+            if success{
+                do{
+                    try moc.save()
+                    container.viewContext.perform {
+                        container.viewContext.mergeChanges(fromContextDidSave:
+                                                            Notification(
+                                                                name: .NSManagedObjectContextDidSave,
+                                                                object: moc
+                                                            )
                         )
+                    }
+                    CBUtils.deleteFile(withName: lineFileName)
+                    CBUtils.deleteFile(withName: tripFileName)
+                    CBGlobalMethods.shared.selectedBidPeriod = self.bidPeriod
+                    NotificationCenter.default.post(
+                        name: Notification.Name("BidParsingCompleted"),
+                        object: nil
                     )
+                    
+                    completion(.success(()))
+                }catch{
+                    print("Error saving new data: %@", error.localizedDescription)
+                    completion(.failure(error))
+                    return
                 }
-                CBUtils.deleteFile(withName: lineFileName)
-                CBUtils.deleteFile(withName: tripFileName)
-                CBGlobalMethods.shared.selectedBidPeriod = self.bidPeriod
-                NotificationCenter.default.post(
-                    name: Notification.Name("BidParsingCompleted"),
-                    object: nil
-                )
-                
-                completion(.success(()))
-            }catch{
-                print("Error saving new data: %@", error.localizedDescription)
-                completion(.failure(error))
+            }else{
+                let err = NSError(domain: "BISwaBidParsing",
+                                  code: 1005,
+                                  userInfo: [NSLocalizedDescriptionKey: "parseBidData() returned false"])
+                completion(.failure(err))
                 return
             }
-        }else{
-            let err = NSError(domain: "BISwaBidParsing",
-                              code: 1005,
-                              userInfo: [NSLocalizedDescriptionKey: "parseBidData() returned false"])
-            completion(.failure(err))
-            return
         }
     }
     
@@ -166,9 +170,26 @@ class BISwaBidDataParsing{
         )
     }
     
+    private func buildTripLookup() -> [String: [[String:Any]]] {
+        var lookup: [String: [[String:Any]]] = [:]
+
+        guard let trips = self.tripsData as? [[String:Any]] else { return lookup }
+
+        for trip in trips {
+            if let key = trip["pairingKey"] as? [String:Any],
+               let num = key["pairingNumber"] as? String,
+               let date = key["pairingDate"] as? String {
+
+                let lookupKey = "\(num)|\(date)"
+                lookup[lookupKey, default: []].append(trip)
+            }
+        }
+        return lookup
+    }
+    
     private func parseBidData(moc:NSManagedObjectContext) -> Bool{
 //        guard let moc = dataSource?.managedObjectContext else { return false}
-        
+        let tripLookup = buildTripLookup()
         var dataParseCompleted = true
         
         let bidInfoReader = BIBidInfoReader()
@@ -252,26 +273,60 @@ class BISwaBidDataParsing{
                             let positionArray = pairingKey?["seatPositions"] as? [String] ?? []
                             let position = positionArray.first ?? "NA"
                             
-                            if let tripsData = self.tripsData as? [[String:Any]]{
-                                for tripDict in tripsData {
+//                            if let tripsData = self.tripsData as? [[String:Any]]{
+//                                for tripDict in tripsData {
+//
+//                                    let pairingKey = tripDict["pairingKey"] as? [String: Any]
+//                                    let pairingTripNum  = pairingKey?["pairingNumber"] as? String ?? ""
+//                                    let pairingTripDate = pairingKey?["pairingDate"]   as? String ?? ""
+//
+//                                    if (lineTripNumber == pairingTripNum) && (lineTripDate == pairingTripDate) {
+//
+//                                        linePairingArray[i] = NSNull()
+//                                        if isReserveLine {
+//                                            self.readTripsForReserve(line: line, tripDict: tripDict, moc: moc)
+//                                        } else {
+//                                            self.readTrips(line: line, tripDict: tripDict, position: position, moc: moc)
+//                                        }
+//                                    } else {
+//                                        continue
+//                                    }
+//                                }
+//                            }
+                            let lookupKey = "\(lineTripNumber)|\(lineTripDate)"
+                            if let tripArray = tripLookup[lookupKey] {
 
-                                    let pairingKey = tripDict["pairingKey"] as? [String: Any]
-                                    let pairingTripNum  = pairingKey?["pairingNumber"] as? String ?? ""
-                                    let pairingTripDate = pairingKey?["pairingDate"]   as? String ?? ""
+                                for tripDict in tripArray {
 
-                                    if (lineTripNumber == pairingTripNum) && (lineTripDate == pairingTripDate) {
+                                    linePairingArray[i] = NSNull()
 
-                                        linePairingArray[i] = NSNull()
-                                        if isReserveLine {
-                                            self.readTripsForReserve(line: line, tripDict: tripDict, moc: moc)
-                                        } else {
-                                            self.readTrips(line: line, tripDict: tripDict, position: position, moc: moc)
-                                        }
+                                    if isReserveLine {
+                                        self.readTripsForReserve(
+                                            line: line,
+                                            tripDict: tripDict,
+                                            moc: moc
+                                        )
                                     } else {
-                                        continue
+                                        self.readTrips(
+                                            line: line,
+                                            tripDict: tripDict,
+                                            position: position,
+                                            moc: moc
+                                        )
                                     }
+                                    break   // IMPORTANT: matches Obj-C behavior
                                 }
                             }
+//                            if let tripDict = tripLookup[lookupKey] {
+//
+//                                linePairingArray[i] = NSNull()
+//
+//                                if isReserveLine {
+//                                    self.readTripsForReserve(line: line,tripDict: tripDict,moc: moc)
+//                                } else {
+//                                    self.readTrips(line: line,tripDict: tripDict,position: position,moc: moc)
+//                                }
+//                            }
                         }
                         
                         // Code for checking the Missing trip
@@ -364,7 +419,7 @@ class BISwaBidDataParsing{
 //                self.readError = BIBidInfoError.error(for: .managedObjectContextSaveFailed, underlyingReason: errReason)
 //            }
 //        }
-        
+        assert(self.bidPeriod?.managedObjectContext === moc)
         bidInfoReader.addDefaultFilterRules(context: moc)
         bidInfoReader.calculateWorkBlockDetails()
         
@@ -374,60 +429,56 @@ class BISwaBidDataParsing{
     private func setupBidPeriodEntity(moc: NSManagedObjectContext){
 //        guard let moc = dataSource?.managedObjectContext else { return }
         
-        moc.perform {
+//        moc.perform {
 
-            let bidPeriod = BIBidPeriod(context: moc)
-            self.bidPeriod = bidPeriod
+        let bidPeriod = BIBidPeriod(context: moc)
+        self.bidPeriod = bidPeriod
+        bidPeriod.isHistoric = NSNumber(value: AppState.shared.isHistoricBid)
+        bidPeriod.year = NSNumber(value: self.dataSource?.year ?? 0)
+        bidPeriod.base = self.dataSource?.base
+        bidPeriod.month = NSNumber(value: self.dataSource?.month ?? 0)
+        bidPeriod.positionType = NSNumber(value: self.dataSource?.position.rawValue ?? 0)
+        bidPeriod.round = NSNumber(value: self.dataSource?.round ?? 0)
+        bidPeriod.appVersion = CBUtils.AppVersion()
+        bidPeriod.created = Date()
+        
+        if let empNumString = self.dataSource?.employeeNumber,
+            let empNum = Int(empNumString) {
+            bidPeriod.crewIdentifier = NSNumber(value: empNum)
+        }
+        
+        if let fullId = self.dataSource?.swaptimizerID {
+            let trimmed = String(fullId.dropFirst())
+            bidPeriod.swaptimizerIdentifier = NSNumber(value: Int(trimmed) ?? 0)
+        }
+        
+        bidPeriod.isAllLinesTrashed = false
+        bidPeriod.lastTrashedDetails = NSMutableArray()
 
-            bidPeriod.isHistoric = NSNumber(value: AppState.shared.isHistoricBid)
-            bidPeriod.year = NSNumber(value: self.dataSource?.year ?? 0)
-            bidPeriod.base = self.dataSource?.base
-            bidPeriod.month = NSNumber(value: self.dataSource?.month ?? 0)
-            bidPeriod.positionType = NSNumber(value: self.dataSource?.position.rawValue ?? 0)
-            bidPeriod.round = NSNumber(value: self.dataSource?.round ?? 0)
-            bidPeriod.appVersion = CBUtils.AppVersion()
-            bidPeriod.created = Date()
-
-            if let empNumString = self.dataSource?.employeeNumber,
-               let empNum = Int(empNumString) {
-                bidPeriod.crewIdentifier = NSNumber(value: empNum)
-            }
-
-            if let fullId = self.dataSource?.swaptimizerID {
-                let trimmed = String(fullId.dropFirst())
-                bidPeriod.swaptimizerIdentifier = NSNumber(value: Int(trimmed) ?? 0)
-            }
-
-            bidPeriod.isAllLinesTrashed = false
-            bidPeriod.lastTrashedDetails = NSMutableArray()
-
-            // Calendar data MUST use the same bidPeriod
-            let calendar = BICalendarData()
-            self.calendarData = calendar.initWithBidPeriod(bidPeriod: bidPeriod)!
-
-            self.thanksgivingDay = CBUtils.thanksgivingDay(for: bidPeriod.year?.intValue ?? 0)
-            self.includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
-            self.intlCities = UserDefaults.standard.object(forKey: kCBInternationalCitiesDict) as? NSDictionary
-
-            if !AppState.shared.isHistoricBid {
-
-                let seniorityList = self.parseAndSaveSeniorityData(context: moc)
-                bidPeriod.seniorityList = seniorityList as NSSet
-
-                bidPeriod.coverLetterFileName = "\(self.bidInfo)-cover-letter.pdf"
-
-                let buddyBids = self.parseAndSaveBuddyBids(context: moc)
-                bidPeriod.buddyBid = buddyBids as NSSet
-
-                self.getMetaData()
-            }
+        let calendar = BICalendarData()
+        calendar.bidPeriod = self.bidPeriod
+        self.calendarData = calendar
+        self.calendarData = calendar.initWithBidPeriod(bidPeriod: bidPeriod)!
+        
+        self.thanksgivingDay = CBUtils.thanksgivingDay(for: bidPeriod.year?.intValue ?? 0)
+        self.includeDroppedTrips = UserDefaults.standard.bool(forKey: kCBIncludeDroppedTripsInProcessingKey)
+        self.intlCities = UserDefaults.standard.object(forKey: kCBInternationalCitiesDict) as? NSDictionary
+        
+        if !AppState.shared.isHistoricBid {
+            let seniorityList = self.parseAndSaveSeniorityData(context: moc)
+            bidPeriod.seniorityList = seniorityList as NSSet
+            bidPeriod.coverLetterFileName = "\(self.bidInfo)-cover-letter.pdf"
+            let buddyBids = self.parseAndSaveBuddyBids(context: moc)
+            bidPeriod.buddyBid = buddyBids as NSSet
+            self.getMetaData()
+        }
 
 //            do {
 //                try moc.save()
 //            } catch {
 //                print("BidPeriod save failed:", error)
 //            }
-        }
+//        }
     }
     
     private func parseAndSaveSeniorityData(context:NSManagedObjectContext) -> Set<SeniorityList>{
@@ -444,7 +495,7 @@ class BISwaBidDataParsing{
         
         for seniorityDict in seniorityArray {
             let seniority = SeniorityList(context: context)
-            
+            seniority.bidPeriod = self.bidPeriod
             seniority.baseSeniority = seniorityDict["baseSeniority"] as? NSNumber
             seniority.legalName = seniorityDict["legalName"] as? String
             seniority.employeeId = seniorityDict["employeeId"] as? String
@@ -614,7 +665,7 @@ class BISwaBidDataParsing{
 
                 trip.tripStartDay = CBUtils.getDay(from: trip.startDate ?? Date())
                 trip.startDay = CBUtils.getDateOnly(from: trip.startDate ?? Date())
-                trip.startDate = calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue)
+//                trip.startDate = calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue)
 
                 let dayCount = tripInfo.orderedDays().count
                 let endDay = (trip.startDay?.intValue ?? 0) + (dayCount - 1)
@@ -865,12 +916,12 @@ class BISwaBidDataParsing{
         if let pairingKey = tripDict["pairingKey"] as? [String: Any],
            let dateString = pairingKey["pairingDate"] as? String {
 
-            df.dateFormat = "yyyy-MM-dd"
+            df.dateFormat = "YYYY-MM-dd"
 
             if let tripDate = df.date(from: dateString) {
                 trip.startDate = calendarData.dateForDate(date: tripDate)
-                trip.startDay = CBUtils.getDateOnly(from: trip.startDate ?? Date())
-                trip.startDate = calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue)
+//                trip.startDay = CBUtils.getDateOnly(from: trip.startDate ?? Date())
+//                trip.startDate = calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue)
                 tripInfo.startDate = trip.startDate
             }
         }

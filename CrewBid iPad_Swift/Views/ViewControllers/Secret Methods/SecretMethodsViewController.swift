@@ -17,7 +17,9 @@ class SecretMethodsViewController: UIViewController {
         super.viewDidLoad()
         
         setupUI()
-
+        let tap = UITapGestureRecognizer(target: self, action: #selector(qaSegmentTapped(_:)))
+        tap.cancelsTouchesInView = false
+        qaTestSegment.addGestureRecognizer(tap)
     }
     
     func setupUI() {
@@ -39,9 +41,6 @@ class SecretMethodsViewController: UIViewController {
         default:
             envSegment.selectedSegmentIndex = 0
         }
-        
-//        envSegment.isHidden = !isQATest
-//        envLbl.isHidden = !isQATest
     }
     
     @IBAction func closeBtnAction(_ sender: Any) {
@@ -61,7 +60,19 @@ class SecretMethodsViewController: UIViewController {
             }
         }
     }
-    
+    @objc private func qaSegmentTapped(_ gesture: UITapGestureRecognizer) {
+        let location = gesture.location(in: qaTestSegment)
+
+        let segmentWidth = qaTestSegment.bounds.width / CGFloat(qaTestSegment.numberOfSegments)
+        let tappedIndex = Int(location.x / segmentWidth)
+
+        let isQAMode = UserDefaults.standard.bool(forKey: "isQATest")
+
+        // QA segment tapped again while already in QA mode
+        if tappedIndex == 0 && isQAMode {
+            alertinQASegment()
+        }
+    }
     @IBAction func qaTestSegmentAction(_ sender: Any) {
         guard let segmentedControl = sender as? UISegmentedControl else { return }
            
@@ -73,7 +84,6 @@ class SecretMethodsViewController: UIViewController {
 //               self.envSegment.selectedSegmentIndex = 0
 //               self.envLbl.isHidden = true
                UserDefaults.standard.setValue(false, forKey: "isQATest")
-               UserDefaults.standard.setValue("Prod", forKey: "SwaApiEnv")
                NotificationCenter.default.post(name: NSNotification.Name("updateTitle"), object: nil)
            }
     }
@@ -110,8 +120,6 @@ class SecretMethodsViewController: UIViewController {
                 UserDefaults.standard.setValue(qaYear, forKey: "QATestYear")
                 UserDefaults.standard.setValue(true, forKey: "isQATest")
                 NotificationCenter.default.post(name: NSNotification.Name("updateTitle"), object: nil)
-//                self.envSegment.isHidden = false
-//                self.envLbl.isHidden = false
                 print("Saved QA Month: \(qaMonth), QA Year: \(qaYear)")
             } else {
                 // Re-present the same alert with an error message
@@ -127,9 +135,6 @@ class SecretMethodsViewController: UIViewController {
         alert.addAction(okAction)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
             self.qaTestSegment.selectedSegmentIndex = 1
-//            self.envSegment.isHidden = true
-//            self.envLbl.isHidden = true
-            UserDefaults.standard.setValue("Prod", forKey: "SwaApiEnv")
             self.envSegment.selectedSegmentIndex = 0
             UserDefaults.standard.setValue(false, forKey: "isQATest")
             NotificationCenter.default.post(name: NSNotification.Name("updateTitle"), object: nil)
@@ -154,5 +159,6 @@ class SecretMethodsViewController: UIViewController {
         }
 
         UserDefaults.standard.set(environment, forKey: "SwaApiEnv")
+        NotificationCenter.default.post(name: NSNotification.Name("updateTitle"), object: nil)
     }
 }
