@@ -512,152 +512,182 @@ class BISwaBidDataDownload{
         }
     }
     
-    private func totalPages(from response: [String: Any]) -> Int {
-        if
-            let page = response["page"] as? [String: Any],
-            let totalPages = page["totalPages"] as? Int {
-            return totalPages
-        }
-        return 1
-    }
-    
-    func fetchPaginatedDataParallel(
-        urlTemplate: String,
-        keyPath: String,
-        completion: @escaping (Result<[String:Any], Errors>) -> Void
-    ) {
-        // 1️⃣ Fetch page 0 first
-        fetchPaginatedData(
-            urlTemplate: urlTemplate,
-            keyPath: keyPath,
-            pageNumber: 0
-        ) { result in
+    func fetchPaginatedData(urlTemplate: String,keyPath: String,completion: @escaping (Result<[String: Any], Errors>) -> Void) {
+        fetchPage(urlTemplate: urlTemplate, pageNumber: 0) { result in
             switch result {
             case .failure(let error):
                 completion(.failure(error))
 
             case .success(let firstPage):
-                let totalPages = self.totalPages(from: firstPage)
-                guard totalPages > 1 else {
+                guard
+                    let pageInfo = firstPage["page"] as? [String: Any],
+                    let totalPages = pageInfo["totalPages"] as? Int
+                else {
                     completion(.success(firstPage))
                     return
                 }
-
+                if totalPages <= 1 {
+                    completion(.success(firstPage))
+                    return
+                }
                 let group = DispatchGroup()
-                let lock = NSLock()
+                let mergeQueue = DispatchQueue(label: "com.crewBid.pagination.merge", attributes: .concurrent)
 
                 var accumulated = firstPage
-                var allItems =
-                    (firstPage["_embedded"] as? [String: Any])?[keyPath] as? [Any] ?? []
-                let headers: [String: String] = [
-                    "Content-Type": "application/hal+json",
-                    "Authorization": "Bearer \(KeychainHelper.retrieveTokenFromKeyChain()!)",
-                    "x-swa-user-department": "IF",
-                    "Postman-Token": "d6c9db45-8ea6-4dd9-9b7e-f77f2baa8b8b"
-                ]
-                // 2️⃣ Fetch remaining pages in parallel
+                var capturedError: Errors?
+
                 for page in 1..<totalPages {
                     group.enter()
-                    let url = String(format: urlTemplate, page)
 
-                    APIService.shared.fetch(
-                        urlString: url,
-                        method: .GET,
-                        headers: headers,
-                        parse: { try JSONSerialization.jsonObject(with: $0) }
-                    ) { result in
-                        if
-                            case .success(let parsed) = result,
-                            let dict = parsed as? [String: Any],
-                            let embedded = dict["_embedded"] as? [String: Any],
-                            let items = embedded[keyPath] as? [Any]
-                        {
-                            lock.lock()
-                            allItems.append(contentsOf: items)
-                            lock.unlock()
+                    self.fetchPage(urlTemplate: urlTemplate, pageNumber: page) { result in
+                        switch result {
+                            
+                        case .success(let pageDict):
+                            mergeQueue.async(flags: .barrier) {
+                                self.mergePage(pageDict,into: &accumulated,keyPath: keyPath)
+                                group.leave()
+                            }
+                
+                        case .failure(let error):
+                            capturedError = error
+                            group.leave()
                         }
-                        group.leave()
                     }
                 }
 
-                // 3️⃣ Merge and return
-                group.notify(queue: .global()) {
-                    var embedded = accumulated["_embedded"] as? [String: Any] ?? [:]
-                    embedded[keyPath] = allItems
-                    accumulated["_embedded"] = embedded
-                    completion(.success(accumulated))
+                group.notify(queue: .global(qos: .userInitiated)) {
+                    if let error = capturedError {
+                        completion(.failure(error))
+                    } else {
+                        completion(.success(accumulated))
+                    }
                 }
             }
         }
     }
     
-    func fetchPaginatedData(
-        urlTemplate: String,
-        keyPath: String,
-        responseDict: [String:Any] = [:],
-        pageNumber: Int = 0,
-        completion: @escaping (Result<[String:Any], Errors>) -> Void
-    ) {
-        let urlString = String(format: urlTemplate,pageNumber)
-        
+    private func fetchPage(urlTemplate: String,pageNumber: Int,completion: @escaping (Result<[String: Any], Errors>) -> Void) {
+        let urlString = String(format: urlTemplate, pageNumber)
+
         let headers: [String: String] = [
             "Content-Type": "application/hal+json",
             "Authorization": "Bearer \(KeychainHelper.retrieveTokenFromKeyChain()!)",
-            "x-swa-user-department": "IF",
-            "Postman-Token": "d6c9db45-8ea6-4dd9-9b7e-f77f2baa8b8b"
+            "x-swa-user-department": "IF"
         ]
-        
+
         APIService.shared.fetch(
             urlString: urlString,
             method: .GET,
             headers: headers,
-            parse: {data in
+            parse: { data in
                 try JSONSerialization.jsonObject(with: data)
             },
-            completion: {result in
-                switch result{
+            completion: { result in
+                switch result {
                 case .success(let parsed):
-                            guard let resultDict = parsed as? [String: Any] else {
-                                completion(.failure(Errors.other("Invalid JSON" as! Error)))
-                                return
-                            }
+                    guard let dict = parsed as? [String: Any] else {
+                        completion(.failure(.other(NSError(
+                            domain: "Pagination",
+                            code: -1,
+                            userInfo: [NSLocalizedDescriptionKey: "Invalid JSON"]
+                        ))))
+                        return
+                    }
+                    completion(.success(dict))
 
-                            var accumulated = responseDict
-                            if pageNumber == 0 {
-                                accumulated = resultDict
-                            }else{
-                                
-                                if
-                                    let embedded = resultDict["_embedded"] as? [String: Any],
-                                    let newItems = embedded[keyPath] as? [Any]
-                                {
-                                    var embeddedResponse = accumulated["_embedded"] as? [String: Any] ?? [:]
-                                    var currentItems = embeddedResponse[keyPath] as? [Any] ?? []
-                                    
-                                    currentItems.append(contentsOf: newItems)
-                                    
-                                    embeddedResponse[keyPath] = currentItems
-                                    accumulated["_embedded"] = embeddedResponse
-                                }
-                            }
-                            let hasNext = self.hasNextPage(resultDict)
-
-                            if hasNext {
-                                self.fetchPaginatedData(
-                                    urlTemplate: urlTemplate,
-                                    keyPath: keyPath,
-                                    responseDict: accumulated,
-                                    pageNumber: pageNumber + 1,
-                                    completion: completion
-                                )
-                            } else {
-                                completion(.success(accumulated))
-                            }
                 case .failure(let error):
                     completion(.failure(error))
                 }
-            })
+            }
+        )
     }
+    
+    private func mergePage(
+        _ page: [String: Any],
+        into accumulated: inout [String: Any],
+        keyPath: String
+    ) {
+        guard
+            let embedded = page["_embedded"] as? [String: Any],
+            let newItems = embedded[keyPath] as? [Any]
+        else { return }
+
+        var baseEmbedded = accumulated["_embedded"] as? [String: Any] ?? [:]
+        var currentItems = baseEmbedded[keyPath] as? [Any] ?? []
+
+        currentItems.append(contentsOf: newItems)
+
+        baseEmbedded[keyPath] = currentItems
+        accumulated["_embedded"] = baseEmbedded
+    }
+    
+//    func fetchPaginatedData(
+//        urlTemplate: String,
+//        keyPath: String,
+//        responseDict: [String:Any] = [:],
+//        pageNumber: Int = 0,
+//        completion: @escaping (Result<[String:Any], Errors>) -> Void
+//    ) {
+//        let urlString = String(format: urlTemplate,pageNumber)
+//        
+//        let headers: [String: String] = [
+//            "Content-Type": "application/hal+json",
+//            "Authorization": "Bearer \(KeychainHelper.retrieveTokenFromKeyChain()!)",
+//            "x-swa-user-department": "IF",
+//            "Postman-Token": "d6c9db45-8ea6-4dd9-9b7e-f77f2baa8b8b"
+//        ]
+//        
+//        APIService.shared.fetch(
+//            urlString: urlString,
+//            method: .GET,
+//            headers: headers,
+//            parse: {data in
+//                try JSONSerialization.jsonObject(with: data)
+//            },
+//            completion: {result in
+//                switch result{
+//                case .success(let parsed):
+//                            guard let resultDict = parsed as? [String: Any] else {
+//                                completion(.failure(Errors.other("Invalid JSON" as! Error)))
+//                                return
+//                            }
+//
+//                            var accumulated = responseDict
+//                            if pageNumber == 0 {
+//                                accumulated = resultDict
+//                            }else{
+//                                
+//                                if
+//                                    let embedded = resultDict["_embedded"] as? [String: Any],
+//                                    let newItems = embedded[keyPath] as? [Any]
+//                                {
+//                                    var embeddedResponse = accumulated["_embedded"] as? [String: Any] ?? [:]
+//                                    var currentItems = embeddedResponse[keyPath] as? [Any] ?? []
+//                                    
+//                                    currentItems.append(contentsOf: newItems)
+//                                    
+//                                    embeddedResponse[keyPath] = currentItems
+//                                    accumulated["_embedded"] = embeddedResponse
+//                                }
+//                            }
+//                            let hasNext = self.hasNextPage(resultDict)
+//
+//                            if hasNext {
+//                                self.fetchPaginatedData(
+//                                    urlTemplate: urlTemplate,
+//                                    keyPath: keyPath,
+//                                    responseDict: accumulated,
+//                                    pageNumber: pageNumber + 1,
+//                                    completion: completion
+//                                )
+//                            } else {
+//                                completion(.success(accumulated))
+//                            }
+//                case .failure(let error):
+//                    completion(.failure(error))
+//                }
+//            })
+//    }
     
     
     func error(byChangingStatusCode originalError: NSError, newStatusCode: Int) -> NSError {

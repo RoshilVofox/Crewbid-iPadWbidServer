@@ -168,6 +168,20 @@ class BISwaBidDataParsing{
             object: nil,
             userInfo: ["progress": Float(progress)]
         )
+        
+        if progress >= 0.8 {
+            NotificationCenter.default.post(
+                name: Notification.Name("ReadingTrips"),
+                object: nil
+            )
+        }
+        if progress >= 0.98{
+            NotificationCenter.default.post(
+                name: Notification.Name("ReadingLines"),
+                object: nil
+            )
+        }
+        
     }
     
     private func buildTripLookup() -> [String: [[String:Any]]] {
@@ -402,15 +416,9 @@ class BISwaBidDataParsing{
                     }
                 }
             }
-            NotificationCenter.default.post(
-                name: Notification.Name("ReadingTrips"),
-                object: nil
-            )
+
         }
-        NotificationCenter.default.post(
-            name: Notification.Name("ReadingLines"),
-            object: nil
-        )
+
 //        if moc.hasChanges{
 //            do{
 //                try moc.save()

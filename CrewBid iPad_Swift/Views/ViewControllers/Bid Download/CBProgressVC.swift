@@ -11,6 +11,8 @@ extension Notification.Name {
     static let bidInfoReadError = Notification.Name("bidInfoReadError")
 }
 
+
+
 class CBProgressVC: UIViewController {
 
     @IBOutlet weak var text1: UILabel!
@@ -182,6 +184,28 @@ class RectangularProgressView: UIView {
         return label
     }()
     
+    private let elapsedLabel: UILabel = {
+        let label = UILabel()
+        label.text = "00:00"
+        label.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .medium)
+        label.textColor = .secondaryLabel
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    private var timer: Timer?
+    private var elapsedSeconds: Int = 0
+    
+    private let etaLabel: UILabel = {
+        let label = UILabel()
+        label.text = "ETA --:--"
+        label.font = UIFont.monospacedDigitSystemFont(ofSize: 13, weight: .medium)
+        label.textAlignment = .right
+        label.textColor = .secondaryLabel
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isHidden = true
+        return label
+    }()
+    private var currentProgress: Float = 0.0
     // Constraint to animate progress width
     private var progressWidthConstraint: NSLayoutConstraint!
     
@@ -198,12 +222,22 @@ class RectangularProgressView: UIView {
     
     // MARK: - Setup UI
     private func setupView() {
+        addSubview(elapsedLabel)
+        addSubview(etaLabel)
         addSubview(progressBackground)
         progressBackground.addSubview(progressForeground)
         addSubview(percentageLabel)
         
         // Background Constraints
         NSLayoutConstraint.activate([
+            // Elapsed (left)
+            elapsedLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            elapsedLabel.bottomAnchor.constraint(equalTo: progressBackground.topAnchor, constant: -6),
+            
+            // ETA (right)
+            etaLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            etaLabel.bottomAnchor.constraint(equalTo: progressBackground.topAnchor, constant: -6),
+            
             progressBackground.leadingAnchor.constraint(equalTo: leadingAnchor),
             progressBackground.trailingAnchor.constraint(equalTo: trailingAnchor),
             progressBackground.topAnchor.constraint(equalTo: topAnchor),
@@ -225,6 +259,7 @@ class RectangularProgressView: UIView {
     
     // MARK: - Update Progress
     func updateProgress(to progress: Float, animated: Bool = true) {
+        currentProgress = min(max(progress, 0.01), 1.0)
         let totalWidth = progressBackground.frame.width
         let newWidth = CGFloat(progress) * totalWidth
         
@@ -239,12 +274,72 @@ class RectangularProgressView: UIView {
         
         let percent = Int(progress * 100)
         percentageLabel.text = "\(percent)%"
+        
+        if currentProgress > 0.6 {
+            etaLabel.isHidden = false
+            updateETA()
+        } else {
+            etaLabel.isHidden = true
+        }
+        if progress >= 1.0 {
+            etaLabel.isHidden = false
+            etaLabel.text = "Completed"
+            stopTimer()
+        }
     }
     
     // Call this in layoutSubviews to update width on rotation or initial layout
     override func layoutSubviews() {
         super.layoutSubviews()
         updateProgress(to: Float(progressWidthConstraint.constant / progressBackground.frame.width), animated: false)
+    }
+    
+    func startTimer() {
+        stopTimer()
+        elapsedSeconds = 0
+        updateTimerLabel()
+
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            self?.elapsedSeconds += 1
+            self?.updateTimerLabel()
+        }
+    }
+
+    private func updateTimerLabel() {
+        let minutes = elapsedSeconds / 60
+        let seconds = elapsedSeconds % 60
+        elapsedLabel.text = String(format: "%02d:%02d", minutes, seconds)
+    }
+    
+    func stopTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
+    
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+
+        if window != nil {
+            startTimer()
+        } else {
+            stopTimer()
+        }
+    }
+    
+    private func updateETA() {
+        guard currentProgress > 0.6 else {return}
+
+        let remainingSeconds = Int(
+            Double(elapsedSeconds) * (1.0 - Double(currentProgress)) / Double(currentProgress)
+        )
+
+        etaLabel.text = "ETA: \(formatTime(remainingSeconds))"
+    }
+    
+    private func formatTime(_ seconds: Int) -> String {
+        let mins = seconds / 60
+        let secs = seconds % 60
+        return String(format: "%02d:%02d", mins, secs)
     }
 }
 

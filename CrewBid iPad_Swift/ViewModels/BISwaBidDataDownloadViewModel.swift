@@ -68,11 +68,9 @@ class BISwaBidDataDownloadViewModel{
             return
         }
 
-        // NORMAL BID → run all 5 downloads in parallel
         let downloadGroup = DispatchGroup()
         var capturedError: Error?
 
-        // Helper to wrap each download
         func run(_ work: (@escaping (Bool, Error?) -> Void) -> Void) {
             downloadGroup.enter()
             work { success, error in
@@ -91,14 +89,12 @@ class BISwaBidDataDownloadViewModel{
             }
         }
 
-        // Start all downloads IN PARALLEL
         run(self.downloadSwaSeniorityData)
         run(self.downloadSwaCoverLetter)
         run(self.downloadSwaLineData)
         run(self.downloadSwaTripsData)
         run(self.downloadSwaBuddyBids)
 
-        // When all downloads finish:
         downloadGroup.notify(queue: .main) {
             
             if let error = capturedError {
@@ -107,7 +103,7 @@ class BISwaBidDataDownloadViewModel{
             }
 
             NotificationCenter.default.post(name: Notification.Name("BidDownloaded"), object: nil)
-            // All downloads completed successfully → NOW parse
+
             DispatchQueue.global(qos: .userInitiated).async {
                 self.readSwaBidData { result in
                     DispatchQueue.main.async {

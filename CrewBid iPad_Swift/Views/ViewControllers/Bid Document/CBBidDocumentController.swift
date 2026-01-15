@@ -32,6 +32,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @IBOutlet weak var leftContainerView: UIView!
     @IBOutlet weak var rightContainerView: UIView!
     @IBOutlet weak var bidView: UIView!
+    @IBOutlet weak var lblQaMode: UILabel!
     
     @IBOutlet weak var bidCont: UIView!
     var bidPeriod: BIBidPeriod?
@@ -118,7 +119,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         NotificationCenter.default.addObserver(self, selector: #selector(updateLocalHerbSwitchUI), name: NSNotification.Name("updateLocalHerbSwitchUI"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(removeVacationsForSync), name: NSNotification.Name("RemoveVacationsForSync"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(reloadVacationButton), name: NSNotification.Name("VacationValueSynced"), object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateQATitle), name: NSNotification.Name("updateTitle"), object: nil)
         firstTimeBidOpen()
         NotificationCenter.default.addObserver(self, selector: #selector(didDismissLatestNews), name: NSNotification.Name("DidDismissLatestNews"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openCoverLetter(notification:)), name: NSNotification.Name(KCBOpenCoverletter), object: nil)
@@ -900,8 +901,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         }else{
             empID = String(format: "e%@", empID)
         }
-        
-        
+        self.lblQaMode.text = ""
+        self.updateQATitle()
         
         lblHome.text = "\(version) \(month) \(year) \(base) \(position) Rnd \(round) - \(empID)"
 
@@ -923,6 +924,27 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         if AppData.shared.isSyncOn == false {
             btnSync.isHidden = true
         }
+        
+    }
+    
+    @objc func updateQATitle(){
+        let isQATest = UserDefaults.standard.bool(forKey: "isQATest")
+        let swaEnv = UserDefaults.standard.string(forKey: "SwaApiEnv") ?? "Prod"
+        
+        var qaString = ""
+        
+        if isQATest {
+            switch swaEnv {
+            case "QA":
+                qaString = "(QA Mode)(SWA-QA)"
+            case "Dev":
+                qaString = "(QA Mode)(SWA-Dev)"
+            default:
+                qaString = "(QA Mode)"
+            }
+        }
+        
+        lblQaMode.text = qaString
     }
     
     func firstTimeBidOpen() {
