@@ -32,7 +32,8 @@ class CBLineCalendarCollectionViewController: BaseViewController, KUIPopOverUsab
     var numberofRows:Int = 5
     override func viewDidLoad() {
         super.viewDidLoad()
-//        headerLabel.text = "S          M          T          W          T           F           S  "
+        headerLabel.text = "S          M          T          W          T           F           S  "
+        headerLabel.backgroundColor = UIColor(red: 233, green: 233, blue: 233)
         self.viewBackground.clipsToBounds = true
         self.viewBackground.layer.cornerRadius = 5
         tripDateFormatter = DateFormatter()
