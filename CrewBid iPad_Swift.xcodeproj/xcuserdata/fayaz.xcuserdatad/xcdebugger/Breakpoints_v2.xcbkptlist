@@ -9650,8 +9650,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BISwaBidDataDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "257"
-            endingLineNumber = "257"
+            startingLineNumber = "253"
+            endingLineNumber = "253"
             landmarkName = "readSwaBidData(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -9826,8 +9826,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BISwaBidDataDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "222"
-            endingLineNumber = "222"
+            startingLineNumber = "218"
+            endingLineNumber = "218"
             landmarkName = "downloadSwaHistoricBid(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -10018,8 +10018,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BISwaBidDataDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "82"
-            endingLineNumber = "82"
+            startingLineNumber = "80"
+            endingLineNumber = "80"
             landmarkName = "run(_:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -10034,8 +10034,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BISwaBidDataDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "149"
-            endingLineNumber = "149"
+            startingLineNumber = "145"
+            endingLineNumber = "145"
             landmarkName = "downloadSwaCoverLetter(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -10050,8 +10050,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BISwaBidDataDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "163"
-            endingLineNumber = "163"
+            startingLineNumber = "159"
+            endingLineNumber = "159"
             landmarkName = "downloadSwaLineData(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -10066,8 +10066,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BISwaBidDataDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "177"
-            endingLineNumber = "177"
+            startingLineNumber = "173"
+            endingLineNumber = "173"
             landmarkName = "downloadSwaTripsData(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -10082,8 +10082,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BISwaBidDataDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "191"
-            endingLineNumber = "191"
+            startingLineNumber = "187"
+            endingLineNumber = "187"
             landmarkName = "downloadSwaBuddyBids(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -10098,8 +10098,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BISwaBidDataDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "108"
-            endingLineNumber = "108"
+            startingLineNumber = "104"
+            endingLineNumber = "104"
             landmarkName = "startBidInfoDownload(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -10114,8 +10114,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BISwaBidDataDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
+            startingLineNumber = "107"
+            endingLineNumber = "107"
             landmarkName = "startBidInfoDownload(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13826,8 +13826,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BISwaBidDataDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "173"
-            endingLineNumber = "173"
+            startingLineNumber = "169"
+            endingLineNumber = "169"
             landmarkName = "downloadSwaTripsData(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13842,8 +13842,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BISwaBidDataDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "159"
-            endingLineNumber = "159"
+            startingLineNumber = "155"
+            endingLineNumber = "155"
             landmarkName = "downloadSwaLineData(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13858,8 +13858,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BISwaBidDataDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "145"
-            endingLineNumber = "145"
+            startingLineNumber = "141"
+            endingLineNumber = "141"
             landmarkName = "downloadSwaCoverLetter(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13874,8 +13874,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BISwaBidDataDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "130"
-            endingLineNumber = "130"
+            startingLineNumber = "126"
+            endingLineNumber = "126"
             landmarkName = "downloadSwaSeniorityData(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13890,8 +13890,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BISwaBidDataDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "187"
-            endingLineNumber = "187"
+            startingLineNumber = "183"
+            endingLineNumber = "183"
             landmarkName = "downloadSwaBuddyBids(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13906,8 +13906,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/BISwaBidDataDownloadViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "134"
-            endingLineNumber = "134"
+            startingLineNumber = "130"
+            endingLineNumber = "130"
             landmarkName = "downloadSwaSeniorityData(completion:)"
             landmarkType = "7">
          </BreakpointContent>
