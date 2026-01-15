@@ -303,6 +303,12 @@
                                     <constraint firstAttribute="trailing" secondItem="Va7-ff-Oem" secondAttribute="trailing" constant="10" id="zJN-XD-xJV"/>
                                 </constraints>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mo0-Av-gaA">
+                                <rect key="frame" x="1148.5" y="792" width="41.5" height="19.5"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="16"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="vDu-zF-Fre"/>
                         <color key="backgroundColor" red="0.43137254901960786" green="0.49803921568627452" blue="0.5490196078431373" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -312,9 +318,11 @@
                             <constraint firstAttribute="bottom" secondItem="pI4-h2-oY2" secondAttribute="bottom" constant="100" id="AUG-7I-3Xr"/>
                             <constraint firstItem="HHH-Tn-XjL" firstAttribute="top" secondItem="VNf-2O-4Pg" secondAttribute="bottom" constant="20" id="BJJ-9d-lvR"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="bottom" secondItem="HHH-Tn-XjL" secondAttribute="bottom" constant="5" id="DtG-V4-zve"/>
+                            <constraint firstAttribute="trailing" secondItem="Mo0-Av-gaA" secondAttribute="trailing" constant="20" id="KLp-q0-ueQ"/>
                             <constraint firstItem="VNf-2O-4Pg" firstAttribute="top" secondItem="5EZ-qb-Rvc" secondAttribute="top" id="Xbw-JM-pqw"/>
                             <constraint firstItem="vDu-zF-Fre" firstAttribute="trailing" secondItem="HHH-Tn-XjL" secondAttribute="trailing" constant="20" id="YxE-uU-cd8"/>
                             <constraint firstItem="VNf-2O-4Pg" firstAttribute="leading" secondItem="vDu-zF-Fre" secondAttribute="leading" id="bjc-ZF-UHv"/>
+                            <constraint firstItem="Mo0-Av-gaA" firstAttribute="top" secondItem="HHH-Tn-XjL" secondAttribute="bottom" constant="8" symbolic="YES" id="yzj-MW-pWN"/>
                             <constraint firstItem="VNf-2O-4Pg" firstAttribute="trailing" secondItem="vDu-zF-Fre" secondAttribute="trailing" id="zoj-Kt-poL"/>
                         </constraints>
                     </view>
@@ -334,6 +342,7 @@
                         <outlet property="btnWbidMax" destination="omP-p3-FZ2" id="RSL-qA-1tX"/>
                         <outlet property="herbLabel" destination="wqh-3z-ZPW" id="fIQ-Gi-ZJ5"/>
                         <outlet property="lblHome" destination="Hno-fj-B0g" id="YHb-3l-foM"/>
+                        <outlet property="lblQaMode" destination="Mo0-Av-gaA" id="icp-Pb-Az6"/>
                         <outlet property="leftContainerView" destination="wsv-BL-8wb" id="JkT-Er-Z4m"/>
                         <outlet property="leftShadowView" destination="aCx-CY-HlG" id="xOx-EX-x2l"/>
                         <outlet property="localLabel" destination="kyj-JP-PkN" id="GfZ-Qa-mXC"/>

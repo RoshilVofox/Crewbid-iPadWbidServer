@@ -43,10 +43,7 @@ class CBBidSubmissionViewModel{
     }
     
     
-    static func previewRemovedFALinesCount(
-        bidPeriod: BIBidPeriod,
-        optionalEmpNumbers: NSArray
-    ) -> Int {
+    static func previewRemovedFALinesCount(bidPeriod: BIBidPeriod, optionalEmpNumbers: NSArray) -> Int {
 
         guard bidPeriod.isFABid(), optionalEmpNumbers.count > 0 else {
             return 0
@@ -96,12 +93,10 @@ class CBBidSubmissionViewModel{
                 }
             }
         }
-        // FA + Buddy → remove D position lines (NO ALERT HERE)
         if bidPeriod!.isFABid(), self.optionalEmpNumbers.count > 0 {
 
             let filtered = NSMutableArray()
 
-            // Normalize to String
             let normalized: [String] = bidLineNumbers.compactMap {
                 if let i = $0 as? Int { return "\(i)" }
                 return $0 as? String
@@ -116,7 +111,6 @@ class CBBidSubmissionViewModel{
             return
         }
 
-        // All other cases
         self.bidListNumbers = bidLineNumbers
         completion(true)
         

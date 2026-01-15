@@ -107,7 +107,6 @@ class BISwaBidDataDownloadViewModel{
             }
 
             NotificationCenter.default.post(name: Notification.Name("BidDownloaded"), object: nil)
-            // All downloads completed successfully → NOW parse
             DispatchQueue.global(qos: .userInitiated).async {
                 self.readSwaBidData { result in
                     DispatchQueue.main.async {
