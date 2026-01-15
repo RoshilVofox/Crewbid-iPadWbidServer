@@ -512,20 +512,7 @@ class BISwaBidDataDownload{
         }
     }
     
-    private func totalPages(from response: [String: Any]) -> Int {
-        if
-            let page = response["page"] as? [String: Any],
-            let totalPages = page["totalPages"] as? Int {
-            return totalPages
-        }
-        return 1
-    }
-    
-    func fetchPaginatedData(
-        urlTemplate: String,
-        keyPath: String,
-        completion: @escaping (Result<[String: Any], Errors>) -> Void
-    ) {
+    func fetchPaginatedData(urlTemplate: String,keyPath: String,completion: @escaping (Result<[String: Any], Errors>) -> Void) {
         fetchPage(urlTemplate: urlTemplate, pageNumber: 0) { result in
             switch result {
             case .failure(let error):
@@ -554,16 +541,13 @@ class BISwaBidDataDownload{
 
                     self.fetchPage(urlTemplate: urlTemplate, pageNumber: page) { result in
                         switch result {
+                            
                         case .success(let pageDict):
                             mergeQueue.async(flags: .barrier) {
-                                self.mergePage(
-                                    pageDict,
-                                    into: &accumulated,
-                                    keyPath: keyPath
-                                )
+                                self.mergePage(pageDict,into: &accumulated,keyPath: keyPath)
                                 group.leave()
                             }
-                            
+                
                         case .failure(let error):
                             capturedError = error
                             group.leave()
@@ -582,11 +566,7 @@ class BISwaBidDataDownload{
         }
     }
     
-    private func fetchPage(
-        urlTemplate: String,
-        pageNumber: Int,
-        completion: @escaping (Result<[String: Any], Errors>) -> Void
-    ) {
+    private func fetchPage(urlTemplate: String,pageNumber: Int,completion: @escaping (Result<[String: Any], Errors>) -> Void) {
         let urlString = String(format: urlTemplate, pageNumber)
 
         let headers: [String: String] = [
