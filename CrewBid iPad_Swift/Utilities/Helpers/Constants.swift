@@ -691,4 +691,10 @@ enum UserSyncType: Int {
     case stateConversion
 }
 
+enum UndoType : Int {
+    case undo = 1
+    case redo = 2
+    case disabled = 3
+}
+
 

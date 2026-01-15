@@ -4701,6 +4701,7 @@ class CBJSONSyncParsing: NSObject {
                                     title: "Ok",
                                     style: .default,
                                     handler: { _ in
+                                        CBGlobalMethods.shared.undoType = .disabled
                                         topVc = UIApplication.topVC()
                                         topVc.dismiss(animated: true) {}
                                     }
@@ -5653,6 +5654,7 @@ class CBJSONSyncParsing: NSObject {
                                                     style: .default,
                                                     handler: { _ in
                                                         topVC = UIApplication.topVC()
+                                                        CBGlobalMethods.shared.undoType = .disabled
                                                         NotificationCenter.default.post(name: NSNotification.Name("VacationValueSynced"), object: self)
                                                         topVC.dismiss(animated: true) {}
                                                     }
@@ -5768,6 +5770,7 @@ class CBJSONSyncParsing: NSObject {
                                     style: .default,
                                     handler: { _ in
                                         topVc = UIApplication.topVC()
+                                        CBGlobalMethods.shared.undoType = .disabled
                                         NotificationCenter.default.post(name: NSNotification.Name("VacationValueSynced"), object: self)
                                         topVc.dismiss(animated: true) {}
                                     }

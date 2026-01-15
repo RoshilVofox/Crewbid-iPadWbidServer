@@ -1118,6 +1118,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
                     navigationController.view.layer.add(transition, forKey: kCATransition)
                     navigationController.popToRootViewController(animated: false)
+                    CBGlobalMethods.shared.canPerformUndo = false
                 } else {
                     self.dismiss(animated: true)
                 }
@@ -1130,6 +1131,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
                 navigationController.view.layer.add(transition, forKey: kCATransition)
                 navigationController.popToRootViewController(animated: false)
+                CBGlobalMethods.shared.canPerformUndo = false
             } else {
                 self.dismiss(animated: true)
             }
@@ -1178,6 +1180,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     
     @objc func setupLayoutView(){
         if AppData.shared.isBidListSort == true{
+//            CBGlobalMethods.shared.canPerformUndo = false
             leftShadowView.isHidden = true
             rightShadowView.isHidden = false
             bidView.isHidden = false
@@ -3710,6 +3713,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         for titleString in numbersArrayList {
             let action = UIAlertAction(title: titleString, style: .default) { _ in
                 self.alertTitleActionPilot(titleString)
+                CBGlobalMethods.shared.undoType = .disabled
             }
             alert.addAction(action)
         }
@@ -3934,10 +3938,12 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     @IBAction func btnEomActionFromStoryBoard(_ sender: UIButton) {
+        CBGlobalMethods.shared.undoType = .disabled
         self.btnEOMAction(btnTemp: self.btnEOM)
     }
     
     @IBAction func btnWbidMaxAction(_ sender: UIButton) {
+        CBGlobalMethods.shared.undoType = .disabled
         //        MARK: btn action for FA
         if self.btnWbidMax.currentTitle == "VAC" {
             if (btnWbidMax.isSelected) {
@@ -4158,6 +4164,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     @IBAction func btnCrewBidVacationButtonAction(_ sender: UIButton) {
+        CBGlobalMethods.shared.undoType = .disabled
         if (!btnWbidMax.isSelected && btnSwaptimizer.isSelected) {
             AlertService.showAlertForTopVC(
                 title: "Warning!",

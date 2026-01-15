@@ -54,6 +54,10 @@ public final class CBGlobalMethods: NSObject {
     var isFromNewSubmission = false
     var isFromCredentialPage = false
     var isFromAwards = false
+    var undoCount = 0
+    var canPerformUndo: Bool = false
+    var redoCount = 0
+    var undoType: UndoType = .disabled
     // Save the WBID expiration date to the Keychain
 
 //    func SaveWbidExpirationdate(date: String) {

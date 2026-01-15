@@ -116,6 +116,14 @@ class CBPDORuleCell: UITableViewCell, RefreshDelegate {
         var utcCal = Calendar(identifier: .gregorian)
         utcCal.timeZone = TimeZone(abbreviation: "UTC")!
         
+        let formatter = DateFormatter()
+        formatter.calendar = utcCal
+        formatter.timeZone = utcCal.timeZone
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "dd-MMM"
+        var tripDatesArray: [String] = []
+//        var tripDa
+        
         for case let line as BILine in bid.lines! {
             
             //            filter out blank lines
@@ -158,6 +166,10 @@ class CBPDORuleCell: UITableViewCell, RefreshDelegate {
                     
                     var depCity = firstLeg?.departCity
                     var arrCity = lastLeg?.arriveCity
+                    
+                    
+                    tripDatesArray.append(formatter.string(from: legArriveDate!))
+                    tripDatesArray.append(formatter.string(from: legDepartDate!))
                     
                     if bid.isFABid() && bid.isSecondRoundBid() && trip.isReserveFa?.boolValue == true {
                         depMins = self.minutesForReserveTime(line: line, trip: trip, isAfter: false)
@@ -313,6 +325,9 @@ class CBPDORuleCell: UITableViewCell, RefreshDelegate {
                             }
                         }
                         else {
+                            if city == bid.base {
+                                status = true
+                            }
                             if !isAtAfter {
                                 let cityMach = depCity == city
                                 let timeMatch = depMins >= filterMinutes
@@ -361,6 +376,12 @@ class CBPDORuleCell: UITableViewCell, RefreshDelegate {
                     break
                 }
             }
+            if  dayValue != "" && (city == "" || city == bid.base) {
+                if tripDatesArray.contains(dayValue) == false {
+                    line.isPdoFiltered = false
+                }
+            }
+            tripDatesArray = []
         }
         lastUpdatedDayValue = dayValue
         lastUpdatedCityValue = city
