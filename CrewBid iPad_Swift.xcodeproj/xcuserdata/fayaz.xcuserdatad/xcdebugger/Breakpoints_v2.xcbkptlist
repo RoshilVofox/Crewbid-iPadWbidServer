@@ -10450,8 +10450,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "654"
-            endingLineNumber = "654"
+            startingLineNumber = "655"
+            endingLineNumber = "655"
             landmarkName = "handleBidSubmissionForFA(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -12962,8 +12962,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "679"
-            endingLineNumber = "679"
+            startingLineNumber = "680"
+            endingLineNumber = "680"
             landmarkName = "handleBidSubmissionForFA(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13330,8 +13330,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "659"
-            endingLineNumber = "659"
+            startingLineNumber = "660"
+            endingLineNumber = "660"
             landmarkName = "handleBidSubmissionForFA(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13378,8 +13378,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "657"
-            endingLineNumber = "657"
+            startingLineNumber = "658"
+            endingLineNumber = "658"
             landmarkName = "handleBidSubmissionForFA(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13410,8 +13410,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "656"
-            endingLineNumber = "656"
+            startingLineNumber = "657"
+            endingLineNumber = "657"
             landmarkName = "handleBidSubmissionForFA(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13426,8 +13426,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "661"
-            endingLineNumber = "661"
+            startingLineNumber = "662"
+            endingLineNumber = "662"
             landmarkName = "handleBidSubmissionForFA(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13570,8 +13570,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "669"
-            endingLineNumber = "669"
+            startingLineNumber = "670"
+            endingLineNumber = "670"
             landmarkName = "handleBidSubmissionForFA(completion:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -13714,8 +13714,8 @@
             filePath = "CrewBid iPad_Swift/ViewModels/CBBidSubmissionViewModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "681"
-            endingLineNumber = "681"
+            startingLineNumber = "682"
+            endingLineNumber = "682"
             landmarkName = "handleBidSubmissionForFA(completion:)"
             landmarkType = "7">
          </BreakpointContent>
