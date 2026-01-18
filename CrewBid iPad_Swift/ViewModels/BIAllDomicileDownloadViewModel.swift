@@ -15,6 +15,8 @@ class BIAllDomicileDownloadViewModel {
     
     var dictionary = GlobalBidInfo.shared.allDomicileDownloadDictionary
     let isBothSelected: Bool? = (GlobalBidInfo.shared.allDomicileDownloadDictionary["both"] as? Bool)
+    let app = UIApplication.shared.delegate as! AppDelegate
+    let webViewModel = BISwaBidDataDownloadViewModel()
     
     func downladAllDomicileBid(bases: [String], tableViewData: [String]) {
         NotificationCenter.default.post(name: Notification.Name("CloseCredentialPage"), object: nil)
@@ -98,6 +100,63 @@ class BIAllDomicileDownloadViewModel {
             NotificationCenter.default.post(name: NSNotification.Name("ReloadCollectionView"), object: nil)
             NotificationCenter.default.post(name: NSNotification.Name("FinishedDownloadingAllDomicileBids"), object: nil)
             return
+        }
+    }
+    
+    func downladAllDomicileBidForFA(bases: [String]) {
+        NotificationCenter.default.post(name: Notification.Name("CloseCredentialPage"), object: nil)
+        var bases = bases
+        if bases.count > 0 {
+            CBGlobalMethods.shared.tableViewDataForFABulk.append("Preparing to download bid for \(bases[0])")
+        }
+        var activityStatus = ""
+        let lastIndex = CBGlobalMethods.shared.tableViewDataForFABulk.indices.last
+        let position = dictionary["position"] as! BICrewPositionType
+        dataSource.month = (dictionary["month"] as? Int)!
+        dataSource.position = position
+        dataSource.round = (dictionary["round"] as? Int)!
+        dataSource.year = (dictionary["year"] as? Int)!
+        
+        if bases.count > 0 {
+            dataSource.base = bases[0]
+//            if app.isNetWorkAvailable {
+                activityStatus = "NetworkAvailable"
+                NotificationCenter.default.post(name: Notification.Name("AllDomicileTableDataUpdate"), object: nil, userInfo: ["status": CBGlobalMethods.shared.tableViewDataForFABulk, "activityStatus": activityStatus])
+            startBidDownloadForFABUlk {
+                    bases.remove(at: 0)
+                    // call next only after previous finishes
+                    self.downladAllDomicileBidForFA(bases: bases)
+                }
+        }
+        else {
+            NotificationCenter.default.post(name: NSNotification.Name("ReloadCollectionView"), object: nil)
+            NotificationCenter.default.post(name: NSNotification.Name("FinishedDownloadingAllDomicileBids"), object: nil)
+            return
+        }
+    }
+    
+    func startBidDownloadForFABUlk(completion: @escaping () -> Void) {
+//        self.view.hideActivityIndicator()
+        let webViewModel = BISwaBidDataDownloadViewModel()
+        if UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
+//            self.dismissVC(animated: true)
+            let lastIndex = CBGlobalMethods.shared.tableViewDataForFABulk.indices.last
+            webViewModel!.startBidInfoDownload(){ result in
+                DispatchQueue.main.async {
+                    switch result{
+                    case .success(()):
+                        CBGlobalMethods.shared.tableViewDataForFABulk[lastIndex!] = "✅ Downloaded \(self.dataSource.base) \(self.dataSource.position.shortName) successfully"
+                        NotificationCenter.default.post(name: Notification.Name("AllDomicileTableDataUpdate"), object: nil, userInfo: ["status": CBGlobalMethods.shared.tableViewDataForFABulk, "activityStatus": ""])
+                        NotificationCenter.default.post(name: NSNotification.Name("ReloadCollectionView"), object: nil)
+                        completion()
+                    case .failure(let error):
+                        print("Error downloading new bid: \(error.localizedDescription)")
+                        CBGlobalMethods.shared.tableViewDataForFABulk[lastIndex!] = "❌ Failed to download \(self.dataSource.base) \(self.dataSource.position.shortName)"
+                        NotificationCenter.default.post(name: Notification.Name("AllDomicileTableDataUpdate"), object: nil, userInfo: ["status": CBGlobalMethods.shared.tableViewDataForFABulk, "activityStatus": "Network Available"])
+                        completion()
+                    }
+                }
+            }
         }
     }
     

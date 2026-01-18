@@ -89,6 +89,9 @@ class BISwaBidDataDownloadViewModel{
             }
         }
 
+        if UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
+            NotificationCenter.default.post(name: Notification.Name("AllDomicileTableDataUpdate"), object: nil, userInfo: ["status": CBGlobalMethods.shared.tableViewDataForFABulk, "activityStatus": "Downloading..."])
+        }
         run(self.downloadSwaSeniorityData)
         run(self.downloadSwaCoverLetter)
         run(self.downloadSwaLineData)
@@ -103,6 +106,9 @@ class BISwaBidDataDownloadViewModel{
             }
 
             NotificationCenter.default.post(name: Notification.Name("BidDownloaded"), object: nil)
+            if UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
+                NotificationCenter.default.post(name: Notification.Name("AllDomicileTableDataUpdate"), object: nil, userInfo: ["status": CBGlobalMethods.shared.tableViewDataForFABulk, "activityStatus": "Bid Parsing..."])
+            }
 
             DispatchQueue.global(qos: .userInitiated).async {
                 self.readSwaBidData { result in

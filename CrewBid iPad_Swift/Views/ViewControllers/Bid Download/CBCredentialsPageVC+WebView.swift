@@ -217,19 +217,33 @@ extension CBCredentialsPageVC: WKNavigationDelegate{
     
     func startBidDownload(){
         self.view.hideActivityIndicator()
-        NotificationCenter.default.post(name: Notification.Name("ShowProgressView"), object: nil)
-        self.webViewModel?.startBidInfoDownload(){ result in
-            DispatchQueue.main.async {
-                switch result{
-                case .success(()):
-                    print("Bid download complete — navigating")
-                    self.loginActions()
-                case .failure(let error):
-                    print("Bid download failed: \(error.localizedDescription)")
-                    NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
-                    NotificationCenter.default.post(name: NSNotification.Name("showBidDownloadError"), object: error)
+        if !UserDefaults.standard.bool(forKey: "isSecretForAllDomicileDownloadEnabled") {
+            NotificationCenter.default.post(name: Notification.Name("ShowProgressView"), object: nil)
+            self.webViewModel?.startBidInfoDownload(){ result in
+                DispatchQueue.main.async {
+                    switch result{
+                    case .success(()):
+                        print("Bid download complete — navigating")
+                        self.loginActions()
+                    case .failure(let error):
+                        print("Bid download failed: \(error.localizedDescription)")
+                        NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
+                        NotificationCenter.default.post(name: NSNotification.Name("showBidDownloadError"), object: error)
+                    }
                 }
             }
+        }
+        else {
+            GlobalBidInfo.shared.isCurrentlyDownloadingAllBid = 1
+            GlobalBidInfo.shared.alertCount = 0
+            let dictionary = GlobalBidInfo.shared.allDomicileDownloadDictionary
+            CBGlobalMethods.shared.tableViewDataForFABulk = []
+            var initialbases: [String] = (dictionary["bases"] as! [String])
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.navigationController?.popViewController(animated: true)
+            }
+            CBGlobalMethods.shared.tableViewDataForFABulk = []
+            BIAllDomicileDownloadViewModel().downladAllDomicileBidForFA(bases: initialbases)
         }
     }
     

@@ -58,6 +58,7 @@ public final class CBGlobalMethods: NSObject {
     var canPerformUndo: Bool = false
     var redoCount = 0
     var undoType: UndoType = .disabled
+    var tableViewDataForFABulk: [String] = []
     // Save the WBID expiration date to the Keychain
 
 //    func SaveWbidExpirationdate(date: String) {
