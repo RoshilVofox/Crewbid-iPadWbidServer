@@ -331,11 +331,25 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     @objc func openCoverLetterFA(){
-        let previewController = QLPreviewController()
-        previewController.dataSource = self
-        previewController.delegate = self
-        previewController.navigationItem.title = "Cover Letter"
-        present(previewController, animated: true)
+        self.bidPeriod?.coverLetterDisplayed = true
+        let fileManager = FileManager.default
+        let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first
+        let destinationURL = documentsDirectory?.appendingPathComponent(self.bidPeriod?.coverLetterFileName ?? "")
+        let fileExists = destinationURL.map { fileManager.fileExists(atPath: $0.path) } ?? false
+        
+        if fileExists{
+            let previewController = QLPreviewController()
+            previewController.dataSource = self
+            previewController.delegate = self
+            previewController.navigationItem.title = "Cover Letter"
+            present(previewController, animated: true)
+        }else{
+            AlertService.showAlertForTopVC(title: "Cover Letter Missing", message: "The Bid Data did not contain a cover letter.  As a result, we are not able to validate the number of lines.  You can bid this data, but we suggest you verify the number of lines with EBS.", actions: [(title: "OK", style: .default, handler: {_ in
+//                if self.bidPeriod?.coverLetterDisplayed?.boolValue == true && self.bidPeriod?.latestNewsDisplayed?.boolValue ?? false{
+                    self.checkNews()
+//                }
+            })])
+        }
     }
     
     @objc func openCoverLetter(notification: Notification) {
@@ -376,7 +390,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             vc.dataTypeSelected = TextFileType.seniorityList
             let transition = CATransition()
             transition.duration = 0.4
-            transition.type = .fade 
+            transition.type = .fade
             transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
             self.navigationController?.view.layer.add(transition, forKey: kCATransition)
             self.navigationController?.pushViewController(vc, animated: false)
@@ -764,11 +778,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 //            }
 //        }
 //    }
-//    
+//
 //    func showSeniorityAlert(){
 //        if self.bidPeriod?.seniorityNumber?.intValue != 0 {
 //            if self.bidPeriod?.positionType?.intValue == 2 {
-//                
+//
 //            }
 //        }
 //    }
@@ -1021,9 +1035,34 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     NotificationCenter.default.post(name: NSNotification.Name("KCBOpenCoverletterForFA"), object: self,userInfo: details)
                 }
             }else{
-                let details = ["isFromFirstTimeOpenBid":true]
-                NotificationCenter.default.post(name: NSNotification.Name(KCBOpenCoverletter), object: self,userInfo: details)
+                let textFile = self.bidPeriod?.textFile(withName: BICoverLetterTextFileName)
+                if textFile != nil {
+                    let details = ["isFromFirstTimeOpenBid":true]
+                    NotificationCenter.default.post(name: NSNotification.Name(KCBOpenCoverletter), object: self,userInfo: details)
+                }else{
+                    AlertService.showAlertForTopVC(title: "Cover Letter Missing", message: "The Bid Data did not contain a cover letter.  As a result, we are not able to validate the number of lines.  You can bid this data, but we suggest you verify the number of lines with EBS.", actions: [(title: "OK", style: .default, handler: {_ in
+                        self.checkNews()
+                    })])
+                }
             }
+        }
+    }
+    
+    private func checkNews(){
+        CBGlobalMethods.shared.isLatestNewsDisplayed = true
+        let storyboard = UIStoryboard(name: "HelpMenu", bundle: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            if let rootVC = UIApplication.shared.windows.first?.rootViewController {
+                let vc = storyboard.instantiateViewController(withIdentifier: "CBHelpMenuController") as! CBHelpMenuController
+                vc.preferredContentSize = CGSize(width: 764, height: 630)
+                vc.modalTransitionStyle = .crossDissolve
+                vc.isModalInPresentation = true
+                rootVC.present(vc, animated: false, completion: nil)
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//            self.bidPeriod?.latestNewsDisplayed = true
+            NotificationCenter.default.post(name: NSNotification.Name("goToLatestNews"), object: nil)
         }
     }
     
@@ -2459,9 +2498,38 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         
         
         if self.bidPeriod?.seniorityNumber?.intValue != 0 {
+
+            let textFile = self.bidPeriod?.textFile(
+                withName: BISeniorityListTextFileName
+            )
+
+            var seniorityMissing = false
+
+            if self.bidPeriod?.isSwaAPI?.boolValue == true {
+                let seniorityListCount = self.bidPeriod?.seniorityList?
+                    .allObjects.count
+                seniorityMissing = seniorityListCount == 0
+            } else {
+                seniorityMissing = textFile == nil
+            }
+
+            if seniorityMissing {
+                AlertService.showAlertForTopVC(
+                    title: "Seniority List Missing",
+                    message:
+                        "The Bid Data did not contain a seniority list.  As a result, we will not be able to display any vacation you might have.  We have contacted Southwest regarding this discrepancy.  You can still bid with this Bid Data and submit a bid.",
+                    actions: [
+                        (
+                            title: "OK", style: .default,
+                            handler: { _ in
+                                self.showCoverLetter()
+                            }
+                        )
+                    ]
+                )
+                return
+            }
             if self.bidPeriod?.positionType?.intValue == 2{
-                let textFile = self.bidPeriod?.textFile(withName: BISeniorityListTextFileName)
-                
                 if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSecondRoundBid() == true{
                     let textField1 = String(format: "%@", (textFile?.text)!)
                     let listItems = textField1.components(separatedBy: "\n") as Array
@@ -2525,7 +2593,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                         }
                     }else{
                         //show toast text
-                        self.showToastWith(text: "We found you in the Seniority List.  You are number \(self.bidPeriod!.seniorityNumber!).", duration: 5.5)
+                        self.showToastWith(text: "We found you in the Seniority List. You are number \(self.bidPeriod!.seniorityNumber!).", duration: 5.5)
                     }
                 }else{
                     if !(self.bidPeriod?.coverLetterDisplayed?.boolValue ?? false){
@@ -2589,6 +2657,26 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         }else{
             if !(self.bidPeriod?.coverLetterDisplayed?.boolValue ?? false){
                 if !seniorityShowed && self.bidPeriod?.isHistoric?.boolValue == false{
+                    let textFile = self.bidPeriod?.textFile(
+                        withName: BISeniorityListTextFileName
+                    )
+                    var seniorityMissing = false
+                    
+                    if self.bidPeriod?.isSwaAPI?.boolValue == true {
+                        let seniorityListCount = self.bidPeriod?.seniorityList?.allObjects.count
+                        seniorityMissing = seniorityListCount == 0
+                    }else{
+                        seniorityMissing = textFile == nil
+                    }
+                    
+                    if seniorityMissing{
+                        AlertService.showAlertForTopVC(title: "Seniority List Missing", message: "The Bid Data did not contain a seniority list.  As a result, we will not be able to display any vacation you might have.  We have contacted Southwest regarding this discrepancy.  You can still bid with this Bid Data and submit a bid.", actions: [(title:"OK", style:.default, handler:{_ in
+                            self.showCoverLetter()
+                        })])
+                        return
+                    }
+                    
+                    
                     if self.bidPeriod?.isFABid() != true && self.bidPeriod?.isSecondRoundBid() == true && self.bidPeriod!.paperBidVacArray?.count ?? 0 > 0{
                         var message = "We did not find you in the Second round Seniority list, but we did find you in the First round as a \"Paper\" bidder. We also found that you have Vacation"
                         for case let dic as NSDictionary in self.bidPeriod!.paperBidVacArray!{
