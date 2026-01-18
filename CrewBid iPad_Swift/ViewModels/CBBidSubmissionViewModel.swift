@@ -245,17 +245,18 @@ class CBBidSubmissionViewModel{
         
         let packetID = self.getPacketID()
         
-        let httpBody = """
-        REQUEST=UPLOAD_BID
-        &CREDENTIALS=
-        &PACKETID=\(packetID)
-        &BIDDER=\(bidEmployeeNumber ?? "")\(optionalParameters)
-        &BASE=\(dataSource.base)
-        &SEAT=\(dataSource.position.shortName)
-        &BIDROUND=Round\(dataSource.round)
-        &VENDOR=\(kVendor)
-        &BID=\(self.bidListNumbers.componentsJoined(by: ","))
-        """
+        let httpBody = String(
+            format: "REQUEST=UPLOAD_BID&CREDENTIALS=%@&PACKETID=%@&BIDDER=%@%@&BASE=%@&SEAT=%@&BIDROUND=Round %@&VENDOR=%@&BID=%@",
+            "",
+            packetID,
+            bidEmployeeNumber ?? "",
+            optionalParameters,
+            dataSource.base,
+            dataSource.position.shortName,
+            dataSource.round,
+            kVendor,
+            self.bidListNumbers.componentsJoined(by: ",")
+        )
         
         let dict: [String: Any] = [
             "Year": self.bidPeriod?.year ?? 0,
