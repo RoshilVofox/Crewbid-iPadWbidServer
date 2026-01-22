@@ -1226,7 +1226,7 @@ extension BIBidPeriod : Identifiable {
     func getBidListLines() -> [BILine] {
         let lines = (self.lines!.allObjects as NSArray).sortedArray(using: [NSSortDescriptor(key: "bidOrder", ascending: true)]) as! [BILine]
         var array : [NSPredicate] = []
-        array.append(NSPredicate(format: "bidOrder > 0"))
+        array.append(NSPredicate(format: "bidOrder != 0"))
         let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: array)
         let predicateValue = (lines as NSArray).filtered(using: predicate) as! [BILine]
         return predicateValue

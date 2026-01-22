@@ -212,6 +212,14 @@ class APIService {
                 return
             }
 
+            if allowNon200Status,
+               let httpResponse = response as? HTTPURLResponse,
+               httpResponse.statusCode == 404 {
+
+                completion(.failure(.httpStatus(404, data)))
+                return
+            }
+            
             guard let data = data else {
                 completion(.failure(.noData))
                 return

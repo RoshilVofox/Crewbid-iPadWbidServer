@@ -14,7 +14,7 @@ class JobShareViewController: BaseViewController {
     @IBOutlet weak var btnCheckBox: UIButton!
     @IBOutlet weak var domicileLbl: UILabel!
     @IBOutlet weak var empNameLbl: UILabel!
-    
+    var defaultEmployeeNumber:String?
     var jobShare1BuddyList:[String]!
     var jobShare2BuddyList:[String]!
     var dict:[String:Any]!
@@ -62,7 +62,7 @@ class JobShareViewController: BaseViewController {
     
     
     func setupUI() {
-        txtJobShare1.text = self.bidPeriod.bidByEmpID ?? ""
+        txtJobShare1.text = self.defaultEmployeeNumber ?? ""
         txtJobShare1.isEnabled = false
         txtJobShare1.isUserInteractionEnabled = false
         txtJobShare1.textColor = UIColor.darkGray
@@ -361,7 +361,7 @@ class JobShareViewController: BaseViewController {
         }
         
         if !isExist {
-            AlertService.showAlertForTopVC(title: "Buddy Bid", message: message)
+            AlertService.showAlertForTopVC(title: "Job Share", message: message)
         }
         return isExist
     }

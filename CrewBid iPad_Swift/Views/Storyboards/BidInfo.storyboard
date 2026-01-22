@@ -877,8 +877,8 @@
                                     <constraint firstAttribute="height" constant="60" id="nNG-fY-IlB"/>
                                 </constraints>
                             </view>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Employee Number" adjustsFontSizeToFit="NO" minimumFontSize="32" translatesAutoresizingMaskIntoConstraints="NO" id="Vxs-fn-amG" customClass="customUITextField" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
-                                <rect key="frame" x="70" y="130" width="460" height="71"/>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Employee Number" adjustsFontSizeToFit="NO" minimumFontSize="32" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Vxs-fn-amG" customClass="customUITextField" customModule="CrewBid_iPad_Swift" customModuleProvider="target">
+                                <rect key="frame" x="70" y="100" width="460" height="71"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <gestureRecognizers/>
                                 <constraints>
@@ -904,7 +904,7 @@
                             <constraint firstItem="8Zi-rw-1s4" firstAttribute="top" secondItem="vq3-bc-3Gg" secondAttribute="top" id="Lf6-O7-lKb"/>
                             <constraint firstItem="6xR-TY-aMO" firstAttribute="top" secondItem="0HF-lW-0h4" secondAttribute="bottom" constant="130" id="Mj7-Bq-dTy"/>
                             <constraint firstItem="0HF-lW-0h4" firstAttribute="leading" secondItem="6p7-zZ-nZP" secondAttribute="leading" constant="47" id="NRq-Qi-CW1"/>
-                            <constraint firstItem="Vxs-fn-amG" firstAttribute="top" secondItem="8Zi-rw-1s4" secondAttribute="bottom" constant="70" id="Xcg-Wz-EMN"/>
+                            <constraint firstItem="Vxs-fn-amG" firstAttribute="top" secondItem="8Zi-rw-1s4" secondAttribute="bottom" constant="40" id="Xcg-Wz-EMN"/>
                             <constraint firstItem="6xR-TY-aMO" firstAttribute="leading" secondItem="6p7-zZ-nZP" secondAttribute="leading" id="iBv-7N-5yw"/>
                             <constraint firstItem="6p7-zZ-nZP" firstAttribute="trailing" secondItem="Vxs-fn-amG" secondAttribute="trailing" constant="70" id="vfa-rc-sDv"/>
                             <constraint firstItem="6xR-TY-aMO" firstAttribute="trailing" secondItem="6p7-zZ-nZP" secondAttribute="trailing" id="z6u-dY-E2S"/>
@@ -1616,7 +1616,7 @@
                                 </constraints>
                             </view>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" text="Message Text" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="PQr-kv-4hT" userLabel="Message Text View">
-                                <rect key="frame" x="20" y="75" width="560" height="220"/>
+                                <rect key="frame" x="20" y="75" width="560" height="230"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="150" id="jed-SS-XwC"/>
                                 </constraints>
@@ -1648,7 +1648,7 @@
                         <viewLayoutGuide key="safeArea" id="nhk-ep-aIJ"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="52W-dB-z6U" firstAttribute="top" relation="lessThanOrEqual" secondItem="PQr-kv-4hT" secondAttribute="bottom" constant="50" id="2VS-Y7-olj"/>
+                            <constraint firstItem="52W-dB-z6U" firstAttribute="top" secondItem="PQr-kv-4hT" secondAttribute="bottom" constant="40" id="2VS-Y7-olj"/>
                             <constraint firstItem="8d6-Nu-o6f" firstAttribute="top" secondItem="8cx-ag-hov" secondAttribute="top" id="48s-9g-LnN"/>
                             <constraint firstItem="I6G-Tg-6hU" firstAttribute="width" secondItem="52W-dB-z6U" secondAttribute="width" id="4NB-l7-mEx"/>
                             <constraint firstItem="I6G-Tg-6hU" firstAttribute="top" secondItem="52W-dB-z6U" secondAttribute="bottom" constant="20" id="9bi-9A-JKu"/>

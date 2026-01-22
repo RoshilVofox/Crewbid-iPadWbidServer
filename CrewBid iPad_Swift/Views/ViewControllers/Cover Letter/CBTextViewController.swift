@@ -46,7 +46,7 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
         textAppending()
     }
     func textAppending() {
-        textView.font = UIFont(name: "Courier", size: 15)
+        textView.font = UIFont(name: "Courier", size: 16)
         
         switch dataTypeSelected {
             case .seniorityList:
@@ -150,19 +150,19 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
             .backgroundColor: UIColor.systemBlue,
             .foregroundColor: UIColor.white,
             .strokeWidth: -3.0,
-            .font: UIFont(name: "Courier", size: 15)!
+            .font: UIFont(name: "Courier", size: 16)!
         ]
 
         let attrReserve: [NSAttributedString.Key: Any] = [
             .backgroundColor: UIColor.systemRed,
             .foregroundColor: UIColor.white,
             .strokeWidth: -3.0,
-            .font: UIFont(name: "Courier", size: 15)!
+            .font: UIFont(name: "Courier", size: 16)!
         ]
 
         let attrClear: [NSAttributedString.Key: Any] = [
             .foregroundColor: UIColor.label,
-            .font: UIFont(name: "Courier", size: 15)!
+            .font: UIFont(name: "Courier", size: 16)!
         ]
 
         let condensedText = NSMutableAttributedString()
@@ -306,6 +306,32 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
     
     
     @IBAction func btnDismissAction(_ sender: Any) {
+        
+        if dataTypeSelected == .bidReceipt,
+           CBGlobalMethods.shared.buddyArray.count > 0 {
+
+            // Close current receipt
+            if self.presentingViewController != nil {
+                self.dismiss(animated: false, completion: nil)
+            } else {
+                let transition = CATransition()
+                transition.duration = 0.4
+                transition.type = .fade
+                transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+
+                self.navigationController?.view.layer.add(transition, forKey: kCATransition)
+                self.navigationController?.popViewController(animated: false)
+            }
+
+            // 👉 Ask document controller to show the next receipt
+            NotificationCenter.default.post(
+                name: NSNotification.Name("showNextQueuedBidReceipt"),
+                object: nil
+            )
+
+            return
+        }
+        
         if self.presentingViewController != nil {
                 self.dismiss(animated: true, completion: nil)
             } else {

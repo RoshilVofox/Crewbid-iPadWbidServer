@@ -125,7 +125,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         NotificationCenter.default.addObserver(self, selector: #selector(openCoverLetter(notification:)), name: NSNotification.Name(KCBOpenCoverletter), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openCoverLetterFA), name: NSNotification.Name("KCBOpenCoverletterForFA"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openSeniority), name: NSNotification.Name(KCBOpenSeniority), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(showBidReceipt), name: NSNotification.Name("showBidReceipt"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(showBidReceipt(notification:)), name: NSNotification.Name("showBidReceipt"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(showNextQueuedReceipt), name: NSNotification.Name("showNextQueuedBidReceipt"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.showBidReceiptWithObject(_:)), name: NSNotification.Name("showBidReceiptWithObject"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openLineText), name: NSNotification.Name(KCBOpenLineText), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openTripText), name: NSNotification.Name(KCBOpenTripText), object: nil)
@@ -397,24 +398,56 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         }
     }
     
-    @objc func showBidReceipt(){
-        if (self.bidPeriod?.isFABid() == true) && CBGlobalMethods.shared.buddyArray.count > 0 {
-            guard let sortedBidReceipts = self.bidPeriod?.sortedBidReceiptByCreatedAt() else{ return}
-            
-            if let matchingReceipt = sortedBidReceipts.first(where: {$0.submittedFor == $0.submittedBy}) {
-                showReceipt(receipt: matchingReceipt)
-                return
-            }
+    @objc func showBidReceipt(notification:Notification){
+        guard let bidPeriod = self.bidPeriod,
+        let buddyCount = notification.object as? NSNumber
+        else { return }
+
+        let buddyCountInt = buddyCount.intValue
+        let sortedDesc = bidPeriod.sortedBidReceiptByCreatedAt()
+
+        guard sortedDesc.count > 0 else { return }
+
+        // buddyCount + 1 (primary + buddies)
+        let maxCount = min(buddyCountInt + 1, sortedDesc.count)
+        let recentReceipts = Array(sortedDesc.prefix(maxCount))
+
+        // Obj-C sorts ASC before display
+        let sortedAsc = recentReceipts.sorted {
+            ($0.createdAt ?? .distantPast) <
+            ($1.createdAt ?? .distantPast)
         }
+
+        // Queue (Obj-C: bidReceiptsToShow)
+        CBGlobalMethods.shared.buddyArray = sortedAsc
+
+        // Show first receipt
+        showNextQueuedReceipt()
+
+//        if (self.bidPeriod?.isFABid() == true) && CBGlobalMethods.shared.buddyArray.count > 0 {
+//            guard let sortedBidReceipts = self.bidPeriod?.sortedBidReceiptByCreatedAt() else{ return}
+//            
+//            if let matchingReceipt = sortedBidReceipts.first(where: {$0.submittedFor == $0.submittedBy}) {
+//                showReceipt(receipt: matchingReceipt)
+//                return
+//            }
+//        }
+//        
+//        if let bidReceipt = self.bidPeriod?.mostRecentBidReceiptByCreatedAt(){
+//            showReceipt(receipt: bidReceipt)
+//        }else{
+//            DispatchQueue.main.async {
+//                AlertService.showAlertForTopVC(title: "", message: "No saved bid receipt found!")
+//            }
+//        }
         
-        if let bidReceipt = self.bidPeriod?.mostRecentBidReceiptByCreatedAt(){
-            showReceipt(receipt: bidReceipt)
-        }else{
-            DispatchQueue.main.async {
-                AlertService.showAlertForTopVC(title: "", message: "No saved bid receipt found!")
-            }
-        }
-        
+    }
+    
+    @objc func showNextQueuedReceipt() {
+        guard CBGlobalMethods.shared.buddyArray.count > 0 else { return }
+
+        let receipt = CBGlobalMethods.shared.buddyArray.removeFirst()
+        showReceipt(receipt: receipt)
     }
     
     @objc func showBidReceiptWithObject(_ notification: NSNotification){

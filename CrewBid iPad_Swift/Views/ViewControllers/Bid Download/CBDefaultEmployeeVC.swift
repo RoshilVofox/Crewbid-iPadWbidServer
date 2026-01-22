@@ -104,6 +104,7 @@ class CBDefaultEmployeeVC: BaseViewController {
     }
     
     @IBAction func btnNextAction(_ sender: Any) {
+        view.endEditing(true)
         if type == .showAwardedLine {
             self.askForEmployeeNumber()
         }else{
@@ -460,6 +461,7 @@ class CBDefaultEmployeeVC: BaseViewController {
             let vc = storyboard.instantiateViewController(withIdentifier: "JobShareViewController") as! JobShareViewController
             vc.preferredContentSize = CGSize(width: 600, height: 500)
             vc.bidPeriod = self.bidPeriod!
+            vc.defaultEmployeeNumber = self.textEmpNum.text
             self.navigationController?.pushViewController(vc, animated: true)
         }),
         (title:"I am NOT Job Share bidding", style: .default , handler: {_ in

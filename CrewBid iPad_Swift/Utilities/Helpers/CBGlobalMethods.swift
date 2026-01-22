@@ -40,6 +40,7 @@ public final class CBGlobalMethods: NSObject {
     var awardLertSecretEmpNum: String?
     var accessKey = "!evG7*5^7E"
     var buddyArray = [BIBidReceipt]()
+    var buddyCount:Int?
     var frameWidth:CGFloat = 0
     var bidCalendarViewFrameWidth:CGFloat = 0
     var falistDict = [String:Any]()
