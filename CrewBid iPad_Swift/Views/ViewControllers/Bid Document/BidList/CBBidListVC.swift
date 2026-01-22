@@ -2061,6 +2061,8 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
             cell.isHidden = false
         }
         cell.mLblSlNo.text = "\(indexPath.row + 1)"
+        cell.mLblSlNo.lineBreakMode = .byClipping
+        cell.mLblSlNo.adjustsFontSizeToFitWidth = false
         cell.mLblLineNumber.text = String(describing: line.number!)
         var setupLineValues = true
         if nil == cell.backgroundView {
@@ -2925,7 +2927,7 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
         return heightForRow
     }
     
-    // Handle row reordering logic
+//     Handle row reordering logic
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         // Do nothing until the move actually finishes
         if sourceIndexPath == destinationIndexPath{
@@ -3030,6 +3032,74 @@ extension CBBidListVC: UITableViewDelegate, UITableViewDataSource{
         NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
  
     }
+    
+//    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+//
+//        if sourceIndexPath == destinationIndexPath { return }
+//
+//        if isAwardSort || isSubmitSort {
+//            removeASortUI()
+//            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+//            return
+//        }
+//
+//        bidPeriod.isBidListSortOn = NSNumber(value: false)
+//        bidPeriod.deleteAllBidListSorts()
+//
+//        let originRow = sourceIndexPath.row
+//        let destRow = destinationIndexPath.row
+//
+//        let startLine = linesArray[originRow]
+//
+//        if startLine.isFrozen != 0 {
+//            tableViewNormalView.reloadData()
+//            return
+//        }
+//
+//        let endLine = linesArray[destRow]
+//        if endLine.isFrozen != 0 {
+//            startLine.isFrozen = true
+//        }
+//
+//        let firstRow = min(originRow, destRow)
+//        let lastRow  = max(originRow, destRow)
+//        // Use Swift array instead of NSMutableArray
+//        var affectedRows = linesArray
+//
+//        // Store marker titles once
+//        var markerTitles = Array(repeating: "", count: affectedRows.count)
+//
+//        for i in 0..<affectedRows.count {
+//            markerTitles[i] = affectedRows[i].markerTitle ?? ""
+//        }
+//        let movedLine = affectedRows.remove(at: originRow)
+//        affectedRows.insert(movedLine, at: destRow)
+//
+//        // ---------- SAME bidOrder UPDATE ----------
+//        for i in firstRow...lastRow {
+//            affectedRows[i].bidOrder = NSNumber(value: i + 1)
+//        }
+//
+//        // ---------- SAME marker restore ----------
+//        for i in 0..<affectedRows.count {
+//            affectedRows[i].markerTitle = markerTitles[i].isEmpty ? nil : markerTitles[i]
+//        }
+//
+//        previousInsertionIndex = insertionIndex
+//        if originRow > destRow && destRow < insertionIndex {
+//            insertionIndex += 1
+//        }
+//        if originRow < destRow && destRow > insertionIndex {
+//            insertionIndex -= 1
+//        }
+//
+//        selectedCellIndexPaths.removeAllObjects()
+//        CBGlobalMethods.shared.canPerformUndo = true
+//       //        CBGlobalMethods.shared.undoType = .undo
+//        bidPeriod.managedObjectContext?.undoManager?.setActionName("Move Line")
+//        NotificationCenter.default.post(name: NSNotification.Name("SortBidListAction"), object: self)
+//        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+//    }
     func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         //No reordering in Freeze line
         if linesArray.count <=  indexPath.row {

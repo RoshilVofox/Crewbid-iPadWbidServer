@@ -907,7 +907,7 @@
             <objects>
                 <viewController storyboardIdentifier="CBFilterRulesTableVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="lNb-3Z-6Rd" customClass="CBFilterRulesTableVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="znz-lA-kdl">
-                        <rect key="frame" x="0.0" y="0.0" width="652" height="2100"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uON-PP-bsg">
@@ -3571,7 +3571,7 @@
             <objects>
                 <viewController storyboardIdentifier="CBPresetsTVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="0Is-tp-i6s" customClass="CBPresetsTVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="q15-Hn-8JI">
-                        <rect key="frame" x="0.0" y="0.0" width="580" height="620"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tXF-CP-Wqh">
@@ -4019,9 +4019,9 @@
                                                     </constraints>
                                                 </scrollView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lab" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gLU-ca-Ka3">
-                                                    <rect key="frame" x="7" y="5" width="30" height="15"/>
+                                                    <rect key="frame" x="7" y="5" width="35" height="15"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="30" id="QZF-hx-oLL"/>
+                                                        <constraint firstAttribute="width" constant="35" id="QZF-hx-oLL"/>
                                                         <constraint firstAttribute="height" constant="15" id="Uls-Fs-4WQ"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="system" weight="medium" pointSize="15"/>
@@ -4363,7 +4363,7 @@
             <objects>
                 <viewController storyboardIdentifier="CBExpandedBidLinesTableController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="uyZ-EO-Nwt" customClass="CBExpandedBidLinesTableController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="n0g-3s-Fcz">
-                        <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4DP-tn-Sbe">
@@ -5446,7 +5446,7 @@
             <objects>
                 <viewController storyboardIdentifier="CBLineSortsTVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Eml-Ur-yj1" customClass="CBLineSortsTVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="0d4-ck-NJf">
-                        <rect key="frame" x="0.0" y="0.0" width="580" height="1970"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PEV-J5-72f">
@@ -7253,7 +7253,7 @@
             <objects>
                 <viewController storyboardIdentifier="CBLineCalendarCollectionViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="VZM-Rg-kOe" customClass="CBLineCalendarCollectionViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="WNk-6k-rDN">
-                        <rect key="frame" x="0.0" y="0.0" width="290" height="260"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1210" height="834"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LMP-i6-tlR">
