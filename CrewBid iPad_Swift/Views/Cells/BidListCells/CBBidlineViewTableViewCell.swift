@@ -66,7 +66,7 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
     var markerAtTop = false
     weak var userFlagIconView: UIView?
     var bidPeriod: BIBidPeriod!
-    var line = BILine(context: CoreDataManager.shared.managedObjectContext)
+    var line: BILine?
     var calendarData: BICalendarData?
     var calendarDaysCount: NSMutableArray?
     var markerTextField = UITextField ()
@@ -163,15 +163,15 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
     
     func handlingFreezingCondition()  {
         imgAccessoryView.isHidden = false
-        if (line.isFrozen != 0) {
+        if (line!.isFrozen != 0) {
             let snowflakeImage = UIImage(named: "Blue_Snowflake")
             imgAccessoryView?.image = snowflakeImage
             mLblLineNumber.textColor = UIColor(red: 0.0, green: 0.75, blue: 1.0, alpha: 1.0)
             
-            if line.isETOPS?.boolValue == true{
+            if line!.isETOPS?.boolValue == true{
                 let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
                 let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 1, 1)
-                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                if line!.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
                     attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
                 } else {
                     attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
@@ -179,10 +179,10 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
                 mLblLineNumber.attributedText = attributedString
                 
             }
-            if line.isETOPSRES?.boolValue == true{
+            if line!.isETOPSRES?.boolValue == true{
                 let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
                 let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 2, 2)
-                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                if line!.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
                     attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
                 } else {
                     attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
@@ -190,10 +190,10 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
                 mLblLineNumber.attributedText = attributedString
             }
             else if bidPeriod.isFABid() && bidPeriod.isSecondRoundBid() {
-                if line.faReserveLineType == (BIFaReserveLineType.SnrAMres.rawValue) as NSNumber || line.faReserveLineType == (BIFaReserveLineType.SnrPMres.rawValue) as NSNumber || line.faReserveLineType == (BIFaReserveLineType.JnrAMres.rawValue) as NSNumber || line.faReserveLineType == (BIFaReserveLineType.JnrPMres.rawValue) as NSNumber || line.faReserveLineType == (BIFaReserveLineType.JnrLateRes.rawValue) as NSNumber{
+                if line!.faReserveLineType == (BIFaReserveLineType.SnrAMres.rawValue) as NSNumber || line!.faReserveLineType == (BIFaReserveLineType.SnrPMres.rawValue) as NSNumber || line!.faReserveLineType == (BIFaReserveLineType.JnrAMres.rawValue) as NSNumber || line!.faReserveLineType == (BIFaReserveLineType.JnrPMres.rawValue) as NSNumber || line!.faReserveLineType == (BIFaReserveLineType.JnrLateRes.rawValue) as NSNumber{
                     let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
                     let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 2, 2)
-                    if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    if line!.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
                         attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
                     } else {
                         attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
@@ -201,20 +201,20 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
                     mLblLineNumber.attributedText = attributedString
                 }
             }
-           else if line.type == BILineType.ReserveLine.rawValue.asNSNumber || line.type == BILineType.NonEtopsReserve.rawValue.asNSNumber{
+           else if line!.type == BILineType.ReserveLine.rawValue.asNSNumber || line!.type == BILineType.NonEtopsReserve.rawValue.asNSNumber{
                 let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
                 let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 1, 1)
-                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                if line!.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
                     attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
                 } else {
                     attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
                 }
                mLblLineNumber.attributedText = attributedString
             }
-           else if !bidPeriod.isFABid() && bidPeriod.isSecondRoundBid() && (line.type == BILineType.MixedLine.rawValue.asNSNumber || line.type == BILineType.NonEtopsMixed.rawValue.asNSNumber){
+           else if !bidPeriod.isFABid() && bidPeriod.isSecondRoundBid() && (line!.type == BILineType.MixedLine.rawValue.asNSNumber || line!.type == BILineType.NonEtopsMixed.rawValue.asNSNumber){
                 let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
                 let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 2, 2)
-                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                if line!.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
                     attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
                 } else {
                     attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
@@ -233,25 +233,25 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
             imgAccessoryView.isHidden = true
             let button = viewWithTag(kSelectionButtonTag) as? UIButton
             button?.isHidden = false
-            if bidPeriod.isFABid() && line.faPosition?.intValue != BIFaPosition.FaPositionNA.rawValue {
+            if bidPeriod.isFABid() && line!.faPosition?.intValue != BIFaPosition.FaPositionNA.rawValue {
                 mLblLineNumber.textColor = UIColor.white
             }else {
                 mLblLineNumber.textColor = UIColor.label
             }
-            if line.isETOPS?.boolValue == true{
+            if line!.isETOPS?.boolValue == true{
                 let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
                 let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 1, 1)
-                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                if line!.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
                     attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
                 } else {
                     attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
                 }
                 mLblLineNumber.attributedText = attributedString
             }
-            if line.isETOPSRES?.boolValue == true{
+            if line!.isETOPSRES?.boolValue == true{
                 let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
                 let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 2, 2)
-                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                if line!.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
                     attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
                 } else {
                     attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
@@ -259,10 +259,10 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
                 mLblLineNumber.attributedText = attributedString
             }
             else if bidPeriod.isFABid() && bidPeriod.isSecondRoundBid() {
-                if line.faReserveLineType == (BIFaReserveLineType.SnrAMres.rawValue) as NSNumber || line.faReserveLineType == (BIFaReserveLineType.SnrPMres.rawValue) as NSNumber || line.faReserveLineType == (BIFaReserveLineType.JnrAMres.rawValue) as NSNumber || line.faReserveLineType == (BIFaReserveLineType.JnrPMres.rawValue) as NSNumber || line.faReserveLineType == (BIFaReserveLineType.JnrLateRes.rawValue) as NSNumber{
+                if line!.faReserveLineType == (BIFaReserveLineType.SnrAMres.rawValue) as NSNumber || line!.faReserveLineType == (BIFaReserveLineType.SnrPMres.rawValue) as NSNumber || line!.faReserveLineType == (BIFaReserveLineType.JnrAMres.rawValue) as NSNumber || line!.faReserveLineType == (BIFaReserveLineType.JnrPMres.rawValue) as NSNumber || line!.faReserveLineType == (BIFaReserveLineType.JnrLateRes.rawValue) as NSNumber{
                     let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
                     let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 2, 2)
-                    if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                    if line!.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
                         attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
                     } else {
                         attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
@@ -270,20 +270,20 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
                     mLblLineNumber.attributedText = attributedString
                 }
             }
-            else if line.type == BILineType.ReserveLine.rawValue.asNSNumber || line.type == BILineType.NonEtopsReserve.rawValue.asNSNumber{
+            else if line!.type == BILineType.ReserveLine.rawValue.asNSNumber || line!.type == BILineType.NonEtopsReserve.rawValue.asNSNumber{
                 let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
                 let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 1, 1)
-                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                if line!.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
                     attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
                 } else {
                     attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
                 }
                 mLblLineNumber.attributedText = attributedString
             }
-            else if !bidPeriod.isFABid() && bidPeriod.isSecondRoundBid() && (line.type == BILineType.MixedLine.rawValue.asNSNumber || line.type == BILineType.NonEtopsMixed.rawValue.asNSNumber){
+            else if !bidPeriod.isFABid() && bidPeriod.isSecondRoundBid() && (line!.type == BILineType.MixedLine.rawValue.asNSNumber || line!.type == BILineType.NonEtopsMixed.rawValue.asNSNumber){
                 let attributedString = NSMutableAttributedString(string: mLblLineNumber.text!)
                 let lastCharacterRange = NSMakeRange( mLblLineNumber.text!.count - 2, 2)
-                if line.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
+                if line!.faPosition?.intValue == BIFaPosition.FaPositionD.rawValue {
                     attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.white , range: lastCharacterRange)
                 } else {
                     attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.red , range: lastCharacterRange)
@@ -526,7 +526,7 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
         refreshViewController.CollectionCellCalendarDaysArr = bidListCellCalendarDaysArr
         refreshViewController.calendarData = calendarData
         refreshViewController.fromScrachpadView = true
-        let lineNumber: Int = self.line.number as! Int
+        let lineNumber: Int = self.line!.number as! Int
         let title = String(format: "%@%d", "Line ",lineNumber)
         refreshViewController.navigationItem.title = title
         let navigationController = UINavigationController(rootViewController: refreshViewController)
@@ -575,7 +575,7 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
             }
         }
         
-        let trips = line.trips
+        let trips = line!.trips
         
         
         for case let trip as BITrip in trips!{
@@ -600,16 +600,16 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
             // Color of trip cell.
             var color: UIColor? = nil
             if bidPeriod.isFABid() && trip.isReserve {
-                if BIFaReserveLineType.SnrAMres.rawValue == line.faReserveLineType?.intValue {
+                if BIFaReserveLineType.SnrAMres.rawValue == line!.faReserveLineType?.intValue {
                     color = CBColor.green
                 }
-                else if BIFaReserveLineType.SnrPMres.rawValue == line.faReserveLineType?.intValue {
+                else if BIFaReserveLineType.SnrPMres.rawValue == line!.faReserveLineType?.intValue {
                     color = CBColor.tripButtonredColor
                 }
-                else if BIFaReserveLineType.JnrAMres.rawValue == line.faReserveLineType?.intValue {
+                else if BIFaReserveLineType.JnrAMres.rawValue == line!.faReserveLineType?.intValue {
                     color = CBColor.lightGreenColor
                 }
-                else if BIFaReserveLineType.JnrPMres.rawValue == line.faReserveLineType?.intValue {
+                else if BIFaReserveLineType.JnrPMres.rawValue == line!.faReserveLineType?.intValue {
                     color = CBColor.lightTripButtonRedColor
                 }
                 else {
@@ -695,7 +695,7 @@ class CBBidlineViewTableViewCell: UITableViewCell, UITextFieldDelegate,UICollect
         textField.borderStyle = .none
         textField.backgroundColor = .darkGray
         textField.textColor = .white
-        self.line.markerTitle = text
+        self.line!.markerTitle = text
         self.bidPeriod.managedObjectContext?.processPendingChanges()
         self.bidPeriod.managedObjectContext?.undoManager?.removeAllActions()
     }

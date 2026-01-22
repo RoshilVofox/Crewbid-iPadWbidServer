@@ -95,6 +95,10 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         lblBidLineCount.isUserInteractionEnabled = true
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(labelTapped))
         lblBidLineCount.addGestureRecognizer(tapGestureRecognizer)
+        tableViewNormalView.separatorStyle = .singleLine
+        tableViewNormalView.separatorColor = .lightGray
+//        tableViewNormalView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -736,61 +740,43 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     }
     
     func moveInsertionIndex(to index: Int, above: Bool) {
-        // Moves the insertion index to the specified position above or below a line.
-        // If there is no change, do nothing.
-        if insertionIndex == index && insertAbove == above {
-            return
-        }
-        // Disable undo registration temporarily
 
-        bidPeriod.managedObjectContext?.undoManager?.disableUndoRegistration()
-        
-        // Store the previous insertion index
-
-        previousInsertionIndex = insertionIndex
-        // Update the insertion index and insertAbove flag
-
-        insertionIndex = index
-        insertAbove = above
-        let linesCount: Int = tableViewNormalView.numberOfRows(inSection: 0)
-        // Check if the insertion indices are valid, and reload the table view if necessary
-
-        if linesCount > 0 {
-            if previousInsertionIndex > linesCount - 1 && previousInsertionIndex != 0 {
-                previousInsertionIndex = linesCount - 1
-                tableViewNormalView.reloadData()
+            if insertionIndex == index && insertAbove == above {
                 return
             }
-            if insertionIndex > linesCount - 1 && insertionIndex != 0 {
-                insertionIndex = linesCount - 1
-                tableViewNormalView.reloadData()
-                return
+
+            let undoManager = bidPeriod.managedObjectContext?.undoManager
+            undoManager?.disableUndoRegistration()
+            defer { undoManager?.enableUndoRegistration() }
+
+            previousInsertionIndex = insertionIndex
+            insertionIndex = index
+            insertAbove = above
+
+            let linesCount = tableViewNormalView.numberOfRows(inSection: 0)
+
+            if linesCount > 0 {
+                if insertionIndex > linesCount - 1 {
+                    insertionIndex = max(linesCount - 1, 0)
+                }
+                if previousInsertionIndex > linesCount - 1 {
+                    previousInsertionIndex = max(linesCount - 1, 0)
+                }
             }
-        }
-        // Create an array of indexPaths to reload
 
-        var reloadIndexPaths: [Any]? = nil
-        if previousInsertionIndex == insertionIndex {
-            reloadIndexPaths = [IndexPath(row: insertionIndex, section: 0)]
-        } else {
-            reloadIndexPaths = [IndexPath(row: previousInsertionIndex, section: 0), IndexPath(row: insertionIndex, section: 0)]
-        }
-        // Deselect cells at the old and new insertion indices
+            let paths: [IndexPath]
+            if previousInsertionIndex == insertionIndex {
+                paths = [IndexPath(row: insertionIndex, section: 0)]
+            } else {
+                paths = [
+                    IndexPath(row: previousInsertionIndex, section: 0),
+                    IndexPath(row: insertionIndex, section: 0)
+                ]
+            }
 
-        for case let ip as IndexPath in reloadIndexPaths! {
-            let cell: UITableViewCell? = tableViewNormalView.cellForRow(at: ip)
-            cell?.setSelected(false, animated: false)
+            tableViewNormalView.reloadRows(at: paths, with: .automatic)
         }
-        // Reload the table view with the updated insertion indices
 
-        if let aPaths = reloadIndexPaths as? [IndexPath] {
-            tableViewNormalView.reloadRows(at: aPaths, with: .automatic)
-        }
-        // Save changes and clear the undo manager
-
-        bidPeriod.managedObjectContext!.processPendingChanges()
-        bidPeriod.managedObjectContext!.undoManager?.removeAllActions()
-    }
     
     @objc func moveInsertionIndex(_ notification: Notification) {
         // Handles the movement of the insertion index when triggered by a notification.
@@ -1497,6 +1483,8 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         if 0 == lines.count {
             return
         }
+        CBGlobalMethods.shared.undoType = .undo
+        CBGlobalMethods.shared.canPerformUndo = true
         undoManager.beginUndoGrouping()
         var insertionRowLine: BILine? = nil
         var insertingDirectlyBelowMarker: Bool = insertionIndex < linesArray.count
