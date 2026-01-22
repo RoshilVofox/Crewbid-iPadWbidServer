@@ -1249,6 +1249,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
     }
     
     @IBAction func btnGoAction(_ sender: UIButton) {
+        view.endEditing(true)
         UserDefaults.standard.set(txtUserID.text, forKey: KCBEmpNumWithPrefix)
         if type == .retrieveAwards {
             self.retriveAwardsAction()

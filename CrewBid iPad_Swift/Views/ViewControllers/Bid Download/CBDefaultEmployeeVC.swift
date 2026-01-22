@@ -104,6 +104,7 @@ class CBDefaultEmployeeVC: BaseViewController {
     }
     
     @IBAction func btnNextAction(_ sender: Any) {
+        view.endEditing(true)
         if type == .showAwardedLine {
             self.askForEmployeeNumber()
         }else{
@@ -394,7 +395,6 @@ class CBDefaultEmployeeVC: BaseViewController {
     }
     
     func goToNextPage(){
-        view.endEditing(true)
         if self.bidPeriod!.positionType?.intValue == BICrewPositionType.FlightAttendant.rawValue{
 //            if self.bidPeriod!.isSwaAPI?.boolValue == true{
                 if self.bidPeriod!.round == 1 {
