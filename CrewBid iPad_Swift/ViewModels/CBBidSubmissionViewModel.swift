@@ -86,7 +86,10 @@ class CBBidSubmissionViewModel{
             
         }else{
             for case let line as BILine in results{
-                if line.faBidLineReserve != 0 {
+                if (line.faBidLineReserve != 0) {
+                    bidLineNumbers.add("R")
+                    break
+                } else if (line.faBidLineMrt != 0) {
                     bidLineNumbers.add("M")
                 }else{
                     bidLineNumbers.add("\(line.number!)\(line.faPositionString)")
@@ -246,7 +249,7 @@ class CBBidSubmissionViewModel{
         let packetID = self.getPacketID()
         
         let httpBody = String(
-            format: "REQUEST=UPLOAD_BID&CREDENTIALS=%@&PACKETID=%@&BIDDER=%@%@&BASE=%@&SEAT=%@&BIDROUND=Round %@&VENDOR=%@&BID=%@",
+            format: "REQUEST=UPLOAD_BID&CREDENTIALS=%@&PACKETID=%@&BIDDER=%@%@&BASE=%@&SEAT=%@&BIDROUND=Round %d&VENDOR=%@&BID=%@",
             "",
             packetID,
             bidEmployeeNumber ?? "",
@@ -668,7 +671,10 @@ class CBBidSubmissionViewModel{
                 }
                 
                 self.bidPeriod?.addBidReceipt(withJSON: bidReceipts)
-                
+                let buddyCount = bidReceipts.filter {
+                    ($0["employeeId"] as? String) != ($0["submittedBy"] as? String)
+                }.count
+                CBGlobalMethods.shared.buddyCount = buddyCount
                 let message = self.getConfirmationNum(bidReceipts)
                 
                 self.handleLogBidSubmissionProcess(event: "submitBid", SWAmessage: "", message: message)
@@ -737,9 +743,9 @@ class CBBidSubmissionViewModel{
             "buddyBids": buddyBids,
             "jobShare1": self.jobShare1 ?? NSNull(),
             "jobShare2": self.jobShare2 ?? NSNull(),
-            "jobShareContingent": self.isJobShareContingency,
+            "jobShareContingent": self.isJobShareContingency.intValue,
             "bidSource": "WEBBID",
-            "mrtContingent": false,
+            "mrtContingent": 0,
             "bidChoices": bidChoices
         ]
         

@@ -394,6 +394,7 @@ class CBDefaultEmployeeVC: BaseViewController {
     }
     
     func goToNextPage(){
+        view.endEditing(true)
         if self.bidPeriod!.positionType?.intValue == BICrewPositionType.FlightAttendant.rawValue{
 //            if self.bidPeriod!.isSwaAPI?.boolValue == true{
                 if self.bidPeriod!.round == 1 {
@@ -460,6 +461,7 @@ class CBDefaultEmployeeVC: BaseViewController {
             let vc = storyboard.instantiateViewController(withIdentifier: "JobShareViewController") as! JobShareViewController
             vc.preferredContentSize = CGSize(width: 600, height: 500)
             vc.bidPeriod = self.bidPeriod!
+            vc.defaultEmployeeNumber = self.textEmpNum.text
             self.navigationController?.pushViewController(vc, animated: true)
         }),
         (title:"I am NOT Job Share bidding", style: .default , handler: {_ in

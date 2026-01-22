@@ -67,7 +67,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
     }
     
     @IBAction func btnNextAction(_ sender: Any) {
-        
+        view.endEditing(true)
         let buddy1 = buddyBidTxtField_1.text ?? ""
         let buddy2 = buddyBidTxtField_2.text ?? ""
         
@@ -328,7 +328,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
         var pendingCalls = userList.count
         
         var didFinish = false
-        
+        var didShowBuddyErrorAlert = false
         for userID in userList {
             self.downloadBuddies(userID: userID) { success in
                 DispatchQueue.main.async {
@@ -339,6 +339,19 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
                         // If an auth alert is being/has been presented, treat it as authError
                         if self.isPresentingInvalidTokenAlert {
                             didFinish = true
+                            completion(false)
+                            return
+                        }
+                        
+                        if !didShowBuddyErrorAlert {
+                            didShowBuddyErrorAlert = true
+                            didFinish = true
+
+                            AlertService.showAlertForTopVC(
+                                title: "Buddy Bid Error",
+                                message: "Error 404: Not Found\n\nResponse Not Found"
+                            )
+
                             completion(false)
                             return
                         }
@@ -406,21 +419,11 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
                         let dict = jsonObj as? [String: Any],
                         let buddyArray = dict["buddyIds"] as? [String]
                     else {
-                        AlertService.showAlertForTopVC(title: "Buddy Bid Error", message: "Data is not in the correct format.")
-                        completion(false)
+                        self.assignBuddyList([], for: userID, buddy1: buddy1, buddy2: buddy2)
+                        completion(true)
                         return
                     }
-
-                    if userID == self.empID {
-                        self.biddersBuddyList = buddyArray
-                    }
-                    else if userID == buddy1 {
-                        self.buddy1BuddyList = buddyArray
-                    }
-                    else if userID == buddy2 {
-                        self.buddy2BuddyList = buddyArray
-                    }
-                    
+                    self.assignBuddyList(buddyArray, for: userID, buddy1: buddy1, buddy2: buddy2)
                     completion(true)
                     
                     
@@ -428,13 +431,42 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
                     switch error{
                     case .httpStatus(let status, _) where status == 401:
                         self.showInvalidTokenAlertOnce()
-                    default:AlertService.showAlertForTopVC(title: "Buddy Bid Error", message: error.localizedDescription)
+                        completion(false)
+                        
+                    case .httpStatus(let status, let data) where status == 404:
+                        if let data = data,
+                           let _ = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                            self.assignBuddyList([], for: userID, buddy1: buddy1, buddy2: buddy2)
+                            completion(true)
+
+                        } else {
+                            completion(false)
+                        }
+                        return
+                    default:
+                        break
                     }
                     completion(false)
                 }
             }
         )
     }
+    
+    private func assignBuddyList(
+        _ buddies: [String],
+        for userID: String,
+        buddy1: String,
+        buddy2: String
+    ) {
+        if userID == self.empID {
+            self.biddersBuddyList = buddies
+        } else if userID == buddy1 {
+            self.buddy1BuddyList = buddies
+        } else if userID == buddy2 {
+            self.buddy2BuddyList = buddies
+        }
+    }
+
     
     private func showInvalidTokenAlertOnce() {
         DispatchQueue.main.async {

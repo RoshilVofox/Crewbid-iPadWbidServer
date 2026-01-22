@@ -1120,20 +1120,20 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
                                     
                                     AlertService.showAlertForTopVC(title: "Bid Successfully Submitted", message: "The bid receipt shown is the bid receipt for the last bid submitted.\n\n Bid receipts are available under the Bid Action (top right) menu and in SwaLife in BidInfo.\n\n Caution: You must see your bid receipt. If you DON'T see your bid receipt, then \"Please try to submit again\".", actions: [(title: "OK", style: .default, handler:{_ in
                                         
-                                        let completion: (Bool) -> Void = { _ in
+//                                        let completion: (Bool) -> Void = { _ in
                                             DispatchQueue.main.async {
                                                 self.dismissVC()
-                                                NotificationCenter.default.post(name: NSNotification.Name("showBidReceipt"), object: self)
+                                                NotificationCenter.default.post(name: NSNotification.Name("showBidReceipt"), object: NSNumber(value: CBGlobalMethods.shared.buddyCount ?? 0))
                                                 
                                             }
-                                        }
+//                                        }
 
                                         if self.bidPeriod?.isFABid() == true {
-                                            self.submissionViewModel?.addSubmittedDataToServerForFA(completion: completion)
+                                            self.submissionViewModel?.addSubmittedDataToServerForFA(completion: {_ in})
                                         } else {
                                             self.submissionViewModel?.handleAddSubmittedBid(
                                                 empNumber: self.defaultEmployeeNumber!,
-                                                completion: completion
+                                                completion: {_ in}
                                             )
                                         }
                                     })])
