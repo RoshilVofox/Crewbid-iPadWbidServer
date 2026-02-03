@@ -2537,10 +2537,12 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             )
 
             var seniorityMissing = false
+            
+            var seniorityListCount = 0
 
             if self.bidPeriod?.isSwaAPI?.boolValue == true {
-                let seniorityListCount = self.bidPeriod?.seniorityList?
-                    .allObjects.count
+                seniorityListCount = self.bidPeriod?.seniorityList?
+                    .allObjects.count ?? 0
                 seniorityMissing = seniorityListCount == 0
             } else {
                 seniorityMissing = textFile == nil
@@ -2563,52 +2565,57 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 return
             }
             if self.bidPeriod?.positionType?.intValue == 2{
-                if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSecondRoundBid() == true{
-                    let textField1 = String(format: "%@", (textFile?.text)!)
-                    let listItems = textField1.components(separatedBy: "\n") as Array
-                    let lastLine = listItems[listItems.count - 2] as String
-                    let lastLine2 = listItems[listItems.count - 3] as String
-                    let sArray = lastLine.components(separatedBy: "]") as Array
-                    let sString = sArray[0] as String
-                    let stringItems = sString.components(separatedBy: "-") as Array
-                    let totalNumber = stringItems[0] as String
-                    let scanner = Scanner(string: totalNumber)
-                    let isNumeric = scanner.scanInt(nil) && scanner.isAtEnd
-                    
-                    if isNumeric == false{
-                        let sArray2 = lastLine2.components(separatedBy: "]") as Array
-                        let sString2 = sArray2[0] as String
-                        let stringItems2 = sString2.components(separatedBy: "-") as Array
-                        let totaNumber2 = stringItems2[0] as String
-                        self.totalNumberString = self.extractNumber(from: totaNumber2)
-                    }else{
-                        self.totalNumberString = self.extractNumber(from: totalNumber)
-                    }
-                }
-                if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isFirstRoundBid() == true{
-                    let textField1 = String(format: "%@", (textFile?.text)!)
-                    let listItems = textField1.components(separatedBy: "\n") as Array
-                    let lastLine = listItems[listItems.count - 2] as String
-                    let lastLine2 = listItems[listItems.count - 3] as String
-                    let sArray = lastLine.components(separatedBy: ")") as Array
-                    let sString = sArray[0] as String
-                    let newString = sString.trimmingCharacters(in: .whitespaces)
-                    let stringItems = newString.components(separatedBy: " ") as Array
-                    let totalNumber = stringItems[0]
-                    let scanner = Scanner(string: totalNumber)
-                    let isNumeric = scanner.scanInt(nil) && scanner.isAtEnd
-                    
-                    if isNumeric == false{
-                        let sArray2 = lastLine2.components(separatedBy: ")") as Array
-                        let sString2 = sArray2[0].trimmingCharacters(in: .whitespacesAndNewlines)
-                        let stringItems2 = sString2.components(separatedBy: " ").filter{ !$0.isEmpty}
-                        let totaNumber2 = stringItems2[0] as String
-                        self.totalNumberString = self.extractNumber(from: totaNumber2)
-                    }else{
-                        self.totalNumberString = self.extractNumber(from: totalNumber)
-                    }
-                }
                 
+                if self.bidPeriod?.isSwaAPI?.boolValue == true{
+                    self.totalNumberString = "\(seniorityListCount)"
+                }else{
+                    
+                    if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSecondRoundBid() == true{
+                        let textField1 = String(format: "%@", (textFile?.text)!)
+                        let listItems = textField1.components(separatedBy: "\n") as Array
+                        let lastLine = listItems[listItems.count - 2] as String
+                        let lastLine2 = listItems[listItems.count - 3] as String
+                        let sArray = lastLine.components(separatedBy: "]") as Array
+                        let sString = sArray[0] as String
+                        let stringItems = sString.components(separatedBy: "-") as Array
+                        let totalNumber = stringItems[0] as String
+                        let scanner = Scanner(string: totalNumber)
+                        let isNumeric = scanner.scanInt(nil) && scanner.isAtEnd
+                        
+                        if isNumeric == false{
+                            let sArray2 = lastLine2.components(separatedBy: "]") as Array
+                            let sString2 = sArray2[0] as String
+                            let stringItems2 = sString2.components(separatedBy: "-") as Array
+                            let totaNumber2 = stringItems2[0] as String
+                            self.totalNumberString = self.extractNumber(from: totaNumber2)
+                        }else{
+                            self.totalNumberString = self.extractNumber(from: totalNumber)
+                        }
+                    }
+                    if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isFirstRoundBid() == true{
+                        let textField1 = String(format: "%@", (textFile?.text) ?? "")
+                        let listItems = textField1.components(separatedBy: "\n") as Array
+                        let lastLine = listItems[listItems.count - 2] as String
+                        let lastLine2 = listItems[listItems.count - 3] as String
+                        let sArray = lastLine.components(separatedBy: ")") as Array
+                        let sString = sArray[0] as String
+                        let newString = sString.trimmingCharacters(in: .whitespaces)
+                        let stringItems = newString.components(separatedBy: " ") as Array
+                        let totalNumber = stringItems[0]
+                        let scanner = Scanner(string: totalNumber)
+                        let isNumeric = scanner.scanInt(nil) && scanner.isAtEnd
+                        
+                        if isNumeric == false{
+                            let sArray2 = lastLine2.components(separatedBy: ")") as Array
+                            let sString2 = sArray2[0].trimmingCharacters(in: .whitespacesAndNewlines)
+                            let stringItems2 = sString2.components(separatedBy: " ").filter{ !$0.isEmpty}
+                            let totaNumber2 = stringItems2[0] as String
+                            self.totalNumberString = self.extractNumber(from: totaNumber2)
+                        }else{
+                            self.totalNumberString = self.extractNumber(from: totalNumber)
+                        }
+                    }
+                }
                 if self.totalNumberString == ""{
                     if !(self.bidPeriod?.coverLetterDisplayed?.boolValue ?? false){
                         if !seniorityShowed && self.bidPeriod?.isHistoric?.boolValue == false{
