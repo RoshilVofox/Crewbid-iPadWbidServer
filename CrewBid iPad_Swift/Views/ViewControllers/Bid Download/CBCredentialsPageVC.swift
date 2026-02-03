@@ -503,31 +503,14 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        if loginReason == .tokenExpired || isForReauth {
+            setupSwaLogin()
+            return
+        }
+        
         if self.dataSource.position == BICrewPositionType.FlightAttendant {
-//            if type == .defaultType && loginReason == .normalBidFlow{
-//                if self.bidAlreadyExists() {
-//                    // show alert which will call the closure on "Download Again"
-//                    self.showAlertForExistingBid {
-//                        // user chose Download Again -> start FA web login after deletion
-//                        DispatchQueue.main.async {
-//                            self.setupSwaLogin()
-////                            self.setupLegacyLogin()
-//                        }
-//                    }
-//                } else {
-//                    // no existing bid -> start FA web login now
-//                    self.setupSwaLogin()
-////                    self.setupLegacyLogin()
-//                }
-//            }else{
-//                self.setupSwaLogin()
-////                self.setupLegacyLogin()
-//            }
             handleFAFlow()
         } else {
-            // legacy (pilot) flow: if you want the pilot path to still show the existing-bid alert here,
-            // you can do the same check or keep your existing go-button based flow.
-            // If you want to start legacy login immediately:
             self.setupLegacyLogin()
             handlePilotFlow()
         }
@@ -536,6 +519,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
     
     private func handleFAFlow() {
         guard type == .defaultType,
+              !isForReauth,
               loginReason == .normalBidFlow else {
             setupSwaLogin()
             return

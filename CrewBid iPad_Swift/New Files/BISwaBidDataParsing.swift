@@ -491,8 +491,17 @@ class BISwaBidDataParsing{
     
     private func parseAndSaveSeniorityData(context:NSManagedObjectContext) -> Set<SeniorityList>{
         let fileName = String(format: "%@-SeniorityList.json", self.bidInfo)
-        guard let responseDict = CBUtils.readJSONString(fromFile: fileName)
-              /*let context = self.dataSource?.managedObjectContext*/ else { return [] }
+        guard let responseDict = CBUtils.readJSONString(fromFile: fileName) else { return [] }
+        
+        var emp = ""
+        
+        if !AppState.shared.isSenioritySecretOn{
+            emp = self.bidPeriod?.crewIdentifier?.stringValue ?? ""
+        }else{
+            if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+                emp = appDelegate.ObjUserAccount?.LoginuserId ?? ""
+            }
+        }
         
         guard let embeddedDict = responseDict["_embedded"] as? [String:Any] else { return [] }
         let dictKey = self.dataSource?.round == 1 ? "IFLineBaseAuctionSeniorities" : "IFLineBaseAuctionReserveAwards"
@@ -507,6 +516,11 @@ class BISwaBidDataParsing{
             seniority.baseSeniority = seniorityDict["baseSeniority"] as? NSNumber
             seniority.legalName = seniorityDict["legalName"] as? String
             seniority.employeeId = seniorityDict["employeeId"] as? String
+            
+            if emp == (seniorityDict["employeeId"] as? String){
+                self.bidPeriod?.seniorityNumber = seniority.baseSeniority
+            }
+            
             
             if self.dataSource?.round == 1{
                 seniority.department = seniorityDict["department"] as? String
