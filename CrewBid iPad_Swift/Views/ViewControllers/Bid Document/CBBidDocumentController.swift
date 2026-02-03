@@ -2875,7 +2875,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         else if (vacationType == "WBID" || vacationType == "WBIDF") {
             if ((self.bidPeriod?.crewIdentifier?.intValue != self.bidPeriod!.credentialEmployeenumber!.intValue)) {
                 DispatchQueue.main.async {
-                    AlertService.showAlertForTopVC(title: "WBidmax vacation loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the WBidmax file is valid (\(self.bidPeriod!.credentialEmployeenumber!)).", actions: [(
+                    AlertService.showAlertForTopVC(title: "WbidMax vacation loaded, but...", message: "There is a mismatch between the user for whom the bid package was downloaded (\(self.bidPeriod!.crewIdentifier?.stringValue ?? "")) and the user for whom the WBidmax file is valid (\(self.bidPeriod!.credentialEmployeenumber!)).", actions: [(
                         title: "OK",
                         style: .default,
                         handler: { _ in
@@ -2891,7 +2891,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             else {
                 DispatchQueue.main.async {
 //                    if self.alertShouldDisplay {
-                        AlertService.showAlertForTopVC(title: "SWAPtimizer loaded!", message: "You now have access to over 20 Sorts and Filters based on SWAPtimizer's vacation prediction algorithms. SWAPtimizer-specific Sorts and Filters display the SWAPtimizer logo. SWAPtimizer line values are displayed in blue.", actions: [(
+                        AlertService.showAlertForTopVC(title: "WBIDMAX Vacation loaded!", message: "You now have access to over 20 Sorts and Filters based on WbidMax vacation prediction algorithms. SWAPtimizer-specific Sorts and Filters display the SWAPtimizer logo. SWAPtimizer line values are displayed in blue.", actions: [(
                             title: "OK",
                             style: .default,
                             handler: { _ in
@@ -2925,7 +2925,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             else {
                 DispatchQueue.main.async {
 //                    if self.alertShouldDisplay {
-                        AlertService.showAlertForTopVC(title: "SWAPtimizer loaded!", message: "You now have access to over 20 Sorts and Filters based on SWAPtimizer's vacation prediction algorithms. SWAPtimizer-specific Sorts and Filters display the SWAPtimizer logo. SWAPtimizer line values are displayed in blue.", actions: [(
+                        AlertService.showAlertForTopVC(title: "Vacation loaded!", message: "You now have access to over 20 Sorts and Filters based on vacation prediction algorithms. SWAPtimizer-specific Sorts and Filters display the SWAPtimizer logo. SWAPtimizer line values are displayed in blue.", actions: [(
                             title: "OK",
                             style: .default,
                             handler: { _ in

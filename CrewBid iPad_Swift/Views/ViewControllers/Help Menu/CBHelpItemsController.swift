@@ -53,7 +53,7 @@ class CBHelpItemsController: UIViewController, UICollectionViewDataSource, UICol
     private func configureSecretGesture(){
         secretView.isUserInteractionEnabled = true
         let tap = UITapGestureRecognizer(target: self, action: #selector(showSecretMenu(_:)))
-        tap.numberOfTapsRequired = 2
+        tap.numberOfTapsRequired = 4
         secretView.addGestureRecognizer(tap)
     }
     

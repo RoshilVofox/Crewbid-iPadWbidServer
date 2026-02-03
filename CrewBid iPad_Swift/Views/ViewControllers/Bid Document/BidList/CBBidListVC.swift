@@ -1345,15 +1345,26 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
 
         DispatchQueue.main.async {
             if let tableView = self.tableViewNormalView {
+                let offset = tableView.contentOffset
                 self.updateBidListTitle()
                 if isTableviewReload{
                     if UserDefaults.standard.bool(forKey: "isSelectedCalanderView") {
                         tableView.reloadData()
-                        self.scrollToInsertionIndex()
+                        if !notifictionFromTripTextView {
+                            self.scrollToInsertionIndex()
+                        }
+                        else {
+                            tableView.layoutIfNeeded()
+                            tableView.setContentOffset(offset, animated: false)
+                        }
                     } else {
                         tableView.reloadData()
                         if !notifictionFromTripTextView {
                             self.scrollToInsertionIndex()
+                        }
+                        else {
+                            tableView.layoutIfNeeded()
+                            tableView.setContentOffset(offset, animated: false)
                         }
                     }
                 }

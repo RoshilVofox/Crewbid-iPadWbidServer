@@ -314,6 +314,7 @@ class CBDownloadAlldomicileViewController: UIViewController {
     
     // MARK: -  OK btn
     @IBAction func btnOkAction(_ sender: Any) {
+        AppState.shared.isHistoricBid = false
         tableviewData = []
         tableView.reloadData()
         if GlobalBidInfo.shared.isCurrentlyDownloadingAllBid == 1 {

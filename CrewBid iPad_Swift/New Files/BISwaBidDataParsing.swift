@@ -673,7 +673,7 @@ class BISwaBidDataParsing{
 
                 trip.tripStartDay = CBUtils.getDay(from: trip.startDate ?? Date())
                 trip.startDay = CBUtils.getDateOnly(from: trip.startDate ?? Date())
-//                trip.startDate = calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue)
+                trip.startDate = calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue)
 
                 let dayCount = tripInfo.orderedDays().count
                 let endDay = (trip.startDay?.intValue ?? 0) + (dayCount - 1)
@@ -829,16 +829,19 @@ class BISwaBidDataParsing{
                     firstLegDate = dep
                     firstLegDepartMin = CBUtils.getMinutes(from: dep)
                 }
-                
+                var offset = 0
                 // Calculate departure minutes
                 if let depDate = departureDate, let firstDate = firstLegDate {
-                    let departMinutes = firstLegDepartMin + Int(depDate.timeIntervalSince(firstDate) / 60)
+                    let crossesDST = CBUtils.crossesDST(from: firstDate, to: depDate)
+                    if crossesDST {
+                        offset = CBUtils.domicileDstOffsetFromCentral(dataSource!.base, dayDate: depDate)
+                    }
+                    let departMinutes = firstLegDepartMin + Int(depDate.timeIntervalSince(firstDate) / 60) + offset
                     legInfo?.departMinutes = NSNumber(value: departMinutes)
                 }
-                
                 // Calculate arrival minutes
                 if let arrDate = arrivalDate, let firstDate = firstLegDate {
-                    let arriveMinutes = firstLegDepartMin + Int(arrDate.timeIntervalSince(firstDate) / 60)
+                    let arriveMinutes = firstLegDepartMin + Int(arrDate.timeIntervalSince(firstDate) / 60) + offset
                     legInfo?.arriveMinutes = NSNumber(value: arriveMinutes)
                 }
                 
@@ -928,8 +931,8 @@ class BISwaBidDataParsing{
 
             if let tripDate = df.date(from: dateString) {
                 trip.startDate = calendarData.dateForDate(date: tripDate)
-//                trip.startDay = CBUtils.getDateOnly(from: trip.startDate ?? Date())
-//                trip.startDate = calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue)
+                trip.startDay = CBUtils.getDateOnly(from: trip.startDate ?? Date())
+                trip.startDate = calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue)
                 tripInfo.startDate = trip.startDate
             }
         }

@@ -823,44 +823,75 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                             }
                             
                         } else {
-//                            print("FileName is null or missing")
+                            //                            print("FileName is null or missing")
                             self.bidPeriod?.seniorityVacayAvailable = NSNumber(booleanLiteral: false)
                             let message = json["Message"] as? String ?? ""
                             var messageContent = message
-                            if message.lowercased().hasPrefix("it takes us about") {
-                                if(self.bidPeriod!.containsVacay?.boolValue != true) {
-                                    messageContent = "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button"
-                                }
-                            }
-                            else {
-                                if self.bidPeriod?.isFABid() == true {
-                                    messageContent = "It takes us about 4 hours to create the vacation files when the bid data is released.  If you have vacation,and the bid data was just release, come back later and touch the WBidMax or Swaptimizer button if a pilot."
-                                    if self.bidPeriod?.containsVacay?.boolValue != true {
+                            if self.vactionDownloadType == .downloadWbidVacation {
+                                if message.lowercased().hasPrefix("it takes us about") {
+                                    if(self.bidPeriod!.containsVacay?.boolValue != true) {
                                         messageContent = "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button"
                                     }
                                 }
                                 else {
-                                    messageContent = "It takes us about 12 hours to create the vacation files when the bid data is released.  If you have vacation,and the bid data was just release, come back later and touch the WBidMax or Swaptimizer button if a pilot."
-                                    if self.bidPeriod?.containsVacay?.boolValue != true {
-                                        messageContent = "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button"
+                                    if self.bidPeriod?.isFABid() == true {
+                                        messageContent = "It takes us about 4 hours to create the vacation files when the bid data is released.  If you have vacation,and the bid data was just release, come back later and touch the WBidMax or Swaptimizer button if a pilot."
+                                        if self.bidPeriod?.containsVacay?.boolValue != true {
+                                            messageContent = "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button"
+                                        }
                                     }
+                                    else {
+                                        messageContent = "It takes us about 12 hours to create the vacation files when the bid data is released.  If you have vacation,and the bid data was just release, come back later and touch the WBidMax or Swaptimizer button if a pilot."
+                                        if self.bidPeriod?.containsVacay?.boolValue != true {
+                                            messageContent = "You do not have Vacation this month.  If you have vacation starting in the 1st 3 days of \(self.eomMonth()), then touch the EOM button"
+                                        }
+                                    }
+                                    
                                 }
-                                
+                                if !messageContent.lowercased().hasPrefix("it takes us about") || !messageContent.lowercased().hasPrefix("You do not have Vacation this month") {
+                                    AlertService.showAlertForTopVC(title: "WBidMax Error", message: messageContent, actions: [(
+                                        title: "OK",
+                                        style: .default,
+                                        handler: { _ in
+                                            self.bidPeriod?.userVacationWbidOrCrewBid = ""
+                                            self.bidPeriod?.vacationType = ""
+                                            self.deleteAllVacation()
+                                            //                                        NotificationCenter.default.post(name: NSNotification.Name("TapWBidMaxBtn"), object: self)
+                                        }
+                                    )])
+                                }
+                                else {
+                                    AlertService.showAlertForTopVC(title: "WBidMax Error", message: messageContent, actions: [(
+                                        title: "OK",
+                                        style: .default,
+                                        handler: { _ in
+                                            self.bidPeriod?.userVacationWbidOrCrewBid = ""
+                                            self.bidPeriod?.vacationType = ""
+                                            self.deleteAllVacation()
+                                        }
+                                    )])
+                                }
+                                completion(false)
+                            }
+                            else if self.vactionDownloadType == .downloadFAVacation {
+                                if message.lowercased().hasPrefix("it takes us about") && (self.bidPeriod!.containsVacay?.boolValue != true) {
+                                    messageContent = "It takes us about 4 hours to create the vacation files when the bid data is released. If you have vacation,and the bid data was just released, come back later and touch the VAC button if a Flight Attendant."
+                                }
                             }
                             if !messageContent.lowercased().hasPrefix("it takes us about") || !messageContent.lowercased().hasPrefix("You do not have Vacation this month") {
-                                AlertService.showAlertForTopVC(title: "WBidMax Error", message: messageContent, actions: [(
+                                AlertService.showAlertForTopVC(title: "Vacation Error", message: messageContent, actions: [(
                                     title: "OK",
                                     style: .default,
                                     handler: { _ in
                                         self.bidPeriod?.userVacationWbidOrCrewBid = ""
                                         self.bidPeriod?.vacationType = ""
                                         self.deleteAllVacation()
-//                                        NotificationCenter.default.post(name: NSNotification.Name("TapWBidMaxBtn"), object: self)
+                                        //                                        NotificationCenter.default.post(name: NSNotification.Name("TapWBidMaxBtn"), object: self)
                                     }
                                 )])
                             }
                             else {
-                                AlertService.showAlertForTopVC(title: "WBidMax Error", message: messageContent, actions: [(
+                                AlertService.showAlertForTopVC(title: "Vacation Error", message: messageContent, actions: [(
                                     title: "OK",
                                     style: .default,
                                     handler: { _ in
@@ -3662,51 +3693,5 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         let newDate = calendar.date(byAdding: dateComponents, to: originalDate)
         let Updatedcomponents = calendar.dateComponents([.year, .month, .day], from: newDate!)
         return CBUtils.shortMonthName(month: Updatedcomponents.month!, uc: false)
-    }
-
-//    func executeAutoDownload() {
-//        if bidPeriod?.containsVacay?.boolValue == true {
-//            if bidPeriod?.isFABid() == true {
-//                self.downloadFaVactionVacationFilesWithHud()
-//            }
-//            else {
-//                self.downloadWbidVacationFilesWithHud()
-////                self.downloadCrewbidVacationFiles(crewbidType: "CREWBID")
-//            }
-//        }
-//    }
-    
-//    func executeAutoDownload(completion: @escaping (Bool) -> Void) {
-//        guard bidPeriod?.containsVacay?.boolValue == true else {
-//            completion(true)
-//            return
-//        }
-//
-//        if bidPeriod?.isFABid() == true {
-//            self.downloadFaVactionVacationFilesWithHud { success in
-//                completion(success)
-//            }
-//        } else {
-//            // You’ll probably add other cases here later, like WBID or CREWBID
-//            completion(true)
-//        }
-//    }
-
-    
-    func executeAutoDownload(completion: @escaping (Bool) -> Void) {
-        guard bidPeriod?.containsVacay?.boolValue == true else {
-            completion(true)
-            return
-        }
-
-        if bidPeriod?.isFABid() == true {
-            self.downloadFaVacationFilesWithHud { didComplete in
-                completion(didComplete)
-            }
-        } else {
-            self.downloadWbidVacationFilesWithHud() { didComplete in
-                completion(didComplete)
-            }
-        }
     }
 }

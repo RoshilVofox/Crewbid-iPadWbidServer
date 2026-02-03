@@ -243,10 +243,19 @@ extension CBSeniorityListVC: UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let seniority = self.filteredSeniorityList[indexPath.row]
         if tableView == self.tableView{
-            if seniority.vacationString == "N/A"{
-                return 35
-            }else{
-                return 54
+            if CBGlobalMethods.shared.selectedBidPeriod!.isSwaAPI?.boolValue == true {
+                if seniority.vacationString == "N/A"{
+                    return 40
+                }else{
+                    return 60
+                }
+            }
+            else {
+                if seniority.vacationString == "N/A"{
+                    return 35
+                }else{
+                    return 54
+                }
             }
         }
         return 40

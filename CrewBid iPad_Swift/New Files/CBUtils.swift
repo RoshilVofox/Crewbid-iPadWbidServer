@@ -2518,6 +2518,49 @@ class CBUtils{
         text += "\n\n"
         return text
     }
+    
+    static func domicileDstOffsetFromCentral(_ domicile: String, dayDate: Date) -> Int {
+
+        let centralTZ = TimeZone(identifier: "America/Chicago")!
+
+        let isDst = centralTZ.isDaylightSavingTime(for: dayDate)
+
+        guard isDst else { return 0 }
+
+//        east
+        if domicile == "ATL" ||
+           domicile == "AUS" ||
+           domicile == "BWI" ||
+           domicile == "MCO" {
+            return 60
+        }
+
+        if domicile == "DEN" {
+            return -60
+        }
+
+//        pecific
+        if domicile == "LAS" ||
+           domicile == "LAX" ||
+           domicile == "OAK" {
+            return -120
+        }
+
+        if domicile == "PHX" {
+            return -120
+        }
+
+        return 0
+    }
+    
+    static func crossesDST(from fromDate: Date, to toDate: Date) -> Bool {
+        let centralTZ = TimeZone(identifier: "America/Chicago")!
+        let fromIsDST = centralTZ.isDaylightSavingTime(for: fromDate)
+        let toIsDST = centralTZ.isDaylightSavingTime(for: toDate)
+        return fromIsDST != toIsDST
+    }
+
+
 }
 
 class JWTDecoder{
