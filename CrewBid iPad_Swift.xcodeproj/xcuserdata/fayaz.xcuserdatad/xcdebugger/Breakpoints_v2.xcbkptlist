@@ -8837,7 +8837,7 @@
             startingLineNumber = "2777"
             endingLineNumber = "2777"
             landmarkName = "getEtopsLineCount()"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8885,7 +8885,7 @@
             startingLineNumber = "3165"
             endingLineNumber = "3165"
             landmarkName = "executeEOmWBid(vDL:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -8901,7 +8901,7 @@
             startingLineNumber = "3168"
             endingLineNumber = "3168"
             landmarkName = "executeEOmWBid(vDL:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -9109,7 +9109,7 @@
             startingLineNumber = "2936"
             endingLineNumber = "2936"
             landmarkName = "showAlertforVacationLoading()"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -9125,7 +9125,7 @@
             startingLineNumber = "3336"
             endingLineNumber = "3336"
             landmarkName = "executeEOMForFAVacation(vDL:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -9141,7 +9141,7 @@
             startingLineNumber = "3341"
             endingLineNumber = "3341"
             landmarkName = "executeEOMForFAVacation(vDL:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -9157,7 +9157,7 @@
             startingLineNumber = "3394"
             endingLineNumber = "3394"
             landmarkName = "executeEOMOnlyFA(vDL:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -9173,7 +9173,7 @@
             startingLineNumber = "3178"
             endingLineNumber = "3178"
             landmarkName = "executeEOmWBid(vDL:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -9189,7 +9189,7 @@
             startingLineNumber = "3170"
             endingLineNumber = "3170"
             landmarkName = "executeEOmWBid(vDL:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -9205,7 +9205,7 @@
             startingLineNumber = "3411"
             endingLineNumber = "3411"
             landmarkName = "executeEOMOnlyFA(vDL:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -11125,7 +11125,7 @@
             startingLineNumber = "3179"
             endingLineNumber = "3179"
             landmarkName = "executeEOmWBid(vDL:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -11141,7 +11141,7 @@
             startingLineNumber = "3143"
             endingLineNumber = "3143"
             landmarkName = "executeEOmWBid(vDL:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -11157,7 +11157,7 @@
             startingLineNumber = "3106"
             endingLineNumber = "3106"
             landmarkName = "selectWBidVacationButton()"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -11173,7 +11173,7 @@
             startingLineNumber = "3076"
             endingLineNumber = "3076"
             landmarkName = "selectWBidVacationButton()"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -11285,7 +11285,7 @@
             startingLineNumber = "3954"
             endingLineNumber = "3954"
             landmarkName = "alertTitleActionPilot(_:)"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -13189,7 +13189,7 @@
             startingLineNumber = "4420"
             endingLineNumber = "4420"
             landmarkName = "eomFromSync()"
-            landmarkType = "9">
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -14301,7 +14301,7 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "06B7CB8D-5C27-44D4-98DF-5D3E33995A45"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             condition = "seniority.employeeId == &quot;9790&quot;"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -14311,6 +14311,54 @@
             startingLineNumber = "520"
             endingLineNumber = "520"
             landmarkName = "parseAndSaveSeniorityData(context:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F2702FBF-418E-41EA-81F5-A1FA1A8EF2B6"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/New Files/BIBidInfoReader.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "3842"
+            endingLineNumber = "3842"
+            landmarkName = "readLinesFA()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "41E2EDFA-F849-42C4-80C0-04500999CEBB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Download/CBDefaultEmployeeVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "117"
+            endingLineNumber = "117"
+            landmarkName = "btnNextAction(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3AEFF706-0172-472D-9753-DDC600B4EB07"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CrewBid iPad_Swift/Views/ViewControllers/Bid Download/CBDefaultEmployeeVC.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "522"
+            endingLineNumber = "522"
+            landmarkName = "textFieldShouldReturn(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
