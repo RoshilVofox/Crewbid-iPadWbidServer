@@ -558,6 +558,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     //MARK: -Bid Submission methods
     @objc func checkLinesAvailableInBidList() {
         var linesCount: Int = 0
+        self.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         linesCount = bidPeriod!.getBidListLines().count
         if 0 == linesCount {
             // Display a warning if there are no lines in the Bid List
