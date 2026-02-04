@@ -558,7 +558,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     //MARK: -Bid Submission methods
     @objc func checkLinesAvailableInBidList() {
         var linesCount: Int = 0
-        self.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
+//        self.bidPeriod = CBGlobalMethods.shared.selectedBidPeriod
         linesCount = bidPeriod!.getBidListLines().count
         if 0 == linesCount {
             // Display a warning if there are no lines in the Bid List
@@ -727,6 +727,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        if self.isMovingFromParent || self.isBeingDismissed {
+            NotificationCenter.default.removeObserver(self,
+                name: Notification.Name("checkLinesAvailableInBidList"),
+                object: nil)
+        }
         NotificationCenter.default.removeObserver("SortBidListAction")
         NotificationCenter.default.removeObserver("ShowCommutabilityFilterView")
     }

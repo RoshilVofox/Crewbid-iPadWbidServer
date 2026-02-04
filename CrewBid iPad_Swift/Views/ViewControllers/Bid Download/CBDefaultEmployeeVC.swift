@@ -47,7 +47,11 @@ class CBDefaultEmployeeVC: BaseViewController {
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        
+        if self.isMovingFromParent || self.isBeingDismissed {
+            NotificationCenter.default.removeObserver(self,
+                name: Notification.Name("showJobShareAlert"),
+                object: nil)
+        }
     }
     func setupUI(){
         titleSetup()
