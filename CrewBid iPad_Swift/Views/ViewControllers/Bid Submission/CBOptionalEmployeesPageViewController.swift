@@ -51,6 +51,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
         buddyBidderDomicile_2.isHidden = true
         buddyBidderName_1.text = ""
         buddyBidderName_2.text = ""
+        lblBuddyBid.textColor = .secondaryLabel
         btnClose.setTitle("", for: .normal)
         btnNext.setTitle("", for: .normal)
         buddyBidTxtField_1.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)

@@ -133,9 +133,15 @@ class CBDefaultEmployeeVC: BaseViewController {
 
              } else {
                  // Already verified
+//                 confirm employee number
+                 guard let empID = textEmpNum.text, !empID.isEmpty else {
+                     shakeTextField(textField: textEmpNum)
+                     return
+                 }
                  if confirmEmpNum != textEmpNum.text! {
-                     self.navigationController?.popViewController(animated: true)
-                 } else {
+                     AlertService.showAlertForTopVC(title: "Employee Number Mismatch", message: "The confirmation employee number does not match the employee number entered earlier.")
+                     }
+                 else {
                      self.goToNextPage()
                  }
              }
@@ -552,7 +558,7 @@ extension CBDefaultEmployeeVC : UITextFieldDelegate{
         } else {
             // Confirm Employee Number
             if confirmEmpNum != textEmpNum.text! {
-                self.navigationController?.popViewController(animated: true)
+//                self.navigationController?.popViewController(animated: true)
             } else {
                 self.goToNextPage()
             }

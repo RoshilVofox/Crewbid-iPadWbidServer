@@ -3508,7 +3508,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                                 let endDate = (df.date(from: "2359" + endDateString))!
                                 
                                 if (trip.isRedEyeTrip) {
-                                    currentDate = tripDaysDate[d]
+                                    currentDate = tripDaysDate.indices.contains(d) ? tripDaysDate[d] : currentDate
                                     if (d == 0 && trip.startDate! < currentDate!) {
                                         currentDate = trip.startDate
                                     }

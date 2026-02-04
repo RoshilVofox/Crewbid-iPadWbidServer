@@ -2303,17 +2303,19 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     
     @objc func reprocessIncludeDroppedTrips(){
         self.view.showActivityIndicator(message: "Reprocessing lines...")
-        self.reprocessAfterChangedIncludeDroppedTrips(){finished in
-            if finished{
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    self.view.hideActivityIndicator()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            self.reprocessAfterChangedIncludeDroppedTrips(){finished in
+                if finished{
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.view.hideActivityIndicator()
+                    }
                 }
             }
         }
     }
     
     func reprocessAfterChangedIncludeDroppedTrips(completion: @escaping (Bool) -> Void) {
-        self.view.updateActivityIndicator(color: CBColor.cbPurpleColor, message: "Reprocessing lines...")
+        self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Reprocessing lines...")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             // Three steps:
             // 1: reset the trip highlight count
