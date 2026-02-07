@@ -2321,6 +2321,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     }
     
     func reprocessAfterChangedIncludeDroppedTrips(completion: @escaping (Bool) -> Void) {
+        self.view.hideActivityIndicator()
         self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Reprocessing lines...")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             // Three steps:
@@ -2806,9 +2807,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             for trip in controller.fetchedObjects ?? [] {
                 trip.vacationOverlapType = 0
                 trip.dropForFiltersSorts = NSNumber(value: false)
+                trip.redEyeDayDisplayDayType = BIDayDisplayType.normal.rawValue as NSNumber
                 for case let day as BIDay in trip.days!  {
                     day.displayType = BIDayDisplayType.normal.rawValue as NSNumber
-                    day.redEyeDayDisplayDayType = BIDayDisplayType.fullPay.rawValue as NSNumber
                 }
             }
         }

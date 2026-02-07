@@ -8,8 +8,8 @@
 import UIKit
 import CoreData
 
-class CBDocumentsCollectionViewController: BaseViewController {
-    
+class CBDocumentsCollectionViewController: BaseViewController, ServiceConnectionDelegate {
+   
     @IBOutlet weak var bidDownloadButton: UIButton!
     @IBOutlet weak var settingsButton: UIButton!
     @IBOutlet weak var lblHome: UILabel!
@@ -22,6 +22,7 @@ class CBDocumentsCollectionViewController: BaseViewController {
     var selectedRows : [Int] = []
     var bidPeriodList : [BIBidPeriod] = []
     var dataSource = GlobalBidInfo.shared
+    var objDatabuilder = ODataBuilder()
     
     let viewModel = DocumentsCollectionViewModel()
     private var didPostInitialSubscriptionCheck = false
@@ -113,34 +114,14 @@ class CBDocumentsCollectionViewController: BaseViewController {
 //        }
         if isPlusImage {
             UserDefaults.standard.set(false, forKey: "isSecretForAllDomicileDownloadEnabled")
-
-            let presentNewBid: () -> Void = {
-                let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
-                let vc = storyboard.instantiateViewController(withIdentifier: "CBNewBidVC") as! CBNewBidVC
-                vc.preferredContentSize = CGSize(width: 600, height: 550)
-                vc.modalTransitionStyle = .crossDissolve
-                vc.isModalInPresentation = true
-                self.present(vc, animated: true)
-                self.bidDownloadButton.tag = 1
+            self.bidDownloadButton.tag = 1
+            if self.isUserInformationAvailable() && app.objNetworkType != .free {
+                self.checkUserAccountDateTime()
             }
-            if let authDetails = app.ObjUserAccount?.dicLoginAuthDetails, authDetails.count > 0 {
-                if app.connectedToInternet() {
-//                    DispatchQueue.main.async {
-//                        self.view.showActivityIndicator(message: "Checking User Account")
-//                    }
-//                    CBSubscriptionInfoController().updateSubscriptionDetails(silent: true)
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-//                        self.view.hideActivityIndicator()
-                        presentNewBid()
-//                    }
-                } else {
-                    let alert = UIAlertController(title: "Network not available!!", message: "Please check your internet connection", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-                    self.present(alert, animated: true, completion: nil)
-                }
-            } else {
-                presentNewBid()
+            else {
+                self.showNewBid()
             }
+           
         }
         else {
             self.bidDownloadButton.tag = 2
@@ -600,6 +581,50 @@ class CBDocumentsCollectionViewController: BaseViewController {
         }
     }
 
+    func responseError(_ errMsg: String) {
+        print("responseError:\(errMsg)")
+    }
+    
+    func serviceResponse(_ arrResponse: [Any]) {
+        self.view.hideActivityIndicator()
+        var isUserAccoutDataSame: Bool = false
+        let respnseFromArray = arrResponse as? [[String: Any]] ?? [[String: Any]]()
+        if (respnseFromArray.count) > 0 {
+            let first = respnseFromArray[0]
+            let value = first["EmpNum"] as? Int
+            if value != 0 {
+                isUserAccoutDataSame = self.checkDateTimes(dBMasterDate: first["UserAccountDateTime"] as? String ?? "")
+                if isUserAccoutDataSame {
+                    self.showNewBid()
+                }
+                else {
+                    self.checkForDifferences(dicTempUserInformation: first)
+                }
+            }
+            else {
+                self.showNewBid()
+            }
+        }
+        else {
+            self.showNewBid()
+        }
+    }
+    
+    func responseStatus(_ responseStatus: Int) {
+        print("responseStatus")
+    }
+    
+    func connectionFailed() {
+        print("connectionFailed")
+    }
+    
+    func requestFailed() {
+        print("requestFailed")
+    }
+    
+    func connectionDataReceived(_ progress: Float) {
+        print("connectionDataReceived")
+    }
 }
 
 
@@ -762,5 +787,114 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
 
     func collectionView(_ collectionView: UICollectionView,layout collectionViewLayout: UICollectionViewLayout,insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 50, left: 50, bottom: 50, right: 50)
+    }
+    
+    func showNewBid() {
+        let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "CBNewBidVC") as! CBNewBidVC
+        vc.preferredContentSize = CGSize(width: 600, height: 550)
+        vc.modalTransitionStyle = .crossDissolve
+        vc.isModalInPresentation = true
+        self.present(vc, animated: true)
+    }
+    
+    func isUserInformationAvailable() -> Bool {
+        var isAvalabele = false
+        if app.isUserInformationAvailable() {
+            isAvalabele = true
+        }
+        return isAvalabele
+    }
+    
+    func checkUserAccountDateTime() {
+        if app.connectedToInternet() {
+            DispatchQueue.main.async {
+                self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Checking User Account")
+                self.app.sc?.delegate = self
+                self.objDatabuilder.checkUserExistOrNot(self.app.ObjUserAccount?.employeeNumber ?? "")
+            }
+        }
+        else {
+            self.view.hideActivityIndicator()
+            AlertService.showAlertForTopVC(title: "Network not available!!", message: "Please check your internet connection ")
+        }
+    }
+
+    func checkDateTimes(dBMasterDate: String) -> Bool {
+        var isSameDate = true
+        if dBMasterDate.isEmpty {
+            return false
+        }
+        let dBMAsterDate = getDateFromJSON(dBMasterDate)
+        if dBMAsterDate == nil {
+            isSameDate = false
+        }
+        else {
+            let localDate = getDateFromJSON(app.ObjUserAccount?.UserAccountDateTime)
+            if localDate?.compare(dBMAsterDate!) != .orderedSame {
+                isSameDate = false
+            }
+        }
+        return isSameDate
+    }
+    
+    func checkForDifferences(dicTempUserInformation: [String: Any]) {
+        var dicTempUserInformation = dicTempUserInformation
+        var dicLocalUserInfo = [String: Any]()
+        let userAccountDateTime = app.ObjUserAccount?.UserAccountDateTime ?? ""
+        dicLocalUserInfo["CellPhone"] = app.ObjUserAccount?.cellPhone
+        dicLocalUserInfo["FirstName"] = app.ObjUserAccount?.firstName
+        dicLocalUserInfo["LastName"] = app.ObjUserAccount?.lastName
+        dicLocalUserInfo["EmpNum"] = app.ObjUserAccount?.employeeNumber
+        dicLocalUserInfo["Email"] = app.ObjUserAccount?.email
+        dicLocalUserInfo["Position"] = app.ObjUserAccount?.position as? String
+        dicLocalUserInfo["AcceptEmail"] = app.ObjUserAccount?.AcceptEmail as? String
+        
+        let cellCarrier = dicTempUserInformation["CarrierNum"] as? String ?? ""
+        if Int(cellCarrier) == 0 {
+            dicTempUserInformation["CarrierNum"] = "1"
+        }
+        
+        if (!userAccountDateTime.isEmpty) {
+            dicLocalUserInfo["UserAccountDateTime"] = userAccountDateTime
+        }
+        let arrHeader = Array(dicLocalUserInfo.keys)
+        var arrCommonHeader: [String] = []
+        var dicCommonDiffInfo = [String: Any]()
+        
+        for i in 0..<arrHeader.count {
+            let locValue = dicLocalUserInfo[arrHeader[i]] as? String
+            let dBValue = dicTempUserInformation[arrHeader[i]] as? String
+            
+            if (!(locValue?.lowercased() == dBValue?.lowercased())) {
+                if (arrHeader[i] == "AcceptEmail" || arrHeader[i] == "EmpNum" || arrHeader[i] == "UserAccountDateTime" || arrHeader[i] == "Password") {
+                    
+                }
+                else {
+                    let key = arrHeader[i]
+                    let localValue = dicLocalUserInfo[key] as? String ?? ""
+                    let tempValue = dicTempUserInformation[key] as? String ?? ""
+                    dicCommonDiffInfo[key] = "\(localValue),\(tempValue)"
+                }
+            }
+        }
+        arrCommonHeader = Array(dicCommonDiffInfo.keys)
+        if arrCommonHeader.count > 0 {
+            self.showDifferenceWindow(filteredDic: dicCommonDiffInfo, commonHeader: arrCommonHeader, dicLocalUserInfo: dicLocalUserInfo)
+        }
+        else {
+            self.showNewBid()
+        }
+    }
+    
+    func showDifferenceWindow(filteredDic:[String:Any],commonHeader arrayCommonHeader:[String], dicLocalUserInfo: [String: Any]){
+        let storyboard = UIStoryboard(name: "HelpMenu", bundle: nil)
+        let vc = storyboard.instantiateViewController(identifier: "CBDifferentAccountDetailsVC") as! CBDifferentAccountDetailsVC
+        vc.diffDict = filteredDic
+        vc.dicLocalAccountInfo = dicLocalUserInfo
+        vc.arrCommonHeader = arrayCommonHeader
+        vc.isFromAccount = true
+        vc.preferredContentSize = CGSize(width: 764, height: 630)
+        self.present(vc, animated: true, completion: nil)
     }
 }

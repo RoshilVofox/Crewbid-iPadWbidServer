@@ -62,45 +62,45 @@ class CBAlertVC: BaseViewController {
 
     @IBAction func tryBtnAction(_ sender: Any) {
         dismiss(animated: true) {
-            switch self.retryFlow {
-            case .bidDownload:
-                NotificationCenter.default.post(
-                    name: NSNotification.Name("dismissLoginView"),
-                    object: nil
-                )
-                guard let sourceVC = self.fromView else { return }
-
-                if let presentingVC = sourceVC.presentingViewController {
-                    presentingVC.dismiss(animated: false) {
-                        AppNavigation.startNewBidFlow(from: presentingVC)
-                    }
-                } else {
-                    AppNavigation.startNewBidFlow(from: sourceVC)
-                }
-
-            case .bidSubmission:
-                guard let sourceVC = self.fromView else { return }
-                if let presentingVC = sourceVC.presentingViewController {
-                    presentingVC.dismiss(animated: false) {
-                        AppNavigation.restartBidSubmissionFlow(
-                            from: presentingVC,
-                            empName: self.empName,
-                            bidPeriod: self.bidPeriod
-                        )
-                    }
-                } else {
-                    AppNavigation.restartBidSubmissionFlow(
-                        from: sourceVC,
-                        empName: self.empName,
-                        bidPeriod: self.bidPeriod
-                    )
-                }
-
-
-
-            case .none:
-                break
-            }
+//            switch self.retryFlow {
+//            case .bidDownload:
+//                NotificationCenter.default.post(
+//                    name: NSNotification.Name("dismissLoginView"),
+//                    object: nil
+//                )
+//                guard let sourceVC = self.fromView else { return }
+//
+//                if let presentingVC = sourceVC.presentingViewController {
+//                    presentingVC.dismiss(animated: false) {
+//                        AppNavigation.startNewBidFlow(from: presentingVC)
+//                    }
+//                } else {
+//                    AppNavigation.startNewBidFlow(from: sourceVC)
+//                }
+//
+//            case .bidSubmission:
+//                guard let sourceVC = self.fromView else { return }
+//                if let presentingVC = sourceVC.presentingViewController {
+//                    presentingVC.dismiss(animated: false) {
+//                        AppNavigation.restartBidSubmissionFlow(
+//                            from: presentingVC,
+//                            empName: self.empName,
+//                            bidPeriod: self.bidPeriod
+//                        )
+//                    }
+//                } else {
+//                    AppNavigation.restartBidSubmissionFlow(
+//                        from: sourceVC,
+//                        empName: self.empName,
+//                        bidPeriod: self.bidPeriod
+//                    )
+//                }
+//
+//
+//
+//            case .none:
+//                break
+//            }
         }
     }
     

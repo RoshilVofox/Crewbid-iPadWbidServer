@@ -18,7 +18,6 @@ extension BIDay {
 
     @NSManaged public var date: Date?
     @NSManaged public var displayType: NSNumber?
-    @NSManaged public var redEyeDayDisplayDayType: NSNumber?
     @NSManaged public var holidayPayment: NSNumber?
     @NSManaged public var info: BIDayInfo?
     @NSManaged public var legs: NSSet?

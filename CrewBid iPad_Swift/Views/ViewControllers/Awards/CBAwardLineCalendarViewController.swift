@@ -737,7 +737,20 @@ class CBAwardLineCalendarViewController: UIViewController, UIGestureRecognizerDe
                     label.font = UIFont.boldSystemFont(ofSize: 20)
                     
                     if redEyePayLabel != nil {
-                        redEyePayLabel?.text = "$"
+                        if CBUtils.isClawBackFromDate(line: self.line!, day: missingRedEyeDate, bidPeriod: bidPeriod!) {
+                            redEyePayLabel?.text = "CB"
+                        }
+                        else {
+                            if trip.redEyeDayDisplayDayType?.intValue == BIDayDisplayType.fullPay.rawValue{
+                                redEyePayLabel?.text = "$"
+                            }
+                            else if trip.redEyeDayDisplayDayType?.intValue == BIDayDisplayType.partialPay.rawValue{
+                                redEyePayLabel?.text =  "¢"
+                            }
+                            else if trip.redEyeDayDisplayDayType?.intValue == BIDayDisplayType.noPay.rawValue{
+                                redEyePayLabel?.text =  "x"
+                            }
+                        }
                         redEyePayLabel?.font = UIFont.boldSystemFont(ofSize: 20)
                         redEyeIconButton.removeFromSuperview()
                     }
@@ -989,7 +1002,20 @@ class CBAwardLineCalendarViewController: UIViewController, UIGestureRecognizerDe
                         label.font = UIFont.boldSystemFont(ofSize: 20)
                     }
                     if redEyePayLabel != nil {
-                        redEyePayLabel?.text = "$"
+                        if CBUtils.isClawBackFromDate(line: self.line!, day: missingRedEyeDate, bidPeriod: bidPeriod!) {
+                            redEyePayLabel?.text = "CB"
+                        }
+                        else {
+                            if trip.redEyeDayDisplayDayType?.intValue == BIDayDisplayType.fullPay.rawValue{
+                                redEyePayLabel?.text = "$"
+                            }
+                            else if trip.redEyeDayDisplayDayType?.intValue == BIDayDisplayType.partialPay.rawValue{
+                                redEyePayLabel?.text =  "¢"
+                            }
+                            else if trip.redEyeDayDisplayDayType?.intValue == BIDayDisplayType.noPay.rawValue{
+                                redEyePayLabel?.text =  "x"
+                            }
+                        }
                         redEyePayLabel?.font = UIFont.boldSystemFont(ofSize: 20)
                         redEyeIconButton.removeFromSuperview()
                     }
