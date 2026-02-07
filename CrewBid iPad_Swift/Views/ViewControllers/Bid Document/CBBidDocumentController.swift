@@ -530,7 +530,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let vc = storyboard.instantiateViewController(withIdentifier: "CBCredentialsPageVC") as! CBCredentialsPageVC
         vc.type = .retrieveAwards
         vc.bidPeriod = self.bidPeriod
-        vc.preferredContentSize = CGSize(width: 600, height: 500)
+        vc.preferredContentSize = CGSize(width: 600, height: 550)
         vc.isModalInPresentation = true
         self.present(vc, animated: true, completion: nil)
     }
@@ -538,7 +538,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     @objc func openTripFetchInTextView() {
         let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "EmbeddedTripAwardViewController") as! EmbeddedTripAwardViewController
-        vc.preferredContentSize = CGSize(width: 600, height: 500)
+        vc.preferredContentSize = CGSize(width: 600, height: 550)
         vc.isModalInPresentation = true
         self.present(vc, animated: true, completion: nil)
     }
@@ -551,7 +551,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             vc.selectedOption = userInfo["option"] as? String
         }
         vc.isModalInPresentation = true
-        vc.preferredContentSize = CGSize(width: 600, height: 500)
+        vc.preferredContentSize = CGSize(width: 600, height: 550)
         self.present(vc, animated: true, completion: nil)
     }
     
@@ -582,7 +582,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     func enterSubmitEmpIdAlert(){
         let storyboard = UIStoryboard(name: "BidInfo", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBDefaultEmployeeVC") as! CBDefaultEmployeeVC
-        vc.preferredContentSize = CGSize(width: 600, height: 500)
+        vc.preferredContentSize = CGSize(width: 600, height: 550)
         vc.isModalInPresentation = true
         vc.type = .submitEmployeeNumber
         vc.bidPeriod = self.bidPeriod!
@@ -590,7 +590,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let navController = UINavigationController(rootViewController: vc)
         navController.setNavigationBarHidden(true, animated: false)
         navController.modalPresentationStyle = .formSheet
-        navController.preferredContentSize = CGSize(width: 600, height: 500)
+        navController.preferredContentSize = CGSize(width: 600, height: 550)
         self.present(navController, animated: true)
     }
     
