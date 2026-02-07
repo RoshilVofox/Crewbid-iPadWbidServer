@@ -5636,8 +5636,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1874"
             endingLineNumber = "1874"
-            landmarkName = "CBCredentialsPageVC"
-            landmarkType = "3">
+            landmarkName = "goActionFromSubmitCertifyDelegate()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -6532,8 +6532,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1495"
             endingLineNumber = "1495"
-            landmarkName = "checkAuthentication(message:)"
-            landmarkType = "7">
+            landmarkName = "CBCredentialsPageVC"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -9588,8 +9588,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1897"
             endingLineNumber = "1897"
-            landmarkName = "isFABid()"
-            landmarkType = "7">
+            landmarkName = "CBCredentialsPageVC"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -11124,8 +11124,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3150"
             endingLineNumber = "3150"
-            landmarkName = "wbidMaxErrorMessageEOM(isAuto:)"
-            landmarkType = "7">
+            landmarkName = "CBBidDocumentController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -11156,8 +11156,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3083"
             endingLineNumber = "3083"
-            landmarkName = "CBBidDocumentController"
-            landmarkType = "3">
+            landmarkName = "selectWBidVacationButton()"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -13284,8 +13284,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1209"
             endingLineNumber = "1209"
-            landmarkName = "CBCredentialsPageVC"
-            landmarkType = "3">
+            landmarkName = "handleBidSubmission(sessionKey:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
