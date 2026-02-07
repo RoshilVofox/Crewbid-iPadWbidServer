@@ -42,6 +42,7 @@ extension BITrip {
     @NSManaged public var lineFirstTrip: BILine?
     @NSManaged public var nextTrip: BITrip?
     @NSManaged public var previousTrip: BITrip?
+    @NSManaged public var redEyeDayDisplayDayType: NSNumber?
 
 }
 

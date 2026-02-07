@@ -770,6 +770,48 @@ class CBUtils{
         return false
     }
     
+    class func isClawBackFromDate(line: BILine, day: Date?, bidPeriod: BIBidPeriod) -> Bool {
+        guard let clawBack = line.clawBack?.floatValue, clawBack > 0 else {
+            return false
+        }
+        if day == nil {return false}
+
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale(identifier: "en_US")
+        calendar.timeZone = TimeZone(identifier: "US/Central")!
+
+        let dateComponents = calendar.dateComponents([.year, .month, .day], from: day!)
+        guard let currentDateMonth = dateComponents.month,
+              let bidMonth = bidPeriod.month?.intValue,
+              currentDateMonth != bidMonth else {
+            return false
+        }
+
+        guard let vacations = bidPeriod.vacations as? Set<BIVacation> else {
+            return false
+        }
+
+        for vacay in vacations {
+            let cal = Calendar.current
+
+            guard let dayDate = day,
+                  let vacStart = vacay.startDate,
+                  let vacEnd = vacay.endDate else { continue }
+
+            let dayDateOnly = cal.startOfDay(for: dayDate)
+            let startDateOnly = cal.startOfDay(for: vacStart)
+            let endDateOnly = cal.startOfDay(for: vacEnd)
+
+            let isInRange = (dayDateOnly >= startDateOnly && dayDateOnly <= endDateOnly)
+
+            if isInRange {
+                return true
+            }
+        }
+
+        return false
+    }
+    
     static func weekDay(from date: Date) -> Int {
         let calendar = Calendar.current
         let weekday = calendar.component(.weekday, from: date)
@@ -828,12 +870,12 @@ class CBUtils{
 
             if let orderedDays = trip.info?.orderedDays() {
                 for dayInfo in orderedDays {
-                    for legInfo in dayInfo.orderedLegs {
-                        dateComps.minute = legInfo.departMinutes?.intValue ?? 0
+//                    for legInfo in dayInfo.orderedLegs {
+                    dateComps.minute = (dayInfo.orderedLegs.first as? BILegInfo)?.departMinutes?.intValue ?? 0
                         if let legStartDate = calendarWithTimeZone.date(from: dateComps) {
                             tripDates.append(df.string(from: legStartDate))
                         }
-                    }
+//                    }
                 }
             }
 
@@ -2522,36 +2564,31 @@ class CBUtils{
     static func domicileDstOffsetFromCentral(_ domicile: String, dayDate: Date) -> Int {
 
         let centralTZ = TimeZone(identifier: "America/Chicago")!
+        guard centralTZ.isDaylightSavingTime(for: dayDate) else { return 0 }
 
-        let isDst = centralTZ.isDaylightSavingTime(for: dayDate)
+        switch domicile {
 
-        guard isDst else { return 0 }
-
-//        east
-        if domicile == "ATL" ||
-           domicile == "AUS" ||
-           domicile == "BWI" ||
-           domicile == "MCO" {
+        // CrewBid "east / central" bucket
+        case "ATL", "AUS", "BWI", "MCO":
             return 60
-        }
 
-        if domicile == "DEN" {
+        // Mountain
+        case "DEN":
             return -60
-        }
 
-//        pecific
-        if domicile == "LAS" ||
-           domicile == "LAX" ||
-           domicile == "OAK" {
-            return -120
-        }
+        // Pacific baseline
+        case "LAS", "LAX", "OAK":
+            return 0
 
-        if domicile == "PHX" {
-            return -120
-        }
+        // Bases currently falling through to Pacific behavior
+        case "BNA", "DAL", "HOU", "MDW", "PHX":
+            return 0
 
-        return 0
+        default:
+            return 0
+        }
     }
+
     
     static func crossesDST(from fromDate: Date, to toDate: Date) -> Bool {
         let centralTZ = TimeZone(identifier: "America/Chicago")!

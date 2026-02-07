@@ -877,31 +877,31 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                                 if message.lowercased().hasPrefix("it takes us about") && (self.bidPeriod!.containsVacay?.boolValue != true) {
                                     messageContent = "It takes us about 4 hours to create the vacation files when the bid data is released. If you have vacation,and the bid data was just released, come back later and touch the VAC button if a Flight Attendant."
                                 }
+                                if !messageContent.lowercased().hasPrefix("it takes us about") || !messageContent.lowercased().hasPrefix("You do not have Vacation this month") {
+                                    AlertService.showAlertForTopVC(title: "Crewbid Alert", message: messageContent, actions: [(
+                                        title: "OK",
+                                        style: .default,
+                                        handler: { _ in
+                                            self.bidPeriod?.userVacationWbidOrCrewBid = ""
+                                            self.bidPeriod?.vacationType = ""
+                                            self.deleteAllVacation()
+                                            //                                        NotificationCenter.default.post(name: NSNotification.Name("TapWBidMaxBtn"), object: self)
+                                        }
+                                    )])
+                                }
+                                else {
+                                    AlertService.showAlertForTopVC(title: "Crewbid Alert", message: messageContent, actions: [(
+                                        title: "OK",
+                                        style: .default,
+                                        handler: { _ in
+                                            self.bidPeriod?.userVacationWbidOrCrewBid = ""
+                                            self.bidPeriod?.vacationType = ""
+                                            self.deleteAllVacation()
+                                        }
+                                    )])
+                                }
+                                completion(false)
                             }
-                            if !messageContent.lowercased().hasPrefix("it takes us about") || !messageContent.lowercased().hasPrefix("You do not have Vacation this month") {
-                                AlertService.showAlertForTopVC(title: "Vacation Error", message: messageContent, actions: [(
-                                    title: "OK",
-                                    style: .default,
-                                    handler: { _ in
-                                        self.bidPeriod?.userVacationWbidOrCrewBid = ""
-                                        self.bidPeriod?.vacationType = ""
-                                        self.deleteAllVacation()
-                                        //                                        NotificationCenter.default.post(name: NSNotification.Name("TapWBidMaxBtn"), object: self)
-                                    }
-                                )])
-                            }
-                            else {
-                                AlertService.showAlertForTopVC(title: "Vacation Error", message: messageContent, actions: [(
-                                    title: "OK",
-                                    style: .default,
-                                    handler: { _ in
-                                        self.bidPeriod?.userVacationWbidOrCrewBid = ""
-                                        self.bidPeriod?.vacationType = ""
-                                        self.deleteAllVacation()
-                                    }
-                                )])
-                            }
-                            completion(false)
                         }
                         
                     case .failure(let error):
@@ -2323,10 +2323,10 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                 for trip in trips {
                     trip.vacationOverlapType = 0
                     trip.dropForFiltersSorts = false
+                    trip.redEyeDayDisplayDayType = BIDayDisplayType.normal.rawValue as NSNumber
                     
                     for case let day as BIDay in trip.days ?? [] {
                         day.displayType = BIDayDisplayType.normal.rawValue as NSNumber
-                        day.redEyeDayDisplayDayType = BIDayDisplayType.normal.rawValue as NSNumber
                     }
                 }
             }
@@ -2710,7 +2710,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                                    calendarData.date(date: normalizedDate, beginDate: fvStartdate, endDate: fvEnddate) == true {
                                     for day in trip.orderedDays {
                                         day.displayType = BIDayDisplayType.fullPay.rawValue as NSNumber
-                                        day.redEyeDayDisplayDayType = BIDayDisplayType.fullPay.rawValue as NSNumber
+                                        trip.redEyeDayDisplayDayType = BIDayDisplayType.fullPay.rawValue as NSNumber
                                         trip.vacationOverlapType = BITripVacationOverlapType.full.rawValue as NSNumber
                                     }
                                 }
@@ -2765,6 +2765,7 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                         
                         // Grab the vacation pieces
                         let vacationPieces = (vLine!["VacationPieces"] as? [[String: Any]])!
+                        var displayTypes: [Int] = []
                         
                         for d in 0..<(trip?.orderedDays.count)! {
                             let day = trip?.orderedDays[d]
@@ -2782,23 +2783,74 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
                                 if displayDayType != -1 {
                                     day?.displayType = displayDayType as NSNumber
 //                                    day?.redEyeDayDisplayDayType = displayDayType as NSNumber
+                                    displayTypes.append(displayDayType)
                                 }
                                 
                                 if trip?.isRedEyeTrip == true{
+                                    var calendar = Calendar(identifier: .gregorian)
+                                    calendar.timeZone = TimeZone(secondsFromGMT: 0)! // UTC
+
+                                    
                                     if missingDateIndex != -1 && missingRedEyeDate != nil && missingDateIndex == d{
                                         let displayType = self.getDisplayType(date: missingRedEyeDate!, startDate: startDate, endDate: endDate, label: label, displayType: displayType)
                                         if displayType != -1 {
                                             day?.displayType = displayType as NSNumber
-                                            day?.redEyeDayDisplayDayType = displayDayType as NSNumber
+                                            trip?.redEyeDayDisplayDayType = displayDayType as NSNumber
+                                        }
+                                    }
+                                    if (d == trip?.orderedDays.count ?? 0 - 1 && day?.displayType?.intValue == BIDayDisplayType.normal.rawValue && label == kVaLabel) {
+                                        if day?.date?.compare(endDate) == .orderedDescending {
+                                            let calendar = Calendar.current
+                                            // Normalize to 00:00:00
+                                            let endDate = df.date(from: "0000\(endDateString)")
+                                            let normalizedEndDate = calendar.startOfDay(for: endDate!)
+                                            let normalizedDayDate = calendar.startOfDay(for: day!.date!)
+                                            
+                                            let afterDayDate =
+                                                calendar.compare(normalizedDayDate, to: normalizedEndDate, toGranularity: .day) == .orderedDescending
+
+                                            let diffWithDate = calendar.dateComponents([.day], from: normalizedEndDate, to: normalizedDayDate)
+                                            if afterDayDate && diffWithDate.day == 1 {
+                                                day?.displayType = BIDayDisplayType.fullPay.rawValue as NSNumber
+                                                if missingDateIndex == d {
+                                                    trip?.redEyeDayDisplayDayType = BIDayDisplayType.fullPay.rawValue as NSNumber
+                                                }
+                                            }
+                                            else {
+                                                day?.displayType = BIDayDisplayType.noPay.rawValue as NSNumber
+                                                trip?.redEyeDayDisplayDayType = BIDayDisplayType.noPay.rawValue as NSNumber
+                                            }
                                         }
                                     }
                                 }
                             }
                             //                        End vacationPieces loop
+                            
+                            // If the day made it through all the vacation pieces without receiving
+                            // a displayType then it must be a noPay day
                             if (day?.displayType?.intValue == BIDayDisplayType.normal.rawValue) {
                                 day?.displayType = BIDayDisplayType.noPay.rawValue as NSNumber
+                                displayTypes.append(BIDayDisplayType.noPay.rawValue)
                             }
                         } // End day loop
+                        
+                        // If the trip made it through all the vacation pieces without receiving
+                        // a RedEye displayType then check previous and next day.
+                        if trip?.redEyeDayDisplayDayType?.intValue == BIDayDisplayType.normal.rawValue  {
+                            trip?.redEyeDayDisplayDayType = BIDayDisplayType.noPay.rawValue as NSNumber
+                            
+                            for d in 0..<(trip?.orderedDays.count ?? 0) {
+                                if d <= displayTypes.count - 1 {
+                                    if missingDateIndex != -1 && missingRedEyeDate != nil && missingDateIndex == d {
+                                        let prevType = displayTypes[d - 1]
+                                        let currentType = displayTypes[d - 1]
+                                        let redEyeType = self.redEyeDisplayTypeFromPrev(prev: prevType, next: currentType)
+                                        trip?.redEyeDayDisplayDayType = redEyeType as NSNumber
+                                    }
+                                }
+                            }
+                        }
+                        
                     } // End pulled pairings loop
                 }
                 else {
@@ -3693,5 +3745,38 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
         let newDate = calendar.date(byAdding: dateComponents, to: originalDate)
         let Updatedcomponents = calendar.dateComponents([.year, .month, .day], from: newDate!)
         return CBUtils.shortMonthName(month: Updatedcomponents.month!, uc: false)
+    }
+    
+    func redEyeDisplayTypeFromPrev(prev: Int, next: Int) -> Int {
+        // Full + Full → Full
+        if prev == BIDayDisplayType.fullPay.rawValue && next == BIDayDisplayType.fullPay.rawValue {
+            return BIDayDisplayType.fullPay.rawValue
+        }
+        // Half + Full → Full
+        if prev == BIDayDisplayType.partialPay.rawValue && next == BIDayDisplayType.fullPay.rawValue {
+            return BIDayDisplayType.fullPay.rawValue
+        }
+        // Full + Half → Full
+        if prev == BIDayDisplayType.fullPay.rawValue && next == BIDayDisplayType.partialPay.rawValue {
+            return BIDayDisplayType.fullPay.rawValue
+        }
+        // Full + NoPay → Half
+        if prev == BIDayDisplayType.fullPay.rawValue && next == BIDayDisplayType.noPay.rawValue {
+            return BIDayDisplayType.partialPay.rawValue
+        }
+        // NoPay + Full → Half
+        if prev == BIDayDisplayType.noPay.rawValue && next == BIDayDisplayType.fullPay.rawValue {
+            return BIDayDisplayType.partialPay.rawValue
+        }
+        // NoPay + Half → NoPay
+        if prev == BIDayDisplayType.noPay.rawValue && next == BIDayDisplayType.partialPay.rawValue {
+            return BIDayDisplayType.noPay.rawValue
+        }
+        // Half + NoPay → NoPay
+        if prev == BIDayDisplayType.partialPay.rawValue && next == BIDayDisplayType.noPay.rawValue {
+            return BIDayDisplayType.noPay.rawValue
+        }
+        // Default fallback
+        return BIDayDisplayType.noPay.rawValue
     }
 }
