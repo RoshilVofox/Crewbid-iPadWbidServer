@@ -4447,50 +4447,70 @@ class BIBidInfoReader{
                 weekdayBits |= 1 << weekday
                 weekdays[weekday] += 1
                 
+                
                 if trip.isRedEyeTrip {
-                    if trip.info?.calendarDaysCount != NSNumber(value: trip.info!.orderedDays().count){
-                        let missingDateIndex =  CBUtils.findMissingIndex(inRedEyeTrip: trip)
-                        let missingDate = CBUtils.findMissingDate(forRedEyeTrip: trip)
-                        let calendar = Calendar.current
-                        let date1 = calendar.startOfDay(for: (day?.date)!)
-                        let date2 = calendar.startOfDay(for: missingDate!)
-                        
-                        let result = date1.compare(date2)
-                        
-                        if result == .orderedSame && missingDateIndex == dayCount && missingDateIndex != trip.info?.orderedDays().count{
-                            dayComponent.day = dayCount + 1
-                            let date = appCal!.date(byAdding: dayComponent, to: trip.startDate!)
-                            day?.date = date
-                            
-                            var weekdayRedEye = appCal!.component(.weekday, from: date!)
-                            weekdayRedEye -= 1
-                            weekdayBits |= 1 << weekdayRedEye
-                            weekdays[weekdayRedEye] += 1
-                        }else{
-                            var weekdayRedEye = appCal!.component(.weekday, from: missingDate!)
-                            weekdayRedEye -= 1
-                            weekdayBits |= 1 << weekdayRedEye
-                            weekdays[weekdayRedEye] += 1
-                        }
-                    }else{
-                        for case let legInfo in (day?.info?.orderedLegs)!{
-                            if legInfo.isRedEyeFlight == true{
-                                let missingDateIndex = CBUtils.findMissingIndex(inRedEyeTrip: trip)
-                                if missingDateIndex != -1 {
-                                    dayComponent.day = dayCount + 1
-                                }
-                                let date = appCal!.date(byAdding: dayComponent, to: trip.startDate!)
-                                day!.date = date
-                                
-                                var weekdayRedEye = appCal!.component(.weekday, from: date!)
-                                weekdayRedEye -= 1
-                                weekdayBits |= 1 << weekdayRedEye
-                                weekdays[weekdayRedEye] += 1
-                                break
-                            }
-                        }
+                    if dayCount == tripOrderedDays.count - 1 &&
+                        trip.info?.calendarDaysCount != NSNumber(value: trip.info!.orderedDays().count) {
+
+                        var nextDayComponent = dayComponent
+                        nextDayComponent.day = dayCount + 1
+
+                        let redEyeDate = appCal!.date(byAdding: nextDayComponent,
+                                                     to: trip.startDate!)!
+
+                        day?.date = redEyeDate
+
+                        var weekdayRedEye = appCal!.component(.weekday, from: redEyeDate)
+                        weekdayRedEye -= 1
+
+                        weekdayBits |= (1 << weekdayRedEye)
+                        weekdays[weekdayRedEye] += 1
                     }
                 }
+//                if trip.isRedEyeTrip {
+//                    if trip.info?.calendarDaysCount != NSNumber(value: trip.info!.orderedDays().count){
+//                        let missingDateIndex =  CBUtils.findMissingIndex(inRedEyeTrip: trip)
+//                        let missingDate = CBUtils.findMissingDate(forRedEyeTrip: trip)
+//                        let calendar = Calendar.current
+//                        let date1 = calendar.startOfDay(for: (day?.date)!)
+//                        let date2 = calendar.startOfDay(for: missingDate!)
+//                        
+//                        let result = date1.compare(date2)
+//                        
+//                        if result == .orderedSame && missingDateIndex == dayCount && missingDateIndex != trip.info?.orderedDays().count{
+//                            dayComponent.day = dayCount + 1
+//                            let date = appCal!.date(byAdding: dayComponent, to: trip.startDate!)
+//                            day?.date = date
+//                            
+//                            var weekdayRedEye = appCal!.component(.weekday, from: date!)
+//                            weekdayRedEye -= 1
+//                            weekdayBits |= 1 << weekdayRedEye
+//                            weekdays[weekdayRedEye] += 1
+//                        }else{
+//                            var weekdayRedEye = appCal!.component(.weekday, from: missingDate!)
+//                            weekdayRedEye -= 1
+//                            weekdayBits |= 1 << weekdayRedEye
+//                            weekdays[weekdayRedEye] += 1
+//                        }
+//                    }else{
+//                        for case let legInfo in (day?.info?.orderedLegs)!{
+//                            if legInfo.isRedEyeFlight == true{
+//                                let missingDateIndex = CBUtils.findMissingIndex(inRedEyeTrip: trip)
+//                                if missingDateIndex != -1 {
+//                                    dayComponent.day = dayCount + 1
+//                                }
+//                                let date = appCal!.date(byAdding: dayComponent, to: trip.startDate!)
+//                                day!.date = date
+//                                
+//                                var weekdayRedEye = appCal!.component(.weekday, from: date!)
+//                                weekdayRedEye -= 1
+//                                weekdayBits |= 1 << weekdayRedEye
+//                                weekdays[weekdayRedEye] += 1
+//                                break
+//                            }
+//                        }
+//                    }
+//                }
                 
                 // Month bits
                 let one:UInt64 = 1
