@@ -839,6 +839,7 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
     }
     
     func checkForDifferences(dicTempUserInformation: [String: Any]) {
+        self.view.hideActivityIndicator()
         var dicTempUserInformation = dicTempUserInformation
         var dicLocalUserInfo = [String: Any]()
         let userAccountDateTime = app.ObjUserAccount?.UserAccountDateTime ?? ""
@@ -847,8 +848,9 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
         dicLocalUserInfo["LastName"] = app.ObjUserAccount?.lastName
         dicLocalUserInfo["EmpNum"] = app.ObjUserAccount?.employeeNumber
         dicLocalUserInfo["Email"] = app.ObjUserAccount?.email
-        dicLocalUserInfo["Position"] = app.ObjUserAccount?.position as? String
-        dicLocalUserInfo["AcceptEmail"] = app.ObjUserAccount?.AcceptEmail as? String
+        dicLocalUserInfo["Position"] = String(app.ObjUserAccount?.position ?? 0)
+        dicLocalUserInfo["AcceptEmail"] = String(app.ObjUserAccount?.isAcceptMail ?? false)
+        dicLocalUserInfo["CarrierNum"] = String(app.ObjUserAccount?.CarrierNum ?? 0)
         
         let cellCarrier = dicTempUserInformation["CarrierNum"] as? String ?? ""
         if Int(cellCarrier) == 0 {
@@ -873,8 +875,17 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
                 else {
                     let key = arrHeader[i]
                     let localValue = dicLocalUserInfo[key] as? String ?? ""
-                    let tempValue = dicTempUserInformation[key] as? String ?? ""
-                    dicCommonDiffInfo[key] = "\(localValue),\(tempValue)"
+                    var tempValue = dicTempUserInformation[key] as? String ?? ""
+                    if (key == "CarrierNum" || key == "Position"),
+                       let intValue = dicTempUserInformation[key] as? Int {
+                        tempValue = String(intValue)
+                    }
+                    if key == "AcceptEmail", let boolValue = dicTempUserInformation[key] as? Bool {
+                        tempValue = String(boolValue)
+                    }
+                    if localValue != tempValue {
+                        dicCommonDiffInfo[key] = "\(localValue),\(tempValue)"
+                    }
                 }
             }
         }

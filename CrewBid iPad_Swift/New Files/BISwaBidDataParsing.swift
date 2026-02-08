@@ -843,20 +843,19 @@ class BISwaBidDataParsing{
                     firstLegDate = dep
                     firstLegDepartMin = CBUtils.getMinutes(from: dep)
                 }
+                
                 var offset = 0
+                
                 // Calculate departure minutes
                 if let depDate = departureDate, let firstDate = firstLegDate {
-                    let crossesDST = CBUtils.crossesDST(from: firstDate, to: depDate)
-                    if crossesDST {
-                        offset = CBUtils.domicileDstOffsetFromCentral(dataSource!.base, dayDate: depDate)
-                    }
-                    let departMinutes = firstLegDepartMin + Int(depDate.timeIntervalSince(firstDate) / 60) + offset
-                    legInfo?.departMinutes = NSNumber(value: departMinutes)
+                    offset = CBUtils.dstMinuteAdjustment(from: firstDate, to: depDate)
+                    let departMinutes = firstLegDepartMin + Int(depDate.timeIntervalSince(firstDate) / 60)
+                    legInfo?.departMinutes = NSNumber(value: departMinutes  + offset)
                 }
                 // Calculate arrival minutes
                 if let arrDate = arrivalDate, let firstDate = firstLegDate {
-                    let arriveMinutes = firstLegDepartMin + Int(arrDate.timeIntervalSince(firstDate) / 60) + offset
-                    legInfo?.arriveMinutes = NSNumber(value: arriveMinutes)
+                    let arriveMinutes = firstLegDepartMin + Int(arrDate.timeIntervalSince(firstDate) / 60)
+                    legInfo?.arriveMinutes = NSNumber(value: arriveMinutes  + offset)
                 }
                 
                 
@@ -1005,8 +1004,10 @@ class BISwaBidDataParsing{
         
         // Language check
         if let language = data["language"] as? String, !language.isEmpty, language != "EN" {
-            line.type = BILineType.BILineTypeLoDo.rawValue as NSNumber
-            line.isLODO = true
+            if line.faPosition?.intValue == 1 {
+                line.type = BILineType.BILineTypeLoDo.rawValue as NSNumber
+                line.isLODO = true
+            }
         }
         
         // Reserve lines

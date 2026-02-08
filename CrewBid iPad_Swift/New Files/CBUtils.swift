@@ -1251,7 +1251,8 @@ class CBUtils{
     }
     
     class func getMinutes(from date: Date) -> Int {
-        var calendar = Calendar.current
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale(identifier: "en_US")
         calendar.timeZone = TimeZone(identifier: "US/Central")!  // DST-aware
 
         let components = calendar.dateComponents([.hour, .minute], from: date)
@@ -2561,41 +2562,59 @@ class CBUtils{
         return text
     }
     
-    static func domicileDstOffsetFromCentral(_ domicile: String, dayDate: Date) -> Int {
-
-        let centralTZ = TimeZone(identifier: "America/Chicago")!
-        guard centralTZ.isDaylightSavingTime(for: dayDate) else { return 0 }
-
-        switch domicile {
-
-        // CrewBid "east / central" bucket
-        case "ATL", "AUS", "BWI", "MCO":
-            return 60
-
-        // Mountain
-        case "DEN":
-            return -60
-
-        // Pacific baseline
-        case "LAS", "LAX", "OAK":
-            return 0
-
-        // Bases currently falling through to Pacific behavior
-        case "BNA", "DAL", "HOU", "MDW", "PHX":
-            return 0
-
-        default:
-            return 0
-        }
-    }
+//    static func domicileDstOffsetFromCentral(_ domicile: String, dayDate: Date) -> Int {
+//
+//        let centralTZ = TimeZone(identifier: "America/Chicago")!
+//        guard centralTZ.isDaylightSavingTime(for: dayDate) else { return 0 }
+//
+//        switch domicile {
+//
+//        // CrewBid "east / central" bucket
+//        case "ATL", "AUS", "BWI", "MCO":
+//            return 60
+//
+//        // Mountain
+//        case "DEN":
+//            return -60
+//
+//        // Pacific baseline
+//        case "LAS", "LAX", "OAK":
+//            return 0
+//
+//        // Bases currently falling through to Pacific behavior
+//        case "BNA", "DAL", "HOU", "MDW", "PHX":
+//            return 0
+//
+//        default:
+//            return 0
+//        }
+//    }
 
     
-    static func crossesDST(from fromDate: Date, to toDate: Date) -> Bool {
-        let centralTZ = TimeZone(identifier: "America/Chicago")!
+//    static func crossesDST(from fromDate: Date, to toDate: Date) -> Bool {
+//        let centralTZ = TimeZone(identifier: "America/Chicago")!
+//        let fromIsDST = centralTZ.isDaylightSavingTime(for: fromDate)
+//        let toIsDST = centralTZ.isDaylightSavingTime(for: toDate)
+//        return fromIsDST != toIsDST
+//    }
+    
+    static func dstMinuteAdjustment(from fromDate: Date, to toDate: Date) -> Int {
+        let centralTZ = TimeZone(identifier: "US/Central")!
+
         let fromIsDST = centralTZ.isDaylightSavingTime(for: fromDate)
-        let toIsDST = centralTZ.isDaylightSavingTime(for: toDate)
-        return fromIsDST != toIsDST
+        let toIsDST   = centralTZ.isDaylightSavingTime(for: toDate)
+
+        // No DST boundary crossed
+        guard fromIsDST != toIsDST else {
+            return 0
+        }
+
+        let fromOffset = centralTZ.secondsFromGMT(for: fromDate)
+        let toOffset   = centralTZ.secondsFromGMT(for: toDate)
+
+        return (toOffset - fromOffset) / 60
     }
+
 
 
 }

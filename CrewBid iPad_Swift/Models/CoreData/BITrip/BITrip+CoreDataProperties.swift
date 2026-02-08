@@ -209,19 +209,23 @@ extension BITrip : Identifiable {
         let df = DateFormatter()
         df.dateFormat = "ddMMMyy"
         df.timeZone = TimeZone(identifier: "US/Central")!
+        let dfFormat = DateFormatter()
+        dfFormat.dateFormat = "ddMMMyy"
+        dfFormat.timeZone = TimeZone(identifier: "US/Central")!
         var dateComps: DateComponents? = calendar.dateComponents([.year, .month, .day], from: trip.startDate! as Date)
-        let date: Date? = trip.startDate as Date?
+        let tripStartDate: Date? = calendar.date(from: dateComps!)
         
         if isFA {
-            textForTrip += String(format: "Trip %@ dated %@   Position %@\n\n", trip.info?.number!.substring(to: 4) ?? "", df.string(from: date!), trip.isReserve ? "RESERVE" : (trip.positionString ?? ""))
+            textForTrip += String(format: "Trip %@ dated %@   Position %@\n\n", trip.info?.number!.substring(to: 4) ?? "", df.string(from: tripStartDate!), trip.isReserve ? "RESERVE" : (trip.positionString ?? ""))
                                      
         } else {
             let tripNo = trip.info!.number!.substring(to: 4)
-            textForTrip += "Trip \(tripNo) dated \(df.string(from: date!))\n\n"
+            textForTrip += "Trip \(tripNo) dated \(df.string(from: tripStartDate!))\n\n"
         }
         
         textForTrip += "Date  Flight  Depart   Arrive  Eqp Blk Grnd  Blk Duty  Cred\n\n"
         df.dateFormat = "ddMMM"
+        df.timeZone = TimeZone(identifier: "US/Central")
         let departFormatter = DateFormatter()
         departFormatter.dateFormat = "HHmm"
         let arriveFormatter = DateFormatter()
@@ -281,10 +285,10 @@ extension BITrip : Identifiable {
                 // should be removed.
                 legFlight = legInfo.flight!
                 
-                dateComps?.minute = Int(truncating: legInfo.departMinutes!)
-                departDate = calendar.date(from: dateComps!)
-                dateComps?.minute = Int(truncating: legInfo.arriveMinutes!)
-                arriveDate = calendar.date(from: dateComps!)
+                    dateComps?.minute = Int(truncating: legInfo.departMinutes!)
+                    departDate = calendar.date(from: dateComps!)
+                    dateComps?.minute = Int(truncating: legInfo.arriveMinutes!)
+                    arriveDate = calendar.date(from: dateComps!)
                 // Ground time.
                 groundMinutes = legInfo.groundMinutes.intValue
                 if groundMinutes <= 0{
@@ -336,23 +340,24 @@ extension BITrip : Identifiable {
             }
             // Day summary (report and release times, layover city and duration,
             // block time, duty time, and pay).
+            var reportMinutes = 0
             if tripOrderedDays[0] == dayInfo {
                 dateComps?.minute = Int(truncating: dayOrderedLegs[0].departMinutes!) - Int(truncating: (trip.info?.briefMinutes)!)
+                
             } else {
                 dateComps?.minute = Int(truncating: dayOrderedLegs[0].departMinutes!) - Int(truncating: (trip.info?.debriefMinutes)!)
             }
+            //                departDate = departDate!.addingTimeInterval(30 * 60)
             
             departFormatter.timeZone = CBUtils.timeZone(forAirportCode: (dayOrderedLegs.first)!.departCity!)
             arriveFormatter.timeZone = CBUtils.timeZone(forAirportCode: (dayOrderedLegs.last)!.arriveCity!)
             departDate = calendar.date(from: dateComps!)
+            
             report = "Rpt \(departFormatter.string(from: departDate!))"
             
             //Release calcultions
-            dateComps?.minute = Int(truncating: (dayOrderedLegs.last?.arriveMinutes)!) + Int(truncating: (trip.info?.debriefMinutes!)!)
-            if isFA && trip.isReserve{
-                dateComps?.minute = Int(truncating: (dayOrderedLegs.last?.arriveMinutes)!)
-            }
-            arriveDate = calendar.date(from: dateComps!)
+                dateComps?.minute = Int(truncating: (dayOrderedLegs.last?.arriveMinutes)!) + Int(truncating: (trip.info?.debriefMinutes!)!)
+                arriveDate = calendar.date(from: dateComps!)
             release = "Rls \(arriveFormatter.string(from: arriveDate!))"
        
             let tripInfoNumber:String = (trip.info?.number)!
