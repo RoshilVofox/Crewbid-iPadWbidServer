@@ -843,6 +843,7 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
         var dicTempUserInformation = dicTempUserInformation
         var dicLocalUserInfo = [String: Any]()
         let userAccountDateTime = app.ObjUserAccount?.UserAccountDateTime ?? ""
+        app.ObjUserAccount?.position = UserDefaults.standard.integer(forKey: "appUserPosition")
         dicLocalUserInfo["CellPhone"] = app.ObjUserAccount?.cellPhone
         dicLocalUserInfo["FirstName"] = app.ObjUserAccount?.firstName
         dicLocalUserInfo["LastName"] = app.ObjUserAccount?.lastName

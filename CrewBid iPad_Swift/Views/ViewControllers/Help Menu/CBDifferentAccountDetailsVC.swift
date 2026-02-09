@@ -46,6 +46,7 @@ class CBDifferentAccountDetailsVC: BaseViewController, UserAccountUpdateCellDele
         app.ObjUserAccount?.employeeNumber = dicLocalAccountInfo["EmpNum"] as? String ?? ""
         app.ObjUserAccount?.email = dicLocalAccountInfo["Email"] as? String ?? ""
         app.ObjUserAccount?.position = Int(dicLocalAccountInfo["Position"] as? String ?? "") ?? 0
+        UserDefaults.standard.set(app.ObjUserAccount?.position, forKey: "appUserPosition")
         app.ObjUserAccount?.isAcceptMail = (dicLocalAccountInfo["AcceptEmail"] as? String ?? "0") == "1"
         app.ObjUserAccount?.CarrierNum = Int(dicLocalAccountInfo["CarrierNum"] as? String ?? "") ?? 0
         app.ObjUserAccount?.UserAccountDateTime = dicLocalAccountInfo["UserAccountDateTime"] as? String ?? ""

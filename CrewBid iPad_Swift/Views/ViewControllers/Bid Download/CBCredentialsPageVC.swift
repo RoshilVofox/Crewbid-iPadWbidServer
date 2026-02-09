@@ -320,6 +320,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
         app.ObjUserAccount?.employeeNumber = "\(dicWbidResponce["EmpNum"]!)"
         app.ObjUserAccount?.email = dicWbidResponce["Email"] as! String
         app.ObjUserAccount?.position = dicWbidResponce["Position"] as! Int
+        UserDefaults.standard.set(app.ObjUserAccount?.position, forKey: "appUserPosition")
         app.ObjUserAccount?.isAcceptMail = dicWbidResponce["AcceptEmail"] as! Bool
         app.ObjUserAccount?.CarrierNum = dicWbidResponce["CarrierNum"] as! Int
         app.ObjUserAccount?.UserAccountDateTime = dicWbidResponce["UserAccountDateTime"] as! String

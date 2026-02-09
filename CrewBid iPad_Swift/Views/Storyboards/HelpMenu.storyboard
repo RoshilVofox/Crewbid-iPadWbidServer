@@ -412,7 +412,7 @@ Get ready for bidding to get way, way easier.</string>
             <objects>
                 <viewController storyboardIdentifier="swaptimizerHelpMenuViewController" id="5OX-qT-nZ5" customClass="swaptimizerHelpMenuViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="A2U-Wf-A99">
-                        <rect key="frame" x="0.0" y="0.0" width="764" height="630"/>
+                        <rect key="frame" x="0.0" y="0.0" width="820" height="1180"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OqA-dy-Gbu" userLabel="header">
@@ -577,7 +577,7 @@ Get ready for bidding to get way, way easier.</string>
             <objects>
                 <viewController storyboardIdentifier="userAccountViewController" id="TnK-NO-m8x" customClass="userAccountViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ECb-da-7Fb">
-                        <rect key="frame" x="0.0" y="0.0" width="764" height="630"/>
+                        <rect key="frame" x="0.0" y="0.0" width="820" height="1180"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rzp-7q-abK" userLabel="header">
@@ -914,7 +914,7 @@ Get ready for bidding to get way, way easier.</string>
             <objects>
                 <viewController storyboardIdentifier="contactUsViewController" id="Gjj-nU-XQu" customClass="contactUsViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="VdX-Jy-pUu">
-                        <rect key="frame" x="0.0" y="0.0" width="764" height="630"/>
+                        <rect key="frame" x="0.0" y="0.0" width="820" height="1180"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IjI-bY-vRt" userLabel="header">
@@ -1515,7 +1515,7 @@ If you would like to provide feedback (positive or negative), report a bug, or s
             <objects>
                 <viewController storyboardIdentifier="faqViewController" id="kqp-fS-Gbh" customClass="faqViewController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="3Do-UU-Eru">
-                        <rect key="frame" x="0.0" y="0.0" width="764" height="630"/>
+                        <rect key="frame" x="0.0" y="0.0" width="820" height="1180"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eVV-eb-Ql0" userLabel="header">
@@ -1899,7 +1899,7 @@ If you would like to provide feedback (positive or negative), report a bug, or s
             <objects>
                 <viewController id="wzV-kv-OGZ" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="FvY-lB-GdS">
-                        <rect key="frame" x="0.0" y="0.0" width="764" height="630"/>
+                        <rect key="frame" x="0.0" y="0.0" width="820" height="1180"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B3o-gv-dVF">
@@ -2561,7 +2561,7 @@ Please select the information to use.</string>
                                         </constraints>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                         <state key="normal" title="Update">
-                                            <color key="titleColor" name="WhiteColor"/>
+                                            <color key="titleColor" name="WhiteLabelColor"/>
                                             <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
@@ -2577,7 +2577,7 @@ Please select the information to use.</string>
                                         </constraints>
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
                                         <state key="normal" title="Cancel">
-                                            <color key="titleColor" name="WhiteColor"/>
+                                            <color key="titleColor" name="WhiteLabelColor"/>
                                             <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </state>
                                         <connections>
@@ -2732,8 +2732,8 @@ Please select the information to use.</string>
         <namedColor name="TopViewColor">
             <color red="0.70200002193450928" green="0.70200002193450928" blue="0.70200002193450928" alpha="0.90299999713897705" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
-        <namedColor name="WhiteColor">
-            <color red="0.32899999618530273" green="0.32400000095367432" blue="0.4779999852180481" alpha="0.33000001311302185" colorSpace="custom" customColorSpace="sRGB"/>
+        <namedColor name="WhiteLabelColor">
+            <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
