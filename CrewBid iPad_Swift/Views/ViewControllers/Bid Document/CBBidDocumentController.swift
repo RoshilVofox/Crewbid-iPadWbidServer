@@ -1017,6 +1017,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let swaAPIenv = UserDefaults.standard.string(forKey: "SwaApiEnv")
         if month != self.bidPeriod?.month?.intValue && self.bidPeriod?.isQAdata == nil && swaAPIenv != "QA" && swaAPIenv != "Dev"{
             isOldBidPackage = true
+//            self.bidPeriod?.isOldBid = NSNumber(value: true)
             AlertService.showAlertForTopVC(title: "Old Bid Package", message: "It looks like you've opened a previous month's bid package.  If you meant to, carry on, if not, download the NEW bid package by tapping the + button on the home screen.", actions: [(title: "OK", style: .default, handler: {_ in
                 //check sanity
                 self.sanityBidCheckingForCoverLetterLineCount()
@@ -1111,6 +1112,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             let storyboard = UIStoryboard(name: "BidActions", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "CBSeniorityListVC") as! CBSeniorityListVC
             vc.bidPeriod = self.bidPeriod
+            vc.isFromFirstTimeOpenBid = true
             let transition = CATransition()
             transition.duration = 0.4
             transition.type = .fade

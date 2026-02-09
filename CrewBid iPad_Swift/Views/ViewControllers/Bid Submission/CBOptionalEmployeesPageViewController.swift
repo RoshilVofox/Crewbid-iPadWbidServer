@@ -1,6 +1,7 @@
 
 
 import UIKit
+import CoreData
 
 class CBOptionalEmployeesPageViewController: BaseViewController {
     
@@ -23,7 +24,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
     var isBuddy2Valid: Bool = false
     var empID: String?
     var bidPeriod: BIBidPeriod!
-    var FAListDict:[String:Any]? = nil
+//    var FAListDict:[String:Any]? = nil
     var optionalEmployees = NSMutableArray()
     var biddersBuddyList = [String]()
     var buddy1BuddyList = [String]()
@@ -32,7 +33,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        FAListDict = CBUtils.readJSONStringFromFile()
+//        FAListDict = CBUtils.readJSONStringFromFile()
         NotificationCenter.default.addObserver(self,
             selector: #selector(handleAuthFlowEnded),
             name: Notification.Name("AuthFlowEnded"),
@@ -78,7 +79,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
         }
            
         if buddy1 == buddy2 && !buddy1.isEmpty {
-                AlertService.showAlertForTopVC(title: "CrewBid", message: "You cannot enter the same employee number in Buddy 1 and Buddy 2", actions: [(title: "OK", style: .default, handler: { _ in
+                AlertService.showAlertForTopVC(title: "CrewBid", message: "You cannot enter the same employee number in Buddy 1 and Buddy 2.", actions: [(title: "OK", style: .default, handler: { _ in
                     self.buddyBidTxtField_2.text = ""
                     self.buddyBidderName_2.text = ""
                     self.buddyBidderDomicile_2.text = ""
@@ -86,18 +87,32 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
             return
             }
         
-        if CBGlobalMethods.shared.domicileIsDifferent == true{
-                AlertService.showAlertForTopVC(title: "CrewBid", message: "One of the Buddy Bidders is NOT in \(CBGlobalMethods.shared.selectedBidPeriod?.base ?? "")", actions: [(title: "OK", style: .default, handler: {_ in
-                    self.buddyBidTxtField_1.text = ""
-                    self.buddyBidTxtField_2.text = ""
-                    self.buddyBidderName_1.text = ""
-                    self.buddyBidderDomicile_1.text = ""
-                    self.buddyBidderName_2.text = ""
-                    self.buddyBidderDomicile_2.text = ""
-                    self.optionalEmployees.removeAllObjects()
-                })])
-            return
+        let isBuddy1Invalid = !buddy1.isEmpty && !isBuddyInSameDomicile(buddy1)
+        let isBuddy2Invalid = !buddy2.isEmpty && !isBuddyInSameDomicile(buddy2)
+
+        if isBuddy1Invalid || isBuddy2Invalid {
+            
+            if isBuddy1Invalid {
+                buddyBidTxtField_1.shakeTextField()
             }
+
+            if isBuddy2Invalid {
+                buddyBidTxtField_2.shakeTextField()
+            }
+            return
+        }
+//        if CBGlobalMethods.shared.domicileIsDifferent == true{
+//                AlertService.showAlertForTopVC(title: "CrewBid", message: "One of the Buddy Bidders is NOT in \(CBGlobalMethods.shared.selectedBidPeriod?.base ?? "")", actions: [(title: "OK", style: .default, handler: {_ in
+//                    self.buddyBidTxtField_1.text = ""
+//                    self.buddyBidTxtField_2.text = ""
+//                    self.buddyBidderName_1.text = ""
+//                    self.buddyBidderDomicile_1.text = ""
+//                    self.buddyBidderName_2.text = ""
+//                    self.buddyBidderDomicile_2.text = ""
+//                    self.optionalEmployees.removeAllObjects()
+//                })])
+//            return
+//            }
         
         if buddy1 == self.empID || buddy2 == self.empID {
             let bidder = self.empID ?? ""
@@ -115,7 +130,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
             }
         }
             
-        if !self.ifEmployeeContainsInFALIST() { return }
+//        if !self.ifEmployeeContainsInFALIST() { return }
         
         self.view.showActivityIndicator(message: "Validating Buddies...")
         
@@ -166,7 +181,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
         })])
     }
     
-    func ifEmployeeContainsInFALIST() ->Bool {
+    /*func ifEmployeeContainsInFALIST() ->Bool {
         if CBGlobalMethods.shared.falistDict.count == 0{
             CBGlobalMethods.shared.falistDict = CBUtils.readJSONStringFromFile()!
         }
@@ -217,7 +232,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
             }
         }
         return true
-    }
+    }*/
     
     /*
     func checkAllBuddysSubscription(completion: @escaping (_ outputString: String, _ success: Bool) -> Void) {
@@ -304,13 +319,11 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
     }*/
     
     func hasBuddyExistInEachOtherList(completion: @escaping (Bool) -> Void) {
-        
-        // Step 1 — check FA list locally
-        let isValidBuddy = self.ifEmployeeContainsInFALIST()
-        if !isValidBuddy {
-            completion(false)
-            return
-        }
+//        let isValidBuddy = self.ifEmployeeContainsInFALIST()
+//        if !isValidBuddy {
+//            completion(false)
+//            return
+//        }
         
         let buddy1 = self.buddyBidTxtField_1.text ?? ""
         let buddy2 = self.buddyBidTxtField_2.text ?? ""
@@ -337,7 +350,6 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
                     if didFinish {return}
                     
                     if !success{
-                        // If an auth alert is being/has been presented, treat it as authError
                         if self.isPresentingInvalidTokenAlert {
                             didFinish = true
                             completion(false)
@@ -530,7 +542,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
             // Buddy 1 in bidder's list
             if !buddy1.isEmpty {
                 if !(self.biddersBuddyList.contains(buddy1)) {
-                    message = "Buddy 1 [ID: \(buddy1)] is not in the buddy list of Employee Number (\(empNum))."
+                    message = "Buddy 1 [ID: \(buddy1)] is not in the buddy list of Employee Number \(empNum)."
                     isExist = false
                 }
             }
@@ -538,9 +550,9 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
             // Buddy 2 in bidder's list
             if !buddy2.isEmpty && !self.biddersBuddyList.contains(buddy2) {
                 if message.isEmpty {
-                    message = "Buddy 2 [ID: \(buddy2)] is not in the buddy list of Employee Number (\(empNum))."
+                    message = "Buddy 2 [ID: \(buddy2)] is not in the buddy list of Employee Number \(empNum)."
                 } else {
-                    message += "\n\nBuddy 2 [ID: \(buddy2)] is not in the buddy list of Employee Number (\(empNum))."
+                    message += "\n\nBuddy 2 [ID: \(buddy2)] is not in the buddy list of Employee Number \(empNum)."
                 }
                 isExist = false
             }
@@ -573,46 +585,137 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
         }
 
     }
+    
+    
+    func seniorityInfo(for employeeId: String) -> SeniorityList? {
+        guard let bidPeriod = bidPeriod else { return nil }
+
+        let context = CoreDataManager.shared.persistentContainer.viewContext
+
+        let request: NSFetchRequest<SeniorityList> = SeniorityList.fetchRequest()
+        request.predicate = NSPredicate(
+            format: "employeeId == %@ AND bidPeriod == %@",
+            employeeId,
+            bidPeriod
+        )
+        request.fetchLimit = 1
+
+        return try? context.fetch(request).first
+    }
+    
+    func isBuddyInSameDomicile(_ empId: String) -> Bool {
+        guard
+            let seniority = seniorityInfo(for: empId),
+            let empDomicile = seniority.base,
+            let base = bidPeriod?.base
+        else {
+            return false
+        }
+        return empDomicile == base
+    }
 }
 
 
 extension CBOptionalEmployeesPageViewController: UITextFieldDelegate {
     
     @objc func textFieldDidChange(_ textField: UITextField) {
-        let empDict = self.FAListDict?[textField.text!] as? [String: Any]
-        let empName = empDict?["Name"] as? String
-        let empDomicile = empDict?["Domicile"] as? String
+//        let empDict = self.FAListDict?[textField.text!] as? [String: Any]
+//        let empName = empDict?["Name"] as? String
+//        let empDomicile = empDict?["Domicile"] as? String
         
-        if empName == nil {
-            if textField == buddyBidTxtField_1{
-                self.buddyBidderName_1.isHidden = true
-                self.buddyBidderDomicile_1.isHidden = true
-            }else if textField == buddyBidTxtField_2{
-                self.buddyBidderName_2.isHidden = true
-                self.buddyBidderDomicile_2.isHidden = true
+        let empId = textField.text ?? ""
+        guard !empId.isEmpty else {
+            if textField == buddyBidTxtField_1 {
+                buddyBidderName_1.isHidden = true
+                buddyBidderDomicile_1.isHidden = true
+                isBuddy1Valid = false
+            } else if textField == buddyBidTxtField_2 {
+                buddyBidderName_2.isHidden = true
+                buddyBidderDomicile_2.isHidden = true
+                isBuddy2Valid = false
             }
-        }else{
-            if textField == buddyBidTxtField_1{
-                self.buddyBidderName_1.isHidden = false
-                self.buddyBidderName_1.text = empName
-                self.buddyBidderName_1.textColor = CBColor.buddyTextColor
-                self.buddyBidderDomicile_1.isHidden = false
-                self.buddyBidderDomicile_1.text = empDomicile
-                self.isBuddy1Valid = true
-            }else if textField == buddyBidTxtField_2{
-                self.buddyBidderName_2.isHidden = false
-                self.buddyBidderName_2.text = empName
-                self.buddyBidderName_2.textColor = CBColor.buddyTextColor
-                self.buddyBidderDomicile_2.isHidden = false
-                self.buddyBidderDomicile_2.text = empDomicile
-                self.isBuddy2Valid = true
+            return
+        }
+        if textField == buddyBidTxtField_1 {
+            buddyBidderName_1.isHidden = false
+            buddyBidderName_1.text = "Not in Domicile"
+            buddyBidderName_1.textColor = .label
+
+            buddyBidderDomicile_1.isHidden = true
+            isBuddy1Valid = false
+
+        } else if textField == buddyBidTxtField_2 {
+            buddyBidderName_2.isHidden = false
+            buddyBidderName_2.text = "Not in Domicile"
+            buddyBidderName_2.textColor = .label
+
+            buddyBidderDomicile_2.isHidden = true
+            isBuddy2Valid = false
+        }
+        if let seniority = seniorityInfo(for: empId),
+           let empName = seniority.legalName,
+           let empDomicile = seniority.base {
+
+            if textField == buddyBidTxtField_1 {
+                buddyBidderName_1.isHidden = false
+                buddyBidderName_1.text = empName
+                buddyBidderName_1.textColor = CBColor.buddyTextColor
+                buddyBidderDomicile_1.isHidden = false
+                buddyBidderDomicile_1.text = empDomicile
+                buddyBidderDomicile_1.textColor = CBColor.buddyTextColor
+                isBuddy1Valid = true
+
+            } else if textField == buddyBidTxtField_2 {
+                buddyBidderName_2.isHidden = false
+                buddyBidderName_2.text = empName
+                buddyBidderName_2.textColor = CBColor.buddyTextColor
+                buddyBidderDomicile_2.isHidden = false
+                buddyBidderDomicile_2.text = empDomicile
+                buddyBidderDomicile_2.textColor = CBColor.buddyTextColor
+                isBuddy2Valid = true
             }
+            
+//                    if empDomicile == self.bidPeriod.base{
+//                        CBGlobalMethods.shared.domicileIsDifferent = false
+//                    }else{
+//                        CBGlobalMethods.shared.domicileIsDifferent = true
+//                    }
         }
-        if empDomicile == self.bidPeriod.base{
-            CBGlobalMethods.shared.domicileIsDifferent = false
-        }else{
-            CBGlobalMethods.shared.domicileIsDifferent = true
-        }
+//        let seniority = seniorityInfo(for: empId)
+//
+//        let empName = seniority?.legalName
+//        let empDomicile = seniority?.base
+//        
+//        if empName == nil {
+//            if textField == buddyBidTxtField_1{
+//                self.buddyBidderName_1.isHidden = true
+//                self.buddyBidderDomicile_1.isHidden = true
+//            }else if textField == buddyBidTxtField_2{
+//                self.buddyBidderName_2.isHidden = true
+//                self.buddyBidderDomicile_2.isHidden = true
+//            }
+//        }else{
+//            if textField == buddyBidTxtField_1{
+//                self.buddyBidderName_1.isHidden = false
+//                self.buddyBidderName_1.text = empName
+//                self.buddyBidderName_1.textColor = CBColor.buddyTextColor
+//                self.buddyBidderDomicile_1.isHidden = false
+//                self.buddyBidderDomicile_1.text = empDomicile
+//                self.isBuddy1Valid = true
+//            }else if textField == buddyBidTxtField_2{
+//                self.buddyBidderName_2.isHidden = false
+//                self.buddyBidderName_2.text = empName
+//                self.buddyBidderName_2.textColor = CBColor.buddyTextColor
+//                self.buddyBidderDomicile_2.isHidden = false
+//                self.buddyBidderDomicile_2.text = empDomicile
+//                self.isBuddy2Valid = true
+//            }
+//        }
+//        if empDomicile == self.bidPeriod.base{
+//            CBGlobalMethods.shared.domicileIsDifferent = false
+//        }else{
+//            CBGlobalMethods.shared.domicileIsDifferent = true
+//        }
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {

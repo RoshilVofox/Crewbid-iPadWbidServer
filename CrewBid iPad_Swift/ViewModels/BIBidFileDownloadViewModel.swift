@@ -158,11 +158,12 @@ class BIBidFileDownloadViewModel {
             }
         }
 
-        if round == 1 && GlobalBidInfo.shared.position == .FlightAttendant {
-            CBUtils.getFALISTWB4JSONFromServer {
-                proceedWithDownload()
-            }
-        } else if round == 2 && GlobalBidInfo.shared.position != .FlightAttendant {
+//        if round == 1 && GlobalBidInfo.shared.position == .FlightAttendant {
+//            CBUtils.getFALISTWB4JSONFromServer {
+//                proceedWithDownload()
+//            }
+//        } else
+        if round == 2 && GlobalBidInfo.shared.position != .FlightAttendant {
             CBUtils.getMissingTripJSON(year: year, month: month, round: round, base: base, position: position) { _ in
                 proceedWithDownload()
             }
@@ -315,12 +316,13 @@ class BIBidFileDownloadViewModel {
             ) {completion($0.mapError { $0 as Error })}
         }
 
-        if dataSource.round == 1 && dataSource.position == .FlightAttendant {
-            CBUtils.getFALISTWB4JSONFromServer {
-                print("FA List WB4 JSON fetched and saved")
-                downloadNext()
-            }
-        } else if dataSource.round == 2 && dataSource.position != .FlightAttendant {
+//        if dataSource.round == 1 && dataSource.position == .FlightAttendant {
+//            CBUtils.getFALISTWB4JSONFromServer {
+//                print("FA List WB4 JSON fetched and saved")
+//                downloadNext()
+//            }
+//        } else
+        if dataSource.round == 2 && dataSource.position != .FlightAttendant {
             CBUtils.getMissingTripJSON(
                 year: dataSource.year,
                 month: dataSource.month,

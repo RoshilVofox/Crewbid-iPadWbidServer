@@ -46,17 +46,9 @@ class BISwaBidDataParsing{
 
 
     func parseAndSaveBidData(completion: @escaping ((Result<Void, Error>)) -> Void) {
-//        guard let moc = dataSource?.managedObjectContext else {
-//            let err = NSError(domain: "BISwaBidParsing",
-//                              code: 1001,
-//                              userInfo: [NSLocalizedDescriptionKey: "Missing Managed Object Context"])
-//            completion(.failure(err))
-//            return }
         let container = CoreDataManager.shared.persistentContainer
         let moc = container.newBackgroundContext()
         moc.perform {
-            
-            // IMPORTANT: inject this context everywhere
             self.setupBidPeriodEntity(moc: moc)
             
             var lineFileName = "\(self.bidInfo)-lines.json"
@@ -435,10 +427,6 @@ class BISwaBidDataParsing{
     }
     
     private func setupBidPeriodEntity(moc: NSManagedObjectContext){
-//        guard let moc = dataSource?.managedObjectContext else { return }
-        
-//        moc.perform {
-
         let bidPeriod = BIBidPeriod(context: moc)
         self.bidPeriod = bidPeriod
         bidPeriod.isHistoric = NSNumber(value: AppState.shared.isHistoricBid)
@@ -480,13 +468,33 @@ class BISwaBidDataParsing{
             bidPeriod.buddyBid = buddyBids as NSSet
             self.getMetaData()
         }
+    }
+    
+    func refreshSeniorityFromDownloadedJSON(
+        bidPeriod: BIBidPeriod,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        let container = CoreDataManager.shared.persistentContainer
+        let context = container.newBackgroundContext()
+        context.perform {
+            do {
+                let localBidPeriod = try context.existingObject(
+                    with: bidPeriod.objectID
+                ) as! BIBidPeriod
+                if let existing = localBidPeriod.seniorityList as? Set<SeniorityList> {
+                    for item in existing {
+                        context.delete(item)
+                    }
+                }
+                let newSet = self.parseAndSaveSeniorityData(context: context)
+                localBidPeriod.seniorityList = newSet as NSSet
+                try context.save()
+                completion(.success(()))
 
-//            do {
-//                try moc.save()
-//            } catch {
-//                print("BidPeriod save failed:", error)
-//            }
-//        }
+            } catch {
+                completion(.failure(error))
+            }
+        }
     }
     
     private func parseAndSaveSeniorityData(context:NSManagedObjectContext) -> Set<SeniorityList>{
