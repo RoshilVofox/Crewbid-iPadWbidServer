@@ -22,7 +22,7 @@ class EndPoint {
             return "https://www27.swalife.com/webbid3pty/ThirdParty"
         }
     }
-    var faListWB4Json = "https://www.wbidmax.com/downloads/swa/falistwb4.json"
+//    var faListWB4Json = "https://www.wbidmax.com/downloads/swa/falistwb4.json"
     var crewBidUpdate = "https://www.wbidmax.com/downloads/CrewBid/CrewBidUpdate.dat"
     var flightdataJSON = "https://www.wbidmax.com/downloads/swa/FlightDataJson.zip"
     var latestNews = "https://www.wbidmax.com/downloads/CrewBid/LatestNews.pdf"

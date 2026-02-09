@@ -53,7 +53,7 @@ class BISwaBidDataDownloadViewModel{
 
         // HISTORIC BID → only one API to call
         if AppState.shared.isHistoricBid {
-            CBUtils.getFALISTWB4JSONFromServer()
+//            CBUtils.getFALISTWB4JSONFromServer()
             self.downloadSwaHistoricBid { success, error in
                 if success {
                     completion(.success(()))
@@ -134,9 +134,9 @@ class BISwaBidDataDownloadViewModel{
             case .success:
                 self.saveSelectionsToUserDefaults()
                 print("Seniority list Downloaded")
-                completion(true, nil)     // notify DispatchGroup
+                completion(true, nil)
             case .failure(let error):
-                completion(false, error)  // notify DispatchGroup
+                completion(false, error)
             }
         }
     }

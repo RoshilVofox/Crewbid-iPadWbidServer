@@ -1029,38 +1029,7 @@ class CBUtils{
             }
         }.resume()
     }
-    class func getFALISTWB4JSONFromServer(completion: (() -> Void)? = nil) {
-//        guard let url = URL(string: EndPoint.shared.faListWB4Json) else {
-//            print("Invalid URL")
-//            completion?()
-//            return
-//        }
-//
-//        let request = URLRequest(url: url)
-//        let session = URLSession(configuration: .default)
-//
-//        let task = session.dataTask(with: request) { data, response, error in
-//            if let error = error {
-//                print("Error in getting FA list from server: \(error.localizedDescription)")
-//                completion?()
-//                return
-//            }
-//
-//            if let data = data {
-//                do {
-//                    if let responseDict = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
-//                        self.writeJSONDictToFile(jsonDict: responseDict)
-//                    }
-//                } catch {
-//                    print("JSON Parsing Error: \(error.localizedDescription)")
-//                }
-//            }
-//
-//            // Notify caller when done
-//            completion?()
-//        }
-//
-//        task.resume()
+    /*class func getFALISTWB4JSONFromServer(completion: (() -> Void)? = nil) {
         APIService.shared.fetch(
             urlString: EndPoint.shared.faListWB4Json,
             parse: { data in
@@ -1080,7 +1049,7 @@ class CBUtils{
                 completion?()
             }
         )
-    }
+    }*/
         
     static func writeJSONDictToFile(jsonDict: [String: Any]) {
             do {

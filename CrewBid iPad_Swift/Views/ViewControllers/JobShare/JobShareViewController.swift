@@ -17,20 +17,20 @@ class JobShareViewController: BaseViewController {
     var defaultEmployeeNumber:String?
     var jobShare1BuddyList:[String]!
     var jobShare2BuddyList:[String]!
-    var dict:[String:Any]!
+//    var dict:[String:Any]!
     var buddy1ListDownloadedFor:String!
     var buddy2ListDownloadedFor:String!
     var selectedObject: [String: Any] = [:]
     
     var isChecked: Bool = false
     var bidPeriod = BIBidPeriod()
-    var FAListDict:[String:Any]? = nil
+//    var FAListDict:[String:Any]? = nil
     
     private var isPresentingInvalidTokenAlert = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.dict = CBUtils.readJSONString(fromFile: "falistwb4.json")
+//        self.dict = CBUtils.readJSONString(fromFile: "falistwb4.json")
         setupUI()
         NotificationCenter.default.addObserver(self,
             selector: #selector(handleAuthFlowEnded),
@@ -72,7 +72,7 @@ class JobShareViewController: BaseViewController {
         btnCheckBox.setTitle("", for: .normal)
         empNameLbl.isHidden = true
         domicileLbl.isHidden = true
-        FAListDict = CBUtils.readJSONStringFromFile()
+//        FAListDict = CBUtils.readJSONStringFromFile()
         
         txtJobShare2.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         
@@ -113,18 +113,23 @@ class JobShareViewController: BaseViewController {
     func employeeContainsInFALISTForDomicile() -> Bool {
 
         let base = self.bidPeriod.base
-
+        let empId = txtJobShare2.text ?? ""
         // First buddy dictionary
-        let buddy2Dict = dict[self.txtJobShare2.text ?? ""] as? [String:Any]
-        let empDomicile2 = buddy2Dict?["Domicile"] as? String
+//        let buddy2Dict = dict[self.txtJobShare2.text ?? ""] as? [String:Any]
+//        let empDomicile2 = buddy2Dict?["Domicile"] as? String
 
         // Validate Job Share 2 Domicile
-        guard let empDomicile2 = empDomicile2 else {
-            self.txtJobShare2.shakeTextField()
+//        guard let empDomicile2 = empDomicile2 else {
+//            self.txtJobShare2.shakeTextField()
+//            return false
+//        }
+        guard let seniority = seniorityInfo(for: empId),
+              let empDomicile = seniority.base else {
+            txtJobShare2.shakeTextField()
             return false
         }
 
-        if empDomicile2 == base {
+        if empDomicile == base {
             return true
         } else {
             AlertService.showAlertForTopVC(title: "Job Share", message: "Job Share 2 NOT in \(base ?? "")")
@@ -523,27 +528,62 @@ class JobShareViewController: BaseViewController {
         return baseURL
     }
     
+    func seniorityInfo(for employeeId: String) -> SeniorityList? {
+        let context = CoreDataManager.shared.persistentContainer.viewContext
+
+        let request: NSFetchRequest<SeniorityList> = SeniorityList.fetchRequest()
+        request.predicate = NSPredicate(
+            format: "employeeId == %@ AND bidPeriod == %@",
+            employeeId,
+            bidPeriod
+        )
+        request.fetchLimit = 1
+
+        return try? context.fetch(request).first
+    }
+    
 }
 
 extension JobShareViewController: UITextFieldDelegate {
     
     @objc func textFieldDidChange(_ textField: UITextField) {
-        let empDict = self.FAListDict?[textField.text!] as? [String: Any]
-        let empName = empDict?["Name"]
-        let empDomicile = empDict?["Domicile"]
-        if empName == nil{
-            domicileLbl.isHidden = true
+//        let empDict = self.FAListDict?[textField.text!] as? [String: Any]
+//        let empName = empDict?["Name"]
+//        let empDomicile = empDict?["Domicile"]
+//        if empName == nil{
+//            domicileLbl.isHidden = true
+//            empNameLbl.isHidden = true
+//        }else{
+//            domicileLbl.isHidden = false
+//            domicileLbl.text = empDomicile as? String
+//            empNameLbl.isHidden = false
+//            empNameLbl.text = empName as? String
+//            empNameLbl.textColor = CBColor.buddyTextColor
+//        }
+        let empId = textField.text ?? ""
+        guard !empId.isEmpty else {
             empNameLbl.isHidden = true
-        }else{
-            domicileLbl.isHidden = false
-            domicileLbl.text = empDomicile as? String
-            empNameLbl.isHidden = false
-            empNameLbl.text = empName as? String
+            domicileLbl.isHidden = true
+            return
+        }
+        empNameLbl.isHidden = false
+        empNameLbl.text = "Not in Domicile"
+        empNameLbl.textColor = .label
+        domicileLbl.isHidden = true
+
+        if let seniority = seniorityInfo(for: empId),
+           let empName = seniority.legalName,
+           let empDomicile = seniority.base {
+
+            empNameLbl.text = empName
             empNameLbl.textColor = CBColor.buddyTextColor
+
+            domicileLbl.isHidden = false
+            domicileLbl.text = empDomicile
         }
     }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder() // dismiss keyboard
+        textField.resignFirstResponder()
         return true
     }
     

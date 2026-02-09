@@ -53,3 +53,51 @@ class BaseViewController: UIViewController {
     
 }
 
+extension UIViewController {
+
+    func showToast(message: String, duration: TimeInterval = 2.0) {
+        let toastLabel = UILabel()
+        toastLabel.text = message
+        toastLabel.textAlignment = .center
+        toastLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        toastLabel.numberOfLines = 0
+        toastLabel.alpha = 0.0
+        toastLabel.layer.cornerRadius = 10
+        toastLabel.clipsToBounds = true
+        toastLabel.textColor = .label
+        toastLabel.backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.95)
+
+        let maxWidthPercentage: CGFloat = 0.85
+        let maxTitleSize = CGSize(
+            width: view.bounds.width * maxWidthPercentage,
+            height: view.bounds.height
+        )
+
+        var expectedSize = toastLabel.sizeThatFits(maxTitleSize)
+        expectedSize.width += 28
+        expectedSize.height += 20
+
+        toastLabel.frame = CGRect(
+            x: (view.bounds.width - expectedSize.width) / 2,
+            y: view.bounds.height - expectedSize.height - 110,
+            width: expectedSize.width,
+            height: expectedSize.height
+        )
+
+        view.addSubview(toastLabel)
+
+        UIView.animate(withDuration: 0.25) {
+            toastLabel.alpha = 1.0
+        } completion: { _ in
+            UIView.animate(
+                withDuration: 0.25,
+                delay: duration,
+                options: .curveEaseOut
+            ) {
+                toastLabel.alpha = 0.0
+            } completion: { _ in
+                toastLabel.removeFromSuperview()
+            }
+        }
+    }
+}

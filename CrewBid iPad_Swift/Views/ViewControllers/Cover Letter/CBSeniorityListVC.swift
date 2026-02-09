@@ -29,6 +29,9 @@ class CBSeniorityListVC: UIViewController {
         super.viewDidLoad()
         setupUI()
         fetchSeniorityData()
+        if !isFromFirstTimeOpenBid /*&& shouldRefreshSeniority()*/ {
+            refreshSeniorityList()
+        }
     }
     
     func bidInfoHeader() -> String{
@@ -101,6 +104,62 @@ class CBSeniorityListVC: UIViewController {
         tableView.reloadData()
     }
     
+//    func shouldRefreshSeniority() -> Bool {
+//        guard let bidPeriod = bidPeriod else { return false }
+//        
+//        if bidPeriod.isHistoric?.boolValue == true {
+//            return false
+//        }
+//
+//        if bidPeriod.isOldBid?.boolValue == true {
+//            return false
+//        }
+//        
+//        return bidPeriod.isFABid() == true &&
+//               bidPeriod.isSwaAPI?.boolValue == true
+//    }
+
+    func refreshSeniorityList() {
+        guard
+            bidPeriod?.isFABid() == true,
+            bidPeriod?.isSwaAPI?.boolValue == true,
+            let bidPeriod = bidPeriod
+        else { return }
+        
+        DispatchQueue.main.async {
+            self.showToast(message: "Refreshing seniority list…")
+            print("Refreshing seniority list…")
+        }
+        let downloader = BISwaBidDataDownload()
+
+        downloader?.getSwaSeniorityList { [weak self] result in
+            switch result {
+
+            case .success:
+                let parser = BISwaBidDataParsing(dataSource: GlobalBidInfo.shared)
+
+                parser?.refreshSeniorityFromDownloadedJSON(bidPeriod: bidPeriod) { saveResult in
+                    DispatchQueue.main.async {
+                        switch saveResult {
+                        case .success:
+                            self?.fetchSeniorityData()
+                            self?.showToast(message: "Seniority list updated")
+                            print("Seniority list updated")
+                        case .failure(let error):
+                            print("Save failed: \(error.localizedDescription)")
+                        }
+                    }
+                }
+
+            case .failure(let error):
+                print("Download failed: \(error.localizedDescription)")
+                DispatchQueue.main.async {
+                    self?.showToast(message: "Unable to refresh. Showing saved list.")
+                }
+            }
+        }
+    }
+    
     
     
     @IBAction func btnShareAction(_ sender: Any) {
@@ -166,17 +225,6 @@ class CBSeniorityListVC: UIViewController {
             }
             text.append(rowString)
         }
-        
-//        let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-//        let filename = "Seniority_\(self.bidPeriod?.base ?? "")\(self.bidPeriod?.year ?? 0)\(self.bidPeriod?.month ?? 0)\(self.bidPeriod?.round ?? 1).txt"
-//        let fileURL = docs.appendingPathComponent(filename)
-//
-//        do {
-//            try text.write(to: fileURL, atomically: true, encoding: .utf8)
-//            return fileURL.path
-//        } catch {
-//            return nil
-//        }
         return text
     }
     

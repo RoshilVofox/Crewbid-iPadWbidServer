@@ -195,9 +195,9 @@ class BISwaBidDataDownload{
         
         self.checkCrewBidUpdateFile()
         self.checkFlightData()
-        if self.dataSource?.round == 1{
-            CBUtils.getFALISTWB4JSONFromServer()
-        }
+//        if self.dataSource?.round == 1{
+//            CBUtils.getFALISTWB4JSONFromServer()
+//        }
         
         let userID = user_id.replacingOccurrences(of: "e", with: "")
         let urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/buddies?employeeId=\(userID)"
