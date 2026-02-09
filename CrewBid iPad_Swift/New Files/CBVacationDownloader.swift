@@ -2792,9 +2792,8 @@ class CBVacationDownloader: NSObject, NSFetchedResultsControllerDelegate {
 
                                     
                                     if missingDateIndex != -1 && missingRedEyeDate != nil && missingDateIndex == d{
-                                        let displayType = self.getDisplayType(date: missingRedEyeDate!, startDate: startDate, endDate: endDate, label: label, displayType: displayType)
-                                        if displayType != -1 {
-                                            day?.displayType = displayType as NSNumber
+                                        let displayDayType = self.getDisplayType(date: missingRedEyeDate!, startDate: startDate, endDate: endDate, label: label, displayType: displayType)
+                                        if displayDayType != -1 {
                                             trip?.redEyeDayDisplayDayType = displayDayType as NSNumber
                                         }
                                     }
