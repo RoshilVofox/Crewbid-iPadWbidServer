@@ -137,12 +137,19 @@ class CBUtils{
             // ARIZONA CITIES
             "PHX" : "America/Phoenix","TUS" : "America/Phoenix","SJU" : "America/Puerto_Rico","AUA" : "America/Aruba","CUN" : "America/Cancun","MBJ" : "America/Jamaica","MEX" : "America/Mexico_City","PUJ" : "America/Santo_Domingo","SJD" : "America/Mazatlan","NAS" : "America/Nassau","PVR" : "America/Mexico_City","SJO" : "America/Costa_Rica","TZA" : "America/Belize","BDA" : "Atlantic/Bermuda","BZE" : "America/Belize","GCM" : "America/Cayman","HAV" : "America/Havana","LIR" : "America/Costa_Rica","PLS" : "America/Grand_Turk","SNU" : "America/Havana","VRA" : "America/Havana","OGG" : "US/Hawaii","HNL" : "US/Hawaii","LIH" : "US/Hawaii","KOA" : "US/Hawaii","ITO" : "US/Hawaii","HDN" : "US/Mountain","MIA" : "US/Eastern","PSP" : "US/Pacific","MTJ" : "US/Mountain","ORD" : "US/Central","SRQ" : "US/Eastern","BZN" : "US/Mountain","COS" : "US/Mountain","CZM" : "America/Cancun","EUG" : "US/Pacific","FAT" : "US/Pacific","MYR" : "US/Eastern","SAV" : "US/Eastern","SBA" : "US/Pacific","SYR" : "US/Eastern","VPS" : "US/Central",]
         
-        let dct = UserDefaults.standard.object(forKey: kCBTimeZoneCitiesList)
-        if (dct == nil) {
-            UserDefaults.standard.register(defaults: [kCBTimeZoneCitiesList:timeZones])
+//        let dct = UserDefaults.standard.object(forKey: kCBTimeZoneCitiesList)
+//        if (dct == nil) {
+//            UserDefaults.standard.register(defaults: [kCBTimeZoneCitiesList:timeZones])
+//        }
+//        
+//        UserDefaults.standard.set(timeZones, forKey: kCBTimeZoneCitiesList)
+        if let dict = UserDefaults.standard.object(forKey: kCBTimeZoneCitiesList) as? NSDictionary {
+            if dict.count < 1 {
+                UserDefaults.standard.register(defaults: [kCBTimeZoneCitiesList: timeZones])
+            }
+        } else {
+            UserDefaults.standard.register(defaults: [kCBTimeZoneCitiesList: timeZones])
         }
-        
-        UserDefaults.standard.set(timeZones, forKey: kCBTimeZoneCitiesList)
         
         let intlCitiesDict = ["AUA" : "YES","CUN" : "YES","MBJ" : "YES","MEX" : "YES","PUJ" : "YES","SJD" : "YES","SJU" : "YES","NAS" : "YES","PVR" : "YES","SJO" : "YES","TZA" : "YES","LIR" : "YES","BZE" : "YES"]
         let intCitiesDefaultDict = [kCBInternationalCitiesDict : intlCitiesDict]
