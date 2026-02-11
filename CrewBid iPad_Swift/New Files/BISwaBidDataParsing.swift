@@ -481,11 +481,17 @@ class BISwaBidDataParsing{
                 let localBidPeriod = try context.existingObject(
                     with: bidPeriod.objectID
                 ) as! BIBidPeriod
-                if let existing = localBidPeriod.seniorityList as? Set<SeniorityList> {
-                    for item in existing {
-                        context.delete(item)
-                    }
-                }
+//                if let existing = localBidPeriod.seniorityList as? Set<SeniorityList> {
+//                    for item in existing {
+//                        context.delete(item)
+//                    }
+//                }
+                let fetchRequest: NSFetchRequest<NSFetchRequestResult> = SeniorityList.fetchRequest()
+                fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", localBidPeriod)
+
+                let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+                try context.execute(deleteRequest)
+                
                 let newSet = self.parseAndSaveSeniorityData(context: context)
                 localBidPeriod.seniorityList = newSet as NSSet
                 try context.save()

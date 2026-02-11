@@ -376,19 +376,6 @@ extension CBSeniorityListVC : UISearchBarDelegate {
                 ($0.baseSeniority?.intValue ?? 0) < ($1.baseSeniority?.intValue ?? 0)
             }
         }else{
-//            let predicate = NSPredicate(format:"employeeId CONTAINS[cd] %@ OR " +
-//                                        "legalName CONTAINS[cd] %@ OR " +
-//                                        "vacation CONTAINS[cd] %@ OR " +
-//                                        "baseSeniority.stringValue CONTAINS[cd] %@",
-//                                        searchText, searchText, searchText, searchText)
-//            // Filter with predicate
-//            let array = (seniorityList as NSArray).filtered(using: predicate)
-//
-//            // Safely cast results back to [SeniorityList]
-//            filteredSeniorityList = array.compactMap { $0 as? SeniorityList }
-//
-//            // Sort
-//            filteredSeniorityList.sort { $0.baseSeniority!.intValue < $1.baseSeniority!.intValue }
             filteredSeniorityList = seniorityList.filter {
                 $0.employeeId?.localizedCaseInsensitiveContains(searchText) == true ||
                 $0.legalName?.localizedCaseInsensitiveContains(searchText) == true ||
@@ -398,53 +385,7 @@ extension CBSeniorityListVC : UISearchBarDelegate {
             .sorted { $0.baseSeniority?.intValue ?? 0 < $1.baseSeniority?.intValue ?? 0 }
         }
         self.tableView.reloadData()
-        
-        
-        
-//        self.isSearchActive = !searchText.isEmpty
-//        self.searchBar.showsCancelButton = true
-//        
-//        filteredSeniorityList.removeAll()
-//        var recurringIndex = 0
-//        
-//        for index in 0..<listArray.count {
-//            
-//                        if recurringIndex == index {
-//                            recurringIndex = index + 1
-//            
-//                            let currentItem = listArray[index]
-//                            let previousItem = (index > 0) ? listArray[index - 1] : nil
-//            
-//                            let nextIndex = (index < listArray.count-1) ? index + 1 : nil
-//            
-//                            if currentItem.lowercased().contains(searchText.lowercased()) {
-//                                if let previous = previousItem {
-//                                    if isStartsWithNumber(currentItem) == false {
-//                                        filteredSeniorityList.append(previous)
-//                                        filteredSeniorityList.append(currentItem)
-//                                    } else {
-//                                        filteredSeniorityList.append(currentItem)
-//                                    }
-//                                } else {
-//                                    filteredSeniorityList.append(currentItem)
-//                                }
-//            
-//                                if let nextIndex = nextIndex {
-//                                    for j in nextIndex..<listArray.count {
-//                                        let nextItem = listArray[j]
-//                                        if isStartsWithNumber(nextItem) == false {
-//                                            filteredSeniorityList.append(nextItem)
-//                                        } else {
-//                                            recurringIndex = j
-//                                            break
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//            self.tableView.reloadData()
-//        }
+
     }
     
     func isStartsWithNumber(_ input: String) -> Bool {
