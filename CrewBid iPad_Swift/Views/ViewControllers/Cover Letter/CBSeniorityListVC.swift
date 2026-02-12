@@ -24,12 +24,12 @@ class CBSeniorityListVC: UIViewController {
     var listArray = [String]()
     var filteredSeniorityList = [SeniorityList]()
     var seniorityList:[SeniorityList]?
-    
+    private var isPresentingInvalidTokenAlert = false
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         fetchSeniorityData()
-        if !isFromFirstTimeOpenBid /*&& shouldRefreshSeniority()*/ {
+        if !isFromFirstTimeOpenBid {
             refreshSeniorityList()
         }
     }
@@ -147,11 +147,19 @@ class CBSeniorityListVC: UIViewController {
                             print("Seniority list updated")
                         case .failure(let error):
                             print("Save failed: \(error.localizedDescription)")
+                            DispatchQueue.main.async {
+                                self?.showToast(message: "Unable to refresh. Showing saved list.")
+                            }
                         }
                     }
                 }
 
             case .failure(let error):
+                if self?.isTokenExpiredError(error) == true {
+                    self?.showInvalidTokenAlertOnce()
+                    return
+                }
+
                 print("Download failed: \(error.localizedDescription)")
                 DispatchQueue.main.async {
                     self?.showToast(message: "Unable to refresh. Showing saved list.")
@@ -160,6 +168,48 @@ class CBSeniorityListVC: UIViewController {
         }
     }
     
+    private func showInvalidTokenAlertOnce() {
+        DispatchQueue.main.async {
+            guard !self.isPresentingInvalidTokenAlert else { return }
+            self.isPresentingInvalidTokenAlert = true
+            self.invalidTokenAlert()
+        }
+    }
+    
+    
+    func invalidTokenAlert(){
+        AlertService.showAlertForTopVC(title: "Buddy Bid Alert", message: "The token has expired or is invalid. Please provide the credentials to proceed.", actions: [(title: "OK", style: .default, handler:{ _ in
+            DispatchQueue.main.async {
+                guard let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBCredentialsPageVC") as? CBCredentialsPageVC else { return }
+                vc.preferredContentSize = CGSize(width: 600, height: 550)
+                vc.isModalInPresentation = true
+                var dictInfo: [String: Any] = [:]
+                dictInfo["base"] = self.bidPeriod?.base
+                dictInfo["month"] = self.bidPeriod?.month
+                dictInfo["round"] = self.bidPeriod?.round
+                if let positionValue = self.bidPeriod?.positionType?.intValue,
+                   let pos = BICrewPositionType(rawValue: positionValue){
+                    dictInfo["position"] = CBUtils.shortName(for: pos)
+                    vc.selectedPosition = pos
+                }
+                vc.isForReauth = true
+                self.isPresentingInvalidTokenAlert = true
+                self.present(vc, animated: true)
+            }
+        })])
+    }
+    
+    func isTokenExpiredError(_ error: Error) -> Bool {
+        let nsError = error as NSError
+        let desc = nsError.localizedDescription.lowercased()
+
+        if nsError.code == 401 { return true }
+        if desc.contains("invalid_token") { return true }
+        if desc.contains("token expired") { return true }
+        if desc.contains("token not valid") { return true }
+
+        return false
+    }
     
     
     @IBAction func btnShareAction(_ sender: Any) {
@@ -327,7 +377,7 @@ extension CBSeniorityListVC: UITableViewDelegate, UITableViewDataSource{
                 cell.vacationLbl.text = String(format: "%@", seniority.vacationString)
             }
         }else{
-            cell.baseSeniorityLbl.text = String(format: "%ld - ", indexPath.row + 1)
+            cell.baseSeniorityLbl.text = String(format: "%@", seniority.baseSeniority?.stringValue ?? "")
             cell.empNumLbl.text = String(format: "[%@]", seniority.employeeId ?? "")
             cell.nameLbl.text = String(format: "%@......................", seniority.legalName?.uppercased() ?? "")
             cell.vacationTop.constant = 0

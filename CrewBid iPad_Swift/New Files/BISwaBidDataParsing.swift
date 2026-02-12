@@ -481,20 +481,11 @@ class BISwaBidDataParsing{
                 let localBidPeriod = try context.existingObject(
                     with: bidPeriod.objectID
                 ) as! BIBidPeriod
-//                if let existing = localBidPeriod.seniorityList as? Set<SeniorityList> {
-//                    for item in existing {
-//                        context.delete(item)
-//                    }
-//                }
-                let fetchRequest: NSFetchRequest<NSFetchRequestResult> = SeniorityList.fetchRequest()
-                fetchRequest.predicate = NSPredicate(format: "bidPeriod == %@", localBidPeriod)
-
-                let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-                try context.execute(deleteRequest)
-                
-                let newSet = self.parseAndSaveSeniorityData(context: context)
-                localBidPeriod.seniorityList = newSet as NSSet
-                try context.save()
+                if let existing = localBidPeriod.seniorityList as? Set<SeniorityList> {
+                    for item in existing {
+                        context.delete(item)
+                    }
+                }
                 completion(.success(()))
 
             } catch {
@@ -518,7 +509,7 @@ class BISwaBidDataParsing{
         }
         
         guard let embeddedDict = responseDict["_embedded"] as? [String:Any] else { return [] }
-        let dictKey = self.dataSource?.round == 1 ? "IFLineBaseAuctionSeniorities" : "IFLineBaseAuctionReserveAwards"
+        let dictKey = self.dataSource?.round == 1 ? "IFLineBaseAuctionSeniorities" : "IFLineBaseAuctionReserveExternal"
         
         guard let seniorityArray = embeddedDict[dictKey] as? [[String:Any]] else{ return []}
         

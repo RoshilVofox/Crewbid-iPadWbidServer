@@ -76,11 +76,13 @@ class BISwaBidDataDownload{
             urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(self.packetID)/seniority?page=%ld&size=\(self.pageSize)"
             keyPath = "IFLineBaseAuctionSeniorities"
         }else{
-            var packetID = self.packetID
-            let lastChar = packetID.substring(to: packetID.length - 1)
-            packetID = lastChar.appending("1")
-            urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/reserve-awards?page=%ld&size=\(self.pageSize)"
-            keyPath = "IFLineBaseAuctionReserveAwards"
+//            var packetID = self.packetID
+//            let lastChar = packetID.substring(to: packetID.length - 1)
+//            packetID = lastChar.appending("1")
+//            urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(packetID)/reserve-awards?page=%ld&size=\(self.pageSize)"
+//            keyPath = "IFLineBaseAuctionReserveAwards"
+            urlTemplate = "\(self.kCBSwaServiceURL())/if-line-base-auction/bid-round/\(self.packetID)/reserves?page=%ld&size=\(self.pageSize)"
+            keyPath = "IFLineBaseAuctionReserveExternal"
         }
         
         

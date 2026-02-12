@@ -118,31 +118,99 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
             let bidder = self.empID ?? ""
             
             if buddy1 == bidder {
-                AlertService.showAlertForTopVC(title: "Buddy Bid",
-                                               message: "Bidder [\(bidder)] and Buddy 1 [\(buddy1)] should not be the same.")
+                AlertService.showAlertForTopVC(title: "Buddy Bid", message: "Bidder [\(bidder)] and Buddy 1 [\(buddy1)] should not be the same.")
                 return
             }
             
             if buddy2 == bidder {
-                AlertService.showAlertForTopVC(title: "Buddy Bid",
-                                               message: "Bidder [\(bidder)] and Buddy 2 [\(buddy2)] should not be the same.")
+                AlertService.showAlertForTopVC(title: "Buddy Bid", message: "Bidder [\(bidder)] and Buddy 2 [\(buddy2)] should not be the same.")
                 return
             }
         }
-            
-//        if !self.ifEmployeeContainsInFALIST() { return }
         
-        self.view.showActivityIndicator(message: "Validating Buddies...")
+        let buddiesToCheck = [buddy1, buddy2].filter { !$0.isEmpty }
+
+        self.view.showActivityIndicator(message: "Checking Authentication...")
+
+        checkBuddyAuthentication(buddiesToCheck[0]) { [weak self] isValid1 in
+            guard let self = self else { return }
+
+            if !isValid1 {
+                DispatchQueue.main.async {
+                    self.view.hideActivityIndicator()
+                }
+                return
+            }
+
+            // If only one buddy entered
+            if buddiesToCheck.count == 1 {
+                DispatchQueue.main.async {
+                    self.view.hideActivityIndicator()
+                }
+                self.validateBuddyLists(buddy1: buddy1, buddy2: buddy2)
+                return
+            }
+
+            // Check second buddy
+            self.checkBuddyAuthentication(buddiesToCheck[1]) { isValid2 in
+
+                DispatchQueue.main.async {
+                    self.view.hideActivityIndicator()
+                }
+
+                guard isValid2 else { return }
+
+                self.validateBuddyLists(buddy1: buddy1, buddy2: buddy2)
+            }
+        }
         
+//        self.view.showActivityIndicator(message: "Validating Buddies...")
+//        
+//        self.hasBuddyExistInEachOtherList { isValid in
+//            DispatchQueue.main.async {
+//                self.view.hideActivityIndicator()
+//                guard isValid else { return }
+//                self.optionalEmployees.removeAllObjects()
+//                // Add buddies directly — no subscription check
+//                if !buddy1.isEmpty { self.optionalEmployees.add(buddy1) }
+//                if !buddy2.isEmpty { self.optionalEmployees.add(buddy2) }
+//                let removedCount = CBBidSubmissionViewModel.previewRemovedFALinesCount(
+//                    bidPeriod: self.bidPeriod!,
+//                    optionalEmpNumbers: self.optionalEmployees
+//                )
+//
+//                if removedCount > 0 {
+//                    AlertService.showAlertForTopVC(
+//                        title: "CrewBid",
+//                        message: "\(removedCount) lines were removed from the submission because they were D position lines. Buddy Bid Lines must have positions (A, B, etc.) for each bidder.",
+//                        actions: [
+//                            (title: "OK", style: .default, handler: { _ in
+//                                self.finalAlert()   // Buddy Bid Terms NEXT
+//                            }),
+//                            (title: "Cancel", style: .cancel, handler: { _ in })
+//                        ]
+//                    )
+//                } else {
+//                    self.finalAlert()
+//                }
+//            }
+//        }
+    }
+    
+    func validateBuddyLists(buddy1: String, buddy2: String) {
+
+        self.view.updateActivityIndicator(message: "Validating Buddies...")
+
         self.hasBuddyExistInEachOtherList { isValid in
             DispatchQueue.main.async {
                 self.view.hideActivityIndicator()
                 guard isValid else { return }
+
                 self.optionalEmployees.removeAllObjects()
-                // Add buddies directly — no subscription check
+
                 if !buddy1.isEmpty { self.optionalEmployees.add(buddy1) }
                 if !buddy2.isEmpty { self.optionalEmployees.add(buddy2) }
-//                self.finalAlert()
+
                 let removedCount = CBBidSubmissionViewModel.previewRemovedFALinesCount(
                     bidPeriod: self.bidPeriod!,
                     optionalEmpNumbers: self.optionalEmployees
@@ -154,7 +222,7 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
                         message: "\(removedCount) lines were removed from the submission because they were D position lines. Buddy Bid Lines must have positions (A, B, etc.) for each bidder.",
                         actions: [
                             (title: "OK", style: .default, handler: { _ in
-                                self.finalAlert()   // Buddy Bid Terms NEXT
+                                self.finalAlert()
                             }),
                             (title: "Cancel", style: .cancel, handler: { _ in })
                         ]
@@ -166,6 +234,34 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
         }
     }
     
+    func checkBuddyAuthentication(_ empID: String,
+                                  completion: @escaping (Bool) -> Void) {
+
+        AuthService.shared.checkAuthentication(empID: empID) { result in
+
+            let msg = result.message ?? ""
+
+            if msg == "Invalid Account" ||
+                msg.contains("create an account") {
+
+                AlertService.showAlertForTopVC(
+                    title: "CrewBid",
+                    message: "User \(empID) does not have a CrewBid account. Go to www.crewbid.com to create the account."
+                )
+                completion(false)
+                return
+            }
+
+            completion(true)
+
+        } onFailure: { error in
+            AlertService.showAlertForTopVC(
+                title: "CrewBid",
+                message: error.localizedDescription
+            )
+            completion(false)
+        }
+    }
     
     
     func finalAlert() {
