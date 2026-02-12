@@ -32,6 +32,7 @@ class CBSeniorityListVC: UIViewController {
         if !isFromFirstTimeOpenBid {
             refreshSeniorityList()
         }
+        NotificationCenter.default.addObserver(self, selector: #selector(handleAuthFlowEnded), name: Notification.Name("AuthFlowEnded"), object: nil)
     }
     
     func bidInfoHeader() -> String{
@@ -209,6 +210,12 @@ class CBSeniorityListVC: UIViewController {
         if desc.contains("token not valid") { return true }
 
         return false
+    }
+    
+    @objc func handleAuthFlowEnded() {
+        print("Auth finished — refreshing seniority again")
+        isPresentingInvalidTokenAlert = false
+        refreshSeniorityList()
     }
     
     
