@@ -179,7 +179,7 @@ class CBSeniorityListVC: UIViewController {
     
     
     func invalidTokenAlert(){
-        AlertService.showAlertForTopVC(title: "Buddy Bid Alert", message: "The token has expired or is invalid. Please provide the credentials to proceed.", actions: [(title: "OK", style: .default, handler:{ _ in
+        AlertService.showAlertForTopVC(title: "Invalid Token Alert", message: "The token has expired or is invalid. Please provide the credentials to proceed.", actions: [(title: "OK", style: .default, handler:{ _ in
             DispatchQueue.main.async {
                 guard let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBCredentialsPageVC") as? CBCredentialsPageVC else { return }
                 vc.preferredContentSize = CGSize(width: 600, height: 550)

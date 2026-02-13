@@ -551,7 +551,7 @@ class JobShareViewController: BaseViewController {
     }
     
     func invalidTokenAlert(){
-        AlertService.showAlertForTopVC(title: "Job Share Alert", message: "The token has expired or is invalid. Please provide the credentials to proceed.", actions: [(title: "OK", style: .default, handler:{ _ in
+        AlertService.showAlertForTopVC(title: "Invalid Token Alert", message: "The token has expired or is invalid. Please provide the credentials to proceed.", actions: [(title: "OK", style: .default, handler:{ _ in
             DispatchQueue.main.async {
                 guard let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBCredentialsPageVC") as? CBCredentialsPageVC else { return }
                 vc.selectedRound = self.bidPeriod.round?.intValue

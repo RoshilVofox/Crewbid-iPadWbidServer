@@ -66,6 +66,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     var totalNumberString: String?
     var didDisplayMonthToMonthAlert = true
     var alertShouldDisplay: Bool = true
+    private var isPresentingInvalidTokenAlert = false
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupLayout()
@@ -137,7 +140,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         NotificationCenter.default.addObserver(self, selector: #selector(openTripFetchInTextView), name: NSNotification.Name("openTripFetchInTextView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openLineFetchInTextView), name: NSNotification.Name("openLineFetchInTextView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(syncButtonVisibilityChnaged), name: NSNotification.Name("SyncButtonVisibilityChange"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.restoreLastBidWithEmployeeID(_:)), name: NSNotification.Name(rawValue: "RestoreLastBidNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.restoreLastBidWithEmployeeID), name: NSNotification.Name(rawValue: "RestoreLastBidNotification"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleAuthFlowEnded), name: Notification.Name("AuthFlowEnded"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openLineImporter), name: NSNotification.Name(KCBOpenLineImporter), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(openShowCAP), name: NSNotification.Name(KCBOpenShowCAP), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(reprocessIncludeDroppedTrips), name: NSNotification.Name("reprocessAfterChangedIncludeDroppedTrips"), object: nil)
@@ -204,66 +208,185 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         vc.preferredContentSize = CGSize(width: 500, height: 500)
         self.present(vc, animated: true)
     }
+
+    func isTokenExpiredError(_ error: Error) -> Bool {
+        let nsError = error as NSError
+        let desc = nsError.localizedDescription.lowercased()
+
+        if nsError.code == 401 { return true }
+        if desc.contains("invalid_token") { return true }
+        if desc.contains("token expired") { return true }
+        if desc.contains("token not valid") { return true }
+
+        return false
+    }
+    private func showInvalidTokenAlertOnce() {
+        DispatchQueue.main.async {
+            self.view.hideActivityIndicator()
+            guard !self.isPresentingInvalidTokenAlert else { return }
+            self.isPresentingInvalidTokenAlert = true
+            self.invalidTokenAlert()
+        }
+    }
     
-    @objc func restoreLastBidWithEmployeeID(_ notification: Notification) {
-        guard let employeeID = notification.userInfo?["employeeID"] as? String else {
-               print("Invalid notification format or missing employeeID")
-               return
-           }
-        self.view.showActivityIndicator(message: "Fetching Data...")
-        var dict = [String:Any]()
-        dict["Year"] = self.bidPeriod?.year
-        dict["Month"] = self.bidPeriod?.month
-        dict["Round"] = self.bidPeriod?.round
-        dict["Domicile"] = self.bidPeriod?.base
-        dict["Position"] = CBUtils.shortName(for: BICrewPositionType(rawValue: self.bidPeriod!.positionType!.intValue)!)
-        dict["EmpNum"] = employeeID
-//        dict["EmpNum"] = "10994"    //DEN FA rnd 1
-        let urlString = EndPoint.shared.getbidSubmittedData
-        let jsonData = (try? JSONSerialization.data(withJSONObject: dict))!
-        let jsonString = String(data: jsonData, encoding: .utf8)
-        let bodyData = jsonString?.data(using: .utf8)
-        
-        APIService.shared.fetch(
-            urlString: urlString,
-            method: .POST,
-            body: bodyData,
-            parse: { data in
-                let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
-                guard let jsonDict = jsonObject as? [String: Any] else {
-                    throw Errors.decodingError
+    func invalidTokenAlert(){
+        AlertService.showAlertForTopVC(title: "Invalid Token Alert", message: "The token has expired or is invalid. Please provide the credentials to proceed.", actions: [(title: "OK", style: .default, handler:{ _ in
+            DispatchQueue.main.async {
+                guard let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBCredentialsPageVC") as? CBCredentialsPageVC else { return }
+                vc.preferredContentSize = CGSize(width: 600, height: 550)
+                vc.isModalInPresentation = true
+                var dictInfo: [String: Any] = [:]
+                dictInfo["base"] = self.bidPeriod?.base
+                dictInfo["month"] = self.bidPeriod?.month
+                dictInfo["round"] = self.bidPeriod?.round
+                if let positionValue = self.bidPeriod?.positionType?.intValue,
+                   let pos = BICrewPositionType(rawValue: positionValue){
+                    dictInfo["position"] = CBUtils.shortName(for: pos)
+                    vc.selectedPosition = pos
                 }
-                return jsonDict
-            },
-            completion: { result in
-                switch result{
-                case .success(let jsonDict):
-                    let submittedBids = jsonDict
-                    var temp = false
-                    let submittedString = String(format: "%@", submittedBids["SubmittedResult"] as! CVarArg)
-                    DispatchQueue.main.async {
-                        if submittedString != "<null>"{
-                            self.view.hideActivityIndicator()
-                            self.resetAndRestoreLastBid(submitString: submittedString)
-                            temp = true
-                        }
-                        if !temp{
-                            AlertService.showAlertForTopVC(title: "Crewbid", message: "We have no record of a Submitted Bid.  You can login to SwaLife and go see all of your submitted bids.\n\nPilots:  My Work=> Flight Ops => Our Business => Bid Info => BidInfo => Search Bids \n\nFlight Attendants:  My Work =Inflight => Bidding => BidInfo => BidInfo => Search Bids")
-                        }else{
-                            NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
-                            DispatchQueue.main.asyncAfter(deadline: .now()+1){
-                                AlertService.showAlertForTopVC(title: "Crewbid", message: "Your last bid details has been loaded")
+                vc.isForReauth = true
+                self.isPresentingInvalidTokenAlert = true
+                self.present(vc, animated: true)
+            }
+        })])
+    }
+    
+    @objc func handleAuthFlowEnded(){
+        self.isPresentingInvalidTokenAlert = false
+        self.restoreLastBidWithEmployeeID()
+    }
+    
+    @objc func restoreLastBidWithEmployeeID() {
+        guard let employeeID = app.ObjUserAccount?.employeeNumber else{
+            print("Invalid notification format or missing employeeID")
+            return
+        }
+        self.view.showActivityIndicator(message: "Fetching Data...")
+        
+        
+        if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSwaAPI?.boolValue == true {
+            let formattedMonth = String(format: "%02d", dataSource.month)
+            let bidInfo = "\(self.dataSource.base)\(self.dataSource.year)\(formattedMonth)\(self.dataSource.round)"
+            let urlString = "\(EndPoint.shared.kCBSwaServiceURL)/if-line-base-auction/bid-round/\(bidInfo)/bids?employeeId=\(employeeID)"
+            let headers: [String: String] = [
+                "Authorization": "Bearer \(KeychainHelper.retrieveTokenFromKeyChain()!)"
+                ]
+            print("SWA SYNC")
+            
+            APIService.shared.fetch(
+                   urlString: urlString,
+                   method: .GET,
+                   headers: headers,
+                   parse: { data in
+                       let jsonObject = try JSONSerialization.jsonObject(with: data)
+                       guard let jsonDict = jsonObject as? [String: Any] else {
+                           throw Errors.decodingError
+                       }
+                       return jsonDict
+                   },
+                   completion: { result in
+                       
+                       switch result {
+                           
+                       case .success(let jsonDict):
+                           
+                           guard
+                               let embedded = jsonDict["_embedded"] as? [String: Any],
+                               let bids = embedded["IFLineBaseAuctionBids"] as? [[String: Any]],
+                               let firstBid = bids.first,
+                               let bidChoices = firstBid["bidChoices"] as? [[String: Any]]
+                           else {
+                               DispatchQueue.main.async {
+                                   self.view.hideActivityIndicator()
+                                   AlertService.showAlertForTopVC(title: "Crewbid", message: "We have no record of a Submitted Bid.  You can login to SwaLife and go see all of your submitted bids.\n\nPilots:  My Work=> Flight Ops => Our Business => Bid Info => BidInfo => Search Bids \n\nFlight Attendants:  My Work =Inflight => Bidding => BidInfo => BidInfo => Search Bids")
+                               }
+                               return
+                           }
+                           let choices: [String] = bidChoices.compactMap {
+                               $0["choice"] as? String
+                           }
+
+                           let submittedString = choices.joined(separator: ",")
+
+                           DispatchQueue.main.async {
+                               self.view.hideActivityIndicator()
+                               self.resetAndRestoreLastBid(submitString: submittedString)
+                               AlertService.showAlertForTopVC(
+                                   title: "Crewbid",
+                                   message: "Your last bid details has been loaded"
+                               )
+                           }
+
+                       case .failure(let error):
+                           DispatchQueue.main.async {
+                               self.view.hideActivityIndicator()
+                           }
+                           if self.isTokenExpiredError(error) == true {
+                               self.showInvalidTokenAlertOnce()
+                               return
+                           }
+      
+                           print("FA SWA fetch error:", error)
+                       }
+                   }
+               )
+        }else{
+            var dict = [String:Any]()
+            dict["Year"] = self.bidPeriod?.year
+            dict["Month"] = self.bidPeriod?.month
+            dict["Round"] = self.bidPeriod?.round
+            dict["Domicile"] = self.bidPeriod?.base
+            dict["Position"] = CBUtils.shortName(for: BICrewPositionType(rawValue: self.bidPeriod!.positionType!.intValue)!)
+            dict["EmpNum"] = employeeID
+            let urlString = EndPoint.shared.getbidSubmittedData
+            let jsonData = try! JSONSerialization.data(withJSONObject: dict)
+            let jsonString = String(data: jsonData, encoding: .utf8)
+            let bodyData = jsonString?.data(using: .utf8)
+            
+            APIService.shared.fetch(
+                urlString: urlString,
+                method: .POST,
+                body: bodyData,
+                parse: { data in
+                    let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
+                    guard let jsonDict = jsonObject as? [String: Any] else {
+                        throw Errors.decodingError
+                    }
+                    return jsonDict
+                },
+                completion: { result in
+                    switch result{
+                    case .success(let jsonDict):
+                        let submittedBids = jsonDict
+                        var temp = false
+                        let submittedString = String(format: "%@", submittedBids["SubmittedResult"] as! CVarArg)
+                        DispatchQueue.main.async {
+                            if submittedString != "<null>" || submittedString != ""{
+                                self.view.hideActivityIndicator()
+                                self.resetAndRestoreLastBid(submitString: submittedString)
+                                temp = true
+                            }
+                            if temp{
+                                AlertService.showAlertForTopVC(title: "Crewbid", message: "We have no record of a Submitted Bid.  You can login to SwaLife and go see all of your submitted bids.\n\nPilots:  My Work=> Flight Ops => Our Business => Bid Info => BidInfo => Search Bids \n\nFlight Attendants:  My Work =Inflight => Bidding => BidInfo => BidInfo => Search Bids")
+                            }else{
+                                NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self)
+                                DispatchQueue.main.asyncAfter(deadline: .now()+1){
+                                    AlertService.showAlertForTopVC(title: "Crewbid", message: "Your last bid details has been loaded")
+                                }
                             }
                         }
+                    case .failure(let error):
+                        DispatchQueue.main.async {
+                            self.view.hideActivityIndicator()
+                        }
+                        if case .other(let underlyingError) = error, (underlyingError as NSError).code == NSURLErrorTimedOut{
+                            let objEvent = CBOfflineEvents()
+                            let monthValue = self.bidPeriod?.month
+                            objEvent.sendOfflineDataForTimeOut(url: urlString, month: monthValue!)
+                        }
                     }
-                case .failure(let error):
-                    if case .other(let underlyingError) = error, (underlyingError as NSError).code == NSURLErrorTimedOut{
-                        let objEvent = CBOfflineEvents()
-                        let monthValue = self.bidPeriod?.month
-                        objEvent.sendOfflineDataForTimeOut(url: urlString, month: monthValue!)
-                    }
-                }
-            })
+                })
+        }
     }
     
     func resetAndRestoreLastBid(submitString:String){
@@ -311,6 +434,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let newInsert = insertVariable - 1
         insertionPoint?.index = NSNumber(value: newInsert)
         NotificationCenter.default.post(name: NSNotification.Name("updateBidListCount"), object: self, userInfo: nil)
+        NotificationCenter.default.post(name: NSNotification.Name("refreshLines"), object: self, userInfo: nil)
         
     }
     
@@ -728,9 +852,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         if self.isMovingFromParent || self.isBeingDismissed {
-            NotificationCenter.default.removeObserver(self,
-                name: Notification.Name("checkLinesAvailableInBidList"),
-                object: nil)
+            NotificationCenter.default.removeObserver(self, name: Notification.Name("checkLinesAvailableInBidList"), object: nil)
+            NotificationCenter.default.removeObserver(self, name: Notification.Name("RestoreLastBidNotification"), object: nil)
+            NotificationCenter.default.removeObserver(self, name: Notification.Name("AuthFlowEnded"), object: nil)
         }
         NotificationCenter.default.removeObserver("SortBidListAction")
         NotificationCenter.default.removeObserver("ShowCommutabilityFilterView")
@@ -829,8 +953,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
     func checkLineCountValidation(lineCount: String?, sanityCheckedBidPackage: inout NSDictionary?){
         // Check this number of lines against the bid package number of lines
         // Alert the user if there is a mismatch
-        if self.bidPeriod?.isHistoric == nil {
-            if let lineCount = lineCount, !lineCount.isEmpty {
+        if self.bidPeriod?.isHistoric?.boolValue != true {
+            if let lineCount = lineCount, Int(lineCount) != 0{
                 if self.bidPeriod!.lines?.count != Int(lineCount){
                     // Mismatch, alert the user
                     AlertService.showAlertForTopVC(title: "Bid Package Error", message: "The number of lines in the processed bid package does not match the number of lines in the Cover Letter.  Double check that this is indeed the case.  If so perform the following steps:\n\n  To try again: (1) delete the bid package, (2) close and reopen the app (by double-tapping the iPad's Home button and swiping CrewBid up), (3) downloading the bid package anew.", actions: [(title: "OK", style: .default, handler:{_ in
@@ -842,8 +966,8 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                         }
                         self.seniorityAlert()
                     })])
-                    if !(self.bidPeriod!.bidPackageErrorDisplayed?.boolValue == true){
-                        // mailbidpackageerror fx
+                    if (self.bidPeriod!.bidPackageErrorDisplayed?.boolValue != true){
+                        self.mailBidPackageError(lineCount: lineCount)
                     }
                 }
                 sanityCheckedBidPackage = [kCBMonthWord: self.bidPeriod!.month!, kCBYearWord: self.bidPeriod!.year!]
@@ -852,6 +976,21 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         }
     }
     
+    func mailBidPackageError(lineCount:String){
+        var position = ""
+        if bidPeriod?.positionType?.intValue == 0{
+            position = "CP"
+        }else if bidPeriod?.positionType?.intValue == 1{
+            position = "FO"
+        }else{
+            position = "FA"
+        }
+        
+        let mailBody = String(format:"This user has received a bid package error. The number of lines in the processed bid package does not match the number of lines in the Cover Letter. Bid Package Count - %ld Cover Letter Count - %@ Bid Data - %@ %@ %@ %@ Round - %@",bidPeriod?.lines?.count ?? 0, lineCount, bidPeriod?.base ?? "", position, bidPeriod?.year ?? "", bidPeriod?.month ?? "", bidPeriod?.round ?? "")
+        let mailObj = CBSendMail()
+        mailObj.sendBidPackageErrorMail(mailBody)
+        self.bidPeriod?.bidPackageErrorDisplayed = true
+    }
     
     
     func getSortDiscriptorsPosition() -> [NSSortDescriptor] {

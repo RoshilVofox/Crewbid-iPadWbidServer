@@ -695,7 +695,7 @@ class CBBidSubmissionViewModel{
         
         let bidChoices: [Any]
         
-        if self.bidPeriod?.isFABid() == true {
+        if self.bidPeriod?.isFirstRoundBid() == true {
             bidChoices  = (self.bidListNumbers) as? [String] ?? []
         }else{
             bidChoices = (self.bidListNumbers) as? [Int] ?? []
