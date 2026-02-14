@@ -387,17 +387,29 @@ class BICalendarData {
     // Convert a date to a standardized format (setting hour to 12:00 PM)
 
     func dateForDate(date: Date?) -> Date? {
-        var comps: DateComponents? = nil
-        comps = Calendar.current.dateComponents([.day,.month,.year], from: date!)
-        let day = comps?.day ?? 0
-        let month = comps?.month ?? 0
-        comps?.day = day
-        comps?.month = month
-        comps?.hour = 12
-        //let returnDate = calendar?.date(from: comps!) // Updated by raja on 13 Feb 2024 - To fix the date conversion issue
-        let returnDate = Calendar(identifier: .gregorian).date(from: comps!)
+        guard let date = date else { return nil }
+        
+        // 1) Extract Y/M/D in UTC
+        var utcCalendar = Calendar(identifier: .gregorian)
+        utcCalendar.timeZone = TimeZone(abbreviation: "UTC")!
+        
+        let ymd = utcCalendar.dateComponents([.year, .month, .day], from: date)
+        
+        // 2) Rebuild same Y/M/D in local calendar (US/Central)
+        var localCalendar = Calendar(identifier: .gregorian)
+        localCalendar.timeZone = TimeZone(identifier: "US/Central")! // US/Central
+        
+        var localComps = DateComponents()
+        localComps.year  = ymd.year
+        localComps.month = ymd.month
+        localComps.day   = ymd.day
+        localComps.hour  = 12 // safe hour
+        
+        let returnDate = localCalendar.date(from: localComps)
+        
         return returnDate
     }
+
     
     // Create a date for a specific day of the month
 

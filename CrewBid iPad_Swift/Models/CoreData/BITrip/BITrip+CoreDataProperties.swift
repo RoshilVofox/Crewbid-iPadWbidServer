@@ -206,6 +206,9 @@ extension BITrip : Identifiable {
         var calendar = Calendar(identifier: .gregorian)
         calendar.locale = Locale(identifier: "en_US")
         calendar.timeZone = TimeZone(identifier: "US/Central")!
+        if isFA && trip.isReserve {
+            calendar.timeZone = TimeZone(abbreviation: "UTC")!
+        }
         let df = DateFormatter()
         df.dateFormat = "ddMMMyy"
         df.timeZone = TimeZone(identifier: "US/Central")!
@@ -251,6 +254,8 @@ extension BITrip : Identifiable {
         var tafbTime: String
         var departMinutes:CGFloat = 0
         var returnMinutes:CGFloat = 0
+        var departDateString: String?
+        var arriveDateString: String?
         
 
         //    NSCharacterSet *whitespace = [NSCharacterSet whitespaceCharacterSet];
@@ -284,11 +289,14 @@ extension BITrip : Identifiable {
                 // whitespace. If deadhead, first two characters will be DH, which
                 // should be removed.
                 legFlight = legInfo.flight!
+                departDateString = BITrip.staticTimeForFAReserveType(trip: trip, line: line!, key: "depart", timeZone: CBUtils.rawTimeZoneString(forAirportCode: legInfo.departCity!)!)
+                arriveDateString = BITrip.staticTimeForFAReserveType(trip: trip, line: line!, key: "arrive", timeZone: CBUtils.rawTimeZoneString(forAirportCode: legInfo.arriveCity!)!)
                 
                     dateComps?.minute = Int(truncating: legInfo.departMinutes!)
                     departDate = calendar.date(from: dateComps!)
                     dateComps?.minute = Int(truncating: legInfo.arriveMinutes!)
                     arriveDate = calendar.date(from: dateComps!)
+                
                 // Ground time.
                 groundMinutes = legInfo.groundMinutes.intValue
                 if groundMinutes <= 0{
@@ -304,6 +312,11 @@ extension BITrip : Identifiable {
                 df.timeZone = CBUtils.timeZone(forAirportCode: legInfo.departCity!)
                 departFormatter.timeZone = CBUtils.timeZone(forAirportCode: legInfo.departCity!)
                 arriveFormatter.timeZone = CBUtils.timeZone(forAirportCode: legInfo.arriveCity!)
+                
+                if departDateString == nil {
+                    departDateString = (departFormatter.string(from: departDate!))
+                    arriveDateString = (arriveFormatter.string(from: arriveDate!))
+                }
                 let deadHead = legInfo.isDeadhead as! Bool
                 let departCity = legInfo.departCity!
                 let arriveCity = legInfo.arriveCity!
@@ -323,17 +336,17 @@ extension BITrip : Identifiable {
                 let formattedLegFlight = String(format: "%4s", result!)
                 if isFA{
                     if (legInfo.equipment == "6") {
-                        textForTrip += "\(df.string(from: departDate!)) \(deadHead ? "DH" : "  ")\(formattedLegFlight) \(departCity) \(departFormatter.string(from: departDate!)) \(arriveCity) \(arriveFormatter.string(from: arriveDate!)) \("MAX") \(blockTime) \(groundTime) \((legInfo.isAircraftChange?.boolValue)! ? "acft change" : "           ") \(String(format:"%03.0f", (legInfo.pay?.floatValue)! * 100.0))\n"
+                        textForTrip += "\(df.string(from: departDate!)) \(deadHead ? "DH" : "  ")\(formattedLegFlight) \(departCity) \(departDateString!) \(arriveCity) \(arriveDateString!) \("MAX") \(blockTime) \(groundTime) \((legInfo.isAircraftChange?.boolValue)! ? "acft change" : "           ") \(String(format:"%03.0f", (legInfo.pay?.floatValue)! * 100.0))\n"
                     }
                     else if legInfo.equipment == "   "{
-                        textForTrip += "\(df.string(from: departDate!)) \(deadHead ? "DH" : "  ")\(formattedLegFlight) \(departCity) \(departFormatter.string(from: departDate!)) \(arriveCity) \(arriveFormatter.string(from: arriveDate!)) \(equipment) \(blockTime) \(groundTime) \((legInfo.isAircraftChange?.boolValue)! ? "acft change" : "           ") \(String(format:"%03.0f", (legInfo.pay?.floatValue)! * 100.0))\n"
+                        textForTrip += "\(df.string(from: departDate!)) \(deadHead ? "DH" : "  ")\(formattedLegFlight) \(departCity) \(departDateString!) \(arriveCity) \(arriveDateString!) \(equipment) \(blockTime) \(groundTime) \((legInfo.isAircraftChange?.boolValue)! ? "acft change" : "           ") \(String(format:"%03.0f", (legInfo.pay?.floatValue)! * 100.0))\n"
                     }
                     else {
-                        textForTrip += "\(df.string(from: departDate!)) \(deadHead ? "DH" : "  ")\(formattedLegFlight) \(departCity) \(departFormatter.string(from: departDate!)) \(arriveCity) \(arriveFormatter.string(from: arriveDate!)) \(equipment) \(blockTime) \(groundTime) \((legInfo.isAircraftChange?.boolValue)! ? "acft change" : "           ") \(String(format:"%03.0f", (legInfo.pay?.floatValue)! * 100.0))\n"
+                        textForTrip += "\(df.string(from: departDate!)) \(deadHead ? "DH" : "  ")\(formattedLegFlight) \(departCity) \(departDateString!) \(arriveCity) \(arriveDateString!) \(equipment) \(blockTime) \(groundTime) \((legInfo.isAircraftChange?.boolValue)! ? "acft change" : "           ") \(String(format:"%03.0f", (legInfo.pay?.floatValue)! * 100.0))\n"
                     }
                 }
                 else{
-                    textForTrip += "\(df.string(from: departDate!)) \(deadHead ? "DH" : "  ")\(formattedLegFlight) \(departCity) \(departFormatter.string(from: departDate!)) \(arriveCity) \(arriveFormatter.string(from: arriveDate!)) \(equipment) \(blockTime) \(groundTime) \((legInfo.isAircraftChange?.boolValue)! ? "acft change" : "           ") \(String(format:"%03.0f", (legInfo.pay?.floatValue)! * 100.0))\n"
+                    textForTrip += "\(df.string(from: departDate!)) \(deadHead ? "DH" : "  ")\(formattedLegFlight) \(departCity) \(departDateString!) \(arriveCity) \(arriveDateString!) \(equipment) \(blockTime) \(groundTime) \((legInfo.isAircraftChange?.boolValue)! ? "acft change" : "           ") \(String(format:"%03.0f", (legInfo.pay?.floatValue)! * 100.0))\n"
                 }
                 dayBlockMinutes += blockMinutes
                 
@@ -352,13 +365,23 @@ extension BITrip : Identifiable {
             departFormatter.timeZone = CBUtils.timeZone(forAirportCode: (dayOrderedLegs.first)!.departCity!)
             arriveFormatter.timeZone = CBUtils.timeZone(forAirportCode: (dayOrderedLegs.last)!.arriveCity!)
             departDate = calendar.date(from: dateComps!)
+            if trip.isReserve {
+                report = "Rpt \(departDateString!)"
+            }
+            else {
+                report = "Rpt \(departFormatter.string(from: departDate!))"
+            }
             
-            report = "Rpt \(departFormatter.string(from: departDate!))"
             
             //Release calcultions
                 dateComps?.minute = Int(truncating: (dayOrderedLegs.last?.arriveMinutes)!) + Int(truncating: (trip.info?.debriefMinutes!)!)
                 arriveDate = calendar.date(from: dateComps!)
-            release = "Rls \(arriveFormatter.string(from: arriveDate!))"
+            if trip.isReserve {
+                release = "Rls \(arriveDateString!)"
+            }
+            else {
+                release = "Rls \(arriveFormatter.string(from: arriveDate!))"
+            }
        
             let tripInfoNumber:String = (trip.info?.number)!
             let index = tripInfoNumber.index(tripInfoNumber.startIndex, offsetBy: 1)

@@ -358,6 +358,9 @@ class BIBidInfoReader{
                     print("Done Reading Lines")
                     NotificationCenter.default.post(name: Notification.Name("ReadingLines"), object: nil)
                 }
+                if success {
+                    self.checkRedEyePropertiesForPilot()
+                }
             }
                 if success && self.isSecondRoundBid(){
                     success = self.addSecondRoundTripsForBidPeriod()
@@ -7237,5 +7240,42 @@ class BIBidInfoReader{
         dateFormatter.timeZone = TimeZone(abbreviation: "GMT")
         dateFormatter.dateFormat = "EEEE"
         return dateFormatter.string(from: date)
+    }
+    private func checkRedEyePropertiesForPilot() {
+        let calendar = self.calendarData.bidPeriodCalendar()
+        for case let line as BILine in self.bidPeriod!.lines! {
+            for case let trip as BITrip in line.trips! {
+                for dayInfo in trip.info!.orderedDays() {
+                    if trip.isRedEyeTrip {
+                        continue
+                    }
+                    for leginfo in dayInfo.orderedLegs {
+                        var startComps = calendar!.dateComponents([.year, .month,.day], from: trip.startDate!)
+                        startComps.hour = 0
+                        startComps.minute = 0
+                        startComps.second = 0
+                        let dayStart = calendar!.date(from: startComps)
+                        let departMinutes = leginfo.departMinutes?.intValue
+                        let arriveMinutes = leginfo.arriveMinutes?.intValue
+                        let legDepartureDate = dayStart?.addingTimeInterval(TimeInterval(departMinutes! * 60))
+                        let isRedEye = self.isFlightRedEyeWithDomicile(domicile: self.bidPeriod!.base!, flightDepartDate: legDepartureDate!, deptTime: departMinutes!, arrivalTime: arriveMinutes!)
+                        if isRedEye {
+                            leginfo.isRedEyeFlight = isRedEye as NSNumber
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private func isFlightRedEyeWithDomicile(domicile: String, flightDepartDate: Date, deptTime: Int, arrivalTime: Int) -> Bool {
+        let domDepTime = CBUtils.domicileTimeFromHerb(domicile: domicile, dayDate: flightDepartDate, herb: deptTime)
+        let domArrTime = CBUtils.domicileTimeFromHerb(domicile: domicile, dayDate: flightDepartDate, herb: arrivalTime)
+        let thresholds: [Int] = [1560, 3000, 4440 , 5880]
+        for th in thresholds {
+            if domDepTime <= th && domArrTime >= th {
+                return true
+            }
+        }
+        return false
     }
 }
