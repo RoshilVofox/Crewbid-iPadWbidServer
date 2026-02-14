@@ -235,7 +235,7 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                 }
             }
             let highlighted = trip.highlightCount!.intValue > 0 && highlightFlag
-            let index = self.calendarData!.indexForDate(date: trip.startDate)
+            let index = self.calendarData!.indexForDateGMT(date: trip.startDate!)
 //            let index = self.calendarData!.indexForDateGMT(date: trip.startDate!)
             // Account for nil pairings showing up in the blank lines
             if index > (daysInCalendar - 1) || index < 0 {

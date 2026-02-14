@@ -2591,6 +2591,51 @@ class CBUtils{
         return (toOffset - fromOffset) / 60
     }
 
+    static func domicileTimeFromHerb(domicile: String, dayDate: Date, herb: Int) -> Int {
+        
+        var calendar = Calendar(identifier: .gregorian)
+        let centralTZ = TimeZone(identifier: "US/Central")!
+        calendar.timeZone = centralTZ
+        // Get year/month/day components
+        let components = calendar.dateComponents([.year, .month, .day], from: dayDate)
+        
+        // Create date at noon
+        var dc = DateComponents()
+        dc.year = components.year
+        dc.month = components.month
+        dc.day = components.day
+        dc.hour = 12
+        dc.minute = 0
+        dc.second = 0
+        
+        guard let dateAtNoon = calendar.date(from: dc) else {
+            return 1440
+        }
+        
+        let isDst = centralTZ.isDaylightSavingTime(for: dateAtNoon)
+        
+        switch domicile {
+            
+        case "ATL", "BWI", "MCO":
+            return herb + 60   // EST = herb + 60
+            
+        case "BNA", "DAL", "HOU", "MDW":
+            return herb        // CST = herb
+            
+        case "DEN":
+            return herb - 60   // MST = herb - 60
+            
+        case "LAS", "LAX", "OAK":
+            return herb - 120  // PST = herb - 120
+            
+        case "PHX":
+            return isDst ? (herb - 120) : (herb - 60)
+            
+        default:
+            return 1440
+        }
+    }
+
 
 
 }

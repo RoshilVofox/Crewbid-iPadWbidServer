@@ -686,13 +686,14 @@ class BISwaBidDataParsing{
         if let dateString = pairingKey?["pairingDate"] as? String {
             let dateFmt = DateFormatter()
             dateFmt.dateFormat = "yyyy-MM-dd"
+            dateFmt.timeZone = TimeZone(abbreviation: "UTC")
             if let date = dateFmt.date(from: dateString) {
                 trip.startDate = self.calendarData.dateForDate(date: date)
                 tripInfo.startDate = trip.startDate
 
                 trip.tripStartDay = CBUtils.getDay(from: trip.startDate ?? Date())
                 trip.startDay = CBUtils.getDateOnly(from: trip.startDate ?? Date())
-                trip.startDate = calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue)
+//                trip.startDate = calendarData.dateForDayOfMonth(dayOfMonth: trip.startDay!.intValue)
 
                 let dayCount = tripInfo.orderedDays().count
                 let endDay = (trip.startDay?.intValue ?? 0) + (dayCount - 1)
@@ -859,6 +860,7 @@ class BISwaBidDataParsing{
                 }
                 // Calculate arrival minutes
                 if let arrDate = arrivalDate, let firstDate = firstLegDate {
+                    offset = CBUtils.dstMinuteAdjustment(from: firstDate, to: arrDate)
                     let arriveMinutes = firstLegDepartMin + Int(arrDate.timeIntervalSince(firstDate) / 60)
                     legInfo?.arriveMinutes = NSNumber(value: arriveMinutes  + offset)
                 }
@@ -1075,6 +1077,11 @@ class BISwaBidDataParsing{
                 }
                 
                 trip.info?.departTime = NSNumber(value: Int(departHHMM) ?? 0)
+                if (trip.info?.departTime?.intValue ?? 0) < 800 {
+                    trip.info?.amPM = BIAMPMTripType.AMTrip.rawValue as NSNumber
+                } else {
+                    trip.info?.amPM = BIAMPMTripType.PMTrip.rawValue as NSNumber
+                }
             }
             
             // --- ARRIVE TIME ---
