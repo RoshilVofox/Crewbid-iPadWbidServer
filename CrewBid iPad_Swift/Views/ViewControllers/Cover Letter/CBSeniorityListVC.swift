@@ -24,14 +24,15 @@ class CBSeniorityListVC: UIViewController {
     var listArray = [String]()
     var filteredSeniorityList = [SeniorityList]()
     var seniorityList:[SeniorityList]?
-    
+    private var isPresentingInvalidTokenAlert = false
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         fetchSeniorityData()
-        if !isFromFirstTimeOpenBid /*&& shouldRefreshSeniority()*/ {
+        if !isFromFirstTimeOpenBid {
             refreshSeniorityList()
         }
+        NotificationCenter.default.addObserver(self, selector: #selector(handleAuthFlowEnded), name: Notification.Name("AuthFlowEnded"), object: nil)
     }
     
     func bidInfoHeader() -> String{
@@ -147,11 +148,19 @@ class CBSeniorityListVC: UIViewController {
                             print("Seniority list updated")
                         case .failure(let error):
                             print("Save failed: \(error.localizedDescription)")
+                            DispatchQueue.main.async {
+                                self?.showToast(message: "Unable to refresh. Showing saved list.")
+                            }
                         }
                     }
                 }
 
             case .failure(let error):
+                if self?.isTokenExpiredError(error) == true {
+                    self?.showInvalidTokenAlertOnce()
+                    return
+                }
+
                 print("Download failed: \(error.localizedDescription)")
                 DispatchQueue.main.async {
                     self?.showToast(message: "Unable to refresh. Showing saved list.")
@@ -160,6 +169,54 @@ class CBSeniorityListVC: UIViewController {
         }
     }
     
+    private func showInvalidTokenAlertOnce() {
+        DispatchQueue.main.async {
+            guard !self.isPresentingInvalidTokenAlert else { return }
+            self.isPresentingInvalidTokenAlert = true
+            self.invalidTokenAlert()
+        }
+    }
+    
+    
+    func invalidTokenAlert(){
+        AlertService.showAlertForTopVC(title: "Invalid Token Alert", message: "The token has expired or is invalid. Please provide the credentials to proceed.", actions: [(title: "OK", style: .default, handler:{ _ in
+            DispatchQueue.main.async {
+                guard let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBCredentialsPageVC") as? CBCredentialsPageVC else { return }
+                vc.preferredContentSize = CGSize(width: 600, height: 550)
+                vc.isModalInPresentation = true
+                var dictInfo: [String: Any] = [:]
+                dictInfo["base"] = self.bidPeriod?.base
+                dictInfo["month"] = self.bidPeriod?.month
+                dictInfo["round"] = self.bidPeriod?.round
+                if let positionValue = self.bidPeriod?.positionType?.intValue,
+                   let pos = BICrewPositionType(rawValue: positionValue){
+                    dictInfo["position"] = CBUtils.shortName(for: pos)
+                    vc.selectedPosition = pos
+                }
+                vc.isForReauth = true
+                self.isPresentingInvalidTokenAlert = true
+                self.present(vc, animated: true)
+            }
+        })])
+    }
+    
+    func isTokenExpiredError(_ error: Error) -> Bool {
+        let nsError = error as NSError
+        let desc = nsError.localizedDescription.lowercased()
+
+        if nsError.code == 401 { return true }
+        if desc.contains("invalid_token") { return true }
+        if desc.contains("token expired") { return true }
+        if desc.contains("token not valid") { return true }
+
+        return false
+    }
+    
+    @objc func handleAuthFlowEnded() {
+        print("Auth finished — refreshing seniority again")
+        isPresentingInvalidTokenAlert = false
+        refreshSeniorityList()
+    }
     
     
     @IBAction func btnShareAction(_ sender: Any) {
@@ -327,7 +384,7 @@ extension CBSeniorityListVC: UITableViewDelegate, UITableViewDataSource{
                 cell.vacationLbl.text = String(format: "%@", seniority.vacationString)
             }
         }else{
-            cell.baseSeniorityLbl.text = String(format: "%ld - ", indexPath.row + 1)
+            cell.baseSeniorityLbl.text = String(format: "%@", seniority.baseSeniority?.stringValue ?? "")
             cell.empNumLbl.text = String(format: "[%@]", seniority.employeeId ?? "")
             cell.nameLbl.text = String(format: "%@......................", seniority.legalName?.uppercased() ?? "")
             cell.vacationTop.constant = 0
@@ -376,19 +433,6 @@ extension CBSeniorityListVC : UISearchBarDelegate {
                 ($0.baseSeniority?.intValue ?? 0) < ($1.baseSeniority?.intValue ?? 0)
             }
         }else{
-//            let predicate = NSPredicate(format:"employeeId CONTAINS[cd] %@ OR " +
-//                                        "legalName CONTAINS[cd] %@ OR " +
-//                                        "vacation CONTAINS[cd] %@ OR " +
-//                                        "baseSeniority.stringValue CONTAINS[cd] %@",
-//                                        searchText, searchText, searchText, searchText)
-//            // Filter with predicate
-//            let array = (seniorityList as NSArray).filtered(using: predicate)
-//
-//            // Safely cast results back to [SeniorityList]
-//            filteredSeniorityList = array.compactMap { $0 as? SeniorityList }
-//
-//            // Sort
-//            filteredSeniorityList.sort { $0.baseSeniority!.intValue < $1.baseSeniority!.intValue }
             filteredSeniorityList = seniorityList.filter {
                 $0.employeeId?.localizedCaseInsensitiveContains(searchText) == true ||
                 $0.legalName?.localizedCaseInsensitiveContains(searchText) == true ||
@@ -398,53 +442,7 @@ extension CBSeniorityListVC : UISearchBarDelegate {
             .sorted { $0.baseSeniority?.intValue ?? 0 < $1.baseSeniority?.intValue ?? 0 }
         }
         self.tableView.reloadData()
-        
-        
-        
-//        self.isSearchActive = !searchText.isEmpty
-//        self.searchBar.showsCancelButton = true
-//        
-//        filteredSeniorityList.removeAll()
-//        var recurringIndex = 0
-//        
-//        for index in 0..<listArray.count {
-//            
-//                        if recurringIndex == index {
-//                            recurringIndex = index + 1
-//            
-//                            let currentItem = listArray[index]
-//                            let previousItem = (index > 0) ? listArray[index - 1] : nil
-//            
-//                            let nextIndex = (index < listArray.count-1) ? index + 1 : nil
-//            
-//                            if currentItem.lowercased().contains(searchText.lowercased()) {
-//                                if let previous = previousItem {
-//                                    if isStartsWithNumber(currentItem) == false {
-//                                        filteredSeniorityList.append(previous)
-//                                        filteredSeniorityList.append(currentItem)
-//                                    } else {
-//                                        filteredSeniorityList.append(currentItem)
-//                                    }
-//                                } else {
-//                                    filteredSeniorityList.append(currentItem)
-//                                }
-//            
-//                                if let nextIndex = nextIndex {
-//                                    for j in nextIndex..<listArray.count {
-//                                        let nextItem = listArray[j]
-//                                        if isStartsWithNumber(nextItem) == false {
-//                                            filteredSeniorityList.append(nextItem)
-//                                        } else {
-//                                            recurringIndex = j
-//                                            break
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//            self.tableView.reloadData()
-//        }
+
     }
     
     func isStartsWithNumber(_ input: String) -> Bool {

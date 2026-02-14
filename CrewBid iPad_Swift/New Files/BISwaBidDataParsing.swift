@@ -486,9 +486,6 @@ class BISwaBidDataParsing{
                         context.delete(item)
                     }
                 }
-                let newSet = self.parseAndSaveSeniorityData(context: context)
-                localBidPeriod.seniorityList = newSet as NSSet
-                try context.save()
                 completion(.success(()))
 
             } catch {
@@ -512,7 +509,7 @@ class BISwaBidDataParsing{
         }
         
         guard let embeddedDict = responseDict["_embedded"] as? [String:Any] else { return [] }
-        let dictKey = self.dataSource?.round == 1 ? "IFLineBaseAuctionSeniorities" : "IFLineBaseAuctionReserveAwards"
+        let dictKey = self.dataSource?.round == 1 ? "IFLineBaseAuctionSeniorities" : "IFLineBaseAuctionReserveExternal"
         
         guard let seniorityArray = embeddedDict[dictKey] as? [[String:Any]] else{ return []}
         

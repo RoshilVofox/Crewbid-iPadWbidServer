@@ -22,6 +22,20 @@ class EndPoint {
             return "https://www27.swalife.com/webbid3pty/ThirdParty"
         }
     }
+    
+    var kCBSwaServiceURL: String{
+        let env = UserDefaults.standard.string(forKey: "SwaApiEnv")
+        var baseURL = ""
+        if env == "Dev"{
+            baseURL = "https://itest.service.east.0.crewbid.dev.swalife.com"
+        }else if env == "QA"{
+            baseURL = "https://service.east.0.crewbid.qa.swalife.com/itest"
+        }else{
+            baseURL = "https://service.crewbid.swalife.com/golden"
+        }
+        return baseURL
+    }
+    
 //    var faListWB4Json = "https://www.wbidmax.com/downloads/swa/falistwb4.json"
     var crewBidUpdate = "https://www.wbidmax.com/downloads/CrewBid/CrewBidUpdate.dat"
     var flightdataJSON = "https://www.wbidmax.com/downloads/swa/FlightDataJson.zip"

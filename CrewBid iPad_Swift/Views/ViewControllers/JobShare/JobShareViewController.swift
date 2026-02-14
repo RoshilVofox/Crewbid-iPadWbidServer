@@ -151,8 +151,69 @@ class JobShareViewController: BaseViewController {
         guard employeeContainsInFALISTForDomicile() else {
             return
         }
-        self.performBuddyListValidationFlow()
+//        self.performBuddyListValidationFlow()
+
+        let id1 = txtJobShare1.text ?? ""
+        let id2 = txtJobShare2.text ?? ""
+
+        let idsToCheck = [id1, id2].filter { !$0.isEmpty }
+
+        self.view.showActivityIndicator(message: "Checking Authentication...")
+
+        checkBuddyAuthentication(idsToCheck[0]) { [weak self] isValid1 in
+            guard let self = self else { return }
+
+            if !isValid1 {
+                DispatchQueue.main.async { self.view.hideActivityIndicator() }
+                return
+            }
+
+            if idsToCheck.count == 1 {
+                DispatchQueue.main.async { self.view.hideActivityIndicator() }
+                self.performBuddyListValidationFlow()
+                return
+            }
+
+            self.checkBuddyAuthentication(idsToCheck[1]) { isValid2 in
+
+                DispatchQueue.main.async { self.view.hideActivityIndicator() }
+
+                guard isValid2 else { return }
+
+                self.performBuddyListValidationFlow()
+            }
+        }
     }
+    
+    func checkBuddyAuthentication(_ empID: String,
+                                  completion: @escaping (Bool) -> Void) {
+
+        AuthService.shared.checkAuthentication(empID: empID) { result in
+
+            let msg = result.message ?? ""
+
+            if msg == "Invalid Account" ||
+                msg.contains("create an account") {
+
+                AlertService.showAlertForTopVC(
+                    title: "CrewBid",
+                    message: "User \(empID) does not have a CrewBid account. Go to www.crewbid.com to create the account."
+                )
+                completion(false)
+                return
+            }
+
+            completion(true)
+
+        } onFailure: { error in
+            AlertService.showAlertForTopVC(
+                title: "CrewBid",
+                message: error.localizedDescription
+            )
+            completion(false)
+        }
+    }
+    
     
     func performBuddyListValidationFlow() {
 
@@ -490,7 +551,7 @@ class JobShareViewController: BaseViewController {
     }
     
     func invalidTokenAlert(){
-        AlertService.showAlertForTopVC(title: "Job Share Alert", message: "The token has expired or is invalid. Please provide the credentials to proceed.", actions: [(title: "OK", style: .default, handler:{ _ in
+        AlertService.showAlertForTopVC(title: "Invalid Token Alert", message: "The token has expired or is invalid. Please provide the credentials to proceed.", actions: [(title: "OK", style: .default, handler:{ _ in
             DispatchQueue.main.async {
                 guard let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBCredentialsPageVC") as? CBCredentialsPageVC else { return }
                 vc.selectedRound = self.bidPeriod.round?.intValue
