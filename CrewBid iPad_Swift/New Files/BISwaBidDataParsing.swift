@@ -624,7 +624,7 @@ class BISwaBidDataParsing{
 //                    }
                 }
             case .failure(let error):
-                print(error)
+                print("Meta Data download failed: ",error.localizedDescription)
             }
         }
     }

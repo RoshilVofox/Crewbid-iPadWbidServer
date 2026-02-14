@@ -39,6 +39,11 @@ class JobShareViewController: BaseViewController {
 //        self.writeInvalidTokenToKeychainForTests()
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("AuthFlowEnded"), object: nil)
+    }
+    
 //    func writeInvalidTokenToKeychainForTests() {
 //        let tokenString = "invalid-token-for-testing"
 //        guard let data = tokenString.data(using: .utf8) else { return }

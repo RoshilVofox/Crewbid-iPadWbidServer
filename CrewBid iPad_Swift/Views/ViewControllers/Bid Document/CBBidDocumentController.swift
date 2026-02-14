@@ -110,6 +110,11 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 btnWbidMax.isHidden = true
             }
         }
+        
+        if let submittedBid = self.bidPeriod?.submittedBid, submittedBid.length > 0{
+            self.getSubmitted()
+        }
+        
         alertShouldDisplay = true
 //        self.bidLinesController = self.storyboard?.instantiateViewController(withIdentifier: "CBBidListVC") as? CBBidListVC
 //        self.bidLinesController.managedObjectContext = self.managedObjectContext
@@ -251,6 +256,95 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         })])
     }
     
+    
+    func getSubmitted(){
+        guard let employeeID = app.ObjUserAccount?.employeeNumber else{
+            print("Invalid notification format or missing employeeID")
+            return
+        }
+        if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSwaAPI?.boolValue == true {
+            let formattedMonth = String(format: "%02d", dataSource.month)
+            let bidInfo = "\(self.dataSource.base)\(self.dataSource.year)\(formattedMonth)\(self.dataSource.round)"
+            let urlString = "\(EndPoint.shared.kCBSwaServiceURL)/if-line-base-auction/bid-round/\(bidInfo)/bids?employeeId=\(employeeID)"
+            let headers: [String: String] = [
+                "Authorization": "Bearer \(KeychainHelper.retrieveTokenFromKeyChain()!)"
+                ]
+
+            
+            APIService.shared.fetch(urlString: urlString, method: .GET, headers: headers,
+                   parse: { data in
+                       let jsonObject = try JSONSerialization.jsonObject(with: data)
+                       guard let jsonDict = jsonObject as? [String: Any] else {
+                           throw Errors.decodingError
+                       }
+                       return jsonDict
+                   },
+                   completion: { result in
+                       
+                       switch result {
+                           
+                       case .success(let jsonDict):
+                           guard
+                               let embedded = jsonDict["_embedded"] as? [String: Any],
+                               let bids = embedded["IFLineBaseAuctionBids"] as? [[String: Any]],
+                               let firstBid = bids.first,
+                               let bidChoices = firstBid["bidChoices"] as? [[String: Any]]
+                           else {
+                               return
+                           }
+                           let choices: [String] = bidChoices.compactMap {
+                               $0["choice"] as? String
+                           }
+
+                           let submittedString = choices.joined(separator: ",")
+                           self.bidPeriod?.submittedBid = submittedString
+
+                       case .failure( _):
+                           print("FA SWA fetch error")
+                       }
+                   }
+               )
+        }else{
+            var dict = [String:Any]()
+            dict["Year"] = self.bidPeriod?.year
+            dict["Month"] = self.bidPeriod?.month
+            dict["Round"] = self.bidPeriod?.round
+            dict["Domicile"] = self.bidPeriod?.base
+            dict["Position"] = CBUtils.shortName(for: BICrewPositionType(rawValue: self.bidPeriod!.positionType!.intValue)!)
+            dict["EmpNum"] = employeeID
+            let urlString = EndPoint.shared.getbidSubmittedData
+            let jsonData = try! JSONSerialization.data(withJSONObject: dict)
+            let jsonString = String(data: jsonData, encoding: .utf8)
+            let bodyData = jsonString?.data(using: .utf8)
+            
+            APIService.shared.fetch(
+                urlString: urlString,
+                method: .POST,
+                body: bodyData,
+                parse: { data in
+                    let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
+                    guard let jsonDict = jsonObject as? [String: Any] else {
+                        throw Errors.decodingError
+                    }
+                    return jsonDict
+                },
+                completion: { result in
+                    switch result{
+                    case .success(let jsonDict):
+                        let submittedBids = jsonDict
+                        let submittedString = String(format: "%@", submittedBids["SubmittedResult"] as! CVarArg)
+                        DispatchQueue.main.async {
+                            if submittedString != "<null>"{                                self.bidPeriod?.submittedBid = submittedString
+                            }
+                        }
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    }
+                })
+        }
+    }
+    
+    
     @objc func handleAuthFlowEnded(){
         self.isPresentingInvalidTokenAlert = false
         self.restoreLastBidWithEmployeeID()
@@ -261,8 +355,18 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             print("Invalid notification format or missing employeeID")
             return
         }
-        self.view.showActivityIndicator(message: "Fetching Data...")
+    
+        if let submittedString = self.bidPeriod?.submittedBid, !submittedString.isEmpty{
+            self.resetAndRestoreLastBid(submitString: submittedString)
+            self.view.hideActivityIndicator()
+            AlertService.showAlertForTopVC(
+                title: "Crewbid",
+                message: "Your last bid details has been loaded."
+            )
+            return
+        }
         
+        self.view.showActivityIndicator(message: "Fetching Data...")
         
         if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSwaAPI?.boolValue == true {
             let formattedMonth = String(format: "%02d", dataSource.month)
@@ -273,10 +377,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 ]
             print("SWA SYNC")
             
-            APIService.shared.fetch(
-                   urlString: urlString,
-                   method: .GET,
-                   headers: headers,
+            APIService.shared.fetch(urlString: urlString, method: .GET, headers: headers,
                    parse: { data in
                        let jsonObject = try JSONSerialization.jsonObject(with: data)
                        guard let jsonDict = jsonObject as? [String: Any] else {
@@ -310,6 +411,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
 
                            DispatchQueue.main.async {
                                self.view.hideActivityIndicator()
+                               self.bidPeriod?.submittedBid = submittedString
                                self.resetAndRestoreLastBid(submitString: submittedString)
                                AlertService.showAlertForTopVC(
                                    title: "Crewbid",
@@ -363,6 +465,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                         DispatchQueue.main.async {
                             if submittedString != "<null>" || submittedString != ""{
                                 self.view.hideActivityIndicator()
+                                self.bidPeriod?.submittedBid = submittedString
                                 self.resetAndRestoreLastBid(submitString: submittedString)
                                 temp = true
                             }

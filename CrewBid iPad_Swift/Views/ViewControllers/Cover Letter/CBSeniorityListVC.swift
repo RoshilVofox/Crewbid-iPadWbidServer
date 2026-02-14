@@ -35,6 +35,11 @@ class CBSeniorityListVC: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(handleAuthFlowEnded), name: Notification.Name("AuthFlowEnded"), object: nil)
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("AuthFlowEnded"), object: nil)
+    }
+    
     func bidInfoHeader() -> String{
         var bidInfo = ""
         if self.bidPeriod?.isFirstRoundBid() == true{

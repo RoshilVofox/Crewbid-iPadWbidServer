@@ -34,10 +34,12 @@ class CBOptionalEmployeesPageViewController: BaseViewController {
         super.viewDidLoad()
         setupUI()
 //        FAListDict = CBUtils.readJSONStringFromFile()
-        NotificationCenter.default.addObserver(self,
-            selector: #selector(handleAuthFlowEnded),
-            name: Notification.Name("AuthFlowEnded"),
-            object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleAuthFlowEnded), name: Notification.Name("AuthFlowEnded"), object: nil)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("AuthFlowEnded"), object: nil)
     }
     
     func setupUI() {

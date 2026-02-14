@@ -830,10 +830,10 @@ extension BIBidPeriod : Identifiable {
         case BIPositionsLineSortType.BIPositionBSortType.rawValue:
             sortKey = "faPositionB"
             posString = "B"
-        case BIPositionsLineSortType.BIPositionASortType.rawValue:
+        case BIPositionsLineSortType.BIPositionCSortType.rawValue:
             sortKey = "faPositionC"
             posString = "C"
-        case BIPositionsLineSortType.BIPositionASortType.rawValue:
+        case BIPositionsLineSortType.BIPositionDSortType.rawValue:
             sortKey = "faPositionD"
             posString = "D"
         default:

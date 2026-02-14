@@ -45,7 +45,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     var previousInsertionIndex:Int = 0
     var tripCBButton: CBTripButton!
     private var _insertionIndex: Int?
-    
+    var isPresentingInvalidTokenAlert = false
     var insertionIndex: Int  {
         get {
             return Int(truncating: insertionPoint!.index ?? 0)
@@ -97,6 +97,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         lblBidLineCount.addGestureRecognizer(tapGestureRecognizer)
         tableViewNormalView.separatorStyle = .singleLine
         tableViewNormalView.separatorColor = .lightGray
+        NotificationCenter.default.addObserver(self, selector: #selector(handleAuthFlowEnded), name: Notification.Name("AuthFlowEnded"), object: nil)
 //        tableViewNormalView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
 
     }
@@ -107,6 +108,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesAboveNotification"), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBMoveSelectedNotification"), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBReturnSelectedLinesNotification"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("AuthFlowEnded"), object: nil)
     }
     
     deinit {
@@ -3404,6 +3406,7 @@ extension CBBidListVC: CBSortOptionDelegate{
                     if self.bidPeriod.isFABid() {
                         for line in self.bidPeriod.getLineWithLineNumberAndFAPos(number: lineNumInt, position: faPosition) {
                             line.submitSortOrder = orderInt.asNSNumber
+                            line.previousBidOrder = line.bidOrder
                             orderInt = orderInt + 1
                         }
                     }else {
@@ -3573,80 +3576,207 @@ extension CBBidListVC: CBSortOptionDelegate{
         }
     }
     
-    func getSubmitted(){
-        let app = UIApplication.shared.delegate as! AppDelegate
-        var dict:[String: Any] = [:]
-        
-        dict["Year"] = self.bidPeriod.year
-        dict["Month"] = self.bidPeriod.month
-        dict["Round"] = self.bidPeriod.round
-        dict["Domicile"] = self.bidPeriod.base
-        dict["Position"] = CBUtils.shortName(for: BICrewPositionType(rawValue: self.bidPeriod.positionType!.intValue)!)
-        dict["EmpNum"] = app.ObjUserAccount?.employeeNumber
-        if app.objNetworkType == .free{
-            let objEvents = CBOfflineEvents()
-            objEvents.addOfflineEvent(dict)
-            return
+    @objc func handleAuthFlowEnded(){
+        isPresentingInvalidTokenAlert = false
+        self.getSubmitted()
+    }
+    
+    func isTokenExpiredError(_ error: Error) -> Bool {
+        let nsError = error as NSError
+        let desc = nsError.localizedDescription.lowercased()
+
+        if nsError.code == 401 { return true }
+        if desc.contains("invalid_token") { return true }
+        if desc.contains("token expired") { return true }
+        if desc.contains("token not valid") { return true }
+
+        return false
+    }
+    private func showInvalidTokenAlertOnce() {
+        DispatchQueue.main.async {
+            self.view.hideActivityIndicator()
+            guard !self.isPresentingInvalidTokenAlert else { return }
+            self.isPresentingInvalidTokenAlert = true
+            self.invalidTokenAlert()
         }
-        let urlString = EndPoint.shared.getbidSubmittedData
-        let jsonData = try! JSONSerialization.data(withJSONObject: dict, options: [])
-        let jsonString = String(data: jsonData, encoding: .utf8)
-        let bodyData = jsonString?.data(using: .utf8)
-        var temp = false
-        APIService.shared.fetch(
-            urlString: urlString,
-            method: .POST,
-            body: bodyData,
-            headers: nil,
-            parse: { data in
-                // Parse and validate JSON response
-                let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
-                guard let jsonDict = jsonObject as? [String: Any] else {
-                    throw Errors.decodingError
+    }
+    
+    func invalidTokenAlert(){
+        AlertService.showAlertForTopVC(title: "Invalid Token Alert", message: "The token has expired or is invalid. Please provide the credentials to proceed.", actions: [(title: "OK", style: .default, handler:{ _ in
+            DispatchQueue.main.async {
+                guard let vc = UIStoryboard(name: "BidInfo", bundle: nil).instantiateViewController(withIdentifier: "CBCredentialsPageVC") as? CBCredentialsPageVC else { return }
+                vc.preferredContentSize = CGSize(width: 600, height: 550)
+                vc.isModalInPresentation = true
+                var dictInfo: [String: Any] = [:]
+                dictInfo["base"] = self.bidPeriod?.base
+                dictInfo["month"] = self.bidPeriod?.month
+                dictInfo["round"] = self.bidPeriod?.round
+                if let positionValue = self.bidPeriod?.positionType?.intValue,
+                   let pos = BICrewPositionType(rawValue: positionValue){
+                    dictInfo["position"] = CBUtils.shortName(for: pos)
+                    vc.selectedPosition = pos
                 }
-                return jsonDict
-            },
-            completion: { result in
-                switch result {
-                case .success(let jsonDict):
-                    let submittedBids = jsonDict
-                    let submittedString = String(format: "%@", submittedBids["SubmittedResult"] as! CVarArg)
-                    if submittedString != "<null>"{
-                        self.bidPeriod.submittedBid = String(format: "%@", submittedBids["SubmittedResult"] as! CVarArg)
-                        temp = true
-                    }
-                    if !temp{
-                        DispatchQueue.main.async {
-                            let msg = "We have no record of a Submitted Bid.  You can login to SwaLife and go see all of your submitted bids.\n\nPilots:  My Work => Flight Ops => Our Business => Bid Info => BidInfo => Search Bids \n\nFlight Attendants:  My Work => Inflight => Bidding => BidInfo => BidInfo => Search Bids"
-                            AlertService.showAlertForTopVC(title: "Sorry!", message: msg, actions: [(title: "OK", style: .default, handler: {_ in
-                                self.btnASort.backgroundColor = CBColor.cbOrangeColor
-                                self.isSubmitSort = false
-                                if self.bidPeriod.isAwardSortOn?.boolValue == true{
-                                    self.btnASort.backgroundColor = CBColor.cbGreenColor
-                                }
-                            })])
-                        }
-                    }else{
-                        DispatchQueue.main.async {
-                            self.loadBidLine()
-                            self.tableViewNormalView.reloadData()
-                        }
-                    }
-                    
-                case .failure(let error):
-                    switch error {
-                    case .timeout:
-                        if let monthValue = self.bidPeriod.month {
-                            let objEvent = CBOfflineEvents()
-                            objEvent.sendOfflineDataForTimeOut(url: urlString, month: monthValue)
-                        }
-                    default:
-                        print("Request failed: \(error)")
-                    }
-                }
+                vc.isForReauth = true
+                self.isPresentingInvalidTokenAlert = true
+                self.present(vc, animated: true)
             }
-        )
-        
+        })])
+    }
+    
+    func getSubmitted(){
+        guard let employeeID = app.ObjUserAccount?.employeeNumber else { return }
+        self.view.showActivityIndicator()
+        if self.bidPeriod?.isFABid() == true && self.bidPeriod?.isSwaAPI?.boolValue == true {
+            let dataSource = GlobalBidInfo.shared
+            let formattedMonth = String(format: "%02d", dataSource.month)
+            let bidInfo = "\(dataSource.base)\(dataSource.year)\(formattedMonth)\(dataSource.round)"
+            let urlString = "\(EndPoint.shared.kCBSwaServiceURL)/if-line-base-auction/bid-round/\(bidInfo)/bids?employeeId=\(employeeID)"
+            let headers: [String: String] = [
+                "Authorization": "Bearer \(KeychainHelper.retrieveTokenFromKeyChain()!)"
+                ]
+            print("SWA Submit Sort")
+
+            APIService.shared.fetch(urlString: urlString, method: .GET, headers: headers,
+                   parse: { data in
+                       let jsonObject = try JSONSerialization.jsonObject(with: data)
+                       guard let jsonDict = jsonObject as? [String: Any] else {
+                           throw Errors.decodingError
+                       }
+                       return jsonDict
+                   },
+                   completion: { result in
+
+                       switch result {
+
+                       case .success(let jsonDict):
+
+                           guard
+                               let embedded = jsonDict["_embedded"] as? [String: Any],
+                               let bids = embedded["IFLineBaseAuctionBids"] as? [[String: Any]],
+                               let firstBid = bids.first,
+                               let bidChoices = firstBid["bidChoices"] as? [[String: Any]]
+                           else {
+                               DispatchQueue.main.async {
+                                   self.view.hideActivityIndicator()
+                                   let msg = "We have no record of a Submitted Bid.  You can login to SwaLife and go see all of your submitted bids.\n\nPilots:  My Work => Flight Ops => Our Business => Bid Info => BidInfo => Search Bids \n\nFlight Attendants:  My Work => Inflight => Bidding => BidInfo => BidInfo => Search Bids"
+                                   AlertService.showAlertForTopVC(title: "Sorry!", message: msg, actions: [(title: "OK", style: .default, handler: {_ in
+                                       self.btnASort.backgroundColor = CBColor.cbOrangeColor
+                                       self.isSubmitSort = false
+                                       if self.bidPeriod.isAwardSortOn?.boolValue == true{
+                                           self.btnASort.backgroundColor = CBColor.cbGreenColor
+                                       }
+                                   })])
+                               }
+                               return
+                           }
+                           let choices: [String] = bidChoices.compactMap {
+                               $0["choice"] as? String
+                           }
+
+                           let submittedString = choices.joined(separator: ",")
+                           self.bidPeriod?.submittedBid = submittedString
+                           
+                           DispatchQueue.main.async {
+                               self.isSubmitSort = true
+                               self.view.hideActivityIndicator()
+                               self.btnASort.backgroundColor = CBColor.cbGreenColor
+                               self.loadBidLine()
+                               self.tableViewNormalView.reloadData()
+                           }
+
+                       case .failure(let error):
+                           DispatchQueue.main.async {
+                               self.view.hideActivityIndicator()
+                               if self.isTokenExpiredError(error) == true {
+                                   self.btnASort.backgroundColor = CBColor.cbOrangeColor
+                                   self.isSubmitSort = false
+                                   if self.bidPeriod.isAwardSortOn?.boolValue == true{
+                                       self.btnASort.backgroundColor = CBColor.cbGreenColor
+                                   }
+                                   self.showInvalidTokenAlertOnce()
+                                   return
+                               }
+                           }
+
+
+                           print("FA SWA fetch error:", error.localizedDescription)
+                       }
+                   }
+               )
+        }else{
+            let app = UIApplication.shared.delegate as! AppDelegate
+            var dict:[String: Any] = [:]
+            
+            dict["Year"] = self.bidPeriod.year
+            dict["Month"] = self.bidPeriod.month
+            dict["Round"] = self.bidPeriod.round
+            dict["Domicile"] = self.bidPeriod.base
+            dict["Position"] = CBUtils.shortName(for: BICrewPositionType(rawValue: self.bidPeriod.positionType!.intValue)!)
+            dict["EmpNum"] = employeeID
+            if app.objNetworkType == .free{
+                let objEvents = CBOfflineEvents()
+                objEvents.addOfflineEvent(dict)
+                return
+            }
+            let urlString = EndPoint.shared.getbidSubmittedData
+            let jsonData = try! JSONSerialization.data(withJSONObject: dict, options: [])
+            let jsonString = String(data: jsonData, encoding: .utf8)
+            let bodyData = jsonString?.data(using: .utf8)
+            var temp = false
+            APIService.shared.fetch(
+                urlString: urlString,
+                method: .POST,
+                body: bodyData,
+                headers: nil,
+                parse: { data in
+                    // Parse and validate JSON response
+                    let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
+                    guard let jsonDict = jsonObject as? [String: Any] else {
+                        throw Errors.decodingError
+                    }
+                    return jsonDict
+                },
+                completion: { result in
+                    switch result {
+                    case .success(let jsonDict):
+                        let submittedBids = jsonDict
+                        let submittedString = String(format: "%@", submittedBids["SubmittedResult"] as! CVarArg)
+                        if submittedString != "<null>"{
+                            self.bidPeriod.submittedBid = String(format: "%@", submittedBids["SubmittedResult"] as! CVarArg)
+                            temp = true
+                        }
+                        if !temp{
+                            DispatchQueue.main.async {
+                                let msg = "We have no record of a Submitted Bid.  You can login to SwaLife and go see all of your submitted bids.\n\nPilots:  My Work => Flight Ops => Our Business => Bid Info => BidInfo => Search Bids \n\nFlight Attendants:  My Work => Inflight => Bidding => BidInfo => BidInfo => Search Bids"
+                                AlertService.showAlertForTopVC(title: "Sorry!", message: msg, actions: [(title: "OK", style: .default, handler: {_ in
+                                    self.btnASort.backgroundColor = CBColor.cbOrangeColor
+                                    self.isSubmitSort = false
+                                    if self.bidPeriod.isAwardSortOn?.boolValue == true{
+                                        self.btnASort.backgroundColor = CBColor.cbGreenColor
+                                    }
+                                })])
+                            }
+                        }else{
+                            DispatchQueue.main.async {
+                                self.loadBidLine()
+                                self.tableViewNormalView.reloadData()
+                            }
+                        }
+                        
+                    case .failure(let error):
+                        switch error {
+                        case .timeout:
+                            if let monthValue = self.bidPeriod.month {
+                                let objEvent = CBOfflineEvents()
+                                objEvent.sendOfflineDataForTimeOut(url: urlString, month: monthValue)
+                            }
+                        default:
+                            print("Request failed: \(error)")
+                        }
+                    }
+                }
+            )
+        }
     }
     
     
