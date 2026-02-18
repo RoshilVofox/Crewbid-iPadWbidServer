@@ -321,17 +321,36 @@ class CBDefaultEmployeeVC: BaseViewController {
                     }
                 }
             }else{
-                    // Back up 50 characters and find the next line
-                var awardedLineCheck: String? = ""
-//                scanner.scanLocation -= 45
-                let newIndex = scanner.string.index(scanner.currentIndex, offsetBy: -45, limitedBy: scanner.string.startIndex)!
-                    scanner.currentIndex = newIndex
-                awardedLineCheck = scanner.scanUpToCharacters(from: newLineCharSet)
-                awardedLineCheck = scanner.scanUpToCharacters(from: numCharSet)
-                    // Scan the awarded line number
+//                    // Back up 50 characters and find the next line
+//                var awardedLineCheck: String? = ""
+////                scanner.scanLocation -= 45
+//                let newIndex = scanner.string.index(scanner.currentIndex, offsetBy: -45, limitedBy: scanner.string.startIndex)!
+//                    scanner.currentIndex = newIndex
+//                awardedLineCheck = scanner.scanUpToCharacters(from: newLineCharSet)
+//                awardedLineCheck = scanner.scanUpToCharacters(from: numCharSet)
+//                    // Scan the awarded line number
+//                awardedLine = scanner.scanCharacters(from: numCharSet)
+//                awardedPos = " "
+//                print("\(String(describing: awardedLineCheck))")
+                var lineStart = firstEIDLoc
+                let text = scanner.string
+
+                while lineStart > text.startIndex {
+                    let prevIndex = text.index(before: lineStart)
+                    if text[prevIndex] == "\n" || text[prevIndex] == "\r" {
+                        break
+                    }
+                    lineStart = prevIndex
+                }
+
+                // Set scanner to beginning of employee's row
+                scanner.currentIndex = lineStart
+
+                // Scan FIRST number on this line (correct awarded line)
+                _ = scanner.scanUpToCharacters(from: numCharSet)
                 awardedLine = scanner.scanCharacters(from: numCharSet)
+
                 awardedPos = " "
-                print("\(String(describing: awardedLineCheck))")
             }
         }
         let returnDict = NSDictionary(objects:[awardedLine!, awardedPos!], forKeys:["awardedLine", "awardedPos"] as [NSCopying]) as Dictionary
@@ -522,52 +541,55 @@ extension CBDefaultEmployeeVC : UITextFieldDelegate{
   
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-
-        if type != .confirmEmployeeNumber {
-            guard let empID = textEmpNum.text, !empID.isEmpty else {
-                shakeTextField(textField: textEmpNum)
-                return false
-            }
-
-            dataSource.employeeNumber = empID
-            UserDefaults.standard.set(empID, forKey: kCBDefaultEmployeeNumberKey)
-
-            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
-
-            AuthService.shared.checkAuthentication(empID: empID) { [weak self] authResult in
-                guard let self = self else { return }
-                self.view.hideActivityIndicator()
-
-                if authResult.isSomehowSubscribed {
-                    self.isEmpIDVerified = true
-                    self.confirmEmpNum = empID
-                    self.handleAuthResult(authResult) // existing method
-                    self.goToNextPage()
-                } else {
-                    let alert = AlertService.showAlert(
-                        title: "Authentication Failed",
-                        message: authResult.message ?? "You are not subscribed or authorized.",
-                        actions: nil
-                    )
-                    self.present(alert, animated: true)
-                }
-
-            } onFailure: { [weak self] error in
-                guard let self = self else { return }
-                self.view.hideActivityIndicator()
-                self.showAlert(message: error.localizedDescription)
-            }
-
-            return true
-        } else {
-            // Confirm Employee Number
-            if confirmEmpNum != textEmpNum.text! {
-//                self.navigationController?.popViewController(animated: true)
-            } else {
-                self.goToNextPage()
-            }
-            return true
-        }
+        btnNextAction(textField)
+        return true
+        
+//
+//        if type != .confirmEmployeeNumber {
+//            guard let empID = textEmpNum.text, !empID.isEmpty else {
+//                shakeTextField(textField: textEmpNum)
+//                return false
+//            }
+//
+//            dataSource.employeeNumber = empID
+//            UserDefaults.standard.set(empID, forKey: kCBDefaultEmployeeNumberKey)
+//
+//            self.view.showActivityIndicator(color: CBColor.cbPurpleColor, message: "Authentication Checking...")
+//
+//            AuthService.shared.checkAuthentication(empID: empID) { [weak self] authResult in
+//                guard let self = self else { return }
+//                self.view.hideActivityIndicator()
+//
+//                if authResult.isSomehowSubscribed {
+//                    self.isEmpIDVerified = true
+//                    self.confirmEmpNum = empID
+//                    self.handleAuthResult(authResult) // existing method
+//                    self.goToNextPage()
+//                } else {
+//                    let alert = AlertService.showAlert(
+//                        title: "Authentication Failed",
+//                        message: authResult.message ?? "You are not subscribed or authorized.",
+//                        actions: nil
+//                    )
+//                    self.present(alert, animated: true)
+//                }
+//
+//            } onFailure: { [weak self] error in
+//                guard let self = self else { return }
+//                self.view.hideActivityIndicator()
+//                self.showAlert(message: error.localizedDescription)
+//            }
+//
+//            return true
+//        } else {
+//            // Confirm Employee Number
+//            if confirmEmpNum != textEmpNum.text! {
+////                self.navigationController?.popViewController(animated: true)
+//            } else {
+//                self.goToNextPage()
+//            }
+//            return true
+//        }
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {

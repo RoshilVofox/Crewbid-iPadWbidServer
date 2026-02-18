@@ -1463,7 +1463,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                     navigationController.view.layer.add(transition, forKey: kCATransition)
                     navigationController.popToRootViewController(animated: false)
                     CBGlobalMethods.shared.canPerformUndo = false
+                    CBGlobalMethods.shared.selectedBidPeriod = nil
                 } else {
+                    CBGlobalMethods.shared.selectedBidPeriod = nil
                     self.dismiss(animated: true)
                 }
             })])
@@ -1476,7 +1478,9 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 navigationController.view.layer.add(transition, forKey: kCATransition)
                 navigationController.popToRootViewController(animated: false)
                 CBGlobalMethods.shared.canPerformUndo = false
+                CBGlobalMethods.shared.selectedBidPeriod = nil
             } else {
+                CBGlobalMethods.shared.selectedBidPeriod = nil
                 self.dismiss(animated: true)
             }
         }

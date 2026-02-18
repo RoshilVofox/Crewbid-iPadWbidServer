@@ -437,7 +437,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
     let allbidDownloadViewModel = BIAllDomicileDownloadViewModel()
     var jobShare1:String?
     var jobShare2:String?
-    
+    var isSubmitSort = false
     //for new API
     var webViewloaded = false
     var clientID: String = "p502838"
@@ -959,6 +959,9 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
             let user = userDetails["cn"] as? String{
             self.defaultEmployeeNumber = user
         }
+        if let secretID = UserDefaults.standard.string(forKey: "SecretVDuserName"), !secretID.isEmpty{
+            self.defaultEmployeeNumber = secretID
+        }
         
         let group = DispatchGroup()
             self.awardError = nil
@@ -1381,7 +1384,11 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
     @IBAction func btnBackAction(_ sender: UIButton) {
         
         if isForReauth {
-            NotificationCenter.default.post(name: Notification.Name("AuthFlowEnded"), object: nil)
+            if isSubmitSort{
+                NotificationCenter.default.post(name: Notification.Name("AuthFlowEndedSubmitSort"), object: nil)
+            }else{
+                NotificationCenter.default.post(name: Notification.Name("AuthFlowEnded"), object: nil)
+            }
             self.dismiss(animated: true, completion: nil)
             return
         }

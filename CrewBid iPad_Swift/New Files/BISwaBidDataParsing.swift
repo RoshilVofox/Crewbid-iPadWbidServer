@@ -91,7 +91,6 @@ class BISwaBidDataParsing{
                 }
             }
             
-            
             self.bidPeriod?.bidByEmpID = self.dataSource?.employeeNumber
             self.bidPeriod?.isSwaAPI = 1
             
@@ -442,6 +441,7 @@ class BISwaBidDataParsing{
             let empNum = Int(empNumString) {
             bidPeriod.crewIdentifier = NSNumber(value: empNum)
         }
+        
         
         if let fullId = self.dataSource?.swaptimizerID {
             let trimmed = String(fullId.dropFirst())

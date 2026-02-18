@@ -143,7 +143,12 @@ extension CBCredentialsPageVC: WKNavigationDelegate{
             DispatchQueue.main.async {
                 self.stopWebViewOperations()
                 if self.isForReauth {
-                    NotificationCenter.default.post(name: Notification.Name("AuthFlowEnded"), object: nil)
+                    if self.isSubmitSort{
+                        NotificationCenter.default.post(name: Notification.Name("AuthFlowEndedSubmitSort"), object: nil)
+                    }else{
+                        NotificationCenter.default.post(name: Notification.Name("AuthFlowEnded"), object: nil)
+                    }
+
                     self.dismiss(animated: true, completion: nil)
                     return
                 }
@@ -160,7 +165,7 @@ extension CBCredentialsPageVC: WKNavigationDelegate{
                     : rawUserId
 
                 self.userid = normalizedId
-                GlobalBidInfo.shared.employeeNumber = normalizedId
+//                self.dataSource.employeeNumber = normalizedId
                 GlobalBidInfo.shared.credentialEmployeeNumber = rawUserId
                 self.webViewModel?.onDownloadError = { [weak self] error in
                     self?.handleDownloadError(error)

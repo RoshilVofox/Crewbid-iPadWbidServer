@@ -45,6 +45,47 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
         tableView.layer.cornerRadius = 5
         textAppending()
     }
+    
+    private func setupSearchUI() {
+
+        tableView.isHidden = false
+        tableView.keyboardDismissMode = .onDrag
+        textView.isHidden = true
+
+        searchBar.isHidden = false
+        searchBar.delegate = self
+
+        if #available(iOS 15.0, *) {
+            searchBar.tintColor = .tintColor
+        } else {
+            searchBar.tintColor = .systemBlue
+        }
+
+        if #available(iOS 13.0, *) {
+            searchBar.searchTextField.backgroundColor = .systemGray6
+        }
+
+        for view in searchBar.subviews.last!.subviews {
+            if view.isKind(of: NSClassFromString("UISearchBarBackground")!) {
+                view.alpha = 0
+            }
+        }
+    }
+    private func loadList(from text: String?) {
+
+        listArray.removeAll()
+        filteredListArray.removeAll()
+
+        guard let lines = text else { return }
+
+        for line in lines.components(separatedBy: "\n") {
+            listArray.append(line)
+        }
+
+        tableView.separatorStyle = .none
+        tableView.reloadData()
+    }
+    
     func textAppending() {
         textView.font = UIFont(name: "Courier", size: 16)
         
@@ -52,36 +93,9 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
             case .seniorityList:
                 lblTitle.text = "Seniority List"
                 titleText = "Seniority List"
-            textView.text = self.bidPeriod?.textFile(withName: BISeniorityListTextFileName)?.text
-                
-                tableView.isHidden = false
-                tableView.keyboardDismissMode = .onDrag
-                textView.isHidden = true
-                searchBar.isHidden = false
-                searchBar.delegate = self
-                if #available(iOS 15.0, *) {
-                    searchBar.tintColor = .tintColor
-                } else {
-                    searchBar.tintColor = .systemBlue
-                }
-            
-                if #available(iOS 13.0, *) {
-                    searchBar.searchTextField.backgroundColor = .systemGray6
-                }
-            
-                for view in searchBar.subviews.last!.subviews {
-                    if view.isKind(of: NSClassFromString("UISearchBarBackground")!) {
-                        view.alpha = 0
-                    }
-                }
-            
-            if let lines = self.bidPeriod?.textFile(withName: BISeniorityListTextFileName)?.text {
-                    for line in lines.components(separatedBy: "\n") {
-                        listArray.append(String(line))
-                    }
-                    tableView.separatorStyle = .none
-                    tableView.reloadData()
-                }
+                setupSearchUI()
+                let seniorityText = self.bidPeriod?.textFile(withName: BISeniorityListTextFileName)?.text
+                loadList(from: seniorityText)
             
                 msgLabel = UILabel()
                 msgLabel.text = "No seniority data found.\nTry with other keywords."
@@ -113,7 +127,10 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
             case .awardText:
                 lblTitle.text = "Bid Awards"
                 titleText = "Bid Awards"
-                textView.text = self.bidPeriod?.awardString
+                setupSearchUI()
+//                textView.text = self.bidPeriod?.awardString
+                let awardText = self.bidPeriod?.awardString
+                loadList(from: awardText)
                 break
             case .faMemo:
                 lblTitle.text = "FA Memo"
