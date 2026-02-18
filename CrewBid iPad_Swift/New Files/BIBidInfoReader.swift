@@ -6520,7 +6520,7 @@ class BIBidInfoReader{
         var prevLeg:BILegInfo?
         let dict = AppState.shared.missingTripInfo
         
-        if dict?["JsonTripData"] is NSNull{
+        if dict?["JsonTripData"] is NSNull || dict?["JsonTripData"] == nil {
             if self.showAlertForPP == true{
                 NotificationCenter.default.post(name: Notification.Name("ShowAlert"), object: nil)
                 self.bidPeriod?.containsMissingTripLines = true

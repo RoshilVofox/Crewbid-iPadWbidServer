@@ -2574,23 +2574,74 @@ class CBUtils{
 //        return fromIsDST != toIsDST
 //    }
     
-    static func dstMinuteAdjustment(from fromDate: Date, to toDate: Date) -> Int {
-        let centralTZ = TimeZone(identifier: "US/Central")!
+//    static func dstMinuteAdjustment(from fromDate: Date, to toDate: Date) -> Int {
+//        let centralTZ = TimeZone(identifier: "US/Central")!
+//
+//        let fromIsDST = centralTZ.isDaylightSavingTime(for: fromDate)
+//        let toIsDST   = centralTZ.isDaylightSavingTime(for: toDate)
+//
+//        // No DST boundary crossed
+//        guard fromIsDST != toIsDST else {
+//            return 0
+//        }
+//
+//        let fromOffset = centralTZ.secondsFromGMT(for: fromDate)
+//        let toOffset   = centralTZ.secondsFromGMT(for: toDate)
+//
+//        return (toOffset - fromOffset) / 60
+//    }
 
-        let fromIsDST = centralTZ.isDaylightSavingTime(for: fromDate)
-        let toIsDST   = centralTZ.isDaylightSavingTime(for: toDate)
-
-        // No DST boundary crossed
-        guard fromIsDST != toIsDST else {
+    static func dstMinuteAdjustment(from fromDate: Date, to toDate: Date, base: String?) -> Int {
+        
+        guard let baseCode = base,
+              let baseTimeZone = timeZone(for: baseCode) else {
             return 0
         }
-
-        let fromOffset = centralTZ.secondsFromGMT(for: fromDate)
-        let toOffset   = centralTZ.secondsFromGMT(for: toDate)
-
+        
+        // PHX does not observe DST
+        if baseCode.uppercased() == "PHX" {
+            return 0
+        }
+        
+        let startDate = min(fromDate, toDate)
+        let endDate   = max(fromDate, toDate)
+        
+        // Check if a DST transition occurs between the two dates
+        guard let transition = baseTimeZone.nextDaylightSavingTimeTransition(after: startDate),
+              transition <= endDate else {
+            return 0
+        }
+        
+        let fromOffset = baseTimeZone.secondsFromGMT(for: fromDate)
+        let toOffset   = baseTimeZone.secondsFromGMT(for: toDate)
+        
         return (toOffset - fromOffset) / 60
     }
 
+
+    private static func timeZone(for baseCode: String) -> TimeZone? {
+        switch baseCode.uppercased() {
+            
+        case "AUS", "DAL", "HOU", "MDW", "BNA":
+            return TimeZone(identifier: "US/Central")
+            
+        case "LAX", "OAK", "LAS":
+            return TimeZone(identifier: "US/Pacific")
+            
+        case "DEN":
+            return TimeZone(identifier: "US/Mountain")
+            
+        case "PHX":
+            return TimeZone(identifier: "America/Phoenix") // No DST
+            
+        case "ATL", "MCO", "BWI":
+            return TimeZone(identifier: "US/Eastern")
+            
+        default:
+            return nil
+        }
+    }
+    
     static func domicileTimeFromHerb(domicile: String, dayDate: Date, herb: Int) -> Int {
         
         var calendar = Calendar(identifier: .gregorian)
