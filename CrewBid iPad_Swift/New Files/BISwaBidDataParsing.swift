@@ -854,13 +854,14 @@ class BISwaBidDataParsing{
                 
                 // Calculate departure minutes
                 if let depDate = departureDate, let firstDate = firstLegDate {
-                    offset = CBUtils.dstMinuteAdjustment(from: firstDate, to: depDate)
+                    offset = CBUtils.dstMinuteAdjustment(from: firstDate, to: depDate, base: bidPeriod?.base)
                     let departMinutes = firstLegDepartMin + Int(depDate.timeIntervalSince(firstDate) / 60)
                     legInfo?.departMinutes = NSNumber(value: departMinutes  + offset)
                 }
                 // Calculate arrival minutes
                 if let arrDate = arrivalDate, let firstDate = firstLegDate {
-                    offset = CBUtils.dstMinuteAdjustment(from: firstDate, to: arrDate)
+                    offset = CBUtils.dstMinuteAdjustment(from: firstDate, to: arrDate, base: bidPeriod?.base)
+                    
                     let arriveMinutes = firstLegDepartMin + Int(arrDate.timeIntervalSince(firstDate) / 60)
                     legInfo?.arriveMinutes = NSNumber(value: arriveMinutes  + offset)
                 }
