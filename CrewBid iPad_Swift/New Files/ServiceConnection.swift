@@ -574,7 +574,7 @@ class ServiceConnection: NSObject, URLSessionDelegate, URLSessionDataDelegate{
                     didReceive response: URLResponse,
                     completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         
-//        print("response received \(response)")
+        print("response received \(response)")
         
         guard let res = response as? HTTPURLResponse else {
             completionHandler(.cancel)

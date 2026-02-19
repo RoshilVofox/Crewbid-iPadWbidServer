@@ -9,10 +9,13 @@ class SecretMethodsViewController: UIViewController {
     @IBOutlet weak var closeBtn: UIButton!
     @IBOutlet weak var mockDataSegment: UISegmentedControl!
     @IBOutlet weak var secretVacationSegment: UISegmentedControl!
-    @IBOutlet weak var secretAwsrdSegment: UISegmentedControl!
+    @IBOutlet weak var secretAwardSegment: UISegmentedControl!
     @IBOutlet weak var envSegment: UISegmentedControl!
     @IBOutlet weak var envLbl: UILabel!
+    @IBOutlet weak var txtSecretUser: UITextField!
     
+    @IBOutlet weak var secretStack1: UIStackView!
+    @IBOutlet weak var secretStack2: UIStackView!
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -27,7 +30,7 @@ class SecretMethodsViewController: UIViewController {
             qaTestSegment.selectedSegmentIndex = isQATest ? 0 : 1
         mockDataSegment.selectedSegmentIndex = 1
         secretVacationSegment.selectedSegmentIndex = 1
-        secretAwsrdSegment.selectedSegmentIndex = 1
+        secretAwardSegment.selectedSegmentIndex = 1
         closeBtn.setTitle("", for: .normal)
         
         let env = UserDefaults.standard.string(forKey: "SwaApiEnv") ?? "Prod"
@@ -41,6 +44,29 @@ class SecretMethodsViewController: UIViewController {
         default:
             envSegment.selectedSegmentIndex = 0
         }
+        
+        if let secretID = UserDefaults.standard.string(forKey: "SecretVDuserName"), !secretID.isEmpty{
+            self.txtSecretUser.text = secretID
+            secretAwardSegment.selectedSegmentIndex = 0
+        }else{
+            secretAwardSegment.selectedSegmentIndex = 1
+        }
+        
+        if secretAwardSegment.selectedSegmentIndex == 0{
+            self.secretStack2.isHidden = false
+        }else{
+            self.secretStack2.isHidden = true
+        }
+        
+        
+        if CBGlobalMethods.shared.selectedBidPeriod == nil {
+            self.secretStack1.isHidden = true
+//            self.secretStack2.isHidden = true
+        }else{
+            self.secretStack1.isHidden = false
+            
+        }
+
     }
     
     @IBAction func closeBtnAction(_ sender: Any) {
@@ -161,4 +187,26 @@ class SecretMethodsViewController: UIViewController {
         UserDefaults.standard.set(environment, forKey: "SwaApiEnv")
         NotificationCenter.default.post(name: NSNotification.Name("updateTitle"), object: nil)
     }
+    
+    @IBAction func secretSgmntAction(_ sender: UISegmentedControl) {
+        let selectedIndex = sender.selectedSegmentIndex
+        if selectedIndex == 0{
+            self.secretStack2.isHidden = false
+        }else{
+            self.secretStack2.isHidden = true
+            UserDefaults.standard.set(nil, forKey: "SecretVDuserName")
+            self.txtSecretUser.text = nil
+        }
+    }
+    
+    @IBAction func secretSubmitAction(_ sender: Any) {
+        
+        if let txt = self.txtSecretUser.text, !txt.isEmpty{
+            UserDefaults.standard.set(txt, forKey: "SecretVDuserName")
+        }else{
+        }
+        
+        
+    }
+    
 }

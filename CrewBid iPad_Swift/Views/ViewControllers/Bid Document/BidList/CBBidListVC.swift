@@ -46,6 +46,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
     var tripCBButton: CBTripButton!
     private var _insertionIndex: Int?
     var isPresentingInvalidTokenAlert = false
+    var handledLinePositions = Set<String>()
     var insertionIndex: Int  {
         get {
             return Int(truncating: insertionPoint!.index ?? 0)
@@ -97,7 +98,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         lblBidLineCount.addGestureRecognizer(tapGestureRecognizer)
         tableViewNormalView.separatorStyle = .singleLine
         tableViewNormalView.separatorColor = .lightGray
-        NotificationCenter.default.addObserver(self, selector: #selector(handleAuthFlowEnded), name: Notification.Name("AuthFlowEnded"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleAuthFlowEnded), name: Notification.Name("AuthFlowEndedSubmitSort"), object: nil)
 //        tableViewNormalView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
 
     }
@@ -108,7 +109,7 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBInsertLinesAboveNotification"), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBMoveSelectedNotification"), object: nil)
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("CBReturnSelectedLinesNotification"), object: nil)
-        NotificationCenter.default.removeObserver(self, name: Notification.Name("AuthFlowEnded"), object: nil)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("AuthFlowEndedSubmitSort"), object: nil)
     }
     
     deinit {
@@ -3160,7 +3161,6 @@ extension CBBidListVC: CBSortOptionDelegate{
 
             btnASort.backgroundColor = CBColor.cbGreenColor
             // Check if award details are available or fetch them
-
             if self.bidPeriod.awardDetails?.allObjects.count == 0 {
                 self.apiForGetAwardDetails { [self] (success) in
                     print(success)
@@ -3299,7 +3299,7 @@ extension CBBidListVC: CBSortOptionDelegate{
             }
     }
     
-    
+
     func saveData(_ json: [String: Any]) {
         DispatchQueue.main.async {
             guard let awardPosition = json["Position"] as? String,
@@ -3315,30 +3315,36 @@ extension CBBidListVC: CBSortOptionDelegate{
             let bidPeriod = self.bidPeriod
             for awardDict in awardArray {
                 autoreleasepool {
-                    
                     let awardDetail = AwardDetails(entity: awardEntity, insertInto: context)
                     
                     if let empNum = awardDict["EmpNum"] {
                         let empNUMString = "\(empNum)"
                         awardDetail.empNum = empNUMString
                         
-                        if bidPeriod?.swaptimizerIdentifier?.stringValue == empNUMString {
+                        if bidPeriod?.swaptimizerIdentifier?.stringValue == empNUMString{
                             self.awardedLineNum = awardDict["LineNum"] as? String
                         }
                     }
+
+                    let lineNum = (awardDict["LineNum"] as? NSNumber)?.intValue ?? -1
+                    let position = (awardDict["Position"] as? String) ?? ""
                     
-                    awardDetail.lineNum = awardDict["LineNum"] as! Int16
-                    awardDetail.seqNumber = awardDict["SeqNumber"] as! Int16
-                    
-                    if awardPosition == "FA" {
-                        if let pos = awardDict["Position"], !(pos is NSNull) {
-                            awardDetail.position = pos as? String
-                        } else {
-                            awardDetail.position = ""
+                    let key = "\(lineNum)\(position)"
+                    if !self.handledLinePositions.contains(key) {
+                        awardDetail.lineNum = awardDict["LineNum"] as! Int16
+                        awardDetail.seqNumber = awardDict["SeqNumber"] as! Int16
+                        
+                        if awardPosition == "FA" {
+                            if let pos = awardDict["Position"], !(pos is NSNull) {
+                                awardDetail.position = pos as? String
+                            } else {
+                                awardDetail.position = ""
+                            }
                         }
+                        awardDetail.bidPeriod = bidPeriod
+                        self.handledLinePositions.insert(key)
                     }
                     
-                    awardDetail.bidPeriod = bidPeriod
                     do {
                         try context.save()
                     } catch {
@@ -3616,6 +3622,7 @@ extension CBBidListVC: CBSortOptionDelegate{
                     dictInfo["position"] = CBUtils.shortName(for: pos)
                     vc.selectedPosition = pos
                 }
+                vc.isSubmitSort = true
                 vc.isForReauth = true
                 self.isPresentingInvalidTokenAlert = true
                 self.present(vc, animated: true)

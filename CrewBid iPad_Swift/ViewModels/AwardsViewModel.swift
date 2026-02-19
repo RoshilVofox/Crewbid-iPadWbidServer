@@ -141,8 +141,15 @@ class AwardsViewModel {
             "Position": userPosition ?? ""
         ]
         
+        
+        
         let numberEmpNum = extractNumber(fromText: empNum) ?? ""
-        dicData["EmployeeNumber"] = bidPeriod.crewIdentifier?.stringValue ?? numberEmpNum
+        if let secretID = UserDefaults.standard.string(forKey: "SecretVDuserName"), !secretID.isEmpty{
+            dicData["EmployeeNumber"] = numberEmpNum
+        }else{
+            dicData["EmployeeNumber"] = bidPeriod.crewIdentifier?.stringValue
+        }
+//        dicData["EmployeeNumber"] = bidPeriod.crewIdentifier?.stringValue ?? numberEmpNum
         EmpNum = numberEmpNum
         guard let url = URL(string: EndPoint.shared.getCurrentMonthAwardData) else { return nil }
         

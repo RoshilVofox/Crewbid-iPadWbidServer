@@ -294,9 +294,9 @@ class BISwaBidDataDownloadViewModel{
         if self.dataSource?.position != nil {
             userDefaults.set(self.dataSource!.position.rawValue, forKey: kCBCrewPositionTypeDefaultKey)
         }
-        if self.dataSource?.employeeNumber != nil {
-            userDefaults.set(self.dataSource!.employeeNumber, forKey: kCBEmployeeNumberDefaultKey)
-        }
+//        if self.dataSource?.employeeNumber != nil {
+//            userDefaults.set(self.dataSource!.employeeNumber, forKey: kCBEmployeeNumberDefaultKey)
+//        }
         if self.dataSource?.round != nil {
             userDefaults.set(self.dataSource!.round, forKey: kCBCrewRoundTypeDefaultKey)
         }

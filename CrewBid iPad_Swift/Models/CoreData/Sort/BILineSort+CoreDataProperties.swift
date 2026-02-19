@@ -40,7 +40,7 @@ extension BILineSort : Identifiable, NSFetchedResultsControllerDelegate {
         var lineSortsFileURL: URL? = nil
         // Determine the appropriate line sorts file URL based on bid period type.
 
-        if bidPeriod.isFABid() == true {
+        if bidPeriod.isFABid() == true && bidPeriod.isFirstRoundBid() {
             lineSortsFileURL = Bundle.main.url(forResource: "LineSortsFA", withExtension: "plist")
         } else if bidPeriod.isFirstRoundBid() {
             lineSortsFileURL = Bundle.main.url(forResource: "LineSorts", withExtension: "plist")
