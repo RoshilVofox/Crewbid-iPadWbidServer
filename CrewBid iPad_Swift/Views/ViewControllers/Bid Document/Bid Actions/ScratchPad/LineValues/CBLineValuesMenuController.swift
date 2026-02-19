@@ -307,7 +307,8 @@ class CBLineValuesMenuController: BaseViewController,UITableViewDelegate,UITable
         case .LatestArr:
             var latestArrival: Int = line.latestArrivalTime as! Int
             if latestArrival > 2400 {
-                latestArrival -= 2400
+                let differnce: Int = latestArrival / 2400
+                latestArrival -= (2400 * differnce)
             }
             let hours: Int = latestArrival / 100
             let mins: Int = latestArrival - hours * 100

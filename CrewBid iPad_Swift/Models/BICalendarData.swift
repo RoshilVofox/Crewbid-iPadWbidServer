@@ -499,17 +499,36 @@ class BICalendarData {
     func dateIsInBidMonth(date: Date?) -> Bool {
         let numDaysInBidMonth = CBUtils.numberOfDays(inMonth: month, forYear: year)
         var startDc: DateComponents?
-        startDc = calendar?.dateComponents( [.month,.year,.day],from: firstDateOfMonth!)
+        var daysToadd = 0
+        if bidPeriod?.month == 2 && bidPeriod?.isFABid() == true {
+            startDc = calendar!.dateComponents([.year], from: firstDateOfMonth!)
+            startDc?.month = 1
+            startDc?.day = 31
+        }
+        else {
+            startDc = calendar?.dateComponents( [.month,.year,.day],from: firstDateOfMonth!)
+        }
         startDc?.hour = 0
         startDc?.minute = 0
         startDc?.timeZone = TimeZone(identifier: "US/Central")!
         startDc?.second = 0
+        
         let startDate = calendar?.date(from: startDc!)
             // Add the number of days in the bid month to get the end date
         var dc = DateComponents()
         dc.day = numDaysInBidMonth - 1
         var endDate: Date?
         endDate = calendar?.date(byAdding: dc, to: firstDateOfMonth!)
+        //in case of January month for FA the last date should be january 30.
+        if bidPeriod?.month == 1 && bidPeriod?.isFABid() == true {
+            daysToadd = -1
+            endDate = endDate?.addingTimeInterval(TimeInterval(60*60*24*daysToadd))
+        }
+        //in case of februaury month for FA the last date should be march 1.
+        else if bidPeriod?.month == 2 && bidPeriod?.isFABid() == true {
+            daysToadd = 1
+            endDate = endDate?.addingTimeInterval(TimeInterval(60*60*24*daysToadd))
+        }
         var endDc: DateComponents?
         endDc = (calendar?.dateComponents([.day,.year,.month], from: endDate!))
         endDc?.hour = 23
@@ -522,10 +541,23 @@ class BICalendarData {
     // Check if a given date is before the first date of the bid month
 
     func dateIsBeforeFirstDateOfBidMonth(date: Date?) -> Bool {
-        if (date?.compare(firstDateOfMonth!) == .orderedDescending) || ((date?.compare(firstDateOfMonth!)) != nil) {
-            return false
-        } else {
-            return true
+        if bidPeriod?.month == 2 && bidPeriod?.isFABid() == true {
+            var components = calendar!.dateComponents([.year], from: firstDateOfMonth!)
+            components.month = 1
+            components.day = 31
+            let effectiveFirstDate = calendar!.date(from: components)!
+            if (date?.compare(effectiveFirstDate) == .orderedDescending) || (date?.compare((effectiveFirstDate)) == .orderedSame) {
+                return false
+            } else {
+                return true
+            }
+        }
+        else {
+            if (date?.compare(firstDateOfMonth!) == .orderedDescending) || ((date?.compare(firstDateOfMonth!)) == .orderedSame) {
+                return false
+            } else {
+                return true
+            }
         }
     }
     

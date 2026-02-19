@@ -4620,8 +4620,20 @@ class BIBidInfoReader{
             
             // Overlap
             // Check for overlap into the next month
-            if(startDay! + tripLength! - 1) > numDaysInBidMonth{
-                overlapDaysCount += (startDay! + tripLength! - 1 - numDaysInBidMonth)
+            if bidPeriod?.month == 2 && bidPeriod?.isFABid() == true {
+                if let tripStartDateinFebBid = trip.startDate {
+                    let components = calendar.dateComponents([.month, .day], from: tripStartDateinFebBid)
+                    if !(components.month == 1 && components.day == 31) {
+                        if(startDay! + tripLength! - 1) > numDaysInBidMonth{
+                            overlapDaysCount += (startDay! + tripLength! - 1 - numDaysInBidMonth)
+                        }
+                    }
+                }
+            }
+            else {
+                if(startDay! + tripLength! - 1) > numDaysInBidMonth{
+                    overlapDaysCount += (startDay! + tripLength! - 1 - numDaysInBidMonth)
+                }
             }
             
             //FAPay
