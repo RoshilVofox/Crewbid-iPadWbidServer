@@ -46,6 +46,16 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
         textAppending()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if self.bidPeriod?.isFABid() == true && self.dataTypeSelected == .awardText{
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5){
+                AlertService.showAlertForTopVC(title: "Bid Awards", message: "The Award List is a live document and may change at any time, and we may not be notified when updates occur.\n\nWhat we display reflects the correct data at the time the Award Lists were downloaded.\n\nIf exact information regarding the list need to be known, please refer to: crewbid.swalife.com")
+            }
+        }
+    }
+
+    
     private func setupSearchUI() {
 
         tableView.isHidden = false

@@ -342,8 +342,9 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                     case 2://Retrieve/Show Awards
                     let textFile = self.bidPeriod?.awardString
                         if textFile != nil {
-                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenAwardData), object: self)
                             dismissFn()
+                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenAwardData), object: self)
+
                         } else {
                                 //retrieveAward()
                             dismissFn()
@@ -430,8 +431,12 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                     case 2://Retrieve/Show Awards
                     let textFile = self.bidPeriod?.awardString
                         if textFile != nil {
-                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenAwardData), object: self)
-                            dismissFn()
+//                            dismissFn()
+                            self.dismiss(animated: true){
+                                NotificationCenter.default.post(name: NSNotification.Name(KCBOpenAwardData), object: self)
+                            }
+                            
+                            
                         } else {
                                 //retrieveAward()
                             dismissFn()
