@@ -3308,6 +3308,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                         if self.bidPeriod!.containsVacay?.boolValue == false {
                             self.disableVacationButton()
                         }
+                        self.disableVacationButton()
                         self.view.hideActivityIndicator()
                         self.btnSwaptimizer.isEnabled = true
                         self.btnWbidMax.isEnabled = true
@@ -4050,7 +4051,16 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
             }
             else if (btnWbidMax.isSelected && (self.bidPeriod!.wbFileIntent != nil || self.bidPeriod!.wbFileIntentF != nil)) {
                 if (self.bidPeriod!.userVacationWbidOrCrewBid == "" || self.bidPeriod?.userVacationWbidOrCrewBid == "WBIDF") {
-                    self.wbid(vDL: vDL)
+                    if self.bidPeriod!.wbFileIntent == nil {
+                        self.bidPeriod?.userVacationWbidOrCrewBid = ""
+                        self.removeCurrentVacation()
+                        self.disableVacationButton()
+                        return
+                    }
+                    else {
+                        self.wbid(vDL: vDL)
+                        return
+                    }
                 }
                 return
             }

@@ -285,6 +285,15 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         insertionIndex = 0
         insertAbove = false
         var enteredForLoop = false
+        let sort = NSSortDescriptor(key: "bidOrder", ascending: true)
+        if bidPeriod.isBidListSortOn?.intValue == 1{
+            let lineSorts = getSortDescriptorsForBidList()
+            
+            self.linesArray = (linesArray as NSArray).sortedArray(using: lineSorts ) as! [BILine]
+        }
+        else {
+            self.linesArray = (linesArray as NSArray).sortedArray(using: [sort]) as! [BILine]
+        }
     
         // Loop through the linesArray
         for line in linesArray {
