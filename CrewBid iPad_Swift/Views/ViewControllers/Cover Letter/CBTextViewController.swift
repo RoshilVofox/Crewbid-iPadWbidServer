@@ -13,7 +13,7 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
     @IBOutlet weak var lblTitle: UILabel!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var textView: UITextView!
-    @IBOutlet weak var searchBar: UISearchBar!
+//    @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var btnClose: UIButton!
     @IBOutlet weak var btnShare: UIButton!
     
@@ -37,6 +37,15 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
     var filteredListArray = [String]()
     var isSearchActive : Bool = false
     
+    private let searchBarForHighlight = UISearchBar()
+    private let previousButton = UIButton(type: .system)
+    private let nextButton = UIButton(type: .system)
+    private let resultLabel = UILabel()
+
+    private var searchRanges: [NSRange] = []
+    private var currentSearchIndex: Int = 0
+    private var originalAttributedText: NSAttributedString?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         textView.clipsToBounds = true
@@ -44,6 +53,7 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
         tableView.clipsToBounds = true
         tableView.layer.cornerRadius = 5
         textAppending()
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -56,45 +66,45 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
     }
 
     
-    private func setupSearchUI() {
-
-        tableView.isHidden = false
-        tableView.keyboardDismissMode = .onDrag
-        textView.isHidden = true
-
-        searchBar.isHidden = false
-        searchBar.delegate = self
-
-        if #available(iOS 15.0, *) {
-            searchBar.tintColor = .tintColor
-        } else {
-            searchBar.tintColor = .systemBlue
-        }
-
-        if #available(iOS 13.0, *) {
-            searchBar.searchTextField.backgroundColor = .systemGray6
-        }
-
-        for view in searchBar.subviews.last!.subviews {
-            if view.isKind(of: NSClassFromString("UISearchBarBackground")!) {
-                view.alpha = 0
-            }
-        }
-    }
-    private func loadList(from text: String?) {
-
-        listArray.removeAll()
-        filteredListArray.removeAll()
-
-        guard let lines = text else { return }
-
-        for line in lines.components(separatedBy: "\n") {
-            listArray.append(line)
-        }
-
-        tableView.separatorStyle = .none
-        tableView.reloadData()
-    }
+//    private func setupSearchUI() {
+//
+//        tableView.isHidden = false
+//        tableView.keyboardDismissMode = .onDrag
+//        textView.isHidden = true
+//
+//        searchBar.isHidden = false
+//        searchBar.delegate = self
+//
+//        if #available(iOS 15.0, *) {
+//            searchBar.tintColor = .tintColor
+//        } else {
+//            searchBar.tintColor = .systemBlue
+//        }
+//
+//        if #available(iOS 13.0, *) {
+//            searchBar.searchTextField.backgroundColor = .systemGray6
+//        }
+//
+//        for view in searchBar.subviews.last!.subviews {
+//            if view.isKind(of: NSClassFromString("UISearchBarBackground")!) {
+//                view.alpha = 0
+//            }
+//        }
+//    }
+//    private func loadList(from text: String?) {
+//
+//        listArray.removeAll()
+//        filteredListArray.removeAll()
+//
+//        guard let lines = text else { return }
+//
+//        for line in lines.components(separatedBy: "\n") {
+//            listArray.append(line)
+//        }
+//
+//        tableView.separatorStyle = .none
+//        tableView.reloadData()
+//    }
     
     func textAppending() {
         textView.font = UIFont(name: "Courier", size: 16)
@@ -103,26 +113,34 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
             case .seniorityList:
                 lblTitle.text = "Seniority List"
                 titleText = "Seniority List"
-                setupSearchUI()
+//                setupSearchUI()
                 let seniorityText = self.bidPeriod?.textFile(withName: BISeniorityListTextFileName)?.text
-                loadList(from: seniorityText)
-            
-                msgLabel = UILabel()
-                msgLabel.text = "No seniority data found.\nTry with other keywords."
-                msgLabel.font = UIFont.systemFont(ofSize: 22)
-                msgLabel.textAlignment = .center
-                msgLabel.numberOfLines = 0
-                msgLabel.isHidden = true
-                self.view.addSubview(msgLabel)
-                self.view.bringSubviewToFront(msgLabel)
-                msgLabel.translatesAutoresizingMaskIntoConstraints = false
-            
-                let leadingConstraint = msgLabel.leadingAnchor.constraint(equalTo: self.textView.leadingAnchor, constant: 20)
-                let trailingConstraint = msgLabel.trailingAnchor.constraint(equalTo: self.textView.trailingAnchor, constant: -20)
-                let topConstraint = msgLabel.topAnchor.constraint(equalTo: self.textView.topAnchor, constant: 100)
-                let heightConstraint = NSLayoutConstraint(item: self.msgLabel!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 100.0)
-                
-                NSLayoutConstraint.activate([leadingConstraint, trailingConstraint, topConstraint, heightConstraint])
+                self.textView.text = seniorityText
+                textView.typingAttributes[.paragraphStyle] = {
+                  let p = NSMutableParagraphStyle()
+                  p.lineSpacing = 25
+                  return p
+                }()
+                originalAttributedText = textView.attributedText
+                setupSearchHighlightUI()
+//                loadList(from: seniorityText)
+//            
+//                msgLabel = UILabel()
+//                msgLabel.text = "No seniority data found.\nTry with other keywords."
+//                msgLabel.font = UIFont.systemFont(ofSize: 22)
+//                msgLabel.textAlignment = .center
+//                msgLabel.numberOfLines = 0
+//                msgLabel.isHidden = true
+//                self.view.addSubview(msgLabel)
+//                self.view.bringSubviewToFront(msgLabel)
+//                msgLabel.translatesAutoresizingMaskIntoConstraints = false
+//            
+//                let leadingConstraint = msgLabel.leadingAnchor.constraint(equalTo: self.textView.leadingAnchor, constant: 20)
+//                let trailingConstraint = msgLabel.trailingAnchor.constraint(equalTo: self.textView.trailingAnchor, constant: -20)
+//                let topConstraint = msgLabel.topAnchor.constraint(equalTo: self.textView.topAnchor, constant: 100)
+//                let heightConstraint = NSLayoutConstraint(item: self.msgLabel!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 100.0)
+//                
+//                NSLayoutConstraint.activate([leadingConstraint, trailingConstraint, topConstraint, heightConstraint])
             
                 break
             case .coverLetter:
@@ -137,10 +155,12 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
             case .awardText:
                 lblTitle.text = "Bid Awards"
                 titleText = "Bid Awards"
-                setupSearchUI()
-//                textView.text = self.bidPeriod?.awardString
-                let awardText = self.bidPeriod?.awardString
-                loadList(from: awardText)
+                self.setupSearchHighlightUI()
+//                setupSearchUI()
+                textView.text = self.bidPeriod?.awardString
+                originalAttributedText = textView.attributedText
+//                let awardText = self.bidPeriod?.awardString
+//                loadList(from: awardText)
                 break
             case .faMemo:
                 lblTitle.text = "FA Memo"
@@ -151,11 +171,15 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
                 lblTitle.text = "Trips Text"
                 titleText = "Trips Text"
                 textView.text = self.bidPeriod?.textFile(withName: BITripsTextFileName)?.text
+                originalAttributedText = textView.attributedText
+                setupSearchHighlightUI()
                 break
             case .lineText:
                 lblTitle.text = "Lines Text"
                 titleText = "Lines Text"
                 textView.text = self.bidPeriod?.textFile(withName: BILinesTextFileName)?.text
+                originalAttributedText = textView.attributedText
+                setupSearchHighlightUI()
                 break
             case .bidReceipt:
                 lblTitle.text = "Bid Receipt"
@@ -452,6 +476,148 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
         
         
     }
+    
+    private func setupSearchHighlightUI() {
+
+        searchBarForHighlight.translatesAutoresizingMaskIntoConstraints = false
+        searchBarForHighlight.searchBarStyle = .minimal
+        searchBarForHighlight.placeholder = "Search"
+        searchBarForHighlight.delegate = self
+
+        previousButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        previousButton.addTarget(self, action: #selector(previousTapped), for: .touchUpInside)
+        previousButton.isEnabled = false
+
+        nextButton.setImage(UIImage(systemName: "chevron.right"), for: .normal)
+        nextButton.addTarget(self, action: #selector(nextTapped), for: .touchUpInside)
+        nextButton.isEnabled = false
+        
+        previousButton.isHidden = true
+        nextButton.isHidden = true
+
+        resultLabel.font = UIFont.systemFont(ofSize: 13)
+        resultLabel.textColor = .secondaryLabel
+
+        let searchStack = UIStackView(arrangedSubviews: [
+            searchBarForHighlight,
+            previousButton,
+            resultLabel,
+            nextButton
+        ])
+
+        searchStack.axis = .horizontal
+        searchStack.spacing = 6
+        searchStack.alignment = .center
+        searchStack.translatesAutoresizingMaskIntoConstraints = false
+
+        view.addSubview(searchStack)
+
+        NSLayoutConstraint.activate([
+            searchStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            searchStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -68),
+
+            searchBarForHighlight.widthAnchor.constraint(equalToConstant: 250),
+            searchBarForHighlight.heightAnchor.constraint(equalToConstant: 36)
+        ])
+    }
+    
+    @objc private func nextTapped() {
+        guard !searchRanges.isEmpty else { return }
+        currentSearchIndex = (currentSearchIndex + 1) % searchRanges.count
+        scrollToCurrentMatch()
+    }
+
+    @objc private func previousTapped() {
+        guard !searchRanges.isEmpty else { return }
+        currentSearchIndex = (currentSearchIndex - 1 + searchRanges.count) % searchRanges.count
+        scrollToCurrentMatch()
+    }
+    
+    private func scrollToCurrentMatch() {
+
+        guard let textStorage = textView?.textStorage else { return }
+
+        let fullRange = NSRange(location: 0, length: textStorage.length)
+
+        // Remove ONLY our highlight colors (yellow & orange)
+        textStorage.enumerateAttribute(.backgroundColor, in: fullRange, options: []) { value, range, _ in
+            if let color = value as? UIColor,
+               color == UIColor.yellow || color == UIColor.orange {
+                textStorage.removeAttribute(.backgroundColor, range: range)
+            }
+        }
+
+        // If no results → disable buttons and exit
+        guard searchRanges.indices.contains(currentSearchIndex) else {
+            previousButton.isEnabled = false
+            nextButton.isEnabled = false
+            previousButton.isHidden = true
+            nextButton.isHidden = true
+            return
+        }
+
+        // Enable buttons
+        previousButton.isEnabled = true
+        nextButton.isEnabled = true
+        previousButton.isHidden = false
+        nextButton.isHidden = false
+
+        // Highlight all matches (yellow)
+        for range in searchRanges {
+            textStorage.addAttribute(.backgroundColor,
+                                     value: UIColor.yellow,
+                                     range: range)
+        }
+
+        // Highlight current match (orange)
+        let currentRange = searchRanges[currentSearchIndex]
+        textStorage.addAttribute(.backgroundColor,
+                                 value: UIColor.orange,
+                                 range: currentRange)
+
+        // Scroll
+        textView.scrollRangeToVisible(currentRange)
+
+        // Update label
+        resultLabel.text = "\(currentSearchIndex + 1)/\(searchRanges.count)"
+    }
+    
+    private func highlightSearchText(_ searchText: String) {
+
+        guard let text = textView.text, !searchText.isEmpty else {
+            searchRanges.removeAll()
+            currentSearchIndex = 0
+            resultLabel.text = ""
+            textView.attributedText = NSAttributedString(string: textView.text ?? "")
+            return
+        }
+
+        searchRanges.removeAll()
+
+        let fullRange = NSRange(location: 0, length: text.utf16.count)
+        var searchRange = fullRange
+
+        while searchRange.location < text.utf16.count {
+
+            let foundRange = (text as NSString).range(of: searchText,
+                                                     options: .caseInsensitive,
+                                                     range: searchRange)
+
+            if foundRange.location != NSNotFound {
+
+                searchRanges.append(foundRange)
+
+                let newLocation = foundRange.location + foundRange.length
+                searchRange = NSRange(location: newLocation,
+                                      length: text.utf16.count - newLocation)
+            } else {
+                break
+            }
+        }
+
+        currentSearchIndex = 0
+        scrollToCurrentMatch()
+    }
 }
 
 extension CBTextViewController: UITableViewDataSource, UITableViewDelegate {
@@ -568,7 +734,7 @@ extension CBTextViewController : UISearchBarDelegate {
         searchBar.text = nil
         searchBar.resignFirstResponder()
         tableView.resignFirstResponder()
-        self.searchBar.showsCancelButton = false
+//        self.searchBar.showsCancelButton = false
         tableView.reloadData()
     }
     
@@ -581,50 +747,27 @@ extension CBTextViewController : UISearchBarDelegate {
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        
-        self.isSearchActive = !searchText.isEmpty
-        self.searchBar.showsCancelButton = true
-        
-        filteredListArray.removeAll()
-        var recurringIndex = 0
-        
-        for index in 0..<listArray.count {
-            
-            if recurringIndex == index {
-                recurringIndex = index + 1
-                
-                let currentItem = listArray[index]
-                let previousItem = (index > 0) ? listArray[index - 1] : nil
-                
-                let nextIndex = (index < listArray.count-1) ? index + 1 : nil
-                
-                if currentItem.lowercased().contains(searchText.lowercased()) {
-                    if let previous = previousItem {
-                        if isStartsWithNumber(currentItem) == false {
-                            filteredListArray.append(previous)
-                            filteredListArray.append(currentItem)
-                        } else {
-                            filteredListArray.append(currentItem)
-                        }
-                    } else {
-                        filteredListArray.append(currentItem)
+
+                if searchText.isEmpty {
+
+                    // Restore ORIGINAL formatting completely
+                    if let original = originalAttributedText {
+                        textView.attributedText = original
                     }
-                    
-                    if let nextIndex = nextIndex {
-                        for j in nextIndex..<listArray.count {
-                            let nextItem = listArray[j]
-                            if isStartsWithNumber(nextItem) == false {
-                                filteredListArray.append(nextItem)
-                            } else {
-                                recurringIndex = j
-                                break
-                            }
-                        }
-                    }
+
+                    searchRanges.removeAll()
+                    currentSearchIndex = 0
+                    resultLabel.text = ""
+                    previousButton.isEnabled = false
+                    nextButton.isEnabled = false
+                    previousButton.isHidden = true
+                    nextButton.isHidden = true
+
+                    return
                 }
-            }
-        }
-        self.tableView.reloadData()
+
+                highlightSearchText(searchText)
+                return
     }
     
     func isStartsWithNumber(_ input: String) -> Bool {
