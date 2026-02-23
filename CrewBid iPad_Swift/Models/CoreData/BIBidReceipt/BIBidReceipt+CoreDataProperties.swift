@@ -352,7 +352,7 @@ extension BIBidReceipt : Identifiable {
     
     func setProperties(withReceiptJson json: [String: Any]) {
         var condensedText = ""
-        let bidLineNumbers: [String] = []
+        var bidLineNumbers: [String] = []
         var isValidReceipt = false
 
         // Extract values safely
@@ -407,6 +407,14 @@ extension BIBidReceipt : Identifiable {
             df.dateFormat = "yyyy-MM-dd HH:mm:ss"
             self.submittedDateString = df.string(from: self.timeStamp ?? Date())
 
+            
+            for choice in bidChoices{
+                if let line = choice["choice"] as? String, !line.isEmpty{
+                    bidLineNumbers.append(line)
+                }
+            }
+            
+            
             self.bidLineNumbers = bidLineNumbers
             self.submittedLineNumbersString = bidLineNumbers.joined(separator: ",")
 
