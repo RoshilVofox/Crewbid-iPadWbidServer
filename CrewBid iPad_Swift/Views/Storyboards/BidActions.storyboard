@@ -49,7 +49,7 @@
             <objects>
                 <viewController storyboardIdentifier="EmbeddedLineNumberController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Ws2-a5-RnL" customClass="EmbeddedLineNumberController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dY2-4n-re8">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="500"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LeG-tg-1di">
@@ -204,16 +204,6 @@
                                             <action selector="btnShareAction:" destination="pev-EE-iRe" eventType="touchUpInside" id="XP6-G9-O5v"/>
                                         </connections>
                                     </button>
-                                    <searchBar hidden="YES" contentMode="redraw" placeholder="search" translatesAutoresizingMaskIntoConstraints="NO" id="LDD-KQ-bAU">
-                                        <rect key="frame" x="1006" y="10" width="300" height="40"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="40" id="AQr-zh-9QJ"/>
-                                            <constraint firstAttribute="width" constant="300" id="iBe-4A-uib"/>
-                                        </constraints>
-                                        <color key="barTintColor" systemColor="systemBackgroundColor"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                    </searchBar>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s5O-w6-0VG">
                                         <rect key="frame" x="10" y="10" width="40" height="40"/>
                                         <constraints>
@@ -238,10 +228,8 @@
                                     <constraint firstAttribute="height" constant="60" id="VXT-4d-V6n"/>
                                     <constraint firstItem="s5O-w6-0VG" firstAttribute="leading" secondItem="N72-fr-CBF" secondAttribute="leading" constant="10" id="Wmf-ml-qYD"/>
                                     <constraint firstAttribute="trailing" secondItem="m16-Hy-SV9" secondAttribute="trailing" constant="400" id="X7u-u6-14x"/>
-                                    <constraint firstItem="GHH-8Q-1PX" firstAttribute="leading" secondItem="LDD-KQ-bAU" secondAttribute="trailing" constant="20" id="Zpr-lz-o3U"/>
                                     <constraint firstItem="m16-Hy-SV9" firstAttribute="leading" secondItem="N72-fr-CBF" secondAttribute="leading" constant="400" id="fUQ-T3-Gqd"/>
                                     <constraint firstAttribute="trailing" secondItem="GHH-8Q-1PX" secondAttribute="trailing" constant="10" id="iho-pD-Mxv"/>
-                                    <constraint firstItem="LDD-KQ-bAU" firstAttribute="centerY" secondItem="N72-fr-CBF" secondAttribute="centerY" id="vtq-S6-zfx"/>
                                 </constraints>
                             </view>
                         </subviews>
@@ -265,7 +253,6 @@
                         <outlet property="btnClose" destination="s5O-w6-0VG" id="a30-IW-wLT"/>
                         <outlet property="btnShare" destination="GHH-8Q-1PX" id="Qi4-CN-Jbs"/>
                         <outlet property="lblTitle" destination="m16-Hy-SV9" id="phu-pB-nzW"/>
-                        <outlet property="searchBar" destination="LDD-KQ-bAU" id="7FN-dW-kb6"/>
                         <outlet property="tableView" destination="wWW-hb-9e2" id="aUq-l4-IDO"/>
                         <outlet property="textView" destination="Ri6-BS-q6x" id="UPU-zF-pGX"/>
                     </connections>
@@ -2195,7 +2182,7 @@
             <objects>
                 <viewController storyboardIdentifier="EmbeddedShowCAPVC" id="vc0-Yi-x0T" customClass="EmbeddedShowCAPVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="W8k-ko-qPR">
-                        <rect key="frame" x="0.0" y="0.0" width="500" height="500"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4pL-SH-oXe">
@@ -3850,28 +3837,28 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray2Color">
-            <color red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGreenColor">
-            <color red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemOrangeColor">
-            <color red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.55294117647058827" blue="0.15686274509803921" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.2196078431372549" blue="0.23529411764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemYellowColor">
             <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tintColor">
-            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.0" green="0.53333333333333333" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

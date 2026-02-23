@@ -3321,7 +3321,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
                 else {
                     NotificationCenter.default.post(name: Notification.Name("refreshLines"), object: self)
                     self.bidPeriod!.userVacationWbidOrCrewBid = ""
-//                    self.disableVacationButton()
+                    self.disableVacationButton()
                     self.view.hideActivityIndicator()
                     self.btnSwaptimizer.isEnabled = true
                     self.btnWbidMax.isEnabled = true
