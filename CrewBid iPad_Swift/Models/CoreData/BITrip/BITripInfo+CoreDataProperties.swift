@@ -49,6 +49,7 @@ extension BITripInfo {
     @NSManaged public var firstDay: BIDayInfo?
     @NSManaged public var trips: NSSet?
     @NSManaged public var startDate: Date?
+    @NSManaged public var tafbMinsFA: NSNumber?
 }
 
 // MARK: Generated accessors for days
@@ -141,6 +142,15 @@ extension BITripInfo : Identifiable {
         }
 //        let tafb = (lastLeg as AnyObject).arriveMinutes!.intValue - firstLeg.departMinutes!.intValue + briefMinutes!.intValue + debriefMinutes!.intValue
         let tafb = lastLeg.arriveMinutes!.intValue - firstDay!.firstLeg!.departMinutes!.intValue + briefMinutes!.intValue + debriefMinutes!.intValue
+        
+        if let trip = self.trips?.allObjects.first as? BITrip,
+           let tripLine = trip.line,
+           let bp = tripLine.bidPeriod,
+           bp.isFABid(),
+           bp.month?.intValue == 3,
+           bp.year?.intValue == 2026{
+            return self.tafbMinsFA
+        }
         return NSNumber(value: tafb)
 //        return 00
     }
