@@ -535,7 +535,8 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
     
     private func scrollToCurrentMatch() {
 
-        guard let textStorage = textView?.textStorage else { return }
+        guard let textView = textView,
+              let textStorage = textView.textStorage as NSTextStorage? else { return }
 
         let fullRange = NSRange(location: 0, length: textStorage.length)
 
@@ -553,6 +554,7 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
             nextButton.isEnabled = false
             previousButton.isHidden = true
             nextButton.isHidden = true
+            resultLabel.text = ""
             return
         }
 
@@ -575,8 +577,22 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
                                  value: UIColor.orange,
                                  range: currentRange)
 
-        // Scroll
-        textView.scrollRangeToVisible(currentRange)
+        // Ensure layout is updated before scrolling
+        textView.layoutManager.ensureLayout(for: textView.textContainer)
+        textView.layoutIfNeeded()
+
+        // Smooth centered scrolling
+        if let start = textView.position(from: textView.beginningOfDocument, offset: currentRange.location),
+           let end = textView.position(from: start, offset: currentRange.length),
+           let textRange = textView.textRange(from: start, to: end) {
+
+            let rect = textView.firstRect(for: textRange)
+
+            let centeredY = rect.origin.y - (textView.bounds.height / 2) + rect.height
+            let targetPoint = CGPoint(x: 0, y: max(centeredY, -textView.contentInset.top))
+
+            textView.setContentOffset(targetPoint, animated: true)
+        }
 
         // Update label
         resultLabel.text = "\(currentSearchIndex + 1)/\(searchRanges.count)"

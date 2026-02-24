@@ -289,8 +289,8 @@ extension BITrip : Identifiable {
                 // whitespace. If deadhead, first two characters will be DH, which
                 // should be removed.
                 legFlight = legInfo.flight!
-                departDateString = BITrip.staticTimeForFAReserveType(trip: trip, line: line!, key: "depart", timeZone: CBUtils.rawTimeZoneString(forAirportCode: legInfo.departCity!)!)
-                arriveDateString = BITrip.staticTimeForFAReserveType(trip: trip, line: line!, key: "arrive", timeZone: CBUtils.rawTimeZoneString(forAirportCode: legInfo.arriveCity!)!)
+                departDateString = BITrip.staticTimeForFAReserveType(trip: trip, line: line!, key: "depart", timeZone: CBUtils.rawTimeZoneString(forAirportCode: legInfo.departCity!) ?? "")
+                arriveDateString = BITrip.staticTimeForFAReserveType(trip: trip, line: line!, key: "arrive", timeZone: CBUtils.rawTimeZoneString(forAirportCode: legInfo.arriveCity!) ?? "")
                 
                     dateComps?.minute = Int(truncating: legInfo.departMinutes!)
                     departDate = calendar.date(from: dateComps!)
