@@ -334,19 +334,51 @@ extension BITrip : Identifiable {
                 let result = (legFlight as NSString).utf8String
                 
                 let formattedLegFlight = String(format: "%4s", result!)
+                
+                
+                var payToDisplay: Float = legInfo.pay!.floatValue
+
+                // 2. Check for the "Spring Forward" DST Gap (Standard -> DST)
+                var appCal = Calendar(identifier: .gregorian)
+                appCal.timeZone = TimeZone(identifier: "US/Central")!   // use base timezone
+
+                let herbTZ = TimeZone(identifier: "US/Central")
+
+                // Re-create date components for this specific check
+                var dComps = DateComponents()
+                dComps.year = trip.line?.bidPeriod?.year?.intValue
+                dComps.month = trip.line?.bidPeriod?.month?.intValue
+                dComps.day = trip.startDay!.intValue + trip.info!.orderedDays().firstIndex(of: dayInfo)!
+
+                // Note: assuming departDate and arriveDate were already calculated above
+
+                if let herbTZ,
+                   let departDate,
+                   let arriveDate {
+
+                    let isDepartDST = herbTZ.isDaylightSavingTime(for: departDate)
+                    let isArriveDST = herbTZ.isDaylightSavingTime(for: arriveDate)
+
+                    // If we take off in Standard and land in DST, add the missing 1.20 Rig
+                    if !isDepartDST && isArriveDST {
+                        payToDisplay += 1.20
+                    }
+                }
+                
+                
                 if isFA{
                     if (legInfo.equipment == "6") {
-                        textForTrip += "\(df.string(from: departDate!)) \(deadHead ? "DH" : "  ")\(formattedLegFlight) \(departCity) \(departDateString!) \(arriveCity) \(arriveDateString!) \("MAX") \(blockTime) \(groundTime) \((legInfo.isAircraftChange?.boolValue)! ? "acft change" : "           ") \(String(format:"%03.0f", (legInfo.pay?.floatValue)! * 100.0))\n"
+                        textForTrip += "\(df.string(from: departDate!)) \(deadHead ? "DH" : "  ")\(formattedLegFlight) \(departCity) \(departDateString!) \(arriveCity) \(arriveDateString!) \("MAX") \(blockTime) \(groundTime) \((legInfo.isAircraftChange?.boolValue)! ? "acft change" : "           ") \(String(format:"%03.0f", /*(legInfo.pay?.floatValue)!*/payToDisplay * 100.0))\n"
                     }
                     else if legInfo.equipment == "   "{
-                        textForTrip += "\(df.string(from: departDate!)) \(deadHead ? "DH" : "  ")\(formattedLegFlight) \(departCity) \(departDateString!) \(arriveCity) \(arriveDateString!) \(equipment) \(blockTime) \(groundTime) \((legInfo.isAircraftChange?.boolValue)! ? "acft change" : "           ") \(String(format:"%03.0f", (legInfo.pay?.floatValue)! * 100.0))\n"
+                        textForTrip += "\(df.string(from: departDate!)) \(deadHead ? "DH" : "  ")\(formattedLegFlight) \(departCity) \(departDateString!) \(arriveCity) \(arriveDateString!) \(equipment) \(blockTime) \(groundTime) \((legInfo.isAircraftChange?.boolValue)! ? "acft change" : "           ") \(String(format:"%03.0f", /*(legInfo.pay?.floatValue)!*/payToDisplay * 100.0))\n"
                     }
                     else {
-                        textForTrip += "\(df.string(from: departDate!)) \(deadHead ? "DH" : "  ")\(formattedLegFlight) \(departCity) \(departDateString!) \(arriveCity) \(arriveDateString!) \(equipment) \(blockTime) \(groundTime) \((legInfo.isAircraftChange?.boolValue)! ? "acft change" : "           ") \(String(format:"%03.0f", (legInfo.pay?.floatValue)! * 100.0))\n"
+                        textForTrip += "\(df.string(from: departDate!)) \(deadHead ? "DH" : "  ")\(formattedLegFlight) \(departCity) \(departDateString!) \(arriveCity) \(arriveDateString!) \(equipment) \(blockTime) \(groundTime) \((legInfo.isAircraftChange?.boolValue)! ? "acft change" : "           ") \(String(format:"%03.0f", /*(legInfo.pay?.floatValue)!*/payToDisplay * 100.0))\n"
                     }
                 }
                 else{
-                    textForTrip += "\(df.string(from: departDate!)) \(deadHead ? "DH" : "  ")\(formattedLegFlight) \(departCity) \(departDateString!) \(arriveCity) \(arriveDateString!) \(equipment) \(blockTime) \(groundTime) \((legInfo.isAircraftChange?.boolValue)! ? "acft change" : "           ") \(String(format:"%03.0f", (legInfo.pay?.floatValue)! * 100.0))\n"
+                    textForTrip += "\(df.string(from: departDate!)) \(deadHead ? "DH" : "  ")\(formattedLegFlight) \(departCity) \(departDateString!) \(arriveCity) \(arriveDateString!) \(equipment) \(blockTime) \(groundTime) \((legInfo.isAircraftChange?.boolValue)! ? "acft change" : "           ") \(String(format:"%03.0f", /*(legInfo.pay?.floatValue)!*/payToDisplay * 100.0))\n"
                 }
                 dayBlockMinutes += blockMinutes
                 
@@ -453,19 +485,58 @@ extension BITrip : Identifiable {
                 blockTime = "\(String(format: "%zd%02zd", dayBlockMinutes / 60, dayBlockMinutes % 60))"
             }
 
-            let component: DateComponents = calendar.dateComponents(Set<Calendar.Component>([ Calendar.Component.minute]), from: departDate!, to: arriveDate!)
-            dayDutyMinutes = component.minute!
+//            let component: DateComponents = calendar.dateComponents(Set<Calendar.Component>([ Calendar.Component.minute]), from: departDate!, to: arriveDate!)
+//            dayDutyMinutes = component.minute!
+            
+            let depClock = calendar.dateComponents([.hour, .minute], from: departDate!)
+            let arrClock = calendar.dateComponents([.hour, .minute], from: arriveDate!)
+
+            var depTotalMins = (depClock.hour ?? 0) * 60 + (depClock.minute ?? 0)
+            var arrTotalMins = (arrClock.hour ?? 0) * 60 + (arrClock.minute ?? 0)
+
+            // Handle overnight crossing
+            if arrTotalMins < depTotalMins {
+                arrTotalMins += 1440 // Add 24 hours
+            }
+
+            // Calculate the raw clock difference
+            dayDutyMinutes = arrTotalMins - depTotalMins
             
             
             // If the depart time is greater thn the arrive time,
             // dayDutyMinutes will be less than zero (-ve integer).
             // For avoiding this we are substracting 1 day (1440 minutes) from departTimeFirstLeg
+//            if dayDutyMinutes < 0 {
+//                let departTimeFirstLeg = dayInfo.departTimeFirstLeg!.intValue - 1440
+//                dateComps?.minute = departTimeFirstLeg
+//                departDate = calendar.date(from: dateComps!)
+//                dayDutyMinutes = calendar.dateComponents([.minute], from: departDate!, to: arriveDate!).minute!
+//            }
+            
             if dayDutyMinutes < 0 {
+
                 let departTimeFirstLeg = dayInfo.departTimeFirstLeg!.intValue - 1440
                 dateComps?.minute = departTimeFirstLeg
                 departDate = calendar.date(from: dateComps!)
-                dayDutyMinutes = calendar.dateComponents([.minute], from: departDate!, to: arriveDate!).minute!
+
+                if let departDate {
+
+                    // Use clock math for the recalculation
+                    let depClockG = calendar.dateComponents([.hour, .minute], from: departDate)
+                    let arrClockG = calendar.dateComponents([.hour, .minute], from: arriveDate!)
+
+                    let depTotalMinsG = (depClockG.hour ?? 0) * 60 + (depClockG.minute ?? 0)
+                    var arrTotalMinsG = (arrClockG.hour ?? 0) * 60 + (arrClockG.minute ?? 0)
+
+                    if arrTotalMinsG < depTotalMinsG {
+                        arrTotalMinsG += 1440
+                    }
+
+                    dayDutyMinutes = arrTotalMinsG - depTotalMinsG
+                }
             }
+            
+            
             
             if self.isReserve {
                 let departAndReturnDifference: CGFloat = returnMinutes - departMinutes

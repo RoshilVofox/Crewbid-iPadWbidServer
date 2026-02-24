@@ -1144,13 +1144,17 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
         bidPeriod?.deleteTextFile(text: bidAwardText, name: BIAwardsTextFileName)
         bidPeriod?.addTextFile(text: bidAwardText, name: BIAwardsTextFileName)
         bidPeriod?.awardString = bidAwardText
+        
+        self.saveLocalAwardsToCoreData()
         guard let empNo = self.defaultEmployeeNumber else { return }
 
         DispatchQueue.main.async {
             self.view.hideActivityIndicator()
         }
 
-        self.awardsViewModel?.getAwardAlertFromServer(empNum: empNo) { title, message, shouldOpenAward in
+        self.showAwardAlertFromLocal(empNum: empNo)
+        
+        /*self.awardsViewModel?.getAwardAlertFromServer(empNum: empNo) { title, message, shouldOpenAward in
 
             guard let title = title,
                   let message = message else {
@@ -1172,34 +1176,171 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
                     })
                 ]
             )
+        }*/
+    }
+    
+    func saveLocalAwardsToCoreData() {
+        guard let context = self.bidPeriod?.managedObjectContext else { return }
+
+        // Clear previous awards to maintain a single source of truth
+        if let existingAwards = self.bidPeriod?.awardDetails as? Set<AwardDetails> {
+            existingAwards.forEach { context.delete($0) }
         }
+
+        func processAwards(dict: [String: Any]?, embeddedKey: String, type: String) {
+            guard let embedded = dict?["_embedded"] as? [String: Any],
+                  let awardArray = embedded[embeddedKey] as? [[String: Any]] else { return }
+            
+            for awardDict in awardArray {
+                let awardDetail = AwardDetails(context: context)
+                
+                awardDetail.type = type
+                awardDetail.empNum = "\(awardDict["employeeId"] ?? "")"
+                awardDetail.empName = awardDict["legalName"] as? String ?? ""
+                awardDetail.position = awardDict["position"] as? String ?? ""
+                
+                if let lineValue = awardDict["line"] as? String{
+                    awardDetail.lineNum = Int16(lineValue) ?? 0
+                }
+                
+                awardDetail.baseSeniority = (awardDict["baseSeniority"] as? Int16) ?? 0
+                awardDetail.isRegulatory = (awardDict["regulatory"] as? Bool) ?? false
+                
+                // Type-Specific Mapping
+                if type == "Reserve" {
+                    awardDetail.reserveType = awardDict["reserveType"] as? String
+                } else if type == "Jobshare" {
+                    awardDetail.jobSharePos = (awardDict["jobSharePosition"] as? Int16) ?? 0
+                    awardDetail.isContingent = (awardDict["contingent"] as? Bool) ?? false
+                }
+
+                awardDetail.bidPeriod = self.bidPeriod
+            }
+        }
+
+        processAwards(dict: lineAwardDetails, embeddedKey: "IFLineBaseAuctionAwards", type: "Line")
+        processAwards(dict: jobshareAwardDetails, embeddedKey: "IFLineBaseAuctionJobShareAwards", type: "Jobshare")
+        processAwards(dict: reserveAwardDetails, embeddedKey: "IFLineBaseAuctionReserveAwards", type: "Reserve")
+        processAwards(dict: mrtAwardDetails, embeddedKey: "IFLineBaseAuctionMrtAwards", type: "MRT")
+        do{
+            try context.save()
+        }catch{
+            print("Error saving Award Details to core data")
+        }
+
     }
     
     
-//    func awardParsingAndTextFileCreation() {
-//        let bidAwardText = CBUtils.generateTextForAwardData(
-//            lineAwardDetails,
-//            mrtAward: mrtAwardDetails,
-//            jobShareAward: jobshareAwardDetails,
-//            reserveData: reserveAwardDetails,
-//            bidPeriod: bidPeriod
-//        )
-//
-//        bidPeriod?.deleteTextFile(text: bidAwardText, name: BIAwardsTextFileName)
-//        bidPeriod?.addTextFile(text: bidAwardText, name: BIAwardsTextFileName)
-//
-//        guard let empNo = self.defaultEmployeeNumber else {return}
-//        DispatchQueue.main.async {
-//            self.view.hideActivityIndicator()
-//        }
-//        self.awardsViewModel?.getAwardAlertFromServer(empNum: empNo) { success in
-//            if success{
-//                DispatchQueue.main.async {
-//                    self.dismissVC()
-//                }
-//            }
-//        }
-//    }
+    func showAwardAlertFromLocal(empNum: String) {
+        
+        let awards = self.bidPeriod?.awardDetails as? Set<AwardDetails> ?? []
+        
+        let rawEmpNum = empNum.lowercased()
+            .replacingOccurrences(of: "e", with: "")
+            .replacingOccurrences(of: "x", with: "")
+        
+        var userAward = awards.first(where: { $0.empNum == rawEmpNum && $0.type == "Jobshare" })
+        
+        if userAward == nil {
+                userAward = awards.first(where: { $0.empNum == rawEmpNum && $0.type == "Line" })
+            }
+        if let userAward = userAward{
+            let monthName = CBUtils.shortMonthName(month: bidPeriod!.month!.intValue, uc: false)
+            let yearNum = bidPeriod!.year!.stringValue
+            
+            var awardDescription = ""
+            var title = "Award!"
+            var buddyText = ""
+            
+            let line = userAward.lineNum
+            let pos = userAward.position ?? ""
+            
+            switch userAward.type {
+                //            case "Reserve":
+                //                let resType = userAward.reserveType ?? "Reserve"
+                //                awardDescription = "a \(resType) Position"
+                
+            case "Jobshare":
+                awardDescription = "Jobshare Line \(line)\(pos)"
+                let buddies = awards.filter { $0.lineNum == line && $0.position == pos && $0.empNum != rawEmpNum }
+                buddyText = formatBuddyText(buddies: Array(buddies), type: userAward.type)
+                
+            case "Line":
+                awardDescription = "Line \(line)\(pos)"
+                let buddies = awards.filter { $0.lineNum == line && $0.empNum != rawEmpNum }
+                buddyText = formatBuddyText(buddies: Array(buddies), type: userAward.type)
+                
+            default:
+                if userAward.lineNum > 0 {
+                    awardDescription = "Line \(userAward.lineNum)\(userAward.position ?? "")"
+                } else {
+                    title = "No awarded line found"
+                    awardDescription = "no specific line"
+                }
+            }
+            
+            var message = title == "Award!"
+            ? "You were awarded \(awardDescription) for \(monthName) \(yearNum)."
+            : "We did not find an awarded line for you \(rawEmpNum)."
+            
+            if !buddyText.isEmpty {
+                if userAward.type == "Jobshare"{
+                    message += "\n\nYou have Jobshare with \(buddyText)."
+                }else{
+                    message += "\n\nYou will be flying with \(buddyText)."
+                }
+                
+            }
+            
+            AlertService.showAlertForTopVC(
+                title: title,
+                message: message,
+                actions: [
+                    (title: "OK", style: .default, handler: { _ in
+                        self.dismissVC()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            NotificationCenter.default.post(
+                                name: NSNotification.Name(KCBOpenAwardData),
+                                object: self
+                            )
+                        }
+                    })
+                ]
+            )
+        }else {
+            AlertService.showAlertForTopVC(title: "Not Found", message: "Employee \(rawEmpNum) was not found.")
+        }
+    }
+    
+    private func formatBuddyText(buddies: [AwardDetails], type:String?) -> String {
+        guard !buddies.isEmpty else { return "" }
+        var text = ""
+        if type == "Jobshare"{
+            var jID = ""
+            for buddy in buddies{
+                let id = buddy.empNum ?? ""
+                if id != jID{
+                    text += "\(id)"
+                    jID = id
+                }
+                
+            }
+        }else if type == "Line"{
+            var buddyIDs:Set<String> = Set()
+            for buddy in buddies {
+                let name = buddy.empName ?? "Unknown"
+                let id = buddy.empNum ?? ""
+                if !buddyIDs.contains(id){
+                    let pos = buddy.position ?? ""
+                    text += "\n\(name) (\(id)) position \(pos)"
+                    buddyIDs.insert(id)
+                }
+                
+            }
+        }
+
+        return text
+    }
     
     
     @objc func showBidAwardReadError(notification: NSNotification){

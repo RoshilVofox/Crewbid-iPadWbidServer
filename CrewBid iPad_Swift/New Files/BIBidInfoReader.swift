@@ -4180,6 +4180,8 @@ class BIBidInfoReader{
         arriveFormatter.dateFormat = "HHmm"
         workBP = 0
         workBPInVac = 0
+        var utcCal = Calendar(identifier: .gregorian)
+        utcCal.timeZone = TimeZone(abbreviation: "UTC")!
         for case let trip as BITrip in line.trips!{
             // Figure out the FA position of the line (A,B,C,D,M,NA)
             if bidPeriod!.isFABid() {
@@ -4424,15 +4426,15 @@ class BIBidInfoReader{
                     else{
                         dateComps.minute = ((dayOrderedLegs.first)?.departMinutes!.intValue)! - (trip.info!.debriefMinutes!.intValue)
                         }
-                    departDate = appCal!.date(from: dateComps)
+                    departDate = utcCal.date(from: dateComps)
                     dateComps.minute = ((dayOrderedLegs.last)?.arriveMinutes!.intValue)! + (trip.info!.debriefMinutes!.intValue)
-                    arriveDate = appCal!.date(from: dateComps)
+                    arriveDate = utcCal.date(from: dateComps)
                     
                     if tripOrderedDays.last !== dayInfo {
                         groundMinutes -= 2 * (trip.info?.debriefMinutes!.intValue)!
                     }
                     
-                    dayDutyMinutes = appCal!.dateComponents([.minute], from: departDate!, to: arriveDate!).minute!
+                    dayDutyMinutes = utcCal.dateComponents([.minute], from: departDate!, to: arriveDate!).minute!
                     if trip.isReserve && self.bidPeriod!.isFABid() && self.bidPeriod!.isSecondRoundBid(){
                         dayDutyMinutes = 60
                     }
@@ -4441,7 +4443,17 @@ class BIBidInfoReader{
                     day?.info?.dutyMinutes = dayDutyMinutes as NSNumber
                     day?.info?.blockMinutes = dayBlockMinutes as NSNumber
                 }
-                dayComponent.day = dayCount
+//                dayComponent.day = dayCount
+                
+                if trip.isRedEyeTrip && dayCount == tripOrderedDays.count - 1 {
+                    let calendarDaysCount = trip.info!.calendarDaysCount!.intValue
+                    let orderedDaysCount = trip.info!.orderedDays().count
+                    dayComponent.day = dayCount + (calendarDaysCount - orderedDaysCount)
+                }else{
+                    dayComponent.day = dayCount
+                }
+                
+                
                 let date = appCal!.date(byAdding: dayComponent, to: trip.startDate!)
                 day?.date = date
                 
@@ -4451,7 +4463,7 @@ class BIBidInfoReader{
                 weekdays[weekday] += 1
                 
                 
-                if trip.isRedEyeTrip {
+               /* if trip.isRedEyeTrip {
                     if dayCount == tripOrderedDays.count - 1 &&
                         trip.info?.calendarDaysCount != NSNumber(value: trip.info!.orderedDays().count) {
 
@@ -4469,7 +4481,8 @@ class BIBidInfoReader{
                         weekdayBits |= (1 << weekdayRedEye)
                         weekdays[weekdayRedEye] += 1
                     }
-                }
+                }*/
+                
 //                if trip.isRedEyeTrip {
 //                    if trip.info?.calendarDaysCount != NSNumber(value: trip.info!.orderedDays().count){
 //                        let missingDateIndex =  CBUtils.findMissingIndex(inRedEyeTrip: trip)
@@ -4895,6 +4908,9 @@ class BIBidInfoReader{
         
         var vcCarryOutPay:Float = 0
         
+        var utcCal = Calendar(identifier: .gregorian)
+        utcCal.timeZone = TimeZone(abbreviation: "UTC")!
+        
         for case let trip as BITrip in line.trips!{
             if trip.vacationOverlapType?.intValue != 0{
                 if self.includeDroppedTrips!{
@@ -4926,22 +4942,52 @@ class BIBidInfoReader{
                         return
                     }
                 }
+                
+                var shouldInjectDSTPay = false
+                
                 if dayOrderedLegs.count > 0{
                     if tripOrderedDays[0] == dayInfo{
                         dateComps.minute = dayOrderedLegs[0].departMinutes!.intValue - trip.info!.briefMinutes!.intValue
                     }else{
                         dateComps.minute = dayOrderedLegs[0].departMinutes!.intValue - trip.info!.debriefMinutes!.intValue
                     }
-                    departDate = appCal!.date(from: dateComps)!
+//                    departDate = appCal!.date(from: dateComps)!
+//                    
+//                    dateComps.minute = dayOrderedLegs.last!.arriveMinutes!.intValue + trip.info!.debriefMinutes!.intValue
+//                    arriveDate = appCal!.date(from: dateComps)!
+//                    dayDutyMinutes = appCal!.dateComponents([.minute], from: departDate, to: arriveDate).minute!
+                    
+                    departDate = utcCal.date(from: dateComps)
+                    let localDepartDate = appCal!.date(from: dateComps)
                     
                     dateComps.minute = dayOrderedLegs.last!.arriveMinutes!.intValue + trip.info!.debriefMinutes!.intValue
-                    arriveDate = appCal!.date(from: dateComps)!
-                    dayDutyMinutes = appCal!.dateComponents([.minute], from: departDate, to: arriveDate).minute!
+                    
+                    arriveDate = utcCal.date(from: dateComps)
+                    let localArriveDate = appCal!.date(from: dateComps)
+                    
+                    let components = utcCal.dateComponents([.minute], from: departDate, to: arriveDate)
+                    dayDutyMinutes = components.minute ?? 0
+                    
+                    let herbTZ = TimeZone(identifier: "US/Central")
+
+                    let isDepartDST = herbTZ?.isDaylightSavingTime(for: localDepartDate!) ?? false
+                    let isArriveDST = herbTZ?.isDaylightSavingTime(for: localArriveDate!) ?? false
+
+                    if !isDepartDST && isArriveDST {
+                        shouldInjectDSTPay = true
+                    }
+                    
+                    
                 }
                 //Day Rig Calculation
                 let dutyHourMinPayRatio:Float = 0.74 // Duty Hour Rig
                 var dayMinimum:NSNumber = isFABid ? 4 : 5  // Duty Period Minimum
-                let dayActualPay = Float(day.info!.dayPay)
+                var dayActualPay = Float(day.info!.dayPay)
+                
+                if shouldInjectDSTPay{
+                    dayActualPay += 1.2
+                }
+                
                 var dayMinimumBasedOnDutyHour = (Float(dayDutyMinutes) / 60 * dutyHourMinPayRatio) as NSNumber
                 if dayMinimum.floatValue >= dayMinimumBasedOnDutyHour.floatValue{
                     dayMinimumBasedOnDutyHour = 0

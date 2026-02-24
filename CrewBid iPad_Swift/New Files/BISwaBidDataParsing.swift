@@ -929,7 +929,7 @@ class BISwaBidDataParsing{
         
         tripInfo.blockMinutes = (tripDict["operationalInfo"] as? [String: Any])?["totalBlockMinutes"] as? NSNumber
         tripInfo.dutyMinutes = (tripDict["operationalInfo"] as? [String: Any])?["totalDutyMinutes"] as? NSNumber
-
+        tripInfo.tafbMinsFA = (tripDict["operationalInfo"]as? [String: Any])?["timeAwayFromBase"] as? NSNumber
         tripInfo.calendarDaysCount = NSNumber(value: daysData.count)
         tripInfo.dutyPeriodsCount = NSNumber(value: daysData.count)
 

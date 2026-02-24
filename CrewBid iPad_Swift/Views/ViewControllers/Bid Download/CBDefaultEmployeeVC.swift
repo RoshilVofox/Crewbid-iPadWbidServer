@@ -263,6 +263,7 @@ class CBDefaultEmployeeVC: BaseViewController {
     }
     
     
+    
     func awardedLineForFA(employeeNumber:String) -> NSDictionary{
         let awardText = bidPeriod?.awardString
         var awardedLine: String? = ""

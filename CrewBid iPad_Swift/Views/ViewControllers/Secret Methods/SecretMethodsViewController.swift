@@ -202,11 +202,13 @@ class SecretMethodsViewController: UIViewController {
     @IBAction func secretSubmitAction(_ sender: Any) {
         
         if let txt = self.txtSecretUser.text, !txt.isEmpty{
+            self.txtSecretUser.resignFirstResponder()
             UserDefaults.standard.set(txt, forKey: "SecretVDuserName")
         }else{
+            UserDefaults.standard.set(nil, forKey: "SecretVDuserName")
         }
         
-        
+        self.dismiss(animated: true)
     }
     
 }

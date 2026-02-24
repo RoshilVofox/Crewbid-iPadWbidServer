@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24512" systemVersion="25C56" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24512" systemVersion="25D125" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AwardDetails" representedClassName="AwardDetails" syncable="YES">
+        <attribute name="baseSeniority" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="empName" optional="YES" attributeType="String"/>
         <attribute name="empNum" optional="YES" attributeType="String"/>
+        <attribute name="isContingent" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isRegulatory" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="jobSharePos" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="lineNum" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="position" optional="YES" attributeType="String"/>
+        <attribute name="reserveType" optional="YES" attributeType="String"/>
         <attribute name="seqNumber" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
         <relationship name="bidPeriod" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BidPeriod" inverseName="awardDetails" inverseEntity="BidPeriod"/>
     </entity>
     <entity name="BidPeriod" representedClassName="BIBidPeriod" syncable="YES">
@@ -617,6 +623,7 @@
         <attribute name="returnTime" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="tafbJson" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
+        <attribute name="tafbMinsFA" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="days" optional="YES" toMany="YES" minCount="1" deletionRule="Nullify" destinationEntity="DayInfo" inverseName="trip" inverseEntity="DayInfo"/>
         <relationship name="firstDay" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="DayInfo" inverseName="tripFirstDay" inverseEntity="DayInfo"/>
         <relationship name="trips" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Trip" inverseName="info" inverseEntity="Trip"/>
