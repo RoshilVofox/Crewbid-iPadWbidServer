@@ -10,7 +10,7 @@ import UIKit
 class CBSeniorityListVC: UIViewController {
 
     @IBOutlet weak var lblTitle: UILabel!
-    @IBOutlet weak var searchBar: UISearchBar!
+//    @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var btnShare: UIButton!
     @IBOutlet weak var btnClose: NSLayoutConstraint!
     @IBOutlet weak var tableView: UITableView!
@@ -25,6 +25,15 @@ class CBSeniorityListVC: UIViewController {
     var filteredSeniorityList = [SeniorityList]()
     var seniorityList:[SeniorityList]?
     private var isPresentingInvalidTokenAlert = false
+    
+    var currentSearchText: String = ""
+    let searchBar = UISearchBar()
+    let previousButton = UIButton(type: .system)
+    let nextButton = UIButton(type: .system)
+    let resultLabel = UILabel()
+
+    var matchIndexPaths: [IndexPath] = []
+    var currentMatchIndex: Int = 0
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -55,6 +64,7 @@ class CBSeniorityListVC: UIViewController {
     
     
     func setupUI(){
+        setupSearchUI()
         tableView.keyboardDismissMode = .onDrag
         tableView.separatorStyle = .none
         tableView.separatorInset = .zero
@@ -97,6 +107,54 @@ class CBSeniorityListVC: UIViewController {
                 view.alpha = 0
             }
         }
+    }
+    
+    func setupSearchUI() {
+        
+        let containerView = UIStackView()
+        containerView.axis = .horizontal
+        containerView.spacing = 8
+        containerView.alignment = .center
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // SearchBar
+        searchBar.placeholder = "Search"
+        searchBar.delegate = self
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        searchBar.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        
+        // Previous Button
+        previousButton.setTitle("◀︎", for: .normal)
+        previousButton.addTarget(self, action: #selector(previousTapped), for: .touchUpInside)
+        
+        // Next Button
+        nextButton.setTitle("▶︎", for: .normal)
+        nextButton.addTarget(self, action: #selector(nextTapped), for: .touchUpInside)
+        
+        // Result Label
+        resultLabel.text = ""
+        resultLabel.font = UIFont.systemFont(ofSize: 14)
+        
+        previousButton.isEnabled = false
+        previousButton.isHidden = true
+        nextButton.isEnabled = true
+        nextButton.isHidden = true
+        
+        containerView.addArrangedSubview(searchBar)
+        containerView.addArrangedSubview(previousButton)
+        containerView.addArrangedSubview(resultLabel)
+        containerView.addArrangedSubview(nextButton)
+        
+        view.addSubview(containerView)
+        
+        NSLayoutConstraint.activate([
+            // Align vertically with btnShare
+            containerView.centerYAnchor.constraint(equalTo: btnShare.centerYAnchor),
+            // Place it to the LEFT of btnShare
+            containerView.trailingAnchor.constraint(equalTo: btnShare.leadingAnchor, constant: -10),
+            // Optional: prevent going off left edge
+            containerView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 10)
+        ])
     }
     
     func fetchSeniorityData() {
@@ -333,6 +391,105 @@ class CBSeniorityListVC: UIViewController {
 //                })
 //            }
     }
+    
+    func highlightedText(fullText: String,
+                         searchText: String,
+                         isCurrentMatch: Bool) -> NSAttributedString {
+        
+        let attributedString = NSMutableAttributedString(
+            string: fullText,
+            attributes: [
+//                .font: UIFont.systemFont(ofSize: 15),
+                .foregroundColor: UIColor.label
+            ]
+        )
+        
+        guard !searchText.isEmpty else {
+            return attributedString
+        }
+        
+        let lowerFull = fullText.lowercased()
+        let lowerSearch = searchText.lowercased()
+        
+        var searchRange = lowerFull.startIndex..<lowerFull.endIndex
+        
+        while let range = lowerFull.range(of: lowerSearch, range: searchRange) {
+            
+            let nsRange = NSRange(range, in: fullText)
+            
+            attributedString.addAttribute(
+                .backgroundColor,
+                value: isCurrentMatch ? UIColor.systemOrange : UIColor.systemYellow,
+                range: nsRange
+            )
+            
+            searchRange = range.upperBound..<lowerFull.endIndex
+        }
+        
+        return attributedString
+    }
+    
+    func updateResultLabel() {
+        if matchIndexPaths.isEmpty {
+            resultLabel.text = ""
+            previousButton.isEnabled = false
+            previousButton.isHidden = true
+            nextButton.isEnabled = false
+            nextButton.isHidden = true
+        } else {
+            resultLabel.text = "\(currentMatchIndex + 1) of \(matchIndexPaths.count)"
+            previousButton.isEnabled = true
+            previousButton.isHidden = false
+            nextButton.isEnabled = true
+            nextButton.isHidden = false
+        }
+    }
+    
+    @objc func nextTapped() {
+        guard !matchIndexPaths.isEmpty else { return }
+        
+        currentMatchIndex += 1
+        
+        if currentMatchIndex >= matchIndexPaths.count {
+            currentMatchIndex = 0
+        }
+        
+        scrollToCurrentMatch()
+    }
+
+    @objc func previousTapped() {
+        guard !matchIndexPaths.isEmpty else { return }
+        
+        currentMatchIndex -= 1
+        if currentMatchIndex < 0 {
+            currentMatchIndex = matchIndexPaths.count - 1
+        }
+        
+        scrollToCurrentMatch()
+    }
+    
+    func scrollToCurrentMatch() {
+        
+        guard !matchIndexPaths.isEmpty,
+              currentMatchIndex < matchIndexPaths.count else { return }
+        
+        let indexPath = matchIndexPaths[currentMatchIndex]
+        
+        tableView.layoutIfNeeded()
+        
+        tableView.scrollToRow(at: indexPath,
+                              at: .middle,
+                              animated: true)
+        
+        updateVisibleCellsHighlight()
+        updateResultLabel()
+    }
+    
+    func updateVisibleCellsHighlight() {
+        guard let visible = tableView.indexPathsForVisibleRows else { return }
+        
+        tableView.reloadRows(at: visible, with: .none)
+    }
 }
 
 extension CBSeniorityListVC: UITableViewDelegate, UITableViewDataSource{
@@ -371,34 +528,88 @@ extension CBSeniorityListVC: UITableViewDelegate, UITableViewDataSource{
         return 40
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CBSeniorityListTableViewCell") as! CBSeniorityListTableViewCell
+    func tableView(_ tableView: UITableView,
+                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: "CBSeniorityListTableViewCell",
+            for: indexPath
+        ) as! CBSeniorityListTableViewCell
+        
         cell.selectionStyle = .none
         cell.layoutMargins = .zero
         cell.separatorInset = .zero
-        let seniority = self.filteredSeniorityList[indexPath.row]
-        if self.bidPeriod?.isFirstRoundBid() == true{
-            cell.baseSeniorityLbl.text = String(format: "%@", seniority.baseSeniority?.stringValue ?? "")
-            cell.empNumLbl.text = String(format: "(%@)", seniority.employeeId ?? "")
-            cell.nameLbl.text = String(format: "%@", seniority.legalName?.uppercased() ?? "")
-            if seniority.vacationString == "N/A"{
-                cell.vacationTop.constant = 0
-                cell.vacationLbl.text = ""
-            }else{
-                cell.vacationTop.constant = 5
-                cell.vacationLbl.text = String(format: "%@", seniority.vacationString)
-            }
-        }else{
-            cell.baseSeniorityLbl.text = String(format: "%@", seniority.baseSeniority?.stringValue ?? "")
-            cell.empNumLbl.text = String(format: "[%@]", seniority.employeeId ?? "")
-            cell.nameLbl.text = String(format: "%@......................", seniority.legalName?.uppercased() ?? "")
-            cell.vacationTop.constant = 0
-            cell.vacationLbl.text = ""
+        
+        let seniority = filteredSeniorityList[indexPath.row]
+        let indexPathMatch = IndexPath(row: indexPath.row, section: 0)
+
+        let isCurrent =
+            matchIndexPaths.indices.contains(currentMatchIndex) &&
+            matchIndexPaths[currentMatchIndex] == indexPathMatch
+        // Base Seniority
+        let baseText = seniority.baseSeniority?.stringValue ?? ""
+        cell.baseSeniorityLbl.attributedText =
+            highlightedText(fullText: baseText,
+                            searchText: currentSearchText, isCurrentMatch: isCurrent)
+        
+        // Employee Number
+        let empText: String
+        if bidPeriod?.isFirstRoundBid() == true {
+            empText = "(\(seniority.employeeId ?? ""))"
+        } else {
+            empText = "[\(seniority.employeeId ?? "")]"
         }
+        
+        cell.empNumLbl.attributedText =
+            highlightedText(fullText: empText,
+                            searchText: currentSearchText, isCurrentMatch: isCurrent)
+        
+        // Name
+        let legalName = seniority.legalName?.uppercased() ?? ""
+        
+        let nameText: String
+        if bidPeriod?.isFirstRoundBid() == true {
+            nameText = legalName
+        } else {
+            nameText = legalName + "......................"
+        }
+        
+        cell.nameLbl.attributedText =
+            highlightedText(fullText: nameText,
+                            searchText: currentSearchText, isCurrentMatch: isCurrent)
+        
+        // 🔥 Vacation Handling (CRITICAL FIX)
+        
+        if bidPeriod?.isFirstRoundBid() == true {
+            
+            if seniority.vacationString == "N/A" {
+                cell.vacationTop.constant = 0
+                cell.vacationLbl.isHidden = true
+                cell.vacationLbl.text = nil
+                cell.vacationLbl.attributedText = nil
+            } else {
+                cell.vacationTop.constant = 5
+                cell.vacationLbl.isHidden = false
+                cell.vacationLbl.attributedText =
+                    highlightedText(fullText: seniority.vacationString,
+                                    searchText: currentSearchText, isCurrentMatch: isCurrent)
+            }
+            
+        } else {
+            // ✅ SECOND ROUND → COMPLETELY HIDE
+            cell.vacationTop.constant = 0
+            cell.vacationLbl.isHidden = true
+            cell.vacationLbl.text = nil
+            cell.vacationLbl.attributedText = nil
+        }
+        
         cell.nameLbl.adjustsFontSizeToFitWidth = false
         cell.nameLbl.lineBreakMode = .byClipping
+        
         return cell
     }
+    
+    
     
     
 }
@@ -427,27 +638,39 @@ extension CBSeniorityListVC : UISearchBarDelegate {
     }
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        guard let seniorityList = seniorityList else {
-            filteredSeniorityList = []
-            tableView.reloadData()
-            return
+        
+        currentSearchText = searchText
+        matchIndexPaths.removeAll()
+        currentMatchIndex = 0
+        
+        guard let seniorityList = seniorityList else { return }
+        
+        filteredSeniorityList = seniorityList.sorted {
+            ($0.baseSeniority?.intValue ?? 0) < ($1.baseSeniority?.intValue ?? 0)
         }
         
-        if searchText.isEmpty{
-            filteredSeniorityList = seniorityList.sorted {
-                ($0.baseSeniority?.intValue ?? 0) < ($1.baseSeniority?.intValue ?? 0)
+        if !searchText.isEmpty {
+            for (index, item) in filteredSeniorityList.enumerated() {
+                if item.employeeId?.localizedCaseInsensitiveContains(searchText) == true ||
+                   item.legalName?.localizedCaseInsensitiveContains(searchText) == true ||
+                   item.vacationString.localizedCaseInsensitiveContains(searchText) ||
+                   item.baseSeniority?.stringValue.localizedCaseInsensitiveContains(searchText) == true {
+                    
+                    matchIndexPaths.append(IndexPath(row: index, section: 0))
+                }
             }
-        }else{
-            filteredSeniorityList = seniorityList.filter {
-                $0.employeeId?.localizedCaseInsensitiveContains(searchText) == true ||
-                $0.legalName?.localizedCaseInsensitiveContains(searchText) == true ||
-                $0.vacationString.localizedCaseInsensitiveContains(searchText) ||
-                $0.baseSeniority?.stringValue.localizedCaseInsensitiveContains(searchText) == true
-            }
-            .sorted { $0.baseSeniority?.intValue ?? 0 < $1.baseSeniority?.intValue ?? 0 }
         }
-        self.tableView.reloadData()
-
+        
+        tableView.reloadData()
+        
+        // 🔥 Scroll AFTER reload + layout
+        DispatchQueue.main.async {
+            if !self.matchIndexPaths.isEmpty {
+                self.scrollToCurrentMatch()
+            }
+        }
+        
+        updateResultLabel()
     }
     
     func isStartsWithNumber(_ input: String) -> Bool {
