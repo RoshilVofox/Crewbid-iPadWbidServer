@@ -197,15 +197,20 @@ class CBDefaultEmployeeVC: BaseViewController {
             let emp = textEmpNum.text!
             var line:BILine?
             if self.bidPeriod!.isFABid(){
-                let awardedLineDic = self.awardedLineForFA(employeeNumber: emp)
+                guard let awardedLineDic = self.swaAwardedLineForFA(employeeNumber: emp) else {
+                        AlertService.showAlertForTopVC(
+                            title: "Employee Number \(emp) Not Found",
+                            message: "This could be due to an issue with the format of the Bid Awards file. As a workaround, you can use the Show Line option from the Lines Text File under Show Bid Files in the Bid Actions menu."
+                        )
+                        return
+                    }
                 if let awardedLineString = awardedLineDic["awardedLine"] as? String, let awardedPos = awardedLineDic["awardedPos"] as? String {
                     let awardedLine = Int(awardedLineString)
                     if awardedLine != 0 {
                         line = self.fetchLine(lineNumber: awardedLine!, isFA: true, pos: awardedPos)!
                     }else{
-                        dismissFn()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            AlertService.showAlertForTopVC(title: "Alert", message: "Awarded Line Not Found")
+                            AlertService.showAlertForTopVC(title: "No Line Awarded", message: "We found your employee record (\(emp)), but no specific line was awarded. This may occur if you are on the Reserve List or if the award data is still being processed.")
                             return
                         }
                     }
@@ -216,17 +221,17 @@ class CBDefaultEmployeeVC: BaseViewController {
                     line = self.fetchLine(lineNumber: awardedLine, isFA: false, pos: nil)!
                 }
             }
-            if action == "Add Awarded Line to Calendar"{
-                if line != nil {
+//            if action == "Add Awarded Line to Calendar"{
+//                if line != nil {
                     //MARK: need code to save to calendar
 //                    self.selectedLine = line
 //                    addtoLineClnder()
-                }
-            }else{
+//                }
+//            }else{
                 if line != nil {
                     self.showAwardedCalendarLineView(line: line!)
                 }
-            }
+//            }
         }
     }
     
@@ -262,9 +267,29 @@ class CBDefaultEmployeeVC: BaseViewController {
         return nil
     }
     
+    func swaAwardedLineForFA(employeeNumber: String) -> NSDictionary? {
+        let awards = self.bidPeriod?.awardDetails as? Set<AwardDetails> ?? []
+        
+        let rawEmpNum = employeeNumber.lowercased().replacingOccurrences(of: "e", with: "").replacingOccurrences(of: "x", with: "")
+        var userAward = awards.first(where: { $0.empNum == rawEmpNum && $0.type == "Jobshare" })
+        
+        if userAward == nil {
+            userAward = awards.first(where: { $0.empNum == rawEmpNum && $0.type == "Line" })
+        }
+        
+        if userAward == nil {
+            userAward = awards.first(where: { $0.empNum == rawEmpNum })
+        }
+
+        if let award = userAward {
+            let lineString = "\(award.lineNum)"
+            let posString = award.position ?? ""
+            return NSDictionary(objects: [lineString, posString], forKeys: ["awardedLine", "awardedPos"] as [NSCopying])
+        }
+        return nil
+    }
     
-    
-    func awardedLineForFA(employeeNumber:String) -> NSDictionary{
+    /*func awardedLineForFA(employeeNumber:String) -> NSDictionary{
         let awardText = bidPeriod?.awardString
         var awardedLine: String? = ""
         var awardedPos: String? = ""
@@ -356,7 +381,7 @@ class CBDefaultEmployeeVC: BaseViewController {
         }
         let returnDict = NSDictionary(objects:[awardedLine!, awardedPos!], forKeys:["awardedLine", "awardedPos"] as [NSCopying]) as Dictionary
         return returnDict as NSDictionary
-    }
+    }*/
     
     
     func awardedLineForPilot(employeeNumber:String) -> Int {

@@ -33,10 +33,10 @@ class CBBidActionsViewController: BaseViewController, KUIPopOverUsable {
     var falistDict: [String: Any] = [:]
     var bidPeriod: BIBidPeriod?
     var isBuddingBiddingEnabled = false
-    let arrForFAWithAwdTxt = ["Submit Bid","Show Bid Receipt","Show Awards","Show Bid File","Line Importer","Vacation","Retrieve Awards","swaSYNC","ReDownload Flt Data"]
-    let arrForFAWithOutAwdTxt = ["Submit Bid","Show Bid Receipt","Retrieve Awards","Show Bid File","Line Importer","Vacation","swaSYNC","ReDownload Flt Data"]
-    let arrForPilotWithAwdTxt = ["Submit Bid","Show Bid Receipt","Show Awards","Show Bid File","Line Importer","Vacation", "Show CAP","Retrieve Awards","Restore Last Bid","ReDownload Flt Data"]
-    let arrForPilotWithOutAwdTxt = ["Submit Bid","Show Bid Receipt","Retrieve Awards","Show Bid File","Line Importer","Vacation","Show CAP","Restore Last Bid","ReDownload Flt Data"]
+    let arrForFAWithAwdTxt = ["Submit Bid","Show Bid Receipt","Show Awards","Show Bid File","Line Importer","Vacation","Retrieve Awards","Get Last Bid","ReDownload Flt Data"]
+    let arrForFAWithOutAwdTxt = ["Submit Bid","Show Bid Receipt","Retrieve Awards","Show Bid File","Line Importer","Vacation","Get Last Bid","ReDownload Flt Data"]
+    let arrForPilotWithAwdTxt = ["Submit Bid","Show Bid Receipt","Show Awards","Show Bid File","Line Importer","Vacation", "Show CAP","Retrieve Awards","Get Last Bid","ReDownload Flt Data"]
+    let arrForPilotWithOutAwdTxt = ["Submit Bid","Show Bid Receipt","Retrieve Awards","Show Bid File","Line Importer","Vacation","Show CAP","Get Last Bid","ReDownload Flt Data"]
     
     let fileArrayFA = ["Cover Letter","Seniority List"/*,"Lines Text","Trips Text","FA Memo"*/]
     let fileArrayPilot = ["Cover Letter","Seniority List","Lines Text","Trips Text"]
@@ -385,7 +385,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                                     NotificationCenter.default.post(name: NSNotification.Name(KCBOpenretrieveAwardDownloadPage), object: self)
                                 }
-                        }else if cell.lblTitle.text == "Restore Last Bid" {
+                        }else if cell.lblTitle.text == "Get Last Bid" {
                             self.dismiss(animated: false, completion: nil)
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                 let notification = Notification(name: Notification.Name("RestoreLastBidNotification"), object: nil)
@@ -395,7 +395,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                         break
                     case 8:
                     let cell = tableView.cellForRow(at: indexPath) as! CBBidActionTableCell
-                    if cell.lblTitle.text == "Restore Last Bid" {
+                    if cell.lblTitle.text == "Get Last Bid" {
                         self.dismiss(animated: false, completion: nil)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             let notification = Notification(name: Notification.Name("RestoreLastBidNotification"), object: nil)
@@ -479,7 +479,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                                 NotificationCenter.default.post(name: NSNotification.Name(KCBOpenretrieveAwardDownloadPage), object: self)
                             }
-                        }else if cell.lblTitle.text == "swaSYNC" {
+                        }else if cell.lblTitle.text == "Get Last Bid" {
                             self.dismiss(animated: false, completion: nil)
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                 let notification = Notification(name: Notification.Name("RestoreLastBidNotification"), object: nil)
@@ -489,7 +489,7 @@ extension CBBidActionsViewController: UITableViewDataSource, UITableViewDelegate
                         break
                     case 7 :
                     let cell = tableView.cellForRow(at: indexPath) as! CBBidActionTableCell
-                    if cell.lblTitle.text == "swaSYNC" {
+                    if cell.lblTitle.text == "Get Last Bid" {
                         self.dismiss(animated: false, completion: nil)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             let notification = Notification(name: Notification.Name("RestoreLastBidNotification"), object: nil)
