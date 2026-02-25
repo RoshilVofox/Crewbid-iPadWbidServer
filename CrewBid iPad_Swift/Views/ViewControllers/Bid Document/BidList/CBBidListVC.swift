@@ -3453,8 +3453,7 @@ extension CBBidListVC: CBSortOptionDelegate{
                 self.updateBidList()
             }
         }
-        //MARK: AWARD SORT
-        else if isAwardSort {
+        /*else if isAwardSort {
             if self.bidPeriod.awardDetails == nil || self.bidPeriod.awardDetails?.allObjects.count == 0 {
                 return
             }
@@ -3588,6 +3587,92 @@ extension CBBidListVC: CBSortOptionDelegate{
                 self.updateBidList()
             }
             
+        }*/
+        // MARK: AWARD SORT
+        else if isAwardSort {
+            
+            guard let awardDetailsSet = self.bidPeriod.awardDetails, awardDetailsSet.count > 0 else {
+                return
+            }
+            
+            // Sort the Core Data objects by baseSeniority to ensure we process them in that order
+            let sortedAwards = (awardDetailsSet.allObjects as! [AwardDetails]).sorted { $0.baseSeniority < $1.baseSeniority }
+            
+            var bidUserId = self.bidPeriod.crewIdentifier?.stringValue ?? CBUserAccountDetail.shared.employeeNumber
+            
+            if let userAward = sortedAwards.first(where: { $0.empNum == bidUserId }) {
+                self.awardedLineNum = "\(userAward.lineNum)"
+                if self.bidPeriod.isFABid() {
+                    self.awardedLineNum = "\(userAward.lineNum)" + (userAward.position ?? "")
+                }
+            }
+
+            if self.bidPeriod.faReserveLineExists?.boolValue ?? false || self.bidPeriod.faMrtLineExists?.boolValue ?? false {
+                for line in self.linesArray {
+                    if line.number?.stringValue == "1000" {
+                        if (line.faBidLineReserve?.boolValue ?? false) || (line.faBidLineMrt?.boolValue ?? false) {
+                            self.bidPeriod.managedObjectContext?.delete(line)
+                        }
+                    }
+                }
+            }
+            
+            var awardedKeys = [String]()
+            
+            // We use an index counter for the new bidOrder to maintain the seniority sequence
+            for (index, award) in sortedAwards.enumerated() {
+                let awardLineStr = "\(award.lineNum)"
+                let awardPos = award.position ?? ""
+                
+                let uniqueKey = userPosition == "FA" ? "\(awardLineStr)\(awardPos)" : awardLineStr
+                awardedKeys.append(uniqueKey)
+
+                for line in linesArray {
+                    let lineNumStr = line.number?.stringValue ?? ""
+                    
+                    if awardLineStr == lineNumStr {
+                        if userPosition == "FA" {
+                            // Match Line Number and FA Position
+                            if awardPos == line.faPositionString || awardPos == "" {
+                                line.previousBidOrder = line.bidOrder
+                                // Use the seniority-based index as the new bid order
+                                line.bidOrder = NSNumber(value: index + 1)
+                            }
+                        } else {
+                            line.previousBidOrder = line.bidOrder
+                            line.bidOrder = NSNumber(value: index + 1)
+                        }
+                    }
+                }
+            }
+
+            let sortedLines = (self.bidPeriod.lines?.allObjects as? [BILine] ?? []).sorted {
+                ($0.bidOrder?.int32Value ?? 0) < ($1.bidOrder?.int32Value ?? 0)
+            }
+            
+            var remainingLines: [BILine] = []
+            for line in sortedLines {
+                var lineKey = line.number?.stringValue ?? ""
+                if userPosition == "FA" && self.bidPeriod.isFirstRoundBid() {
+                    lineKey = "\(lineKey)\(line.faPositionString)"
+                }
+                
+                if !awardedKeys.contains(lineKey) && (line.bidOrder?.intValue ?? 0) > 0 {
+                    remainingLines.append(line)
+                }
+            }
+
+            // Assign bid orders for remaining lines starting after the last seniority-sorted award
+            let startingOrder = sortedAwards.count + 1
+            for (index, extraLine) in remainingLines.enumerated() {
+                extraLine.previousBidOrder = extraLine.bidOrder
+                extraLine.bidOrder = NSNumber(value: startingOrder + index)
+            }
+            
+            DispatchQueue.main.async {
+                self.view.hideActivityIndicator()
+                self.updateBidList()
+            }
         }
     }
     

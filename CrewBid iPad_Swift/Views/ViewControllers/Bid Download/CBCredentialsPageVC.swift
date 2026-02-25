@@ -915,8 +915,8 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
                         self.dismiss(animated: false) {
                             if self.awardsViewModel?.bidPeriod.awardString != nil {
                                 var emp = ""
-                                if (CBGlobalMethods.shared.awardLertSecretEmpNum?.length ?? 0 > 0) {
-                                    emp = CBGlobalMethods.shared.awardLertSecretEmpNum!;
+                                if let secretID = UserDefaults.standard.string(forKey: "SecretVDuserName"), !secretID.isEmpty{
+                                    emp = secretID
                                 } else {
                                     emp = empNum
                                 }
@@ -1244,6 +1244,9 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
         if userAward == nil {
                 userAward = awards.first(where: { $0.empNum == rawEmpNum && $0.type == "Line" })
             }
+        if userAward == nil {
+                userAward = awards.first(where: { $0.empNum == rawEmpNum && $0.type == "Reserve" })
+            }
         if let userAward = userAward{
             let monthName = CBUtils.shortMonthName(month: bidPeriod!.month!.intValue, uc: false)
             let yearNum = bidPeriod!.year!.stringValue
@@ -1292,23 +1295,21 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
                 
             }
             
-            AlertService.showAlertForTopVC(
-                title: title,
-                message: message,
-                actions: [
-                    (title: "OK", style: .default, handler: { _ in
-                        self.dismissVC()
+            AlertService.showAlertForTopVC(title: title, message: message, actions: [(title: "OK", style: .default, handler: { _ in
+                        self.dismiss(animated: true)
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            NotificationCenter.default.post(
-                                name: NSNotification.Name(KCBOpenAwardData),
-                                object: self
-                            )
+                            NotificationCenter.default.post(name: NSNotification.Name(KCBOpenAwardData), object: self)
                         }
                     })
                 ]
             )
         }else {
-            AlertService.showAlertForTopVC(title: "Not Found", message: "Employee \(rawEmpNum) was not found.")
+            AlertService.showAlertForTopVC(title: "No awarded line found", message: "We did not find an awarded line for you (\(rawEmpNum))",actions: [(title:"OK", style: .default, handler: {_ in
+                self.dismiss(animated: true)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    NotificationCenter.default.post(name: NSNotification.Name(KCBOpenAwardData), object: self)
+                }
+            })])
         }
     }
     
