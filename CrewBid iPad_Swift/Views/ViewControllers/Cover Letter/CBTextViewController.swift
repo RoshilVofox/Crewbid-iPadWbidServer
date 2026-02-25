@@ -484,11 +484,11 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
         searchBarForHighlight.placeholder = "Search"
         searchBarForHighlight.delegate = self
 
-        previousButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        previousButton.setTitle("◀︎", for: .normal)
         previousButton.addTarget(self, action: #selector(previousTapped), for: .touchUpInside)
         previousButton.isEnabled = false
 
-        nextButton.setImage(UIImage(systemName: "chevron.right"), for: .normal)
+        nextButton.setTitle("▶︎", for: .normal)
         nextButton.addTarget(self, action: #selector(nextTapped), for: .touchUpInside)
         nextButton.isEnabled = false
         
