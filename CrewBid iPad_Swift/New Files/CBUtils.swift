@@ -1952,7 +1952,7 @@ class CBUtils{
     
     
     static func isSwaTypeOfFileDownload() -> Bool{
-        if ((AppState.shared.mockDataYear == 2025 && AppState.shared.mockDataMonth == 12) || AppState.shared.mockDataYear! > 2026){
+        if (AppState.shared.mockDataYear == 2026 && AppState.shared.mockDataMonth == 3){
             return true
         }
         return false

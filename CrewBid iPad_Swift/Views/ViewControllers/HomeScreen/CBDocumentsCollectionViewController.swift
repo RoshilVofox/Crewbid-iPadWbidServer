@@ -328,14 +328,15 @@ class CBDocumentsCollectionViewController: BaseViewController, ServiceConnection
         var qaString = ""
         
         if isQATest {
-            switch swaEnv {
-            case "QA":
-                qaString = "(QA Mode)(SWA-QA)"
-            case "Dev":
-                qaString = "(QA Mode)(SWA-Dev)"
-            default:
-                qaString = "(QA Mode)"
-            }
+            qaString = "(QA Mode)"
+        }
+        switch swaEnv {
+        case "QA":
+            qaString += "(SWA-QA)"
+        case "Dev":
+            qaString += "(SWA-Dev)"
+        default:
+            break
         }
 
         let version = CBUtils.AppVersion()

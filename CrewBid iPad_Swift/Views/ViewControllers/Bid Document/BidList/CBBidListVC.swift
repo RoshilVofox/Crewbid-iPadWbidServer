@@ -12,9 +12,14 @@ var kReserveMrtViewTag: Int = 76
 var kReserveMrtLabelTag: Int = 333
 var kSnowflakeTag: Int = 1040
 
+enum SortAction {
+    case submit
+    case award
+}
+
 class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBidListCalenderViewCellDelegate,StartOverDelegate, CBBidLineMenuControllerDelegate, UIPopoverPresentationControllerDelegate  {
 
-    
+    private var pendingSortAction: SortAction?
     @IBOutlet weak var btnNormalView: UIButton!
     @IBOutlet weak var btnCalendarView: UIButton!
     @IBOutlet weak var btnExpandedView: UIButton!
@@ -3171,21 +3176,87 @@ extension CBBidListVC: CBSortOptionDelegate{
             btnASort.backgroundColor = CBColor.cbGreenColor
             // Check if award details are available or fetch them
             if self.bidPeriod.awardDetails?.allObjects.count == 0 {
-                self.apiForGetAwardDetails { [self] (success) in
-                    print(success)
-                    if success {
-                        self.bidPeriod.isAwardSortOn = Yes
-                        self.bidPeriod.isSortBySubmitOn = No
-                        self.isAwardSort = true
-                        self.isSubmitSort = false
-                    } else {
-                        if !self.isSubmitSort && !self.isAwardSort {
+                let swaBidDataDownload = BISwaBidDataDownload()
+                self.view.showActivityIndicator(color: CBColor.cbGreenColor, message: "Downloading...")
+
+                SwaAwardDownloadManager.shared.retrieveAwards(bidPeriod: self.bidPeriod, downloader: swaBidDataDownload) { result in
+
+                    DispatchQueue.main.async {
+                        self.view.hideActivityIndicator()
+                    }
+
+                    switch result {
+
+                    case .success(let awardResult):
+
+                        guard let json = awardResult.lineAwardDetails else {
                             DispatchQueue.main.async {
-                                self.btnASort.backgroundColor = CBColor.cbOrangeColor
+                                AlertService.showAlertForTopVC(title: "Sorry!",message: "No award data found")
+                            }
+                            return
+                        }
+                        
+                        DispatchQueue.global(qos: .background).async {
+                            self.saveGoldenAwardData(json)
+
+                            DispatchQueue.main.async {
+                                self.bidPeriod.isAwardSortOn = Yes
+                                self.bidPeriod.isSortBySubmitOn = No
+                                self.isAwardSort = true
+                                self.isSubmitSort = false
                             }
                         }
+
+                    case .failure(let error):
+                        if let awardError = error as? AwardError {
+
+                            switch awardError {
+
+                            case .invalidToken:
+                                self.pendingSortAction = .award
+                                self.showInvalidTokenAlertOnce()
+                                self.btnASort.backgroundColor = CBColor.cbOrangeColor
+                                return
+
+                            case .invalidBidPeriod:
+                                AlertService.showAlertForTopVC(
+                                    title: "Error",
+                                    message: "Invalid Bid Period"
+                                )
+
+                            case .other(let underlyingError):
+                                AlertService.showAlertForTopVC(
+                                    title: "Sorry!",
+                                    message: underlyingError.localizedDescription
+                                )
+                            }
+
+                        } else {
+                            AlertService.showAlertForTopVC(
+                                title: "Sorry!",
+                                message: error.localizedDescription
+                            )
+                        }
+                        self.btnASort.backgroundColor = CBColor.cbOrangeColor
                     }
                 }
+                
+                
+//                self.apiForGetAwardDetails { [self] (success) in
+//                    print(success)
+//                    if success {
+//                        self.bidPeriod.isAwardSortOn = Yes
+//                        self.bidPeriod.isSortBySubmitOn = No
+//                        self.isAwardSort = true
+//                        self.isSubmitSort = false
+//                    } else {
+//                        if !self.isSubmitSort && !self.isAwardSort {
+//                            DispatchQueue.main.async {
+//                                self.btnASort.backgroundColor = CBColor.cbOrangeColor
+//                            }
+//                        }
+//                    }
+//                }
             } else {
                 // Show sorting indicator and update sorting flags
                 DispatchQueue.main.async {
@@ -3308,6 +3379,70 @@ extension CBBidListVC: CBSortOptionDelegate{
             }
     }
     
+    
+    func saveGoldenAwardData(_ json: [String: Any]) {
+
+        guard
+            let embedded = json["_embedded"] as? [String: Any],
+            let awards = embedded["IFLineBaseAuctionAwards"] as? [[String: Any]],
+            let context = self.bidPeriod.managedObjectContext
+        else { return }
+
+        context.perform {
+
+            let awardEntity = NSEntityDescription.entity(
+                forEntityName: "AwardDetails",
+                in: context
+            )!
+
+            // Optional: clear previous awards first
+            if let existing = self.bidPeriod.awardDetails?.allObjects as? [AwardDetails] {
+                for obj in existing {
+                    context.delete(obj)
+                }
+            }
+
+            for award in awards {
+
+                let awardDetail = AwardDetails(
+                    entity: awardEntity,
+                    insertInto: context
+                )
+
+                // employeeId → empNum
+                if let empId = award["employeeId"] {
+                    awardDetail.empNum = "\(empId)"
+                }
+
+                // line → lineNum
+                if let lineString = award["line"] as? String,
+                   let lineValue = Int(lineString) {
+                    awardDetail.lineNum = Int16(lineValue)
+                }
+
+                // baseSeniority → seqNumber
+                if let seniority = award["baseSeniority"] as? Int {
+                    awardDetail.baseSeniority = Int16(seniority)
+                }
+
+                // position
+                awardDetail.position = award["position"] as? String ?? ""
+
+                awardDetail.bidPeriod = self.bidPeriod
+            }
+
+            do {
+                try context.save()
+            } catch {
+                print("Failed saving Golden awards: \(error)")
+            }
+
+            DispatchQueue.main.async {
+                self.loadBidLine()
+                self.tableViewNormalView.reloadData()
+            }
+        }
+    }
 
     func saveData(_ json: [String: Any]) {
         DispatchQueue.main.async {
@@ -3429,7 +3564,6 @@ extension CBBidListVC: CBSortOptionDelegate{
                             line.submitSortOrder = orderInt.asNSNumber
                             line.previousBidOrder = line.bidOrder
                             orderInt = orderInt + 1
-                            print(i, lineNumInt)
                         }
                     }
                 }
@@ -3595,10 +3729,9 @@ extension CBBidListVC: CBSortOptionDelegate{
                 return
             }
             
-            // Sort the Core Data objects by baseSeniority to ensure we process them in that order
             let sortedAwards = (awardDetailsSet.allObjects as! [AwardDetails]).sorted { $0.baseSeniority < $1.baseSeniority }
             
-            var bidUserId = self.bidPeriod.crewIdentifier?.stringValue ?? CBUserAccountDetail.shared.employeeNumber
+            let bidUserId = self.bidPeriod.crewIdentifier?.stringValue ?? CBUserAccountDetail.shared.employeeNumber
             
             if let userAward = sortedAwards.first(where: { $0.empNum == bidUserId }) {
                 self.awardedLineNum = "\(userAward.lineNum)"
@@ -3619,7 +3752,6 @@ extension CBBidListVC: CBSortOptionDelegate{
             
             var awardedKeys = [String]()
             
-            // We use an index counter for the new bidOrder to maintain the seniority sequence
             for (index, award) in sortedAwards.enumerated() {
                 let awardLineStr = "\(award.lineNum)"
                 let awardPos = award.position ?? ""
@@ -3632,10 +3764,8 @@ extension CBBidListVC: CBSortOptionDelegate{
                     
                     if awardLineStr == lineNumStr {
                         if userPosition == "FA" {
-                            // Match Line Number and FA Position
                             if awardPos == line.faPositionString || awardPos == "" {
                                 line.previousBidOrder = line.bidOrder
-                                // Use the seniority-based index as the new bid order
                                 line.bidOrder = NSNumber(value: index + 1)
                             }
                         } else {
@@ -3649,7 +3779,6 @@ extension CBBidListVC: CBSortOptionDelegate{
             let sortedLines = (self.bidPeriod.lines?.allObjects as? [BILine] ?? []).sorted {
                 ($0.bidOrder?.int32Value ?? 0) < ($1.bidOrder?.int32Value ?? 0)
             }
-            
             var remainingLines: [BILine] = []
             for line in sortedLines {
                 var lineKey = line.number?.stringValue ?? ""
@@ -3662,7 +3791,6 @@ extension CBBidListVC: CBSortOptionDelegate{
                 }
             }
 
-            // Assign bid orders for remaining lines starting after the last seniority-sorted award
             let startingOrder = sortedAwards.count + 1
             for (index, extraLine) in remainingLines.enumerated() {
                 extraLine.previousBidOrder = extraLine.bidOrder
@@ -3678,7 +3806,19 @@ extension CBBidListVC: CBSortOptionDelegate{
     
     @objc func handleAuthFlowEnded(){
         isPresentingInvalidTokenAlert = false
-        self.getSubmitted()
+
+        guard let action = pendingSortAction else {
+            return
+        }
+        
+        pendingSortAction = nil
+        
+        switch action {
+        case .submit:
+            self.getSubmitted()
+        case .award:
+            self.didTappedAwardSort(isOn: true)
+        }
     }
     
     func isTokenExpiredError(_ error: Error) -> Bool {
@@ -3794,6 +3934,7 @@ extension CBBidListVC: CBSortOptionDelegate{
                                    if self.bidPeriod.isAwardSortOn?.boolValue == true{
                                        self.btnASort.backgroundColor = CBColor.cbGreenColor
                                    }
+                                   self.pendingSortAction = .submit
                                    self.showInvalidTokenAlertOnce()
                                    return
                                }
