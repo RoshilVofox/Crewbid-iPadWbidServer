@@ -352,6 +352,7 @@
 		F474F4342E9243DE00B940B7 /* EmbeddedPrivacyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F474F4332E9243DE00B940B7 /* EmbeddedPrivacyVC.swift */; };
 		F474F4362E9245DE00B940B7 /* CBPrivacyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F474F4352E9245DE00B940B7 /* CBPrivacyVC.swift */; };
 		F474F4382E9245FA00B940B7 /* CBLicenseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F474F4372E9245FA00B940B7 /* CBLicenseVC.swift */; };
+		F47BA0B72F5554780076DA71 /* SwaAwardDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47BA0B62F5554780076DA71 /* SwaAwardDownloadManager.swift */; };
 		F47FF7732E9D00CE0033D77D /* AwardCalendarCollectionViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = F47FF7722E9D00CE0033D77D /* AwardCalendarCollectionViewVC.swift */; };
 		F481E96A2DD05ED200DED8FE /* CBUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F481E9692DD05ED200DED8FE /* CBUtils.swift */; };
 		F481E96F2DD0906C00DED8FE /* BIBidInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F481E96E2DD0906B00DED8FE /* BIBidInfo.swift */; };
@@ -764,6 +765,7 @@
 		F474F4332E9243DE00B940B7 /* EmbeddedPrivacyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmbeddedPrivacyVC.swift; sourceTree = "<group>"; };
 		F474F4352E9245DE00B940B7 /* CBPrivacyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBPrivacyVC.swift; sourceTree = "<group>"; };
 		F474F4372E9245FA00B940B7 /* CBLicenseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBLicenseVC.swift; sourceTree = "<group>"; };
+		F47BA0B62F5554780076DA71 /* SwaAwardDownloadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwaAwardDownloadManager.swift; sourceTree = "<group>"; };
 		F47FF7722E9D00CE0033D77D /* AwardCalendarCollectionViewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AwardCalendarCollectionViewVC.swift; sourceTree = "<group>"; };
 		F481E9692DD05ED200DED8FE /* CBUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBUtils.swift; sourceTree = "<group>"; };
 		F481E96E2DD0906B00DED8FE /* BIBidInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BIBidInfo.swift; sourceTree = "<group>"; };
@@ -1659,6 +1661,7 @@
 		F41EBFC72DC4E465001413DE /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				F47BA0B62F5554780076DA71 /* SwaAwardDownloadManager.swift */,
 				F41EBD5F2DC4DB20001413DE /* CoreData */,
 				F41EBDD52DC4DB20001413DE /* CBLineValues.swift */,
 				F41EBD662DC4DB20001413DE /* BICalendarData.swift */,
@@ -2427,6 +2430,7 @@
 				8B77C52B2DC7973B00E5B3B4 /* AppData.swift in Sources */,
 				F41EBFA82DC4DB20001413DE /* CBHelpVideosController.swift in Sources */,
 				F41EBFA92DC4DB20001413DE /* contactUsViewController.swift in Sources */,
+				F47BA0B72F5554780076DA71 /* SwaAwardDownloadManager.swift in Sources */,
 				F4E5DA0C2E3CA0DD00C96BDF /* CBBidLineCalendarCollectionView.swift in Sources */,
 				F4DF6DCD2DD5EA2700761057 /* KeychainHelper.swift in Sources */,
 				F41475812DC8D8290064CD25 /* KeychainItemWrapper.m in Sources */,
@@ -2512,7 +2516,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 7.35.94;
+				MARKETING_VERSION = 7.35.95;
 				PRODUCT_BUNDLE_IDENTIFIER = com.brainbagsoftware.CrewBid;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -2550,7 +2554,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 7.35.94;
+				MARKETING_VERSION = 7.35.95;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

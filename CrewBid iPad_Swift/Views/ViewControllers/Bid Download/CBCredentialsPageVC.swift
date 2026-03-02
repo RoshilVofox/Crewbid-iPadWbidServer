@@ -963,156 +963,125 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
             self.defaultEmployeeNumber = secretID
         }
         
-        let group = DispatchGroup()
-            self.awardError = nil
+        SwaAwardDownloadManager.shared.retrieveAwards(
+            bidPeriod: self.bidPeriod,
+            downloader: self.swaBidDataDownload
+        ) { result in
 
-            // Line awards
-            group.enter()
-            swaBidDataDownload?.getAwards { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success(let responseDict):
-                        self.lineAwardDetails = responseDict
-                    case .failure(let error):
-                        self.awardError = error
-                    }
-                    group.leave()
+            switch result {
+
+            case .success(let awardData):
+
+                let bidAwardText = CBUtils.generateTextForAwardData(
+                    awardData.lineAwardDetails,
+                    mrtAward: awardData.mrtAwardDetails,
+                    jobShareAward: awardData.jobshareAwardDetails,
+                    reserveData: awardData.reserveAwardDetails,
+                    bidPeriod: self.bidPeriod
+                )
+
+                self.bidPeriod?.deleteTextFile(text: bidAwardText, name: BIAwardsTextFileName)
+                self.bidPeriod?.addTextFile(text: bidAwardText, name: BIAwardsTextFileName)
+                self.bidPeriod?.awardString = bidAwardText
+
+                self.saveLocalAwardsToCoreData()
+
+                if let empNo = self.defaultEmployeeNumber {
+                    self.showAwardAlertFromLocal(empNum: empNo)
                 }
+
+            case .failure(let error):
+                AlertService.showAlertForTopVC(title: "Award Download Error",message: error.localizedDescription)
             }
-
-            if !(self.bidPeriod?.isSecondRoundBid() ?? false) {
-
-                // MRT awards
-                group.enter()
-                swaBidDataDownload?.getMrtAwards { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let responseDict):
-                            self.mrtAwardDetails = responseDict
-                        case .failure(let error):
-                            self.awardError = error
-                        }
-                        group.leave()
-                    }
-                }
-
-                // JobShare awards
-                group.enter()
-                swaBidDataDownload?.getJobShareAwards { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let responseDict):
-                            self.jobshareAwardDetails = responseDict
-                        case .failure(let error):
-                            self.awardError = error
-                        }
-                        group.leave()
-                    }
-                }
-
-                // Reserve awards
-                group.enter()
-                swaBidDataDownload?.getReserveDataForAward { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let responseDict):
-                            self.reserveAwardDetails = responseDict
-                        case .failure(let error):
-                            self.awardError = error
-                        }
-                        group.leave()
-                    }
-                }
-            }
-
-            // Final completion once ALL downloads finish
-            group.notify(queue: .main) {
-
-                if let error = self.awardError {
-
-                    let okAction = (title: "OK", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction) in
-                        self.awardParsingAndTextFileCreation()
-                    })
-
-                    AlertService.showAlertForTopVC(
-                        title: "Award Download Error",
-                        message: error.localizedDescription,
-                        actions: [okAction]
-                    )
-
-                } else {
-                    self.awardParsingAndTextFileCreation()
-                }
-            }
+            self.view.hideActivityIndicator()
+        }
         
-//        swaBidDataDownload?.getAwards(){ result in
-//            DispatchQueue.main.async {
-//                switch result {
-//                case .success(let responseDict):
-//                    self.lineAwardDownloaded = true
-//                    self.lineAwardDetails = responseDict
-//                case .failure(let error):
-//                    self.lineAwardDownloaded = true
-//                    self.awardError = error
-//                }
-//                self.checkForAwardError()
-//            }
-//        }
-//        
-//        if !self.bidPeriod!.isSecondRoundBid(){
-//            // MRT awards
-//            swaBidDataDownload?.getMrtAwards(){ result in
+//        let group = DispatchGroup()
+//            self.awardError = nil
+//
+//            // Line awards
+//            group.enter()
+//            swaBidDataDownload?.getAwards { result in
 //                DispatchQueue.main.async {
 //                    switch result {
 //                    case .success(let responseDict):
-//                        self.mrtAwardDownloaded = true
-//                        self.mrtAwardDetails = responseDict
+//                        self.lineAwardDetails = responseDict
 //                    case .failure(let error):
-//                        self.mrtAwardDownloaded = true
 //                        self.awardError = error
 //                    }
-//                    self.checkForAwardError()
+//                    group.leave()
 //                }
 //            }
-//            // JobShare awards
-//            swaBidDataDownload?.getJobShareAwards { result in
-//                DispatchQueue.main.async {
-//                    switch result {
-//                    case .success(let responseDict):
-//                        self.jobShareAwardDownloaded = true
-//                        self.jobshareAwardDetails = responseDict
-//                    case .failure(let error):
-//                        self.jobShareAwardDownloaded = true
-//                        self.awardError = error
+//
+//            if !(self.bidPeriod?.isSecondRoundBid() ?? false) {
+//
+//                // MRT awards
+//                group.enter()
+//                swaBidDataDownload?.getMrtAwards { result in
+//                    DispatchQueue.main.async {
+//                        switch result {
+//                        case .success(let responseDict):
+//                            self.mrtAwardDetails = responseDict
+//                        case .failure(let error):
+//                            self.awardError = error
+//                        }
+//                        group.leave()
 //                    }
-//                    self.checkForAwardError()
 //                }
-//            }
-//            
-//            // Reserve data
-//            swaBidDataDownload?.getReserveDataForAward { result in
-//                DispatchQueue.main.async {
-//                    switch result {
-//                    case .success(let responseDict):
-//                        self.reserveAwardDownloaded = true
-//                        self.reserveAwardDetails = responseDict
-//                    case .failure(let error):
-//                        self.reserveAwardDownloaded = true
-//                        self.awardError = error
+//
+//                // JobShare awards
+//                group.enter()
+//                swaBidDataDownload?.getJobShareAwards { result in
+//                    DispatchQueue.main.async {
+//                        switch result {
+//                        case .success(let responseDict):
+//                            self.jobshareAwardDetails = responseDict
+//                        case .failure(let error):
+//                            self.awardError = error
+//                        }
+//                        group.leave()
 //                    }
-//                    self.checkForAwardError()
+//                }
+//
+//                // Reserve awards
+//                group.enter()
+//                swaBidDataDownload?.getReserveDataForAward { result in
+//                    DispatchQueue.main.async {
+//                        switch result {
+//                        case .success(let responseDict):
+//                            self.reserveAwardDetails = responseDict
+//                        case .failure(let error):
+//                            self.awardError = error
+//                        }
+//                        group.leave()
+//                    }
 //                }
 //            }
-//        }
+//
+//            // Final completion once ALL downloads finish
+//            group.notify(queue: .main) {
+//
+//                if let error = self.awardError {
+//
+//                    let okAction = (title: "OK", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction) in
+//                        self.awardParsingAndTextFileCreation()
+//                    })
+//
+//                    AlertService.showAlertForTopVC(
+//                        title: "Award Download Error",
+//                        message: error.localizedDescription,
+//                        actions: [okAction]
+//                    )
+//
+//                } else {
+//                    self.awardParsingAndTextFileCreation()
+//                }
+//            }
+        
+
     }
     
     func checkForAwardError() {
-        // If not a second round, wait until all 4 downloads have finished
-//        if !(bidPeriod?.isSecondRoundBid() ?? false) {
-//            if !(reserveAwardDownloaded && mrtAwardDownloaded && lineAwardDownloaded && jobShareAwardDownloaded) {
-//                return
-//            }
-//        }
 
         if let error = self.awardError {
             let okAction = (title: "OK", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction) in
@@ -1153,30 +1122,6 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
         }
 
         self.showAwardAlertFromLocal(empNum: empNo)
-        
-        /*self.awardsViewModel?.getAwardAlertFromServer(empNum: empNo) { title, message, shouldOpenAward in
-
-            guard let title = title,
-                  let message = message else {
-                return
-            }
-
-            AlertService.showAlertForTopVC(
-                title: title,
-                message: message,
-                actions: [
-                    (title: "OK", style: .default, handler: { _ in
-                        self.dismissVC()
-                        if shouldOpenAward {
-                            NotificationCenter.default.post(
-                                name: NSNotification.Name(KCBOpenAwardData),
-                                object: self
-                            )
-                        }
-                    })
-                ]
-            )
-        }*/
     }
     
     func saveLocalAwardsToCoreData() {
