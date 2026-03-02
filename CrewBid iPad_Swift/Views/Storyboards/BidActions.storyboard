@@ -49,7 +49,7 @@
             <objects>
                 <viewController storyboardIdentifier="EmbeddedLineNumberController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Ws2-a5-RnL" customClass="EmbeddedLineNumberController" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="dY2-4n-re8">
-                        <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="500"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LeG-tg-1di">
@@ -2182,7 +2182,7 @@
             <objects>
                 <viewController storyboardIdentifier="EmbeddedShowCAPVC" id="vc0-Yi-x0T" customClass="EmbeddedShowCAPVC" customModule="CrewBid_iPad_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="W8k-ko-qPR">
-                        <rect key="frame" x="0.0" y="0.0" width="1376" height="1032"/>
+                        <rect key="frame" x="0.0" y="0.0" width="500" height="500"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4pL-SH-oXe">
@@ -3719,16 +3719,6 @@
                                             <action selector="btnShareAction:" destination="xfI-FU-lqa" eventType="touchUpInside" id="0qJ-7i-mdU"/>
                                         </connections>
                                     </button>
-                                    <searchBar hidden="YES" contentMode="redraw" placeholder="search" translatesAutoresizingMaskIntoConstraints="NO" id="aA3-qv-6CK">
-                                        <rect key="frame" x="1006" y="10" width="300" height="40"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="40" id="Xke-Tg-gMi"/>
-                                            <constraint firstAttribute="width" constant="300" id="fZD-EZ-vBK"/>
-                                        </constraints>
-                                        <color key="barTintColor" systemColor="systemBackgroundColor"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                    </searchBar>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="edn-02-W11">
                                         <rect key="frame" x="10" y="10" width="40" height="40"/>
                                         <constraints>
@@ -3749,12 +3739,10 @@
                                 <constraints>
                                     <constraint firstItem="C44-rG-qpL" firstAttribute="centerY" secondItem="ucn-Sd-7fD" secondAttribute="centerY" id="14f-nK-OSg"/>
                                     <constraint firstAttribute="height" constant="60" id="1Z6-L0-pYt"/>
-                                    <constraint firstItem="aA3-qv-6CK" firstAttribute="centerY" secondItem="ucn-Sd-7fD" secondAttribute="centerY" id="CdB-mZ-IvB"/>
                                     <constraint firstItem="n8v-Wu-PHc" firstAttribute="leading" secondItem="ucn-Sd-7fD" secondAttribute="leading" constant="400" id="Dlb-fU-Sl3"/>
                                     <constraint firstAttribute="trailing" secondItem="C44-rG-qpL" secondAttribute="trailing" constant="10" id="GhE-Sd-YEx"/>
                                     <constraint firstItem="edn-02-W11" firstAttribute="centerY" secondItem="ucn-Sd-7fD" secondAttribute="centerY" id="dAf-sS-9di"/>
                                     <constraint firstItem="edn-02-W11" firstAttribute="leading" secondItem="ucn-Sd-7fD" secondAttribute="leading" constant="10" id="hx7-iI-t4A"/>
-                                    <constraint firstItem="C44-rG-qpL" firstAttribute="leading" secondItem="aA3-qv-6CK" secondAttribute="trailing" constant="20" id="ptW-p8-03g"/>
                                     <constraint firstItem="n8v-Wu-PHc" firstAttribute="centerY" secondItem="ucn-Sd-7fD" secondAttribute="centerY" id="sfi-M0-rmQ"/>
                                     <constraint firstAttribute="trailing" secondItem="n8v-Wu-PHc" secondAttribute="trailing" constant="400" id="zya-ra-ZeW"/>
                                 </constraints>
@@ -3782,7 +3770,6 @@
                         <outlet property="btnShare" destination="C44-rG-qpL" id="jwz-tB-vHA"/>
                         <outlet property="headerView" destination="MQV-9U-fjH" id="pnV-Ij-bdZ"/>
                         <outlet property="lblTitle" destination="n8v-Wu-PHc" id="dKC-P5-Qe6"/>
-                        <outlet property="searchBar" destination="aA3-qv-6CK" id="uFi-uZ-RVf"/>
                         <outlet property="tableView" destination="en8-rH-QzL" id="DLX-zy-oj6"/>
                         <outlet property="textView" destination="0Wb-8c-HUS" id="d86-Sb-1xm"/>
                     </connections>
