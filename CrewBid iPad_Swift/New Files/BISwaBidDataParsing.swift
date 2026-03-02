@@ -1000,7 +1000,7 @@ class BISwaBidDataParsing{
         let type = data["lineType"] as? String ?? ""
         
         // Basic line type
-        if type == "HARD" {
+        if type == "HARD" || type == "VR" {
             line.type = BILineType.HardConUS.rawValue as NSNumber
         }
         

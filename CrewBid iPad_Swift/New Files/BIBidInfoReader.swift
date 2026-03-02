@@ -1937,7 +1937,16 @@ class BIBidInfoReader{
                                     let checkDomicile = self.calculateNMidCount(trips: arrFetchedTrip, workBlock: workBlock1)
                                     workBlock1.nightINDomicile = checkDomicile as NSNumber
                                     
-                                    let workBlockDays = (prevTrip!.days!.allObjects) + (trip.days!.allObjects)
+                                    var workBlockDays: [Any] = []
+
+                                    if let prevDays = prevTrip?.days?.allObjects {
+                                        workBlockDays += prevDays
+                                    }
+
+                                    if let currentDays = trip.days?.allObjects {
+                                        workBlockDays += currentDays
+                                    }
+
                                     for case let day as BIDay in workBlockDays {
                                         let dayObj = BIDay(context: moc)
                                         dayObj.date = day.date
@@ -4337,8 +4346,13 @@ class BIBidInfoReader{
                     let arriveCity = legInfo.arriveCity
                     
                     if !(line.type?.intValue == BILineType.ReserveLine.rawValue) && arriveCity == base{
-                        passesThruBase += 1
-                        if dayCount > 0 && dayCount < (tripOrderedDays.count - 1){
+                        let isLastDay = (tripOrderedDays.count + -1) == dayCount
+                        let isMidTrip = (dayCount > 0 && dayCount < (tripOrderedDays.count - 1))
+                        
+                        if (!trip.isReserve || isLastDay) {
+                            passesThruBase += 1
+                        }
+                        if isMidTrip{
                             midTripPTBs += 1
                             containsMidTripPTB = true
                         }

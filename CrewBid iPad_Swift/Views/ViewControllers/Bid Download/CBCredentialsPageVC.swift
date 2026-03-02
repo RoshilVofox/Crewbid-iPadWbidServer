@@ -844,6 +844,7 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
                     }
                 case .failure(let error):
                     print("Historic bid download failed: \(error.localizedDescription)")
+                    NotificationCenter.default.post(name: Notification.Name("CloseProgressView"), object: nil)
                 }
             }
         }
