@@ -290,48 +290,54 @@ class CBBidListVC: BaseViewController, NSFetchedResultsControllerDelegate, CBBid
         insertionIndex = 0
         insertAbove = false
         var enteredForLoop = false
+        
+        // --- Sorting Logic from Code 2 ---
         let sort = NSSortDescriptor(key: "bidOrder", ascending: true)
-        if bidPeriod.isBidListSortOn?.intValue == 1{
+        if bidPeriod.isBidListSortOn?.intValue == 1 {
             let lineSorts = getSortDescriptorsForBidList()
-            
-            self.linesArray = (linesArray as NSArray).sortedArray(using: lineSorts ) as! [BILine]
-        }
-        else {
+            self.linesArray = (linesArray as NSArray).sortedArray(using: lineSorts) as! [BILine]
+        } else {
             self.linesArray = (linesArray as NSArray).sortedArray(using: [sort]) as! [BILine]
         }
-    
-        // Loop through the linesArray
+        
+        // --- Deletion Loop ---
         for line in linesArray {
             enteredForLoop = true
-            // Check if the line is not frozen
+            
+            // Check if the line is NOT frozen (isFrozen == 0)
             if !(line.isFrozen != 0) {
-                // Check if it's a Flight Attendant bid line and delete accordingly
-                if bidPeriod.isFABid() && (line.faBidLineMrt?.boolValue)! || (line.faBidLineReserve?.boolValue)! {
+                
+                // Reverted to isFlightAttendantBid() and added grouping parentheses for logic safety
+                if bidPeriod.isFABid() && ((line.faBidLineMrt?.boolValue)! || (line.faBidLineReserve?.boolValue)!) {
+                    
                     if (line.faBidLineReserve?.boolValue)! {
                         bidPeriod.faReserveLineExists = false
-                    }
-                    else {
+                    } else {
                         bidPeriod.faMrtLineExists = false
                     }
-                    // Remove the line from the bidLines
+                    
+                    // Remove from relationship and delete from Core Data context
                     line.removeFromBidLines()
                     bidPeriod.managedObjectContext!.delete(line)
-                }
-                else {
+                    
+                } else {
+                    // If Pilot or standard line, just remove from the relationship
                     line.removeFromBidLines()
                 }
-            }
-            else {
+            } else {
+                // Line is frozen, increment the index to maintain position
                 insertionIndex += 1
             }
         }
+        
+        // --- Finalize Changes ---
         if enteredForLoop {
             bidPeriod.managedObjectContext!.undoManager?.setActionName("Remove All Unfrozen Lines")
             if insertionIndex != 0 {
                 insertionIndex -= 1
             }
-            
         }
+        
         selectedCellIndexPaths.removeAllObjects()
         self.updateBidList()
         

@@ -992,7 +992,12 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
                 }
 
             case .failure(let error):
-                AlertService.showAlertForTopVC(title: "Award Download Error",message: error.localizedDescription)
+                AlertService.showAlertForTopVC(title: "Award Download Error", message: error.localizedDescription, actions: [
+                        (title: "OK", style: .default, handler: { [weak self] action, textFields in
+                            // This dismisses the View Controller that presented the alert
+                            self?.dismiss(animated: true, completion: nil)
+                        })
+                    ])
             }
             self.view.hideActivityIndicator()
         }
