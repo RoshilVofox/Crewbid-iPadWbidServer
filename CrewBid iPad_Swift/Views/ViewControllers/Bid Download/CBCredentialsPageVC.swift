@@ -980,7 +980,11 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
                     reserveData: awardData.reserveAwardDetails,
                     bidPeriod: self.bidPeriod
                 )
-
+                self.lineAwardDetails = awardData.lineAwardDetails!
+                self.mrtAwardDetails = awardData.mrtAwardDetails!
+                self.jobshareAwardDetails = awardData.jobshareAwardDetails!
+                self.reserveAwardDetails = awardData.reserveAwardDetails!
+                
                 self.bidPeriod?.deleteTextFile(text: bidAwardText, name: BIAwardsTextFileName)
                 self.bidPeriod?.addTextFile(text: bidAwardText, name: BIAwardsTextFileName)
                 self.bidPeriod?.awardString = bidAwardText
@@ -1087,24 +1091,24 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
 
     }
     
-    func checkForAwardError() {
-
-        if let error = self.awardError {
-            let okAction = (title: "OK", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction) in
-                self.awardParsingAndTextFileCreation()
-            })
-
-            DispatchQueue.main.async {
-                AlertService.showAlertForTopVC(
-                    title: "Award Download Error",
-                    message: error.localizedDescription,
-                    actions: [okAction]
-                )
-            }
-        } else {
-            self.awardParsingAndTextFileCreation()
-        }
-    }
+//    func checkForAwardError() {
+//
+//        if let error = self.awardError {
+//            let okAction = (title: "OK", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction) in
+//                self.awardParsingAndTextFileCreation()
+//            })
+//
+//            DispatchQueue.main.async {
+//                AlertService.showAlertForTopVC(
+//                    title: "Award Download Error",
+//                    message: error.localizedDescription,
+//                    actions: [okAction]
+//                )
+//            }
+//        } else {
+//            self.awardParsingAndTextFileCreation()
+//        }
+//    }
     
     func awardParsingAndTextFileCreation() {
 

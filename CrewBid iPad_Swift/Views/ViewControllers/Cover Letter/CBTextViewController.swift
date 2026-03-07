@@ -108,7 +108,11 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
     
     func textAppending() {
         textView.font = UIFont(name: "Courier", size: 16)
-        
+        guard let bp = self.bidPeriod else { return }
+
+        let base = bp.base ?? ""
+        let month = CBUtils.shortMonthName(month: bp.month?.intValue ?? 1, uc: false)
+        let year = bp.year ?? 0
         switch dataTypeSelected {
             case .seniorityList:
                 lblTitle.text = "Seniority List"
@@ -153,7 +157,7 @@ class CBTextViewController: BaseViewController, UIPopoverPresentationControllerD
             }
                 break
             case .awardText:
-                lblTitle.text = "Bid Awards"
+            lblTitle.text = "Bid Awards (\(base) \(month) \(year))"
                 titleText = "Bid Awards"
                 self.setupSearchHighlightUI()
 //                setupSearchUI()
