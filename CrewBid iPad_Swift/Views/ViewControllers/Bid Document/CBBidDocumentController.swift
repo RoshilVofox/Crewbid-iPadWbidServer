@@ -1199,6 +1199,16 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         self.lblQaMode.text = ""
         self.updateQATitle()
         
+        let screenWidth = UIScreen.main.bounds.width
+        var fontSize: CGFloat = 18
+
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if screenWidth <= 744 {          // iPad Mini
+                fontSize = 16
+            }
+        }
+        lblHome.font = UIFont.systemFont(ofSize: fontSize)
+        lblQaMode.font = UIFont.systemFont(ofSize: fontSize)
         lblHome.text = "\(version) \(month) \(year) \(base) \(position) Rnd \(round) - \(empID)"
 
 
