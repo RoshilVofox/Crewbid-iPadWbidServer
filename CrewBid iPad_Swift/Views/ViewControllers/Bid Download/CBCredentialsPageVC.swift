@@ -955,11 +955,14 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
     }
     
     func retrieveAwardsForFA(){
-        if let token = KeychainHelper.retrieveTokenFromKeyChain(),
-            let userDetails = JWTDecoder.decode(jwtToken: token),
-            let user = userDetails["cn"] as? String{
-            self.defaultEmployeeNumber = user
-        }
+//        if let token = KeychainHelper.retrieveTokenFromKeyChain(),
+//            let userDetails = JWTDecoder.decode(jwtToken: token),
+//            let user = userDetails["cn"] as? String{
+//            self.defaultEmployeeNumber = user
+//        }
+        self.defaultEmployeeNumber = self.bidPeriod?.bidByEmpID
+        
+        
         if let secretID = UserDefaults.standard.string(forKey: "SecretVDuserName"), !secretID.isEmpty{
             self.defaultEmployeeNumber = secretID
         }
