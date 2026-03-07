@@ -744,6 +744,7 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         let storyboard : UIStoryboard = UIStoryboard(name: "BidActions", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "CBTextViewController") as!   CBTextViewController
         vc.bidPeriod = self.bidPeriod
+        
         vc.dataTypeSelected = TextFileType.awardText
         let transition = CATransition()
         transition.duration = 0.4

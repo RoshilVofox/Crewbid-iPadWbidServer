@@ -876,17 +876,17 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
  
     }
     
-    var lineAwardDetails:[String:Any] = [:]
-    var lineAwardDownloaded = false
+    var lineAwardDetails:[String:Any]?
+//    var lineAwardDownloaded = false
     
-    var mrtAwardDetails:[String:Any] = [:]
-    var mrtAwardDownloaded = false
+    var mrtAwardDetails:[String:Any]?
+//    var mrtAwardDownloaded = false
     
-    var jobshareAwardDetails:[String:Any] = [:]
-    var jobShareAwardDownloaded = false
+    var jobshareAwardDetails:[String:Any]?
+//    var jobShareAwardDownloaded = false
     
-    var reserveAwardDetails:[String:Any] = [:]
-    var reserveAwardDownloaded = false
+    var reserveAwardDetails:[String:Any]?
+//    var reserveAwardDownloaded = false
     
     var awardError:Error?
     //MARK: Award retrieval
@@ -955,11 +955,14 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
     }
     
     func retrieveAwardsForFA(){
-        if let token = KeychainHelper.retrieveTokenFromKeyChain(),
-            let userDetails = JWTDecoder.decode(jwtToken: token),
-            let user = userDetails["cn"] as? String{
-            self.defaultEmployeeNumber = user
-        }
+//        if let token = KeychainHelper.retrieveTokenFromKeyChain(),
+//            let userDetails = JWTDecoder.decode(jwtToken: token),
+//            let user = userDetails["cn"] as? String{
+//            self.defaultEmployeeNumber = user
+//        }
+        self.defaultEmployeeNumber = self.bidPeriod?.bidByEmpID
+        
+        
         if let secretID = UserDefaults.standard.string(forKey: "SecretVDuserName"), !secretID.isEmpty{
             self.defaultEmployeeNumber = secretID
         }
@@ -980,7 +983,11 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
                     reserveData: awardData.reserveAwardDetails,
                     bidPeriod: self.bidPeriod
                 )
-
+                self.lineAwardDetails = awardData.lineAwardDetails
+                self.mrtAwardDetails = awardData.mrtAwardDetails
+                self.jobshareAwardDetails = awardData.jobshareAwardDetails
+                self.reserveAwardDetails = awardData.reserveAwardDetails
+                
                 self.bidPeriod?.deleteTextFile(text: bidAwardText, name: BIAwardsTextFileName)
                 self.bidPeriod?.addTextFile(text: bidAwardText, name: BIAwardsTextFileName)
                 self.bidPeriod?.awardString = bidAwardText
@@ -1087,24 +1094,24 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
 
     }
     
-    func checkForAwardError() {
-
-        if let error = self.awardError {
-            let okAction = (title: "OK", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction) in
-                self.awardParsingAndTextFileCreation()
-            })
-
-            DispatchQueue.main.async {
-                AlertService.showAlertForTopVC(
-                    title: "Award Download Error",
-                    message: error.localizedDescription,
-                    actions: [okAction]
-                )
-            }
-        } else {
-            self.awardParsingAndTextFileCreation()
-        }
-    }
+//    func checkForAwardError() {
+//
+//        if let error = self.awardError {
+//            let okAction = (title: "OK", style: UIAlertAction.Style.default, handler: { (_: UIAlertAction) in
+//                self.awardParsingAndTextFileCreation()
+//            })
+//
+//            DispatchQueue.main.async {
+//                AlertService.showAlertForTopVC(
+//                    title: "Award Download Error",
+//                    message: error.localizedDescription,
+//                    actions: [okAction]
+//                )
+//            }
+//        } else {
+//            self.awardParsingAndTextFileCreation()
+//        }
+//    }
     
     func awardParsingAndTextFileCreation() {
 

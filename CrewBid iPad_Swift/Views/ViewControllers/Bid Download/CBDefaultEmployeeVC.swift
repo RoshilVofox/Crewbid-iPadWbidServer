@@ -288,6 +288,15 @@ class CBDefaultEmployeeVC: BaseViewController {
         }
         return nil
     }
+    func normalizeEmp(_ emp: String?) -> String {
+        return emp?
+            .lowercased()
+            .replacingOccurrences(of: "e", with: "")
+            .replacingOccurrences(of: "x", with: "")
+            .replacingOccurrences(of: "[", with: "")
+            .replacingOccurrences(of: "]", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    }
     
     /*func awardedLineForFA(employeeNumber:String) -> NSDictionary{
         let awardText = bidPeriod?.awardString
