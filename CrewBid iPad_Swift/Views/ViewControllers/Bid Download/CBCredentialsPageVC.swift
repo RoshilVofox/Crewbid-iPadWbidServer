@@ -876,17 +876,17 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
  
     }
     
-    var lineAwardDetails:[String:Any] = [:]
-    var lineAwardDownloaded = false
+    var lineAwardDetails:[String:Any]?
+//    var lineAwardDownloaded = false
     
-    var mrtAwardDetails:[String:Any] = [:]
-    var mrtAwardDownloaded = false
+    var mrtAwardDetails:[String:Any]?
+//    var mrtAwardDownloaded = false
     
-    var jobshareAwardDetails:[String:Any] = [:]
-    var jobShareAwardDownloaded = false
+    var jobshareAwardDetails:[String:Any]?
+//    var jobShareAwardDownloaded = false
     
-    var reserveAwardDetails:[String:Any] = [:]
-    var reserveAwardDownloaded = false
+    var reserveAwardDetails:[String:Any]?
+//    var reserveAwardDownloaded = false
     
     var awardError:Error?
     //MARK: Award retrieval
@@ -980,10 +980,10 @@ class CBCredentialsPageVC: BaseViewController, submissionGoActiondelegate, submi
                     reserveData: awardData.reserveAwardDetails,
                     bidPeriod: self.bidPeriod
                 )
-                self.lineAwardDetails = awardData.lineAwardDetails!
-                self.mrtAwardDetails = awardData.mrtAwardDetails!
-                self.jobshareAwardDetails = awardData.jobshareAwardDetails!
-                self.reserveAwardDetails = awardData.reserveAwardDetails!
+                self.lineAwardDetails = awardData.lineAwardDetails
+                self.mrtAwardDetails = awardData.mrtAwardDetails
+                self.jobshareAwardDetails = awardData.jobshareAwardDetails
+                self.reserveAwardDetails = awardData.reserveAwardDetails
                 
                 self.bidPeriod?.deleteTextFile(text: bidAwardText, name: BIAwardsTextFileName)
                 self.bidPeriod?.addTextFile(text: bidAwardText, name: BIAwardsTextFileName)

@@ -59,13 +59,13 @@ class SecretMethodsViewController: UIViewController {
         }
         
         
-        if CBGlobalMethods.shared.selectedBidPeriod == nil {
-            self.secretStack1.isHidden = true
+//        if CBGlobalMethods.shared.selectedBidPeriod == nil {
+//            self.secretStack1.isHidden = true
 //            self.secretStack2.isHidden = true
-        }else{
-            self.secretStack1.isHidden = false
-            
-        }
+//        }else{
+//            self.secretStack1.isHidden = false
+//            
+//        }
 
     }
     
