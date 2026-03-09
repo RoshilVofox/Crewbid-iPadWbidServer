@@ -111,6 +111,10 @@ extension CBCredentialsPageVC: WKNavigationDelegate{
             return
         }
         
+        if let cn = userDetail["cn"] as? String {
+            CBGlobalMethods.shared.FacredentialEmployeeNumber = String(cn.dropFirst())
+        }
+        
         let group = (userDetail["groups"] as? String) ?? ""
         
         if !group.contains("Attendant"){

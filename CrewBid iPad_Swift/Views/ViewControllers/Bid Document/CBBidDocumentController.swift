@@ -1199,20 +1199,14 @@ class CBBidDocumentController: BaseViewController, NSFetchedResultsControllerDel
         }
         self.lblQaMode.text = ""
         self.updateQATitle()
-        
-        let screenWidth = UIScreen.main.bounds.width
-        var fontSize: CGFloat = 18
-
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            if screenWidth <= 744 {          // iPad Mini
-                fontSize = 16
-            }
+        let screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
+        if screenWidth <= 744  {
+            let spacer = "               "
+            lblHome.text = "\(spacer) \(version) \(month) \(year) \(base) \(position) Rnd \(round) - \(empID)"
         }
-        lblHome.font = UIFont.systemFont(ofSize: fontSize)
-        lblQaMode.font = UIFont.systemFont(ofSize: fontSize)
-        lblHome.text = "\(version) \(month) \(year) \(base) \(position) Rnd \(round) - \(empID)"
-
-
+        else {
+            lblHome.text = "\(version) \(month) \(year) \(base) \(position) Rnd \(round) - \(empID)"
+        }
         btnLocalHerbView.layer.borderWidth = 1
         btnLocalHerbView.layer.borderColor = UIColor.black.cgColor
         btnLocalHerbView.layer.cornerRadius = 16

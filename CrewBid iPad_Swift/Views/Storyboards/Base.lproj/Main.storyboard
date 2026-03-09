@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="yKP-JL-rqg">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="yKP-JL-rqg">
     <device id="ipad10_9rounded" orientation="landscape" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -224,10 +224,13 @@
                                                 <connections>
                                                     <outlet property="activityIndicator" destination="HyU-RE-ytO" id="SuK-tp-dML"/>
                                                     <outlet property="base" destination="Lx5-BQ-jrL" id="yWc-al-nXA"/>
+                                                    <outlet property="baseIconImage" destination="0Fw-Wy-o0b" id="KpX-sK-oip"/>
                                                     <outlet property="baseIconView" destination="0Fw-Wy-o0b" id="4hp-Ke-pZ7"/>
+                                                    <outlet property="imageStackViewTopConstraint" destination="A3E-1y-JdV" id="p1X-jD-e2p"/>
                                                     <outlet property="lastBidDate" destination="jtx-6Y-8Ub" id="z4O-U6-F4o"/>
                                                     <outlet property="monthRoundLabel" destination="9S1-qG-LcA" id="Ml7-sY-6hv"/>
                                                     <outlet property="position" destination="mbM-sk-JFd" id="jmv-rF-YOj"/>
+                                                    <outlet property="positionImageIcon" destination="LNr-0l-Toa" id="Rdd-AG-iR8"/>
                                                     <outlet property="userIconView" destination="LNr-0l-Toa" id="hIC-2o-lxg"/>
                                                 </connections>
                                             </collectionViewCell>
@@ -993,16 +996,16 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray2Color">
-            <color red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray6Color">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

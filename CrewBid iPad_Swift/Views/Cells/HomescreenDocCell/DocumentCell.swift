@@ -17,6 +17,9 @@ class DocumentCell: UICollectionViewCell {
     @IBOutlet weak var userIconView: UIImageView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
+    @IBOutlet weak var positionImageIcon: UIImageView!
+    @IBOutlet weak var baseIconImage: UIImageView!
+    @IBOutlet weak var imageStackViewTopConstraint: NSLayoutConstraint!
     //MARK: - Wiggle Animation
     private let kWiggleAnimationKey = "wiggle"
     // Function to start a wiggling animation on a view.

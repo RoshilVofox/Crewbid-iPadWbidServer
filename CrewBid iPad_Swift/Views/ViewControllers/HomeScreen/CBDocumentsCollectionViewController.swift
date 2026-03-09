@@ -641,6 +641,18 @@ extension CBDocumentsCollectionViewController: UICollectionViewDataSource,UIColl
         cell.layer.cornerRadius = 10
         cell.layer.borderWidth = 8
         cell.layer.borderColor = CBColor.cbPurpleColor?.cgColor
+        let screenWidth = min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
+        if screenWidth <= 744  {
+            cell.baseIconImage.translatesAutoresizingMaskIntoConstraints = false
+            cell.positionImageIcon.translatesAutoresizingMaskIntoConstraints = false
+            cell.imageStackViewTopConstraint.constant = 55
+            NSLayoutConstraint.activate([
+                cell.baseIconImage.widthAnchor.constraint(equalToConstant: 60),
+                cell.baseIconImage.heightAnchor.constraint(equalToConstant: 60),
+                cell.positionImageIcon.widthAnchor.constraint(equalToConstant: 60),
+                cell.positionImageIcon.heightAnchor.constraint(equalToConstant: 60)
+            ])
+        }
         
         let bidPeriod : BIBidPeriod = bidPeriodList[indexPath.item]
         cell.base.text = bidPeriod.base

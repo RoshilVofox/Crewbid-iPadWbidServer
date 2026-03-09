@@ -4544,35 +4544,60 @@ class BIBidInfoReader{
                 
                 // Month bits
                 let one:UInt64 = 1
-                monthBits |= one << (monthBitIndex + dayCount)
-                
+
+                // --- Calculate monthBits using each leg departure time ---
+                let calendar = BICalendarData.bidPeriodCalendar()! as Calendar
+                let allLegs = dayInfo.orderedLegs
+
+                for leg in allLegs {
+                    if let departMinutes = leg.departMinutes {
+                        let totalMinutes = Int(truncating: departMinutes)
+
+                        if let legClockDate = calendar.date(byAdding: .minute,
+                                                             value: totalMinutes,
+                                                             to: trip.startDate!) {
+
+                            // Apply same 3AM workday rule
+                            let adjustedDate = calendar.date(byAdding: .hour, value: -3, to: legClockDate) ?? legClockDate
+
+                            let dayComponent = calendar.component(.day, from: adjustedDate)
+                            let bitIndex = monthBitIndex + (dayComponent - 1)
+
+                            monthBits |= one << bitIndex
+                        }
+                    }
+                }
+
                 if dayCount == 0{
                     tripStartMonthBits |= one << (monthBitIndex + dayCount)
                     trip.info?.firstDay = dayInfo
                     dayInfo.firstLeg = dayInfo.orderedLegs.first
                 }
+
                 if dayCount == (trip.info?.orderedDays().count)! - 1{
-//                    fix for Monthbits for RedEye Trips
-                    if trip.isRedEyeTrip {
-                        if !(trip.info?.calendarDaysCount?.intValue == trip.info?.orderedDays().count) {
-                            let missingDateIndex = CBUtils.findMissingIndex(inRedEyeTrip: trip)
-                            if missingDateIndex != -1 && missingDateIndex < (trip.info!.orderedDays().count + 1) {
-                                monthBits |= one << (monthBitIndex + dayCount + 1)
-                                tripEndMonthBits |= one << (monthBitIndex + dayCount + 1)
-                            }
-                        }
-                        else {
-                            tripEndMonthBits |= one << (monthBitIndex + dayCount)
-                        }
-                    }
-                    else {
+                    // fix for Monthbits for RedEye Trips
+//                    if trip.isRedEyeTrip {
+//                        if !(trip.info?.calendarDaysCount?.intValue == trip.info?.orderedDays().count) {
+//                            let missingDateIndex = CBUtils.findMissingIndex(inRedEyeTrip: trip)
+//                            if missingDateIndex != -1 && missingDateIndex < (trip.info!.orderedDays().count + 1) {
+//                                monthBits |= one << (monthBitIndex + dayCount + 1)
+//                                tripEndMonthBits |= one << (monthBitIndex + dayCount + 1)
+//                            }
+//                        }
+//                        else {
+//                            tripEndMonthBits |= one << (monthBitIndex + dayCount)
+//                        }
+//                    }
+//                    else {
                         tripEndMonthBits |= one << (monthBitIndex + dayCount)
-                    }
+//                    }
                 }
+
                 // Max legs in a day
                 if dayNumLegs > maxLegsInADay{
                     maxLegsInADay = dayNumLegs
                 }
+
                 dayCount += 1
                 
                 // Minimum and maximum overnight times

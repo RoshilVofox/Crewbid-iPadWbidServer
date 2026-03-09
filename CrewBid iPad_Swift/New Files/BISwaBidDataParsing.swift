@@ -441,6 +441,7 @@ class BISwaBidDataParsing{
             let empNum = Int(empNumString) {
             bidPeriod.crewIdentifier = NSNumber(value: empNum)
         }
+        bidPeriod.credentialEmployeenumber = Int(CBGlobalMethods.shared.FacredentialEmployeeNumber ?? "0") as? NSNumber
         
         
         if let fullId = self.dataSource?.swaptimizerID {
