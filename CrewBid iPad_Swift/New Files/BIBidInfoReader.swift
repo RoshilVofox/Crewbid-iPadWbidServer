@@ -7310,7 +7310,7 @@ class BIBidInfoReader{
     private func getEquipmentType(type: String) -> String {
         let type700 = ["73W", "73R", "7S7", "7R7"]
         let type800 = ["73H", "7S8", "738", "7R8"]
-        let type8Max = ["7M8", "7U8", "7T8", "7V8"]
+        let type8Max = ["7M8", "7U8", "7T8", "7V8", "7A8"]
 
         if type700.contains(type) {
             return "7" // Equipment 700

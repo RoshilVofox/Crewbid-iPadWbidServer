@@ -420,11 +420,17 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
             var missingDateIndex = -1
             var missingRedEyeDate: Date? = nil
             var isDateMissingInPreviousDay = false
+            var missingIndicesCount = -1
+            var result: [String: Any] = [:]
+            var currentDayHasRedeye = false
+            var currentDayShiftNeededForRedEye = 0
             
-            if trip.isRedEyeTrip{
-                missingDateIndex = CBUtils.findMissingIndex(inRedEyeTrip: trip)
-                missingRedEyeDate = CBUtils.findMissingDate(forRedEyeTrip: trip)
-                isDateMissingInPreviousDay = CBUtils.isDateMissingInPreviousDay(trip)
+            if trip.isRedEyeTrip {
+                result = CBUtils.findMissingDatesIncludingMultipleMissingDates(forRedEyeTrip: trip)
+                missingDateIndex = (result["missingIndexes"] as? [Int])?[currentDayShiftNeededForRedEye] as? Int ?? -1
+                missingRedEyeDate = (result["missingDates"] as? [Date])?[currentDayShiftNeededForRedEye] as? Date ?? nil
+                missingIndicesCount = (result["missingIndexes"] as? [Int])?.count ?? -1
+                isDateMissingInPreviousDay = (result["isLastDayMissing"] as? Bool)!
             }
             var showingRedEyeIconForThisDay: Bool = false
             var showingRedEyeIconForThisTrip: Bool = false
@@ -437,22 +443,38 @@ class ScratchPadTableCellTableViewCell: UITableViewCell,UICollectionViewDataSour
                 showingRedEyeIconForThisDay = false
                 var labelFrame = button!.bounds
                 labelFrame.size.width = itemSize.width
-                var dayIndex = d
+                if trip.isRedEyeTrip && missingIndicesCount > 1 && currentDayHasRedeye {
+                    currentDayHasRedeye = false
+                    missingDateIndex = (result["missingIndexes"] as? [Int])?[currentDayShiftNeededForRedEye] as? Int ?? -1
+                    missingRedEyeDate = (result["missingDates"] as? [Date])?[currentDayShiftNeededForRedEye] as? Date ?? nil
+                    if (currentDayShiftNeededForRedEye + 1) < missingIndicesCount {
+                        currentDayShiftNeededForRedEye += 1
+                    }
+                }
+                var dayIndex = d + currentDayShiftNeededForRedEye
+                
                 if !self.bidPeriod!.isFABid() && (trip.info?.dutyPeriodsCount != trip.info?.calendarDaysCount) {
                     if !showingRedEyeIconForThisTrip {
-                        if trip.isRedEyeTrip && (dayIndex >= missingDateIndex) && missingDateIndex != -1 {
-                            labelFrame.origin.x = CGFloat(d) * itemSize.width + 3
-                            redEyeIconButton.frame = labelFrame
-                            labelButton.addSubview(redEyeIconButton)
-                            redEyePayLabel = UILabel(frame: labelFrame)
-                            labelButton.addSubview(redEyePayLabel!)
-                            
-                            if trip.info?.dutyPeriodsCount == trip.info?.calendarDaysCount {
-                                showingRedEyeIconForThisDay = true
-                                showingRedEyeIconForThisTrip = true
-                            }else{
-                                dayIndex += 1
-                                showingRedEyeIconForThisDay = false
+                        if trip.isRedEyeTrip  {
+                            if d == missingDateIndex {
+                                labelFrame.origin.x = CGFloat(d) * itemSize.width + 3
+                                redEyeIconButton.frame = labelFrame
+                                labelButton.addSubview(redEyeIconButton)
+                                redEyePayLabel = UILabel(frame: labelFrame)
+                                labelButton.addSubview(redEyePayLabel!)
+                                
+                                if trip.info?.dutyPeriodsCount == trip.info?.calendarDaysCount {
+                                    showingRedEyeIconForThisDay = true
+                                    showingRedEyeIconForThisTrip = true
+                                    
+                                }else{
+                                    dayIndex += 1
+                                    showingRedEyeIconForThisDay = false
+                                    showingRedEyeIconForThisTrip = false
+                                    if missingIndicesCount > 1 {
+                                        currentDayHasRedeye = true
+                                    }
+                                }
                             }
                         }
                     }

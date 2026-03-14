@@ -147,8 +147,7 @@ extension BITripInfo : Identifiable {
            let tripLine = trip.line,
            let bp = tripLine.bidPeriod,
            bp.isFABid(),
-           bp.month?.intValue == 3,
-           bp.year?.intValue == 2026{
+           bp.isHistoric?.boolValue == false {
             return self.tafbMinsFA
         }
         return NSNumber(value: tafb)

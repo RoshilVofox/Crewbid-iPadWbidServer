@@ -939,6 +939,107 @@ class CBUtils{
         ]
     }
     
+    class func findMissingDatesIncludingMultipleMissingDates(forRedEyeTrip trip: BITrip?) -> [String: Any] {
+
+        var missingIndexes: [Int] = []
+        var missingDates: [Date] = []
+        var lastDayMissing = false
+
+        guard let trip = trip, trip.isRedEyeTrip else {
+            return [
+                "missingDates": [],
+                "missingIndexes": [],
+                "isLastDayMissing": false
+            ]
+        }
+
+        let calendar = Calendar(identifier: .gregorian)
+        var calendarWithTimeZone = calendar
+        calendarWithTimeZone.locale = Locale(identifier: "en_US")
+        calendarWithTimeZone.timeZone = TimeZone(identifier: "US/Central")!
+
+        var dateComps = calendarWithTimeZone.dateComponents([.year, .month, .day], from: trip.startDate!)
+
+        let df = DateFormatter()
+        df.dateFormat = "dd-MMM-yyyy"
+        df.timeZone = TimeZone(identifier: "US/Central")
+
+        var tripDates: [String] = []
+
+        if let orderedDays = trip.info?.orderedDays() {
+            for dayInfo in orderedDays {
+
+                dateComps.minute = (dayInfo.orderedLegs.first as? BILegInfo)?.departMinutes?.intValue ?? 0
+
+                if let legStartDate = calendarWithTimeZone.date(from: dateComps) {
+                    tripDates.append(df.string(from: legStartDate))
+                }
+            }
+        }
+
+        let uniqueDatesArray = Array(NSOrderedSet(array: tripDates)) as! [String]
+
+        for i in 0..<uniqueDatesArray.count - 1 {
+
+            guard let currentDate = df.date(from: uniqueDatesArray[i]),
+                  let nextDate = df.date(from: uniqueDatesArray[i + 1]) else {
+                continue
+            }
+
+            let startOfCurrentDate = calendarWithTimeZone.startOfDay(for: currentDate)
+            let startOfNextDate = calendarWithTimeZone.startOfDay(for: nextDate)
+
+            let daysBetween = calendarWithTimeZone.dateComponents([.day],
+                                                                  from: startOfCurrentDate,
+                                                                  to: startOfNextDate).day ?? 0
+
+            if daysBetween > 1 {
+
+                for j in 1..<daysBetween {
+
+                    if let missingDate = calendarWithTimeZone.date(byAdding: .day,
+                                                                   value: j,
+                                                                   to: startOfCurrentDate) {
+
+                        missingDates.append(missingDate)
+                        missingIndexes.append(i + j)
+                    }
+                }
+            }
+        }
+
+        // Handle missing last day
+        if let lastDateStr = uniqueDatesArray.last,
+           let lastDate = df.date(from: lastDateStr) {
+
+            let startOfLastDate = calendarWithTimeZone.startOfDay(for: lastDate)
+
+            if let calendarDaysCount = trip.info?.calendarDaysCount?.intValue,
+               uniqueDatesArray.count < calendarDaysCount {
+
+                let missingCount = calendarDaysCount - uniqueDatesArray.count
+
+                for i in 1...missingCount {
+
+                    if let missingDate = calendarWithTimeZone.date(byAdding: .day,
+                                                                   value: i,
+                                                                   to: startOfLastDate) {
+
+                        missingDates.append(missingDate)
+                        missingIndexes.append(uniqueDatesArray.count - 1 + i)
+                        lastDayMissing = true
+                    }
+                }
+            }
+        }
+
+        return [
+            "missingDates": missingDates,
+            "missingIndexes": missingIndexes,
+            "isLastDayMissing": lastDayMissing
+        ]
+    }
+    
     class func compareDatesToDecideRedEye(Date1: Date, Date2: Date) -> Bool {
         // Create a calendar with a fixed time zone (UTC)
         var calendar = Calendar.current
